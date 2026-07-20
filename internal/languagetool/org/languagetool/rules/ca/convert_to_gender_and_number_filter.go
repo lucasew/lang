@@ -572,20 +572,7 @@ func (f *ConvertToGenderAndNumberFilter) synthesizeWithGenderAndNumber(
 	return synthesizedSuggestion
 }
 
-// preserveCaseWordByWord ports StringTools.preserveCaseWordByWord.
+// preserveCaseWordByWord delegates to tools.PreserveCaseWordByWord (StringTools).
 func preserveCaseWordByWord(inputString, modelString string) string {
-	inputWords := strings.Split(inputString, " ")
-	modelWords := strings.Split(modelString, " ")
-	// Java split(" ", -1) keeps trailing empties — Go Split keeps them too for non-empty sep.
-	if len(inputWords) != len(modelWords) {
-		return tools.PreserveCase(inputString, modelString)
-	}
-	var result strings.Builder
-	for i := range inputWords {
-		if i > 0 {
-			result.WriteByte(' ')
-		}
-		result.WriteString(tools.PreserveCase(inputWords[i], modelWords[i]))
-	}
-	return result.String()
+	return tools.PreserveCaseWordByWord(inputString, modelString)
 }

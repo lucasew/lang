@@ -576,7 +576,7 @@
 - [x] org/languagetool/tools/PseudoMatch.java::PseudoMatch
 - [ ] org/languagetool/tools/RuleMatchesAsJsonSerializer.java::RuleMatchesAsJsonSerializer
 - [x] org/languagetool/tools/StringInterner.java::StringInterner
-- [ ] org/languagetool/tools/StringTools.java::StringTools
+- [x] org/languagetool/tools/StringTools.java::StringTools
 - [x] org/languagetool/tools/StringTools.java::StringTools.ApiPrintMode
 - [ ] org/languagetool/tools/TelemetryProvider.java::TelemetryProvider
 - [ ] org/languagetool/tools/Tools.java::Tools

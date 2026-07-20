@@ -3,7 +3,6 @@ package es
 import (
 	"regexp"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -125,48 +124,20 @@ func (r *MorfologikSpanishSpellerRule) isTagged(word string) bool {
 	return false
 }
 
-// splitCamelCaseES ports StringTools.splitCamelCase.
+// splitCamelCaseES delegates to tools.SplitCamelCase (StringTools).
 func splitCamelCaseES(word string) []string {
 	if word == "" {
 		return nil
 	}
-	if tools.IsAllUppercase(word) {
-		return []string{word}
-	}
-	var parts []string
-	var cur strings.Builder
-	runes := []rune(word)
-	prevUpper := false
-	for _, r := range runes {
-		up := unicode.IsUpper(r)
-		if up && !prevUpper && cur.Len() > 0 {
-			parts = append(parts, cur.String())
-			cur.Reset()
-		}
-		prevUpper = up
-		cur.WriteRune(r)
-	}
-	if cur.Len() > 0 {
-		parts = append(parts, cur.String())
-	}
-	return parts
+	return tools.SplitCamelCase(word)
 }
 
+// splitDigitsAtEndES delegates to tools.SplitDigitsAtEnd (StringTools).
 func splitDigitsAtEndES(input string) []string {
 	if input == "" {
 		return nil
 	}
-	runes := []rune(input)
-	last := len(runes) - 1
-	for last >= 0 && runes[last] >= '0' && runes[last] <= '9' {
-		last--
-	}
-	nonDigit := string(runes[:last+1])
-	digit := string(runes[last+1:])
-	if nonDigit != "" && digit != "" {
-		return []string{nonDigit, digit}
-	}
-	return []string{input}
+	return tools.SplitDigitsAtEnd(input)
 }
 
 var spanishSplitDigitsAtEnd = map[string]struct{}{

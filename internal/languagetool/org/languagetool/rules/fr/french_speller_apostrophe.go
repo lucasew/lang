@@ -3,8 +3,9 @@ package fr
 import (
 	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Patterns from MorfologikFrenchSpellerRule (CASE_INSENSITIVE | UNICODE_CASE).
@@ -163,22 +164,12 @@ func (r *MorfologikFrenchSpellerRule) apostropheHyphenTopSuggestions(word string
 	return out
 }
 
-// splitDigitsAtEnd ports StringTools.splitDigitsAtEnd.
+// splitDigitsAtEnd delegates to tools.SplitDigitsAtEnd (StringTools).
 func splitDigitsAtEnd(input string) []string {
 	if input == "" {
 		return nil
 	}
-	runes := []rune(input)
-	last := len(runes) - 1
-	for last >= 0 && unicode.IsDigit(runes[last]) {
-		last--
-	}
-	nonDigit := string(runes[:last+1])
-	digit := string(runes[last+1:])
-	if nonDigit != "" && digit != "" {
-		return []string{nonDigit, digit}
-	}
-	return []string{input}
+	return tools.SplitDigitsAtEnd(input)
 }
 
 // isTagged reports whether TagPOS returned any non-empty POS (Java isTagged).

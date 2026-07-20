@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // FindSuggestionsFilter ports org.languagetool.rules.fr.FindSuggestionsFilter.
@@ -77,7 +78,8 @@ func (f *FindSuggestionsFilter) getSpellingSuggestions(atr *languagetool.Analyze
 	}
 	w := atr.GetToken()
 	if atr.IsTagged() {
-		w = MakeWrong(w)
+		// Java FindSuggestionsFilter uses StringTools.makeWrong (not InterrogativeVerbFilter's private makeWrong).
+		w = tools.MakeWrong(w)
 	}
 	var wordsToCheck []string
 	wordsToCheck = append(wordsToCheck, w)

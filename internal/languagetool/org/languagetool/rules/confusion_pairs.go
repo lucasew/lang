@@ -7,7 +7,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -144,7 +143,7 @@ func (f *ConfusionCheckFilter) Suggest(form, postag, desiredPOS, message, templa
 	}
 	msg := message
 	if f.MessageDiacritic != "" && f.MessageNoDiacritic != "" {
-		if !(HasDiacritics(replacement) && !HasDiacritics(lower)) {
+		if !(tools.HasDiacritics(replacement) && !tools.HasDiacritics(lower)) {
 			msg = strings.ReplaceAll(msg, f.MessageDiacritic, f.MessageNoDiacritic)
 		}
 	}
@@ -251,20 +250,5 @@ func (f *ConfusionCheckFilter) desiredPOSFromToken(atr *languagetool.AnalyzedTok
 	return ""
 }
 
-// HasDiacritics reports common Latin diacritic marks (Spanish/Catalan/Portuguese).
-func HasDiacritics(s string) bool {
-	for _, r := range s {
-		switch r {
-		case 'á', 'à', 'â', 'ã', 'ä', 'é', 'è', 'ê', 'ë', 'í', 'ì', 'î', 'ï',
-			'ó', 'ò', 'ô', 'õ', 'ö', 'ú', 'ù', 'û', 'ü', 'ý', 'ÿ', 'ñ', 'ç',
-			'Á', 'À', 'Â', 'Ã', 'Ä', 'É', 'È', 'Ê', 'Ë', 'Í', 'Ì', 'Î', 'Ï',
-			'Ó', 'Ò', 'Ô', 'Õ', 'Ö', 'Ú', 'Ù', 'Û', 'Ü', 'Ý', 'Ñ', 'Ç':
-			return true
-		}
-		// combining marks
-		if unicode.Is(unicode.Mn, r) {
-			return true
-		}
-	}
-	return false
-}
+// HasDiacritics is a thin alias of tools.HasDiacritics (StringTools.hasDiacritics).
+func HasDiacritics(s string) bool { return tools.HasDiacritics(s) }

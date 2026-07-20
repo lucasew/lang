@@ -3,7 +3,6 @@ package fr
 import (
 	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -159,23 +158,10 @@ func additionalTopFrenchSuggestions(word string) []string {
 	return nil
 }
 
-// splitCamelCase ports StringTools.splitCamelCase for getAdditionalTopSuggestions.
+// splitCamelCase delegates to tools.SplitCamelCase (StringTools).
 func splitCamelCase(word string) []string {
 	if word == "" {
 		return nil
 	}
-	var parts []string
-	var cur strings.Builder
-	runes := []rune(word)
-	for i, r := range runes {
-		if i > 0 && unicode.IsUpper(r) && unicode.IsLower(runes[i-1]) {
-			parts = append(parts, cur.String())
-			cur.Reset()
-		}
-		cur.WriteRune(r)
-	}
-	if cur.Len() > 0 {
-		parts = append(parts, cur.String())
-	}
-	return parts
+	return tools.SplitCamelCase(word)
 }

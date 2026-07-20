@@ -106,8 +106,5 @@ func ConvertCaseLang(conversion CaseConversion, s, sample, langShortCode string)
 }
 
 func uppercaseFirstCharLang(str, langShortCode string) string {
-	if langShortCode == "nl" && strings.HasPrefix(strings.ToLower(str), "ij") {
-		return "IJ" + str[2:]
-	}
-	return tools.UppercaseFirstChar(str)
+	return tools.UppercaseFirstCharLang(str, langShortCode)
 }

@@ -301,7 +301,7 @@ func (r *AbstractSimpleReplaceRule2) Match(sentence *languagetool.AnalyzedSenten
 				}
 				keyBuilder.WriteString(tokens[endIndex].GetToken())
 				originalStr := keyBuilder.String()
-				numberOfSpaces := strings.Count(originalStr, " ")
+				numberOfSpaces := tools.NumberOf(originalStr, " ")
 				if numberOfSpaces+1 > maxTokenLen {
 					break
 				}

@@ -263,3 +263,111 @@ func TestStringTools_NormalizeNFC(t *testing.T) {
 	require.Equal(t, "é", NormalizeNFC(decomposed))
 	require.Equal(t, "café", NormalizeNFC("café"))
 }
+
+func TestStringTools_UppercaseFirstCharLang(t *testing.T) {
+	require.Equal(t, "IJsselmeer", UppercaseFirstCharLang("ijsselmeer", "nl"))
+	require.Equal(t, "IJsselmeer", UppercaseFirstCharLang("IJsselmeer", "nl"))
+	require.Equal(t, "Ijsselmeer", UppercaseFirstCharLang("ijsselmeer", "en"))
+	require.Equal(t, "Öäü", UppercaseFirstCharLang("öäü", "de"))
+}
+
+func TestStringTools_MakeWrong(t *testing.T) {
+	// StringTools.makeWrong (not FR InterrogativeVerbFilter private makeWrong)
+	require.Equal(t, "mänge", MakeWrong("mange"))
+	require.Equal(t, "ï", MakeWrong("i"))
+	require.Equal(t, "ù", MakeWrong("u"))
+	require.Equal(t, "xyz-", MakeWrong("xyz"))
+}
+
+func TestStringTools_GetDifference(t *testing.T) {
+	require.Equal(t, []string{"same", "", "", ""}, GetDifference("same", "same"))
+	// stress vs stresses
+	d := GetDifference("stress", "stresses")
+	require.Equal(t, "stress", d[0])
+	require.Equal(t, "", d[1])
+	require.Equal(t, "es", d[2])
+	require.Equal(t, "", d[3])
+	d2 := GetDifference("cat", "bat")
+	require.Equal(t, "", d2[0])
+	require.Equal(t, "c", d2[1])
+	require.Equal(t, "b", d2[2])
+	require.Equal(t, "at", d2[3])
+}
+
+func TestStringTools_SplitCamelCase(t *testing.T) {
+	require.Equal(t, []string{"ABC"}, SplitCamelCase("ABC"))
+	require.Equal(t, []string{"micro", "RNA"}, SplitCamelCase("microRNA"))
+	require.Equal(t, []string{"i", "Something"}, SplitCamelCase("iSomething"))
+}
+
+func TestStringTools_SplitDigitsAtEnd(t *testing.T) {
+	require.Equal(t, []string{"foo", "12"}, SplitDigitsAtEnd("foo12"))
+	require.Equal(t, []string{"12"}, SplitDigitsAtEnd("12"))
+	require.Equal(t, []string{"foo"}, SplitDigitsAtEnd("foo"))
+}
+
+func TestStringTools_IsAnagram(t *testing.T) {
+	require.True(t, IsAnagram("listen", "silent"))
+	require.False(t, IsAnagram("listen", "listens"))
+	require.True(t, IsAnagram("a", "a"))
+	require.False(t, IsAnagram("ab", "baa"))
+}
+
+func TestStringTools_IsNumeric(t *testing.T) {
+	require.True(t, IsNumeric("123"))
+	require.True(t, IsNumeric("1 234"))
+	require.True(t, IsNumeric("1.234,5"))
+	require.False(t, IsNumeric(""))
+	require.False(t, IsNumeric("12a"))
+	require.False(t, IsNumeric("abc"))
+}
+
+func TestStringTools_IsEmoji(t *testing.T) {
+	require.True(t, IsEmoji("🧡"))
+	require.False(t, IsEmoji("a"))
+	require.False(t, IsEmoji(""))
+	require.False(t, IsEmoji("abc"))
+}
+
+func TestStringTools_PreserveCaseWordByWord(t *testing.T) {
+	require.Equal(t, "Foo Bar", PreserveCaseWordByWord("foo bar", "Aaa Bbb"))
+	require.Equal(t, "FOO BAR", PreserveCaseWordByWord("foo bar", "AAA BBB"))
+	// different word counts → whole-string preserveCase (Aaa is capitalized → first char upper)
+	require.Equal(t, "Foo bar baz", PreserveCaseWordByWord("foo bar baz", "Aaa"))
+	require.Equal(t, "FOO BAR BAZ", PreserveCaseWordByWord("foo bar baz", "AAA"))
+}
+
+func TestStringTools_IsParagraphEndSentence(t *testing.T) {
+	require.True(t, IsParagraphEndSentence("hi\n", true))
+	require.False(t, IsParagraphEndSentence("hi\n", false))
+	require.True(t, IsParagraphEndSentence("hi\n\n", false))
+	require.True(t, IsParagraphEndSentence("hi\r\n\r\n", false))
+}
+
+func TestStringTools_TrimSpecialCharacters(t *testing.T) {
+	// soft hyphen U+00AD removed
+	require.Equal(t, "foobar", TrimSpecialCharacters("foo\u00ADbar"))
+	require.Equal(t, "ok!", TrimSpecialCharacters("ok!"))
+}
+
+func TestStringTools_TrimLeadingAndTrailingSpaces(t *testing.T) {
+	require.Equal(t, "a b", TrimLeadingAndTrailingSpaces("  a b  "))
+	require.Equal(t, "x", TrimLeadingAndTrailingSpaces("\u00A0x\u00A0"))
+}
+
+func TestStringTools_NumberOf(t *testing.T) {
+	require.Equal(t, 2, NumberOf("a b c", " "))
+	require.Equal(t, 3, NumberOf("aaa", "a"))
+}
+
+func TestStringTools_IsAllUppercaseList(t *testing.T) {
+	require.True(t, IsAllUppercaseList([]string{"ABC", "DEF"}))
+	require.False(t, IsAllUppercaseList([]string{"ABC", "def"}))
+	// all punctuation/numbers only → not all-uppercase (Java isAllNotLetters)
+	require.False(t, IsAllUppercaseList([]string{"...", "123"}))
+}
+
+func TestStringTools_NormalizeNFKC(t *testing.T) {
+	// fullwidth digit → ASCII
+	require.Equal(t, "1", NormalizeNFKC("\uFF11"))
+}

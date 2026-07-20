@@ -3,7 +3,6 @@ package ca
 import (
 	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -250,45 +249,18 @@ func (r *MorfologikCatalanSpellerRule) isTaggedCA(word string) bool {
 	return false
 }
 
-// splitCamelCaseCA ports StringTools.splitCamelCase.
+// splitCamelCaseCA delegates to tools.SplitCamelCase (StringTools).
 func splitCamelCaseCA(word string) []string {
 	if word == "" {
 		return nil
 	}
-	if tools.IsAllUppercase(word) {
-		return []string{word}
-	}
-	var parts []string
-	var cur strings.Builder
-	prevUpper := false
-	for _, r := range word {
-		up := unicode.IsUpper(r)
-		if up && !prevUpper && cur.Len() > 0 {
-			parts = append(parts, cur.String())
-			cur.Reset()
-		}
-		prevUpper = up
-		cur.WriteRune(r)
-	}
-	if cur.Len() > 0 {
-		parts = append(parts, cur.String())
-	}
-	return parts
+	return tools.SplitCamelCase(word)
 }
 
+// splitDigitsAtEndCA delegates to tools.SplitDigitsAtEnd (StringTools).
 func splitDigitsAtEndCA(input string) []string {
 	if input == "" {
 		return nil
 	}
-	runes := []rune(input)
-	last := len(runes) - 1
-	for last >= 0 && runes[last] >= '0' && runes[last] <= '9' {
-		last--
-	}
-	nonDigit := string(runes[:last+1])
-	digit := string(runes[last+1:])
-	if nonDigit != "" && digit != "" {
-		return []string{nonDigit, digit}
-	}
-	return []string{input}
+	return tools.SplitDigitsAtEnd(input)
 }

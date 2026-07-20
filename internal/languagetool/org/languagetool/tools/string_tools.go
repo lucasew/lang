@@ -1,8 +1,10 @@
 package tools
 
 import (
+	"bufio"
 	"io"
 	"regexp"
+	"sort"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -89,7 +91,8 @@ func StartsWithLowercase(str string) bool {
 }
 
 func AllStartWithLowercase(str string) bool {
-	parts := strings.Split(str, " ")
+	// Java String.split(" ") discards trailing empty strings (limit 0).
+	parts := javaSplitSpace(str)
 	if len(parts) < 2 {
 		return StartsWithLowercase(str)
 	}
@@ -101,7 +104,26 @@ func AllStartWithLowercase(str string) bool {
 	return true
 }
 
+// javaSplitSpace mirrors Java String.split(" ") (limit 0): trailing empties discarded.
+func javaSplitSpace(str string) []string {
+	parts := strings.Split(str, " ")
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
+	}
+	return parts
+}
+
 func UppercaseFirstChar(str string) string {
+	return changeFirstCharCase(str, true)
+}
+
+// UppercaseFirstCharLang ports StringTools.uppercaseFirstChar(str, language)
+// including the Dutch "ij" → "IJ" hack.
+func UppercaseFirstCharLang(str, languageShortCode string) string {
+	if languageShortCode == "nl" && str != "" && strings.HasPrefix(strings.ToLower(str), "ij") {
+		// Java: "IJ" + str.substring(2) — first two chars are always ASCII "ij"/"IJ"/"Ij"/"iJ".
+		return "IJ" + str[len("ij"):]
+	}
 	return changeFirstCharCase(str, true)
 }
 
@@ -313,20 +335,29 @@ func IsNonBreakingWhitespace(str string) bool {
 	return str == "\u00A0"
 }
 
-// IsEmoji — minimal: false for BMP tests; detect surrogate pairs / emoji ranges loosely
+// wordForSpellerRE ports StringTools.WORD_FOR_SPELLER: ^[\p{L}\d\p{P}\p{Zs}]+$
+var wordForSpellerRE = regexp.MustCompile(`^[\p{L}\d\p{P}\p{Zs}]+$`)
+
+// IsEmoji ports StringTools.isEmoji — true when UTF-16 length ≠ code-point count
+// (supplementary plane / surrogates) and the token is not only letters/digits/punct/spaces.
 func IsEmoji(token string) bool {
-	for _, r := range token {
-		if r >= 0x1F300 && r <= 0x1FAFF {
-			return true
-		}
-		if r >= 0x2600 && r <= 0x27BF {
-			return true
-		}
+	// Java: word.length() > 1 && codePointCount != length
+	uLen := utf16LenTools(token)
+	if uLen <= 1 {
+		return false
 	}
-	// also multi-codepoint emoji as UTF-16 surrogates already decoded to runes
+	cps := 0
+	for range token {
+		cps++
+	}
+	if cps != uLen {
+		return !wordForSpellerRE.MatchString(token)
+	}
 	return false
 }
 
+// IsNumericSpace ports Apache Commons StringUtils.isNumericSpace (WordRepeatRule).
+// True when every character is a digit or whitespace (empty → false, matching Commons).
 func IsNumericSpace(token string) bool {
 	if token == "" {
 		return false
@@ -337,6 +368,14 @@ func IsNumericSpace(token string) bool {
 		}
 	}
 	return true
+}
+
+// isNumericRE ports StringTools.IS_NUMERIC: ^[\d\s\.,]*\d$
+var isNumericRE = regexp.MustCompile(`^[\d\s\.,]*\d$`)
+
+// IsNumeric ports StringTools.isNumeric.
+func IsNumeric(string_ string) bool {
+	return isNumericRE.MatchString(string_)
 }
 
 // IsNotWordCharacter ports StringTools.isNotWordCharacter (Pattern "[^\p{L}]").matches.
@@ -423,7 +462,7 @@ func LowercaseFirstCharIfCapitalized(str string) string {
 
 // TitlecaseGlobal ports StringTools.titlecaseGlobal.
 func TitlecaseGlobal(str string) string {
-	parts := strings.Split(str, " ")
+	parts := javaSplitSpace(str)
 	if len(parts) == 1 {
 		return UppercaseFirstChar(str)
 	}
@@ -442,39 +481,43 @@ func TitlecaseGlobal(str string) string {
 	return strings.Join(out, " ")
 }
 
-var charsNotForSpelling = regexp.MustCompile(`[^\p{L}\d\p{P}\p{Z}]`)
+// charsNotForSpelling ports StringTools.CHARS_NOT_FOR_SPELLING: [^\p{L}\d\p{P}\p{Zs}]
+var charsNotForSpelling = regexp.MustCompile(`[^\p{L}\d\p{P}\p{Zs}]`)
 
 // StringForSpeller ports StringTools.stringForSpeller — replace non-spelling symbols
 // (e.g. emoji) with same-width spaces using UTF-16 length of the match.
 func StringForSpeller(s string) string {
 	// Java: if length > 1 && codePointCount != length (has supplementary chars)
-	if len(s) > 1 {
+	if utf16LenTools(s) > 1 {
 		cps := 0
 		for range s {
 			cps++
 		}
-		// codePointCount vs UTF-16 length
 		if cps != utf16LenTools(s) {
-			// replace each match with spaces of UTF-16 length of match
 			s = charsNotForSpelling.ReplaceAllStringFunc(s, func(found string) string {
-				n := utf16LenTools(found)
-				if n >= 20 {
-					return strings.Repeat(" ", n)
-				}
-				return strings.Repeat(" ", n)
+				return strings.Repeat(" ", utf16LenTools(found))
 			})
 		}
 	}
 	return s
 }
 
-// ReadStream ports StringTools.readStream.
+// ReadStream ports StringTools.readStream(stream, encoding):
+// line-based read, each line followed by '\n' (including after the last line).
 func ReadStream(r io.Reader) (string, error) {
-	b, err := io.ReadAll(r)
-	if err != nil {
+	// Encoding is handled by the caller (bytes already decoded to a UTF-8 Reader).
+	sc := bufio.NewScanner(r)
+	// Allow long lines (Java uses 4k char buffer but can accumulate).
+	sc.Buffer(make([]byte, 0, 64*1024), 16*1024*1024)
+	var sb strings.Builder
+	for sc.Scan() {
+		sb.WriteString(sc.Text())
+		sb.WriteByte('\n')
+	}
+	if err := sc.Err(); err != nil {
 		return "", err
 	}
-	return string(b), nil
+	return sb.String(), nil
 }
 
 // Java: Pattern.compile("[\\p{IsPunctuation}']") — entire string is one punct char (or apostrophe).
@@ -499,4 +542,269 @@ var notWordStringRE = regexp.MustCompile(`^[^\p{L}]+$`)
 // IsNotWordString ports StringTools.isNotWordString.
 func IsNotWordString(input string) bool {
 	return notWordStringRE.MatchString(input)
+}
+
+// IsAllUppercaseList ports StringTools.isAllUppercase(List<String>).
+// True when every element is all-uppercase and not every element is non-letter/punct-only.
+func IsAllUppercaseList(strList []string) bool {
+	isInputAllUppercase := true
+	isAllNotLetters := true
+	for _, s := range strList {
+		isInputAllUppercase = isInputAllUppercase && IsAllUppercase(s)
+		isAllNotLetters = isAllNotLetters && (IsNotWordString(s) || IsPunctuationMark(s))
+	}
+	return isInputAllUppercase && !isAllNotLetters
+}
+
+// trimSpecialRE ports StringTools.PATTERN: (?U)[^\p{Space}\p{Alnum}\p{Punct}]
+var trimSpecialRE = regexp.MustCompile(`[^\p{Z}\p{N}\p{L}\p{P}]`)
+
+// TrimSpecialCharacters ports StringTools.trimSpecialCharacters —
+// delete characters that are not space/alnum/punct (e.g. soft hyphens).
+func TrimSpecialCharacters(s string) string {
+	return trimSpecialRE.ReplaceAllString(s, "")
+}
+
+// NormalizeNFKC ports StringTools.normalizeNFKC.
+func NormalizeNFKC(str string) string {
+	return norm.NFKC.String(str)
+}
+
+// PreserveCaseWordByWord ports StringTools.preserveCaseWordByWord.
+func PreserveCaseWordByWord(inputString, modelString string) string {
+	// Java split(" ", -1) keeps trailing empties.
+	inputWords := strings.Split(inputString, " ")
+	modelWords := strings.Split(modelString, " ")
+	if len(inputWords) != len(modelWords) {
+		return PreserveCase(inputString, modelString)
+	}
+	var result strings.Builder
+	for i := range inputWords {
+		if i > 0 {
+			result.WriteByte(' ')
+		}
+		result.WriteString(PreserveCase(inputWords[i], modelWords[i]))
+	}
+	return result.String()
+}
+
+// IsParagraphEndSentence ports StringTools.isParagraphEnd(sentence, singleLineBreaksMarksPara).
+func IsParagraphEndSentence(sentence string, singleLineBreaksMarksPara bool) bool {
+	if singleLineBreaksMarksPara {
+		return strings.HasSuffix(sentence, "\n") || strings.HasSuffix(sentence, "\n\r")
+	}
+	return strings.HasSuffix(sentence, "\n\n") ||
+		strings.HasSuffix(sentence, "\n\r\n\r") ||
+		strings.HasSuffix(sentence, "\r\n\r\n")
+}
+
+// GetDifference ports StringTools.getDifference — single-diff split into
+// [commonStart, diff1, diff2, commonEnd] using Java char (UTF-16) indices.
+func GetDifference(s1, s2 string) []string {
+	if s1 == s2 {
+		return []string{s1, "", "", ""}
+	}
+	// Operate on UTF-16 code units to match Java charAt/length/substring.
+	u1 := utf16Units(s1)
+	u2 := utf16Units(s2)
+	l1, l2 := len(u1), len(u2)
+	fromStart := 0
+	for fromStart < l1 && fromStart < l2 && u1[fromStart] == u2[fromStart] {
+		fromStart++
+	}
+	fromEnd := 0
+	for fromEnd < l1 && fromEnd < l2 && u1[l1-1-fromEnd] == u2[l2-1-fromEnd] {
+		fromEnd++
+	}
+	for fromStart > l1-fromEnd {
+		fromEnd--
+	}
+	for fromStart > l2-fromEnd {
+		fromEnd--
+	}
+	return []string{
+		utf16ToString(u1[:fromStart]),
+		utf16ToString(u1[fromStart : l1-fromEnd]),
+		utf16ToString(u2[fromStart : l2-fromEnd]),
+		utf16ToString(u1[l1-fromEnd : l1]),
+	}
+}
+
+func utf16Units(s string) []uint16 {
+	// Encode to UTF-16 as Java String does.
+	var out []uint16
+	for _, r := range s {
+		if r <= 0xFFFF {
+			out = append(out, uint16(r))
+		} else {
+			r -= 0x10000
+			out = append(out, uint16(0xD800+(r>>10)), uint16(0xDC00+(r&0x3FF)))
+		}
+	}
+	return out
+}
+
+func utf16ToString(u []uint16) string {
+	if len(u) == 0 {
+		return ""
+	}
+	var b strings.Builder
+	for i := 0; i < len(u); {
+		c := u[i]
+		if c >= 0xD800 && c <= 0xDBFF && i+1 < len(u) {
+			low := u[i+1]
+			if low >= 0xDC00 && low <= 0xDFFF {
+				r := rune(c-0xD800)<<10 + rune(low-0xDC00) + 0x10000
+				b.WriteRune(r)
+				i += 2
+				continue
+			}
+		}
+		b.WriteRune(rune(c))
+		i++
+	}
+	return b.String()
+}
+
+// MakeWrong ports StringTools.makeWrong — invent a wrong form for speller probes.
+// Note: InterrogativeVerbFilter has a *different* private makeWrong; do not merge them.
+func MakeWrong(s string) string {
+	repls := []struct{ old, new string }{
+		{"a", "ä"}, {"e", "ë"}, {"i", "ï"}, {"o", "ö"}, {"u", "ù"},
+		{"á", "ä"}, {"é", "ë"}, {"í", "ï"}, {"ó", "ö"}, {"ú", "ù"},
+		{"à", "ä"}, {"è", "ë"}, {"ì", "i"}, {"ò", "ö"},
+		{"ï", "ì"}, {"ü", "ù"},
+	}
+	for _, r := range repls {
+		if strings.Contains(s, r.old) {
+			return strings.ReplaceAll(s, r.old, r.new)
+		}
+	}
+	return s + "-"
+}
+
+// NumberOf ports StringTools.numberOf — Java: s.length() - s.replace(t, "").length()
+// (UTF-16 length delta; for single-char t this equals occurrence count).
+func NumberOf(s, t string) int {
+	return utf16LenTools(s) - utf16LenTools(strings.ReplaceAll(s, t, ""))
+}
+
+// SplitCamelCase ports StringTools.splitCamelCase.
+func SplitCamelCase(input string) []string {
+	if IsAllUppercase(input) {
+		return []string{input}
+	}
+	var word, result strings.Builder
+	previousIsUppercase := false
+	for _, r := range input {
+		if unicode.IsUpper(r) {
+			if !previousIsUppercase {
+				result.WriteString(word.String())
+				result.WriteByte(' ')
+				word.Reset()
+			}
+			previousIsUppercase = true
+		} else {
+			previousIsUppercase = false
+		}
+		word.WriteRune(r)
+	}
+	result.WriteString(word.String())
+	trimmed := strings.TrimSpace(result.String())
+	if trimmed == "" {
+		return []string{""}
+	}
+	return strings.Split(trimmed, " ")
+}
+
+// SplitDigitsAtEnd ports StringTools.splitDigitsAtEnd.
+// Java uses charAt + Character.isDigit from the end; digits and LT tails are BMP,
+// so iterating runes with unicode.IsDigit matches Character.isDigit for those inputs.
+func SplitDigitsAtEnd(input string) []string {
+	runes := []rune(input)
+	lastIndex := len(runes) - 1
+	for lastIndex >= 0 && unicode.IsDigit(runes[lastIndex]) {
+		lastIndex--
+	}
+	nonDigit := string(runes[:lastIndex+1])
+	digit := string(runes[lastIndex+1:])
+	if nonDigit != "" && digit != "" {
+		return []string{nonDigit, digit}
+	}
+	return []string{input}
+}
+
+// IsAnagram ports StringTools.isAnagram (Java String.length is UTF-16 code units;
+// sort is on UTF-16 char array — for BMP-only LT inputs this equals rune sort).
+func IsAnagram(string1, string2 string) bool {
+	if utf16LenTools(string1) != utf16LenTools(string2) {
+		return false
+	}
+	a := []rune(string1)
+	b := []rune(string2)
+	if len(a) != len(b) {
+		return false
+	}
+	sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+	sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// trimLeadingTrailingRE ports StringTools.TRIM_PATTERN: ^[\s\u00A0]+|[\s\u00A0]+$
+var trimLeadingTrailingRE = regexp.MustCompile(`^[\s\x{00A0}]+|[\s\x{00A0}]+$`)
+
+// TrimLeadingAndTrailingSpaces ports StringTools.trimLeadingAndTrailingSpaces.
+func TrimLeadingAndTrailingSpaces(s string) string {
+	return trimLeadingTrailingRE.ReplaceAllString(s, "")
+}
+
+// EscapeForXmlAttribute ports StringTools.escapeForXmlAttribute (Guava xmlAttributeEscaper).
+// Escapes < > & " ' and control chars used by Guava's escaper for attributes.
+func EscapeForXmlAttribute(s string) string {
+	var sb strings.Builder
+	for _, c := range s {
+		switch c {
+		case '&':
+			sb.WriteString("&amp;")
+		case '<':
+			sb.WriteString("&lt;")
+		case '>':
+			sb.WriteString("&gt;")
+		case '"':
+			sb.WriteString("&quot;")
+		case '\'':
+			sb.WriteString("&apos;")
+		default:
+			sb.WriteRune(c)
+		}
+	}
+	return sb.String()
+}
+
+// EscapeForXmlContent ports StringTools.escapeForXmlContent (Guava xmlContentEscaper).
+func EscapeForXmlContent(s string) string {
+	var sb strings.Builder
+	for _, c := range s {
+		switch c {
+		case '&':
+			sb.WriteString("&amp;")
+		case '<':
+			sb.WriteString("&lt;")
+		case '>':
+			sb.WriteString("&gt;")
+		default:
+			sb.WriteRune(c)
+		}
+	}
+	return sb.String()
+}
+
+// StreamToString ports StringTools.streamToString (charset already applied by Reader).
+func StreamToString(r io.Reader) (string, error) {
+	return ReaderToString(r)
 }
