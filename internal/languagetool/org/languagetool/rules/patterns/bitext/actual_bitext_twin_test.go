@@ -55,45 +55,44 @@ func TestToolsBitextCheck_ACTUAL(t *testing.T) {
 		_ = languagetool.RegisterBinaryPOSTagger(enLT, enDict)
 	}
 
-	// Case 1: Java matchCount path + ACTUAL span 12-20
+	// Case 1: Java Tools.checkBitext uses getAnalyzedSentence (not multi-sentence Analyze).
 	srcText := "This is not actual."
 	trgText := "To nie jest aktualne."
-	src := enLT.Analyze(srcText)
-	trg := plLT.Analyze(trgText)
-	require.Len(t, src, 1)
-	require.Len(t, trg, 1)
-	ms := bitext.CheckBitextAnalyzed(src[0], trg[0], trgText, actual)
+	src := enLT.GetAnalyzedSentence(srcText)
+	trg := plLT.GetAnalyzedSentence(trgText)
+	require.NotNil(t, src)
+	require.NotNil(t, trg)
+	ms := bitext.CheckBitextAnalyzed(src, trg, trgText, actual)
 	require.Len(t, ms, 1)
 	require.Equal(t, "ACTUAL", ms[0].RuleID)
 	require.Equal(t, 12, ms[0].FromPos)
 	require.Equal(t, 20, ms[0].ToPos)
 
-	// Case 2: multi-clause string as single getAnalyzedSentence when SRX keeps one sentence
+	// Case 2: multi-clause string — Java getAnalyzedSentence does not SRX-split.
 	srcText2 := "A sentence. This is not actual."
 	trgText2 := "Zdanie. To nie jest aktualne."
-	src2 := enLT.Analyze(srcText2)
-	trg2 := plLT.Analyze(trgText2)
-	// Java getAnalyzedSentence analyzes each sentence separately per checkBitext
-	// actually: getAnalyzedSentence returns ONE AnalyzedSentence for the whole input
-	// (first sentence only? No - getAnalyzedSentence is for a single sentence string;
-	//  JLanguageTool.getAnalyzedSentence tokenizes as one sentence unit)
-	// Tools.checkBitext(src, trg) passes full strings to getAnalyzedSentence.
-	// In LT, getAnalyzedSentence does NOT re-split on . — it analyzes the string as one sentence.
-	// Our Analyze uses SRX and may split. Prefer AnalyzeWithTagger path for one sentence:
-	if len(src2) > 1 || len(trg2) > 1 {
-		// Fall back to last-sentence pair with document-offset adjustment like Java multi-match tests
-		// when SRX splits — still prove ACTUAL fires.
-		sSrc, sTrg := src2[len(src2)-1], trg2[len(trg2)-1]
-		ms2 := bitext.CheckBitextAnalyzed(sSrc, sTrg, sTrg.GetText(), actual)
-		require.NotEmpty(t, ms2)
-		require.Equal(t, "ACTUAL", ms2[0].RuleID)
-		return
-	}
-	ms2 := bitext.CheckBitextAnalyzed(src2[0], trg2[0], trgText2, actual)
+	src2 := enLT.GetAnalyzedSentence(srcText2)
+	trg2 := plLT.GetAnalyzedSentence(trgText2)
+	require.NotNil(t, src2)
+	require.NotNil(t, trg2)
+	require.Equal(t, srcText2, src2.GetText())
+	require.Equal(t, trgText2, trg2.GetText())
+	ms2 := bitext.CheckBitextAnalyzed(src2, trg2, trgText2, actual)
 	require.Len(t, ms2, 1)
 	require.Equal(t, "ACTUAL", ms2[0].RuleID)
 	require.Equal(t, 20, ms2[0].FromPos)
 	require.Equal(t, 28, ms2[0].ToPos)
+
+	// Case 3: Java ToolsTest matches3 span 25-33
+	srcText3 := "A new sentence. This is not actual."
+	trgText3 := "Nowa zdanie. To nie jest aktualne."
+	src3 := enLT.GetAnalyzedSentence(srcText3)
+	trg3 := plLT.GetAnalyzedSentence(trgText3)
+	ms3 := bitext.CheckBitextAnalyzed(src3, trg3, trgText3, actual)
+	require.Len(t, ms3, 1)
+	require.Equal(t, "ACTUAL", ms3[0].RuleID)
+	require.Equal(t, 25, ms3[0].FromPos)
+	require.Equal(t, 33, ms3[0].ToPos)
 }
 
 func TestGetBitextRules_IncludesBuiltins(t *testing.T) {

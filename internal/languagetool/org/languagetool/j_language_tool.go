@@ -881,7 +881,8 @@ func (lt *JLanguageTool) GetUnknownWords() []string {
 	return out
 }
 
-// Analyze splits text into sentences and builds plain analyzed sentences.
+// Analyze splits text into sentences (SRX) and analyzes each part like Java
+// TextCheckCallable sentence loop (getAnalyzedSentence per sentence string).
 func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 	st := tokenizers.NewSRXSentenceTokenizer(lt.LanguageCode)
 	parts := st.Tokenize(text)
@@ -892,45 +893,64 @@ func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 		parts = []string{text}
 	}
 	out := make([]*AnalyzedSentence, 0, len(parts))
-	wt := WordTokenizerForLanguage(lt.LanguageCode)
-	// Java PolishWordTokenizer.setTagger: hyphen compounds split using POS (adja+adj, …).
-	attachPolishHyphenTagger(wt, lt.TagWord)
-	var ignore *regexp.Regexp
-	if lt != nil {
-		ignore = lt.IgnoredCharacters
-	}
 	for _, p := range parts {
-		var s *AnalyzedSentence
-		if lt.TagWord != nil {
-			s = AnalyzeWithTaggerTokenizerAndIgnore(p, lt.TagWord, wt, ignore)
-		} else {
-			s = AnalyzeWithTokenizerAndIgnore(p, wt, ignore)
+		if s := lt.GetAnalyzedSentence(p); s != nil {
+			out = append(out, s)
 		}
-		// Java getRawAnalyzedSentence: tagger then language.getChunker().
-		if s != nil && lt.Chunker != nil {
-			lt.Chunker.AddChunkTags(s.GetTokens())
-		}
-		// Preserve pre-disambiguation tokens for pattern raw_pos="yes"
-		// (Java AnalyzedSentence keeps both token arrays).
-		var preDisambig []*AnalyzedTokenReadings
-		if s != nil {
-			preDisambig = cloneAnalyzedTokenSlice(s.GetTokens())
-		}
-		if lt.Disambiguator != nil && s != nil {
-			if d := lt.Disambiguator.Disambiguate(s); d != nil {
-				s = d
-			}
-		}
-		if s != nil && preDisambig != nil {
-			s = NewAnalyzedSentenceFull(s.GetTokens(), preDisambig)
-		}
-		// Java getAnalyzedSentence: optional post-disambiguation chunker.
-		if s != nil && lt.PostDisambiguationChunker != nil {
-			lt.PostDisambiguationChunker.AddChunkTags(s.GetTokens())
-		}
-		out = append(out, s)
 	}
 	return out
+}
+
+// GetRawAnalyzedSentence ports JLanguageTool.getRawAnalyzedSentence:
+// word-tokenize + tag (+ chunker) + SENT_END — no disambiguator.
+// The input is treated as a single sentence (no SRX re-split), matching Java.
+func (lt *JLanguageTool) GetRawAnalyzedSentence(sentence string) *AnalyzedSentence {
+	if lt == nil {
+		return AnalyzePlain(sentence)
+	}
+	wt := WordTokenizerForLanguage(lt.LanguageCode)
+	// Java PolishWordTokenizer.setTagger: hyphen compounds split using POS.
+	attachPolishHyphenTagger(wt, lt.TagWord)
+	var ignore *regexp.Regexp
+	ignore = lt.IgnoredCharacters
+	var s *AnalyzedSentence
+	if lt.TagWord != nil {
+		s = AnalyzeWithTaggerTokenizerAndIgnore(sentence, lt.TagWord, wt, ignore)
+	} else {
+		s = AnalyzeWithTokenizerAndIgnore(sentence, wt, ignore)
+	}
+	// Java getRawAnalyzedSentence: tagger then language.getChunker().
+	if s != nil && lt.Chunker != nil {
+		lt.Chunker.AddChunkTags(s.GetTokens())
+	}
+	return s
+}
+
+// GetAnalyzedSentence ports JLanguageTool.getAnalyzedSentence:
+// getRawAnalyzedSentence + disambiguator + preDisambig tokens + post chunker.
+// Does not SRX-split the string (callers that need multi-sentence use Analyze).
+func (lt *JLanguageTool) GetAnalyzedSentence(sentence string) *AnalyzedSentence {
+	raw := lt.GetRawAnalyzedSentence(sentence)
+	if raw == nil {
+		return nil
+	}
+	// Preserve pre-disambiguation tokens for pattern raw_pos="yes"
+	// (Java: new AnalyzedSentence(disambig.getTokens(), raw.getTokens())).
+	preDisambig := cloneAnalyzedTokenSlice(raw.GetTokens())
+	s := raw
+	if lt != nil && lt.Disambiguator != nil {
+		if d := lt.Disambiguator.Disambiguate(s); d != nil {
+			s = d
+		}
+	}
+	if preDisambig != nil {
+		s = NewAnalyzedSentenceFull(s.GetTokens(), preDisambig)
+	}
+	// Java getAnalyzedSentence: optional post-disambiguation chunker.
+	if s != nil && lt != nil && lt.PostDisambiguationChunker != nil {
+		lt.PostDisambiguationChunker.AddChunkTags(s.GetTokens())
+	}
+	return s
 }
 
 // sentenceHasTypographicApostrophe ports Java stream anyMatch(hasTypographicApostrophe).
