@@ -3,17 +3,18 @@ package language
 // Contributor ports org.languagetool.language.Contributor.
 type Contributor struct {
 	Name string
-	URL  string // optional
+	// URL is optional homepage; empty string maps Java null.
+	URL string
 }
 
+// NewContributor ports Contributor(String name) with url = null.
 func NewContributor(name string) Contributor {
 	return NewContributorWithURL(name, "")
 }
 
+// NewContributorWithURL ports Contributor(String name, String url).
+// name may be empty (Java Objects.requireNonNull only rejects null).
 func NewContributorWithURL(name, url string) Contributor {
-	if name == "" {
-		panic("name cannot be null")
-	}
 	return Contributor{Name: name, URL: url}
 }
 

@@ -1,17 +1,22 @@
 package languagetool
 
+import "hash/fnv"
+
 // GlobalConfig ports org.languagetool.GlobalConfig.
 type GlobalConfig struct {
 	GrammalecteServer   string
 	GrammalecteUser     string
 	GrammalectePassword string
-	BeolingusFile       string // path
+	BeolingusFile       string // path (Java: File)
 	NerURL              string
 }
 
 var globalVerbose bool
 
-func IsVerbose() bool         { return globalVerbose }
+// IsVerbose ports GlobalConfig.isVerbose.
+func IsVerbose() bool { return globalVerbose }
+
+// SetVerbose ports GlobalConfig.setVerbose.
 func SetVerbose(verbose bool) { globalVerbose = verbose }
 
 func (c *GlobalConfig) SetGrammalecteServer(u string)   { c.GrammalecteServer = u }
@@ -26,6 +31,7 @@ func (c *GlobalConfig) GetGrammalectePassword() string { return c.GrammalectePas
 func (c *GlobalConfig) GetBeolingusFile() string       { return c.BeolingusFile }
 func (c *GlobalConfig) GetNerUrl() string              { return c.NerURL }
 
+// Equal ports equals (all five fields).
 func (c *GlobalConfig) Equal(o *GlobalConfig) bool {
 	if c == o {
 		return true
@@ -38,4 +44,18 @@ func (c *GlobalConfig) Equal(o *GlobalConfig) bool {
 		c.GrammalectePassword == o.GrammalectePassword &&
 		c.BeolingusFile == o.BeolingusFile &&
 		c.NerURL == o.NerURL
+}
+
+// Hash ports hashCode — Java hashes only grammalecteServer, beolingusFile, nerUrl.
+func (c *GlobalConfig) Hash() uint64 {
+	if c == nil {
+		return 0
+	}
+	h := fnv.New64a()
+	_, _ = h.Write([]byte(c.GrammalecteServer))
+	_, _ = h.Write([]byte{0})
+	_, _ = h.Write([]byte(c.BeolingusFile))
+	_, _ = h.Write([]byte{0})
+	_, _ = h.Write([]byte(c.NerURL))
+	return h.Sum64()
 }

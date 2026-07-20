@@ -20,7 +20,15 @@ func TestInputSentence_Equal(t *testing.T) {
 func TestSimpleInputSentence(t *testing.T) {
 	s := NewSimpleInputSentence("hi", "en")
 	require.Equal(t, "hi", s.GetText())
+	require.Equal(t, "hi", s.String())
 	require.True(t, s.Equal(NewSimpleInputSentence("hi", "en")))
+	require.False(t, s.Equal(NewSimpleInputSentence("hi", "de")))
+	require.False(t, s.Equal(NewSimpleInputSentence("Hello.", "en")))
+	// empty text is allowed (Java Objects.requireNonNull only rejects null)
+	require.Equal(t, "", NewSimpleInputSentence("", "en").GetText())
+	require.Panics(t, func() { NewSimpleInputSentence("x", "") })
+	require.Equal(t, s.Hash(), NewSimpleInputSentence("hi", "en").Hash())
+	require.NotEqual(t, s.Hash(), NewSimpleInputSentence("hi", "de").Hash())
 }
 
 func TestResultCache(t *testing.T) {

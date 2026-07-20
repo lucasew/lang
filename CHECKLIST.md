@@ -20,17 +20,17 @@
 - [ ] org/languagetool/AnalyzedSentence.java::AnalyzedSentence
 - [x] org/languagetool/AnalyzedToken.java::AnalyzedToken
 - [ ] org/languagetool/AnalyzedTokenReadings.java::AnalyzedTokenReadings
-- [ ] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
+- [x] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
 - [x] org/languagetool/CheckResults.java::CheckResults
 - [ ] org/languagetool/DetectedLanguage.java::DetectedLanguage
 - [ ] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
 - [ ] org/languagetool/DynamicLanguage.java::DynamicLanguage
 - [ ] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
 - [x] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
-- [ ] org/languagetool/Experimental.java::Experimental
+- [x] org/languagetool/Experimental.java::Experimental
 - [x] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
 - [x] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
-- [ ] org/languagetool/GlobalConfig.java::GlobalConfig
+- [x] org/languagetool/GlobalConfig.java::GlobalConfig
 - [ ] org/languagetool/InputSentence.java::InputSentence
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
@@ -50,7 +50,7 @@
 - [ ] org/languagetool/Languages.java::Languages
 - [x] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
 - [ ] org/languagetool/LinguServices.java::LinguServices
-- [ ] org/languagetool/LtBuildInfo.java::LtBuildInfo
+- [x] org/languagetool/LtBuildInfo.java::LtBuildInfo
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
@@ -65,10 +65,10 @@
 - [ ] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
 - [ ] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
 - [ ] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
-- [ ] org/languagetool/RuleMatchListener.java::RuleMatchListener
+- [x] org/languagetool/RuleMatchListener.java::RuleMatchListener
 - [x] org/languagetool/SentenceRange.java::SentenceRange
-- [ ] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider
-- [ ] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
+- [x] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider
+- [x] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
 - [x] org/languagetool/Tag.java::Tag
 - [x] org/languagetool/ToneTag.java::ToneTag
 - [ ] org/languagetool/UserConfig.java::UserConfig
@@ -112,11 +112,11 @@
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponse
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponseItemOrBuilder
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponseItem
-- [ ] org/languagetool/language/Contributor.java::Contributor
-- [ ] org/languagetool/language/Contributors.java::Contributors
+- [x] org/languagetool/language/Contributor.java::Contributor
+- [x] org/languagetool/language/Contributors.java::Contributors
 - [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder
 - [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder.ExtendedLanguage
-- [ ] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
+- [x] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
 - [ ] org/languagetool/language/identifier/DefaultLanguageIdentifier.java::DefaultLanguageIdentifier
 - [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier
 - [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
