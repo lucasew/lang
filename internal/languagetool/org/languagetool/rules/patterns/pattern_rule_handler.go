@@ -124,6 +124,7 @@ type grammarCategory struct {
 	ID       string         `xml:"id,attr"`
 	Name     string         `xml:"name,attr"`
 	Type     string         `xml:"type,attr"`
+	Tags     string         `xml:"tags,attr"`      // space-separated Tag names (e.g. picky)
 	ToneTags string         `xml:"tone_tags,attr"` // space-separated ToneTag names
 	Rules    []grammarRule  `xml:"rule"`
 	Groups   []grammarGroup `xml:"rulegroup"`
@@ -132,6 +133,7 @@ type grammarCategory struct {
 type grammarGroup struct {
 	ID       string        `xml:"id,attr"`
 	Name     string        `xml:"name,attr"`
+	Tags     string        `xml:"tags,attr"`
 	ToneTags string        `xml:"tone_tags,attr"`
 	Rules    []grammarRule `xml:"rule"`
 }
@@ -140,6 +142,7 @@ type grammarRule struct {
 	ID           string          `xml:"id,attr"`
 	Name         string          `xml:"name,attr"`
 	Default      string          `xml:"default,attr"`
+	Tags         string          `xml:"tags,attr"`
 	ToneTags     string          `xml:"tone_tags,attr"`
 	GoalSpecific string          `xml:"is_goal_specific,attr"` // "yes" / "true"
 	Pattern      *grammarPattern `xml:"pattern"`
@@ -204,18 +207,20 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 			h.Categories[cat.ID] = rules.NewCategory(rules.NewCategoryId(cat.ID), orDefault(cat.Name, cat.ID))
 		}
 		catTones := parseToneTagsAttr(cat.ToneTags)
+		catTags := parseRuleTagsAttr(cat.Tags)
 		for _, xr := range cat.Rules {
-			if err := h.addRule(xr, cat.ID, catTones, nil); err != nil {
+			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil); err != nil {
 				return err
 			}
 		}
 		for _, g := range cat.Groups {
 			groupTones := parseToneTagsAttr(g.ToneTags)
+			groupTags := parseRuleTagsAttr(g.Tags)
 			for i, xr := range g.Rules {
 				if xr.ID == "" {
 					xr.ID = g.ID
 				}
-				if err := h.addRule(xr, cat.ID, catTones, groupTones); err != nil {
+				if err := h.addRule(xr, cat.ID, catTones, groupTones, catTags, groupTags); err != nil {
 					return err
 				}
 				if len(h.XMLRuleHandler.Rules) > 0 {
@@ -246,6 +251,22 @@ func parseToneTagsAttr(s string) []languagetool.ToneTag {
 	return out
 }
 
+// parseRuleTagsAttr ports tags="picky …" → []rules.Tag (Java Tag.valueOf).
+func parseRuleTagsAttr(s string) []rules.Tag {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return nil
+	}
+	var out []rules.Tag
+	for _, p := range strings.Fields(s) {
+		if p == "" {
+			continue
+		}
+		out = append(out, rules.Tag(strings.ToLower(p)))
+	}
+	return out
+}
+
 // mergeToneTags ports successive rule.addToneTags(category/group/rule) lists.
 func mergeToneTags(parts ...[]languagetool.ToneTag) []languagetool.ToneTag {
 	var out []languagetool.ToneTag
@@ -262,14 +283,32 @@ func mergeToneTags(parts ...[]languagetool.ToneTag) []languagetool.ToneTag {
 	return out
 }
 
-func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag) error {
+// mergeRuleTags ports successive rule.addTags lists (rule + group + category).
+func mergeRuleTags(parts ...[]rules.Tag) []rules.Tag {
+	var out []rules.Tag
+	seen := map[rules.Tag]struct{}{}
+	for _, part := range parts {
+		for _, t := range part {
+			if _, ok := seen[t]; ok {
+				continue
+			}
+			seen[t] = struct{}{}
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag) error {
 	if xr.ID == "" && !h.RelaxedMode {
 		return fmt.Errorf("rule without id in %s", h.SourceFile)
 	}
 	lang := h.LanguageCode
 	ruleTones := parseToneTagsAttr(xr.ToneTags)
 	tones := mergeToneTags(ruleTones, groupTones, categoryTones)
+	tags := mergeRuleTags(parseRuleTagsAttr(xr.Tags), groupTags, categoryTags)
 	goalSpecific := strings.EqualFold(xr.GoalSpecific, "yes") || strings.EqualFold(xr.GoalSpecific, "true")
+	defaultOff := xr.Default == "off" || xr.Default == "temp_off"
 	if xr.Regexp != nil {
 		content := strings.TrimSpace(xr.Regexp.Content)
 		re, err := regexp.Compile(content)
@@ -290,6 +329,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 		if rr.AbstractPatternRule != nil {
 			rr.AbstractPatternRule.ToneTags = tones
 			rr.AbstractPatternRule.GoalSpecific = goalSpecific
+			rr.AbstractPatternRule.DefaultOff = defaultOff
 		}
 		h.LoadedRegexRules = append(h.LoadedRegexRules, rr)
 		// also as abstract for listing
@@ -297,9 +337,9 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 		abs.Message = rr.Message
 		abs.ShortMessage = rr.ShortMessage
 		abs.SourceFile = h.SourceFile
-		if xr.Default == "off" || xr.Default == "temp_off" {
-			// mark via premium/off not modeled — skip default-off from active lists if needed
-		}
+		abs.ToneTags = tones
+		abs.GoalSpecific = goalSpecific
+		abs.DefaultOff = defaultOff
 		h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 		return nil
 	}
@@ -317,11 +357,17 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	pr := NewPatternRule(xr.ID, lang, tokens, xr.Name, strings.TrimSpace(xr.Message), strings.TrimSpace(xr.Short))
 	pr.ToneTags = tones
 	pr.GoalSpecific = goalSpecific
+	if len(tags) > 0 {
+		pr.SetTags(tags)
+	}
 	h.LoadedPatternRules = append(h.LoadedPatternRules, pr)
 	abs := NewAbstractPatternRule(xr.ID, xr.Name, lang, tokens, false)
 	abs.Message = pr.Message
 	abs.ShortMessage = pr.ShortMessage
 	abs.SourceFile = h.SourceFile
+	abs.ToneTags = tones
+	abs.GoalSpecific = goalSpecific
+	abs.DefaultOff = defaultOff
 	h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 	_ = categoryID
 	return nil

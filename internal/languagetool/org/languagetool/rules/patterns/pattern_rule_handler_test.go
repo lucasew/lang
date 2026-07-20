@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -93,4 +94,75 @@ func TestPatternRuleHandler_ToneTagsAndGoalSpecific(t *testing.T) {
 	require.False(t, r2.GoalSpecific)
 	require.Contains(t, r2.ToneTags, languagetool.ToneInformal)
 	require.Contains(t, r2.ToneTags, languagetool.ToneClarity)
+}
+
+func TestPatternRuleHandler_TagsPicky(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat" tags="picky">
+    <rule id="PICKY_RULE" name="n" tags="picky">
+      <pattern><token>xyzzy</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("test.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	require.Len(t, h.LoadedPatternRules, 1)
+	require.True(t, h.LoadedPatternRules[0].HasTag(rules.TagPicky))
+}
+
+func TestRegisterPatternRule_LevelPickyFilter(t *testing.T) {
+	// End-to-end: picky pattern rule suppressed at LevelDefault, active at LevelPicky.
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat">
+    <rule id="PICKY_FOO" name="n" tags="picky">
+      <pattern><token>foo</token></pattern>
+      <message>found foo</message>
+    </rule>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("test.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	require.Len(t, h.LoadedPatternRules, 1)
+	pr := h.LoadedPatternRules[0]
+	require.True(t, pr.HasTag(rules.TagPicky))
+
+	lt := languagetool.NewJLanguageTool("en")
+	lt.Level = languagetool.LevelDefault
+	RegisterPatternRule(lt, pr)
+	ms := lt.Check("foo bar")
+	require.Empty(t, ms, "picky rule must be filtered at DEFAULT level")
+
+	lt.Level = languagetool.LevelPicky
+	ms = lt.Check("foo bar")
+	require.NotEmpty(t, ms)
+	require.Equal(t, "PICKY_FOO", ms[0].RuleID)
+	require.True(t, ms[0].IsPicky)
+}
+
+func TestRegisterPatternRule_ToneFilter(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat">
+    <rule id="FORMAL_FOO" name="n" tone_tags="formal" is_goal_specific="yes">
+      <pattern><token>foo</token></pattern>
+      <message>formal foo</message>
+    </rule>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("test.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	pr := h.LoadedPatternRules[0]
+	lt := languagetool.NewJLanguageTool("en")
+	RegisterPatternRule(lt, pr)
+	// empty tone set → ALL_WITHOUT_GOAL_SPECIFIC → goal-specific rules dropped
+	require.Empty(t, lt.Check("foo bar"))
+	lt.SetToneTags(languagetool.ToneFormal)
+	ms := lt.Check("foo bar")
+	require.NotEmpty(t, ms)
+	require.Equal(t, "FORMAL_FOO", ms[0].RuleID)
+	require.Contains(t, ms[0].ToneTags, languagetool.ToneFormal)
+	require.True(t, ms[0].GoalSpecific)
 }
