@@ -23,9 +23,8 @@ func TestPrintMatchesAndCheckText(t *testing.T) {
 	var buf bytes.Buffer
 	PrintMatches(&buf, []*rules.RuleMatch{m}, 0, "I has a problem.", 20, 0, false)
 	out := buf.String()
+	// PrintMatches ports CommandLineTools.printMatches (Rule ID / Message / Suggestion).
 	require.Contains(t, out, "Rule ID: DEMO_RULE")
-	require.Contains(t, out, "Type:")
-	require.Contains(t, out, "Severity:")
 	require.Contains(t, out, "Message: grammar")
 	require.Contains(t, out, "Suggestion: have; had")
 

@@ -143,7 +143,8 @@ func TestCoreCheckHook_FalseFriends(t *testing.T) {
 </rules>`), 0o644))
 
 	var out, errb bytes.Buffer
-	code := RunWithIO([]string{"-l", "en", "-m", "fr", "--falsefriends", ff, "-"}, RunHooks{
+	// Java FalseFriendPatternRule is Tag.picky — Level.PICKY required.
+	code := RunWithIO([]string{"-l", "en", "-m", "fr", "--level", "picky", "--falsefriends", ff, "-"}, RunHooks{
 		ReadStdin: func() (string, error) { return "My ability is great.", nil },
 		Check:     CoreCheckHook,
 	}, &out, &errb)

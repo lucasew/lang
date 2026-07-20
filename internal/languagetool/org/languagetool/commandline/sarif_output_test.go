@@ -17,7 +17,8 @@ func TestMatchesAsSARIF(t *testing.T) {
 	require.Contains(t, s, `"version":"2.1.0"`)
 	require.Contains(t, s, "EN_A_VS_AN")
 	require.Contains(t, s, `"level":"error"`)
-	require.Contains(t, s, `"type":"grammar"`)
+	// Java AvsAnRule: ITSIssueType.Misspelling
+	require.Contains(t, s, `"type":"misspelling"`)
 	require.Contains(t, s, `"helpUri":"https://community.languagetool.org/rule/show/EN_A_VS_AN?lang=en"`)
 	var raw map[string]any
 	require.NoError(t, json.Unmarshal([]byte(s), &raw))
@@ -39,7 +40,8 @@ func TestCoreCheckHook_SARIF(t *testing.T) {
 
 func TestCoreCheckHook_DisableCategories(t *testing.T) {
 	var out, errb bytes.Buffer
-	code := RunWithIO([]string{"-l", "en", "--disablecategories", "GRAMMAR", "-"}, RunHooks{
+	// Java AvsAnRule: Categories.MISC (not GRAMMAR)
+	code := RunWithIO([]string{"-l", "en", "--disablecategories", "MISC", "-"}, RunHooks{
 		ReadStdin: func() (string, error) { return "This is an test.", nil },
 		Check:     CoreCheckHook,
 	}, &out, &errb)

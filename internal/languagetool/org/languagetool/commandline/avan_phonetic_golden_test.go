@@ -50,7 +50,8 @@ func TestGolden_AvsAn_PhoneticExceptions(t *testing.T) {
 				if f.Rule == "EN_A_VS_AN" {
 					found = true
 					require.Equal(t, tc.sug, f.Suggestion)
-					require.Equal(t, "grammar", f.Type)
+					// Java AvsAnRule: ITSIssueType.Misspelling
+			require.Equal(t, "misspelling", f.Type)
 				}
 			}
 			require.True(t, found, "%+v", findings)

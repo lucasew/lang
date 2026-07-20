@@ -160,6 +160,10 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 	lt := checker.lt
 	if opts != nil {
 		picky := strings.EqualFold(opts.Level, "PICKY")
+		// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends, long sentence, …).
+		if picky {
+			lt.Level = languagetool.LevelPicky
+		}
 		baseLang := lang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
 			baseLang = lang[:i]

@@ -47,7 +47,7 @@ func TestCoreGoldenHook_Direct(t *testing.T) {
 		if f.Rule == "EN_A_VS_AN" {
 			found = true
 			require.Equal(t, "error", f.Severity)
-			require.Equal(t, "grammar", f.Type)
+			require.Equal(t, "misspelling", f.Type) // Java AvsAnRule ITS Misspelling
 			require.Equal(t, "a", f.Suggestion)
 		}
 	}

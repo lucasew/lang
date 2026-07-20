@@ -10,8 +10,11 @@ import (
 
 func TestGolden_EmptyLine(t *testing.T) {
 	var buf bytes.Buffer
+	// Java EmptyLineRule is setDefaultOff; enable explicitly.
 	// default SRX (_two): four newlines = empty line between paragraphs
-	_, err := CoreGoldenHook(&buf, "Hello world.\n\n\n\nNext para starts here.", &CommandLineOptions{Language: "en"})
+	opts := &CommandLineOptions{Language: "en"}
+	opts.EnabledRules = []string{"EMPTY_LINE"}
+	_, err := CoreGoldenHook(&buf, "Hello world.\n\n\n\nNext para starts here.", opts)
 	require.NoError(t, err)
 	var findings []Finding
 	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))

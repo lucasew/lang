@@ -65,7 +65,9 @@ func applyCLIRuleValues(lang, text string, existing []*rules.RuleMatch, raw []st
 	ls := rules.NewLongSentenceRule(map[string]string{
 		"long_sentence_rule_msg2": "This sentence is too long (%d words)",
 	}, maxWords)
+	// LongSentenceRule is Tag.picky; explicit ruleValues threshold uses Level.PICKY.
 	lt := languagetool.NewJLanguageTool(lang)
+	lt.Level = languagetool.LevelPicky
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 	for _, id := range lt.GetAllRegisteredRuleIDs() {
 		if id != ls.GetID() {

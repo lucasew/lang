@@ -21,7 +21,8 @@ func TestWriteLintMatches(t *testing.T) {
 	require.Contains(t, out, "severity")
 	require.Contains(t, out, "EN_A_VS_AN")
 	require.Contains(t, out, "error")
-	require.Contains(t, out, "grammar")
+	// Java AvsAnRule: ITSIssueType.Misspelling
+	require.Contains(t, out, "misspelling")
 	require.Contains(t, out, "doc.txt:")
 	require.Contains(t, out, "a")
 }
@@ -36,7 +37,8 @@ func TestCoreCheckHook_Lint(t *testing.T) {
 	body := out.String()
 	require.True(t, strings.Contains(body, "EN_A_VS_AN"), body)
 	require.True(t, strings.Contains(body, "error"), body)
-	require.True(t, strings.Contains(body, "grammar"), body)
+	// Java AvsAnRule: ITSIssueType.Misspelling
+	require.True(t, strings.Contains(body, "misspelling"), body)
 	require.True(t, strings.Contains(body, "stdin:"), body)
 	_ = io.Discard
 }
