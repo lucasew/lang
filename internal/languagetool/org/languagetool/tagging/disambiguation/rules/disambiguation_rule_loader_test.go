@@ -166,6 +166,75 @@ func TestDisambigLoader_RuleGroupAntipatternAndID(t *testing.T) {
 	require.Len(t, ars[1].AntiPatterns, 2)
 }
 
+func TestDisambigLoader_PatternCaseSensitiveInherit(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="CS" name="case sensitive pattern">
+    <pattern case_sensitive="yes">
+      <token>or</token>
+      <token case_sensitive="no">AND</token>
+    </pattern>
+    <disambig action="remove"><wd pos="JJ"/></disambig>
+  </rule>
+</rules>`
+	ars, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t.xml")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.True(t, ars[0].Tokens[0].CaseSensitive, "inherits pattern case_sensitive")
+	require.False(t, ars[0].Tokens[1].CaseSensitive, "token attr overrides inherit")
+}
+
+func TestDisambigLoader_UnifyBlock(t *testing.T) {
+	// EN-style number unify: tokens inside <unify> must load with UniFeatures.
+	xml := `<?xml version="1.0"?>
+<rules>
+  <unification feature="number">
+    <equivalence type="singular"><token postag=".*sg.*" postag_regexp="yes"/></equivalence>
+    <equivalence type="plural"><token postag=".*pl.*" postag_regexp="yes"/></equivalence>
+  </unification>
+  <rule id="NUM_UNIFY" name="number unify">
+    <pattern>
+      <unify>
+        <feature id="number"/>
+        <token postag="NN.*" postag_regexp="yes"/>
+        <token postag="VB.*" postag_regexp="yes"/>
+      </unify>
+    </pattern>
+    <disambig action="unify"/>
+  </rule>
+  <rule id="UNIFY_NEG" name="unify negate">
+    <pattern>
+      <unify negate="yes">
+        <feature id="number"/>
+        <type id="singular"/>
+        <token>a</token>
+        <unify-ignore>
+          <token>,</token>
+        </unify-ignore>
+        <token>b</token>
+      </unify>
+    </pattern>
+    <disambig action="filter" postag="NN"/>
+  </rule>
+</rules>`
+	ars, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t.xml")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+
+	require.Len(t, ars[0].Tokens, 2)
+	require.True(t, ars[0].Tokens[0].IsUnified())
+	require.Contains(t, ars[0].Tokens[0].GetUniFeatures(), "number")
+	require.False(t, ars[0].Tokens[0].IsLastInUnification())
+	require.True(t, ars[0].Tokens[1].IsLastInUnification())
+	require.Equal(t, "NN.*", ars[0].Tokens[0].Pos.PosTag)
+
+	// unify-ignore token is neutral; last is UniNegated
+	require.Len(t, ars[1].Tokens, 3)
+	require.True(t, ars[1].Tokens[1].IsUnificationNeutral())
+	require.True(t, ars[1].Tokens[2].IsLastInUnification())
+	require.True(t, ars[1].Tokens[2].IsUniNegated())
+}
+
 func TestDisambigLoader_TokenNegatePos(t *testing.T) {
 	xml := `<?xml version="1.0"?>
 <rules>

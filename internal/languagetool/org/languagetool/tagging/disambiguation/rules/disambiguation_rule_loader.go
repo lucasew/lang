@@ -93,18 +93,27 @@ type disambigRule struct {
 	Disambig disambigElem    `xml:"disambig"`
 }
 
-// disambigPattern holds pattern children in document order: <token> and/or <and>.
+// disambigPattern holds pattern children in document order: <token>, <and>, <unify>, <marker>.
 // Java PatternRuleHandler walks elements; empty tokens from skipped <and> must not load.
 type disambigPattern struct {
+	// CaseSensitive ports pattern case_sensitive="yes" (inherits to tokens without own attr).
+	CaseSensitive string
 	// Tokens is filled by UnmarshalXML (ordered, includes synthetic AND-group tokens).
 	Tokens []disambigToken
 }
 
-// UnmarshalXML ports pattern content: sequence of <token>, <marker>…</marker>, and <and>.
+// UnmarshalXML ports pattern content: sequence of <token>, <marker>…</marker>, <and>, <unify>.
 // Java PatternRuleHandler walks children; skipping <marker> drops tokens and invents
 // empty/exception-only patterns (e.g. EXCEPT_NOT_VERB matched every word).
+// Skipping <unify> drops unified tokens entirely (UNIFY match / number agreement broken).
 func (p *disambigPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	p.Tokens = nil
+	p.CaseSensitive = ""
+	for _, a := range start.Attr {
+		if a.Name.Local == "case_sensitive" {
+			p.CaseSensitive = a.Value
+		}
+	}
 	for {
 		tok, err := d.Token()
 		if err != nil {
@@ -135,6 +144,11 @@ func (p *disambigPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) e
 				}
 				if base != nil {
 					p.Tokens = append(p.Tokens, *base)
+				}
+			case "unify":
+				// Java <unify feature/type tokens> — must not Skip (would drop tokens).
+				if err := p.decodeDisambigUnify(d, t); err != nil {
+					return err
 				}
 			default:
 				if err := d.Skip(); err != nil {
@@ -174,6 +188,241 @@ func (p *disambigPattern) decodeMarkerContents(d *xml.Decoder) error {
 					base.Marker = "yes"
 					p.Tokens = append(p.Tokens, *base)
 				}
+			case "unify":
+				// unify inside marker: tokens are InsideMarker
+				startN := len(p.Tokens)
+				if err := p.decodeDisambigUnify(d, it); err != nil {
+					return err
+				}
+				for i := startN; i < len(p.Tokens); i++ {
+					p.Tokens[i].Marker = "yes"
+				}
+			default:
+				if err := d.Skip(); err != nil {
+					return err
+				}
+			}
+		}
+	}
+}
+
+// decodeDisambigUnify ports PatternRuleLoader.decodeXMLUnify for disambiguation patterns.
+// Sets UniFeatures / LastInUnification / UniNegated / UnificationNeutral on tokens.
+func (p *disambigPattern) decodeDisambigUnify(d *xml.Decoder, start xml.StartElement) error {
+	uniNeg := false
+	for _, a := range start.Attr {
+		if a.Name.Local == "negate" && strings.EqualFold(a.Value, "yes") {
+			uniNeg = true
+		}
+	}
+	// feature id → type ids (empty slice = all types for feature, Java).
+	features := map[string][]string{}
+	var collected []disambigToken
+
+	appendTok := func(xt disambigToken, neutral bool) {
+		xt.UniFeatures = copyDisambigFeatureMap(features)
+		xt.UnificationNeutral = neutral
+		collected = append(collected, xt)
+	}
+
+	parseIgnore := func() error {
+		for {
+			inner, err := d.Token()
+			if err != nil {
+				return err
+			}
+			switch it := inner.(type) {
+			case xml.EndElement:
+				if it.Name.Local == "unify-ignore" {
+					return nil
+				}
+			case xml.StartElement:
+				switch it.Name.Local {
+				case "token":
+					xt, err := decodeDisambigToken(d, it)
+					if err != nil {
+						return err
+					}
+					appendTok(xt, true)
+				case "and":
+					base, err := decodeDisambigAnd(d, it)
+					if err != nil {
+						return err
+					}
+					if base != nil {
+						appendTok(*base, true)
+					}
+				case "marker":
+					if err := decodeDisambigUnifyMarker(d, true, appendTok); err != nil {
+						return err
+					}
+				default:
+					if err := d.Skip(); err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+
+	for {
+		tok, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch t := tok.(type) {
+		case xml.EndElement:
+			if t.Name.Local == start.Name.Local {
+				if len(collected) > 0 {
+					last := &collected[len(collected)-1]
+					last.LastInUnification = true
+					if uniNeg {
+						last.UniNegated = true
+					}
+				}
+				p.Tokens = append(p.Tokens, collected...)
+				return nil
+			}
+		case xml.StartElement:
+			switch t.Name.Local {
+			case "feature":
+				featID, types, err := decodeDisambigUnifyFeature(d, t)
+				if err != nil {
+					return err
+				}
+				if featID != "" {
+					features[featID] = types
+				}
+			case "token":
+				xt, err := decodeDisambigToken(d, t)
+				if err != nil {
+					return err
+				}
+				appendTok(xt, false)
+			case "and":
+				base, err := decodeDisambigAnd(d, t)
+				if err != nil {
+					return err
+				}
+				if base != nil {
+					appendTok(*base, false)
+				}
+			case "unify-ignore":
+				if err := parseIgnore(); err != nil {
+					return err
+				}
+			case "marker":
+				if err := decodeDisambigUnifyMarker(d, false, appendTok); err != nil {
+					return err
+				}
+			default:
+				if err := d.Skip(); err != nil {
+					return err
+				}
+			}
+		}
+	}
+}
+
+func copyDisambigFeatureMap(in map[string][]string) map[string][]string {
+	if len(in) == 0 {
+		return map[string][]string{}
+	}
+	out := make(map[string][]string, len(in))
+	for k, v := range in {
+		out[k] = append([]string(nil), v...)
+	}
+	return out
+}
+
+func decodeDisambigUnifyFeature(d *xml.Decoder, start xml.StartElement) (id string, types []string, err error) {
+	for _, a := range start.Attr {
+		if a.Name.Local == "id" {
+			id = a.Value
+		}
+	}
+	types = []string{}
+	for {
+		tok, e := d.Token()
+		if e != nil {
+			return id, types, e
+		}
+		switch t := tok.(type) {
+		case xml.EndElement:
+			if t.Name.Local == start.Name.Local {
+				return id, types, nil
+			}
+		case xml.StartElement:
+			if t.Name.Local == "type" {
+				typeID := ""
+				for _, a := range t.Attr {
+					if a.Name.Local == "id" {
+						typeID = a.Value
+					}
+				}
+				if err := drainDisambigElement(d, t.Name.Local); err != nil {
+					return id, types, err
+				}
+				if typeID != "" {
+					types = append(types, typeID)
+				}
+			} else if err := d.Skip(); err != nil {
+				return id, types, err
+			}
+		}
+	}
+}
+
+func drainDisambigElement(d *xml.Decoder, name string) error {
+	depth := 1
+	for depth > 0 {
+		tok, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch t := tok.(type) {
+		case xml.StartElement:
+			if t.Name.Local == name {
+				depth++
+			}
+		case xml.EndElement:
+			if t.Name.Local == name {
+				depth--
+			}
+		}
+	}
+	return nil
+}
+
+func decodeDisambigUnifyMarker(d *xml.Decoder, neutral bool, appendTok func(disambigToken, bool)) error {
+	for {
+		inner, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch it := inner.(type) {
+		case xml.EndElement:
+			if it.Name.Local == "marker" {
+				return nil
+			}
+		case xml.StartElement:
+			switch it.Name.Local {
+			case "token":
+				xt, err := decodeDisambigToken(d, it)
+				if err != nil {
+					return err
+				}
+				xt.Marker = "yes"
+				appendTok(xt, neutral)
+			case "and":
+				base, err := decodeDisambigAnd(d, it)
+				if err != nil {
+					return err
+				}
+				if base != nil {
+					base.Marker = "yes"
+					appendTok(*base, neutral)
+				}
 			default:
 				if err := d.Skip(); err != nil {
 					return err
@@ -185,7 +434,23 @@ func (p *disambigPattern) decodeMarkerContents(d *xml.Decoder) error {
 
 func decodeDisambigToken(d *xml.Decoder, start xml.StartElement) (disambigToken, error) {
 	var xt disambigToken
+	// Track whether case_sensitive was set on the token element (for pattern inherit).
+	for _, a := range start.Attr {
+		if a.Name.Local == "case_sensitive" {
+			xt.caseSensitiveSet = true
+			break
+		}
+	}
 	err := d.DecodeElement(&xt, &start)
+	// DecodeElement may clear unexported fields depending on version; re-check attrs after.
+	if !xt.caseSensitiveSet {
+		for _, a := range start.Attr {
+			if a.Name.Local == "case_sensitive" {
+				xt.caseSensitiveSet = true
+				break
+			}
+		}
+	}
 	return xt, err
 }
 
@@ -248,6 +513,13 @@ type disambigToken struct {
 	// Match ports Java pattern-token <match no="…" setpos=…/> (tokenReference).
 	Match   *disambigMatch `xml:"match"`
 	Content string         `xml:",chardata"`
+	// Unification fields set by decodeDisambigUnify (not XML attrs on <token>).
+	UniFeatures          map[string][]string
+	LastInUnification    bool
+	UnificationNeutral   bool
+	UniNegated           bool
+	// caseSensitiveSet is true when the token XML set case_sensitive= (for pattern inherit).
+	caseSensitiveSet bool
 }
 
 // disambigException ports Java pattern-token <exception> attributes used by
@@ -317,7 +589,7 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 			if typ == "" {
 				continue
 			}
-			pt := disambigTokenFromXML(eq.Token, false)
+			pt := disambigTokenFromXML(eq.Token, false, false)
 			if pt != nil {
 				cfg.SetEquivalence(feat, typ, pt)
 			}
@@ -369,8 +641,10 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 			anyMarker = true
 		}
 	}
+	// Java: pattern-level case_sensitive inherits when token has no own case_sensitive.
+	patternCS := strings.EqualFold(xr.Pattern.CaseSensitive, "yes")
 	for _, xt := range xr.Pattern.Tokens {
-		tokens = append(tokens, disambigTokenFromXML(xt, anyMarker))
+		tokens = append(tokens, disambigTokenFromXML(xt, anyMarker, patternCS))
 	}
 	if len(tokens) == 0 {
 		return nil
@@ -466,8 +740,9 @@ func antiPatternsFromDisambigXML(ruleID, languageCode string, patternsXML []disa
 				anyMarker = true
 			}
 		}
+		patternCS := strings.EqualFold(ap.CaseSensitive, "yes")
 		for _, xt := range ap.Tokens {
-			apToks = append(apToks, disambigTokenFromXML(xt, anyMarker))
+			apToks = append(apToks, disambigTokenFromXML(xt, anyMarker, patternCS))
 		}
 		if len(apToks) == 0 {
 			continue
@@ -527,14 +802,30 @@ func matchFromDisambigXML(xm *disambigMatch) *patterns.Match {
 	return m
 }
 
-func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.PatternToken {
+func disambigTokenFromXML(xt disambigToken, patternHasMarker bool, patternCaseSensitive bool) *patterns.PatternToken {
 	content := strings.TrimSpace(xt.Content)
+	// Java: token case_sensitive attr, else pattern-level case_sensitive inherit.
 	cs := strings.EqualFold(xt.CaseSensitive, "yes")
+	if !xt.caseSensitiveSet && patternCaseSensitive {
+		cs = true
+	}
 	re := strings.EqualFold(xt.Regexp, "yes")
 	inflected := strings.EqualFold(xt.Inflected, "yes")
 	pt := patterns.NewPatternToken(content, cs, re, inflected)
 	if strings.EqualFold(xt.Negate, "yes") {
 		pt.SetNegation(true)
+	}
+	if xt.UniFeatures != nil {
+		pt.SetUnification(xt.UniFeatures)
+	}
+	if xt.UniNegated {
+		pt.SetUniNegation()
+	}
+	if xt.LastInUnification {
+		pt.SetLastInUnification()
+	}
+	if xt.UnificationNeutral {
+		pt.SetUnificationNeutral()
 	}
 	if xt.Postag != "" {
 		pt.SetPosToken(patterns.PosToken{
@@ -614,7 +905,7 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 	}
 	// Java <and> group members (also soft <and_token> attribute path): each must match some reading.
 	for _, at := range xt.AndTokens {
-		pt.AddAndGroupElement(disambigTokenFromXML(at, false))
+		pt.AddAndGroupElement(disambigTokenFromXML(at, false, patternCaseSensitive))
 	}
 	// Java MATCH inside TOKEN (not under DISAMBIG): tokenReference / setpos.
 	if m := matchFromTokenMatchXML(xt.Match); m != nil {
