@@ -38,7 +38,7 @@ func TestAdvancedSynthesizerFilter_WithInjectedSynth(t *testing.T) {
 	t2.SetStartPos(6)
 	m := rules.NewRuleMatch(rules.NewFakeRule("R"), nil, 0, 5, "msg")
 	out := f.AcceptRuleMatch(m, map[string]string{
-		"lemmaFrom": "1", "postagFrom": "2", "lemmaSelect": "gehen", "postagSelect": "VER:PA2:SIN:NEU",
+		"lemmaFrom": "1", "postagFrom": "2", "lemmaSelect": "VER:INF:NON", "postagSelect": "VER:PA2:SIN:NEU",
 	}, 0, []*languagetool.AnalyzedTokenReadings{t1, t2}, nil)
 	require.NotNil(t, out)
 	require.Equal(t, []string{"gegangen"}, out.GetSuggestedReplacements())
@@ -60,7 +60,7 @@ func TestAdvancedSynthesizerFilter_ProcessWideWire(t *testing.T) {
 	t1.SetStartPos(0)
 	m := rules.NewRuleMatch(rules.NewFakeRule("R"), nil, 0, 4, "msg")
 	out := f.AcceptRuleMatch(m, map[string]string{
-		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "haus", "postagSelect": "SUB:NOM:SIN:NEU",
+		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "SUB:NOM:SIN:NEU", "postagSelect": "SUB:NOM:SIN:NEU",
 	}, 0, []*languagetool.AnalyzedTokenReadings{t1}, nil)
 	require.NotNil(t, out)
 	require.Equal(t, []string{"Haus"}, out.GetSuggestedReplacements())

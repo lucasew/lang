@@ -36,7 +36,8 @@ func TestAdvancedSynthesizerFilter_WithInjectedSynth(t *testing.T) {
 	t2.SetStartPos(3)
 	m := rules.NewRuleMatch(rules.NewFakeRule("R"), nil, 0, 2, "msg")
 	out := f.AcceptRuleMatch(m, map[string]string{
-		"lemmaFrom": "1", "postagFrom": "2", "lemmaSelect": "go", "postagSelect": "VBG",
+		// Java lemmaSelect is a POS regex (not lemma surface).
+		"lemmaFrom": "1", "postagFrom": "2", "lemmaSelect": "VB", "postagSelect": "VBG",
 	}, 0, []*languagetool.AnalyzedTokenReadings{t1, t2}, nil)
 	require.NotNil(t, out)
 	require.Equal(t, []string{"going"}, out.GetSuggestedReplacements())
@@ -58,7 +59,7 @@ func TestAdvancedSynthesizerFilter_ProcessWideWire(t *testing.T) {
 	t1.SetStartPos(0)
 	m := rules.NewRuleMatch(rules.NewFakeRule("R"), nil, 0, 4, "msg")
 	out := f.AcceptRuleMatch(m, map[string]string{
-		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "walk", "postagSelect": "VBD",
+		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "VBD", "postagSelect": "VBD",
 	}, 0, []*languagetool.AnalyzedTokenReadings{t1}, nil)
 	require.NotNil(t, out)
 	require.Equal(t, []string{"walked"}, out.GetSuggestedReplacements())

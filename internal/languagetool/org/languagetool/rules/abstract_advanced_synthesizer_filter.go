@@ -98,6 +98,7 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 		}
 	}
 
+	// take capitalization from the lemma token (Java)
 	isCap := tools.IsCapitalizedWord(patternTokens[lemmaFrom].GetToken())
 	isAllUpper := tools.IsAllUppercase(patternTokens[lemmaFrom].GetToken())
 	replacements := f.Synthesize(desiredLemma, desiredPostag)
@@ -110,11 +111,9 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 	out.ShortMessage = match.ShortMessage
 	var list []string
 	suggestionUsed := false
-	existing := match.GetSuggestedReplacements()
-	if len(existing) == 0 {
-		existing = []string{""}
-	}
-	for _, r := range existing {
+	// Java: for (String r : match.getSuggestedReplacements()) — empty list means
+	// no placeholder loop; do not invent a bare "" suggestion (that would apply case).
+	for _, r := range match.GetSuggestedReplacements() {
 		for _, nr := range replacements {
 			if f.IsSuggestionException != nil && f.IsSuggestionException(nr, desiredPostag) {
 				continue
@@ -129,35 +128,18 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 			if isAllUpper {
 				form = strings.ToUpper(form)
 			}
-			complete := r
-			if complete == "" {
-				complete = form
-			} else {
-				complete = strings.ReplaceAll(complete, "{suggestion}", form)
-				complete = strings.ReplaceAll(complete, "{Suggestion}", tools.UppercaseFirstChar(form))
-				complete = strings.ReplaceAll(complete, "{SUGGESTION}", strings.ToUpper(form))
-			}
+			complete := strings.ReplaceAll(r, "{suggestion}", form)
+			complete = strings.ReplaceAll(complete, "{Suggestion}", tools.UppercaseFirstChar(form))
+			complete = strings.ReplaceAll(complete, "{SUGGESTION}", strings.ToUpper(form))
 			if !sliceHasString(list, complete) {
 				list = append(list, complete)
 			}
 		}
 	}
+	// Java: if (!suggestionUsed) replacementsList.addAll(Arrays.asList(replacements));
+	// No case conversion, no isSuggestionException filter, no dedup on this branch.
 	if !suggestionUsed {
-		for _, nr := range replacements {
-			if f.IsSuggestionException != nil && f.IsSuggestionException(nr, desiredPostag) {
-				continue
-			}
-			form := nr
-			if isCap {
-				form = tools.UppercaseFirstChar(form)
-			}
-			if isAllUpper {
-				form = strings.ToUpper(form)
-			}
-			if !sliceHasString(list, form) {
-				list = append(list, form)
-			}
-		}
+		list = append(list, replacements...)
 	}
 	if f.AdaptSuggestion != nil {
 		adj := make([]string, 0, len(list))
@@ -180,30 +162,37 @@ func sliceHasString(ss []string, s string) bool {
 }
 
 // GetCompositePostag ports AbstractAdvancedSynthesizerFilter.getCompositePostag (\aN / \bN).
+// Java: Pattern.compile(..., Pattern.UNICODE_CASE) only — case-sensitive (no CASE_INSENSITIVE).
+// Matcher.matches() on original/desired postag; group replacements when group != null.
 func GetCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace string) string {
-	aRE, err1 := regexp.Compile("(?i)" + lemmaSelect)
-	bRE, err2 := regexp.Compile("(?i)" + postagSelect)
+	aRE, err1 := compileJavaMatches(lemmaSelect)
+	bRE, err2 := compileJavaMatches(postagSelect)
 	if err1 != nil || err2 != nil {
 		return postagReplace
 	}
 	aM := aRE.FindStringSubmatch(originalPostag)
 	bM := bRE.FindStringSubmatch(desiredPostag)
-	// Java Matcher.matches requires full string
-	if aM == nil || aM[0] != originalPostag || bM == nil || bM[0] != desiredPostag {
+	if aM == nil || bM == nil {
 		return postagReplace
 	}
 	result := postagReplace
+	// Submatch indices: 0 = full (\A(?:pat)\z wrapper), 1 = outer non-capturing is not counted...
+	// compileJavaMatches wraps as \A(?:pat)\z so group i in Java = group i in pat = aM[i] when
+	// wrapping uses non-capturing (?:). Yes: groups inside pat keep their numbers as aM[1..].
 	for i := 1; i < len(aM); i++ {
-		if aM[i] != "" {
-			result = strings.ReplaceAll(result, `\a`+strconv.Itoa(i), aM[i])
-		}
+		// Java: if (groupStr != null) — empty still replaces; skip only non-participating.
+		// Go cannot distinguish non-participating from empty; empty string still replaces (safe).
+		result = strings.ReplaceAll(result, `\a`+strconv.Itoa(i), aM[i])
 	}
 	for i := 1; i < len(bM); i++ {
-		if bM[i] != "" {
-			result = strings.ReplaceAll(result, `\b`+strconv.Itoa(i), bM[i])
-		}
+		result = strings.ReplaceAll(result, `\b`+strconv.Itoa(i), bM[i])
 	}
 	return result
+}
+
+// compileJavaMatches compiles pattern for Java Matcher.matches() (full region).
+func compileJavaMatches(pattern string) (*regexp.Regexp, error) {
+	return regexp.Compile(`\A(?:` + pattern + `)\z`)
 }
 
 func requireArg(args map[string]string, key string) string {
@@ -234,32 +223,31 @@ func resolveIndex(spec string, match *RuleMatch, patternTokens []*languagetool.A
 	return n - 1 // Java is 1-based
 }
 
+// getAnalyzedToken ports AbstractAdvancedSynthesizerFilter.getAnalyzedToken.
+// Java matches the regexp against POS tags only (null POS → "UNKNOWN"), Matcher.matches();
+// never invents lemma-surface selection. Fallback: first reading.
 func getAnalyzedToken(atr *languagetool.AnalyzedTokenReadings, regexpStr string) *languagetool.AnalyzedToken {
 	if atr == nil {
 		return nil
 	}
-	re, err := regexp.Compile(regexpStr)
+	re, err := compileJavaMatches(regexpStr)
 	if err != nil {
-		re = regexp.MustCompile("^(?:" + regexp.QuoteMeta(regexpStr) + ")$")
-	}
-	// Java getAnalyzedToken: prefer lemma match then POS
-	for _, r := range atr.GetReadings() {
-		if r == nil {
-			continue
-		}
-		if lem := r.GetLemma(); lem != nil && re.MatchString(*lem) {
-			return r
-		}
+		// Java Pattern.compile throws; fall through to first reading
+		re = nil
 	}
 	for _, r := range atr.GetReadings() {
 		if r == nil {
 			continue
 		}
-		if pt := r.GetPOSTag(); pt != nil && re.MatchString(*pt) {
+		posTag := "UNKNOWN"
+		if pt := r.GetPOSTag(); pt != nil {
+			posTag = *pt
+		}
+		if re != nil && re.MatchString(posTag) {
 			return r
 		}
 	}
-	// fallback first reading
+	// Return the first one. Something is wrong, anyway
 	rs := atr.GetReadings()
 	if len(rs) > 0 {
 		return rs[0]

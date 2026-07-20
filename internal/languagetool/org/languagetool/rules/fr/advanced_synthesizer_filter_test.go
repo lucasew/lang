@@ -33,7 +33,7 @@ func TestAdvancedSynthesizerFilter_WithInjectedSynth(t *testing.T) {
 	t1.SetStartPos(0)
 	m := rules.NewRuleMatch(rules.NewFakeRule("R"), nil, 0, 6, "msg")
 	out := f.AcceptRuleMatch(m, map[string]string{
-		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "manger", "postagSelect": "V inf",
+		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "V inf", "postagSelect": "V inf",
 	}, 0, []*languagetool.AnalyzedTokenReadings{t1}, nil)
 	require.NotNil(t, out)
 	require.Equal(t, []string{"manger"}, out.GetSuggestedReplacements())
