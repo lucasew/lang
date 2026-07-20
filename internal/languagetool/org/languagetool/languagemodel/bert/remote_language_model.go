@@ -117,20 +117,12 @@ func NewRemoteLanguageModelEndpoint(host string, port int, useSSL bool, _clientK
 	}
 }
 
-// Score ports score(Request) with cache-aside (batch path is the primary Java cache writer;
-// single-score caching is a safe superset for callers that only use Score).
+// Score ports RemoteLanguageModel.score(Request).
+// Java does not cache single-score calls (only batchScore writes the Guava cache).
 func (m *RemoteLanguageModel) Score(req Request) ([]float64, error) {
 	if m == nil {
 		return nil, fmt.Errorf("nil RemoteLanguageModel")
 	}
-	key := req.cacheKey()
-	m.mu.Lock()
-	if v, ok := m.cache[key]; ok {
-		m.mu.Unlock()
-		return append([]float64(nil), v...), nil
-	}
-	m.mu.Unlock()
-
 	if m.Scorer == nil {
 		// Fail closed: Java needs a remote BERT service — do not invent edit-distance ranks.
 		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer configured")
@@ -139,7 +131,6 @@ func (m *RemoteLanguageModel) Score(req Request) ([]float64, error) {
 	if err != nil {
 		return nil, err
 	}
-	m.putCache(req, scores)
 	return append([]float64(nil), scores...), nil
 }
 

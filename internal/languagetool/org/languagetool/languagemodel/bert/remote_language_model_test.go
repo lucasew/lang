@@ -8,7 +8,11 @@ import (
 )
 
 func TestRemoteLanguageModel(t *testing.T) {
-	m := NewRemoteLanguageModel(EditDistanceScorer)
+	var scoreCalls int32
+	m := NewRemoteLanguageModel(func(req Request) ([]float64, error) {
+		atomic.AddInt32(&scoreCalls, 1)
+		return EditDistanceScorer(req)
+	})
 	req := NewRequest("I has a cat", 2, 5, []string{"have", "had", "xx"})
 	scores, err := m.Score(req)
 	require.NoError(t, err)
@@ -16,10 +20,11 @@ func TestRemoteLanguageModel(t *testing.T) {
 	// "has" → "had"/"have" closer than "xx"
 	require.Greater(t, scores[0], scores[2])
 
-	// cache
+	// Java score() does not use the Guava cache — each call hits the stub.
 	scores2, err := m.Score(req)
 	require.NoError(t, err)
 	require.Equal(t, scores, scores2)
+	require.Equal(t, int32(2), atomic.LoadInt32(&scoreCalls))
 
 	batch, err := m.BatchScore([]Request{req, NewRequest("a", 0, 1, []string{"a", "b"})})
 	require.NoError(t, err)
