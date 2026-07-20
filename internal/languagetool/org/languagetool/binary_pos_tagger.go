@@ -61,6 +61,9 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	case "pt":
 		// Java PortugueseTagger: exact lookups + ordinals/mente/soto- (not BaseTagger alone).
 		tw = portugueseTaggerTagWord(wordTagger)
+	case "es":
+		// Java SpanishTagger: exact + all-upper title + mente/auto prefixes.
+		tw = spanishTaggerTagWord(wordTagger)
 	default:
 		// Java BaseTagger: tagLowercaseWithUppercase=true by default (most language taggers).
 		base := tagging.NewBaseTagger(wordTagger, dictPath, langBase, true)
@@ -69,6 +72,129 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	lt.TagWord = tw
 	wireTokenizerIsTaggedFromPOS(lt.GetLanguageCode(), tw)
 	return true
+}
+
+// spanishTaggerTagWord ports Java SpanishTagger.tag for TagWord inject.
+func spanishTaggerTagWord(wt tagging.WordTagger) func(token string) []TokenTag {
+	if wt == nil {
+		return nil
+	}
+	lookup := func(w string) []TokenTag {
+		tws := wt.Tag(w)
+		if len(tws) == 0 {
+			return nil
+		}
+		out := make([]TokenTag, 0, len(tws))
+		for _, tw := range tws {
+			out = append(out, TokenTag{POS: tw.PosTag, Lemma: tw.Lemma})
+		}
+		return out
+	}
+	adjPartFS := regexp.MustCompile(`^VMP00SF|A[QO].[FC]S.$`)
+	verbRE := regexp.MustCompile(`^V.+`)
+	prefVerb := regexp.MustCompile(`(?i)^(auto)([^r].{3,})$`)
+	prefVerb2 := regexp.MustCompile(`(?i)^(autor)(r.{3,})$`)
+	prefAdjSuper := regexp.MustCompile(`(?i)^(super)(.*[aeiouáéèíòóïü].+[aeiouáéèíòóïü].*)$`)
+	prefAdjHyphen := regexp.MustCompile(`(?i)^(.+)-(.+)$`)
+	adjRE := regexp.MustCompile(`^AQ.+`)
+	adjMS := regexp.MustCompile(`^AQ.MS.|AQ.CS.|AQ.MN.$`)
+	noPrefAdj := regexp.MustCompile(`(?i)^(anti|pre|ex|pro|afro|ultra|super|súper)$`)
+	adjVP := regexp.MustCompile(`^AQ.*|V.P.*$`)
+
+	return func(token string) []TokenTag {
+		if token == "" {
+			return nil
+		}
+		w := strings.ReplaceAll(token, "’", "'")
+		lower := strings.ToLower(w)
+		isLower := w == lower
+		isMixed := tools.IsMixedCase(w)
+		isAllUpper := tools.IsAllUppercase(w)
+		var out []TokenTag
+		seen := map[string]struct{}{}
+		add := func(tags []TokenTag) {
+			for _, t := range tags {
+				key := t.POS + "\x00" + t.Lemma
+				if _, ok := seen[key]; ok {
+					continue
+				}
+				seen[key] = struct{}{}
+				out = append(out, t)
+			}
+		}
+		add(lookup(w))
+		if !isLower && !isMixed {
+			add(lookup(lower))
+		}
+		if isAllUpper {
+			add(lookup(tools.UppercaseFirstChar(lower)))
+		}
+		if len(out) == 0 && !isMixed {
+			if strings.HasSuffix(lower, "mente") {
+				possibleAdj := strings.TrimSuffix(lower, "mente")
+				for _, tw := range lookup(possibleAdj) {
+					if tw.POS != "" && adjPartFS.MatchString(tw.POS) {
+						add([]TokenTag{{POS: "RG", Lemma: lower}})
+						break
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := prefVerb.FindStringSubmatch(w); m != nil {
+					for _, tw := range lookup(strings.ToLower(m[2])) {
+						if tw.POS != "" && verbRE.MatchString(tw.POS) {
+							add([]TokenTag{{POS: tw.POS, Lemma: strings.ToLower(m[1]) + tw.Lemma}})
+						}
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := prefVerb2.FindStringSubmatch(w); m != nil {
+					for _, tw := range lookup(strings.ToLower(m[2])) {
+						if tw.POS != "" && verbRE.MatchString(tw.POS) {
+							add([]TokenTag{{POS: tw.POS, Lemma: strings.ToLower(m[1]) + tw.Lemma}})
+						}
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := prefAdjSuper.FindStringSubmatch(w); m != nil {
+					for _, tw := range lookup(strings.ToLower(m[2])) {
+						if tw.POS != "" && adjVP.MatchString(tw.POS) {
+							add([]TokenTag{{POS: tw.POS, Lemma: strings.ToLower(m[1]) + tw.Lemma}})
+						}
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := prefAdjHyphen.FindStringSubmatch(w); m != nil {
+					pref := strings.ToLower(m[1])
+					if !noPrefAdj.MatchString(pref) {
+						adj := strings.ToLower(m[2])
+						prefixOK := false
+						for _, tw := range lookup(pref) {
+							if tw.POS != "" && adjMS.MatchString(tw.POS) {
+								prefixOK = true
+								break
+							}
+						}
+						if prefixOK {
+							for _, tw := range lookup(adj) {
+								if tw.POS != "" && adjRE.MatchString(tw.POS) {
+									add([]TokenTag{{POS: tw.POS, Lemma: pref + "-" + tw.Lemma}})
+									break
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if len(out) == 0 && tools.IsEmoji(token) {
+			add([]TokenTag{{POS: "_emoji_", Lemma: "_emoji_"}})
+		}
+		return out
+	}
 }
 
 // portugueseTaggerTagWord ports Java PortugueseTagger.tag for TagWord inject

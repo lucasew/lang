@@ -326,7 +326,8 @@ func languagePOSDictNames(base string) []string {
 	case "en":
 		return []string{"english.dict"}
 	case "es":
-		return []string{"spanish.dict"}
+		// Java SpanishTagger: /es/es-ES.dict (also historical spanish.dict name).
+		return []string{"es-ES.dict", "spanish.dict"}
 	case "fr":
 		return []string{"french.dict"}
 	case "gl":
