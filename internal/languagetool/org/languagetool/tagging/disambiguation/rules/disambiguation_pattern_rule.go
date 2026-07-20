@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
@@ -114,6 +115,10 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 		if firstMatch < 0 || firstMatch >= len(nws) || lastMatch < 0 || lastMatch >= len(nws) {
 			return
 		}
+		// Java keepDespiteFilter before keepByDisambig
+		if !r.keepDespiteFilter(nws, positions, firstMatch, lastMatch) {
+			return
+		}
 		// Java keepByDisambig on full pattern char offsets (firstMatch…lastMatch)
 		fromPos := nws[firstMatch].GetStartPos()
 		toPos := nws[lastMatch].GetEndPos()
@@ -128,7 +133,7 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 		if first < 0 || last < first {
 			return
 		}
-		r.applyAction(nws, first, last)
+		r.applyAction(nws, first, last, firstMatch, positions)
 		changed = true
 	})
 	if !changed {
@@ -214,6 +219,27 @@ func (r *DisambiguationPatternRule) actionSpan(firstMatchToken, lastMarker int, 
 	return from, to
 }
 
+// keepDespiteFilter ports DisambiguationPatternRuleReplacer.keepDespiteFilter.
+// When a RuleFilter is set, only apply the action if filter.matches (AcceptRuleMatch ≠ nil).
+func (r *DisambiguationPatternRule) keepDespiteFilter(
+	tokens []*languagetool.AnalyzedTokenReadings,
+	tokenPositions []int,
+	firstMatchToken, lastMatchToken int,
+) bool {
+	if r == nil || r.PatternRule == nil || r.Filter == nil {
+		return true
+	}
+	if firstMatchToken < 0 || lastMatchToken < firstMatchToken || lastMatchToken >= len(tokens) {
+		return true
+	}
+	eval := patterns.NewRuleFilterEvaluator(r.Filter)
+	// Java: RuleMatch fakeMatch = new RuleMatch(new FakeRule(), null, 0, 1, "(internal rule)");
+	fake := rules.NewRuleMatch(nil, nil, 0, 1, "(internal rule)")
+	patternTokens := tokens[firstMatchToken : lastMatchToken+1]
+	out := eval.RunFilter(r.FilterArgs, fake, patternTokens, firstMatchToken, tokenPositions)
+	return out != nil
+}
+
 // keepByDisambig ports DisambiguationPatternRuleReplacer.keepByDisambig:
 // false when any anti-pattern match overlaps [fromPos,toPos].
 func (r *DisambiguationPatternRule) keepByDisambig(sentence *languagetool.AnalyzedSentence, fromPos, toPos int) bool {
@@ -249,7 +275,123 @@ func (r *DisambiguationPatternRule) keepByDisambig(sentence *languagetool.Analyz
 	return true
 }
 
-func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedTokenReadings, first, last int) {
+// applyFilterAll ports DisambiguationPatternRuleReplacer case FILTERALL.
+func (r *DisambiguationPatternRule) applyFilterAll(
+	nws []*languagetool.AnalyzedTokenReadings,
+	firstMatchToken int,
+	tokenPositions []int,
+) {
+	if r == nil || len(r.Tokens) == 0 || firstMatchToken < 0 {
+		return
+	}
+	startCorr := 0
+	endCorr := 0
+	if r.PatternRule != nil {
+		startCorr = r.StartPositionCorrection
+		endCorr = r.EndPositionCorrection
+		if startCorr == 0 && endCorr == 0 {
+			startCorr, endCorr = patterns.PositionCorrectionsFromTokens(r.Tokens)
+		}
+	}
+	// matchingTokens = count of non-zero positions
+	matchingTokens := 0
+	for _, p := range tokenPositions {
+		if p != 0 {
+			matchingTokens++
+		}
+	}
+	correctedStPos := 0
+	startPositionCorrection := startCorr
+	endPositionCorrection := endCorr
+	if startPositionCorrection > 0 {
+		correctedStPos = -1
+		lim := startPositionCorrection
+		if lim > len(tokenPositions)-1 {
+			lim = len(tokenPositions) - 1
+		}
+		for l := 0; l <= lim && l < len(tokenPositions); l++ {
+			correctedStPos += tokenPositions[l]
+		}
+		// adjust when optional elements (position 0) appear before start correction
+		w := startPositionCorrection
+		for j := 0; j <= w && j < len(tokenPositions); j++ {
+			if tokenPositions[j] == 0 {
+				startPositionCorrection--
+			}
+		}
+	}
+	if endPositionCorrection < 0 {
+		for d := startPositionCorrection; d < len(tokenPositions); d++ {
+			if tokenPositions[d] == 0 {
+				endPositionCorrection++
+			}
+		}
+	}
+	matchingTokensWithCorrection := matchingTokens
+	// lastMatchToken not available here; actionSpan already bounded the marker span.
+	// Use positions-based count for the corrected span length.
+	spanCount := matchingTokensWithCorrection - startPositionCorrection + endPositionCorrection
+	if spanCount <= 0 {
+		// Fallback: 1:1 marked tokens (legacy path when positions are empty)
+		var marked []*patterns.PatternToken
+		for _, pt := range r.Tokens {
+			if pt != nil && pt.InsideMarker {
+				marked = append(marked, pt)
+			}
+		}
+		if len(marked) == 0 || firstMatchToken+len(marked) > len(nws) {
+			return
+		}
+		for j, pt := range marked {
+			pos := firstMatchToken + correctedStPos + j
+			if pos < 0 || pos >= len(nws) || nws[pos] == nil || pt == nil || pt.Pos == nil || pt.Pos.PosTag == "" {
+				continue
+			}
+			tmpMatch := patterns.NewMatch(pt.Pos.PosTag, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
+			ms := tmpMatch.CreateStateWithSynth(nil, nws[pos])
+			if filtered := ms.FilterReadings(); filtered != nil {
+				nws[pos].ReplaceReadings(filtered.GetReadings(), r.ID)
+			}
+		}
+		return
+	}
+	for i := 0; i < spanCount; i++ {
+		position := firstMatchToken + correctedStPos + i
+		if position < 0 || position >= len(nws) || nws[position] == nil {
+			continue
+		}
+		idx := i + startPositionCorrection
+		var pToken *patterns.PatternToken
+		if idx >= 0 && idx < len(tokenPositions) && tokenPositions[idx] > 0 && idx < len(r.Tokens) {
+			pToken = r.Tokens[idx]
+		} else {
+			k := 1
+			for idx+k < len(r.Tokens)+endPositionCorrection &&
+				idx+k < len(tokenPositions) &&
+				tokenPositions[idx+k] == 0 {
+				k++
+			}
+			if idx+k >= 0 && idx+k < len(r.Tokens) {
+				pToken = r.Tokens[idx+k]
+			}
+		}
+		if pToken == nil || pToken.Pos == nil || pToken.Pos.PosTag == "" {
+			continue
+		}
+		// Java: new Match(pToken.getPOStag(), null, true, pToken.getPOStag(), null, …)
+		tmpMatch := patterns.NewMatch(pToken.Pos.PosTag, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
+		ms := tmpMatch.CreateStateWithSynth(nil, nws[position])
+		if filtered := ms.FilterReadings(); filtered != nil {
+			nws[position].ReplaceReadings(filtered.GetReadings(), r.ID)
+		}
+	}
+}
+
+func (r *DisambiguationPatternRule) applyAction(
+	nws []*languagetool.AnalyzedTokenReadings,
+	first, last, firstMatchToken int,
+	tokenPositions []int,
+) {
 	switch r.Action {
 	case ActionImmunize:
 		for i := first; i <= last && i < len(nws); i++ {
@@ -439,40 +581,10 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			nws[first].ReplaceReadings(filtered.GetReadings(), r.ID)
 		}
 	case ActionFilterAll:
-		// Java FILTERALL: Match from each pattern token POS (postagRegexp=true),
-		// filterReadings on corresponding matched token position.
-		// Without tokenPositions for skip gaps, require 1:1 marked tokens ↔ span.
-		var marked []*patterns.PatternToken
-		if r.AbstractTokenBasedRule != nil {
-			for _, pt := range r.Tokens {
-				if pt != nil && pt.InsideMarker {
-					marked = append(marked, pt)
-				}
-			}
-		}
-		span := 0
-		if last >= first && first >= 0 {
-			span = last - first + 1
-		}
-		if span == 0 || len(marked) != span {
-			return
-		}
-		for j, i := 0, first; i <= last && i < len(nws); i, j = i+1, j+1 {
-			if nws[i] == nil || j >= len(marked) || marked[j] == nil || marked[j].Pos == nil {
-				continue
-			}
-			posTag := marked[j].Pos.PosTag
-			if posTag == "" {
-				continue
-			}
-			// Java: new Match(pToken.getPOStag(), null, true, pToken.getPOStag(), null, …)
-			tmpMatch := patterns.NewMatch(posTag, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
-			ms := tmpMatch.CreateStateWithSynth(nil, nws[i])
-			filtered := ms.FilterReadings()
-			if filtered != nil {
-				nws[i].ReplaceReadings(filtered.GetReadings(), r.ID)
-			}
-		}
+		// Java FILTERALL (DisambiguationPatternRuleReplacer): map each matched
+		// token in the corrected span to a pattern token via tokenPositions
+		// (skip zero-width optional elements), then MatchState.filterReadings.
+		r.applyFilterAll(nws, firstMatchToken, tokenPositions)
 	case ActionIgnoreSpelling:
 		for i := first; i <= last && i < len(nws); i++ {
 			if nws[i] != nil {
