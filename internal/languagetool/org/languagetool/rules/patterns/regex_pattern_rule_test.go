@@ -23,7 +23,7 @@ func TestRegexPatternRuleMatch(t *testing.T) {
 	text := "This is foo bar and fou bar"
 	// use a single-token sentence if GetText uses token strings
 	tok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(text, nil, nil))
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{tok})
+	sent := testSentence(tok)
 	// if GetText doesn't equal full text, set via whatever API exists
 	gotText := sent.GetText()
 	if gotText != text {
@@ -42,7 +42,7 @@ func TestRegexPatternRuleMarkGroup(t *testing.T) {
 	re := regexp.MustCompile(`(fo[ou]) bar`)
 	rule := NewRegexPatternRule("M", "d", "m", "", "", "en", re, 1)
 	tok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("This is foo bar", nil, nil))
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{tok})
+	sent := testSentence(tok)
 	matches, err := rule.Match(sent)
 	require.NoError(t, err)
 	require.Len(t, matches, 1)

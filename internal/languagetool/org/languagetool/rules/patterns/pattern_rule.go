@@ -243,9 +243,13 @@ func NewFalseFriendPatternRule(id, languageCode string, tokens []*PatternToken, 
 	return &FalseFriendPatternRule{PatternRule: pr}
 }
 
-// Match ports PatternRule.match: PatternRuleMatcher then checkForAntiPatterns.
+// Match ports PatternRule.match: canBeIgnoredFor fast-path, PatternRuleMatcher, antipatterns.
 func (r *PatternRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	matcher := NewPatternRuleMatcherFromPattern(r)
+	// Java PatternRule.match: if (canBeIgnoredFor(sentence)) return EMPTY_ARRAY
+	if matcher.Rule != nil && matcher.Rule.CanBeIgnoredFor(sentence) {
+		return nil, nil
+	}
 	found, err := matcher.Match(sentence)
 	if err != nil {
 		return found, err

@@ -76,6 +76,7 @@ func NewAbstractTokenBasedRule(id, description, languageCode string, patternToke
 }
 
 func (r *AbstractTokenBasedRule) computeHints(patternTokens []*PatternToken) {
+	// Java AbstractTokenBasedRule constructor: minTokenCount + tokenHints from calcFormHints/calcLemmaHints.
 	minCount := 0
 	if len(patternTokens) > 0 && !canMatchSentenceStart(patternTokens[0]) {
 		minCount = 1
@@ -90,8 +91,9 @@ func (r *AbstractTokenBasedRule) computeHints(patternTokens []*PatternToken) {
 		if token.MinOccurrence > 0 {
 			minCount++
 		}
-		// surface form hint when non-regex simple token
-		if token.Token != "" && !token.Regexp && !token.Negation {
+		// Java PatternToken.calcFormHints: null when negation || !hasStringThatMustMatch
+		// hasStringThatMustMatch: !ref && !mayBeOmitted (min=0) && non-empty string.
+		if hasStringThatMustMatch(token) && !token.Regexp && !token.Negation {
 			h := NewTokenHint(token.MatchInflected, []string{token.Token}, i)
 			hints = append(hints, h)
 			if fixedOffset && anchor == nil {
@@ -111,12 +113,33 @@ func (r *AbstractTokenBasedRule) computeHints(patternTokens []*PatternToken) {
 	r.MinTokenCount = minCount
 }
 
+// hasStringThatMustMatch ports PatternToken.hasStringThatMustMatch.
+func hasStringThatMustMatch(token *PatternToken) bool {
+	if token == nil {
+		return false
+	}
+	// !isReferenceElement && !MAY_BE_OMITTED && !getString().isEmpty()
+	if token.IsReferenceElement() {
+		return false
+	}
+	if token.MinOccurrence == 0 {
+		return false
+	}
+	return token.Token != ""
+}
+
 func canMatchSentenceStart(token *PatternToken) bool {
 	if token == nil {
 		return true
 	}
-	// simplified: empty token or negation can match start
-	return token.Token == "" || token.Negation
+	// Java: isSentenceStart() || getNegation() || !hasStringThatMustMatch()
+	if token.Negation || !hasStringThatMustMatch(token) {
+		return true
+	}
+	if token.Pos != nil && token.Pos.PosTag == languagetool.SentenceStartTagName && !token.Pos.Negate {
+		return true
+	}
+	return false
 }
 
 // CanBeIgnoredFor ports AbstractTokenBasedRule.canBeIgnoredFor.

@@ -544,7 +544,7 @@ func TestPatternRuleLoader_PhraserefExpands(t *testing.T) {
 		}
 		pr := NewPatternRule(ar.ID, "en", ar.PatternTokens, ar.Description, ar.Message, "")
 		toks := []*languagetool.AnalyzedTokenReadings{atr("hello", 0), atr("world", 6)}
-		ms, err := pr.Match(languagetool.NewAnalyzedSentence(toks))
+		ms, err := pr.Match(testSentence(toks...))
 		require.NoError(t, err)
 		require.Len(t, ms, 1)
 	}
@@ -588,7 +588,7 @@ func TestPatternRuleLoader_OrExpands(t *testing.T) {
 			atr(ar.PatternTokens[0].Token, 0),
 			atr("its", 10),
 		}
-		ms, err := pr.Match(languagetool.NewAnalyzedSentence(toks))
+		ms, err := pr.Match(testSentence(toks...))
 		require.NoError(t, err)
 		require.Len(t, ms, 1, "surface %s its", ar.PatternTokens[0].Token)
 	}
@@ -683,9 +683,7 @@ func TestPatternRuleMatcher_MultitokenFilterFailClosed(t *testing.T) {
 	pr := NewPatternRule(ars[0].ID, "en", ars[0].PatternTokens, ars[0].Description, ars[0].Message, "")
 	pr.Filter = ars[0].Filter
 	pr.FilterArgs = ars[0].FilterArgs
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atrTok("New", 0), atrTok("Yrok", 4),
-	})
+	sent := testSentence(atrTok("New", 0), atrTok("Yrok", 4),)
 	ms, err := pr.Match(sent)
 	require.NoError(t, err)
 	require.Empty(t, ms, "no multitoken dict → filter drops (fail-closed)")
@@ -720,17 +718,13 @@ func TestPatternRuleLoader_AntiPatternsLoaded(t *testing.T) {
 	pr.AntiPatterns = ars[0].AntiPatterns
 
 	// "go go" alone → fire
-	sentFire := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atrTok("go", 0), atrTok("go", 3),
-	})
+	sentFire := testSentence(atrTok("go", 0), atrTok("go", 3),)
 	ms, err := pr.Match(sentFire)
 	require.NoError(t, err)
 	require.Len(t, ms, 1)
 
 	// "to go go" → antipattern overlaps → suppress
-	sentKeep := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atrTok("to", 0), atrTok("go", 3), atrTok("go", 6),
-	})
+	sentKeep := testSentence(atrTok("to", 0), atrTok("go", 3), atrTok("go", 6),)
 	ms, err = pr.Match(sentKeep)
 	require.NoError(t, err)
 	require.Empty(t, ms, "antipattern must suppress overlapping rule match")

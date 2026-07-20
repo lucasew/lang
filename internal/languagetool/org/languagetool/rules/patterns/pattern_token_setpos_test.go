@@ -42,7 +42,7 @@ func TestPatternToken_SetPosMatch_CompileAndMatch(t *testing.T) {
 			languagetool.NewAnalyzedToken("maison", &pos2, &lem2), 3),
 	}
 	pr := NewPatternRule(ars[0].ID, "en", ars[0].PatternTokens, ars[0].Description, ars[0].Message, "")
-	ms, err := pr.Match(languagetool.NewAnalyzedSentence(toks))
+	ms, err := pr.Match(testSentence(toks...))
 	require.NoError(t, err)
 	require.Len(t, ms, 1, "setpos should align second POS with first")
 

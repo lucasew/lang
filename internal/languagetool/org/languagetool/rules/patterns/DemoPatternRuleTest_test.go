@@ -13,7 +13,7 @@ func TestDemoPatternRule_Rules(t *testing.T) {
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("foo", nil, nil), 0),
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("bar", nil, nil), 4),
 	}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	rule := NewPatternRule("DEMO_RULE", "xx",
 		[]*PatternToken{Token("foo"), Token("bar")},
 		"demo", "found", "")

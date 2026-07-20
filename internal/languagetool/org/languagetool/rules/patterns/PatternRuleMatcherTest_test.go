@@ -12,11 +12,22 @@ func atrTok(token string, start int) *languagetool.AnalyzedTokenReadings {
 	return languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken(token, nil, nil), start)
 }
 
+// testSentence prepends SENT_START so non-whitespace count matches Java analysis
+// (AbstractTokenBasedRule.minTokenCount for canBeIgnoredFor).
+func testSentence(toks ...*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedSentence {
+	ss := languagetool.SentenceStartTagName
+	start := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0)
+	all := make([]*languagetool.AnalyzedTokenReadings, 0, len(toks)+1)
+	all = append(all, start)
+	all = append(all, toks...)
+	return languagetool.NewAnalyzedSentence(all)
+}
+
 func TestPatternRuleMatcher_Match(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{
 		atrTok("This", 0), atrTok("is", 5), atrTok("foo", 8), atrTok("bar", 12),
 	}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	rule := NewPatternRule("DEMO", "en",
 		[]*PatternToken{Token("foo"), Token("bar")},
 		"demo", "found foo bar", "short")
@@ -28,7 +39,7 @@ func TestPatternRuleMatcher_Match(t *testing.T) {
 
 func TestPatternRuleMatcher_ZeroMinOccurrences(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("hello", 0), atrTok("world", 6)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	opt := Token("the")
 	opt.SetMinOccurrence(0)
 	rule := NewPatternRule("OPT", "en",
@@ -41,7 +52,7 @@ func TestPatternRuleMatcher_ZeroMinOccurrences(t *testing.T) {
 
 func TestPatternRuleMatcher_TwoZeroMinOccurrences(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("a", 0), atrTok("b", 2)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	o1, o2 := Token("x"), Token("y")
 	o1.SetMinOccurrence(0)
 	o2.SetMinOccurrence(0)
@@ -56,7 +67,7 @@ func TestPatternRuleMatcher_TwoZeroMinOccurrences(t *testing.T) {
 func TestPatternRuleMatcher_ZeroMinOccurrences2(t *testing.T) {
 	// optional in the middle: a [x]? b
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("a", 0), atrTok("b", 2)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	opt := Token("x")
 	opt.SetMinOccurrence(0)
 	rule := NewPatternRule("MID", "en",
@@ -70,7 +81,7 @@ func TestPatternRuleMatcher_ZeroMinOccurrences2(t *testing.T) {
 
 func TestPatternRuleMatcher_ZeroMinOccurrences3(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("a", 0), atrTok("x", 2), atrTok("b", 4)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	opt := Token("x")
 	opt.SetMinOccurrence(0)
 	rule := NewPatternRule("MID2", "en",
@@ -83,7 +94,7 @@ func TestPatternRuleMatcher_ZeroMinOccurrences3(t *testing.T) {
 
 func TestPatternRuleMatcher_ZeroMinOccurrences4(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("end", 0)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	opt := Token("opt")
 	opt.SetMinOccurrence(0)
 	rule := NewPatternRule("END", "en",
@@ -97,7 +108,7 @@ func TestPatternRuleMatcher_ZeroMinOccurrences4(t *testing.T) {
 func TestPatternRuleMatcher_ZeroMinOccurrencesWithEmptyElement(t *testing.T) {
 	// empty/any element with min 0: matcher may skip; assert no panic + optional match with explicit token
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("z", 0)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	any := NewPatternToken("", false, false, false)
 	any.SetMinOccurrence(0)
 	rule := NewPatternRule("E", "en",
@@ -120,7 +131,7 @@ func TestPatternRuleMatcher_ZeroMinOccurrencesWithEmptyElement(t *testing.T) {
 
 func TestPatternRuleMatcher_ZeroMinOccurrencesWithSuggestion(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("hi", 0)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	opt := Token("please")
 	opt.SetMinOccurrence(0)
 	rule := NewPatternRule("S", "en",
@@ -135,7 +146,7 @@ func TestPatternRuleMatcher_ZeroMinOccurrencesWithSuggestion(t *testing.T) {
 func TestPatternRuleMatcher_ZeroMinTwoMaxOccurrences(t *testing.T) {
 	// max=2 min=0 on filler
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("a", 0), atrTok("b", 2)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	opt := Token("x")
 	opt.SetMinOccurrence(0)
 	opt.SetMaxOccurrence(2)
@@ -148,7 +159,7 @@ func TestPatternRuleMatcher_ZeroMinTwoMaxOccurrences(t *testing.T) {
 
 func TestPatternRuleMatcher_TwoMaxOccurrencesWithAnyToken(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("a", 0), atrTok("x", 2), atrTok("y", 4), atrTok("b", 6)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	any := NewPatternToken("", false, false, false)
 	any.SetMaxOccurrence(2)
 	rule := NewPatternRule("ANY2", "en",
@@ -160,7 +171,7 @@ func TestPatternRuleMatcher_TwoMaxOccurrencesWithAnyToken(t *testing.T) {
 
 func TestPatternRuleMatcher_ThreeMaxOccurrencesWithAnyToken(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("a", 0), atrTok("b", 2)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	any := NewPatternToken("", false, false, false)
 	any.SetMaxOccurrence(3)
 	any.SetMinOccurrence(0)
@@ -174,7 +185,7 @@ func TestPatternRuleMatcher_ThreeMaxOccurrencesWithAnyToken(t *testing.T) {
 
 func TestPatternRuleMatcher_ZeroMinTwoMaxOccurrencesWithAnyToken(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("start", 0), atrTok("end", 6)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	any := NewPatternToken("", false, false, false)
 	any.SetMinOccurrence(0)
 	any.SetMaxOccurrence(2)
@@ -188,7 +199,7 @@ func TestPatternRuleMatcher_ZeroMinTwoMaxOccurrencesWithAnyToken(t *testing.T) {
 
 func TestPatternRuleMatcher_UnlimitedMaxOccurrences(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atrTok("a", 0), atrTok("b", 2)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	any := NewPatternToken("", false, false, false)
 	any.SetMinOccurrence(0)
 	any.SetMaxOccurrence(-1) // unlimited if supported

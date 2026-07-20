@@ -21,7 +21,7 @@ func TestPatternRuleMatcherSimple(t *testing.T) {
 		atr("bar", 12),
 	}
 	// fix end positions roughly
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	rule := NewPatternRule("DEMO", "en",
 		[]*PatternToken{Token("foo"), Token("bar")},
 		"demo", "found foo bar", "short")
@@ -39,7 +39,7 @@ func TestPatternRuleMatcherOptional(t *testing.T) {
 		atr("hello", 0),
 		atr("world", 6),
 	}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	opt := Token("the")
 	opt.SetMinOccurrence(0)
 	rule := NewPatternRule("OPT", "en",
@@ -52,7 +52,7 @@ func TestPatternRuleMatcherOptional(t *testing.T) {
 
 func TestPatternRuleMatcherNoMatch(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atr("hello", 0)}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	rule := NewPatternRule("X", "en", []*PatternToken{Token("bye")}, "d", "m", "")
 	matches, err := rule.Match(sent)
 	require.NoError(t, err)
@@ -70,16 +70,12 @@ func TestPatternRuleMatcher_NextExceptionImmediate(t *testing.T) {
 		[]*PatternToken{can, Token("run")},
 		"d", "m", "")
 	// "can be" — next exception fires
-	sent1 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atr("can", 0), atr("be", 4),
-	})
+	sent1 := testSentence(atr("can", 0), atr("be", 4),)
 	ms, err := rule.Match(sent1)
 	require.NoError(t, err)
 	require.Empty(t, ms)
 	// "can run" — ok
-	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atr("can", 0), atr("run", 4),
-	})
+	sent2 := testSentence(atr("can", 0), atr("run", 4),)
 	ms, err = rule.Match(sent2)
 	require.NoError(t, err)
 	require.Len(t, ms, 1)
@@ -99,27 +95,22 @@ func TestPatternRuleMatcher_NextExceptionSkipWindow(t *testing.T) {
 		"d", "m", "")
 
 	// see foo bad good → match; "bad" skipped over as non-candidate for "good"
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atr("see", 0), atr("foo", 4), atr("bad", 8), atr("good", 12),
-	})
+	sent := testSentence(atr("see", 0), atr("foo", 4), atr("bad", 8), atr("good", 12),)
 	ms, err := rule.Match(sent)
 	require.NoError(t, err)
 	require.Len(t, ms, 1)
 	require.Equal(t, 0, ms[0].FromPos)
-	require.Equal(t, sent.GetTokensWithoutWhitespace()[3].GetEndPos(), ms[0].ToPos)
+	// [SENT_START, see, foo, bad, good] → good is index 4
+	require.Equal(t, sent.GetTokensWithoutWhitespace()[4].GetEndPos(), ms[0].ToPos)
 
 	// see bad good → path 2 blocks matching "see" (immediate next is exception)
-	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atr("see", 0), atr("bad", 4), atr("good", 8),
-	})
+	sent2 := testSentence(atr("see", 0), atr("bad", 4), atr("good", 8),)
 	ms, err = rule.Match(sent2)
 	require.NoError(t, err)
 	require.Empty(t, ms)
 
 	// see good — adjacent; next of see is good (not bad) → match
-	sent3 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atr("see", 0), atr("good", 4),
-	})
+	sent3 := testSentence(atr("see", 0), atr("good", 4),)
 	ms, err = rule.Match(sent3)
 	require.NoError(t, err)
 	require.Len(t, ms, 1)
@@ -167,7 +158,7 @@ func TestPatternRuleMatcher_UnificationAgreement(t *testing.T) {
 	// cat(NN) + sits(VBZ) — second token pattern is NN so won't surface-match; use two NN.
 	sg1 := atrPOS("cat", "NN", 0)
 	sg2 := atrPOS("dog", "NN", 4)
-	sentAgree := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{sg1, sg2})
+	sentAgree := testSentence(sg1, sg2)
 	ms, err := agree.Match(sentAgree)
 	require.NoError(t, err)
 	require.Len(t, ms, 1, "same number should unify and match")
@@ -187,7 +178,7 @@ func TestPatternRuleMatcher_UnificationAgreement(t *testing.T) {
 	agree2.UnifierConfig = cfg
 
 	pl := atrPOS("dogs", "NNS", 4)
-	sentDisagree := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{sg1, pl})
+	sentDisagree := testSentence(sg1, pl)
 	ms, err = agree2.Match(sentDisagree)
 	require.NoError(t, err)
 	require.Empty(t, ms, "different number must not unify without negate")

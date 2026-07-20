@@ -14,10 +14,8 @@ func sampleSentenceTokenLemma() *languagetool.AnalyzedSentence {
 	ss := languagetool.SentenceStartTagName
 	start := languagetool.NewAnalyzedToken("", &ss, nil)
 	tok := languagetool.NewAnalyzedToken("token", &pos, &lem)
-	return languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		languagetool.NewAnalyzedTokenReadingsAt(start, 0),
-		languagetool.NewAnalyzedTokenReadingsAt(tok, 0),
-	})
+	return testSentence(languagetool.NewAnalyzedTokenReadingsAt(start, 0),
+		languagetool.NewAnalyzedTokenReadingsAt(tok, 0),)
 }
 
 func TestRuleSet_TextHintsAreHonored(t *testing.T) {

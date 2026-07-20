@@ -58,7 +58,7 @@ func TestPatternRuleMatcher_FormatsBackrefs(t *testing.T) {
 		atr("hello", 0),
 		atr("world", 6),
 	}
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	raw := `Bad <suggestion><match no="1" case_conversion="allupper"/> \2</suggestion>`
 	msg, matches := ProcessRuleMessage(raw)
 	display, suggs := extractSuggestions(msg)

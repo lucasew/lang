@@ -55,8 +55,12 @@ func NewPatternRuleMatcherFromPattern(rule *PatternRule) *PatternRuleMatcher {
 	if rule == nil {
 		panic("rule required")
 	}
+	// Java PatternRule extends AbstractTokenBasedRule: constructor computes tokenHints / minTokenCount.
 	atr := &AbstractTokenBasedRule{PatternRule: rule}
-	return NewPatternRuleMatcher(atr)
+	atr.computeHints(rule.Tokens)
+	m := NewPatternRuleMatcher(atr)
+	m.InterpretPreDisambig = rule.InterpretPreDisambig
+	return m
 }
 
 // Match ports PatternRuleMatcher.match.

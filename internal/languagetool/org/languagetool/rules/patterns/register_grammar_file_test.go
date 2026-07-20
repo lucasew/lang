@@ -31,7 +31,7 @@ func TestMatchSpanTokens_NoSentStartInvent(t *testing.T) {
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("of", nil, nil), 6),
 	}
 	require.True(t, toks[0].IsSentenceStart())
-	sent := languagetool.NewAnalyzedSentence(toks)
+	sent := testSentence(toks...)
 	span := matchSpanTokens(sent, 0, 8)
 	// Only real surfaces — no empty invent for SENT_START
 	require.Equal(t, []string{"could", "of"}, span)
