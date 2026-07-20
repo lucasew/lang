@@ -46,6 +46,8 @@ type xmlRulesRoot struct {
 	XMLName xml.Name `xml:"rules"`
 	// IdPrefix ports Java rules idprefix="…" (e.g. L2_ on grammar-l2-de.xml).
 	IdPrefix string `xml:"idprefix,attr"`
+	// Premium ports rules premium="yes|no" file-level default (Java premiumFileAttribute).
+	Premium string `xml:"premium,attr"`
 	// Unifications ports top-level <unification feature="…"> equivalence tables.
 	Unifications []xmlUnification `xml:"unification"`
 	// Phrases ports top-level <phrases><phrase id="…"> (PatternRuleHandler).
@@ -107,6 +109,8 @@ type xmlCategory struct {
 	Type string `xml:"type,attr"`
 	// Prio ports category prio="N" (Java prioCategoryAttribute; 0 = unset).
 	Prio string `xml:"prio,attr"`
+	// Premium ports category premium="yes|no" (Java premiumCategoryAttribute).
+	Premium string `xml:"premium,attr"`
 	Tags       string         `xml:"tags,attr"`
 	ToneTags   string         `xml:"tone_tags,attr"`
 	// GoalSpecific ports is_goal_specific on category (inherited when rule omits it).
@@ -124,6 +128,8 @@ type xmlRuleGroup struct {
 	Type string `xml:"type,attr"`
 	// Prio ports rulegroup prio="N" (Java prioRuleGroupAttribute; non-zero overrides category).
 	Prio string `xml:"prio,attr"`
+	// Premium ports rulegroup premium="yes|no" (Java premiumRuleGroupAttribute).
+	Premium string `xml:"premium,attr"`
 	Tags  string    `xml:"tags,attr"`
 	ToneTags string `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -142,6 +148,8 @@ type xmlRule struct {
 	Type string `xml:"type,attr"`
 	// Prio ports rule prio="N" (Java prioRuleAttribute; non-zero overrides group/category).
 	Prio string `xml:"prio,attr"`
+	// Premium ports rule premium="yes|no" (overrides group/category/file).
+	Premium string `xml:"premium,attr"`
 	Tags    string     `xml:"tags,attr"`
 	ToneTags string    `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -781,7 +789,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
 	idPrefix := strings.TrimSpace(root.IdPrefix)
-	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string, catPrio, groupPrio int) error {
+	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string, catPrio, groupPrio int, filePremium, catPremium, groupPremium string) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -861,6 +869,8 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 				r.SourceFile = sourceFile
 				// Java finalize: cat prio then group prio then rule prio (non-zero overwrites).
 				r.Priority = resolvePriority(catPrio, groupPrio, parsePrioAttr(xr.Prio))
+				// Java prepareRule setPremium(isPremiumRule): rule > group > category > file.
+				r.Premium = resolvePremium(xr.Premium, groupPremium, catPremium, filePremium)
 				if defaultOff {
 					r.DefaultOff = true
 				}
@@ -879,6 +889,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		return nil
 	}
 	srcFile := strings.TrimSpace(filename)
+	filePremium := strings.TrimSpace(root.Premium)
 	for _, cat := range root.Categories {
 		catTags := parseRuleTagsAttr(cat.Tags)
 		catTones := parseToneTagsAttr(cat.ToneTags)
@@ -886,8 +897,9 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		catDefaultOff := strings.EqualFold(strings.TrimSpace(cat.Default), XMLOff)
 		catType := strings.TrimSpace(cat.Type)
 		catPrio := parsePrioAttr(cat.Prio)
+		catPremium := strings.TrimSpace(cat.Premium)
 		for _, xr := range cat.Rules {
-			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile, catPrio, 0); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile, catPrio, 0, filePremium, catPremium, ""); err != nil {
 				return nil, err
 			}
 		}
@@ -903,13 +915,14 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 			groupType := strings.TrimSpace(g.Type)
 			groupURL := strings.TrimSpace(g.URL)
 			groupPrio := parsePrioAttr(g.Prio)
+			groupPremium := strings.TrimSpace(g.Premium)
 			for i, xr := range g.Rules {
 				id := xr.ID
 				if id == "" {
 					id = g.ID
 				}
 				start := len(out)
-				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType, groupType, groupURL, srcFile, catPrio, groupPrio); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType, groupType, groupURL, srcFile, catPrio, groupPrio, filePremium, catPremium, groupPremium); err != nil {
 					return nil, err
 				}
 				// sub id 1-based per XML rule (shared by OR expansions of that rule)
@@ -929,11 +942,29 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, "", "", "", srcFile, 0, 0); err != nil {
+		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, "", "", "", srcFile, 0, 0, filePremium, "", ""); err != nil {
 			return nil, err
 		}
 	}
 	return out, nil
+}
+
+// resolvePremium ports PatternRuleHandler isPremiumRule:
+// rule premium → rulegroup → category → file; yes/true → true; no/false → false; unset → false.
+func resolvePremium(rulePrem, groupPrem, catPrem, filePrem string) bool {
+	for _, a := range []string{rulePrem, groupPrem, catPrem, filePrem} {
+		a = strings.TrimSpace(a)
+		if a == "" {
+			continue
+		}
+		if strings.EqualFold(a, XMLYes) || strings.EqualFold(a, XMLTrue) {
+			return true
+		}
+		if strings.EqualFold(a, XMLNo) || strings.EqualFold(a, XMLFalse) {
+			return false
+		}
+	}
+	return false
 }
 
 // parsePrioAttr ports Integer.parseInt on XML prio= (invalid/empty → 0).

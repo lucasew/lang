@@ -48,6 +48,8 @@ type PatternRule struct {
 	URL string
 	// Priority ports Rule.priority (XML prio= inheritance).
 	Priority int
+	// Premium ports Rule.isPremium (XML premium= inheritance).
+	Premium bool
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -146,6 +148,18 @@ func (r *PatternRule) GetPriority() int {
 		return 0
 	}
 	return r.Priority
+}
+
+// IsPremium ports Rule.isPremium.
+func (r *PatternRule) IsPremium() bool {
+	return r != nil && r.Premium
+}
+
+// SetPremium ports Rule.setPremium.
+func (r *PatternRule) SetPremium(v bool) {
+	if r != nil {
+		r.Premium = v
+	}
 }
 
 // SetDefaultTempOff ports Rule.setDefaultTempOff (defaultOff + defaultTempOff).

@@ -64,6 +64,62 @@ func TestPatternRuleLoader_DefaultTempOff(t *testing.T) {
 	require.False(t, byID["O1"].DefaultTempOff)
 }
 
+// Java premium= inheritance: rule > rulegroup > category > file (yes/no).
+func TestPatternRuleLoader_PremiumInheritance(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en" premium="yes">
+  <category id="C1" name="C1" premium="no">
+    <rule id="CAT_NO">
+      <pattern><token>a</token></pattern>
+      <message>m</message>
+    </rule>
+    <rule id="RULE_YES" premium="yes">
+      <pattern><token>b</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+  <category id="C2" name="C2">
+    <rulegroup id="G" premium="yes">
+      <rule id="GROUP_YES">
+        <pattern><token>c</token></pattern>
+        <message>m</message>
+      </rule>
+      <rule id="GROUP_NO" premium="no">
+        <pattern><token>d</token></pattern>
+        <message>m</message>
+      </rule>
+    </rulegroup>
+    <rule id="FILE_YES">
+      <pattern><token>e</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	byID := map[string]*AbstractPatternRule{}
+	for _, ar := range ars {
+		byID[ar.ID] = ar
+	}
+	require.False(t, byID["CAT_NO"].Premium, "category premium=no overrides file yes")
+	require.True(t, byID["RULE_YES"].Premium, "rule premium=yes wins")
+	require.True(t, byID["GROUP_YES"].Premium, "rulegroup premium=yes")
+	require.False(t, byID["GROUP_NO"].Premium, "rule premium=no overrides group")
+	require.True(t, byID["FILE_YES"].Premium, "file premium=yes when nothing else set")
+
+	lt := languagetool.NewJLanguageTool("en")
+	_, err = RegisterGrammarXML(lt, xml, "t.xml", "en")
+	require.NoError(t, err)
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		if id != "RULE_YES" {
+			lt.DisableRule(id)
+		}
+	}
+	ms := lt.Check("b here")
+	require.NotEmpty(t, ms)
+	require.True(t, ms[0].IsPremium)
+}
+
 // Java prio= inheritance: category then group then rule (non-zero overwrites).
 // Twin of grammar-withPrio.xml expectations.
 func TestPatternRuleLoader_PrioInheritance(t *testing.T) {
