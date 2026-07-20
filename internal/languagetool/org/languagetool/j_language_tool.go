@@ -336,7 +336,25 @@ type JLanguageTool struct {
 	MaxErrorsPerWordRate float64
 	// LanguageName used in ErrorRateTooHighException message (Java language.getName()).
 	LanguageName string
-	unknown      map[string]struct{}
+	// ParaMode ports ParagraphHandling passed into TextCheckCallable / checkAnalyzedSentence.
+	// Zero value "" is treated as ParagraphNormal.
+	ParaMode ParagraphHandling
+	unknown  map[string]struct{}
+}
+
+// paraModeOrNormal returns ParaMode or ParagraphNormal when unset.
+func (lt *JLanguageTool) paraModeOrNormal() ParagraphHandling {
+	if lt == nil || lt.ParaMode == "" {
+		return ParagraphNormal
+	}
+	return lt.ParaMode
+}
+
+// SetParagraphHandling ports callers that pass ParagraphHandling into check.
+func (lt *JLanguageTool) SetParagraphHandling(p ParagraphHandling) {
+	if lt != nil {
+		lt.ParaMode = p
+	}
 }
 
 // SetMaxErrorsPerWordRate ports JLanguageTool.setMaxErrorsPerWordRate.
@@ -797,8 +815,11 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 	lt.unknown = map[string]struct{}{}
 	sents := lt.Analyze(text)
 	var out []LocalMatch
-	runSentence := lt.Mode != ModeTextLevelOnly
-	runTextLevel := lt.Mode != ModeAllButTextLevel
+	// Mode ports JLanguageTool.Mode; ParaMode ports ParagraphHandling:
+	// ONLYPARA → checkAnalyzedSentence returns empty (no sentence rules);
+	// ONLYNONPARA → getTextLevelRuleMatches skips text-level rules.
+	runSentence := lt.Mode != ModeTextLevelOnly && lt.paraModeOrNormal() != ParagraphOnlyPara
+	runTextLevel := lt.Mode != ModeAllButTextLevel && lt.paraModeOrNormal() != ParagraphOnlyNonPara
 
 	if runSentence {
 		data := sentenceDataFromAnalyzed(sents)

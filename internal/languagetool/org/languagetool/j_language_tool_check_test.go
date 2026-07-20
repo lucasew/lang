@@ -288,3 +288,42 @@ func TestCheck_AdjustLocalMatchPosLineColumn(t *testing.T) {
 	require.GreaterOrEqual(t, found.Column, 0)
 	require.GreaterOrEqual(t, found.EndColumn, found.Column)
 }
+
+func TestCheck_ParagraphHandling(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.DisableCleanOverlapping() // avoid TL span colliding with sentence matches
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	// document-end span so it does not overlap "this this" (0..n)
+	lt.AddTextLevelRuleChecker("TL", func(sents []*AnalyzedSentence) []LocalMatch {
+		return []LocalMatch{{FromPos: 8, ToPos: 9, RuleID: "TL", Message: "tl"}}
+	})
+	// NORMAL: both
+	lt.SetParagraphHandling(ParagraphNormal)
+	ms := lt.Check("this this")
+	ids := map[string]bool{}
+	for _, m := range ms {
+		ids[m.RuleID] = true
+	}
+	require.True(t, ids["WORD_REPEAT_RULE"])
+	require.True(t, ids["TL"])
+
+	// ONLYPARA: sentence rules skipped (checkAnalyzedSentence empty)
+	lt.SetParagraphHandling(ParagraphOnlyPara)
+	ms = lt.Check("this this")
+	ids = map[string]bool{}
+	for _, m := range ms {
+		ids[m.RuleID] = true
+	}
+	require.False(t, ids["WORD_REPEAT_RULE"])
+	require.True(t, ids["TL"])
+
+	// ONLYNONPARA: text-level skipped
+	lt.SetParagraphHandling(ParagraphOnlyNonPara)
+	ms = lt.Check("this this")
+	ids = map[string]bool{}
+	for _, m := range ms {
+		ids[m.RuleID] = true
+	}
+	require.True(t, ids["WORD_REPEAT_RULE"])
+	require.False(t, ids["TL"])
+}

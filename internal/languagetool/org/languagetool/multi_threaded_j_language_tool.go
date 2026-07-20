@@ -246,8 +246,8 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 		return lt.JLanguageTool.Check(text)
 	}
 
-	runSentence := lt.Mode != ModeTextLevelOnly
-	runTextLevel := lt.Mode != ModeAllButTextLevel
+	runSentence := lt.Mode != ModeTextLevelOnly && lt.paraModeOrNormal() != ParagraphOnlyPara
+	runTextLevel := lt.Mode != ModeAllButTextLevel && lt.paraModeOrNormal() != ParagraphOnlyNonPara
 	lt.unknown = map[string]struct{}{}
 
 	type sentResult struct {
