@@ -22,16 +22,18 @@ var (
 	// Longer ordinal suffixes first. No trailing \b: Go's \b is ASCII-only and
 	// fails after º/ª (Java uses UNICODE_CHARACTER_CLASS).
 	ordinalPoint = regexp.MustCompile(`(?i)\b([\d]+)\.(º|ª|er|os|as|o|a)`)
-	softHyphen       = regexp.MustCompile(`\x{00AD}`)
-	// Soft: keep only known dictionary-like compounds (Java keeps when tagged).
-	// Default is split so grammar patterns with explicit "-" tokens can match.
-	hyphenExceptions = map[string]bool{
+	softHyphen   = regexp.MustCompile(`\x{00AD}`)
+	// Java SpanishWordTokenizer.wordsToAdd camel-case hyphen exceptions only.
+	javaHyphenExceptions = map[string]bool{
 		"mers-cov": true, "mcgraw-hill": true, "sars-cov-2": true, "sars-cov": true,
 		"ph-metre": true, "ph-metres": true,
-		"e-mails": true, "e-mail": true, "best-seller": true, "best-sellers": true,
-		"covid-19": true, "al-ándalus": true, "al-andalus": true,
 	}
 )
+
+// IsTaggedES optional SpanishTagger.INSTANCE.tag(...).isTagged() hook.
+// Java keeps hyphen compounds only when SpanishTagger tags them.
+// Without a tagger, miss (split hyphens) — do not invent a soft compound lexicon.
+var IsTaggedES func(s string) bool
 
 func (w *SpanishWordTokenizer) Tokenize(text string) []string {
 	auxText := strings.ReplaceAll(text, "\u2010", "\u002d")
@@ -69,33 +71,35 @@ func wordsToAddES(s string) []string {
 	}
 	normalized := softHyphen.ReplaceAllString(s, "")
 	normalized = strings.ReplaceAll(normalized, "’", "'")
-	if isTaggedES(normalized) || hyphenExceptions[strings.ToLower(s)] {
+	// Java: SpanishTagger.INSTANCE.tag(...).isTagged() OR equalsIgnoreCase exceptions.
+	if isTaggedES(normalized) || javaHyphenExceptions[strings.ToLower(s)] {
 		l = append(l, s)
-	} else {
-		// split on hyphen, keep delims
-		var cur strings.Builder
-		for _, r := range s {
-			if r == '-' {
-				if cur.Len() > 0 {
-					l = append(l, cur.String())
-					cur.Reset()
-				}
-				l = append(l, "-")
-			} else {
-				cur.WriteRune(r)
+		return l
+	}
+	// if not found, the word is split on hyphens (keep separators)
+	var cur strings.Builder
+	for _, r := range s {
+		if r == '-' {
+			if cur.Len() > 0 {
+				l = append(l, cur.String())
+				cur.Reset()
 			}
+			l = append(l, "-")
+		} else {
+			cur.WriteRune(r)
 		}
-		if cur.Len() > 0 {
-			l = append(l, cur.String())
-		}
+	}
+	if cur.Len() > 0 {
+		l = append(l, cur.String())
 	}
 	return l
 }
 
 func isTaggedES(s string) bool {
-	// Soft path without SpanishTagger: do not keep arbitrary hyphen compounds.
-	// Java only keeps hyphenated forms when the dictionary tags them; untagged
-	// forms are split so rules like PREFIJO_CUASI / DEJA_VU can match.
-	_ = s
+	// Java: SpanishTagger.INSTANCE.tag(...).isTagged(). Without a tagger, miss
+	// (split hyphens) — do not invent a soft compound lexicon.
+	if IsTaggedES != nil {
+		return IsTaggedES(s)
+	}
 	return false
 }

@@ -12,6 +12,19 @@ func tokStr(tokens []string) string {
 }
 
 func TestSpanishWordTokenizer_Tokenize(t *testing.T) {
+	// Java keeps dictionary-tagged hyphen compounds via SpanishTagger.
+	// Inject IsTaggedES for those surfaces — no soft invent exception list.
+	prev := IsTaggedES
+	IsTaggedES = func(s string) bool {
+		switch strings.ToLower(s) {
+		case "best-seller", "covid-19", "e-mails", "e-mail", "al-ándalus", "al-andalus":
+			return true
+		default:
+			return false
+		}
+	}
+	t.Cleanup(func() { IsTaggedES = prev })
+
 	w := NewSpanishWordTokenizer()
 	tokens := w.Tokenize("*test+")
 	require.Equal(t, 3, len(tokens))
