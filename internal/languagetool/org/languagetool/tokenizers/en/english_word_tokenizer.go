@@ -3,7 +3,6 @@ package en
 import (
 	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
@@ -32,13 +31,18 @@ var (
 		regexp.MustCompile(`(?i)^(.+)(['’]m|['’]re|['’]ll|['’]ve|['’]d|['’]s)(['’-]?)$`),
 		regexp.MustCompile(`(?i)^(['’]t)(was|were|is)$`),
 	}
-	// known hyphenated forms kept whole (from Java wordsToAdd)
-	hyphenExceptions = map[string]bool{
+	// Java EnglishWordTokenizer.wordsToAdd camel-case hyphen exceptions only.
+	javaHyphenExceptions = map[string]bool{
 		"mers-cov": true, "mcgraw-hill": true, "sars-cov-2": true, "sars-cov": true,
 		"ph-metre": true, "ph-metres": true, "anti-ivg": true, "anti-uv": true,
 		"anti-vih": true, "al-qaida": true,
 	}
 )
+
+// IsTaggedEN optional EnglishTagger.INSTANCE.tag(...).isTagged() hook.
+// Java keeps hyphen/apostrophe compounds only when EnglishTagger tags them.
+// Without a tagger, miss — do not invent soft keep lists for doin'/ne'er/etc.
+var IsTaggedEN func(s string) bool
 
 func (w *EnglishWordTokenizer) Tokenize(text string) []string {
 	auxText := singleQuote.ReplaceAllString(text, "xxAPOSTYPEWxx")
@@ -81,8 +85,7 @@ func (w *EnglishWordTokenizer) Tokenize(text string) []string {
 	return tokenizers.JoinEMailsAndUrls(l)
 }
 
-var keepApostropheForm = regexp.MustCompile(`(?i)^(fo['’]c['’]sle|rec['’][ds]|ok['’]d|cc['’][ds]|dj['’][d]|[pd]m['’]d|rsvp['’]d|n['’]t|['’](m|re|ll|ve|d|s)|doin['’]|ne['’]er|e['’]er|o['’]er|jack-o['’]-lantern)$`)
-
+// wordsToAdd ports EnglishWordTokenizer.wordsToAdd.
 func wordsToAdd(s string) []string {
 	var l []string
 	hyphensAtEnd := 0
@@ -103,10 +106,11 @@ func wordsToAdd(s string) []string {
 		} else {
 			normalized := softHyphen.ReplaceAllString(s, "")
 			normalized = curlyQuote.ReplaceAllString(normalized, "'")
-			if isTaggedEnglish(normalized) || keepApostropheForm.MatchString(s) || hyphenExceptions[strings.ToLower(s)] {
+			// Java: EnglishTagger.INSTANCE.tag(...).isTagged() OR equalsIgnoreCase exceptions.
+			if isTaggedEN(normalized) || javaHyphenExceptions[strings.ToLower(s)] {
 				l = append(l, s)
 			} else {
-				// split on ’ and ' only (not hyphen)
+				// Java: split on ’ and ' only (not hyphen) — StringTokenizer(s, "’'", true)
 				l = append(l, splitKeepDelim(s, "’'")...)
 			}
 		}
@@ -118,9 +122,13 @@ func wordsToAdd(s string) []string {
 	return l
 }
 
-func isTaggedEnglish(s string) bool {
-	// Without full EnglishTagger: keep emails/handles whole.
-	return strings.Contains(s, "@")
+func isTaggedEN(s string) bool {
+	// Java: EnglishTagger.INSTANCE.tag(...).isTagged(). Without a tagger, miss —
+	// do not invent soft keep for @, doin', ne'er, etc. (emails via JoinEMailsAndUrls).
+	if IsTaggedEN != nil {
+		return IsTaggedEN(s)
+	}
+	return false
 }
 
 func splitKeepDelim(s, delims string) []string {
@@ -140,6 +148,5 @@ func splitKeepDelim(s, delims string) []string {
 	if cur.Len() > 0 {
 		out = append(out, cur.String())
 	}
-	_ = unicode.MaxRune
 	return out
 }

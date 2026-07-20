@@ -14,6 +14,24 @@ func tokStr(tokens []string) string {
 }
 
 func TestEnglishWordTokenizer_Tokenize(t *testing.T) {
+	// Java keeps dictionary-tagged apostrophe/hyphen forms via EnglishTagger.
+	// Inject IsTaggedEN for those surfaces — no soft invent keepApostropheForm.
+	prev := IsTaggedEN
+	IsTaggedEN = func(s string) bool {
+		// Surfaces EnglishTagger keeps whole (clitics after pattern split + archaic forms).
+		switch strings.ToLower(s) {
+		case "doin'", "ne'er", "e'er", "o'er", "jack-o'-lantern",
+			"doin’", "ne’er", "o’er", "jack-o’-lantern",
+			"fo'c'sle", "fo’c’sle", "rec'd", "rec’d", "ok'd", "ok’d",
+			"'m", "’m", "'re", "’re", "'ll", "’ll", "'ve", "’ve",
+			"'d", "’d", "'s", "’s", "n't", "n’t":
+			return true
+		default:
+			return false
+		}
+	}
+	t.Cleanup(func() { IsTaggedEN = prev })
+
 	w := NewEnglishWordTokenizer()
 	tokens := w.Tokenize("This is\u00A0a test")
 	require.Equal(t, 7, len(tokens))
