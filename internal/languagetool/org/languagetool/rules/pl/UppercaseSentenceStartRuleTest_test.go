@@ -6,14 +6,15 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
 // Port of UppercaseSentenceStartRuleTest.testPolishSpecialCases (subset)
 func TestUppercaseSentenceStartRule_PolishSpecialCases(t *testing.T) {
-	r := NewUppercaseSentenceStartRule(map[string]string{
+	r := rules.NewUppercaseSentenceStartRule(map[string]string{
 		"incorrect_case": "Zdanie nie zaczyna się wielką literą",
-	})
+	}, "pl")
 	analyze := func(s string) []*languagetool.AnalyzedSentence {
 		if strings.Contains(s, ". ") {
 			return languagetool.SplitAndAnalyze(s)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,7 +27,8 @@ func TestFrenchRepeatedWordsRule_Construct(t *testing.T) {
 }
 
 func TestFrenchCommaWhitespace_Construct(t *testing.T) {
-	r := NewCommaWhitespaceRule(nil)
+	// Java CommaWhitespaceRule — not invent fr.NewCommaWhitespaceRule re-export.
+	r := rules.NewCommaWhitespaceRule(nil)
 	require.NotNil(t, r)
 	ms := r.Match(languagetool.AnalyzePlain("Bonjour , monde"))
 	// may flag space before comma

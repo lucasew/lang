@@ -6,14 +6,15 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
 // Port of UppercaseSentenceStartRuleTest.testUkrainian
 func TestUppercaseSentenceStartRule_Ukrainian(t *testing.T) {
-	r := NewUppercaseSentenceStartRule(map[string]string{
+	r := rules.NewUppercaseSentenceStartRule(map[string]string{
 		"incorrect_case": "Речення не починається з великої літери",
-	})
+	}, "uk")
 	analyze := func(s string) []*languagetool.AnalyzedSentence {
 		if strings.Contains(s, ". ") {
 			return languagetool.SplitAndAnalyze(s)
