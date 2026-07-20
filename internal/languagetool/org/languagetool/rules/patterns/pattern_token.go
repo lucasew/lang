@@ -40,9 +40,13 @@ type PatternToken struct {
 	// the same exception PatternToken). Empty surface + POS-only is valid Java.
 	TokenExceptionPosTag string
 	TokenExceptionPosRE  bool
-	// TokenExceptionNegation / PosNegation port exception negate / negate_pos.
+	// TokenExceptionNegation / PosNegation port exception negate / negate_pos
+	// for the first current-scope exception (legacy fields; prefer CurrentExceptions).
 	TokenExceptionNegation    bool
 	TokenExceptionPosNegation bool
+	// CurrentExceptions ports non-next entries of rareFields.currentAndNextExceptions
+	// (scope empty = current). Multi-exception disjunction via isExceptionMatched.
+	CurrentExceptions []*PatternToken
 	// PreviousExceptions ports Java rareFields.previousExceptions (scope="previous").
 	// Each element is a full exception PatternToken (surface/POS/negation/inflected).
 	PreviousExceptions []*PatternToken
@@ -125,15 +129,33 @@ func (p *PatternToken) HasOrGroup() bool {
 	return p != nil && len(p.OrGroup) > 0
 }
 
+// AddCurrentException ports PatternToken.addException(scopeNext=false, scopePrevious=false).
+func (p *PatternToken) AddCurrentException(ex *PatternToken) {
+	if p == nil || ex == nil {
+		return
+	}
+	p.CurrentExceptions = append(p.CurrentExceptions, ex)
+	// Mirror first exception into legacy TokenException* fields for tests/builders.
+	if len(p.CurrentExceptions) == 1 {
+		p.TokenException = ex.Token
+		p.TokenExceptionRE = ex.Regexp
+		p.TokenExceptionCaseSensitive = ex.CaseSensitive
+		p.TokenExceptionNegation = ex.Negation
+		if ex.Pos != nil {
+			p.TokenExceptionPosTag = ex.Pos.PosTag
+			p.TokenExceptionPosRE = ex.Pos.Regexp
+			p.TokenExceptionPosNegation = ex.Pos.Negate
+		}
+	}
+}
+
 func (p *PatternToken) SetStringPosException(tokenException string, regexp bool) {
 	p.SetStringPosExceptionCS(tokenException, regexp, false)
 }
 
 // SetStringPosExceptionCS sets a surface exception with optional regexp and case sensitivity.
 func (p *PatternToken) SetStringPosExceptionCS(tokenException string, regexp, caseSensitive bool) {
-	p.TokenException = tokenException
-	p.TokenExceptionRE = regexp
-	p.TokenExceptionCaseSensitive = caseSensitive
+	p.SetStringPosExceptionFullNeg(tokenException, regexp, caseSensitive, false, "", false, false)
 }
 
 // SetStringPosExceptionFull ports Java PatternToken.setStringPosException with optional POS.
@@ -143,19 +165,28 @@ func (p *PatternToken) SetStringPosExceptionFull(tokenException string, surfaceR
 }
 
 // SetStringPosExceptionFullNeg ports setStringPosException with surface/POS negation flags.
+// Appends a current-scope exception PatternToken (Java always adds; multi is a disjunction).
 func (p *PatternToken) SetStringPosExceptionFullNeg(tokenException string, surfaceRE, caseSensitive, negation bool, posTag string, posRE, posNegation bool) {
-	p.TokenException = tokenException
-	p.TokenExceptionRE = surfaceRE
-	p.TokenExceptionCaseSensitive = caseSensitive
-	p.TokenExceptionNegation = negation
-	p.TokenExceptionPosTag = posTag
-	p.TokenExceptionPosRE = posRE
-	p.TokenExceptionPosNegation = posNegation
+	if p == nil {
+		return
+	}
+	ex := NewPatternToken(tokenException, caseSensitive, surfaceRE, false)
+	ex.SetNegation(negation)
+	if posTag != "" {
+		ex.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNegation})
+	}
+	p.AddCurrentException(ex)
 }
 
 // HasCurrentException reports whether a current-scope exception (surface and/or POS) is set.
 func (p *PatternToken) HasCurrentException() bool {
-	return p != nil && (p.TokenException != "" || p.TokenExceptionPosTag != "")
+	if p == nil {
+		return false
+	}
+	if len(p.CurrentExceptions) > 0 {
+		return true
+	}
+	return p.TokenException != "" || p.TokenExceptionPosTag != ""
 }
 
 // AddPreviousException ports PatternToken.addException(..., scopePrevious=true).

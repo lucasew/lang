@@ -433,8 +433,7 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			pt.SetSkipNext(n)
 		}
 	}
-	// Java PatternToken exceptions: setStringPosException → addException by scope.
-	// previous/next: multi PatternToken exceptions; current: first-wins TokenException*.
+	// Java PatternToken exceptions: setStringPosException → addException by scope (multi).
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
 		posTag := strings.TrimSpace(ex.Postag)
@@ -452,27 +451,18 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			// exception-level spacebefore applies to current exception token context
 			pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 		}
-		if scope == "previous" {
-			exTok := patterns.NewPatternToken(exc, cs, re, infl)
-			exTok.SetNegation(neg)
-			if posTag != "" {
-				exTok.SetPosToken(patterns.PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
-			}
+		exTok := patterns.NewPatternToken(exc, cs, re, infl)
+		exTok.SetNegation(neg)
+		if posTag != "" {
+			exTok.SetPosToken(patterns.PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
+		}
+		switch scope {
+		case "previous":
 			pt.AddPreviousException(exTok)
-			continue
-		}
-		if scope == "next" {
-			exTok := patterns.NewPatternToken(exc, cs, re, infl)
-			exTok.SetNegation(neg)
-			if posTag != "" {
-				exTok.SetPosToken(patterns.PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
-			}
+		case "next":
 			pt.AddNextException(exTok)
-			continue
-		}
-		if !pt.HasCurrentException() {
-			// Java supports string/POS negation via SetStringPosExceptionFullNeg
-			pt.SetStringPosExceptionFullNeg(exc, re, cs, neg, posTag, posRE, posNeg)
+		default:
+			pt.AddCurrentException(exTok)
 		}
 	}
 	// Java <and> group members (also soft <and_token> attribute path): each must match some reading.

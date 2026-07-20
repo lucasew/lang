@@ -1390,10 +1390,8 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 	} else if ch := strings.TrimSpace(xt.Chunk); ch != "" {
 		pt.SetChunkTag(ch, false)
 	}
-	// Current exception (surface and/or postag) + scope previous/next.
-	// Java PatternToken.setStringPosException → addException(scopeNext, scopePrevious, exceptionToken).
-	// previous/next: multi exceptions via PreviousExceptions / NextExceptions lists.
-	// current: still first-wins on TokenException* fields (multi current list TBD).
+	// Exceptions: Java PatternToken.setStringPosException → addException by scope.
+	// previous/next/current all multi-append (disjunction on isExceptionMatched*).
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
 		posTag := strings.TrimSpace(ex.Postag)
@@ -1407,26 +1405,18 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 		neg := strings.EqualFold(ex.Negate, "yes")
 		posNeg := strings.EqualFold(ex.NegatePos, "yes")
 		infl := strings.EqualFold(ex.Inflected, "yes")
+		exTok := NewPatternToken(exc, cs, re, infl)
+		exTok.SetNegation(neg)
+		if posTag != "" {
+			exTok.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
+		}
 		switch scope {
 		case "previous":
-			// Java: new PatternToken + setNegation + setPosToken + addException(prev).
-			exTok := NewPatternToken(exc, cs, re, infl)
-			exTok.SetNegation(neg)
-			if posTag != "" {
-				exTok.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
-			}
 			pt.AddPreviousException(exTok)
 		case "next":
-			exTok := NewPatternToken(exc, cs, re, infl)
-			exTok.SetNegation(neg)
-			if posTag != "" {
-				exTok.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
-			}
 			pt.AddNextException(exTok)
 		default:
-			if !pt.HasCurrentException() {
-				pt.SetStringPosExceptionFullNeg(exc, re, cs, neg, posTag, posRE, posNeg)
-			}
+			pt.AddCurrentException(exTok)
 		}
 	}
 	// Java <and> group members (soft <and_token>).

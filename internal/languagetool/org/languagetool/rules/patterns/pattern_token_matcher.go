@@ -153,7 +153,11 @@ func (m *PatternTokenMatcher) GetPatternToken() *PatternToken {
 }
 
 // IsMatched checks whether a single AnalyzedToken matches the pattern token.
-// Ports PatternToken.isMatched / PatternTokenMatcher.isMatched (string + POS only).
+// Ports PatternToken.isMatched — Java uses XOR for negation and posNegation with
+// operator precedence (^ binds tighter than &&):
+//
+//	hasString: (textMatch ^ negation) && (posMatch ^ posNegation)
+//	no string: !negation && (posMatch ^ posNegation)
 func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool {
 	if m == nil || m.active() == nil || token == nil {
 		return false
@@ -163,43 +167,42 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 	if pt.WhitespaceBefore != nil && token.IsWhitespaceBefore() != *pt.WhitespaceBefore {
 		return false
 	}
-	matched := m.matchSurface(token.GetToken())
-	if pt.MatchInflected && !matched {
-		// Java: also try lemma via dictionary readings — not soft morphological invent.
-		if lem := token.GetLemma(); lem != nil && *lem != "" {
-			matched = m.matchSurface(*lem)
+	// Java TEST_STRING_MASK: non-empty string element.
+	hasSurface := pt.Token != ""
+	surfaceMatch := false
+	if hasSurface {
+		surfaceMatch = m.matchSurface(token.GetToken())
+		if pt.MatchInflected && !surfaceMatch {
+			// Java getTestToken: lemma when inflected, else surface.
+			if lem := token.GetLemma(); lem != nil && *lem != "" {
+				surfaceMatch = m.matchSurface(*lem)
+			}
 		}
 	}
+	posNegation := pt.Pos != nil && pt.Pos.Negate
+	posMatch := true
 	if pt.Pos != nil && pt.Pos.PosTag != "" {
 		pos := token.GetPOSTag()
-		posOK := false
+		posMatch = false
 		if pos != nil && *pos != "" {
 			if pt.Pos.Regexp {
 				re, err := regexp.Compile("^(?:" + normalizeJavaRegexp(pt.Pos.PosTag) + ")$")
 				if err == nil {
-					posOK = re.MatchString(*pos)
+					posMatch = re.MatchString(*pos)
 				}
 			} else {
-				posOK = *pos == pt.Pos.PosTag
+				posMatch = *pos == pt.Pos.PosTag
 			}
 		} else {
-			// Untagged: Java UNKNOWN only (faithful StrictPOS).
+			// Untagged: Java UNKNOWN only (faithful StrictPOS) / posUnknown.
 			tag := strings.ToUpper(pt.Pos.PosTag)
-			posOK = tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN")
-		}
-		if pt.Pos.Negate {
-			posOK = !posOK
-		}
-		if pt.Token == "" {
-			matched = posOK
-		} else {
-			matched = matched && posOK
+			posMatch = tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN")
 		}
 	}
-	if pt.Negation {
-		return !matched
+	if hasSurface {
+		return (surfaceMatch != pt.Negation) && (posMatch != posNegation)
 	}
-	return matched
+	return !pt.Negation && (posMatch != posNegation)
 }
 
 // IsMatchedByPreviousException ports PatternToken.isMatchedByPreviousException
@@ -377,7 +380,11 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 }
 
 func (m *PatternTokenMatcher) anyReadingExceptionMatched(atr *languagetool.AnalyzedTokenReadings) bool {
-	if m == nil || m.Base == nil || !m.Base.HasCurrentException() || atr == nil {
+	if m == nil || m.Base == nil || atr == nil {
+		return false
+	}
+	// Current exceptions on this token or on AndGroup members (Java isExceptionMatchedCompletely).
+	if !m.Base.HasCurrentException() && !m.hasAndGroupCurrentExceptions() {
 		return false
 	}
 	for _, r := range atr.GetReadings() {
@@ -392,25 +399,61 @@ func (m *PatternTokenMatcher) anyReadingExceptionMatched(atr *languagetool.Analy
 	return false
 }
 
-// isExceptionMatchedCompletely ports PatternToken.isExceptionMatchedCompletely
-// via isExceptionMatched → exception PatternToken.isMatched (with negation XOR).
+func (m *PatternTokenMatcher) hasAndGroupCurrentExceptions() bool {
+	if m == nil || m.Base == nil {
+		return false
+	}
+	for _, andTok := range m.Base.AndGroup {
+		if andTok != nil && andTok.HasCurrentException() {
+			return true
+		}
+	}
+	return false
+}
+
+// isExceptionMatchedCompletely ports PatternToken.isExceptionMatchedCompletely:
+// isExceptionMatched (any current exception) || isAndExceptionGroupMatched.
 func (m *PatternTokenMatcher) isExceptionMatchedCompletely(token *languagetool.AnalyzedToken) bool {
-	if m == nil || m.Base == nil || token == nil || !m.Base.HasCurrentException() {
+	if m == nil || m.Base == nil || token == nil {
+		return false
+	}
+	if m.isExceptionMatched(token) {
+		return true
+	}
+	return m.isAndExceptionGroupMatched(token)
+}
+
+// isExceptionMatched ports PatternToken.isExceptionMatched: any current-scope
+// exception PatternToken.isMatched (disjunction). Skips next-scope (separate list).
+func (m *PatternTokenMatcher) isExceptionMatched(token *languagetool.AnalyzedToken) bool {
+	if m == nil || m.Base == nil || token == nil {
 		return false
 	}
 	pt := m.Base
-	// Surface match (Java textMatcher / getNegation XOR).
+	if len(pt.CurrentExceptions) > 0 {
+		for _, ex := range pt.CurrentExceptions {
+			if ex == nil {
+				continue
+			}
+			if NewPatternTokenMatcher(ex).IsMatched(token) {
+				return true
+			}
+		}
+		return false
+	}
+	// Legacy single TokenException* fields
+	if !pt.HasCurrentException() {
+		return false
+	}
 	hasSurface := pt.TokenException != ""
 	surfaceMatch := false
 	if hasSurface {
 		surfaceMatch = matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive)
 	}
-	// POS match (Java isPosTokenMatched; null posToken → true).
 	posMatch := true
 	if pt.TokenExceptionPosTag != "" {
 		pos := token.GetPOSTag()
 		if pos == nil || *pos == "" {
-			// Java UNKNOWN_TAG matches null POS; otherwise false
 			if strings.Contains(pt.TokenExceptionPosTag, "UNKNOWN") {
 				posMatch = true
 			} else {
@@ -423,13 +466,27 @@ func (m *PatternTokenMatcher) isExceptionMatchedCompletely(token *languagetool.A
 			posMatch = *pos == pt.TokenExceptionPosTag
 		}
 	}
-	// Java isMatched:
-	//   with surface: (textMatch ^ neg) && (posMatch ^ posNeg)
-	//   without:      !neg && (posMatch ^ posNeg)
 	if hasSurface {
 		return (surfaceMatch != pt.TokenExceptionNegation) && (posMatch != pt.TokenExceptionPosNegation)
 	}
 	return !pt.TokenExceptionNegation && (posMatch != pt.TokenExceptionPosNegation)
+}
+
+// isAndExceptionGroupMatched ports PatternToken.isAndExceptionGroupMatched:
+// true if any AndGroup member has a current exception matching the token.
+func (m *PatternTokenMatcher) isAndExceptionGroupMatched(token *languagetool.AnalyzedToken) bool {
+	if m == nil || m.Base == nil || token == nil || len(m.Base.AndGroup) == 0 {
+		return false
+	}
+	for _, andTok := range m.Base.AndGroup {
+		if andTok == nil {
+			continue
+		}
+		if NewPatternTokenMatcher(andTok).isExceptionMatched(token) {
+			return true
+		}
+	}
+	return false
 }
 
 // matchAndGroupReadings ports Java and-group accumulation over all readings.
