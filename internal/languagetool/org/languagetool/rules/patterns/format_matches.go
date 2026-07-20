@@ -353,16 +353,16 @@ func FormatMatches(
 				surface = tokenReadings[tokIdx].GetToken()
 			}
 			ref := `\` + strconv.Itoa(j+1)
-			// Java computes newErrorMessageProcessed from lastIndexOf before replace.
+			// Java (before replace):
+			//   newErrorMessageProcessed = errorMessage.lastIndexOf("\\"+(j+1)) + token.length()
+			//   errorMessage = prefix + suffix.replace("\\"+(j+1), token)
+			//   errorMessageProcessed = newErrorMessageProcessed
+			// lastIndexOf on full message; assign always (no invent clamp).
 			newProcessed := strings.LastIndex(errorMessage, ref) + len(surface)
 			prefix := errorMessage[:errorMessageProcessed]
 			suffix := errorMessage[errorMessageProcessed:]
 			errorMessage = prefix + strings.ReplaceAll(suffix, ref, surface)
-			if newProcessed < errorMessageProcessed {
-				errorMessageProcessed = errorMessageProcessed + len(surface)
-			} else {
-				errorMessageProcessed = newProcessed
-			}
+			errorMessageProcessed = newProcessed
 		}
 	}
 	return removeSuppressMisspelled(errorMessage)

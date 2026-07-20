@@ -223,6 +223,18 @@ func TestFormatMatches_BareReplaceAllInSuffix(t *testing.T) {
 	require.Equal(t, "aa and aa", msg)
 }
 
+// Twin of Java bare-path errorMessageProcessed assignment:
+// newProcessed = lastIndexOf("\\N") + token.length() on the pre-replace string,
+// always assigned (no invent clamp to keep processed cursor).
+func TestFormatMatches_BarePathProcessedFromLastIndexOf(t *testing.T) {
+	toks := []*languagetool.AnalyzedTokenReadings{atr("X", 0)}
+	// Two bare \1; single replaceAll in one bare-path step consumes both.
+	msg := FormatMatches(toks, []int{1}, 0, `A \1 B \1 C`, nil, "en")
+	require.Equal(t, "A X B X C", msg)
+	// After bare replace, no leftover backrefs
+	require.NotContains(t, msg, `\`)
+}
+
 func TestConcatWithoutExtraSpace_WhitespaceOrPunct(t *testing.T) {
 	// Java WHITESPACE_OR_PUNCT = [\s,:;.!?].* — Matcher.matches entire rightSide
 	require.Equal(t, "x,", concatWithoutExtraSpace("x ", ","))
