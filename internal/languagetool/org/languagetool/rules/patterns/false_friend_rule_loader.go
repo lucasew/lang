@@ -17,7 +17,20 @@ type FalseFriendRuleLoader struct {
 	SuggestionMap map[string][]string
 }
 
+// Official EN MessagesBundle keys (Java FalseFriendRuleLoader(Language) loads mother-tongue
+// MessagesBundle; when callers pass empty strings, use EN defaults — not invent 2-arg templates).
+const (
+	messagesFalseFriendHint = `Hint: "{0}" ({1}) means {2} ({3}).`
+	messagesFalseFriendSugg = `Did you mean {0}?`
+)
+
 func NewFalseFriendRuleLoader(hint, sugg string) *FalseFriendRuleLoader {
+	if hint == "" {
+		hint = messagesFalseFriendHint
+	}
+	if sugg == "" {
+		sugg = messagesFalseFriendSugg
+	}
 	return &FalseFriendRuleLoader{
 		FalseFriendHint: hint,
 		FalseFriendSugg: sugg,
@@ -149,21 +162,11 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		//   tokensAsString, englishName(textLang), formatTranslations, englishName(mother))
 		tokensStr := strings.ReplaceAll(tokensAsString(tokens), "|", "/")
 		transStr := FormatTranslations(motherTranslations)
-		msg := l.FalseFriendHint
-		if msg == "" {
-			// legacy 2-arg soft default kept for older call sites
-			msg = "Possible false friend: {0} → {1}"
-			msg = strings.ReplaceAll(msg, "{0}", tokensStr)
-			msg = strings.ReplaceAll(msg, "{1}", transStr)
-		} else {
-			h := NewFalseFriendRuleHandler(textLang, motherLang, l.FalseFriendHint)
-			msg = h.FormatHint(tokensStr, englishLangName(textLang), transStr, englishLangName(motherLang))
-		}
-		// suggestions — Java appends MessageFormat(falseFriendSugg) with joined <suggestion> list
+		// NewFalseFriendRuleLoader always sets non-empty hint/sugg (EN MessagesBundle defaults).
+		h := NewFalseFriendRuleHandler(textLang, motherLang, l.FalseFriendHint)
+		msg := h.FormatHint(tokensStr, englishLangName(textLang), transStr, englishLangName(motherLang))
+		// Java appends MessageFormat(falseFriendSugg) with joined <suggestion> list
 		suggMsg := l.FalseFriendSugg
-		if suggMsg == "" {
-			suggMsg = strings.Join(motherTranslations, ", ")
-		}
 		rule := NewFalseFriendPatternRule(id, textLang, tokens, "False friend: "+id, msg, "")
 		var sb strings.Builder
 		sb.WriteString(msg)

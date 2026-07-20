@@ -72,6 +72,33 @@ func TestFalseFriendRuleLoader_PostagNegate(t *testing.T) {
 	require.Equal(t, "na", rulesFR[0].Tokens[0].Token)
 }
 
+// Empty constructor args use MessagesBundle_en false_friend_* defaults (not invent 2-arg).
+func TestFalseFriendRuleLoader_MessagesBundleDefaults(t *testing.T) {
+	loader := NewFalseFriendRuleLoader("", "")
+	require.Equal(t, messagesFalseFriendHint, loader.FalseFriendHint)
+	require.Equal(t, messagesFalseFriendSugg, loader.FalseFriendSugg)
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="ABILITY">
+    <rule>
+      <pattern lang="en"><token>ability</token></pattern>
+      <translation lang="fr">aptitude</translation>
+    </rule>
+  </rulegroup>
+</rules>`
+	rules, err := loader.GetRulesFromString(xml, "en", "fr")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	// MessagesBundle_en: Hint: "{0}" ({1}) means {2} ({3}).
+	require.Contains(t, rules[0].Message, "Hint:")
+	require.Contains(t, rules[0].Message, "English")
+	require.Contains(t, rules[0].Message, "French")
+	require.Contains(t, rules[0].Message, `"aptitude"`)
+	// Distinct surface → Did you mean {0}?
+	require.Contains(t, rules[0].Message, "Did you mean")
+	require.NotContains(t, rules[0].Message, "Possible false friend")
+}
+
 // false-friends.xml has skip="-1" on PL pracować; load into PatternToken.SkipNext.
 func TestFalseFriendRuleLoader_Skip(t *testing.T) {
 	xml := `<?xml version="1.0"?>

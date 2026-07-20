@@ -43,9 +43,13 @@ func FormatTranslations(translations []string) string {
 // FormatHint applies a simple {0}-style format using the false-friend hint template.
 // Java uses MessageFormat; here we replace {0},{1},{2},{3} positionally.
 func (h *FalseFriendRuleHandler) FormatHint(tokensAsString, textLangName, translations, motherName string) string {
-	tpl := h.FalseFriendHint
+	tpl := ""
+	if h != nil {
+		tpl = h.FalseFriendHint
+	}
 	if tpl == "" {
-		tpl = "''{0}'' ({1}) means {2} ({3})"
+		// MessagesBundle_en false_friend_hint (not invent 2-arg templates)
+		tpl = messagesFalseFriendHint
 	}
 	repl := []string{tokensAsString, textLangName, translations, motherName}
 	out := tpl
