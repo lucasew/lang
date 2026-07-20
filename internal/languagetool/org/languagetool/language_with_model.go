@@ -1,6 +1,12 @@
 package languagetool
 
-import "sync"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"sync"
+	"sync/atomic"
+)
 
 // PseudoProbability is a minimal score surface (avoids importing ngrams into this package).
 type PseudoProbability interface {
@@ -9,8 +15,15 @@ type PseudoProbability interface {
 }
 
 // NgramModel is the minimal LM interface for LanguageWithModel.
+// Java LanguageModel is AutoCloseable; Close is optional here.
 type NgramModel interface {
 	GetPseudoProbability(context []string) PseudoProbability
+}
+
+// ClosableNgramModel optionally closes (Java LanguageModel.close).
+type ClosableNgramModel interface {
+	NgramModel
+	Close() error
 }
 
 // LanguageWithModel ports org.languagetool.LanguageWithModel as a holder
@@ -20,8 +33,11 @@ type LanguageWithModel struct {
 	Name      string
 	mu        sync.Mutex
 	model     NgramModel
-	// InitModel creates a model for indexDir when missing.
-	InitModel func(indexDir string) (NgramModel, error)
+	// noLmWarningPrinted ports AtomicBoolean noLmWarningPrinted.
+	noLmWarningPrinted atomic.Bool
+	// InitModel creates a model for topIndexDir (indexDir/shortCode) when present.
+	// When nil, default init only checks directory existence and warns once.
+	InitModel func(topIndexDir string) (NgramModel, error)
 }
 
 func NewLanguageWithModel(shortCode, name string) *LanguageWithModel {
@@ -31,16 +47,17 @@ func NewLanguageWithModel(shortCode, name string) *LanguageWithModel {
 func (l *LanguageWithModel) GetShortCode() string { return l.ShortCode }
 func (l *LanguageWithModel) GetName() string      { return l.Name }
 
+// GetLanguageModel ports getLanguageModel(File indexDir) with double-checked locking.
 func (l *LanguageWithModel) GetLanguageModel(indexDir string) (NgramModel, error) {
+	if l == nil {
+		return nil, nil
+	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	if l.model != nil {
 		return l.model, nil
 	}
-	if l.InitModel == nil {
-		return nil, nil
-	}
-	m, err := l.InitModel(indexDir)
+	m, err := l.initLanguageModel(indexDir)
 	if err != nil {
 		return nil, err
 	}
@@ -48,9 +65,38 @@ func (l *LanguageWithModel) GetLanguageModel(indexDir string) (NgramModel, error
 	return l.model, nil
 }
 
+// initLanguageModel ports protected initLanguageModel(File indexDir, LanguageModel languageModel).
+func (l *LanguageWithModel) initLanguageModel(indexDir string) (NgramModel, error) {
+	topIndexDir := filepath.Join(indexDir, l.ShortCode)
+	if st, err := os.Stat(topIndexDir); err == nil && st.IsDir() {
+		if l.InitModel != nil {
+			return l.InitModel(topIndexDir)
+		}
+		// Without Lucene twin, return nil model when dir exists but no InitModel
+		// (Java would construct LuceneLanguageModel).
+		return nil, nil
+	}
+	if l.noLmWarningPrinted.CompareAndSwap(false, true) {
+		// Java: System.err.println("WARN: ngram index dir " + topIndexDir + " not found for " + getName());
+		fmt.Fprintf(os.Stderr, "WARN: ngram index dir %s not found for %s\n", topIndexDir, l.Name)
+	}
+	return nil, nil
+}
+
+// Close ports close() — closes model if ClosableNgramModel.
 func (l *LanguageWithModel) Close() error {
+	if l == nil {
+		return nil
+	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	l.model = nil
+	if l.model != nil {
+		if c, ok := l.model.(ClosableNgramModel); ok {
+			err := c.Close()
+			l.model = nil
+			return err
+		}
+		l.model = nil
+	}
 	return nil
 }

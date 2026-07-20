@@ -8,7 +8,9 @@ import (
 
 func TestLinguServices_Defaults(t *testing.T) {
 	l := NewLinguServices()
-	require.Empty(t, l.GetSynonyms("word", "en"))
+	syn := l.GetSynonyms("word", "en")
+	require.NotNil(t, syn) // Java: new ArrayList, never null
+	require.Empty(t, syn)
 	require.False(t, l.IsCorrectSpell("word", "en"))
 	require.Equal(t, 0, l.GetNumberOfSyllables("word", "en"))
 	l.SetThesaurusRelevantRule("RULE")

@@ -22,10 +22,10 @@
 - [ ] org/languagetool/AnalyzedTokenReadings.java::AnalyzedTokenReadings
 - [x] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
 - [x] org/languagetool/CheckResults.java::CheckResults
-- [ ] org/languagetool/DetectedLanguage.java::DetectedLanguage
-- [ ] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
-- [ ] org/languagetool/DynamicLanguage.java::DynamicLanguage
-- [ ] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
+- [x] org/languagetool/DetectedLanguage.java::DetectedLanguage
+- [x] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
+- [x] org/languagetool/DynamicLanguage.java::DynamicLanguage
+- [x] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
 - [x] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
 - [x] org/languagetool/Experimental.java::Experimental
 - [x] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
@@ -46,10 +46,10 @@
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
 - [x] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
-- [ ] org/languagetool/LanguageWithModel.java::LanguageWithModel
+- [x] org/languagetool/LanguageWithModel.java::LanguageWithModel
 - [ ] org/languagetool/Languages.java::Languages
 - [x] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
-- [ ] org/languagetool/LinguServices.java::LinguServices
+- [x] org/languagetool/LinguServices.java::LinguServices
 - [x] org/languagetool/LtBuildInfo.java::LtBuildInfo
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
@@ -59,12 +59,12 @@
 - [x] org/languagetool/Range.java::Range
 - [ ] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
 - [ ] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
-- [ ] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
+- [x] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
 - [ ] org/languagetool/ResultCache.java::ResultCache
 - [ ] org/languagetool/ResultCache.java::ResultCache.MatchesWeigher
 - [ ] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
 - [ ] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
-- [ ] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
+- [x] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
 - [x] org/languagetool/RuleMatchListener.java::RuleMatchListener
 - [x] org/languagetool/SentenceRange.java::SentenceRange
 - [x] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider

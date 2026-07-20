@@ -1,7 +1,13 @@
 package languagetool
 
-// DynamicHunspellLanguage ports org.languagetool.DynamicHunspellLanguage metadata.
-// Speller wiring stays pluggable (full HunspellRule needs language stack).
+import (
+	"regexp"
+	"strings"
+)
+
+// DynamicHunspellLanguage ports org.languagetool.DynamicHunspellLanguage.
+// Speller rule construction (HunspellRule anonymous subclass) is partial until
+// full Language + HunspellRule stack is wired; ID/path surfaces match Java.
 type DynamicHunspellLanguage struct {
 	DynamicLanguage
 }
@@ -10,28 +16,24 @@ func NewDynamicHunspellLanguage(name, code, dictPath string) DynamicHunspellLang
 	return DynamicHunspellLanguage{DynamicLanguage: NewDynamicLanguage(name, code, dictPath)}
 }
 
-// SpellerRuleID returns e.g. EN-US_SPELLER_RULE from code.
+// SpellerRuleID ports anonymous HunspellRule.getId(): code.toUpperCase() + "_SPELLER_RULE".
 func (d DynamicHunspellLanguage) SpellerRuleID() string {
-	return toUpperCode(d.Code) + "_SPELLER_RULE"
+	return strings.ToUpper(d.Code) + "_SPELLER_RULE"
 }
 
-// DictFilenameInResources strips .dic suffix like Java getDictFilenameInResources.
+// dicSuffixRE mirrors Java replaceAll(".dic$", "") — regex, not literal.
+var dicSuffixRE = regexp.MustCompile(`.dic$`)
+
+// DictFilenameInResources ports getDictFilenameInResources:
+// dictPath.getAbsolutePath().replaceAll(".dic$", "")
 func (d DynamicHunspellLanguage) DictFilenameInResources() string {
-	p := d.DictPath
-	if len(p) > 4 && p[len(p)-4:] == ".dic" {
-		return p[:len(p)-4]
-	}
-	return p
+	return dicSuffixRE.ReplaceAllString(d.DictPath, "")
 }
 
-func toUpperCode(code string) string {
-	b := make([]byte, len(code))
-	for i := 0; i < len(code); i++ {
-		c := code[i]
-		if c >= 'a' && c <= 'z' {
-			c -= 'a' - 'A'
-		}
-		b[i] = c
-	}
-	return string(b)
+// GetSpellingFileName ports getSpellingFileName → null.
+func (d DynamicHunspellLanguage) GetSpellingFileName() *string { return nil }
+
+// RelevantSpellerRuleIDs ports getRelevantRules returning singleton list of the dynamic rule.
+func (d DynamicHunspellLanguage) RelevantSpellerRuleIDs() []string {
+	return []string{d.SpellerRuleID()}
 }
