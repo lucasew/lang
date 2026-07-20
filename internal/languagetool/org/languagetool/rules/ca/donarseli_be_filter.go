@@ -95,21 +95,6 @@ func IsExceptionQue(token string) bool {
 	return ok
 }
 
-// IsVerbDicendiBeforeTokens ports VerbsHelper.isVerbDicendiBefore(tokens, i).
-func IsVerbDicendiBeforeTokens(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
-	for i > 0 && i < len(tokens) {
-		reading := readingWithTagRegex(tokens[i], `V.*|RG.*|LOC_ADV`)
-		if reading == nil {
-			return false
-		}
-		if reading.GetLemma() != nil && IsVerbDicendi(*reading.GetLemma()) {
-			return true
-		}
-		i--
-	}
-	return false
-}
-
 // AcceptRuleMatch ports DonarseliBeFilter.acceptRuleMatch.
 func (f *DonarseliBeFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, patternTokenPos int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {

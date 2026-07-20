@@ -35,3 +35,13 @@ func TestDiscoverAndLoadGermanMultitokenSpeller_NoPanic(t *testing.T) {
 	require.NotNil(t, s)
 	require.NotNil(t, s.MultitokenSpeller)
 }
+
+func TestGermanMultitokenSpeller_ResourcePaths(t *testing.T) {
+	// Java constructor Arrays.asList order
+	require.Equal(t, []string{
+		"/de/multitoken-suggest.txt",
+		"/spelling_global.txt",
+		"de/hunspell/spelling.txt",
+	}, GermanMultitokenResourcePaths)
+	require.NotNil(t, GermanMultitokenSpellerInstance)
+}

@@ -64,6 +64,12 @@ func (r *AbstractStatisticSentenceStyleRule) GetLocQualityIssueType() ITSIssueTy
 
 func (r *AbstractStatisticSentenceStyleRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
+// MinToCheckParagraph ports AbstractStatisticSentenceStyleRule.minToCheckParagraph (Java returns -1).
+func (r *AbstractStatisticSentenceStyleRule) MinToCheckParagraph() int { return -1 }
+
+// EstimateContextForSureMatch ports TextLevelRule (Java always -1).
+func (r *AbstractStatisticSentenceStyleRule) EstimateContextForSureMatch() int { return -1 }
+
 func (r *AbstractStatisticSentenceStyleRule) GetDescription() string {
 	if r != nil && r.Description != "" {
 		return r.Description

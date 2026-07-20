@@ -23,8 +23,10 @@ type CommaWhitespaceRule struct {
 	IssueType ITSIssueType
 	// IsException skips a candidate match at token index i (language-specific).
 	IsException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
-	fileExt     *regexp.Regexp
-	domain      *regexp.Regexp
+	// DefaultOff ports Rule.setDefaultOff (e.g. PersianCommaWhitespaceRule).
+	DefaultOff bool
+	fileExt    *regexp.Regexp
+	domain     *regexp.Regexp
 }
 
 func NewCommaWhitespaceRule(messages map[string]string) *CommaWhitespaceRule {
@@ -44,6 +46,11 @@ func (r *CommaWhitespaceRule) GetID() string {
 		return r.RuleID
 	}
 	return "COMMA_PARENTHESIS_WHITESPACE"
+}
+
+// IsDefaultOff ports Rule.isDefaultOff.
+func (r *CommaWhitespaceRule) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
 }
 
 // GetDescription ports getDescription (desc_comma_whitespace).

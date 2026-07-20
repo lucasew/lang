@@ -314,6 +314,11 @@ func (r *ConfusionProbabilityRule) Match(sentence *languagetool.AnalyzedSentence
 	return matches
 }
 
+// Message ports getMessage (public for language subclasses such as EnglishForL2SpeakersFalseFriendRule).
+func (r *ConfusionProbabilityRule) Message(textStr, better *rules.ConfusionString) string {
+	return r.message(textStr, better)
+}
+
 func (r *ConfusionProbabilityRule) message(textStr, better *rules.ConfusionString) string {
 	if r.MessageFor != nil {
 		return r.MessageFor(textStr, better)

@@ -145,34 +145,53 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 			}
 			tokens = append(tokens, pt)
 		}
-		// format message with hint template placeholders {0}=pattern, {1}=translations, {2}=mother name
+		// Java FalseFriendRuleHandler: MessageFormat(falseFriendHint).format(
+		//   tokensAsString, englishName(textLang), formatTranslations, englishName(mother))
+		tokensStr := strings.ReplaceAll(tokensAsString(tokens), "|", "/")
+		transStr := FormatTranslations(motherTranslations)
 		msg := l.FalseFriendHint
 		if msg == "" {
+			// legacy 2-arg soft default kept for older call sites
 			msg = "Possible false friend: {0} → {1}"
+			msg = strings.ReplaceAll(msg, "{0}", tokensStr)
+			msg = strings.ReplaceAll(msg, "{1}", transStr)
+		} else {
+			h := NewFalseFriendRuleHandler(textLang, motherLang, l.FalseFriendHint)
+			msg = h.FormatHint(tokensStr, englishLangName(textLang), transStr, englishLangName(motherLang))
 		}
-		// Java FalseFriendRuleHandler.formatTranslations: "a", "b"
-		msg = strings.ReplaceAll(msg, "{0}", tokensAsString(tokens))
-		msg = strings.ReplaceAll(msg, "{1}", formatFFTranslations(motherTranslations))
-		msg = strings.ReplaceAll(msg, "{2}", motherLang)
-		// suggestions
+		// suggestions — Java appends MessageFormat(falseFriendSugg) with joined <suggestion> list
 		suggMsg := l.FalseFriendSugg
 		if suggMsg == "" {
 			suggMsg = strings.Join(motherTranslations, ", ")
 		}
 		rule := NewFalseFriendPatternRule(id, textLang, tokens, "False friend: "+id, msg, "")
-		// stash suggestions on message suffix as <suggestion> for matcher consumers
 		var sb strings.Builder
 		sb.WriteString(msg)
-		for _, s := range motherTranslations {
-			if s == "" {
-				continue
+		// Prefer Java-style suggestion suffix when template present
+		if strings.Contains(suggMsg, "{0}") {
+			var formatted []string
+			for _, s := range motherTranslations {
+				if s == "" || strings.EqualFold(s, tokensStr) {
+					continue
+				}
+				formatted = append(formatted, "<suggestion>"+s+"</suggestion>")
 			}
-			sb.WriteString(" <suggestion>")
-			sb.WriteString(s)
-			sb.WriteString("</suggestion>")
+			if len(formatted) > 0 {
+				joined := strings.Join(formatted, ", ")
+				sb.WriteString(" ")
+				sb.WriteString(strings.ReplaceAll(suggMsg, "{0}", joined))
+			}
+		} else {
+			for _, s := range motherTranslations {
+				if s == "" {
+					continue
+				}
+				sb.WriteString(" <suggestion>")
+				sb.WriteString(s)
+				sb.WriteString("</suggestion>")
+			}
 		}
 		rule.Message = sb.String()
-		_ = suggMsg
 		out = append(out, rule)
 	}
 	for _, g := range root.RuleGroups {
@@ -184,6 +203,34 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		process(xr.ID, xr)
 	}
 	return out, nil
+}
+
+// englishLangName ports englishMessages.getString(lang.getShortCode()) for common codes.
+func englishLangName(code string) string {
+	switch baseLang(code) {
+	case "en":
+		return "English"
+	case "de":
+		return "German"
+	case "fr":
+		return "French"
+	case "es":
+		return "Spanish"
+	case "nl":
+		return "Dutch"
+	case "pt":
+		return "Portuguese"
+	case "it":
+		return "Italian"
+	case "pl":
+		return "Polish"
+	case "ru":
+		return "Russian"
+	case "ca":
+		return "Catalan"
+	default:
+		return code
+	}
 }
 
 func baseLang(code string) string {

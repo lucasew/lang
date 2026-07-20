@@ -11,87 +11,87 @@
 - [ ] org/languagetool/commandline/CommandLineParser.java::CommandLineParser
 - [ ] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
 - [ ] org/languagetool/commandline/Main.java::Main
-- [ ] org/languagetool/commandline/Main.java::Main.SystemExitHandler
-- [ ] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
-- [ ] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
+- [x] org/languagetool/commandline/Main.java::Main.SystemExitHandler
+- [x] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
+- [x] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
 
 ## languagetool-core
 
 - [ ] org/languagetool/AnalyzedSentence.java::AnalyzedSentence
-- [ ] org/languagetool/AnalyzedToken.java::AnalyzedToken
+- [x] org/languagetool/AnalyzedToken.java::AnalyzedToken
 - [ ] org/languagetool/AnalyzedTokenReadings.java::AnalyzedTokenReadings
-- [ ] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
-- [ ] org/languagetool/CheckResults.java::CheckResults
+- [x] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
+- [x] org/languagetool/CheckResults.java::CheckResults
 - [ ] org/languagetool/DetectedLanguage.java::DetectedLanguage
-- [ ] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
-- [ ] org/languagetool/DynamicLanguage.java::DynamicLanguage
-- [ ] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
-- [ ] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
-- [ ] org/languagetool/Experimental.java::Experimental
-- [ ] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
-- [ ] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
-- [ ] org/languagetool/GlobalConfig.java::GlobalConfig
+- [x] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
+- [x] org/languagetool/DynamicLanguage.java::DynamicLanguage
+- [x] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
+- [x] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
+- [x] org/languagetool/Experimental.java::Experimental
+- [x] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
+- [x] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
+- [x] org/languagetool/GlobalConfig.java::GlobalConfig
 - [ ] org/languagetool/InputSentence.java::InputSentence
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Level
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CleanToken
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.Level
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.CleanToken
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable.LineColumnPosition
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable.LineColumnPosition
 - [ ] org/languagetool/Language.java::Language
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
-- [ ] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
+- [x] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
 - [ ] org/languagetool/LanguageWithModel.java::LanguageWithModel
 - [ ] org/languagetool/Languages.java::Languages
-- [ ] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
-- [ ] org/languagetool/LinguServices.java::LinguServices
-- [ ] org/languagetool/LtBuildInfo.java::LtBuildInfo
+- [x] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
+- [x] org/languagetool/LinguServices.java::LinguServices
+- [x] org/languagetool/LtBuildInfo.java::LtBuildInfo
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
-- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
-- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
-- [ ] org/languagetool/Premium.java::Premium
-- [ ] org/languagetool/PremiumOff.java::PremiumOff
-- [ ] org/languagetool/Range.java::Range
-- [ ] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
+- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
+- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
+- [x] org/languagetool/Premium.java::Premium
+- [x] org/languagetool/PremiumOff.java::PremiumOff
+- [x] org/languagetool/Range.java::Range
+- [x] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
 - [ ] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
-- [ ] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
+- [x] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
 - [ ] org/languagetool/ResultCache.java::ResultCache
-- [ ] org/languagetool/ResultCache.java::ResultCache.MatchesWeigher
-- [ ] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
-- [ ] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
-- [ ] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
-- [ ] org/languagetool/RuleMatchListener.java::RuleMatchListener
-- [ ] org/languagetool/SentenceRange.java::SentenceRange
-- [ ] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider
-- [ ] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
-- [ ] org/languagetool/Tag.java::Tag
-- [ ] org/languagetool/ToneTag.java::ToneTag
-- [ ] org/languagetool/UserConfig.java::UserConfig
-- [ ] org/languagetool/UserConfig.java::UserConfig.TokenType
+- [x] org/languagetool/ResultCache.java::ResultCache.MatchesWeigher
+- [x] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
+- [x] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
+- [x] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
+- [x] org/languagetool/RuleMatchListener.java::RuleMatchListener
+- [x] org/languagetool/SentenceRange.java::SentenceRange
+- [x] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider
+- [x] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
+- [x] org/languagetool/Tag.java::Tag
+- [x] org/languagetool/ToneTag.java::ToneTag
+- [x] org/languagetool/UserConfig.java::UserConfig
+- [x] org/languagetool/UserConfig.java::UserConfig.TokenType
 - [ ] org/languagetool/XMLValidator.java::XMLValidator
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.LSRuleEntityResolver
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.EntityAsInput
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.ErrorHandler
-- [ ] org/languagetool/bitext/BitextReader.java::BitextReader
-- [ ] org/languagetool/bitext/StringPair.java::StringPair
-- [ ] org/languagetool/bitext/TabBitextReader.java::TabBitextReader
-- [ ] org/languagetool/bitext/TabBitextReader.java::TabBitextReader.TabReader
-- [ ] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader
-- [ ] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader.TabReader
-- [ ] org/languagetool/broker/ClassBroker.java::ClassBroker
+- [x] org/languagetool/bitext/BitextReader.java::BitextReader
+- [x] org/languagetool/bitext/StringPair.java::StringPair
+- [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader
+- [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader.TabReader
+- [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader
+- [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader.TabReader
+- [x] org/languagetool/broker/ClassBroker.java::ClassBroker
 - [ ] org/languagetool/broker/DefaultClassBroker.java::DefaultClassBroker
 - [ ] org/languagetool/broker/DefaultResourceDataBroker.java::DefaultResourceDataBroker
 - [ ] org/languagetool/broker/ResourceDataBroker.java::ResourceDataBroker
-- [ ] org/languagetool/chunking/ChunkTag.java::ChunkTag
-- [ ] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
-- [ ] org/languagetool/chunking/Chunker.java::Chunker
-- [ ] org/languagetool/chunking/TokenExpressionFactory.java::TokenExpressionFactory
-- [ ] org/languagetool/chunking/TokenPredicate.java::TokenPredicate
+- [x] org/languagetool/chunking/ChunkTag.java::ChunkTag
+- [x] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
+- [x] org/languagetool/chunking/Chunker.java::Chunker
+- [x] org/languagetool/chunking/TokenExpressionFactory.java::TokenExpressionFactory
+- [x] org/languagetool/chunking/TokenPredicate.java::TokenPredicate
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc.AsyncService
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc.SynthesizeServerImplBase
@@ -112,27 +112,27 @@
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponse
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponseItemOrBuilder
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponseItem
-- [ ] org/languagetool/language/Contributor.java::Contributor
-- [ ] org/languagetool/language/Contributors.java::Contributors
+- [x] org/languagetool/language/Contributor.java::Contributor
+- [x] org/languagetool/language/Contributors.java::Contributors
 - [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder
 - [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder.ExtendedLanguage
-- [ ] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
+- [x] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
 - [ ] org/languagetool/language/identifier/DefaultLanguageIdentifier.java::DefaultLanguageIdentifier
 - [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier
-- [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
+- [x] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
 - [ ] org/languagetool/language/identifier/LanguageIdentifierService.java::LanguageIdentifierService
 - [ ] org/languagetool/language/identifier/SimpleLanguageIdentifier.java::SimpleLanguageIdentifier
 - [ ] org/languagetool/language/identifier/detector/CommonWordsDetector.java::CommonWordsDetector
 - [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector
-- [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector.FastTextException
+- [x] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector.FastTextException
 - [ ] org/languagetool/language/identifier/detector/NGramDetector.java::NGramDetector
-- [ ] org/languagetool/language/identifier/detector/UnicodeBasedDetector.java::UnicodeBasedDetector
-- [ ] org/languagetool/languagemodel/BaseLanguageModel.java::BaseLanguageModel
-- [ ] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
+- [x] org/languagetool/language/identifier/detector/UnicodeBasedDetector.java::UnicodeBasedDetector
+- [x] org/languagetool/languagemodel/BaseLanguageModel.java::BaseLanguageModel
+- [x] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
 - [ ] org/languagetool/languagemodel/LuceneLanguageModel.java::LuceneLanguageModel
 - [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel
 - [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel.LuceneSearcher
-- [ ] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
+- [x] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
 - [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel
 - [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel.Request
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc
@@ -159,36 +159,36 @@
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmProto.java::BertLmProto.BatchScoreRequest
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmProto.java::BertLmProto.BatchBertLmResponseOrBuilder
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmProto.java::BertLmProto.BatchBertLmResponse
-- [ ] org/languagetool/markup/AnnotatedText.java::AnnotatedText
-- [ ] org/languagetool/markup/AnnotatedText.java::AnnotatedText.MetaDataKey
-- [ ] org/languagetool/markup/AnnotatedTextBuilder.java::AnnotatedTextBuilder
-- [ ] org/languagetool/markup/MappingValue.java::MappingValue
-- [ ] org/languagetool/markup/TextPart.java::TextPart
-- [ ] org/languagetool/markup/TextPart.java::TextPart.Type
-- [ ] org/languagetool/noop/NoopChunker.java::NoopChunker
-- [ ] org/languagetool/noop/NoopDisambiguator.java::NoopDisambiguator
-- [ ] org/languagetool/noop/NoopLanguage.java::NoopLanguage
+- [x] org/languagetool/markup/AnnotatedText.java::AnnotatedText
+- [x] org/languagetool/markup/AnnotatedText.java::AnnotatedText.MetaDataKey
+- [x] org/languagetool/markup/AnnotatedTextBuilder.java::AnnotatedTextBuilder
+- [x] org/languagetool/markup/MappingValue.java::MappingValue
+- [x] org/languagetool/markup/TextPart.java::TextPart
+- [x] org/languagetool/markup/TextPart.java::TextPart.Type
+- [x] org/languagetool/noop/NoopChunker.java::NoopChunker
+- [x] org/languagetool/noop/NoopDisambiguator.java::NoopDisambiguator
+- [x] org/languagetool/noop/NoopLanguage.java::NoopLanguage
 - [ ] org/languagetool/rules/AbstractAdvancedSynthesizerFilter.java::AbstractAdvancedSynthesizerFilter
-- [ ] org/languagetool/rules/AbstractCheckCaseRule.java::AbstractCheckCaseRule
+- [x] org/languagetool/rules/AbstractCheckCaseRule.java::AbstractCheckCaseRule
 - [ ] org/languagetool/rules/AbstractCompoundRule.java::AbstractCompoundRule
-- [ ] org/languagetool/rules/AbstractDashRule.java::AbstractDashRule
+- [x] org/languagetool/rules/AbstractDashRule.java::AbstractDashRule
 - [ ] org/languagetool/rules/AbstractDateCheckFilter.java::AbstractDateCheckFilter
 - [ ] org/languagetool/rules/AbstractDateCheckWithSuggestionsFilter.java::AbstractDateCheckWithSuggestionsFilter
 - [ ] org/languagetool/rules/AbstractFillerWordsRule.java::AbstractFillerWordsRule
 - [ ] org/languagetool/rules/AbstractFindSuggestionsFilter.java::AbstractFindSuggestionsFilter
 - [ ] org/languagetool/rules/AbstractFindSuggestionsFilter.java::AbstractFindSuggestionsFilter.StringComparator
 - [ ] org/languagetool/rules/AbstractFutureDateFilter.java::AbstractFutureDateFilter
-- [ ] org/languagetool/rules/AbstractMakeContractionsFilter.java::AbstractMakeContractionsFilter
+- [x] org/languagetool/rules/AbstractMakeContractionsFilter.java::AbstractMakeContractionsFilter
 - [ ] org/languagetool/rules/AbstractNewYearDateFilter.java::AbstractNewYearDateFilter
-- [ ] org/languagetool/rules/AbstractNumberInWordFilter.java::AbstractNumberInWordFilter
+- [x] org/languagetool/rules/AbstractNumberInWordFilter.java::AbstractNumberInWordFilter
 - [ ] org/languagetool/rules/AbstractPunctuationCheckRule.java::AbstractPunctuationCheckRule
 - [ ] org/languagetool/rules/AbstractRepeatedWordsRule.java::AbstractRepeatedWordsRule
 - [ ] org/languagetool/rules/AbstractSimpleReplaceRule.java::AbstractSimpleReplaceRule
 - [ ] org/languagetool/rules/AbstractSimpleReplaceRule2.java::AbstractSimpleReplaceRule2
 - [ ] org/languagetool/rules/AbstractSimpleReplaceRule2.java::AbstractSimpleReplaceRule2.CaseSensitivy
-- [ ] org/languagetool/rules/AbstractSpaceBeforeRule.java::AbstractSpaceBeforeRule
+- [x] org/languagetool/rules/AbstractSpaceBeforeRule.java::AbstractSpaceBeforeRule
 - [ ] org/languagetool/rules/AbstractSpecificCaseRule.java::AbstractSpecificCaseRule
-- [ ] org/languagetool/rules/AbstractStatisticSentenceStyleRule.java::AbstractStatisticSentenceStyleRule
+- [x] org/languagetool/rules/AbstractStatisticSentenceStyleRule.java::AbstractStatisticSentenceStyleRule
 - [ ] org/languagetool/rules/AbstractStatisticStyleRule.java::AbstractStatisticStyleRule
 - [ ] org/languagetool/rules/AbstractStyleRepeatedWordRule.java::AbstractStyleRepeatedWordRule
 - [ ] org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java::AbstractStyleTooOftenUsedWordRule
@@ -197,38 +197,38 @@
 - [ ] org/languagetool/rules/AbstractUnitConversionRule.java::AbstractUnitConversionRule
 - [ ] org/languagetool/rules/AbstractUnitConversionRule.java::AbstractUnitConversionRule.Message
 - [ ] org/languagetool/rules/AbstractWordCoherencyRule.java::AbstractWordCoherencyRule
-- [ ] org/languagetool/rules/AdaptSuggestionsFilter.java::AdaptSuggestionsFilter
-- [ ] org/languagetool/rules/AddCommasFilter.java::AddCommasFilter
+- [x] org/languagetool/rules/AdaptSuggestionsFilter.java::AdaptSuggestionsFilter
+- [x] org/languagetool/rules/AddCommasFilter.java::AddCommasFilter
 - [ ] org/languagetool/rules/AdvancedWordRepeatRule.java::AdvancedWordRepeatRule
 - [ ] org/languagetool/rules/BERTSuggestionRanking.java::BERTSuggestionRanking
 - [ ] org/languagetool/rules/BERTSuggestionRanking.java::BERTSuggestionRanking.MatchesForReordering
 - [ ] org/languagetool/rules/BERTSuggestionRanking.java::BERTSuggestionRanking.CuratedAndSameCaseComparator
-- [ ] org/languagetool/rules/Categories.java::Categories
-- [ ] org/languagetool/rules/Category.java::Category
-- [ ] org/languagetool/rules/Category.java::Category.Location
-- [ ] org/languagetool/rules/CategoryId.java::CategoryId
-- [ ] org/languagetool/rules/CategoryIds.java::CategoryIds
+- [x] org/languagetool/rules/Categories.java::Categories
+- [x] org/languagetool/rules/Category.java::Category
+- [x] org/languagetool/rules/Category.java::Category.Location
+- [x] org/languagetool/rules/CategoryId.java::CategoryId
+- [x] org/languagetool/rules/CategoryIds.java::CategoryIds
 - [ ] org/languagetool/rules/CheckPostagsInSuggestionFilter.java::CheckPostagsInSuggestionFilter
-- [ ] org/languagetool/rules/CleanOverlappingFilter.java::CleanOverlappingFilter
-- [ ] org/languagetool/rules/CommaWhitespaceRule.java::CommaWhitespaceRule
+- [x] org/languagetool/rules/CleanOverlappingFilter.java::CleanOverlappingFilter
+- [x] org/languagetool/rules/CommaWhitespaceRule.java::CommaWhitespaceRule
 - [ ] org/languagetool/rules/CompoundRuleData.java::CompoundRuleData
-- [ ] org/languagetool/rules/ConfusionPair.java::ConfusionPair
-- [ ] org/languagetool/rules/ConfusionSet.java::ConfusionSet
+- [x] org/languagetool/rules/ConfusionPair.java::ConfusionPair
+- [x] org/languagetool/rules/ConfusionSet.java::ConfusionSet
 - [ ] org/languagetool/rules/ConfusionSetLoader.java::ConfusionSetLoader
-- [ ] org/languagetool/rules/ConfusionString.java::ConfusionString
+- [x] org/languagetool/rules/ConfusionString.java::ConfusionString
 - [ ] org/languagetool/rules/ConvertToSentenceCaseFilter.java::ConvertToSentenceCaseFilter
-- [ ] org/languagetool/rules/CorrectExample.java::CorrectExample
-- [ ] org/languagetool/rules/DateRangeChecker.java::DateRangeChecker
-- [ ] org/languagetool/rules/DemoRule.java::DemoRule
-- [ ] org/languagetool/rules/DictionaryMatchFilter.java::DictionaryMatchFilter
+- [x] org/languagetool/rules/CorrectExample.java::CorrectExample
+- [x] org/languagetool/rules/DateRangeChecker.java::DateRangeChecker
+- [x] org/languagetool/rules/DemoRule.java::DemoRule
+- [x] org/languagetool/rules/DictionaryMatchFilter.java::DictionaryMatchFilter
 - [ ] org/languagetool/rules/DictionarySpellMatchFilter.java::DictionarySpellMatchFilter
 - [ ] org/languagetool/rules/DictionarySpellMatchFilter.java::DictionarySpellMatchFilter.PhraseSearchLoader
-- [ ] org/languagetool/rules/DoublePunctuationRule.java::DoublePunctuationRule
-- [ ] org/languagetool/rules/EmptyLineRule.java::EmptyLineRule
-- [ ] org/languagetool/rules/ErrorTriggeringExample.java::ErrorTriggeringExample
-- [ ] org/languagetool/rules/Example.java::Example
-- [ ] org/languagetool/rules/ExampleSentence.java::ExampleSentence
-- [ ] org/languagetool/rules/FakeRule.java::FakeRule
+- [x] org/languagetool/rules/DoublePunctuationRule.java::DoublePunctuationRule
+- [x] org/languagetool/rules/EmptyLineRule.java::EmptyLineRule
+- [x] org/languagetool/rules/ErrorTriggeringExample.java::ErrorTriggeringExample
+- [x] org/languagetool/rules/Example.java::Example
+- [x] org/languagetool/rules/ExampleSentence.java::ExampleSentence
+- [x] org/languagetool/rules/FakeRule.java::FakeRule
 - [ ] org/languagetool/rules/GRPCPostProcessing.java::GRPCPostProcessing
 - [ ] org/languagetool/rules/GRPCRule.java::GRPCRule
 - [ ] org/languagetool/rules/GRPCRule.java::GRPCRule.GRPCSubRule
@@ -241,77 +241,77 @@
 - [ ] org/languagetool/rules/GenericUnpairedBracketsRule.java::Symbol.Type
 - [ ] org/languagetool/rules/GenericUnpairedQuotesRule.java::GenericUnpairedQuotesRule
 - [ ] org/languagetool/rules/GenericUnpairedQuotesRule.java::GenericUnpairedQuotesRule.SymbolLocator
-- [ ] org/languagetool/rules/ITSIssueType.java::ITSIssueType
-- [ ] org/languagetool/rules/IncorrectExample.java::IncorrectExample
-- [ ] org/languagetool/rules/IsEnglishWordFilter.java::IsEnglishWordFilter
-- [ ] org/languagetool/rules/LanguageDependentRuleMatchFilter.java::LanguageDependentRuleMatchFilter
-- [ ] org/languagetool/rules/LineExpander.java::LineExpander
-- [ ] org/languagetool/rules/LongParagraphRule.java::LongParagraphRule
-- [ ] org/languagetool/rules/LongSentenceRule.java::LongSentenceRule
-- [ ] org/languagetool/rules/MatchPosition.java::MatchPosition
-- [ ] org/languagetool/rules/MultipleWhitespaceRule.java::MultipleWhitespaceRule
-- [ ] org/languagetool/rules/NewLineMatchFilter.java::NewLineMatchFilter
-- [ ] org/languagetool/rules/ParagraphRepeatBeginningRule.java::ParagraphRepeatBeginningRule
-- [ ] org/languagetool/rules/PartialPosTagFilter.java::PartialPosTagFilter
-- [ ] org/languagetool/rules/PunctuationMarkAtParagraphEnd.java::PunctuationMarkAtParagraphEnd
-- [ ] org/languagetool/rules/PunctuationMarkAtParagraphEnd2.java::PunctuationMarkAtParagraphEnd2
+- [x] org/languagetool/rules/ITSIssueType.java::ITSIssueType
+- [x] org/languagetool/rules/IncorrectExample.java::IncorrectExample
+- [x] org/languagetool/rules/IsEnglishWordFilter.java::IsEnglishWordFilter
+- [x] org/languagetool/rules/LanguageDependentRuleMatchFilter.java::LanguageDependentRuleMatchFilter
+- [x] org/languagetool/rules/LineExpander.java::LineExpander
+- [x] org/languagetool/rules/LongParagraphRule.java::LongParagraphRule
+- [x] org/languagetool/rules/LongSentenceRule.java::LongSentenceRule
+- [x] org/languagetool/rules/MatchPosition.java::MatchPosition
+- [x] org/languagetool/rules/MultipleWhitespaceRule.java::MultipleWhitespaceRule
+- [x] org/languagetool/rules/NewLineMatchFilter.java::NewLineMatchFilter
+- [x] org/languagetool/rules/ParagraphRepeatBeginningRule.java::ParagraphRepeatBeginningRule
+- [x] org/languagetool/rules/PartialPosTagFilter.java::PartialPosTagFilter
+- [x] org/languagetool/rules/PunctuationMarkAtParagraphEnd.java::PunctuationMarkAtParagraphEnd
+- [x] org/languagetool/rules/PunctuationMarkAtParagraphEnd2.java::PunctuationMarkAtParagraphEnd2
 - [ ] org/languagetool/rules/ReadabilityRule.java::ReadabilityRule
 - [ ] org/languagetool/rules/RemoteRule.java::RemoteRule
 - [ ] org/languagetool/rules/RemoteRule.java::RemoteRule.RemoteRequest
-- [ ] org/languagetool/rules/RemoteRuleConfig.java::RemoteRuleConfig
+- [x] org/languagetool/rules/RemoteRuleConfig.java::RemoteRuleConfig
 - [ ] org/languagetool/rules/RemoteRuleFilters.java::RemoteRuleFilters
 - [ ] org/languagetool/rules/RemoteRuleFilters.java::RemoteRuleFilters.ExpectedMatches
 - [ ] org/languagetool/rules/RemoteRuleFilters.java::RemoteRuleFilters.ExpectedMatch
 - [ ] org/languagetool/rules/RemoteRuleFilters.java::RemoteRuleFilters.ExpectedRule
 - [ ] org/languagetool/rules/RemoteRuleMetrics.java::RemoteRuleMetrics
-- [ ] org/languagetool/rules/RemoteRuleMetrics.java::RemoteRuleMetrics.RequestResult
-- [ ] org/languagetool/rules/RemoteRuleResult.java::RemoteRuleResult
+- [x] org/languagetool/rules/RemoteRuleMetrics.java::RemoteRuleMetrics.RequestResult
+- [x] org/languagetool/rules/RemoteRuleResult.java::RemoteRuleResult
 - [ ] org/languagetool/rules/Rule.java::Rule
 - [ ] org/languagetool/rules/RuleMatch.java::RuleMatch
-- [ ] org/languagetool/rules/RuleMatch.java::RuleMatch.Type
-- [ ] org/languagetool/rules/RuleMatch.java::RuleMatch.PatternPosition
-- [ ] org/languagetool/rules/RuleMatch.java::RuleMatch.OffsetPosition
-- [ ] org/languagetool/rules/RuleMatch.java::RuleMatch.SentencePosition
-- [ ] org/languagetool/rules/RuleMatch.java::RuleMatch.LinePosition
-- [ ] org/languagetool/rules/RuleMatch.java::RuleMatch.ColumnPosition
-- [ ] org/languagetool/rules/RuleMatchFilter.java::RuleMatchFilter
-- [ ] org/languagetool/rules/RuleOption.java::RuleOption
-- [ ] org/languagetool/rules/RuleWithMaxFilter.java::RuleWithMaxFilter
-- [ ] org/languagetool/rules/SameRuleGroupFilter.java::SameRuleGroupFilter
-- [ ] org/languagetool/rules/ScoredConfusionSet.java::ScoredConfusionSet
-- [ ] org/languagetool/rules/SentenceWhitespaceRule.java::SentenceWhitespaceRule
-- [ ] org/languagetool/rules/ShortenedYearRangeChecker.java::ShortenedYearRangeChecker
-- [ ] org/languagetool/rules/SimpleReplaceDataLoader.java::SimpleReplaceDataLoader
-- [ ] org/languagetool/rules/SpecificIdRule.java::SpecificIdRule
-- [ ] org/languagetool/rules/SuggestedReplacement.java::SuggestedReplacement
-- [ ] org/languagetool/rules/SuggestedReplacement.java::SuggestedReplacement.SuggestionType
-- [ ] org/languagetool/rules/SuggestionFilter.java::SuggestionFilter
-- [ ] org/languagetool/rules/SuggestionWithMessage.java::SuggestionWithMessage
-- [ ] org/languagetool/rules/SuppressIfAnyRuleMatchesFilter.java::SuppressIfAnyRuleMatchesFilter
-- [ ] org/languagetool/rules/SymbolLocator.java::SymbolLocator
-- [ ] org/languagetool/rules/SynonymsData.java::SynonymsData
-- [ ] org/languagetool/rules/TestHackHelper.java::TestHackHelper
+- [x] org/languagetool/rules/RuleMatch.java::RuleMatch.Type
+- [x] org/languagetool/rules/RuleMatch.java::RuleMatch.PatternPosition
+- [x] org/languagetool/rules/RuleMatch.java::RuleMatch.OffsetPosition
+- [x] org/languagetool/rules/RuleMatch.java::RuleMatch.SentencePosition
+- [x] org/languagetool/rules/RuleMatch.java::RuleMatch.LinePosition
+- [x] org/languagetool/rules/RuleMatch.java::RuleMatch.ColumnPosition
+- [x] org/languagetool/rules/RuleMatchFilter.java::RuleMatchFilter
+- [x] org/languagetool/rules/RuleOption.java::RuleOption
+- [x] org/languagetool/rules/RuleWithMaxFilter.java::RuleWithMaxFilter
+- [x] org/languagetool/rules/SameRuleGroupFilter.java::SameRuleGroupFilter
+- [x] org/languagetool/rules/ScoredConfusionSet.java::ScoredConfusionSet
+- [x] org/languagetool/rules/SentenceWhitespaceRule.java::SentenceWhitespaceRule
+- [x] org/languagetool/rules/ShortenedYearRangeChecker.java::ShortenedYearRangeChecker
+- [x] org/languagetool/rules/SimpleReplaceDataLoader.java::SimpleReplaceDataLoader
+- [x] org/languagetool/rules/SpecificIdRule.java::SpecificIdRule
+- [x] org/languagetool/rules/SuggestedReplacement.java::SuggestedReplacement
+- [x] org/languagetool/rules/SuggestedReplacement.java::SuggestedReplacement.SuggestionType
+- [x] org/languagetool/rules/SuggestionFilter.java::SuggestionFilter
+- [x] org/languagetool/rules/SuggestionWithMessage.java::SuggestionWithMessage
+- [x] org/languagetool/rules/SuppressIfAnyRuleMatchesFilter.java::SuppressIfAnyRuleMatchesFilter
+- [x] org/languagetool/rules/SymbolLocator.java::SymbolLocator
+- [x] org/languagetool/rules/SynonymsData.java::SynonymsData
+- [x] org/languagetool/rules/TestHackHelper.java::TestHackHelper
 - [ ] org/languagetool/rules/TestRemoteRule.java::TestRemoteRule
 - [ ] org/languagetool/rules/TestRemoteRule.java::TestRemoteRule.TestRemoteRequest
-- [ ] org/languagetool/rules/TextLevelRule.java::TextLevelRule
-- [ ] org/languagetool/rules/UnderlineSpacesFilter.java::UnderlineSpacesFilter
-- [ ] org/languagetool/rules/UnsyncStack.java::UnsyncStack
-- [ ] org/languagetool/rules/UppercaseSentenceStartRule.java::UppercaseSentenceStartRule
-- [ ] org/languagetool/rules/WhiteSpaceAtBeginOfParagraph.java::WhiteSpaceAtBeginOfParagraph
-- [ ] org/languagetool/rules/WhiteSpaceBeforeParagraphEnd.java::WhiteSpaceBeforeParagraphEnd
-- [ ] org/languagetool/rules/WhitespaceBeforePunctuationRule.java::WhitespaceBeforePunctuationRule
-- [ ] org/languagetool/rules/WhitespaceCheckFilter.java::WhitespaceCheckFilter
+- [x] org/languagetool/rules/TextLevelRule.java::TextLevelRule
+- [x] org/languagetool/rules/UnderlineSpacesFilter.java::UnderlineSpacesFilter
+- [x] org/languagetool/rules/UnsyncStack.java::UnsyncStack
+- [x] org/languagetool/rules/UppercaseSentenceStartRule.java::UppercaseSentenceStartRule
+- [x] org/languagetool/rules/WhiteSpaceAtBeginOfParagraph.java::WhiteSpaceAtBeginOfParagraph
+- [x] org/languagetool/rules/WhiteSpaceBeforeParagraphEnd.java::WhiteSpaceBeforeParagraphEnd
+- [x] org/languagetool/rules/WhitespaceBeforePunctuationRule.java::WhitespaceBeforePunctuationRule
+- [x] org/languagetool/rules/WhitespaceCheckFilter.java::WhitespaceCheckFilter
 - [ ] org/languagetool/rules/WordCoherencyDataLoader.java::WordCoherencyDataLoader
-- [ ] org/languagetool/rules/WordRepeatBeginningRule.java::WordRepeatBeginningRule
-- [ ] org/languagetool/rules/WordRepeatRule.java::WordRepeatRule
+- [x] org/languagetool/rules/WordRepeatBeginningRule.java::WordRepeatBeginningRule
+- [x] org/languagetool/rules/WordRepeatRule.java::WordRepeatRule
 - [ ] org/languagetool/rules/WrongWordInContextRule.java::WrongWordInContextRule
 - [ ] org/languagetool/rules/WrongWordInContextRule.java::WrongWordInContextRule.ContextWords
-- [ ] org/languagetool/rules/YMDDateHelper.java::YMDDateHelper
+- [x] org/languagetool/rules/YMDDateHelper.java::YMDDateHelper
 - [ ] org/languagetool/rules/bitext/BitextRule.java::BitextRule
-- [ ] org/languagetool/rules/bitext/DifferentLengthRule.java::DifferentLengthRule
-- [ ] org/languagetool/rules/bitext/DifferentPunctuationRule.java::DifferentPunctuationRule
-- [ ] org/languagetool/rules/bitext/IncorrectBitextExample.java::IncorrectBitextExample
-- [ ] org/languagetool/rules/bitext/SameTranslationRule.java::SameTranslationRule
+- [x] org/languagetool/rules/bitext/DifferentLengthRule.java::DifferentLengthRule
+- [x] org/languagetool/rules/bitext/DifferentPunctuationRule.java::DifferentPunctuationRule
+- [x] org/languagetool/rules/bitext/IncorrectBitextExample.java::IncorrectBitextExample
+- [x] org/languagetool/rules/bitext/SameTranslationRule.java::SameTranslationRule
 - [ ] org/languagetool/rules/ml/MLServerGrpc.java::MLServerGrpc
 - [ ] org/languagetool/rules/ml/MLServerGrpc.java::MLServerGrpc.AsyncService
 - [ ] org/languagetool/rules/ml/MLServerGrpc.java::MLServerGrpc.MLServerImplBase
@@ -393,52 +393,52 @@
 - [ ] org/languagetool/rules/ngrams/NgramProbabilityRule.java::NgramProbabilityRule.AdvancedReplacement
 - [ ] org/languagetool/rules/ngrams/NgramProbabilityRule.java::NgramProbabilityRule.Alternative
 - [ ] org/languagetool/rules/ngrams/NgramProbabilityRule.java::NgramProbabilityRule.Alternatives
-- [ ] org/languagetool/rules/ngrams/Probability.java::Probability
+- [x] org/languagetool/rules/ngrams/Probability.java::Probability
 - [ ] org/languagetool/rules/patterns/AbstractPatternRule.java::AbstractPatternRule
 - [ ] org/languagetool/rules/patterns/AbstractPatternRulePerformer.java::AbstractPatternRulePerformer
 - [ ] org/languagetool/rules/patterns/AbstractPatternRulePerformer.java::AbstractPatternRulePerformer.MatchConsumer
 - [ ] org/languagetool/rules/patterns/AbstractTokenBasedRule.java::AbstractTokenBasedRule
 - [ ] org/languagetool/rules/patterns/AbstractTokenBasedRule.java::AbstractTokenBasedRule.TokenHint
-- [ ] org/languagetool/rules/patterns/ApostropheTypeFilter.java::ApostropheTypeFilter
-- [ ] org/languagetool/rules/patterns/CaseConversionHelper.java::CaseConversionHelper
+- [x] org/languagetool/rules/patterns/ApostropheTypeFilter.java::ApostropheTypeFilter
+- [x] org/languagetool/rules/patterns/CaseConversionHelper.java::CaseConversionHelper
 - [ ] org/languagetool/rules/patterns/ConsistencyPatternRuleTransformer.java::ConsistencyPatternRuleTransformer
 - [ ] org/languagetool/rules/patterns/ConsistencyPatternRuleTransformer.java::ConsistencyPatternRuleTransformer.ConsistencyPatternRule
-- [ ] org/languagetool/rules/patterns/EquivalenceTypeLocator.java::EquivalenceTypeLocator
+- [x] org/languagetool/rules/patterns/EquivalenceTypeLocator.java::EquivalenceTypeLocator
 - [ ] org/languagetool/rules/patterns/FalseFriendPatternRule.java::FalseFriendPatternRule
 - [ ] org/languagetool/rules/patterns/FalseFriendRuleHandler.java::FalseFriendRuleHandler
 - [ ] org/languagetool/rules/patterns/FalseFriendRuleLoader.java::FalseFriendRuleLoader
-- [ ] org/languagetool/rules/patterns/IgnoreWhitespaceFilter.java::IgnoreWhitespaceFilter
+- [x] org/languagetool/rules/patterns/IgnoreWhitespaceFilter.java::IgnoreWhitespaceFilter
 - [ ] org/languagetool/rules/patterns/Match.java::Match
-- [ ] org/languagetool/rules/patterns/Match.java::Match.CaseConversion
-- [ ] org/languagetool/rules/patterns/Match.java::Match.IncludeRange
+- [x] org/languagetool/rules/patterns/Match.java::Match.CaseConversion
+- [x] org/languagetool/rules/patterns/Match.java::Match.IncludeRange
 - [ ] org/languagetool/rules/patterns/MatchState.java::MatchState
-- [ ] org/languagetool/rules/patterns/PasswordAuthenticator.java::PasswordAuthenticator
+- [x] org/languagetool/rules/patterns/PasswordAuthenticator.java::PasswordAuthenticator
 - [ ] org/languagetool/rules/patterns/PatternRule.java::PatternRule
-- [ ] org/languagetool/rules/patterns/PatternRuleBuilderHelper.java::PatternRuleBuilderHelper
+- [x] org/languagetool/rules/patterns/PatternRuleBuilderHelper.java::PatternRuleBuilderHelper
 - [ ] org/languagetool/rules/patterns/PatternRuleHandler.java::PatternRuleHandler
-- [ ] org/languagetool/rules/patterns/PatternRuleId.java::PatternRuleId
+- [x] org/languagetool/rules/patterns/PatternRuleId.java::PatternRuleId
 - [ ] org/languagetool/rules/patterns/PatternRuleLoader.java::PatternRuleLoader
 - [ ] org/languagetool/rules/patterns/PatternRuleMatcher.java::PatternRuleMatcher
-- [ ] org/languagetool/rules/patterns/PatternRuleTransformer.java::PatternRuleTransformer
-- [ ] org/languagetool/rules/patterns/PatternRuleTransformer.java::PatternRuleTransformer.TransformedRules
+- [x] org/languagetool/rules/patterns/PatternRuleTransformer.java::PatternRuleTransformer
+- [x] org/languagetool/rules/patterns/PatternRuleTransformer.java::PatternRuleTransformer.TransformedRules
 - [ ] org/languagetool/rules/patterns/PatternRuleXmlCreator.java::PatternRuleXmlCreator
 - [ ] org/languagetool/rules/patterns/PatternToken.java::PatternToken
 - [ ] org/languagetool/rules/patterns/PatternToken.java::PatternToken.PosToken
 - [ ] org/languagetool/rules/patterns/PatternToken.java::PatternToken.RareFields
 - [ ] org/languagetool/rules/patterns/PatternTokenBuilder.java::PatternTokenBuilder
 - [ ] org/languagetool/rules/patterns/PatternTokenMatcher.java::PatternTokenMatcher
-- [ ] org/languagetool/rules/patterns/RegexAntiPatternFilter.java::RegexAntiPatternFilter
+- [x] org/languagetool/rules/patterns/RegexAntiPatternFilter.java::RegexAntiPatternFilter
 - [ ] org/languagetool/rules/patterns/RegexPatternRule.java::RegexPatternRule
-- [ ] org/languagetool/rules/patterns/RegexRuleFilter.java::RegexRuleFilter
-- [ ] org/languagetool/rules/patterns/RegexRuleFilterCreator.java::RegexRuleFilterCreator
-- [ ] org/languagetool/rules/patterns/RegexRuleFilterEvaluator.java::RegexRuleFilterEvaluator
+- [x] org/languagetool/rules/patterns/RegexRuleFilter.java::RegexRuleFilter
+- [x] org/languagetool/rules/patterns/RegexRuleFilterCreator.java::RegexRuleFilterCreator
+- [x] org/languagetool/rules/patterns/RegexRuleFilterEvaluator.java::RegexRuleFilterEvaluator
 - [ ] org/languagetool/rules/patterns/RepeatedPatternRuleTransformer.java::RepeatedPatternRuleTransformer
 - [ ] org/languagetool/rules/patterns/RepeatedPatternRuleTransformer.java::RepeatedPatternRuleTransformer.RepeatedPatternRule
 - [ ] org/languagetool/rules/patterns/RuleFilter.java::RuleFilter
 - [ ] org/languagetool/rules/patterns/RuleFilter.java::RuleFilter.FakeRule
 - [ ] org/languagetool/rules/patterns/RuleFilterCreator.java::RuleFilterCreator
 - [ ] org/languagetool/rules/patterns/RuleFilterEvaluator.java::RuleFilterEvaluator
-- [ ] org/languagetool/rules/patterns/RuleMatcher.java::RuleMatcher
+- [x] org/languagetool/rules/patterns/RuleMatcher.java::RuleMatcher
 - [ ] org/languagetool/rules/patterns/RuleSet.java::RuleSet
 - [ ] org/languagetool/rules/patterns/StringMatcher.java::StringMatcher
 - [ ] org/languagetool/rules/patterns/StringMatcher.java::StringMatcher.RegexpParser
@@ -453,10 +453,10 @@
 - [ ] org/languagetool/rules/patterns/bitext/BitextPatternRuleHandler.java::BitextPatternRuleHandler
 - [ ] org/languagetool/rules/patterns/bitext/BitextPatternRuleLoader.java::BitextPatternRuleLoader
 - [ ] org/languagetool/rules/patterns/bitext/FalseFriendsAsBitextLoader.java::FalseFriendsAsBitextLoader
-- [ ] org/languagetool/rules/spelling/CachingWordListLoader.java::CachingWordListLoader
-- [ ] org/languagetool/rules/spelling/CommonFileTypes.java::CommonFileTypes
+- [x] org/languagetool/rules/spelling/CachingWordListLoader.java::CachingWordListLoader
+- [x] org/languagetool/rules/spelling/CommonFileTypes.java::CommonFileTypes
 - [ ] org/languagetool/rules/spelling/ForeignLanguageChecker.java::ForeignLanguageChecker
-- [ ] org/languagetool/rules/spelling/RuleWithLanguage.java::RuleWithLanguage
+- [x] org/languagetool/rules/spelling/RuleWithLanguage.java::RuleWithLanguage
 - [ ] org/languagetool/rules/spelling/SpellingCheckRule.java::SpellingCheckRule
 - [ ] org/languagetool/rules/spelling/SymSpellRule.java::SymSpellRule
 - [ ] org/languagetool/rules/spelling/VagueSpellChecker.java::VagueSpellChecker
@@ -467,8 +467,8 @@
 - [ ] org/languagetool/rules/spelling/hunspell/Hunspell.java::Hunspell.PathPair
 - [ ] org/languagetool/rules/spelling/hunspell/Hunspell.java::Hunspell.ResourcePair
 - [ ] org/languagetool/rules/spelling/hunspell/Hunspell.java::Hunspell.Factory
-- [ ] org/languagetool/rules/spelling/hunspell/HunspellDictionary.java::HunspellDictionary
-- [ ] org/languagetool/rules/spelling/hunspell/HunspellNoSuggestionRule.java::HunspellNoSuggestionRule
+- [x] org/languagetool/rules/spelling/hunspell/HunspellDictionary.java::HunspellDictionary
+- [x] org/languagetool/rules/spelling/hunspell/HunspellNoSuggestionRule.java::HunspellNoSuggestionRule
 - [ ] org/languagetool/rules/spelling/hunspell/HunspellRule.java::HunspellRule
 - [ ] org/languagetool/rules/spelling/morfologik/MorfologikMultiSpeller.java::MorfologikMultiSpeller
 - [ ] org/languagetool/rules/spelling/morfologik/MorfologikMultiSpeller.java::MorfologikMultiSpeller.UserDictCacheKey
@@ -476,7 +476,7 @@
 - [ ] org/languagetool/rules/spelling/morfologik/MorfologikSpeller.java::MorfologikSpeller
 - [ ] org/languagetool/rules/spelling/morfologik/MorfologikSpellerRule.java::MorfologikSpellerRule
 - [ ] org/languagetool/rules/spelling/morfologik/MorfologikSpellerRule.java::MorfologikSpellerRule.PhraseToTranslate
-- [ ] org/languagetool/rules/spelling/morfologik/WeightedSuggestion.java::WeightedSuggestion
+- [x] org/languagetool/rules/spelling/morfologik/WeightedSuggestion.java::WeightedSuggestion
 - [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java::DetailedDamerauLevenstheinDistance
 - [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java::DetailedDamerauLevenstheinDistance.EditOperation
 - [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java::DetailedDamerauLevenstheinDistance.Delete
@@ -484,7 +484,7 @@
 - [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java::DetailedDamerauLevenstheinDistance.Insert
 - [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java::DetailedDamerauLevenstheinDistance.Replace
 - [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java::DetailedDamerauLevenstheinDistance.Distance
-- [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/SuggestionsOrdererConfig.java::SuggestionsOrdererConfig
+- [x] org/languagetool/rules/spelling/morfologik/suggestions_ordering/SuggestionsOrdererConfig.java::SuggestionsOrdererConfig
 - [ ] org/languagetool/rules/spelling/multitoken/MultitokenSpeller.java::MultitokenSpeller
 - [ ] org/languagetool/rules/spelling/multitoken/MultitokenSpellerFilter.java::MultitokenSpellerFilter
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionChangesExperiment.java::SuggestionChangesTestConfig
@@ -493,10 +493,10 @@
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionChangesExperiment.java::SuggestionChangesExperiment
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionsChanges.java::SuggestionsChanges
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionsChanges.java::SuggestionsChanges.Report
-- [ ] org/languagetool/rules/spelling/suggestions/SuggestionsOrderer.java::SuggestionsOrderer
+- [x] org/languagetool/rules/spelling/suggestions/SuggestionsOrderer.java::SuggestionsOrderer
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionsOrdererFeatureExtractor.java::SuggestionsOrdererFeatureExtractor
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionsOrdererFeatureExtractor.java::SuggestionsOrdererFeatureExtractor.Feature
-- [ ] org/languagetool/rules/spelling/suggestions/SuggestionsRanker.java::SuggestionsRanker
+- [x] org/languagetool/rules/spelling/suggestions/SuggestionsRanker.java::SuggestionsRanker
 - [ ] org/languagetool/rules/spelling/symspell/implementation/ChunkArray.java::ChunkArray
 - [ ] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance
 - [ ] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance.DistanceAlgorithm
@@ -515,39 +515,39 @@
 - [ ] org/languagetool/synthesis/ManualSynthesizer.java::ManualSynthesizer
 - [ ] org/languagetool/synthesis/Soros.java::Soros
 - [ ] org/languagetool/synthesis/Synthesizer.java::Synthesizer
-- [ ] org/languagetool/synthesis/SynthesizerTools.java::SynthesizerTools
+- [x] org/languagetool/synthesis/SynthesizerTools.java::SynthesizerTools
 - [ ] org/languagetool/tagging/BaseTagger.java::BaseTagger
-- [ ] org/languagetool/tagging/CombiningTagger.java::CombiningTagger
-- [ ] org/languagetool/tagging/ManualTagger.java::ManualTagger
+- [x] org/languagetool/tagging/CombiningTagger.java::CombiningTagger
+- [x] org/languagetool/tagging/ManualTagger.java::ManualTagger
 - [ ] org/languagetool/tagging/MorfologikTagger.java::MorfologikTagger
-- [ ] org/languagetool/tagging/TaggedWord.java::TaggedWord
-- [ ] org/languagetool/tagging/Tagger.java::Tagger
-- [ ] org/languagetool/tagging/WordTagger.java::WordTagger
-- [ ] org/languagetool/tagging/disambiguation/AbstractDisambiguator.java::AbstractDisambiguator
-- [ ] org/languagetool/tagging/disambiguation/Disambiguator.java::Disambiguator
+- [x] org/languagetool/tagging/TaggedWord.java::TaggedWord
+- [x] org/languagetool/tagging/Tagger.java::Tagger
+- [x] org/languagetool/tagging/WordTagger.java::WordTagger
+- [x] org/languagetool/tagging/disambiguation/AbstractDisambiguator.java::AbstractDisambiguator
+- [x] org/languagetool/tagging/disambiguation/Disambiguator.java::Disambiguator
 - [ ] org/languagetool/tagging/disambiguation/MultiWordChunker.java::MultiWordChunker
 - [ ] org/languagetool/tagging/disambiguation/MultiWordChunker.java::MultiWordChunker.Settings
 - [ ] org/languagetool/tagging/disambiguation/MultiWordChunker2.java::MultiWordChunker2
 - [ ] org/languagetool/tagging/disambiguation/MultiWordChunker2.java::MultiWordChunker2.MultiWordEntry
-- [ ] org/languagetool/tagging/disambiguation/rules/DisambiguatedExample.java::DisambiguatedExample
+- [x] org/languagetool/tagging/disambiguation/rules/DisambiguatedExample.java::DisambiguatedExample
 - [ ] org/languagetool/tagging/disambiguation/rules/DisambiguationPatternRule.java::DisambiguationPatternRule
 - [ ] org/languagetool/tagging/disambiguation/rules/DisambiguationPatternRule.java::DisambiguationPatternRule.DisambiguatorAction
 - [ ] org/languagetool/tagging/disambiguation/rules/DisambiguationPatternRuleReplacer.java::DisambiguationPatternRuleReplacer
 - [ ] org/languagetool/tagging/disambiguation/rules/DisambiguationRuleHandler.java::DisambiguationRuleHandler
 - [ ] org/languagetool/tagging/disambiguation/rules/DisambiguationRuleLoader.java::DisambiguationRuleLoader
 - [ ] org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java::XmlRuleDisambiguator
-- [ ] org/languagetool/tagging/disambiguation/xx/DemoDisambiguator.java::DemoDisambiguator
+- [x] org/languagetool/tagging/disambiguation/xx/DemoDisambiguator.java::DemoDisambiguator
 - [ ] org/languagetool/tagging/ner/NERService.java::NERService
-- [ ] org/languagetool/tagging/ner/NERService.java::NERService.Span
-- [ ] org/languagetool/tagging/xx/DemoTagger.java::DemoTagger
-- [ ] org/languagetool/tokenizers/CompoundWordTokenizer.java::CompoundWordTokenizer
+- [x] org/languagetool/tagging/ner/NERService.java::NERService.Span
+- [x] org/languagetool/tagging/xx/DemoTagger.java::DemoTagger
+- [x] org/languagetool/tokenizers/CompoundWordTokenizer.java::CompoundWordTokenizer
 - [ ] org/languagetool/tokenizers/SRXSentenceTokenizer.java::SRXSentenceTokenizer
-- [ ] org/languagetool/tokenizers/SentenceTokenizer.java::SentenceTokenizer
-- [ ] org/languagetool/tokenizers/SimpleSentenceTokenizer.java::SimpleSentenceTokenizer
+- [x] org/languagetool/tokenizers/SentenceTokenizer.java::SentenceTokenizer
+- [x] org/languagetool/tokenizers/SimpleSentenceTokenizer.java::SimpleSentenceTokenizer
 - [ ] org/languagetool/tokenizers/SimpleSentenceTokenizer.java::SimpleSentenceTokenizer.AnyLanguage
 - [ ] org/languagetool/tokenizers/SrxTools.java::SrxTools
-- [ ] org/languagetool/tokenizers/Tokenizer.java::Tokenizer
-- [ ] org/languagetool/tokenizers/WordTokenizer.java::WordTokenizer
+- [x] org/languagetool/tokenizers/Tokenizer.java::Tokenizer
+- [x] org/languagetool/tokenizers/WordTokenizer.java::WordTokenizer
 - [ ] org/languagetool/tools/Cache/CacheUtils.java::CacheUtils
 - [ ] org/languagetool/tools/Cache/ProtoResultCache.java::ProtoResultCache
 - [ ] org/languagetool/tools/Cache/ProtoResultCache.java::ProtoResultCache.CachedResultMatchOrBuilder
@@ -562,27 +562,27 @@
 - [ ] org/languagetool/tools/Cache/ProtoResultCache.java::ProtoResultCache.CachedRule
 - [ ] org/languagetool/tools/Cache/ProtoResultCache.java::ProtoResultCache.Tag
 - [ ] org/languagetool/tools/CircuitBreakers.java::CircuitBreakers
-- [ ] org/languagetool/tools/ConfidenceKey.java::ConfidenceKey
-- [ ] org/languagetool/tools/ContextTools.java::ContextTools
-- [ ] org/languagetool/tools/DiffsAsMatches.java::DiffsAsMatches
-- [ ] org/languagetool/tools/InterruptibleCharSequence.java::InterruptibleCharSequence
-- [ ] org/languagetool/tools/JnaTools.java::JnaTools
-- [ ] org/languagetool/tools/LoggingTools.java::LoggingTools
+- [x] org/languagetool/tools/ConfidenceKey.java::ConfidenceKey
+- [x] org/languagetool/tools/ContextTools.java::ContextTools
+- [x] org/languagetool/tools/DiffsAsMatches.java::DiffsAsMatches
+- [x] org/languagetool/tools/InterruptibleCharSequence.java::InterruptibleCharSequence
+- [x] org/languagetool/tools/JnaTools.java::JnaTools
+- [x] org/languagetool/tools/LoggingTools.java::LoggingTools
 - [ ] org/languagetool/tools/LtThreadPoolExecutor.java::LtThreadPoolExecutor
 - [ ] org/languagetool/tools/LtThreadPoolFactory.java::LtThreadPoolFactory
 - [ ] org/languagetool/tools/LtThreadPoolFactory.java::LtThreadPoolFactory.LtRejectedExecutionHandler
-- [ ] org/languagetool/tools/MostlySingularMultiMap.java::MostlySingularMultiMap
-- [ ] org/languagetool/tools/MultiKeyProperties.java::MultiKeyProperties
-- [ ] org/languagetool/tools/PseudoMatch.java::PseudoMatch
+- [x] org/languagetool/tools/MostlySingularMultiMap.java::MostlySingularMultiMap
+- [x] org/languagetool/tools/MultiKeyProperties.java::MultiKeyProperties
+- [x] org/languagetool/tools/PseudoMatch.java::PseudoMatch
 - [ ] org/languagetool/tools/RuleMatchesAsJsonSerializer.java::RuleMatchesAsJsonSerializer
-- [ ] org/languagetool/tools/StringInterner.java::StringInterner
+- [x] org/languagetool/tools/StringInterner.java::StringInterner
 - [ ] org/languagetool/tools/StringTools.java::StringTools
-- [ ] org/languagetool/tools/StringTools.java::StringTools.ApiPrintMode
+- [x] org/languagetool/tools/StringTools.java::StringTools.ApiPrintMode
 - [ ] org/languagetool/tools/TelemetryProvider.java::TelemetryProvider
 - [ ] org/languagetool/tools/Tools.java::Tools
-- [ ] org/languagetool/tools/TracedFunction.java::TracedFunction
-- [ ] org/languagetool/tools/WrappedValue.java::WrappedValue
-- [ ] org/languagetool/tools/WrappedVoid.java::WrappedVoid
+- [x] org/languagetool/tools/TracedFunction.java::TracedFunction
+- [x] org/languagetool/tools/WrappedValue.java::WrappedValue
+- [x] org/languagetool/tools/WrappedVoid.java::WrappedVoid
 - [ ] org/languagetool/tools/grpc/ProtoHelper.java::ProtoHelper
 - [ ] org/languagetool/tools/grpc/RuleData.java::RuleData
 
@@ -698,15 +698,15 @@
 - [ ] org/languagetool/dev/eval/CheckBNC.java::CheckBNC.BNCTextFilter
 - [ ] org/languagetool/dev/eval/ConfusionPairEvaluator.java::ConfusionPairEvaluator
 - [ ] org/languagetool/dev/eval/Evaluator.java::Evaluator
-- [ ] org/languagetool/dev/eval/FMeasure.java::FMeasure
+- [x] org/languagetool/dev/eval/FMeasure.java::FMeasure
 - [ ] org/languagetool/dev/eval/LanguageToolEvaluator.java::LanguageToolEvaluator
 - [ ] org/languagetool/dev/eval/MissingDiacriticsEvaluator.java::MissingDiacriticsEvaluator
-- [ ] org/languagetool/dev/eval/PrecisionRecall.java::PrecisionRecall
+- [x] org/languagetool/dev/eval/PrecisionRecall.java::PrecisionRecall
 - [ ] org/languagetool/dev/eval/RealWordCorpusEvaluator.java::RealWordCorpusEvaluator
 - [ ] org/languagetool/dev/eval/RealWordFalseAlarmEvaluator.java::RealWordFalseAlarmEvaluator
 - [ ] org/languagetool/dev/eval/SimpleCorpusEvaluator.java::SimpleCorpusEvaluator
 - [ ] org/languagetool/dev/eval/SimpleCorpusEvaluator.java::SimpleCorpusEvaluator.NgramLanguageToolEvaluator
-- [ ] org/languagetool/dev/eval/Span.java::Span
+- [x] org/languagetool/dev/eval/Span.java::Span
 - [ ] org/languagetool/dev/eval/SpellCheckEvaluation.java::SpellCheckEvaluation
 - [ ] org/languagetool/dev/eval/TatoebaEvaluator.java::TatoebaEvaluator
 - [ ] org/languagetool/dev/httpchecker/CheckCallable.java::CheckCallable
@@ -749,19 +749,19 @@
 ## languagetool-http-client
 
 - [ ] org/languagetool/remote/ArtificialErrorEval.java::ArtificialErrorEval
-- [ ] org/languagetool/remote/CheckConfiguration.java::CheckConfiguration
-- [ ] org/languagetool/remote/CheckConfigurationBuilder.java::CheckConfigurationBuilder
+- [x] org/languagetool/remote/CheckConfiguration.java::CheckConfiguration
+- [x] org/languagetool/remote/CheckConfigurationBuilder.java::CheckConfigurationBuilder
 - [ ] org/languagetool/remote/CorrectionLoopFinderApi.java::CorrectionLoopFinderApi
 - [ ] org/languagetool/remote/CorrectionLoopFinderApi.java::CorrectionLoopFinderApi.Configuration
-- [ ] org/languagetool/remote/RemoteConfigurationInfo.java::RemoteConfigurationInfo
-- [ ] org/languagetool/remote/RemoteIgnoreRange.java::RemoteIgnoreRange
+- [x] org/languagetool/remote/RemoteConfigurationInfo.java::RemoteConfigurationInfo
+- [x] org/languagetool/remote/RemoteIgnoreRange.java::RemoteIgnoreRange
 - [ ] org/languagetool/remote/RemoteLanguageTool.java::RemoteLanguageTool
-- [ ] org/languagetool/remote/RemoteResult.java::RemoteResult
-- [ ] org/languagetool/remote/RemoteRuleMatch.java::RemoteRuleMatch
-- [ ] org/languagetool/remote/RemoteServer.java::RemoteServer
+- [x] org/languagetool/remote/RemoteResult.java::RemoteResult
+- [x] org/languagetool/remote/RemoteRuleMatch.java::RemoteRuleMatch
+- [x] org/languagetool/remote/RemoteServer.java::RemoteServer
 - [ ] org/languagetool/remote/SentenceAnnotator.java::SentenceAnnotator
 - [ ] org/languagetool/remote/SentenceAnnotator.java::SentenceAnnotator.AnnotatorConfig
-- [ ] org/languagetool/remote/multiLang/InjectedSentence.java::InjectedSentence
+- [x] org/languagetool/remote/multiLang/InjectedSentence.java::InjectedSentence
 - [ ] org/languagetool/remote/multiLang/MultiLangCorpora.java::MultiLangCorpora
 - [ ] org/languagetool/remote/multiLang/MultiLanguageTextCheckEval.java::MultiLanguageTextCheckEval
 - [ ] org/languagetool/remote/multiLang/MultiLanguageTextCheckEval.java::MultiLanguageTextCheckEval.DetectionResults
@@ -770,26 +770,26 @@
 
 - [ ] org/languagetool/language/Arabic.java::Arabic
 - [ ] org/languagetool/rules/ar/ArabicCommaWhitespaceRule.java::ArabicCommaWhitespaceRule
-- [ ] org/languagetool/rules/ar/ArabicConfusionProbabilityRule.java::ArabicConfusionProbabilityRule
+- [x] org/languagetool/rules/ar/ArabicConfusionProbabilityRule.java::ArabicConfusionProbabilityRule
 - [ ] org/languagetool/rules/ar/ArabicDarjaRule.java::ArabicDarjaRule
 - [ ] org/languagetool/rules/ar/ArabicDiacriticsRule.java::ArabicDiacriticsRule
-- [ ] org/languagetool/rules/ar/ArabicDoublePunctuationRule.java::ArabicDoublePunctuationRule
+- [x] org/languagetool/rules/ar/ArabicDoublePunctuationRule.java::ArabicDoublePunctuationRule
 - [ ] org/languagetool/rules/ar/ArabicHomophonesRule.java::ArabicHomophonesRule
 - [ ] org/languagetool/rules/ar/ArabicHunspellSpellerRule.java::ArabicHunspellSpellerRule
 - [ ] org/languagetool/rules/ar/ArabicInflectedOneWordReplaceRule.java::ArabicInflectedOneWordReplaceRule
-- [ ] org/languagetool/rules/ar/ArabicQuestionMarkWhitespaceRule.java::ArabicQuestionMarkWhitespaceRule
+- [x] org/languagetool/rules/ar/ArabicQuestionMarkWhitespaceRule.java::ArabicQuestionMarkWhitespaceRule
 - [ ] org/languagetool/rules/ar/ArabicRedundancyRule.java::ArabicRedundancyRule
 - [ ] org/languagetool/rules/ar/ArabicSemiColonWhitespaceRule.java::ArabicSemiColonWhitespaceRule
 - [ ] org/languagetool/rules/ar/ArabicSimpleReplaceRule.java::ArabicSimpleReplaceRule
 - [ ] org/languagetool/rules/ar/ArabicTransVerbRule.java::ArabicTransVerbRule
-- [ ] org/languagetool/rules/ar/ArabicWordCoherencyRule.java::ArabicWordCoherencyRule
-- [ ] org/languagetool/rules/ar/ArabicWordRepeatRule.java::ArabicWordRepeatRule
+- [x] org/languagetool/rules/ar/ArabicWordCoherencyRule.java::ArabicWordCoherencyRule
+- [x] org/languagetool/rules/ar/ArabicWordRepeatRule.java::ArabicWordRepeatRule
 - [ ] org/languagetool/rules/ar/ArabicWordinessRule.java::ArabicWordinessRule
 - [ ] org/languagetool/rules/ar/ArabicWrongWordInContextRule.java::ArabicWrongWordInContextRule
 - [ ] org/languagetool/rules/ar/filters/ArabicAdjectiveToExclamationFilter.java::ArabicAdjectiveToExclamationFilter
-- [ ] org/languagetool/rules/ar/filters/ArabicAdvancedSynthesizerFilter.java::ArabicAdvancedSynthesizerFilter
+- [x] org/languagetool/rules/ar/filters/ArabicAdvancedSynthesizerFilter.java::ArabicAdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/ar/filters/ArabicDMYDateCheckFilter.java::ArabicDMYDateCheckFilter
-- [ ] org/languagetool/rules/ar/filters/ArabicDateCheckFilter.java::ArabicDateCheckFilter
+- [x] org/languagetool/rules/ar/filters/ArabicDateCheckFilter.java::ArabicDateCheckFilter
 - [ ] org/languagetool/rules/ar/filters/ArabicDateFilterHelper.java::ArabicDateFilterHelper
 - [ ] org/languagetool/rules/ar/filters/ArabicMasdarToVerbFilter.java::ArabicMasdarToVerbFilter
 - [ ] org/languagetool/rules/ar/filters/ArabicNumberPhraseFilter.java::ArabicNumberPhraseFilter
@@ -798,35 +798,35 @@
 - [ ] org/languagetool/tagging/ar/ArabicHybridDisambiguator.java::ArabicHybridDisambiguator
 - [ ] org/languagetool/tagging/ar/ArabicTagManager.java::ArabicTagManager
 - [ ] org/languagetool/tagging/ar/ArabicTagger.java::ArabicTagger
-- [ ] org/languagetool/tokenizers/ArabicWordTokenizer.java::ArabicWordTokenizer
-- [ ] org/languagetool/tools/ArabicConstants.java::ArabicConstants
-- [ ] org/languagetool/tools/ArabicConstantsMaps.java::ArabicConstantsMaps
+- [x] org/languagetool/tokenizers/ArabicWordTokenizer.java::ArabicWordTokenizer
+- [x] org/languagetool/tools/ArabicConstants.java::ArabicConstants
+- [x] org/languagetool/tools/ArabicConstantsMaps.java::ArabicConstantsMaps
 - [ ] org/languagetool/tools/ArabicNumbersWords.java::ArabicNumbersWords
 - [ ] org/languagetool/tools/ArabicNumbersWordsConstants.java::ArabicNumbersWordsConstants
-- [ ] org/languagetool/tools/ArabicStringTools.java::ArabicStringTools
-- [ ] org/languagetool/tools/ArabicUnitsHelper.java::ArabicUnitsHelper
-- [ ] org/languagetool/tools/ArabicWordMaps.java::ArabicWordMaps
+- [x] org/languagetool/tools/ArabicStringTools.java::ArabicStringTools
+- [x] org/languagetool/tools/ArabicUnitsHelper.java::ArabicUnitsHelper
+- [x] org/languagetool/tools/ArabicWordMaps.java::ArabicWordMaps
 
 ## languagetool-language-modules/ast
 
 - [ ] org/languagetool/language/Asturian.java::Asturian
-- [ ] org/languagetool/language/rules/ast/MorfologikAsturianSpellerRule.java::MorfologikAsturianSpellerRule
+- [x] org/languagetool/language/rules/ast/MorfologikAsturianSpellerRule.java::MorfologikAsturianSpellerRule
 - [ ] org/languagetool/tagging/ast/AsturianTagger.java::AsturianTagger
 
 ## languagetool-language-modules/be
 
 - [ ] org/languagetool/language/Belarusian.java::Belarusian
 - [ ] org/languagetool/rules/be/BelarusianSpecificCaseRule.java::BelarusianSpecificCaseRule
-- [ ] org/languagetool/rules/be/MorfologikBelarusianSpellerRule.java::MorfologikBelarusianSpellerRule
+- [x] org/languagetool/rules/be/MorfologikBelarusianSpellerRule.java::MorfologikBelarusianSpellerRule
 - [ ] org/languagetool/rules/be/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/tokenizers/be/BelarusianWordTokenizer.java::BelarusianWordTokenizer
+- [x] org/languagetool/tokenizers/be/BelarusianWordTokenizer.java::BelarusianWordTokenizer
 
 ## languagetool-language-modules/br
 
 - [ ] org/languagetool/language/Breton.java::Breton
 - [ ] org/languagetool/rules/br/BretonCompoundRule.java::BretonCompoundRule
 - [ ] org/languagetool/rules/br/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/br/MorfologikBretonSpellerRule.java::MorfologikBretonSpellerRule
+- [x] org/languagetool/rules/br/MorfologikBretonSpellerRule.java::MorfologikBretonSpellerRule
 - [ ] org/languagetool/rules/br/TopoReplaceRule.java::TopoReplaceRule
 - [ ] org/languagetool/tagging/br/BretonTagger.java::BretonTagger
 - [ ] org/languagetool/tokenizers/br/BretonWordTokenizer.java::BretonWordTokenizer
@@ -839,13 +839,13 @@
 - [ ] org/languagetool/rules/ca/AbstractSimpleReplaceLemmasRule.java::AbstractSimpleReplaceLemmasRule
 - [ ] org/languagetool/rules/ca/AdjustPronounsFilter.java::AdjustPronounsFilter
 - [ ] org/languagetool/rules/ca/AdjustVerbSuggestionsFilter.java::AdjustVerbSuggestionsFilter
-- [ ] org/languagetool/rules/ca/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/rules/ca/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/ca/AnarASuggestionsFilter.java::AnarASuggestionsFilter
 - [ ] org/languagetool/rules/ca/ApostophationHelper.java::ApostophationHelper
-- [ ] org/languagetool/rules/ca/CatalanMorfologikMultitokenSpeller.java::CatalanMorfologikMultitokenSpeller
-- [ ] org/languagetool/rules/ca/CatalanMultitokenSpeller.java::CatalanMultitokenSpeller
-- [ ] org/languagetool/rules/ca/CatalanNumberInWordFilter.java::CatalanNumberInWordFilter
-- [ ] org/languagetool/rules/ca/CatalanNumberSpellerFilter.java::CatalanNumberSpellerFilter
+- [x] org/languagetool/rules/ca/CatalanMorfologikMultitokenSpeller.java::CatalanMorfologikMultitokenSpeller
+- [x] org/languagetool/rules/ca/CatalanMultitokenSpeller.java::CatalanMultitokenSpeller
+- [x] org/languagetool/rules/ca/CatalanNumberInWordFilter.java::CatalanNumberInWordFilter
+- [x] org/languagetool/rules/ca/CatalanNumberSpellerFilter.java::CatalanNumberSpellerFilter
 - [ ] org/languagetool/rules/ca/CatalanRemoteRewriteFilter.java::CatalanRemoteRewriteFilter
 - [ ] org/languagetool/rules/ca/CatalanRemoteRewriteHelper.java::CatalanRemoteRewriteHelper
 - [ ] org/languagetool/rules/ca/CatalanRemoteRule.java::CatalanRemoteRule
@@ -853,17 +853,17 @@
 - [ ] org/languagetool/rules/ca/CatalanSplitLongSentenceRule.java::CatalanSplitLongSentenceRule
 - [ ] org/languagetool/rules/ca/CatalanSuppressMisspelledSuggestionsFilter.java::CatalanSuppressMisspelledSuggestionsFilter
 - [ ] org/languagetool/rules/ca/CatalanUnpairedBracketsRule.java::CatalanUnpairedBracketsRule
-- [ ] org/languagetool/rules/ca/CatalanUnpairedExclamationMarksRule.java::CatalanUnpairedExclamationMarksRule
+- [x] org/languagetool/rules/ca/CatalanUnpairedExclamationMarksRule.java::CatalanUnpairedExclamationMarksRule
 - [ ] org/languagetool/rules/ca/CatalanUnpairedQuestionMarksRule.java::CatalanUnpairedQuestionMarksRule
 - [ ] org/languagetool/rules/ca/CatalanWordRepeatBeginningRule.java::CatalanWordRepeatBeginningRule
-- [ ] org/languagetool/rules/ca/CatalanWordRepeatRule.java::CatalanWordRepeatRule
+- [x] org/languagetool/rules/ca/CatalanWordRepeatRule.java::CatalanWordRepeatRule
 - [ ] org/languagetool/rules/ca/CatalanWrongWordInContextRule.java::CatalanWrongWordInContextRule
 - [ ] org/languagetool/rules/ca/CheckCaseRule.java::CheckCaseRule
 - [ ] org/languagetool/rules/ca/CompoundRule.java::CompoundRule
-- [ ] org/languagetool/rules/ca/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
+- [x] org/languagetool/rules/ca/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
 - [ ] org/languagetool/rules/ca/ConvertToGenderAndNumberFilter.java::ConvertToGenderAndNumberFilter
 - [ ] org/languagetool/rules/ca/ConvertToGenderAndNumberFilter.java::ConvertToGenderAndNumberFilter.GenderAndNumberSplit
-- [ ] org/languagetool/rules/ca/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/rules/ca/DateCheckFilter.java::DateCheckFilter
 - [ ] org/languagetool/rules/ca/DateFilterHelper.java::DateFilterHelper
 - [ ] org/languagetool/rules/ca/DiacriticsCheckFilter.java::DiacriticsCheckFilter
 - [ ] org/languagetool/rules/ca/DonarTempsSuggestionsFilter.java::DonarTempsSuggestionsFilter
@@ -873,7 +873,7 @@
 - [ ] org/languagetool/rules/ca/FindSuggestionsFilter.java::FindSuggestionsFilter
 - [ ] org/languagetool/rules/ca/IgnoreProperNouns.java::IgnoreProperNouns
 - [ ] org/languagetool/rules/ca/MorfologikCatalanSpellerRule.java::MorfologikCatalanSpellerRule
-- [ ] org/languagetool/rules/ca/NewYearDateFilter.java::NewYearDateFilter
+- [x] org/languagetool/rules/ca/NewYearDateFilter.java::NewYearDateFilter
 - [ ] org/languagetool/rules/ca/NounToVerbHelper.java::NounToVerbHelper
 - [ ] org/languagetool/rules/ca/OblidarseSugestionsFilter.java::OblidarseSugestionsFilter
 - [ ] org/languagetool/rules/ca/PortarGerundiSuggestionsFilter.java::PortarGerundiSuggestionsFilter
@@ -898,9 +898,9 @@
 - [ ] org/languagetool/rules/ca/SynthesizeWithDAFilter.java::SynthesizeWithDAFilter
 - [ ] org/languagetool/rules/ca/TextToNumberFilter.java::TextToNumberFilter
 - [ ] org/languagetool/rules/ca/VerbsHelper.java::VerbsHelper
-- [ ] org/languagetool/rules/ca/WordCoherencyRule.java::WordCoherencyRule
-- [ ] org/languagetool/rules/ca/WordCoherencyValencianRule.java::WordCoherencyValencianRule
-- [ ] org/languagetool/synthesis/ca/CatalanSynthesizer.java::CatalanSynthesizer
+- [x] org/languagetool/rules/ca/WordCoherencyRule.java::WordCoherencyRule
+- [x] org/languagetool/rules/ca/WordCoherencyValencianRule.java::WordCoherencyValencianRule
+- [x] org/languagetool/synthesis/ca/CatalanSynthesizer.java::CatalanSynthesizer
 - [ ] org/languagetool/synthesis/ca/CatalanSynthesizer.java::CatalanSynthesizer.PostagComparator
 - [ ] org/languagetool/synthesis/ca/VerbSynthesizer.java::VerbSynthesizer
 - [ ] org/languagetool/tagging/ca/CatalanTagger.java::CatalanTagger
@@ -912,10 +912,10 @@
 ## languagetool-language-modules/crh
 
 - [ ] org/languagetool/language/CrimeanTatar.java::CrimeanTatar
-- [ ] org/languagetool/rules/crh/MorfologikCrimeanTatarSpellerRule.java::MorfologikCrimeanTatarSpellerRule
-- [ ] org/languagetool/synthesis/crh/CrimeanTatarSynthesizer.java::CrimeanTatarSynthesizer
+- [x] org/languagetool/rules/crh/MorfologikCrimeanTatarSpellerRule.java::MorfologikCrimeanTatarSpellerRule
+- [x] org/languagetool/synthesis/crh/CrimeanTatarSynthesizer.java::CrimeanTatarSynthesizer
 - [ ] org/languagetool/tagging/crh/CrimeanTatarTagger.java::CrimeanTatarTagger
-- [ ] org/languagetool/tokenizers/crh/CrimeanTatarWordTokenizer.java::CrimeanTatarWordTokenizer
+- [x] org/languagetool/tokenizers/crh/CrimeanTatarWordTokenizer.java::CrimeanTatarWordTokenizer
 
 ## languagetool-language-modules/da
 
@@ -935,7 +935,7 @@
 - [ ] org/languagetool/language/NonSwissGerman.java::NonSwissGerman
 - [ ] org/languagetool/language/SwissGerman.java::SwissGerman
 - [ ] org/languagetool/rules/de/AdaptSuggestionFilter.java::AdaptSuggestionFilter
-- [ ] org/languagetool/rules/de/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/rules/de/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/de/AgreementRule.java::AgreementRule
 - [ ] org/languagetool/rules/de/AgreementRule.java::AgreementRule.GrammarCategory
 - [ ] org/languagetool/rules/de/AgreementRule.java::AgreementRule.ReplacementType
@@ -946,63 +946,63 @@
 - [ ] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2
 - [ ] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2.Suggestion
 - [ ] org/languagetool/rules/de/AgreementTools.java::AgreementTools
-- [ ] org/languagetool/rules/de/AustrianGermanSpellerRule.java::AustrianGermanSpellerRule
+- [x] org/languagetool/rules/de/AustrianGermanSpellerRule.java::AustrianGermanSpellerRule
 - [ ] org/languagetool/rules/de/CaseRule.java::CaseRule
 - [ ] org/languagetool/rules/de/CaseRuleAntiPatterns.java::CaseRuleAntiPatterns
 - [ ] org/languagetool/rules/de/CaseRuleExceptions.java::CaseRuleExceptions
-- [ ] org/languagetool/rules/de/CompoundCheckFilter.java::CompoundCheckFilter
+- [x] org/languagetool/rules/de/CompoundCheckFilter.java::CompoundCheckFilter
 - [ ] org/languagetool/rules/de/CompoundCheckFilter.java::CompoundCheckFilter.Lazy
 - [ ] org/languagetool/rules/de/CompoundCoherencyRule.java::CompoundCoherencyRule
 - [ ] org/languagetool/rules/de/CompoundInfinitivRule.java::CompoundInfinitivRule
-- [ ] org/languagetool/rules/de/ConjunctionAtBeginOfSentenceRule.java::ConjunctionAtBeginOfSentenceRule
-- [ ] org/languagetool/rules/de/DashRule.java::DashRule
-- [ ] org/languagetool/rules/de/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/de/DateFilterHelper.java::DateFilterHelper
-- [ ] org/languagetool/rules/de/DuUpperLowerCaseRule.java::DuUpperLowerCaseRule
-- [ ] org/languagetool/rules/de/FutureDateFilter.java::FutureDateFilter
-- [ ] org/languagetool/rules/de/GermanCommaWhitespaceRule.java::GermanCommaWhitespaceRule
+- [x] org/languagetool/rules/de/ConjunctionAtBeginOfSentenceRule.java::ConjunctionAtBeginOfSentenceRule
+- [x] org/languagetool/rules/de/DashRule.java::DashRule
+- [x] org/languagetool/rules/de/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/rules/de/DateFilterHelper.java::DateFilterHelper
+- [x] org/languagetool/rules/de/DuUpperLowerCaseRule.java::DuUpperLowerCaseRule
+- [x] org/languagetool/rules/de/FutureDateFilter.java::FutureDateFilter
+- [x] org/languagetool/rules/de/GermanCommaWhitespaceRule.java::GermanCommaWhitespaceRule
 - [ ] org/languagetool/rules/de/GermanCompoundRule.java::GermanCompoundRule
 - [ ] org/languagetool/rules/de/GermanConfusionProbabilityRule.java::GermanConfusionProbabilityRule
-- [ ] org/languagetool/rules/de/GermanDoublePunctuationRule.java::GermanDoublePunctuationRule
+- [x] org/languagetool/rules/de/GermanDoublePunctuationRule.java::GermanDoublePunctuationRule
 - [ ] org/languagetool/rules/de/GermanFillerWordsRule.java::GermanFillerWordsRule
-- [ ] org/languagetool/rules/de/GermanHelper.java::GermanHelper
-- [ ] org/languagetool/rules/de/GermanMultitokenSpeller.java::GermanMultitokenSpeller
-- [ ] org/languagetool/rules/de/GermanNumberInWordFilter.java::GermanNumberInWordFilter
-- [ ] org/languagetool/rules/de/GermanParagraphRepeatBeginningRule.java::GermanParagraphRepeatBeginningRule
+- [x] org/languagetool/rules/de/GermanHelper.java::GermanHelper
+- [x] org/languagetool/rules/de/GermanMultitokenSpeller.java::GermanMultitokenSpeller
+- [x] org/languagetool/rules/de/GermanNumberInWordFilter.java::GermanNumberInWordFilter
+- [x] org/languagetool/rules/de/GermanParagraphRepeatBeginningRule.java::GermanParagraphRepeatBeginningRule
 - [ ] org/languagetool/rules/de/GermanReadabilityRule.java::GermanReadabilityRule
 - [ ] org/languagetool/rules/de/GermanRepeatedWordsRule.java::GermanRepeatedWordsRule
 - [ ] org/languagetool/rules/de/GermanSpellerRule.java::GermanSpellerRule
 - [ ] org/languagetool/rules/de/GermanSpellerRule.java::GermanSpellerRule.ExpandingReader
 - [ ] org/languagetool/rules/de/GermanStyleRepeatedWordRule.java::GermanStyleRepeatedWordRule
-- [ ] org/languagetool/rules/de/GermanSuppressMisspelledSuggestionsFilter.java::GermanSuppressMisspelledSuggestionsFilter
-- [ ] org/languagetool/rules/de/GermanTools.java::GermanTools
-- [ ] org/languagetool/rules/de/GermanUnpairedBracketsRule.java::GermanUnpairedBracketsRule
-- [ ] org/languagetool/rules/de/GermanUnpairedQuotesRule.java::GermanUnpairedQuotesRule
-- [ ] org/languagetool/rules/de/GermanWordRepeatBeginningRule.java::GermanWordRepeatBeginningRule
-- [ ] org/languagetool/rules/de/GermanWordRepeatRule.java::GermanWordRepeatRule
+- [x] org/languagetool/rules/de/GermanSuppressMisspelledSuggestionsFilter.java::GermanSuppressMisspelledSuggestionsFilter
+- [x] org/languagetool/rules/de/GermanTools.java::GermanTools
+- [x] org/languagetool/rules/de/GermanUnpairedBracketsRule.java::GermanUnpairedBracketsRule
+- [x] org/languagetool/rules/de/GermanUnpairedQuotesRule.java::GermanUnpairedQuotesRule
+- [x] org/languagetool/rules/de/GermanWordRepeatBeginningRule.java::GermanWordRepeatBeginningRule
+- [x] org/languagetool/rules/de/GermanWordRepeatRule.java::GermanWordRepeatRule
 - [ ] org/languagetool/rules/de/GermanWrongWordInContextRule.java::GermanWrongWordInContextRule
 - [ ] org/languagetool/rules/de/InsertCommaFilter.java::InsertCommaFilter
-- [ ] org/languagetool/rules/de/LanguageNames.java::LanguageNames
+- [x] org/languagetool/rules/de/LanguageNames.java::LanguageNames
 - [ ] org/languagetool/rules/de/LineExpander.java::LineExpander
-- [ ] org/languagetool/rules/de/LongSentenceRule.java::LongSentenceRule
+- [x] org/languagetool/rules/de/LongSentenceRule.java::LongSentenceRule
 - [ ] org/languagetool/rules/de/MissingCommaRelativeClauseRule.java::MissingCommaRelativeClauseRule
-- [ ] org/languagetool/rules/de/MissingVerbRule.java::MissingVerbRule
-- [ ] org/languagetool/rules/de/MorfologikGermanyGermanSpellerRule.java::MorfologikGermanyGermanSpellerRule
-- [ ] org/languagetool/rules/de/NewYearDateFilter.java::NewYearDateFilter
+- [x] org/languagetool/rules/de/MissingVerbRule.java::MissingVerbRule
+- [x] org/languagetool/rules/de/MorfologikGermanyGermanSpellerRule.java::MorfologikGermanyGermanSpellerRule
+- [x] org/languagetool/rules/de/NewYearDateFilter.java::NewYearDateFilter
 - [ ] org/languagetool/rules/de/NonSignificantVerbsRule.java::NonSignificantVerbsRule
 - [ ] org/languagetool/rules/de/OldSpellingRule.java::OldSpellingRule
-- [ ] org/languagetool/rules/de/PassiveSentenceRule.java::PassiveSentenceRule
+- [x] org/languagetool/rules/de/PassiveSentenceRule.java::PassiveSentenceRule
 - [ ] org/languagetool/rules/de/PotentialCompoundFilter.java::PotentialCompoundFilter
 - [ ] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases
 - [ ] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases.Case
 - [ ] org/languagetool/rules/de/ProhibitedCompoundRule.java::ProhibitedCompoundRule
 - [ ] org/languagetool/rules/de/ProhibitedCompoundRule.java::ProhibitedCompoundRule.WeightedRuleMatch
 - [ ] org/languagetool/rules/de/ProhibitedCompoundRule.java::ProhibitedCompoundRule.Pair
-- [ ] org/languagetool/rules/de/RecentYearFilter.java::RecentYearFilter
+- [x] org/languagetool/rules/de/RecentYearFilter.java::RecentYearFilter
 - [ ] org/languagetool/rules/de/RedundantModalOrAuxiliaryVerb.java::RedundantModalOrAuxiliaryVerb
-- [ ] org/languagetool/rules/de/RemoveUnknownCompoundsFilter.java::RemoveUnknownCompoundsFilter
-- [ ] org/languagetool/rules/de/SentenceWhitespaceRule.java::SentenceWhitespaceRule
-- [ ] org/languagetool/rules/de/SentenceWithManRule.java::SentenceWithManRule
+- [x] org/languagetool/rules/de/RemoveUnknownCompoundsFilter.java::RemoveUnknownCompoundsFilter
+- [x] org/languagetool/rules/de/SentenceWhitespaceRule.java::SentenceWhitespaceRule
+- [x] org/languagetool/rules/de/SentenceWithManRule.java::SentenceWithManRule
 - [ ] org/languagetool/rules/de/SentenceWithModalVerbRule.java::SentenceWithModalVerbRule
 - [ ] org/languagetool/rules/de/SimilarNameRule.java::SimilarNameRule
 - [ ] org/languagetool/rules/de/SimpleReplaceRule.java::SimpleReplaceRule
@@ -1016,18 +1016,18 @@
 - [ ] org/languagetool/rules/de/SubjectVerbAgreementRule.java::SubjectVerbAgreementRule.SingularPluralPair
 - [ ] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule
 - [ ] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule.SwissExpander
-- [ ] org/languagetool/rules/de/SwissGermanSpellerRule.java::SwissGermanSpellerRule
+- [x] org/languagetool/rules/de/SwissGermanSpellerRule.java::SwissGermanSpellerRule
 - [ ] org/languagetool/rules/de/UnitConversionRule.java::UnitConversionRule
 - [ ] org/languagetool/rules/de/UnnecessaryPhraseRule.java::UnnecessaryPhraseRule
 - [ ] org/languagetool/rules/de/UpperCaseNgramRule.java::UpperCaseNgramRule
 - [ ] org/languagetool/rules/de/UppercaseNounReadingFilter.java::UppercaseNounReadingFilter
-- [ ] org/languagetool/rules/de/ValidWordFilter.java::ValidWordFilter
+- [x] org/languagetool/rules/de/ValidWordFilter.java::ValidWordFilter
 - [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule
 - [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule.BooleanAndFiniteVerb
 - [ ] org/languagetool/rules/de/WiederVsWiderRule.java::WiederVsWiderRule
-- [ ] org/languagetool/rules/de/WordCoherencyRule.java::WordCoherencyRule
-- [ ] org/languagetool/rules/de/YMDDateCheckFilter.java::YMDDateCheckFilter
-- [ ] org/languagetool/rules/de/YMDNewYearDateFilter.java::YMDNewYearDateFilter
+- [x] org/languagetool/rules/de/WordCoherencyRule.java::WordCoherencyRule
+- [x] org/languagetool/rules/de/YMDDateCheckFilter.java::YMDDateCheckFilter
+- [x] org/languagetool/rules/de/YMDNewYearDateFilter.java::YMDNewYearDateFilter
 - [ ] org/languagetool/synthesis/GermanSynthesizer.java::GermanSynthesizer
 - [ ] org/languagetool/tagging/de/AdjectiveTags.java::AdjectiveTags
 - [ ] org/languagetool/tagging/de/AnalyzedGermanToken.java::AnalyzedGermanToken
@@ -1043,12 +1043,12 @@
 - [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.Numerus
 - [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.Genus
 - [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.Determination
-- [ ] org/languagetool/tagging/de/SwissGermanTagger.java::SwissGermanTagger
-- [ ] org/languagetool/tagging/de/VerbPrefixes.java::VerbPrefixes
+- [x] org/languagetool/tagging/de/SwissGermanTagger.java::SwissGermanTagger
+- [x] org/languagetool/tagging/de/VerbPrefixes.java::VerbPrefixes
 - [ ] org/languagetool/tagging/disambiguation/rules/de/GermanRuleDisambiguator.java::GermanRuleDisambiguator
 - [ ] org/languagetool/tokenizers/de/GermanCompoundTokenizer.java::GermanCompoundTokenizer
 - [ ] org/languagetool/tokenizers/de/GermanCompoundTokenizer.java::GermanCompoundTokenizer.ExtendedGermanWordSplitter
-- [ ] org/languagetool/tokenizers/de/GermanWordTokenizer.java::GermanWordTokenizer
+- [x] org/languagetool/tokenizers/de/GermanWordTokenizer.java::GermanWordTokenizer
 
 ## languagetool-language-modules/de-DE-x-simple-language
 
@@ -1063,7 +1063,7 @@
 - [ ] org/languagetool/rules/el/MorfologikGreekSpellerRule.java::MorfologikGreekSpellerRule
 - [ ] org/languagetool/rules/el/NumeralStressRule.java::NumeralStressRule
 - [ ] org/languagetool/rules/el/ReplaceHomonymsRule.java::ReplaceHomonymsRule
-- [ ] org/languagetool/synthesis/el/GreekSynthesizer.java::GreekSynthesizer
+- [x] org/languagetool/synthesis/el/GreekSynthesizer.java::GreekSynthesizer
 - [ ] org/languagetool/tagging/el/GreekTagger.java::GreekTagger
 - [ ] org/languagetool/tokenizers/el/GreekWordTokenizer.java::GreekWordTokenizer
 - [ ] org/languagetool/tokenizers/el/GreekWordTokenizerImpl.java::GreekWordTokenizerImpl
@@ -1080,72 +1080,72 @@
 - [ ] org/languagetool/language/English.java::English
 - [ ] org/languagetool/language/NewZealandEnglish.java::NewZealandEnglish
 - [ ] org/languagetool/language/SouthAfricanEnglish.java::SouthAfricanEnglish
-- [ ] org/languagetool/rules/en/AbstractEnglishSpellerRule.java::AbstractEnglishSpellerRule
-- [ ] org/languagetool/rules/en/AbstractEnglishSpellerRule.java::AbstractEnglishSpellerRule.IrregularForms
-- [ ] org/languagetool/rules/en/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
-- [ ] org/languagetool/rules/en/AdverbFilter.java::AdverbFilter
-- [ ] org/languagetool/rules/en/AmericanReplaceRule.java::AmericanReplaceRule
-- [ ] org/languagetool/rules/en/AvsAnData.java::AvsAnData
-- [ ] org/languagetool/rules/en/AvsAnRule.java::AvsAnRule
-- [ ] org/languagetool/rules/en/AvsAnRule.java::AvsAnRule.Determiner
-- [ ] org/languagetool/rules/en/BritishReplaceRule.java::BritishReplaceRule
-- [ ] org/languagetool/rules/en/CompoundRule.java::CompoundRule
-- [ ] org/languagetool/rules/en/ConsistentApostrophesRule.java::ConsistentApostrophesRule
-- [ ] org/languagetool/rules/en/ContractionSpellingRule.java::ContractionSpellingRule
-- [ ] org/languagetool/rules/en/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/en/DateFilterHelper.java::DateFilterHelper
-- [ ] org/languagetool/rules/en/EnglishConfusionProbabilityRule.java::EnglishConfusionProbabilityRule
-- [ ] org/languagetool/rules/en/EnglishConvertToSentenceCaseFilter.java::EnglishConvertToSentenceCaseFilter
-- [ ] org/languagetool/rules/en/EnglishDashRule.java::EnglishDashRule
-- [ ] org/languagetool/rules/en/EnglishDiacriticsRule.java::EnglishDiacriticsRule
-- [ ] org/languagetool/rules/en/EnglishForDutchmenFalseFriendRule.java::EnglishForDutchmenFalseFriendRule
-- [ ] org/languagetool/rules/en/EnglishForFrenchFalseFriendRule.java::EnglishForFrenchFalseFriendRule
-- [ ] org/languagetool/rules/en/EnglishForGermansFalseFriendRule.java::EnglishForGermansFalseFriendRule
-- [ ] org/languagetool/rules/en/EnglishForL2SpeakersFalseFriendRule.java::EnglishForL2SpeakersFalseFriendRule
-- [ ] org/languagetool/rules/en/EnglishForSpaniardsFalseFriendRule.java::EnglishForSpaniardsFalseFriendRule
-- [ ] org/languagetool/rules/en/EnglishMultitokenSpeller.java::EnglishMultitokenSpeller
-- [ ] org/languagetool/rules/en/EnglishNgramProbabilityRule.java::EnglishNgramProbabilityRule
-- [ ] org/languagetool/rules/en/EnglishNumberInWordFilter.java::EnglishNumberInWordFilter
-- [ ] org/languagetool/rules/en/EnglishPartialPosTagFilter.java::EnglishPartialPosTagFilter
-- [ ] org/languagetool/rules/en/EnglishPlainEnglishRule.java::EnglishPlainEnglishRule
-- [ ] org/languagetool/rules/en/EnglishRedundancyRule.java::EnglishRedundancyRule
-- [ ] org/languagetool/rules/en/EnglishRepeatedWordsRule.java::EnglishRepeatedWordsRule
-- [ ] org/languagetool/rules/en/EnglishSpecificCaseRule.java::EnglishSpecificCaseRule
-- [ ] org/languagetool/rules/en/EnglishSuppressMisspelledSuggestionsFilter.java::EnglishSuppressMisspelledSuggestionsFilter
-- [ ] org/languagetool/rules/en/EnglishUnpairedBracketsRule.java::EnglishUnpairedBracketsRule
-- [ ] org/languagetool/rules/en/EnglishUnpairedQuotesRule.java::EnglishUnpairedQuotesRule
-- [ ] org/languagetool/rules/en/EnglishWordRepeatBeginningRule.java::EnglishWordRepeatBeginningRule
-- [ ] org/languagetool/rules/en/EnglishWordRepeatRule.java::EnglishWordRepeatRule
-- [ ] org/languagetool/rules/en/EnglishWrongWordInContextRule.java::EnglishWrongWordInContextRule
-- [ ] org/languagetool/rules/en/FindSuggestionsFilter.java::FindSuggestionsFilter
-- [ ] org/languagetool/rules/en/FutureDateFilter.java::FutureDateFilter
-- [ ] org/languagetool/rules/en/GoogleStyleWordTokenizer.java::GoogleStyleWordTokenizer
-- [ ] org/languagetool/rules/en/LongSentenceRule.java::LongSentenceRule
-- [ ] org/languagetool/rules/en/MorfologikAmericanSpellerRule.java::MorfologikAmericanSpellerRule
-- [ ] org/languagetool/rules/en/MorfologikAustralianSpellerRule.java::MorfologikAustralianSpellerRule
-- [ ] org/languagetool/rules/en/MorfologikBritishSpellerRule.java::MorfologikBritishSpellerRule
-- [ ] org/languagetool/rules/en/MorfologikCanadianSpellerRule.java::MorfologikCanadianSpellerRule
-- [ ] org/languagetool/rules/en/MorfologikNewZealandSpellerRule.java::MorfologikNewZealandSpellerRule
-- [ ] org/languagetool/rules/en/MorfologikSouthAfricanSpellerRule.java::MorfologikSouthAfricanSpellerRule
-- [ ] org/languagetool/rules/en/NewYearDateFilter.java::NewYearDateFilter
-- [ ] org/languagetool/rules/en/NewZealandReplaceRule.java::NewZealandReplaceRule
-- [ ] org/languagetool/rules/en/NoDisambiguationEnglishPartialPosTagFilter.java::NoDisambiguationEnglishPartialPosTagFilter
-- [ ] org/languagetool/rules/en/OrdinalSuffixFilter.java::OrdinalSuffixFilter
-- [ ] org/languagetool/rules/en/SimpleReplaceProfanityRule.java::SimpleReplaceProfanityRule
-- [ ] org/languagetool/rules/en/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/rules/en/StyleTooOftenUsedAdjectiveRule.java::StyleTooOftenUsedAdjectiveRule
-- [ ] org/languagetool/rules/en/StyleTooOftenUsedNounRule.java::StyleTooOftenUsedNounRule
-- [ ] org/languagetool/rules/en/StyleTooOftenUsedVerbRule.java::StyleTooOftenUsedVerbRule
-- [ ] org/languagetool/rules/en/UnitConversionRule.java::UnitConversionRule
-- [ ] org/languagetool/rules/en/UnitConversionRuleImperial.java::UnitConversionRuleImperial
-- [ ] org/languagetool/rules/en/UnitConversionRuleUS.java::UnitConversionRuleUS
+- [x] org/languagetool/rules/en/AbstractEnglishSpellerRule.java::AbstractEnglishSpellerRule
+- [x] org/languagetool/rules/en/AbstractEnglishSpellerRule.java::AbstractEnglishSpellerRule.IrregularForms
+- [x] org/languagetool/rules/en/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/rules/en/AdverbFilter.java::AdverbFilter
+- [x] org/languagetool/rules/en/AmericanReplaceRule.java::AmericanReplaceRule
+- [x] org/languagetool/rules/en/AvsAnData.java::AvsAnData
+- [x] org/languagetool/rules/en/AvsAnRule.java::AvsAnRule
+- [x] org/languagetool/rules/en/AvsAnRule.java::AvsAnRule.Determiner
+- [x] org/languagetool/rules/en/BritishReplaceRule.java::BritishReplaceRule
+- [x] org/languagetool/rules/en/CompoundRule.java::CompoundRule
+- [x] org/languagetool/rules/en/ConsistentApostrophesRule.java::ConsistentApostrophesRule
+- [x] org/languagetool/rules/en/ContractionSpellingRule.java::ContractionSpellingRule
+- [x] org/languagetool/rules/en/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/rules/en/DateFilterHelper.java::DateFilterHelper
+- [x] org/languagetool/rules/en/EnglishConfusionProbabilityRule.java::EnglishConfusionProbabilityRule
+- [x] org/languagetool/rules/en/EnglishConvertToSentenceCaseFilter.java::EnglishConvertToSentenceCaseFilter
+- [x] org/languagetool/rules/en/EnglishDashRule.java::EnglishDashRule
+- [x] org/languagetool/rules/en/EnglishDiacriticsRule.java::EnglishDiacriticsRule
+- [x] org/languagetool/rules/en/EnglishForDutchmenFalseFriendRule.java::EnglishForDutchmenFalseFriendRule
+- [x] org/languagetool/rules/en/EnglishForFrenchFalseFriendRule.java::EnglishForFrenchFalseFriendRule
+- [x] org/languagetool/rules/en/EnglishForGermansFalseFriendRule.java::EnglishForGermansFalseFriendRule
+- [x] org/languagetool/rules/en/EnglishForL2SpeakersFalseFriendRule.java::EnglishForL2SpeakersFalseFriendRule
+- [x] org/languagetool/rules/en/EnglishForSpaniardsFalseFriendRule.java::EnglishForSpaniardsFalseFriendRule
+- [x] org/languagetool/rules/en/EnglishMultitokenSpeller.java::EnglishMultitokenSpeller
+- [x] org/languagetool/rules/en/EnglishNgramProbabilityRule.java::EnglishNgramProbabilityRule
+- [x] org/languagetool/rules/en/EnglishNumberInWordFilter.java::EnglishNumberInWordFilter
+- [x] org/languagetool/rules/en/EnglishPartialPosTagFilter.java::EnglishPartialPosTagFilter
+- [x] org/languagetool/rules/en/EnglishPlainEnglishRule.java::EnglishPlainEnglishRule
+- [x] org/languagetool/rules/en/EnglishRedundancyRule.java::EnglishRedundancyRule
+- [x] org/languagetool/rules/en/EnglishRepeatedWordsRule.java::EnglishRepeatedWordsRule
+- [x] org/languagetool/rules/en/EnglishSpecificCaseRule.java::EnglishSpecificCaseRule
+- [x] org/languagetool/rules/en/EnglishSuppressMisspelledSuggestionsFilter.java::EnglishSuppressMisspelledSuggestionsFilter
+- [x] org/languagetool/rules/en/EnglishUnpairedBracketsRule.java::EnglishUnpairedBracketsRule
+- [x] org/languagetool/rules/en/EnglishUnpairedQuotesRule.java::EnglishUnpairedQuotesRule
+- [x] org/languagetool/rules/en/EnglishWordRepeatBeginningRule.java::EnglishWordRepeatBeginningRule
+- [x] org/languagetool/rules/en/EnglishWordRepeatRule.java::EnglishWordRepeatRule
+- [x] org/languagetool/rules/en/EnglishWrongWordInContextRule.java::EnglishWrongWordInContextRule
+- [x] org/languagetool/rules/en/FindSuggestionsFilter.java::FindSuggestionsFilter
+- [x] org/languagetool/rules/en/FutureDateFilter.java::FutureDateFilter
+- [x] org/languagetool/rules/en/GoogleStyleWordTokenizer.java::GoogleStyleWordTokenizer
+- [x] org/languagetool/rules/en/LongSentenceRule.java::LongSentenceRule
+- [x] org/languagetool/rules/en/MorfologikAmericanSpellerRule.java::MorfologikAmericanSpellerRule
+- [x] org/languagetool/rules/en/MorfologikAustralianSpellerRule.java::MorfologikAustralianSpellerRule
+- [x] org/languagetool/rules/en/MorfologikBritishSpellerRule.java::MorfologikBritishSpellerRule
+- [x] org/languagetool/rules/en/MorfologikCanadianSpellerRule.java::MorfologikCanadianSpellerRule
+- [x] org/languagetool/rules/en/MorfologikNewZealandSpellerRule.java::MorfologikNewZealandSpellerRule
+- [x] org/languagetool/rules/en/MorfologikSouthAfricanSpellerRule.java::MorfologikSouthAfricanSpellerRule
+- [x] org/languagetool/rules/en/NewYearDateFilter.java::NewYearDateFilter
+- [x] org/languagetool/rules/en/NewZealandReplaceRule.java::NewZealandReplaceRule
+- [x] org/languagetool/rules/en/NoDisambiguationEnglishPartialPosTagFilter.java::NoDisambiguationEnglishPartialPosTagFilter
+- [x] org/languagetool/rules/en/OrdinalSuffixFilter.java::OrdinalSuffixFilter
+- [x] org/languagetool/rules/en/SimpleReplaceProfanityRule.java::SimpleReplaceProfanityRule
+- [x] org/languagetool/rules/en/SimpleReplaceRule.java::SimpleReplaceRule
+- [x] org/languagetool/rules/en/StyleTooOftenUsedAdjectiveRule.java::StyleTooOftenUsedAdjectiveRule
+- [x] org/languagetool/rules/en/StyleTooOftenUsedNounRule.java::StyleTooOftenUsedNounRule
+- [x] org/languagetool/rules/en/StyleTooOftenUsedVerbRule.java::StyleTooOftenUsedVerbRule
+- [x] org/languagetool/rules/en/UnitConversionRule.java::UnitConversionRule
+- [x] org/languagetool/rules/en/UnitConversionRuleImperial.java::UnitConversionRuleImperial
+- [x] org/languagetool/rules/en/UnitConversionRuleUS.java::UnitConversionRuleUS
 - [ ] org/languagetool/rules/en/UpperCaseNgramRule.java::UpperCaseNgramRule
-- [ ] org/languagetool/rules/en/VariantInfo.java::VariantInfo
-- [ ] org/languagetool/rules/en/WordCoherencyRule.java::WordCoherencyRule
-- [ ] org/languagetool/rules/en/YMDDateCheckFilter.java::YMDDateCheckFilter
-- [ ] org/languagetool/rules/en/YMDNewYearDateFilter.java::YMDNewYearDateFilter
+- [x] org/languagetool/rules/en/VariantInfo.java::VariantInfo
+- [x] org/languagetool/rules/en/WordCoherencyRule.java::WordCoherencyRule
+- [x] org/languagetool/rules/en/YMDDateCheckFilter.java::YMDDateCheckFilter
+- [x] org/languagetool/rules/en/YMDNewYearDateFilter.java::YMDNewYearDateFilter
 - [ ] org/languagetool/rules/en/translation/BeoLingusTranslator.java::BeoLingusTranslator
-- [ ] org/languagetool/rules/en/translation/Inflector.java::Inflector
+- [x] org/languagetool/rules/en/translation/Inflector.java::Inflector
 - [ ] org/languagetool/synthesis/en/EnglishSynthesizer.java::EnglishSynthesizer
 - [ ] org/languagetool/tagging/en/EnglishHybridDisambiguator.java::EnglishHybridDisambiguator
 - [ ] org/languagetool/tagging/en/EnglishTagger.java::EnglishTagger
@@ -1161,48 +1161,48 @@
 ## languagetool-language-modules/es
 
 - [ ] org/languagetool/language/Spanish.java::Spanish
-- [ ] org/languagetool/language/SpanishVoseo.java::SpanishVoseo
-- [ ] org/languagetool/rules/es/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/language/SpanishVoseo.java::SpanishVoseo
+- [x] org/languagetool/rules/es/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/es/CompoundRule.java::CompoundRule
 - [ ] org/languagetool/rules/es/ConfusionCheckFilter.java::ConfusionCheckFilter
-- [ ] org/languagetool/rules/es/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
-- [ ] org/languagetool/rules/es/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/rules/es/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
+- [x] org/languagetool/rules/es/DateCheckFilter.java::DateCheckFilter
 - [ ] org/languagetool/rules/es/DateFilterHelper.java::DateFilterHelper
 - [ ] org/languagetool/rules/es/FindSuggestionsFilter.java::FindSuggestionsFilter
 - [ ] org/languagetool/rules/es/MorfologikSpanishSpellerRule.java::MorfologikSpanishSpellerRule
-- [ ] org/languagetool/rules/es/NewYearDateFilter.java::NewYearDateFilter
+- [x] org/languagetool/rules/es/NewYearDateFilter.java::NewYearDateFilter
 - [ ] org/languagetool/rules/es/PostponedAdjectiveConcordanceFilter.java::PostponedAdjectiveConcordanceFilter
 - [ ] org/languagetool/rules/es/QuestionMarkRule.java::QuestionMarkRule
 - [ ] org/languagetool/rules/es/SimpleReplaceRule.java::SimpleReplaceRule
 - [ ] org/languagetool/rules/es/SimpleReplaceVerbsRule.java::SimpleReplaceVerbsRule
-- [ ] org/languagetool/rules/es/SpanishConfusionProbabilityRule.java::SpanishConfusionProbabilityRule
-- [ ] org/languagetool/rules/es/SpanishMultitokenSpeller.java::SpanishMultitokenSpeller
-- [ ] org/languagetool/rules/es/SpanishNumberInWordFilter.java::SpanishNumberInWordFilter
+- [x] org/languagetool/rules/es/SpanishConfusionProbabilityRule.java::SpanishConfusionProbabilityRule
+- [x] org/languagetool/rules/es/SpanishMultitokenSpeller.java::SpanishMultitokenSpeller
+- [x] org/languagetool/rules/es/SpanishNumberInWordFilter.java::SpanishNumberInWordFilter
 - [ ] org/languagetool/rules/es/SpanishRepeatedWordsRule.java::SpanishRepeatedWordsRule
-- [ ] org/languagetool/rules/es/SpanishSuppressMisspelledSuggestionsFilter.java::SpanishSuppressMisspelledSuggestionsFilter
+- [x] org/languagetool/rules/es/SpanishSuppressMisspelledSuggestionsFilter.java::SpanishSuppressMisspelledSuggestionsFilter
 - [ ] org/languagetool/rules/es/SpanishUnpairedBracketsRule.java::SpanishUnpairedBracketsRule
 - [ ] org/languagetool/rules/es/SpanishWikipediaRule.java::SpanishWikipediaRule
 - [ ] org/languagetool/rules/es/SpanishWordRepeatBeginningRule.java::SpanishWordRepeatBeginningRule
-- [ ] org/languagetool/rules/es/SpanishWordRepeatRule.java::SpanishWordRepeatRule
+- [x] org/languagetool/rules/es/SpanishWordRepeatRule.java::SpanishWordRepeatRule
 - [ ] org/languagetool/rules/es/SpanishWrongWordInContextRule.java::SpanishWrongWordInContextRule
 - [ ] org/languagetool/rules/es/TextToNumberFilter.java::TextToNumberFilter
 - [ ] org/languagetool/synthesis/es/SpanishSynthesizer.java::SpanishSynthesizer
 - [ ] org/languagetool/synthesis/es/SpanishSynthesizer.java::SpanishSynthesizer.PostagComparator
 - [ ] org/languagetool/tagging/disambiguation/es/SpanishHybridDisambiguator.java::SpanishHybridDisambiguator
 - [ ] org/languagetool/tagging/es/SpanishTagger.java::SpanishTagger
-- [ ] org/languagetool/tokenizers/es/SpanishWordTokenizer.java::SpanishWordTokenizer
+- [x] org/languagetool/tokenizers/es/SpanishWordTokenizer.java::SpanishWordTokenizer
 
 ## languagetool-language-modules/fa
 
 - [ ] org/languagetool/language/Persian.java::Persian
-- [ ] org/languagetool/rules/fa/PersianCommaWhitespaceRule.java::PersianCommaWhitespaceRule
-- [ ] org/languagetool/rules/fa/PersianDoublePunctuationRule.java::PersianDoublePunctuationRule
-- [ ] org/languagetool/rules/fa/PersianSpaceBeforeRule.java::PersianSpaceBeforeRule
+- [x] org/languagetool/rules/fa/PersianCommaWhitespaceRule.java::PersianCommaWhitespaceRule
+- [x] org/languagetool/rules/fa/PersianDoublePunctuationRule.java::PersianDoublePunctuationRule
+- [x] org/languagetool/rules/fa/PersianSpaceBeforeRule.java::PersianSpaceBeforeRule
 - [ ] org/languagetool/rules/fa/PersianWordRepeatBeginningRule.java::PersianWordRepeatBeginningRule
 - [ ] org/languagetool/rules/fa/PersianWordRepeatRule.java::PersianWordRepeatRule
 - [ ] org/languagetool/rules/fa/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/rules/fa/WordCoherencyRule.java::WordCoherencyRule
-- [ ] org/languagetool/tokenizers/PersianWordTokenizer.java::PersianWordTokenizer
+- [x] org/languagetool/rules/fa/WordCoherencyRule.java::WordCoherencyRule
+- [x] org/languagetool/tokenizers/PersianWordTokenizer.java::PersianWordTokenizer
 
 ## languagetool-language-modules/fr
 
@@ -1210,31 +1210,31 @@
 - [ ] org/languagetool/language/CanadianFrench.java::CanadianFrench
 - [ ] org/languagetool/language/French.java::French
 - [ ] org/languagetool/language/SwissFrench.java::SwissFrench
-- [ ] org/languagetool/rules/fr/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/rules/fr/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/fr/CompoundRule.java::CompoundRule
 - [ ] org/languagetool/rules/fr/DMYDateCheckFilter.java::DMYDateCheckFilter
-- [ ] org/languagetool/rules/fr/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/rules/fr/DateCheckFilter.java::DateCheckFilter
 - [ ] org/languagetool/rules/fr/DateFilterHelper.java::DateFilterHelper
 - [ ] org/languagetool/rules/fr/FindSuggestionsFilter.java::FindSuggestionsFilter
-- [ ] org/languagetool/rules/fr/FrenchConfusionProbabilityRule.java::FrenchConfusionProbabilityRule
-- [ ] org/languagetool/rules/fr/FrenchMultitokenSpeller.java::FrenchMultitokenSpeller
-- [ ] org/languagetool/rules/fr/FrenchNumberInWordFilter.java::FrenchNumberInWordFilter
-- [ ] org/languagetool/rules/fr/FrenchPartialPosTagFilter.java::FrenchPartialPosTagFilter
+- [x] org/languagetool/rules/fr/FrenchConfusionProbabilityRule.java::FrenchConfusionProbabilityRule
+- [x] org/languagetool/rules/fr/FrenchMultitokenSpeller.java::FrenchMultitokenSpeller
+- [x] org/languagetool/rules/fr/FrenchNumberInWordFilter.java::FrenchNumberInWordFilter
+- [x] org/languagetool/rules/fr/FrenchPartialPosTagFilter.java::FrenchPartialPosTagFilter
 - [ ] org/languagetool/rules/fr/FrenchRepeatedWordsRule.java::FrenchRepeatedWordsRule
-- [ ] org/languagetool/rules/fr/FrenchSuppressMisspelledSuggestionsFilter.java::FrenchSuppressMisspelledSuggestionsFilter
+- [x] org/languagetool/rules/fr/FrenchSuppressMisspelledSuggestionsFilter.java::FrenchSuppressMisspelledSuggestionsFilter
 - [ ] org/languagetool/rules/fr/GrammalecteRule.java::GrammalecteRule
 - [ ] org/languagetool/rules/fr/GrammalecteRule.java::GrammalecteRule.GrammalecteInternalRule
 - [ ] org/languagetool/rules/fr/InterrogativeVerbFilter.java::InterrogativeVerbFilter
-- [ ] org/languagetool/rules/fr/MakeContractionsFilter.java::MakeContractionsFilter
+- [x] org/languagetool/rules/fr/MakeContractionsFilter.java::MakeContractionsFilter
 - [ ] org/languagetool/rules/fr/MorfologikFrenchSpellerRule.java::MorfologikFrenchSpellerRule
-- [ ] org/languagetool/rules/fr/NewYearDateFilter.java::NewYearDateFilter
+- [x] org/languagetool/rules/fr/NewYearDateFilter.java::NewYearDateFilter
 - [ ] org/languagetool/rules/fr/PostponedAdjectiveConcordanceFilter.java::PostponedAdjectiveConcordanceFilter
 - [ ] org/languagetool/rules/fr/QuestionWhitespaceRule.java::QuestionWhitespaceRule
 - [ ] org/languagetool/rules/fr/QuestionWhitespaceStrictRule.java::QuestionWhitespaceStrictRule
 - [ ] org/languagetool/rules/fr/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/rules/fr/SuggestionsFilter.java::SuggestionsFilter
+- [x] org/languagetool/rules/fr/SuggestionsFilter.java::SuggestionsFilter
 - [ ] org/languagetool/rules/fr/WordWithDeterminerFilter.java::WordWithDeterminerFilter
-- [ ] org/languagetool/synthesis/FrenchSynthesizer.java::FrenchSynthesizer
+- [x] org/languagetool/synthesis/FrenchSynthesizer.java::FrenchSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/fr/FrenchHybridDisambiguator.java::FrenchHybridDisambiguator
 - [ ] org/languagetool/tagging/fr/FrenchTagger.java::FrenchTagger
 - [ ] org/languagetool/tokenizers/fr/FrenchWordTokenizer.java::FrenchWordTokenizer
@@ -1250,16 +1250,16 @@
 - [ ] org/languagetool/rules/ga/DhaNoBeirtRule.java::DhaNoBeirtRule
 - [ ] org/languagetool/rules/ga/EnglishHomophoneRule.java::EnglishHomophoneRule
 - [ ] org/languagetool/rules/ga/IrishFGBEqReplaceRule.java::IrishFGBEqReplaceRule
-- [ ] org/languagetool/rules/ga/IrishPartialPosTagFilter.java::IrishPartialPosTagFilter
+- [x] org/languagetool/rules/ga/IrishPartialPosTagFilter.java::IrishPartialPosTagFilter
 - [ ] org/languagetool/rules/ga/IrishReplaceRule.java::IrishReplaceRule
 - [ ] org/languagetool/rules/ga/IrishSpecificCaseRule.java::IrishSpecificCaseRule
 - [ ] org/languagetool/rules/ga/LogainmRule.java::LogainmRule
 - [ ] org/languagetool/rules/ga/MorfologikIrishSpellerRule.java::MorfologikIrishSpellerRule
-- [ ] org/languagetool/rules/ga/NoDisambiguationIrishPartialPosTagFilter.java::NoDisambiguationIrishPartialPosTagFilter
+- [x] org/languagetool/rules/ga/NoDisambiguationIrishPartialPosTagFilter.java::NoDisambiguationIrishPartialPosTagFilter
 - [ ] org/languagetool/rules/ga/PeopleRule.java::PeopleRule
 - [ ] org/languagetool/rules/ga/PrestandardReplaceRule.java::PrestandardReplaceRule
 - [ ] org/languagetool/rules/ga/SpacesRule.java::SpacesRule
-- [ ] org/languagetool/synthesis/ga/IrishSynthesizer.java::IrishSynthesizer
+- [x] org/languagetool/synthesis/ga/IrishSynthesizer.java::IrishSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/ga/IrishHybridDisambiguator.java::IrishHybridDisambiguator
 - [ ] org/languagetool/tagging/ga/IrishTagger.java::IrishTagger
 - [ ] org/languagetool/tagging/ga/Retaggable.java::Retaggable
@@ -1269,14 +1269,14 @@
 ## languagetool-language-modules/gl
 
 - [ ] org/languagetool/language/Galician.java::Galician
-- [ ] org/languagetool/rules/gl/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/rules/gl/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/gl/CastWordsRule.java::CastWordsRule
 - [ ] org/languagetool/rules/gl/GalicianBarbarismsRule.java::GalicianBarbarismsRule
 - [ ] org/languagetool/rules/gl/GalicianRedundancyRule.java::GalicianRedundancyRule
 - [ ] org/languagetool/rules/gl/GalicianWikipediaRule.java::GalicianWikipediaRule
 - [ ] org/languagetool/rules/gl/GalicianWordinessRule.java::GalicianWordinessRule
 - [ ] org/languagetool/rules/gl/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/synthesis/gl/GalicianSynthesizer.java::GalicianSynthesizer
+- [x] org/languagetool/synthesis/gl/GalicianSynthesizer.java::GalicianSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/gl/GalicianHybridDisambiguator.java::GalicianHybridDisambiguator
 - [ ] org/languagetool/tagging/gl/GalicianTagger.java::GalicianTagger
 - [ ] org/languagetool/tokenizers/gl/GalicianWordTokenizer.java::GalicianWordTokenizer
@@ -1289,10 +1289,10 @@
 
 - [ ] org/languagetool/language/Italian.java::Italian
 - [ ] org/languagetool/rules/it/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/it/ItalianConfusionProbabilityRule.java::ItalianConfusionProbabilityRule
-- [ ] org/languagetool/rules/it/ItalianWordRepeatRule.java::ItalianWordRepeatRule
+- [x] org/languagetool/rules/it/ItalianConfusionProbabilityRule.java::ItalianConfusionProbabilityRule
+- [x] org/languagetool/rules/it/ItalianWordRepeatRule.java::ItalianWordRepeatRule
 - [ ] org/languagetool/rules/it/MorfologikItalianSpellerRule.java::MorfologikItalianSpellerRule
-- [ ] org/languagetool/synthesis/it/ItalianSynthesizer.java::ItalianSynthesizer
+- [x] org/languagetool/synthesis/it/ItalianSynthesizer.java::ItalianSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/rules/it/ItalianRuleDisambiguator.java::ItalianRuleDisambiguator
 - [ ] org/languagetool/tagging/it/ItalianTagger.java::ItalianTagger
 
@@ -1300,30 +1300,30 @@
 
 - [ ] org/languagetool/language/Japanese.java::Japanese
 - [ ] org/languagetool/tagging/ja/JapaneseTagger.java::JapaneseTagger
-- [ ] org/languagetool/tokenizers/ja/JapaneseWordTokenizer.java::JapaneseWordTokenizer
+- [x] org/languagetool/tokenizers/ja/JapaneseWordTokenizer.java::JapaneseWordTokenizer
 
 ## languagetool-language-modules/km
 
 - [ ] org/languagetool/language/Khmer.java::Khmer
-- [ ] org/languagetool/rules/km/KhmerHunspellRule.java::KhmerHunspellRule
+- [x] org/languagetool/rules/km/KhmerHunspellRule.java::KhmerHunspellRule
 - [ ] org/languagetool/rules/km/KhmerSimpleReplaceRule.java::KhmerSimpleReplaceRule
-- [ ] org/languagetool/rules/km/KhmerSpaceBeforeRule.java::KhmerSpaceBeforeRule
-- [ ] org/languagetool/rules/km/KhmerUnpairedBracketsRule.java::KhmerUnpairedBracketsRule
+- [x] org/languagetool/rules/km/KhmerSpaceBeforeRule.java::KhmerSpaceBeforeRule
+- [x] org/languagetool/rules/km/KhmerUnpairedBracketsRule.java::KhmerUnpairedBracketsRule
 - [ ] org/languagetool/rules/km/KhmerWordRepeatRule.java::KhmerWordRepeatRule
 - [ ] org/languagetool/tagging/km/KhmerTagger.java::KhmerTagger
-- [ ] org/languagetool/tokenizers/km/KhmerWordTokenizer.java::KhmerWordTokenizer
+- [x] org/languagetool/tokenizers/km/KhmerWordTokenizer.java::KhmerWordTokenizer
 
 ## languagetool-language-modules/lt
 
 - [ ] org/languagetool/language/Lithuanian.java::Lithuanian
-- [ ] org/languagetool/rules/lt/MorfologikLithuanianSpellerRule.java::MorfologikLithuanianSpellerRule
+- [x] org/languagetool/rules/lt/MorfologikLithuanianSpellerRule.java::MorfologikLithuanianSpellerRule
 
 ## languagetool-language-modules/ml
 
 - [ ] org/languagetool/language/Malayalam.java::Malayalam
-- [ ] org/languagetool/rules/ml/MorfologikMalayalamSpellerRule.java::MorfologikMalayalamSpellerRule
+- [x] org/languagetool/rules/ml/MorfologikMalayalamSpellerRule.java::MorfologikMalayalamSpellerRule
 - [ ] org/languagetool/tagging/ml/MalayalamTagger.java::MalayalamTagger
-- [ ] org/languagetool/tokenizers/ml/MalayalamWordTokenizer.java::MalayalamWordTokenizer
+- [x] org/languagetool/tokenizers/ml/MalayalamWordTokenizer.java::MalayalamWordTokenizer
 
 ## languagetool-language-modules/nl
 
@@ -1331,13 +1331,13 @@
 - [ ] org/languagetool/language/Dutch.java::Dutch
 - [ ] org/languagetool/rules/nl/CheckCaseRule.java::CheckCaseRule
 - [ ] org/languagetool/rules/nl/CompoundAcceptor.java::CompoundAcceptor
-- [ ] org/languagetool/rules/nl/CompoundFilter.java::CompoundFilter
+- [x] org/languagetool/rules/nl/CompoundFilter.java::CompoundFilter
 - [ ] org/languagetool/rules/nl/CompoundRule.java::CompoundRule
 - [ ] org/languagetool/rules/nl/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/nl/DutchConfusionProbabilityRule.java::DutchConfusionProbabilityRule
-- [ ] org/languagetool/rules/nl/DutchMultitokenSpeller.java::DutchMultitokenSpeller
-- [ ] org/languagetool/rules/nl/DutchNumberInWordFilter.java::DutchNumberInWordFilter
-- [ ] org/languagetool/rules/nl/DutchSuppressMisspelledSuggestionsFilter.java::DutchSuppressMisspelledSuggestionsFilter
+- [x] org/languagetool/rules/nl/DutchConfusionProbabilityRule.java::DutchConfusionProbabilityRule
+- [x] org/languagetool/rules/nl/DutchMultitokenSpeller.java::DutchMultitokenSpeller
+- [x] org/languagetool/rules/nl/DutchNumberInWordFilter.java::DutchNumberInWordFilter
+- [x] org/languagetool/rules/nl/DutchSuppressMisspelledSuggestionsFilter.java::DutchSuppressMisspelledSuggestionsFilter
 - [ ] org/languagetool/rules/nl/DutchWrongWordInContextRule.java::DutchWrongWordInContextRule
 - [ ] org/languagetool/rules/nl/MorfologikDutchSpellerRule.java::MorfologikDutchSpellerRule
 - [ ] org/languagetool/rules/nl/PreferredWordData.java::PreferredWordData
@@ -1346,8 +1346,8 @@
 - [ ] org/languagetool/rules/nl/SimpleReplaceRule.java::SimpleReplaceRule
 - [ ] org/languagetool/rules/nl/SpaceInCompoundRule.java::SpaceInCompoundRule
 - [ ] org/languagetool/rules/nl/Tools.java::Tools
-- [ ] org/languagetool/rules/nl/WordCoherencyRule.java::WordCoherencyRule
-- [ ] org/languagetool/synthesis/nl/DutchSynthesizer.java::DutchSynthesizer
+- [x] org/languagetool/rules/nl/WordCoherencyRule.java::WordCoherencyRule
+- [x] org/languagetool/synthesis/nl/DutchSynthesizer.java::DutchSynthesizer
 - [ ] org/languagetool/tagging/nl/DutchHybridDisambiguator.java::DutchHybridDisambiguator
 - [ ] org/languagetool/tagging/nl/DutchTagger.java::DutchTagger
 - [ ] org/languagetool/tokenizers/nl/DutchWordTokenizer.java::DutchWordTokenizer
@@ -1356,15 +1356,15 @@
 
 - [ ] org/languagetool/language/Polish.java::Polish
 - [ ] org/languagetool/rules/pl/CompoundRule.java::CompoundRule
-- [ ] org/languagetool/rules/pl/DashRule.java::DashRule
+- [x] org/languagetool/rules/pl/DashRule.java::DashRule
 - [ ] org/languagetool/rules/pl/DateCheckFilter.java::DateCheckFilter
 - [ ] org/languagetool/rules/pl/DecadeSpellingFilter.java::DecadeSpellingFilter
 - [ ] org/languagetool/rules/pl/MorfologikPolishSpellerRule.java::MorfologikPolishSpellerRule
-- [ ] org/languagetool/rules/pl/PolishUnpairedBracketsRule.java::PolishUnpairedBracketsRule
+- [x] org/languagetool/rules/pl/PolishUnpairedBracketsRule.java::PolishUnpairedBracketsRule
 - [ ] org/languagetool/rules/pl/PolishWordRepeatRule.java::PolishWordRepeatRule
 - [ ] org/languagetool/rules/pl/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/rules/pl/WordCoherencyRule.java::WordCoherencyRule
-- [ ] org/languagetool/synthesis/pl/PolishSynthesizer.java::PolishSynthesizer
+- [x] org/languagetool/rules/pl/WordCoherencyRule.java::WordCoherencyRule
+- [x] org/languagetool/synthesis/pl/PolishSynthesizer.java::PolishSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/pl/PolishHybridDisambiguator.java::PolishHybridDisambiguator
 - [ ] org/languagetool/tagging/pl/PolishTagger.java::PolishTagger
 - [ ] org/languagetool/tokenizers/pl/PolishWordTokenizer.java::PolishWordTokenizer
@@ -1376,43 +1376,43 @@
 - [ ] org/languagetool/language/MozambiquePortuguese.java::MozambiquePortuguese
 - [ ] org/languagetool/language/PortugalPortuguese.java::PortugalPortuguese
 - [ ] org/languagetool/language/Portuguese.java::Portuguese
-- [ ] org/languagetool/rules/pt/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/rules/pt/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/pt/BrazilianPortugueseReplaceRule.java::BrazilianPortugueseReplaceRule
-- [ ] org/languagetool/rules/pt/BrazilianToponymFilter.java::BrazilianToponymFilter
+- [x] org/languagetool/rules/pt/BrazilianToponymFilter.java::BrazilianToponymFilter
 - [ ] org/languagetool/rules/pt/BrazilianToponymMap.java::BrazilianToponymMap
 - [ ] org/languagetool/rules/pt/BrazilianToponymMapLoader.java::BrazilianToponymMapLoader
 - [ ] org/languagetool/rules/pt/ConfusionCheckFilter.java::ConfusionCheckFilter
-- [ ] org/languagetool/rules/pt/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
-- [ ] org/languagetool/rules/pt/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/rules/pt/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
+- [x] org/languagetool/rules/pt/DateCheckFilter.java::DateCheckFilter
 - [ ] org/languagetool/rules/pt/DateFilterHelper.java::DateFilterHelper
 - [ ] org/languagetool/rules/pt/EnglishContractionSpellingRule.java::EnglishContractionSpellingRule
-- [ ] org/languagetool/rules/pt/FutureDateFilter.java::FutureDateFilter
+- [x] org/languagetool/rules/pt/FutureDateFilter.java::FutureDateFilter
 - [ ] org/languagetool/rules/pt/MorfologikPortugueseSpellerRule.java::MorfologikPortugueseSpellerRule
-- [ ] org/languagetool/rules/pt/NewYearDateFilter.java::NewYearDateFilter
-- [ ] org/languagetool/rules/pt/NoDisambiguationPortuguesePartialPosTagFilter.java::NoDisambiguationPortuguesePartialPosTagFilter
+- [x] org/languagetool/rules/pt/NewYearDateFilter.java::NewYearDateFilter
+- [x] org/languagetool/rules/pt/NoDisambiguationPortuguesePartialPosTagFilter.java::NoDisambiguationPortuguesePartialPosTagFilter
 - [ ] org/languagetool/rules/pt/PortugalPortugueseReplaceRule.java::PortugalPortugueseReplaceRule
 - [ ] org/languagetool/rules/pt/PortugueseAccentuationCheckRule.java::PortugueseAccentuationCheckRule
-- [ ] org/languagetool/rules/pt/PortugueseAccentuationDataLoader.java::PortugueseAccentuationDataLoader
+- [x] org/languagetool/rules/pt/PortugueseAccentuationDataLoader.java::PortugueseAccentuationDataLoader
 - [ ] org/languagetool/rules/pt/PortugueseAgreementReplaceRule.java::PortugueseAgreementReplaceRule
 - [ ] org/languagetool/rules/pt/PortugueseArchaismsRule.java::PortugueseArchaismsRule
 - [ ] org/languagetool/rules/pt/PortugueseBarbarismsRule.java::PortugueseBarbarismsRule
 - [ ] org/languagetool/rules/pt/PortugueseClicheRule.java::PortugueseClicheRule
 - [ ] org/languagetool/rules/pt/PortugueseColourHyphenationRule.java::PortugueseColourHyphenationRule
-- [ ] org/languagetool/rules/pt/PortugueseConfusionProbabilityRule.java::PortugueseConfusionProbabilityRule
+- [x] org/languagetool/rules/pt/PortugueseConfusionProbabilityRule.java::PortugueseConfusionProbabilityRule
 - [ ] org/languagetool/rules/pt/PortugueseDiacriticsRule.java::PortugueseDiacriticsRule
 - [ ] org/languagetool/rules/pt/PortugueseEnclisisFilter.java::PortugueseEnclisisFilter
 - [ ] org/languagetool/rules/pt/PortugueseFillerWordsRule.java::PortugueseFillerWordsRule
-- [ ] org/languagetool/rules/pt/PortugueseMultitokenSpeller.java::PortugueseMultitokenSpeller
+- [x] org/languagetool/rules/pt/PortugueseMultitokenSpeller.java::PortugueseMultitokenSpeller
 - [ ] org/languagetool/rules/pt/PortugueseOrthographyReplaceRule.java::PortugueseOrthographyReplaceRule
 - [ ] org/languagetool/rules/pt/PortugueseProclisisFilter.java::PortugueseProclisisFilter
 - [ ] org/languagetool/rules/pt/PortugueseReadabilityRule.java::PortugueseReadabilityRule
 - [ ] org/languagetool/rules/pt/PortugueseRedundancyRule.java::PortugueseRedundancyRule
 - [ ] org/languagetool/rules/pt/PortugueseReplaceRule.java::PortugueseReplaceRule
-- [ ] org/languagetool/rules/pt/PortugueseSuppressMisspelledSuggestionsFilter.java::PortugueseSuppressMisspelledSuggestionsFilter
+- [x] org/languagetool/rules/pt/PortugueseSuppressMisspelledSuggestionsFilter.java::PortugueseSuppressMisspelledSuggestionsFilter
 - [ ] org/languagetool/rules/pt/PortugueseUnitConversionRule.java::PortugueseUnitConversionRule
 - [ ] org/languagetool/rules/pt/PortugueseWeaselWordsRule.java::PortugueseWeaselWordsRule
 - [ ] org/languagetool/rules/pt/PortugueseWikipediaRule.java::PortugueseWikipediaRule
-- [ ] org/languagetool/rules/pt/PortugueseWordCoherencyRule.java::PortugueseWordCoherencyRule
+- [x] org/languagetool/rules/pt/PortugueseWordCoherencyRule.java::PortugueseWordCoherencyRule
 - [ ] org/languagetool/rules/pt/PortugueseWordRepeatBeginningRule.java::PortugueseWordRepeatBeginningRule
 - [ ] org/languagetool/rules/pt/PortugueseWordRepeatRule.java::PortugueseWordRepeatRule
 - [ ] org/languagetool/rules/pt/PortugueseWordinessRule.java::PortugueseWordinessRule
@@ -1422,10 +1422,10 @@
 - [ ] org/languagetool/rules/pt/PreReformPortugueseCompoundRule.java::PreReformPortugueseCompoundRule
 - [ ] org/languagetool/rules/pt/PreReformPortugueseDashRule.java::PreReformPortugueseDashRule
 - [ ] org/languagetool/rules/pt/RegularIrregularParticipleFilter.java::RegularIrregularParticipleFilter
-- [ ] org/languagetool/rules/pt/RomanNumeralFilter.java::RomanNumeralFilter
-- [ ] org/languagetool/rules/pt/YMDDateCheckFilter.java::YMDDateCheckFilter
-- [ ] org/languagetool/rules/pt/YMDNewYearDateFilter.java::YMDNewYearDateFilter
-- [ ] org/languagetool/synthesis/pt/PortugueseSynthesizer.java::PortugueseSynthesizer
+- [x] org/languagetool/rules/pt/RomanNumeralFilter.java::RomanNumeralFilter
+- [x] org/languagetool/rules/pt/YMDDateCheckFilter.java::YMDDateCheckFilter
+- [x] org/languagetool/rules/pt/YMDNewYearDateFilter.java::YMDNewYearDateFilter
+- [x] org/languagetool/synthesis/pt/PortugueseSynthesizer.java::PortugueseSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/pt/PortugueseHybridDisambiguator.java::PortugueseHybridDisambiguator
 - [ ] org/languagetool/tagging/pt/PortugueseTagger.java::PortugueseTagger
 - [ ] org/languagetool/tokenizers/pt/PortugueseWordTokenizer.java::PortugueseWordTokenizer
@@ -1437,9 +1437,9 @@
 - [ ] org/languagetool/rules/ro/MorfologikRomanianSpellerRule.java::MorfologikRomanianSpellerRule
 - [ ] org/languagetool/rules/ro/RomanianWordRepeatBeginningRule.java::RomanianWordRepeatBeginningRule
 - [ ] org/languagetool/rules/ro/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/synthesis/ro/RomanianSynthesizer.java::RomanianSynthesizer
+- [x] org/languagetool/synthesis/ro/RomanianSynthesizer.java::RomanianSynthesizer
 - [ ] org/languagetool/tagging/ro/RomanianTagger.java::RomanianTagger
-- [ ] org/languagetool/tokenizers/ro/RomanianWordTokenizer.java::RomanianWordTokenizer
+- [x] org/languagetool/tokenizers/ro/RomanianWordTokenizer.java::RomanianWordTokenizer
 
 ## languagetool-language-modules/ru
 
@@ -1449,45 +1449,45 @@
 - [ ] org/languagetool/chunking/RussianChunker.java::RussianChunker.AffectedSpans
 - [ ] org/languagetool/chunking/RussianChunker.java::RussianChunker.RegularExpressionWithPhraseType
 - [ ] org/languagetool/language/Russian.java::Russian
-- [ ] org/languagetool/rules/ru/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
-- [ ] org/languagetool/rules/ru/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/rules/ru/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
+- [x] org/languagetool/rules/ru/DateCheckFilter.java::DateCheckFilter
 - [ ] org/languagetool/rules/ru/DateFilterHelper.java::DateFilterHelper
-- [ ] org/languagetool/rules/ru/FutureDateFilter.java::FutureDateFilter
+- [x] org/languagetool/rules/ru/FutureDateFilter.java::FutureDateFilter
 - [ ] org/languagetool/rules/ru/INNNumberFilter.java::INNNumberFilter
 - [ ] org/languagetool/rules/ru/MorfologikRussianSpellerRule.java::MorfologikRussianSpellerRule
 - [ ] org/languagetool/rules/ru/MorfologikRussianYOSpellerRule.java::MorfologikRussianYOSpellerRule
 - [ ] org/languagetool/rules/ru/NoDisambiguationRussianPartialPosTagFilter.java::NoDisambiguationRussianPartialPosTagFilter
 - [ ] org/languagetool/rules/ru/RussianCompoundRule.java::RussianCompoundRule
-- [ ] org/languagetool/rules/ru/RussianConfusionProbabilityRule.java::RussianConfusionProbabilityRule
+- [x] org/languagetool/rules/ru/RussianConfusionProbabilityRule.java::RussianConfusionProbabilityRule
 - [ ] org/languagetool/rules/ru/RussianDashRule.java::RussianDashRule
 - [ ] org/languagetool/rules/ru/RussianFillerWordsRule.java::RussianFillerWordsRule
-- [ ] org/languagetool/rules/ru/RussianPartialPosTagFilter.java::RussianPartialPosTagFilter
+- [x] org/languagetool/rules/ru/RussianPartialPosTagFilter.java::RussianPartialPosTagFilter
 - [ ] org/languagetool/rules/ru/RussianSimpleReplaceRule.java::RussianSimpleReplaceRule
 - [ ] org/languagetool/rules/ru/RussianSimpleWordRepeatRule.java::RussianSimpleWordRepeatRule
 - [ ] org/languagetool/rules/ru/RussianSpecificCaseRule.java::RussianSpecificCaseRule
-- [ ] org/languagetool/rules/ru/RussianSuppressMisspelledSuggestionsFilter.java::RussianSuppressMisspelledSuggestionsFilter
-- [ ] org/languagetool/rules/ru/RussianUnpairedBracketsRule.java::RussianUnpairedBracketsRule
+- [x] org/languagetool/rules/ru/RussianSuppressMisspelledSuggestionsFilter.java::RussianSuppressMisspelledSuggestionsFilter
+- [x] org/languagetool/rules/ru/RussianUnpairedBracketsRule.java::RussianUnpairedBracketsRule
 - [ ] org/languagetool/rules/ru/RussianVerbConjugationRule.java::RussianVerbConjugationRule
-- [ ] org/languagetool/rules/ru/RussianWordCoherencyRule.java::RussianWordCoherencyRule
+- [x] org/languagetool/rules/ru/RussianWordCoherencyRule.java::RussianWordCoherencyRule
 - [ ] org/languagetool/rules/ru/RussianWordRepeatRule.java::RussianWordRepeatRule
 - [ ] org/languagetool/rules/ru/RussianWordRootRepeatRule.java::RussianWordRootRepeatRule
-- [ ] org/languagetool/synthesis/ru/RussianSynthesizer.java::RussianSynthesizer
+- [x] org/languagetool/synthesis/ru/RussianSynthesizer.java::RussianSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/ru/RussianHybridDisambiguator.java::RussianHybridDisambiguator
 - [ ] org/languagetool/tagging/ru/RussianTagger.java::RussianTagger
-- [ ] org/languagetool/tokenizers/ru/RussianWordTokenizer.java::RussianWordTokenizer
+- [x] org/languagetool/tokenizers/ru/RussianWordTokenizer.java::RussianWordTokenizer
 
 ## languagetool-language-modules/sk
 
 - [ ] org/languagetool/language/Slovak.java::Slovak
 - [ ] org/languagetool/rules/sk/CompoundRule.java::CompoundRule
 - [ ] org/languagetool/rules/sk/MorfologikSlovakSpellerRule.java::MorfologikSlovakSpellerRule
-- [ ] org/languagetool/synthesis/sk/SlovakSynthesizer.java::SlovakSynthesizer
+- [x] org/languagetool/synthesis/sk/SlovakSynthesizer.java::SlovakSynthesizer
 - [ ] org/languagetool/tagging/sk/SlovakTagger.java::SlovakTagger
 
 ## languagetool-language-modules/sl
 
 - [ ] org/languagetool/language/Slovenian.java::Slovenian
-- [ ] org/languagetool/rules/sl/MorfologikSlovenianSpellerRule.java::MorfologikSlovenianSpellerRule
+- [x] org/languagetool/rules/sl/MorfologikSlovenianSpellerRule.java::MorfologikSlovenianSpellerRule
 
 ## languagetool-language-modules/sr
 
@@ -1516,8 +1516,8 @@
 
 - [ ] org/languagetool/language/Swedish.java::Swedish
 - [ ] org/languagetool/rules/sv/CompoundRule.java::CompoundRule
-- [ ] org/languagetool/rules/sv/WordCoherencyRule.java::WordCoherencyRule
-- [ ] org/languagetool/synthesis/sv/SwedishSynthesizer.java::SwedishSynthesizer
+- [x] org/languagetool/rules/sv/WordCoherencyRule.java::WordCoherencyRule
+- [x] org/languagetool/synthesis/sv/SwedishSynthesizer.java::SwedishSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/sv/SwedishHybridDisambiguator.java::SwedishHybridDisambiguator
 - [ ] org/languagetool/tagging/sv/SwedishTagger.java::SwedishTagger
 
@@ -1529,8 +1529,8 @@
 ## languagetool-language-modules/tl
 
 - [ ] org/languagetool/language/Tagalog.java::Tagalog
-- [ ] org/languagetool/language/tl/MorfologikTagalogSpellerRule.java::MorfologikTagalogSpellerRule
-- [ ] org/languagetool/language/tokenizers/TagalogWordTokenizer.java::TagalogWordTokenizer
+- [x] org/languagetool/language/tl/MorfologikTagalogSpellerRule.java::MorfologikTagalogSpellerRule
+- [x] org/languagetool/language/tokenizers/TagalogWordTokenizer.java::TagalogWordTokenizer
 - [ ] org/languagetool/tagging/tl/TagalogTagger.java::TagalogTagger
 
 ## languagetool-language-modules/uk
@@ -1548,8 +1548,8 @@
 - [ ] org/languagetool/rules/uk/MixedAlphabetsRule.java::MixedAlphabetsRule
 - [ ] org/languagetool/rules/uk/MorfologikUkrainianSpellerRule.java::MorfologikUkrainianSpellerRule
 - [ ] org/languagetool/rules/uk/PunctuationCheckRule.java::PunctuationCheckRule
-- [ ] org/languagetool/rules/uk/RuleException.java::RuleException
-- [ ] org/languagetool/rules/uk/RuleException.java::RuleException.Type
+- [x] org/languagetool/rules/uk/RuleException.java::RuleException
+- [x] org/languagetool/rules/uk/RuleException.java::RuleException.Type
 - [ ] org/languagetool/rules/uk/SearchHelper.java::SearchHelper
 - [ ] org/languagetool/rules/uk/SearchHelper.java::SearchHelper.Match
 - [ ] org/languagetool/rules/uk/SearchHelper.java::SearchHelper.Condition
@@ -1574,12 +1574,12 @@
 - [ ] org/languagetool/rules/uk/TokenAgreementVerbNounRule.java::TokenAgreementVerbNounRule
 - [ ] org/languagetool/rules/uk/TokenAgreementVerbNounRule.java::TokenAgreementVerbNounRule.State
 - [ ] org/languagetool/rules/uk/TypographyRule.java::TypographyRule
-- [ ] org/languagetool/rules/uk/UkrainianCommaWhitespaceRule.java::UkrainianCommaWhitespaceRule
-- [ ] org/languagetool/rules/uk/UkrainianUppercaseSentenceStartRule.java::UkrainianUppercaseSentenceStartRule
+- [x] org/languagetool/rules/uk/UkrainianCommaWhitespaceRule.java::UkrainianCommaWhitespaceRule
+- [x] org/languagetool/rules/uk/UkrainianUppercaseSentenceStartRule.java::UkrainianUppercaseSentenceStartRule
 - [ ] org/languagetool/rules/uk/UkrainianWordRepeatRule.java::UkrainianWordRepeatRule
 - [ ] org/languagetool/rules/uk/VerbInflectionHelper.java::VerbInflectionHelper
 - [ ] org/languagetool/rules/uk/VerbInflectionHelper.java::VerbInflectionHelper.Inflection
-- [ ] org/languagetool/synthesis/uk/UkrainianSynthesizer.java::UkrainianSynthesizer
+- [x] org/languagetool/synthesis/uk/UkrainianSynthesizer.java::UkrainianSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/uk/SimpleDisambiguator.java::SimpleDisambiguator
 - [ ] org/languagetool/tagging/disambiguation/uk/SimpleDisambiguator.java::SimpleDisambiguator.MatcherEntry
 - [ ] org/languagetool/tagging/disambiguation/uk/SimpleDisambiguator.java::SimpleDisambiguator.TokenMatcher
@@ -1597,7 +1597,7 @@
 ## languagetool-language-modules/zh
 
 - [ ] org/languagetool/language/Chinese.java::Chinese
-- [ ] org/languagetool/rules/zh/ChineseConfusionProbabilityRule.java::ChineseConfusionProbabilityRule
+- [x] org/languagetool/rules/zh/ChineseConfusionProbabilityRule.java::ChineseConfusionProbabilityRule
 - [ ] org/languagetool/tagging/zh/ChineseTagger.java::ChineseTagger
 - [ ] org/languagetool/tokenizers/zh/ChineseSentenceTokenizer.java::ChineseSentenceTokenizer
 - [ ] org/languagetool/tokenizers/zh/ChineseWordTokenizer.java::ChineseWordTokenizer
@@ -1627,7 +1627,7 @@
 - [ ] org/languagetool/server/ErrorRequestLimiter.java::ErrorRequestLimiter
 - [ ] org/languagetool/server/ExtendedUserInfo.java::ExtendedUserInfo
 - [ ] org/languagetool/server/GRPCServer.java::GRPCServer
-- [ ] org/languagetool/server/GroupRoles.java::GroupRoles
+- [x] org/languagetool/server/GroupRoles.java::GroupRoles
 - [ ] org/languagetool/server/HTTPSServer.java::HTTPSServer
 - [ ] org/languagetool/server/HTTPSServerConfig.java::HTTPSServerConfig
 - [ ] org/languagetool/server/HTTPServer.java::HTTPServer
@@ -1637,9 +1637,9 @@
 - [ ] org/languagetool/server/HTTPTestTools.java::HTTPTestTools.TestData
 - [ ] org/languagetool/server/IllegalConfigurationException.java::IllegalConfigurationException
 - [ ] org/languagetool/server/InstrumentedAppender.java::InstrumentedAppender
-- [ ] org/languagetool/server/JwtContent.java::JwtContent
+- [x] org/languagetool/server/JwtContent.java::JwtContent
 - [ ] org/languagetool/server/LanguageToolHttpHandler.java::LanguageToolHttpHandler
-- [ ] org/languagetool/server/LimitEnforcementMode.java::LimitEnforcementMode
+- [x] org/languagetool/server/LimitEnforcementMode.java::LimitEnforcementMode
 - [ ] org/languagetool/server/LocalAbTestService.java::LocalAbTestService
 - [ ] org/languagetool/server/LoggingInterceptor.java::LoggingInterceptor
 - [ ] org/languagetool/server/PathNotFoundException.java::PathNotFoundException

@@ -12,8 +12,9 @@ type DutchSynthesizer struct {
 
 func NewDutchSynthesizer(manual *synthesis.ManualSynthesizer) *DutchSynthesizer {
 	base := synthesis.NewBaseSynthesizer("nl", manual)
-	base.ResourceFileName = "/nl/nl_synth.dict"
-	base.TagFileName = "/nl/nl_tags.txt"
+	base.ResourceFileName = "/nl/dutch_synth.dict"
+	base.TagFileName = "/nl/dutch_tags.txt"
+	base.SorFileName = "/nl/nl.sor"
 	return &DutchSynthesizer{BaseSynthesizer: base}
 }
 

@@ -30,9 +30,14 @@ func NewRuleOption(defaultValue any, configureText string, min, max any) *RuleOp
 	return ro
 }
 
+// Char is the Go stand-in for Java Character in RuleOption codecs
+// (distinct from int so ObjectToString can emit the 'c' prefix).
+type Char rune
+
 func isNumericLike(o any) bool {
+	// Java: Integer || Character || Float || Double
 	switch o.(type) {
-	case int, int32, int64, float32, float64:
+	case int, int64, float32, float64, Char:
 		return true
 	default:
 		return false
@@ -44,11 +49,10 @@ func ObjectToString(o any) string {
 	switch v := o.(type) {
 	case int:
 		return "i" + strconv.Itoa(v)
-	case int32:
-		// distinguish character vs integer by convention: int32 used as int
-		return "i" + strconv.Itoa(int(v))
 	case int64:
 		return "i" + strconv.FormatInt(v, 10)
+	case Char:
+		return "c" + string(v)
 	case bool:
 		return "b" + strconv.FormatBool(v)
 	case float32:
@@ -56,18 +60,15 @@ func ObjectToString(o any) string {
 	case float64:
 		return "d" + strconv.FormatFloat(v, 'g', -1, 64)
 	case string:
-		if len([]rune(v)) == 1 {
-			// still string encoding 's' unless callers want 'c' — use CharToString helper
-		}
 		return "s" + v
 	default:
 		return "s" + fmt.Sprint(o)
 	}
 }
 
-// CharToString encodes a single character with 'c' prefix.
+// CharToString encodes a single character with 'c' prefix (Java Character).
 func CharToString(c rune) string {
-	return "c" + string(c)
+	return ObjectToString(Char(c))
 }
 
 // ObjectsToString joins encoded objects with ';'.

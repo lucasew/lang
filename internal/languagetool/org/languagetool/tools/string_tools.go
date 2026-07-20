@@ -12,6 +12,20 @@ import (
 
 // --- StringTools ports (org.languagetool.tools.StringTools) ---
 
+// ApiPrintMode ports StringTools.ApiPrintMode (XML/JSON rule-match print modes).
+type ApiPrintMode int
+
+const (
+	// NORMAL_API normally output the rule matches by starting and ending the XML/JSON output on every call.
+	NORMAL_API ApiPrintMode = iota
+	// START_API start XML/JSON output by printing the preamble and the start of the root element.
+	START_API
+	// END_API end XML/JSON output by closing the root element.
+	END_API
+	// CONTINUE_API simply continue rule match output.
+	CONTINUE_API
+)
+
 func IsEmptyStr(str string) bool { return str == "" }
 
 func AssureSet(s, varName string) {

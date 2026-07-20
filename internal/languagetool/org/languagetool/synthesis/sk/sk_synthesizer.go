@@ -9,8 +9,8 @@ type SlovakSynthesizer struct { *synthesis.BaseSynthesizer }
 
 func NewSlovakSynthesizer(m *synthesis.ManualSynthesizer) *SlovakSynthesizer {
 	b := synthesis.NewBaseSynthesizer("sk", m)
-	b.ResourceFileName = "/sk/sk_synth.dict"
-	b.TagFileName = "/sk/sk_tags.txt"
+	b.ResourceFileName = "/sk/slovak_synth.dict"
+	b.TagFileName = "/sk/slovak_tags.txt"
 	return &SlovakSynthesizer{BaseSynthesizer: b}
 }
 func (s *SlovakSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {

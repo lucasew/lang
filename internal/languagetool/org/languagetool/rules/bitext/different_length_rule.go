@@ -1,6 +1,8 @@
 package bitext
 
 import (
+	"unicode/utf16"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
@@ -29,17 +31,29 @@ func (r *DifferentLengthRule) MatchBitext(source, target *languagetool.AnalyzedS
 		return nil
 	}
 	if isLengthDifferent(source.GetText(), target.GetText()) {
-		end := targetEndPos(target)
+		// Java: last.getStartPos() + last.getToken().length()
+		toks := target.GetTokens()
+		if len(toks) == 0 {
+			return []*rules.RuleMatch{rules.NewRuleMatch(r, target, 0, 0, r.GetMessage())}
+		}
+		last := toks[len(toks)-1]
+		end := last.GetStartPos() + javaStringLen(last.GetToken())
 		return []*rules.RuleMatch{rules.NewRuleMatch(r, target, 0, end, r.GetMessage())}
 	}
 	return nil
 }
 
+// javaStringLen matches Java String.length() (UTF-16 code units).
+func javaStringLen(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
 func isLengthDifferent(src, trg string) bool {
-	if len(trg) == 0 {
-		return len(src) > 0
-	}
-	skew := (float64(len(src)) / float64(len(trg))) * 100.0
+	// Java: ((double) src.length() / (double) trg.length()) * 100
+	// Empty trg → Infinity (or NaN if both empty); Infinity > MAX_SKEW.
+	srcLen := float64(javaStringLen(src))
+	trgLen := float64(javaStringLen(trg))
+	skew := (srcLen / trgLen) * 100.0
 	return skew > maxSkew || skew < minSkew
 }
 

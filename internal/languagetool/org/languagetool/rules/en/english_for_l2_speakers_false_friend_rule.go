@@ -1,162 +1,235 @@
 package en
 
 import (
-	"fmt"
-	"strings"
+	"os"
+	"path/filepath"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ngrams"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
-// L2ConfusionPair is an inject-friendly false-friend surface (full ngram deferred).
-type L2ConfusionPair struct {
-	// Wrong is the English surface often misused by L2 speakers.
-	Wrong string
-	// Better is the preferred English alternative.
-	Better string
-	// MotherGloss is the L1 meaning of Wrong (e.g. French "réaliser").
-	MotherGloss string
-	// MessageWord optional lemma for the detail template (defaults to Wrong).
-	MessageWord string
-}
-
-// EnglishForL2SpeakersFalseFriendRule ports metadata for
-// org.languagetool.rules.en.EnglishForL2SpeakersFalseFriendRule variants.
-// Full ngram ConfusionProbabilityRule matching is deferred; Pairs inject greens Match.
+// EnglishForL2SpeakersFalseFriendRule ports
+// org.languagetool.rules.en.EnglishForL2SpeakersFalseFriendRule —
+// ConfusionProbabilityRule + false-friend message rewrite for L2 mother tongues.
 type EnglishForL2SpeakersFalseFriendRule struct {
-	ID           string
-	MotherTongue string // short code, e.g. "de"
-	Language     string // target language, e.g. "en"
-	// Filenames are confusion set resources under the language resource dir.
+	*ngrams.ConfusionProbabilityRule
+	// MotherTongue short code (e.g. "de") — Java Language motherTongue.
+	MotherTongue string
+	// Language target short code (e.g. "en").
+	Language string
+	// Filenames ports getFilenames() confusion set resources under language dir.
 	Filenames []string
-	// ExampleWrong / ExampleFixed surface for documentation / tests (may include markers).
+	// ExampleWrong / ExampleFixed surface for documentation / tests.
 	ExampleWrong string
 	ExampleFixed string
-	// incorrectExamples / correctExamples port Rule.addExamplePair.
-	incorrectExamples []rules.IncorrectExample
-	correctExamples   []rules.CorrectExample
-	// Pairs optional inject map for unit tests (Java uses FakeLanguageModel + confusion file).
-	Pairs []L2ConfusionPair
+	// TagWord ports lang.getTagger().tag for isBaseformMatch (nil → no lemma match).
+	TagWord func(token string) []languagetool.TokenTag
+	// FalseFriendsXML optional path override; empty → discover official false-friends.xml.
+	FalseFriendsXML string
 }
 
-func (r *EnglishForL2SpeakersFalseFriendRule) GetID() string { return r.ID }
+// Package-level cache ports static motherTongue2rules map.
+var (
+	l2FFMu    sync.Mutex
+	l2FFRules = map[string][]*patterns.FalseFriendPatternRule{}
+)
+
+// NewEnglishForL2SpeakersFalseFriendRule ports the abstract constructor
+// (messages, languageModel, motherTongue, lang) with grams=3.
+func NewEnglishForL2SpeakersFalseFriendRule(lm ngrams.LanguageModel, motherTongue, lang string) *EnglishForL2SpeakersFalseFriendRule {
+	base := ngrams.NewConfusionProbabilityRule(lm, 3)
+	r := &EnglishForL2SpeakersFalseFriendRule{
+		ConfusionProbabilityRule: base,
+		MotherTongue:             motherTongue,
+		Language:                 lang,
+	}
+	// Java getMessage override via MessageFor hook.
+	base.MessageFor = r.l2Message
+	return r
+}
+
+// GetFilenames ports getFilenames().
+func (r *EnglishForL2SpeakersFalseFriendRule) GetFilenames() []string {
+	if r == nil {
+		return nil
+	}
+	return append([]string(nil), r.Filenames...)
+}
 
 // AddExamplePair ports Rule.addExamplePair and sets ExampleWrong/Fixed surfaces.
 func (r *EnglishForL2SpeakersFalseFriendRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
-	if r == nil {
+	if r == nil || r.ConfusionProbabilityRule == nil {
 		return
 	}
-	var br rules.BaseRule
-	br.AddExamplePair(incorrect, correct)
-	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
-	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+	r.ConfusionProbabilityRule.AddExamplePair(incorrect, correct)
 	r.ExampleWrong = incorrect.GetExample()
 	r.ExampleFixed = correct.GetExample()
 }
 
 // GetIncorrectExamples ports Rule.getIncorrectExamples.
 func (r *EnglishForL2SpeakersFalseFriendRule) GetIncorrectExamples() []rules.IncorrectExample {
-	if r == nil || len(r.incorrectExamples) == 0 {
+	if r == nil || r.ConfusionProbabilityRule == nil {
 		return nil
 	}
-	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
-	copy(out, r.incorrectExamples)
-	return out
+	return r.ConfusionProbabilityRule.GetIncorrectExamples()
 }
 
 // GetCorrectExamples ports Rule.getCorrectExamples.
 func (r *EnglishForL2SpeakersFalseFriendRule) GetCorrectExamples() []rules.CorrectExample {
-	if r == nil || len(r.correctExamples) == 0 {
+	if r == nil || r.ConfusionProbabilityRule == nil {
 		return nil
 	}
-	out := make([]rules.CorrectExample, len(r.correctExamples))
-	copy(out, r.correctExamples)
-	return out
-}
-func (r *EnglishForL2SpeakersFalseFriendRule) GetFilenames() []string {
-	return append([]string(nil), r.Filenames...)
+	return r.ConfusionProbabilityRule.GetCorrectExamples()
 }
 
-// MotherTongueName returns a display name for mother-tongue code (message surface).
-func (r *EnglishForL2SpeakersFalseFriendRule) MotherTongueName() string {
-	if r == nil {
+// Match ports ConfusionProbabilityRule.match (ngram pairs; nil LM → no hits).
+func (r *EnglishForL2SpeakersFalseFriendRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || r.ConfusionProbabilityRule == nil {
+		return nil
+	}
+	return r.ConfusionProbabilityRule.Match(sentence)
+}
+
+// l2Message ports EnglishForL2SpeakersFalseFriendRule.getMessage.
+func (r *EnglishForL2SpeakersFalseFriendRule) l2Message(textStr, better *rules.ConfusionString) string {
+	if r == nil || textStr == nil {
 		return ""
 	}
-	switch r.MotherTongue {
-	case "de":
-		return "German"
-	case "fr":
-		return "French"
-	case "es":
-		return "Spanish"
-	case "nl":
-		return "Dutch"
-	default:
-		return r.MotherTongue
-	}
-}
-
-// LanguageName returns display name for the target language.
-func (r *EnglishForL2SpeakersFalseFriendRule) LanguageName() string {
-	if r == nil || r.Language == "" || r.Language == "en" {
-		return "English"
-	}
-	return r.Language
-}
-
-// MessageFor ports the false-friend detail template:
-// “$word1” ($L2) means “$word2” ($L1).
-func (r *EnglishForL2SpeakersFalseFriendRule) MessageFor(enWord, motherGloss string) string {
-	return fmt.Sprintf(`"%s" (%s) means "%s" (%s)`,
-		enWord, r.LanguageName(), motherGloss, r.MotherTongueName())
-}
-
-// Match flags tokens present in Pairs (inject). Full LM ranking deferred.
-func (r *EnglishForL2SpeakersFalseFriendRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
-	if r == nil || sentence == nil || len(r.Pairs) == 0 {
-		return nil, nil
-	}
-	byWrong := map[string]L2ConfusionPair{}
-	for _, p := range r.Pairs {
-		if p.Wrong == "" {
+	s := textStr.GetString()
+	for _, rule := range r.getFalseFriendRules() {
+		if rule == nil || rule.PatternRule == nil {
 			continue
 		}
-		byWrong[strings.ToLower(p.Wrong)] = p
+		for _, pt := range rule.Tokens {
+			if pt == nil {
+				continue
+			}
+			if s == pt.Token || r.isBaseformMatch(textStr, pt) {
+				if msg := rule.GetMessage(); msg != "" {
+					return msg
+				}
+			}
+		}
 	}
-	var out []*rules.RuleMatch
-	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		// Skip pure SENT_START only — last content word carries SENT_END in LT.
-		if tok == nil || tok.IsSentenceStart() {
-			continue
-		}
-		w := tok.GetToken()
-		p, ok := byWrong[strings.ToLower(w)]
-		if !ok {
-			continue
-		}
-		mw := p.MessageWord
-		if mw == "" {
-			mw = p.Wrong
-		}
-		msg := r.MessageFor(mw, p.MotherGloss)
-		m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-		if p.Better != "" {
-			m.SetSuggestedReplacements([]string{p.Better})
-		}
-		out = append(out, m)
-	}
-	return out, nil
+	// super.getMessage — temporarily clear MessageFor to avoid recursion
+	mf := r.MessageFor
+	r.MessageFor = nil
+	msg := r.ConfusionProbabilityRule.Message(textStr, better)
+	r.MessageFor = mf
+	return msg
 }
+
+// isBaseformMatch ports isBaseformMatch (inflected pattern token + tagger lemmas).
+func (r *EnglishForL2SpeakersFalseFriendRule) isBaseformMatch(textString *rules.ConfusionString, patternToken *patterns.PatternToken) bool {
+	if r == nil || textString == nil || patternToken == nil || !patternToken.IsInflected() {
+		return false
+	}
+	if r.TagWord == nil {
+		return false
+	}
+	want := patternToken.Token
+	for _, tt := range r.TagWord(textString.GetString()) {
+		if tt.Lemma == want {
+			return true
+		}
+	}
+	return false
+}
+
+// getFalseFriendRules ports getRules() with motherTongue2rules cache.
+func (r *EnglishForL2SpeakersFalseFriendRule) getFalseFriendRules() []*patterns.FalseFriendPatternRule {
+	if r == nil || r.MotherTongue == "" {
+		return nil
+	}
+	key := r.MotherTongue
+	l2FFMu.Lock()
+	defer l2FFMu.Unlock()
+	if cached, ok := l2FFRules[key]; ok {
+		return cached
+	}
+	path := r.FalseFriendsXML
+	if path == "" {
+		path = discoverFalseFriendsXML()
+	}
+	if path == "" {
+		l2FFRules[key] = nil
+		return nil
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		// Java: throw RuntimeException — fail closed with empty rules (do not invent)
+		l2FFRules[key] = nil
+		return nil
+	}
+	defer f.Close()
+	// Java: FalseFriendRuleLoader("\"{0}\" ({1}) means {2} ({3}).", "Did you maybe mean {0}?")
+	loader := patterns.NewFalseFriendRuleLoader(
+		`"{0}" ({1}) means {2} ({3}).`,
+		"Did you maybe mean {0}?",
+	)
+	lang := r.Language
+	if lang == "" {
+		lang = "en"
+	}
+	rules, err := loader.GetRulesFromReader(f, lang, r.MotherTongue)
+	if err != nil {
+		l2FFRules[key] = nil
+		return nil
+	}
+	l2FFRules[key] = rules
+	return rules
+}
+
+// discoverFalseFriendsXML finds official false-friends.xml (same roots as Java data broker).
+func discoverFalseFriendsXML() string {
+	candidates := []string{
+		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources", "org", "languagetool", "rules", "false-friends.xml"),
+		filepath.Join("testdata", "upstream", "false-friends.xml"),
+	}
+	// walk up from CWD
+	wd, err := os.Getwd()
+	if err != nil {
+		wd = "."
+	}
+	dir := wd
+	for i := 0; i < 8; i++ {
+		for _, rel := range candidates {
+			p := filepath.Join(dir, rel)
+			if st, err := os.Stat(p); err == nil && !st.IsDir() {
+				return p
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
+
+// ClearL2FalseFriendRuleCache clears the motherTongue→rules cache (tests).
+func ClearL2FalseFriendRuleCache() {
+	l2FFMu.Lock()
+	defer l2FFMu.Unlock()
+	l2FFRules = map[string][]*patterns.FalseFriendPatternRule{}
+}
+
+// --- concrete language variants ---
 
 // NewEnglishForGermansFalseFriendRule ports EnglishForGermansFalseFriendRule metadata.
 func NewEnglishForGermansFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	r := &EnglishForL2SpeakersFalseFriendRule{
-		ID:           "EN_FOR_DE_SPEAKERS_FALSE_FRIENDS",
-		MotherTongue: "de",
-		Language:     "en",
-		Filenames:    []string{"confusion_sets_l2_de.txt"},
-	}
-	// Java: My <marker>handy</marker> → phone
+	return NewEnglishForGermansFalseFriendRuleWithLM(nil)
+}
+
+// NewEnglishForGermansFalseFriendRuleWithLM ports the full Java constructor.
+func NewEnglishForGermansFalseFriendRuleWithLM(lm ngrams.LanguageModel) *EnglishForL2SpeakersFalseFriendRule {
+	r := NewEnglishForL2SpeakersFalseFriendRule(lm, "de", "en")
+	r.RuleIDOverride = "EN_FOR_DE_SPEAKERS_FALSE_FRIENDS"
+	r.Filenames = []string{"confusion_sets_l2_de.txt"}
 	r.AddExamplePair(
 		rules.Wrong("My <marker>handy</marker> is broken."),
 		rules.Fixed("My <marker>phone</marker> is broken."),
@@ -166,13 +239,13 @@ func NewEnglishForGermansFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule 
 
 // NewEnglishForFrenchFalseFriendRule ports EnglishForFrenchFalseFriendRule.
 func NewEnglishForFrenchFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	r := &EnglishForL2SpeakersFalseFriendRule{
-		ID:           "EN_FOR_FR_SPEAKERS_FALSE_FRIENDS",
-		MotherTongue: "fr",
-		Language:     "en",
-		Filenames:    []string{"confusion_sets_l2_fr.txt"},
-	}
-	// Java: achieve → complete
+	return NewEnglishForFrenchFalseFriendRuleWithLM(nil)
+}
+
+func NewEnglishForFrenchFalseFriendRuleWithLM(lm ngrams.LanguageModel) *EnglishForL2SpeakersFalseFriendRule {
+	r := NewEnglishForL2SpeakersFalseFriendRule(lm, "fr", "en")
+	r.RuleIDOverride = "EN_FOR_FR_SPEAKERS_FALSE_FRIENDS"
+	r.Filenames = []string{"confusion_sets_l2_fr.txt"}
 	r.AddExamplePair(
 		rules.Wrong("She will <marker>achieve</marker> her task."),
 		rules.Fixed("She will <marker>complete</marker> her task."),
@@ -182,13 +255,13 @@ func NewEnglishForFrenchFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
 
 // NewEnglishForSpaniardsFalseFriendRule ports EnglishForSpaniardsFalseFriendRule.
 func NewEnglishForSpaniardsFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	r := &EnglishForL2SpeakersFalseFriendRule{
-		ID:           "EN_FOR_ES_SPEAKERS_FALSE_FRIENDS",
-		MotherTongue: "es",
-		Language:     "en",
-		Filenames:    []string{"confusion_sets_l2_es.txt"},
-	}
-	// Java: realize → produce
+	return NewEnglishForSpaniardsFalseFriendRuleWithLM(nil)
+}
+
+func NewEnglishForSpaniardsFalseFriendRuleWithLM(lm ngrams.LanguageModel) *EnglishForL2SpeakersFalseFriendRule {
+	r := NewEnglishForL2SpeakersFalseFriendRule(lm, "es", "en")
+	r.RuleIDOverride = "EN_FOR_ES_SPEAKERS_FALSE_FRIENDS"
+	r.Filenames = []string{"confusion_sets_l2_es.txt"}
 	r.AddExamplePair(
 		rules.Wrong("The factory will <marker>realize</marker> computer chips."),
 		rules.Fixed("The factory will <marker>produce</marker> computer chips."),
@@ -198,13 +271,13 @@ func NewEnglishForSpaniardsFalseFriendRule() *EnglishForL2SpeakersFalseFriendRul
 
 // NewEnglishForDutchmenFalseFriendRule ports EnglishForDutchmenFalseFriendRule.
 func NewEnglishForDutchmenFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	r := &EnglishForL2SpeakersFalseFriendRule{
-		ID:           "EN_FOR_NL_SPEAKERS_FALSE_FRIENDS",
-		MotherTongue: "nl",
-		Language:     "en",
-		Filenames:    []string{"confusion_sets_l2_nl.txt"},
-	}
-	// Java: want → wall
+	return NewEnglishForDutchmenFalseFriendRuleWithLM(nil)
+}
+
+func NewEnglishForDutchmenFalseFriendRuleWithLM(lm ngrams.LanguageModel) *EnglishForL2SpeakersFalseFriendRule {
+	r := NewEnglishForL2SpeakersFalseFriendRule(lm, "nl", "en")
+	r.RuleIDOverride = "EN_FOR_NL_SPEAKERS_FALSE_FRIENDS"
+	r.Filenames = []string{"confusion_sets_l2_nl.txt"}
 	r.AddExamplePair(
 		rules.Wrong("The <marker>want</marker> should be painted green."),
 		rules.Fixed("The <marker>wall</marker> should be painted green."),

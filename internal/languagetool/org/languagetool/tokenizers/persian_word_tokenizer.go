@@ -1,7 +1,7 @@
 package tokenizers
 
-// PersianWordTokenizer ports tokenizers.PersianWordTokenizer-like ZWNJ-aware splitting.
-// Falls back to WordTokenizer with extra Persian punctuation.
+// PersianWordTokenizer ports org.languagetool.tokenizers.PersianWordTokenizer.
+// Java: super.getTokenizingCharacters() + "،؟؛"
 type PersianWordTokenizer struct {
 	*WordTokenizer
 }
@@ -11,8 +11,7 @@ func NewPersianWordTokenizer() *PersianWordTokenizer {
 }
 
 func (w *PersianWordTokenizer) GetTokenizingCharacters() string {
-	// Arabic-script punctuation used in Persian + ZWNJ as separator option
-	return TokenizingCharacters() + "،؟؛«»\u200c"
+	return TokenizingCharacters() + "،؟؛"
 }
 
 func (w *PersianWordTokenizer) Tokenize(text string) []string {

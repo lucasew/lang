@@ -9,8 +9,8 @@ type IrishSynthesizer struct { *synthesis.BaseSynthesizer }
 
 func NewIrishSynthesizer(m *synthesis.ManualSynthesizer) *IrishSynthesizer {
 	b := synthesis.NewBaseSynthesizer("ga", m)
-	b.ResourceFileName = "/ga/ga_synth.dict"
-	b.TagFileName = "/ga/ga_tags.txt"
+	b.ResourceFileName = "/ga/irish_synth.dict"
+	b.TagFileName = "/ga/irish_tags.txt"
 	return &IrishSynthesizer{BaseSynthesizer: b}
 }
 func (s *IrishSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {

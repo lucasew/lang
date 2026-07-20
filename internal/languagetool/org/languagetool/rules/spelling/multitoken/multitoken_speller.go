@@ -10,6 +10,12 @@ import (
 
 const maxLengthDiff = 3
 
+// WeightedSuggestion ports morfologik.WeightedSuggestion for multitoken merge path.
+type WeightedSuggestion struct {
+	Word   string
+	Weight int
+}
+
 // MultitokenSpeller ports org.languagetool.rules.spelling.multitoken.MultitokenSpeller
 // as a dictionary-backed multiword suggestion engine (no full Language/speller stack).
 type MultitokenSpeller struct {
@@ -22,8 +28,11 @@ type MultitokenSpeller struct {
 	// IsException optional language hook (Java MultitokenSpeller.isException).
 	// When true for (original, candidate), stopSearching returns true (no suggestion).
 	IsException func(original, candidate string) bool
-	mu          sync.RWMutex
-	cache       map[string][]string
+	// GetAdditionalSuggestions ports getAdditionalSuggestions (e.g. Catalan Morfologik).
+	// If any additional word equals originalWord, Java returns empty list (exact hit).
+	GetAdditionalSuggestions func(originalWord string) []WeightedSuggestion
+	mu                       sync.RWMutex
+	cache                    map[string][]string
 }
 
 func NewMultitokenSpeller() *MultitokenSpeller {
@@ -148,6 +157,20 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 		}
 	}
 	m.mu.RUnlock()
+
+	// Java: for (WeightedSuggestion additionalSuggestion : getAdditionalSuggestions(word))
+	if m.GetAdditionalSuggestions != nil {
+		for _, add := range m.GetAdditionalSuggestions(word) {
+			if add.Word == "" {
+				continue
+			}
+			if add.Word == originalWord {
+				// Java: return Collections.emptyList() when additional equals original
+				return nil
+			}
+			weightedCandidates = append(weightedCandidates, weighted{add.Word, add.Weight})
+		}
+	}
 
 	if len(weightedCandidates) == 0 {
 		return nil

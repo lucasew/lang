@@ -16,16 +16,18 @@ func NewStyleTooOftenUsedNounRule() *rules.AbstractStyleTooOftenUsedWordRule {
 		ID:          "TOO_OFTEN_USED_NOUN_EN",
 		Description: "Statistical Style Analysis: Overused Noun",
 		MinPercent:  defaultStyleMinPercent,
+		// Java: isToCountedWord = NN*; isException = NNP|IN|JJ|RB|VB
 		IsToCountedWord: func(tok *languagetool.AnalyzedTokenReadings) bool {
-			if !tok.HasPosTagStartingWith("NN") {
+			return tok != nil && tok.HasPosTagStartingWith("NN")
+		},
+		IsException: func(tokens []*languagetool.AnalyzedTokenReadings, n int) bool {
+			if n < 0 || n >= len(tokens) || tokens[n] == nil {
 				return false
 			}
-			if tok.HasPosTagStartingWith("NNP") || tok.HasPosTagStartingWith("IN") ||
+			tok := tokens[n]
+			return tok.HasPosTagStartingWith("NNP") || tok.HasPosTagStartingWith("IN") ||
 				tok.HasPosTagStartingWith("JJ") || tok.HasPosTagStartingWith("RB") ||
-				tok.HasPosTagStartingWith("VB") {
-				return false
-			}
-			return true
+				tok.HasPosTagStartingWith("VB")
 		},
 		ToAddedLemma: func(tok *languagetool.AnalyzedTokenReadings) string {
 			return lemmaForPosPrefix(tok, "NN")
@@ -44,15 +46,17 @@ func NewStyleTooOftenUsedVerbRule() *rules.AbstractStyleTooOftenUsedWordRule {
 		ID:          "TOO_OFTEN_USED_VERB_EN",
 		Description: "Statistical Style Analysis: Overused Verb",
 		MinPercent:  defaultStyleMinPercent,
+		// Java: isToCountedWord = VB*; isException = be|have|do lemmas | IN | NN
 		IsToCountedWord: func(tok *languagetool.AnalyzedTokenReadings) bool {
-			if !tok.HasPosTagStartingWith("VB") {
+			return tok != nil && tok.HasPosTagStartingWith("VB")
+		},
+		IsException: func(tokens []*languagetool.AnalyzedTokenReadings, n int) bool {
+			if n < 0 || n >= len(tokens) || tokens[n] == nil {
 				return false
 			}
-			if tok.HasAnyLemma("be", "have", "do") || tok.HasPosTagStartingWith("IN") ||
-				tok.HasPosTagStartingWith("NN") {
-				return false
-			}
-			return true
+			tok := tokens[n]
+			return tok.HasAnyLemma("be", "have", "do") || tok.HasPosTagStartingWith("IN") ||
+				tok.HasPosTagStartingWith("NN")
 		},
 		ToAddedLemma: func(tok *languagetool.AnalyzedTokenReadings) string {
 			return lemmaForPosPrefix(tok, "VB")
@@ -71,16 +75,18 @@ func NewStyleTooOftenUsedAdjectiveRule() *rules.AbstractStyleTooOftenUsedWordRul
 		ID:          "TOO_OFTEN_USED_ADJECTIVE_EN",
 		Description: "Statistical Style Analysis: Overused Adjective",
 		MinPercent:  defaultStyleMinPercent,
+		// Java: isToCountedWord = JJ*; isException = RB|IN|CD|DT|NN
 		IsToCountedWord: func(tok *languagetool.AnalyzedTokenReadings) bool {
-			if !tok.HasPosTagStartingWith("JJ") {
+			return tok != nil && tok.HasPosTagStartingWith("JJ")
+		},
+		IsException: func(tokens []*languagetool.AnalyzedTokenReadings, n int) bool {
+			if n < 0 || n >= len(tokens) || tokens[n] == nil {
 				return false
 			}
-			if tok.HasPosTagStartingWith("RB") || tok.HasPosTagStartingWith("IN") ||
+			tok := tokens[n]
+			return tok.HasPosTagStartingWith("RB") || tok.HasPosTagStartingWith("IN") ||
 				tok.HasPosTagStartingWith("CD") || tok.HasPosTagStartingWith("DT") ||
-				tok.HasPosTagStartingWith("NN") {
-				return false
-			}
-			return true
+				tok.HasPosTagStartingWith("NN")
 		},
 		ToAddedLemma: func(tok *languagetool.AnalyzedTokenReadings) string {
 			return lemmaForPosPrefix(tok, "JJ")

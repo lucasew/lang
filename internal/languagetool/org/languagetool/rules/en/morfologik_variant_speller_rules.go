@@ -87,8 +87,29 @@ func usGbVariantMap(column int) map[string]string {
 
 func NewMorfologikAmericanSpellerRule() *MorfologikVariantSpellerRule {
 	// Java: loadWordlist("en/en-US-GB.txt", 1) — British form as key → American form
-	return newVariantSpeller(MorfologikAmericanSpellerRuleID, "en-US", AmericanSpellerDict,
+	r := newVariantSpeller(MorfologikAmericanSpellerRuleID, "en-US", AmericanSpellerDict,
 		AmericanVariantSpellingFile, "British English", usGbVariantMap(1))
+	// Java MorfologikAmericanSpellerRule.getAdditionalTopSuggestions: automize*
+	if r.AbstractEnglishSpellerRule != nil && r.MorfologikSpellerRule != nil {
+		baseFn := r.GetAdditionalTopSuggestionsFn
+		r.GetAdditionalTopSuggestionsFn = func(existing []string, word string) []string {
+			switch word {
+			case "automize":
+				return []string{"automate"}
+			case "automized":
+				return []string{"automated"}
+			case "automizing":
+				return []string{"automating"}
+			case "automizes":
+				return []string{"automates"}
+			}
+			if baseFn != nil {
+				return baseFn(existing, word)
+			}
+			return nil
+		}
+	}
+	return r
 }
 
 func NewMorfologikBritishSpellerRule() *MorfologikVariantSpellerRule {

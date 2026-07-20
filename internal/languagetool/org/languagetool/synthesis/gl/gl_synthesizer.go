@@ -9,8 +9,8 @@ type GalicianSynthesizer struct { *synthesis.BaseSynthesizer }
 
 func NewGalicianSynthesizer(m *synthesis.ManualSynthesizer) *GalicianSynthesizer {
 	b := synthesis.NewBaseSynthesizer("gl", m)
-	b.ResourceFileName = "/gl/gl_synth.dict"
-	b.TagFileName = "/gl/gl_tags.txt"
+	b.ResourceFileName = "/gl/galician_synth.dict"
+	b.TagFileName = "/gl/galician_tags.txt"
 	return &GalicianSynthesizer{BaseSynthesizer: b}
 }
 func (s *GalicianSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {

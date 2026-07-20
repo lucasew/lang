@@ -7,6 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ner"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -24,10 +25,16 @@ type AbstractEnglishSpellerRule struct {
 	LanguageShortCode string // e.g. "en"
 	// VariantCode for file paths (en-US etc.).
 	VariantCode string
+	// LanguageName ports language.getName() (short description on variant suggestions).
+	LanguageName string
 	// Synthesize optional English synthesizer for irregular-form suggestions (fail-closed when nil).
 	Synthesize SynthesizeFn
 	// IsValidInOtherVariantFn ports isValidInOtherVariant (variant spellers set this).
 	IsValidInOtherVariantFn func(word string) *VariantInfo
+	// LanguageModel ports BaseLanguageModel for NER filter (nil → skip NER arm).
+	LanguageModel CountProvider
+	// NERPipe ports AbstractEnglishSpellerRule.nerPipe (nil → skip NER arm).
+	NERPipe *ner.NERService
 	// incorrectExamples / correctExamples port Rule.addExamplePair.
 	incorrectExamples []rules.IncorrectExample
 	correctExamples   []rules.CorrectExample
@@ -73,6 +80,7 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 		MorfologikSpellerRule: base,
 		LanguageShortCode:     short,
 		VariantCode:           variantCode,
+		LanguageName:          englishLanguageName(variantCode),
 	}
 	// Java AbstractEnglishSpellerRule: sentenc → sentence
 	r.AddExamplePair(
@@ -113,7 +121,8 @@ func (r *AbstractEnglishSpellerRule) GetCorrectExamples() []rules.CorrectExample
 	return out
 }
 
-// Match ports parent Match + getRuleMatches irregular forms / other-variant rewrite.
+// Match ports parent Match + getRuleMatches irregular forms / other-variant rewrite
+// + Match-level variant blog URLs (Java AbstractEnglishSpellerRule.match).
 func (r *AbstractEnglishSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if r == nil || r.MorfologikSpellerRule == nil {
 		return nil, nil
@@ -121,6 +130,19 @@ func (r *AbstractEnglishSpellerRule) Match(sentence *languagetool.AnalyzedSenten
 	base, err := r.MorfologikSpellerRule.Match(sentence)
 	if err != nil || len(base) == 0 {
 		return base, err
+	}
+	// Java Match: NER filter when languageModel is BaseLanguageModel && nerPipe != null
+	// and sentenceText.length() <= 250.
+	if r.LanguageModel != nil && r.NERPipe != nil && sentence != nil {
+		sentenceText := sentence.GetText()
+		if len(sentenceText) <= 250 {
+			// Java: catch Exception → warn and keep matches
+			func() {
+				defer func() { _ = recover() }()
+				named := r.NERPipe.RunNER(sentenceText)
+				base = filterNERMatches(base, sentenceText, named, r.LanguageModel)
+			}()
+		}
 	}
 	for _, m := range base {
 		if m == nil {
@@ -130,17 +152,53 @@ func (r *AbstractEnglishSpellerRule) Match(sentence *languagetool.AnalyzedSenten
 		if word == "" {
 			continue
 		}
-		// Java: irregular forms preferred over dialect variant
+		// Java getRuleMatches: irregular forms preferred over dialect variant
 		if forms := EnglishIrregularForms(word, r.IsMisspelled, r.Synthesize); forms != nil && len(forms.Forms) > 0 {
-			m.SetSuggestedReplacements(append([]string(nil), forms.Forms...))
+			// Java addFormsToFirstMatch: message + forms prepended to existing suggestions
+			m.Message = "Possible spelling mistake. Did you mean <suggestion>" + forms.Forms[0] +
+				"</suggestion>, the " + forms.FormName + " form of the " + forms.PosName +
+				" '" + forms.BaseForm + "'?"
+			old := m.GetSuggestedReplacements()
+			merged := append([]string(nil), forms.Forms...)
+			seen := map[string]bool{}
+			for _, f := range forms.Forms {
+				seen[f] = true
+			}
+			for _, o := range old {
+				if !seen[o] {
+					merged = append(merged, o)
+					seen[o] = true
+				}
+			}
+			m.SetSuggestedReplacements(merged)
+			if sugs := m.GetSuggestedReplacements(); len(sugs) > 0 {
+				m.SetSuggestedReplacements(EnglishCleanSuggestions(sugs))
+			}
 			continue
 		}
 		if vi := r.isValidInOtherVariant(word); vi != nil {
+			// Java replaceFormsOfFirstMatch
+			m.Message = "Possible spelling mistake. '" + word + "' is " + vi.GetVariantName() + "."
 			sug := vi.GetOtherVariant()
 			if tools.StartsWithUppercase(word) {
 				sug = tools.UppercaseFirstChar(sug)
 			}
-			m.SetSuggestedReplacements([]string{sug})
+			// Java: sugg.setShortDescription(language.getName())
+			desc := r.LanguageName
+			if desc == "" {
+				desc = englishLanguageName(r.VariantCode)
+			}
+			obj := rules.NewSuggestedReplacementWithDesc(sug, &desc)
+			m.SetSuggestedReplacementObjects([]*rules.SuggestedReplacement{obj})
+			// Java Match: setUrl for variant blog when isValidInOtherVariant
+			if u := enVariantBlogURL(word); u != "" {
+				m.SetURL(u)
+			}
+			// Java getRuleMatches still wraps with cleanSuggestions for all matches
+			if sugs := m.GetSuggestedReplacements(); len(sugs) > 0 {
+				m.SetSuggestedReplacements(EnglishCleanSuggestions(sugs))
+			}
+			continue
 		}
 		// Java: setLazySuggestedReplacements(() -> cleanSuggestions(m))
 		if sugs := m.GetSuggestedReplacements(); len(sugs) > 0 {
@@ -207,4 +265,27 @@ func FilterEnglishSuggestions(suggestions []string) []string {
 // filterEnglishNoSuggestWords ports AbstractEnglishSpellerRule.filterNoSuggestWords.
 func filterEnglishNoSuggestWords(suggestions []string) []string {
 	return FilterEnglishSuggestions(suggestions)
+}
+
+// englishLanguageName maps variant codes to Java Language.getName() twins used by
+// replaceFormsOfFirstMatch short descriptions.
+func englishLanguageName(variantCode string) string {
+	switch variantCode {
+	case "en-US":
+		return "English (US)"
+	case "en-GB":
+		return "English (GB)"
+	case "en-CA":
+		return "English (Canadian)"
+	case "en-AU":
+		return "English (Australian)"
+	case "en-NZ":
+		return "English (New Zealand)"
+	case "en-ZA":
+		return "English (South African)"
+	case "en", "":
+		return "English"
+	default:
+		return "English"
+	}
 }

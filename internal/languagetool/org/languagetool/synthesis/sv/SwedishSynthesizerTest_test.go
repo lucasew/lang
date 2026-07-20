@@ -14,7 +14,7 @@ func TestSwedishSynthesizer_NoTests(t *testing.T) {
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader("forms\tlemma\tTAG\n"))
 	require.NoError(t, err)
 	s := NewSwedishSynthesizer(manual)
-	require.Equal(t, "/sv/sv_synth.dict", s.ResourceFileName)
+	require.Equal(t, "/sv/swedish_synth.dict", s.ResourceFileName)
 	lemma, tag := "lemma", "TAG"
 	tok := languagetool.NewAnalyzedToken("lemma", &tag, &lemma)
 	got, err := s.Synthesize(tok, tag)

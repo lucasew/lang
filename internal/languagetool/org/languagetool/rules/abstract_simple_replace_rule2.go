@@ -52,6 +52,8 @@ type AbstractSimpleReplaceRule2 struct {
 	Tags []Tag
 	// URL ports Rule.url (Java setUrl).
 	URL string
+	// DefaultOff ports Rule.setDefaultOff (e.g. EnglishRedundancyRule, EnglishPlainEnglishRule).
+	DefaultOff bool
 	// RuleHasSuggestions ports setRuleHasSuggestions (false for profanity — no repls).
 	// When false, Match still runs but does not attach suggestion lists from the file.
 	RuleHasSuggestions *bool
@@ -193,6 +195,11 @@ func (r *AbstractSimpleReplaceRule2) GetURL() string {
 		return ""
 	}
 	return r.URL
+}
+
+// IsDefaultOff ports Rule.isDefaultOff.
+func (r *AbstractSimpleReplaceRule2) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
 }
 
 // SetURL ports Rule.setUrl.

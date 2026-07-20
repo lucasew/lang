@@ -12,8 +12,9 @@ type ItalianSynthesizer struct {
 
 func NewItalianSynthesizer(manual *synthesis.ManualSynthesizer) *ItalianSynthesizer {
 	base := synthesis.NewBaseSynthesizer("it", manual)
-	base.ResourceFileName = "/it/it_synth.dict"
-	base.TagFileName = "/it/it_tags.txt"
+	// Java ItalianSynthesizer: "/it/italian_synth.dict", "/it/italian_tags.txt"
+	base.ResourceFileName = "/it/italian_synth.dict"
+	base.TagFileName = "/it/italian_tags.txt"
 	return &ItalianSynthesizer{BaseSynthesizer: base}
 }
 

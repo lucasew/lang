@@ -10,7 +10,7 @@ import (
 )
 
 // PunctuationMarkAtParagraphEnd ports org.languagetool.rules.PunctuationMarkAtParagraphEnd.
-// Java: PUNCTUATION, Grammar; setDefaultOff when !defaultActive; Tag.picky.
+// Java: PUNCTUATION, Grammar; default ctor defaultActive=true (not default-off); Tag.picky.
 type PunctuationMarkAtParagraphEnd struct {
 	Messages map[string]string
 	// SingleLineBreaksMarksPara matches Demo/SRX default false → need \n\n
@@ -31,22 +31,22 @@ var (
 const maxURLLength = 30
 
 func NewPunctuationMarkAtParagraphEnd(messages map[string]string) *PunctuationMarkAtParagraphEnd {
-	// Java (messages, lang) → defaultActive false → setDefaultOff() + Tag.picky.
+	// Java (messages, lang) → this(messages, lang, true) → defaultActive true → NOT setDefaultOff.
 	return &PunctuationMarkAtParagraphEnd{
 		Messages:   messages,
 		Category:   CatPunctuation.GetCategory(messages),
 		IssueType:  ITSGrammar,
-		DefaultOff: true,
+		DefaultOff: false,
 		Tags:       []Tag{TagPicky},
 	}
 }
 
 func (r *PunctuationMarkAtParagraphEnd) GetID() string { return "PUNCTUATION_PARAGRAPH_END" }
 
-// GetDescription ports getDescription (paragraph_end_desc).
+// GetDescription ports getDescription (punctuation_mark_paragraph_end_desc).
 func (r *PunctuationMarkAtParagraphEnd) GetDescription() string {
 	if r != nil && r.Messages != nil {
-		if s := r.Messages["paragraph_end_desc"]; s != "" {
+		if s := r.Messages["punctuation_mark_paragraph_end_desc"]; s != "" {
 			return s
 		}
 	}
@@ -68,6 +68,17 @@ func (r *PunctuationMarkAtParagraphEnd) GetLocQualityIssueType() ITSIssueType {
 }
 
 func (r *PunctuationMarkAtParagraphEnd) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// GetTags ports Rule.getTags (Java Tag.picky).
+func (r *PunctuationMarkAtParagraphEnd) GetTags() []Tag {
+	if r == nil || len(r.Tags) == 0 {
+		return nil
+	}
+	return append([]Tag(nil), r.Tags...)
+}
+
+// MinToCheckParagraph ports minToCheckParagraph (Java returns 0).
+func (r *PunctuationMarkAtParagraphEnd) MinToCheckParagraph() int { return 0 }
 
 func (r *PunctuationMarkAtParagraphEnd) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
@@ -105,7 +116,7 @@ func isParaNumeric(s string) bool {
 	return paraEndNumericRE.MatchString(strings.TrimSpace(s))
 }
 
-// MatchList ports match(List<AnalyzedSentence>).
+// MatchList ports match(List<AnalyzedSentence>) bug-for-bug with Java control flow.
 func (r *PunctuationMarkAtParagraphEnd) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
 	lastPara := -1
@@ -131,34 +142,40 @@ func (r *PunctuationMarkAtParagraphEnd) MatchList(sentences []*languagetool.Anal
 						lastNWToken--
 					}
 					// e.g. "find it at: http://example.com" should not be an error
-					colonURL := len(tokens) >= 2 &&
+					if len(tokens) >= 2 &&
 						strings.EqualFold(tokens[len(tokens)-2].GetToken(), ":") &&
-						tokenizers.IsURL(tokens[len(tokens)-1].GetToken())
+						tokenizers.IsURL(tokens[len(tokens)-1].GetToken()) {
+						// Java: lastPara=n; pos += getText().length(); continue (skip normal pos += corrected)
+						lastPara = n
+						pos += utf16Len(sentence.GetText())
+						continue
+					}
 					lastToken := tokens[lastNWToken].GetToken()
 					low := strings.ToLower(lastToken)
 					// Java: length > MAX && http || ftp  (&& binds tighter than ||)
-					longOrFTP := (utf16Len(lastToken) > maxURLLength && strings.HasPrefix(low, "http")) ||
-						strings.HasPrefix(low, "ftp")
-					if !colonURL && !longOrFTP {
-						if isParaWord(tokens[lastNWToken]) ||
-							(isParaQuotationMark(tokens[lastNWToken]) && lastNWToken > 0 && isParaWord(tokens[lastNWToken-1])) {
-							fromPos := pos + tokens[lastNWToken].GetStartPos()
-							toPos := pos + tokens[lastNWToken].GetEndPos()
-							msg := "Add a punctuation mark at paragraph end"
-							if r.Messages != nil {
-								if m := r.Messages["punctuation_mark_paragraph_end_msg"]; m != "" {
-									msg = m
-								}
+					// Java continues without lastPara/pos update when long URL or ftp.
+					if (utf16Len(lastToken) > maxURLLength && strings.HasPrefix(low, "http")) ||
+						strings.HasPrefix(low, "ftp") {
+						continue
+					}
+					if isParaWord(tokens[lastNWToken]) ||
+						(isParaQuotationMark(tokens[lastNWToken]) && lastNWToken > 0 && isParaWord(tokens[lastNWToken-1])) {
+						fromPos := pos + tokens[lastNWToken].GetStartPos()
+						toPos := pos + tokens[lastNWToken].GetEndPos()
+						msg := "Add a punctuation mark at paragraph end"
+						if r.Messages != nil {
+							if m := r.Messages["punctuation_mark_paragraph_end_msg"]; m != "" {
+								msg = m
 							}
-							rm := NewRuleMatch(r, sentence, fromPos, toPos, msg)
-							var reps []string
-							tok := tokens[lastNWToken].GetToken()
-							for _, mark := range paraEndPunctMarks {
-								reps = append(reps, tok+mark)
-							}
-							rm.SuggestedReplacements = reps
-							ruleMatches = append(ruleMatches, rm)
 						}
+						rm := NewRuleMatch(r, sentence, fromPos, toPos, msg)
+						var reps []string
+						tok := tokens[lastNWToken].GetToken()
+						for _, mark := range paraEndPunctMarks {
+							reps = append(reps, tok+mark)
+						}
+						rm.SuggestedReplacements = reps
+						ruleMatches = append(ruleMatches, rm)
 					}
 				}
 			}

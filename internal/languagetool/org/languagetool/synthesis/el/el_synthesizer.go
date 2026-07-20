@@ -9,8 +9,8 @@ type GreekSynthesizer struct { *synthesis.BaseSynthesizer }
 
 func NewGreekSynthesizer(m *synthesis.ManualSynthesizer) *GreekSynthesizer {
 	b := synthesis.NewBaseSynthesizer("el", m)
-	b.ResourceFileName = "/el/el_synth.dict"
-	b.TagFileName = "/el/el_tags.txt"
+	b.ResourceFileName = "/el/greek_synth.dict"
+	b.TagFileName = "/el/greek_tags.txt"
 	return &GreekSynthesizer{BaseSynthesizer: b}
 }
 func (s *GreekSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {

@@ -48,6 +48,9 @@ func (r *MultipleWhitespaceRule) GetLocQualityIssueType() ITSIssueType {
 	return r.IssueType
 }
 
+// MinToCheckParagraph ports MultipleWhitespaceRule.minToCheckParagraph (Java returns 0).
+func (r *MultipleWhitespaceRule) MinToCheckParagraph() int { return 0 }
+
 func isFirstWhite(token *languagetool.AnalyzedTokenReadings) bool {
 	t := token.GetToken()
 	return (token.IsWhitespace() || tools.IsNonBreakingWhitespace(t)) &&
@@ -108,9 +111,9 @@ func (r *MultipleWhitespaceRule) Match(sentences []*languagetool.AnalyzedSentenc
 					ruleMatches = append(ruleMatches, rm)
 				}
 			} else if tokens[i].IsLinebreak() {
+				// Java: for (i++; …; i++); — no i--, so outer loop advances past next token.
 				for i++; i < len(tokens) && isRemovableWhite(tokens[i]); i++ {
 				}
-				i--
 			}
 		}
 		pos += sentence.GetCorrectedTextLength()

@@ -104,6 +104,9 @@ func (r *AbstractDashRule) GetID() string {
 	return r.ID
 }
 
+// EstimateContextForSureMatch ports AbstractDashRule.estimateContextForSureMatch (Java returns 2).
+func (r *AbstractDashRule) EstimateContextForSureMatch() int { return 2 }
+
 // AddExamplePair ports Rule.addExamplePair.
 func (r *AbstractDashRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
 	if r == nil {

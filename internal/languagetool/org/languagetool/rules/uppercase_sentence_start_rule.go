@@ -11,16 +11,19 @@ import (
 )
 
 var (
-	numeralsEN          = regexp.MustCompile(`^[a-z]$|^(?i)m{0,4}(c[md]|d?c{0,3})(x[cl]|l?x{0,3})(i[xv]|v?i{0,3})$`)
+	// Java NUMERALS_EN: "[a-z]|(m{0,4}(c[md]|d?c{0,3})(x[cl]|l?x{0,3})(i[xv]|v?i{0,3}))$"
+	// String.matches → full match; roman numerals are lowercase only (no CASE_INSENSITIVE).
+	numeralsEN          = regexp.MustCompile(`^(?:[a-z]|m{0,4}(?:c[md]|d?c{0,3})(?:x[cl]|l?x{0,3})(?:i[xv]|v?i{0,3}))$`)
 	containsDigitRE     = regexp.MustCompile(`\d`)
 	onlyLowercaseStart  = regexp.MustCompile(`^[a-z][A-Z]`)
 	whitespaceOrQuote   = regexp.MustCompile(`^[ "'„«»‘’“”\n]$`)
-	digitDot            = regexp.MustCompile(`^\d+\. `)
+	digitDot            = regexp.MustCompile(`^\d+\. .*`)
 	linebreakDigitDot   = regexp.MustCompile(`\n\d+\. `)
 	uppercaseExceptions = map[string]bool{
 		"n": true, "w": true, "x86": true, "ⓒ": true, "ø": true,
 		"cc": true, "pH": true, "heylogin": true,
 	}
+	dutchSpecialTokens = map[string]bool{"k": true, "m": true, "n": true, "r": true, "s": true, "t": true}
 )
 
 // UppercaseSentenceStartRule ports org.languagetool.rules.UppercaseSentenceStartRule.
@@ -71,6 +74,12 @@ func (r *UppercaseSentenceStartRule) GetLocQualityIssueType() ITSIssueType {
 	return r.IssueType
 }
 
+// MinToCheckParagraph ports minToCheckParagraph (Java returns 0).
+func (r *UppercaseSentenceStartRule) MinToCheckParagraph() int { return 0 }
+
+// EstimateContextForSureMatch ports TextLevelRule (Java always -1).
+func (r *UppercaseSentenceStartRule) EstimateContextForSureMatch() int { return -1 }
+
 func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	lastParagraphString := ""
 	var ruleMatches []*RuleMatch
@@ -82,6 +91,7 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 	for _, sentence := range sentences {
 		tokens := sentence.GetTokensWithoutWhitespace()
 		if len(tokens) < 2 {
+			// Java: return immediately (drop remaining sentences)
 			return ruleMatches
 		}
 		matchTokenPos := 1
@@ -92,16 +102,20 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 			matchTokenPos = 2
 			secondToken = tokens[matchTokenPos].GetToken()
 		}
-		// dutch special skipped for en demo
-		_ = thirdToken
+		if dutch := r.dutchSpecialCase(firstToken, secondToken, tokens); dutch != "" {
+			thirdToken = dutch
+			matchTokenPos = 3
+		}
 
+		// Java isException: return toRuleMatchArray (abort whole match)
 		if r.IsException != nil && r.IsException(tokens, matchTokenPos) {
-			pos += sentence.GetCorrectedTextLength()
-			continue
+			return ruleMatches
 		}
 
 		checkToken := firstToken
-		if secondToken != "" {
+		if thirdToken != "" {
+			checkToken = thirdToken
+		} else if secondToken != "" {
 			checkToken = secondToken
 		}
 
@@ -118,7 +132,6 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 			preventError = true
 		}
 		// Java: !SENTENCE_END1.matcher(lastParagraphString).matches() && !isSentenceEnd(lastToken)
-		// SENTENCE_END1 matches "", ".", "?", "!", "…"
 		if !sentenceEnd1Matches(lastParagraphString) && !isSentenceEnd(lastToken) {
 			preventError = true
 		}
@@ -133,11 +146,13 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 			preventError = true
 		}
 
-		if isPrevSentenceNumberedList || tokenizers.IsURL(checkToken) || tokenizers.IsEMail(checkToken) || firstTokenObj.IsImmunized() {
+		if isPrevSentenceNumberedList || tokenizers.IsURL(checkToken) || tokenizers.IsEMail(checkToken) ||
+			firstTokenObj.IsImmunized() || tokens[matchTokenPos].HasPosTag("_IS_URL") {
 			preventError = true
 		}
 
 		if len(checkToken) > 0 {
+			// Java charAt(0) = first UTF-16 code unit; first rune is fine for letters.
 			firstChar := []rune(checkToken)[0]
 			capitalized := tools.UppercaseFirstChar(checkToken)
 			if capitalized != checkToken && !preventError && unicode.IsLower(firstChar) &&
@@ -153,6 +168,12 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 				to := pos + tokens[matchTokenPos].GetEndPos()
 				rm := NewRuleMatch(r, sentence, from, to, msg)
 				rm.SetSuggestedReplacement(capitalized)
+				// Java: setShortMessage(messages.getString("category_case"))
+				if r.Messages != nil {
+					if sm := r.Messages["category_case"]; sm != "" {
+						rm.ShortMessage = sm
+					}
+				}
 				ruleMatches = append(ruleMatches, rm)
 			}
 		}
@@ -160,6 +181,17 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 		isPrevSentenceNumberedList = digitDot.MatchString(sentence.GetText()) || linebreakDigitDot.MatchString(sentence.GetText())
 	}
 	return ruleMatches
+}
+
+// dutchSpecialCase ports UppercaseSentenceStartRule.dutchSpecialCase.
+func (r *UppercaseSentenceStartRule) dutchSpecialCase(firstToken, secondToken string, tokens []*languagetool.AnalyzedTokenReadings) string {
+	if r == nil || r.LangCode != "nl" {
+		return ""
+	}
+	if len(tokens) > 3 && firstToken == "'" && dutchSpecialTokens[secondToken] {
+		return tokens[3].GetToken()
+	}
+	return ""
 }
 
 func sentenceEnd1Matches(s string) bool {
@@ -179,6 +211,14 @@ func (r *UppercaseSentenceStartRule) isQuoteStart(word string) bool {
 	for _, q := range base {
 		if word == q {
 			return true
+		}
+	}
+	// Java: pt short code adds dialogue dashes
+	if r != nil && r.LangCode == "pt" {
+		for _, q := range []string{"-", "–", "—"} {
+			if word == q {
+				return true
+			}
 		}
 	}
 	return false

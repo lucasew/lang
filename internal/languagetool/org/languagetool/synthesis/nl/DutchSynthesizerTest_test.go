@@ -14,7 +14,7 @@ func TestDutchSynthesizer_NoTests(t *testing.T) {
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader("forms\tlemma\tTAG\n"))
 	require.NoError(t, err)
 	s := NewDutchSynthesizer(manual)
-	require.Equal(t, "/nl/nl_synth.dict", s.ResourceFileName)
+	require.Equal(t, "/nl/dutch_synth.dict", s.ResourceFileName)
 	lemma, tag := "lemma", "TAG"
 	tok := languagetool.NewAnalyzedToken("lemma", &tag, &lemma)
 	got, err := s.Synthesize(tok, tag)

@@ -98,11 +98,16 @@ func (s *SuggestedReplacement) GetWeight() *int  { return s.Weight }
 func (s *SuggestedReplacement) SetWeight(w *int) { s.Weight = w }
 
 func (s *SuggestedReplacement) String() string {
-	desc := ""
-	if s.ShortDescription != nil {
+	// Java: replacement + '(' + shortDescription + ')' — null desc prints as "null"
+	desc := "null"
+	if s != nil && s.ShortDescription != nil {
 		desc = *s.ShortDescription
 	}
-	return s.Replacement + "(" + desc + ")"
+	repl := ""
+	if s != nil {
+		repl = s.Replacement
+	}
+	return repl + "(" + desc + ")"
 }
 
 // ConvertSuggestions maps bare strings to SuggestedReplacement list.

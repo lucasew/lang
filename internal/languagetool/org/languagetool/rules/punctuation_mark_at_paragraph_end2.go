@@ -7,10 +7,13 @@ import (
 )
 
 // PunctuationMarkAtParagraphEnd2 ports org.languagetool.rules.PunctuationMarkAtParagraphEnd2.
-// Simplified paragraph-end punctuation check requiring enough word tokens.
+// Java: PUNCTUATION, Grammar; setDefaultOff(); minToCheckParagraph=0.
 type PunctuationMarkAtParagraphEnd2 struct {
 	Messages                  map[string]string
 	SingleLineBreaksMarksPara bool
+	Category                  *Category
+	IssueType                 ITSIssueType
+	DefaultOff                bool
 }
 
 // more than this many word tokens needed for a "real" paragraph
@@ -19,10 +22,44 @@ const paraEnd2TokenThreshold = 10
 var paraEnd2FinalPunct = regexp.MustCompile(`^[:.?!…]$`)
 
 func NewPunctuationMarkAtParagraphEnd2(messages map[string]string) *PunctuationMarkAtParagraphEnd2 {
-	return &PunctuationMarkAtParagraphEnd2{Messages: messages}
+	return &PunctuationMarkAtParagraphEnd2{
+		Messages:   messages,
+		Category:   CatPunctuation.GetCategory(messages),
+		IssueType:  ITSGrammar,
+		DefaultOff: true,
+	}
 }
 
 func (r *PunctuationMarkAtParagraphEnd2) GetID() string { return "PUNCTUATION_PARAGRAPH_END2" }
+
+// GetDescription ports getDescription (punctuation_mark_paragraph_end_desc).
+func (r *PunctuationMarkAtParagraphEnd2) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["punctuation_mark_paragraph_end_desc"]; s != "" {
+			return s
+		}
+	}
+	return "No punctuation mark at the end of paragraph"
+}
+
+func (r *PunctuationMarkAtParagraphEnd2) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *PunctuationMarkAtParagraphEnd2) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSGrammar
+	}
+	return r.IssueType
+}
+
+func (r *PunctuationMarkAtParagraphEnd2) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// MinToCheckParagraph ports minToCheckParagraph (Java returns 0).
+func (r *PunctuationMarkAtParagraphEnd2) MinToCheckParagraph() int { return 0 }
 
 func (r *PunctuationMarkAtParagraphEnd2) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)

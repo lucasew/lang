@@ -1,8 +1,6 @@
 package ar
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
@@ -26,11 +24,13 @@ func NewArabicWordRepeatRule(messages map[string]string) *ArabicWordRepeatRule {
 }
 
 func (r *ArabicWordRepeatRule) arIgnore(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
-	if position <= 0 {
+	if position <= 0 || tokens[position] == nil || tokens[position-1] == nil {
 		return false
 	}
+	// Java WordRepeatRule.wordRepetitionOf uses token equality (not fold).
+	prev, cur := tokens[position-1].GetToken(), tokens[position].GetToken()
 	for _, w := range []string{"خطوة", "رويدا"} {
-		if strings.EqualFold(tokens[position-1].GetToken(), w) && strings.EqualFold(tokens[position].GetToken(), w) {
+		if prev == w && cur == w {
 			return true
 		}
 	}

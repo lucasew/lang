@@ -20,8 +20,8 @@ type PolishSynthesizer struct {
 
 func NewPolishSynthesizer(manual *synthesis.ManualSynthesizer) *PolishSynthesizer {
 	base := synthesis.NewBaseSynthesizer("pl", manual)
-	base.ResourceFileName = "/pl/pl_synth.dict"
-	base.TagFileName = "/pl/pl_tags.txt"
+	base.ResourceFileName = "/pl/polish_synth.dict"
+	base.TagFileName = "/pl/polish_tags.txt"
 	return &PolishSynthesizer{BaseSynthesizer: base}
 }
 

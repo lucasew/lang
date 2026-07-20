@@ -14,7 +14,7 @@ func TestCatalanSynthesizer_NoTests(t *testing.T) {
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader("forms\tlemma\tTAG\n"))
 	require.NoError(t, err)
 	s := NewCatalanSynthesizer(manual)
-	require.Equal(t, "/ca/ca_synth.dict", s.ResourceFileName)
+	require.Equal(t, "/ca/ca-ES_synth.dict", s.ResourceFileName)
 	lemma, tag := "lemma", "TAG"
 	tok := languagetool.NewAnalyzedToken("lemma", &tag, &lemma)
 	got, err := s.Synthesize(tok, tag)

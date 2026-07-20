@@ -12,6 +12,7 @@ import (
 type ConfusionPairsDataLoader struct{}
 
 func (ConfusionPairsDataLoader) LoadWords(r io.Reader, path string) (map[string]*languagetool.AnalyzedTokenReadings, error) {
-	// false = do not reverse columns (parts[0] key, parts[1] surface, parts[2] POS)
-	return rules.NewAccentuationDataLoader(false).LoadWords(r, path)
+	// Java ConfusionPairsDataLoader: same key may accumulate multiple readings.
+	// parts[0] key, parts[1] surface, parts[2] POS.
+	return rules.NewAccentuationDataLoader(true).LoadWords(r, path)
 }

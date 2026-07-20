@@ -14,7 +14,7 @@ func TestRomanianSynthesizer_NoTests(t *testing.T) {
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader("forms\tlemma\tTAG\n"))
 	require.NoError(t, err)
 	s := NewRomanianSynthesizer(manual)
-	require.Equal(t, "/ro/ro_synth.dict", s.ResourceFileName)
+	require.Equal(t, "/ro/romanian_synth.dict", s.ResourceFileName)
 	lemma, tag := "lemma", "TAG"
 	tok := languagetool.NewAnalyzedToken("lemma", &tag, &lemma)
 	got, err := s.Synthesize(tok, tag)

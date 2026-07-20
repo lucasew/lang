@@ -44,6 +44,9 @@ func NewPortugueseWordCoherencyRule(messages map[string]string) *PortugueseWordC
 		Description: "Consistência de palavras com grafias múltiplas",
 		WordMap:     d.WordMap,
 		ToBase:      d.ToBase,
+		// Java: setCategory(STYLE); setLocQualityIssueType(Inconsistency)
+		Category:  rules.CatStyle.GetCategory(messages),
+		IssueType: rules.ITSInconsistency,
 		MessageFn: func(word1, word2 string) string {
 			return "Não deve utilizar formas distintas de palavras com dupla grafia no mesmo texto. Escolha entre '" + word1 + "' e '" + word2 + "'."
 		},

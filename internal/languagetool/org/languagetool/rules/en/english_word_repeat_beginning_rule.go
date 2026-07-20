@@ -46,6 +46,11 @@ func NewEnglishWordRepeatBeginningRule(messages map[string]string) *EnglishWordR
 }
 
 func (r *EnglishWordRepeatBeginningRule) isException(token string) bool {
+	// Java: super.isException(token) || The/A/An
+	switch token {
+	case ":", "–", "-", "✔️", "➡️", "—", "⭐️", "⚠️":
+		return true
+	}
 	return token == "The" || token == "A" || token == "An"
 }
 

@@ -1,16 +1,21 @@
 package de
 
 // VerbPrefixes ports org.languagetool.tagging.de.VerbPrefixes.
+// Order: alphabetical then longest-first (Java static initializer).
 var verbPrefixes = []string{
-	"ab", "an", "auf", "aus", "auseinander", "bei", "ein", "empor", "entgegen", "entlang", "entzwei",
-	"fehl", "fern", "fest", "fort", "gegenüber", "heim", "hinterher", "hoch", "los", "mit", "nach", "neben", "nieder", "vor",
-	"weg", "weiter", "zu", "zurecht", "zurück", "zusammen", "da", "hin", "her",
-	"herab", "heran", "herauf", "heraus", "herbei", "herein", "hernieder", "herüber", "herum", "herunter", "hervor", "herzu",
-	"hinab", "hinan", "hinauf", "hinaus", "hinein", "hinüber", "hinunter", "hinweg", "hinzu", "vorab", "voran", "vorauf", "voraus",
-	"vorbei", "vorweg", "vorher", "vorüber",
-	"dabei", "dafür", "dagegen", "daher", "dahin", "dahinter", "daneben", "daran", "darauf", "darein", "darüber", "darunter",
-	"hinter", "dran", "drauf", "drein", "drüber", "drunter",
-	"davon", "davor", "dazu", "dazwischen",
+	"auseinander", "aneinander", "dazwischen", "gegenüber", "hernieder", "hinterher", "dahinter", "darunter",
+	"entgegen", "herunter", "hinunter", "zusammen", "dagegen", "daneben", "darüber", "drunter",
+	"entlang", "entzwei", "herüber", "hinüber", "vorüber", "zurecht", "darauf", "darein",
+	"drüber", "herauf", "heraus", "herbei", "herein", "hervor", "hinauf", "hinaus",
+	"hinein", "hinter", "hinweg", "nieder", "runter", "vorauf", "voraus", "vorbei",
+	"vorher", "vorweg", "weiter", "wieder", "zurück", "dabei", "dafür", "daher",
+	"dahin", "daran", "davon", "davor", "drauf", "drein", "durch", "empor",
+	"gegen", "herab", "heran", "herum", "herzu", "hinab", "hinan", "hinzu",
+	"neben", "rüber", "umher", "unter", "vorab", "voran", "wider", "dazu",
+	"dran", "fehl", "fern", "fest", "fort", "frei", "heim", "hoch",
+	"nach", "rauf", "rein", "über", "auf", "aus", "bei", "ein",
+	"ent", "her", "hin", "los", "mit", "ran", "ver", "vor",
+	"weg", "zer", "ab", "an", "da", "um", "zu",
 }
 
 // GetVerbPrefixes returns a copy of the known separable/inseparable prefix list.

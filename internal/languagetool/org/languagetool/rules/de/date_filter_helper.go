@@ -37,6 +37,21 @@ func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 	}
 }
 
+// GetDayOfWeekName ports DateFilterHelper.getDayOfWeek(Calendar) — German long weekday name.
+func (h *DateFilterHelper) GetDayOfWeekName(t time.Time) string {
+	// Locale.GERMAN Calendar.LONG display names.
+	names := map[time.Weekday]string{
+		time.Sunday:    "Sonntag",
+		time.Monday:    "Montag",
+		time.Tuesday:   "Dienstag",
+		time.Wednesday: "Mittwoch",
+		time.Thursday:  "Donnerstag",
+		time.Friday:    "Freitag",
+		time.Saturday:  "Samstag",
+	}
+	return names[t.Weekday()]
+}
+
 // GetMonth returns month number 1–12 for a German month name prefix.
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 	mon := strings.ToLower(trimSpecial(monthStr))

@@ -1,6 +1,11 @@
 package ca
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+)
 
 // VerbsHelper ports org.languagetool.rules.ca.VerbsHelper.
 var verbsDicendi = map[string]struct{}{
@@ -187,6 +192,40 @@ func IsVerbDicendiBefore(lemmas []string, i int, keepLooking func(int) bool) boo
 		if IsVerbDicendi(lemmas[i]) {
 			return true
 		}
+		i--
+	}
+	return false
+}
+
+// Java VerbsHelper.pKeepLooking
+var pKeepLooking = regexp.MustCompile(`^(V.*|RG.*|LOC_ADV)$`)
+
+// IsVerbDicendiBeforeTokens ports VerbsHelper.isVerbDicendiBefore(tokens, i).
+// Scans backward from i while a reading matches V.*|RG.*|LOC_ADV; true if lemma is dicendi.
+func IsVerbDicendiBeforeTokens(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	for i > 0 && i < len(tokens) {
+		tok := tokens[i]
+		if tok == nil {
+			return false
+		}
+		var reading *languagetool.AnalyzedToken
+		for _, r := range tok.GetReadings() {
+			if r == nil {
+				continue
+			}
+			p := r.GetPOSTag()
+			if p != nil && pKeepLooking.MatchString(*p) {
+				reading = r
+				break
+			}
+		}
+		if reading == nil {
+			return false
+		}
+		if lem := reading.GetLemma(); lem != nil && IsVerbDicendi(*lem) {
+			return true
+		}
+		// Java continues while reading != null even if lemma not dicendi
 		i--
 	}
 	return false

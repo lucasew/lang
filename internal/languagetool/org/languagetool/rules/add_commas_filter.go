@@ -15,7 +15,8 @@ func NewAddCommasFilter() *AddCommasFilter {
 	return &AddCommasFilter{}
 }
 
-var openingQuotesRE = regexp.MustCompile(`[«“"‘'„¿¡]`)
+// Java OPENING_QUOTES.matcher(token).matches() — whole-token match.
+var openingQuotesRE = regexp.MustCompile(`^[«“"‘'„¿¡]$`)
 
 // AcceptRuleMatch ports AddCommasFilter.acceptRuleMatch (Java).
 func (f *AddCommasFilter) AcceptRuleMatch(match *RuleMatch, arguments map[string]string, _ int,
@@ -54,11 +55,8 @@ func (f *AddCommasFilter) AcceptRuleMatch(match *RuleMatch, arguments map[string
 		return nil
 	}
 
-	text := match.Sentence.GetText()
-	matched := ""
-	if match.FromPos >= 0 && match.ToPos <= len(text) && match.FromPos <= match.ToPos {
-		matched = text[match.FromPos:match.ToPos]
-	}
+	// Positions are UTF-16 code units (Java String indices).
+	matched := utf16Substring(match.Sentence.GetText(), match.GetFromPos(), match.GetToPos())
 	msg := match.GetMessage()
 	short := match.ShortMessage
 

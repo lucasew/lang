@@ -79,7 +79,8 @@ func frDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter 
 			},
 		},
 		// Java DateCheckFilter.getErrorMessageWrongYear
-		ErrorMessageWrongYear: `Cette date est incorrecte. Faites-vous référence à l'année "{currentYear}" ?`,
+		// Java ends with NBSP before '?': "\"{currentYear}\"\u00a0?"
+	ErrorMessageWrongYear: "Cette date est incorrecte. Faites-vous référence à l'année \"{currentYear}\"\u00a0?",
 	}
 }
 

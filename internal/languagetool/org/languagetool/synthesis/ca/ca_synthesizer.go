@@ -12,8 +12,9 @@ type CatalanSynthesizer struct {
 
 func NewCatalanSynthesizer(manual *synthesis.ManualSynthesizer) *CatalanSynthesizer {
 	base := synthesis.NewBaseSynthesizer("ca", manual)
-	base.ResourceFileName = "/ca/ca_synth.dict"
-	base.TagFileName = "/ca/ca_tags.txt"
+	base.ResourceFileName = "/ca/ca-ES_synth.dict"
+	base.TagFileName = "/ca/ca-ES_tags.txt"
+	base.SorFileName = "/ca/ca.sor"
 	return &CatalanSynthesizer{BaseSynthesizer: base}
 }
 

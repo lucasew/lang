@@ -35,6 +35,9 @@ type LongSentenceRule struct {
 	Tags []Tag
 	// URL ports Rule.url (Java setUrl; EN subclass sets splitting-long-sentences).
 	URL string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 }
 
 func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentenceRule {
@@ -102,8 +105,39 @@ func (r *LongSentenceRule) SetURL(u string) {
 	}
 }
 
+// AddExamplePair ports Rule.addExamplePair.
+func (r *LongSentenceRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *LongSentenceRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *LongSentenceRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
+
 // EstimateContextForSureMatch ports TextLevelRule (Java always -1).
 func (r *LongSentenceRule) EstimateContextForSureMatch() int { return -1 }
+
+// MinToCheckParagraph ports LongSentenceRule.minToCheckParagraph (Java returns 0).
+func (r *LongSentenceRule) MinToCheckParagraph() int { return 0 }
 
 // GetDescription ports LongSentenceRule.getDescription.
 // Default: MessageFormat(messages["long_sentence_rule_desc"], maxWords).
@@ -113,7 +147,7 @@ func (r *LongSentenceRule) GetDescription() string {
 	}
 	if r != nil && r.Messages != nil {
 		if tmpl := r.Messages["long_sentence_rule_desc"]; tmpl != "" {
-			return fmt.Sprintf(strings.ReplaceAll(tmpl, "{0}", "%d"), r.MaxWords)
+			return messageFormat0(tmpl, r.maxWords())
 		}
 	}
 	return fmt.Sprintf("Finds long sentences (more than %d words)", r.maxWords())
@@ -127,19 +161,23 @@ func (r *LongSentenceRule) maxWords() int {
 }
 
 func (r *LongSentenceRule) GetMessage() string {
-	msg := r.Messages["long_sentence_rule_msg2"]
+	msg := ""
+	if r.Messages != nil {
+		msg = r.Messages["long_sentence_rule_msg2"]
+	}
 	if msg == "" {
-		msg = "This sentence is too long (%d words)"
+		msg = "This sentence is too long ({0} words)"
 	}
-	// MessageFormat with one number
-	if containsPercentD(msg) {
-		return fmt.Sprintf(msg, r.MaxWords)
-	}
-	return fmt.Sprintf(msg, r.MaxWords)
+	return messageFormat0(msg, r.maxWords())
 }
 
-func containsPercentD(s string) bool {
-	return regexp.MustCompile(`\{\d+\}|%d`).MatchString(s)
+// messageFormat0 ports MessageFormat with a single {0} integer argument.
+func messageFormat0(tmpl string, n int) string {
+	s := strings.ReplaceAll(tmpl, "{0}", "%d")
+	if strings.Contains(s, "%d") {
+		return fmt.Sprintf(s, n)
+	}
+	return fmt.Sprintf("%s (%d)", s, n)
 }
 
 func isWordCount(tokenText string) bool {

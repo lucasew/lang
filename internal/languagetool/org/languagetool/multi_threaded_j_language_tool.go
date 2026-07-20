@@ -92,7 +92,8 @@ func (c ParagraphEndAnalyzeSentenceCallable) Call() (*AnalyzedSentence, error) {
 	return MarkAsParagraphEnd(s), nil
 }
 
-// MarkAsParagraphEnd sets paragraph-end on the last token (Java markAsParagraphEnd).
+// MarkAsParagraphEnd ports JLanguageTool.markAsParagraphEnd:
+// setParagraphEnd on last tokens[i] and preDisambigTokens[i], return new sentence.
 func MarkAsParagraphEnd(s *AnalyzedSentence) *AnalyzedSentence {
 	if s == nil {
 		return nil
@@ -101,14 +102,19 @@ func MarkAsParagraphEnd(s *AnalyzedSentence) *AnalyzedSentence {
 	if len(toks) == 0 {
 		return s
 	}
-	// clone shallow tokens slice and mark last non-nil
-	out := make([]*AnalyzedTokenReadings, len(toks))
-	copy(out, toks)
-	last := out[len(out)-1]
-	if last != nil {
+	// Java mutates the existing arrays in place, then wraps them.
+	if last := toks[len(toks)-1]; last != nil {
 		last.SetParagraphEnd()
 	}
-	return NewAnalyzedSentence(out)
+	pre := s.GetPreDisambigTokens()
+	if len(pre) > 0 {
+		// Java: preDisambigAnTokens[anTokens.length - 1] — same index as tokens length.
+		idx := len(toks) - 1
+		if idx < len(pre) && pre[idx] != nil {
+			pre[idx].SetParagraphEnd()
+		}
+	}
+	return NewAnalyzedSentenceFull(toks, pre)
 }
 
 // AnalyzeSentencesParallel ports analyzeSentences override for multi-sentence input.

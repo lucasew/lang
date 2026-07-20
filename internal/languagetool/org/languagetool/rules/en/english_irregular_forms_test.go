@@ -51,6 +51,8 @@ func TestMatch_IrregularAndVariant(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, m, 1)
 	require.Equal(t, []string{"went"}, m[0].GetSuggestedReplacements())
+	require.Contains(t, m[0].GetMessage(), "past tense")
+	require.Contains(t, m[0].GetMessage(), "went")
 }
 
 func TestMatch_OtherVariant(t *testing.T) {
@@ -70,6 +72,8 @@ func TestMatch_OtherVariant(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, m, 1)
 	require.Equal(t, []string{"color"}, m[0].GetSuggestedReplacements())
+	require.Contains(t, m[0].GetMessage(), "British English")
+	require.NotEmpty(t, m[0].URL) // colour matches *(or|our)* blog pattern
 	m, err = r.Match(languagetool.AnalyzePlain("Colour"))
 	require.NoError(t, err)
 	require.Len(t, m, 1)

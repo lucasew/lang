@@ -19,8 +19,10 @@ type BaseSynthesizer struct {
 	LangShortCode    string
 	ResourceFileName string
 	TagFileName      string
-	Manual           *ManualSynthesizer
-	Removal          *ManualSynthesizer
+	// SorFileName optional removal/stemmer SOR resource (Java BaseSynthesizer first ctor arg).
+	SorFileName string
+	Manual      *ManualSynthesizer
+	Removal     *ManualSynthesizer
 	// Lookup is optional binary-dict synthesis (lemma+pos → forms).
 	Lookup func(lemma, posTag string) []string
 	// PossibleTags lists known POS tags when loaded.

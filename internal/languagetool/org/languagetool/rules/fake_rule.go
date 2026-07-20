@@ -60,6 +60,11 @@ func NewFakeRuleWithTag(id string, tag Tag) *FakeRule {
 
 func (r *FakeRule) GetID() string { return r.id }
 
+func (r *FakeRule) GetDescription() string { return "<none>" }
+
+// Match returns no matches (Java RuleMatch.EMPTY_ARRAY).
+func (r *FakeRule) Match(_ any) []*RuleMatch { return nil }
+
 func (r *FakeRule) SetURL(u string) {
 	if r != nil {
 		r.url = u

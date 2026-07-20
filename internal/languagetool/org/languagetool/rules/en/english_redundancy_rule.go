@@ -23,7 +23,7 @@ func loadRedundancy() *rules.AbstractSimpleReplaceRule2 {
 			panic(err)
 		}
 		defer f.Close()
-		// Java EnglishRedundancyRule: REDUNDANCY, Style, tuna fish → tuna
+		// Java EnglishRedundancyRule: REDUNDANCY, Style, setDefaultOff, Wikipedia URL, tuna fish → tuna
 		base := &rules.AbstractSimpleReplaceRule2{
 			ID:                   "EN_REDUNDANCY_REPLACE",
 			Description:          "1. Redundancy (General)",
@@ -35,6 +35,8 @@ func loadRedundancy() *rules.AbstractSimpleReplaceRule2 {
 			SubRuleSpecificIDs:   true,
 			Category:             rules.CatRedundancy.GetCategory(nil),
 			IssueType:            rules.ITSStyle,
+			DefaultOff:           true,
+			URL:                  "https://en.wikipedia.org/wiki/Redundancy_(linguistics)",
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/en/redundancies.txt"); err != nil {
 			panic(err)
@@ -59,6 +61,8 @@ func NewEnglishRedundancyRule(messages map[string]string) *EnglishRedundancyRule
 	r.Messages = messages
 	r.Category = rules.CatRedundancy.GetCategory(messages)
 	r.IssueType = rules.ITSStyle
+	r.DefaultOff = true
+	r.URL = "https://en.wikipedia.org/wiki/Redundancy_(linguistics)"
 	return &EnglishRedundancyRule{AbstractSimpleReplaceRule2: &r}
 }
 

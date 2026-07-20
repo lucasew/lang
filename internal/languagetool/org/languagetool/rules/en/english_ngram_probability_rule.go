@@ -9,8 +9,18 @@ type EnglishNgramProbabilityRule struct {
 }
 
 func NewEnglishNgramProbabilityRule(lm ngrams.LanguageModel) *EnglishNgramProbabilityRule {
+	base := ngrams.NewNgramProbabilityRule(lm)
+	// Java getGoogleStyleWordTokenizer → GoogleStyleWordTokenizer
+	gst := NewGoogleStyleWordTokenizer()
+	base.Tokenize = gst.Tokenize
 	return &EnglishNgramProbabilityRule{
-		NgramProbabilityRule: ngrams.NewNgramProbabilityRule(lm),
-		DefaultOff:           true,
+		NgramProbabilityRule: base,
+		// Java setDefaultOff() — too many false alarms (2015-12)
+		DefaultOff: true,
 	}
+}
+
+// IsDefaultOff ports Rule.isDefaultOff.
+func (r *EnglishNgramProbabilityRule) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
 }

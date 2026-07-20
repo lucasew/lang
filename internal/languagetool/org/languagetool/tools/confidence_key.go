@@ -8,9 +8,7 @@ type ConfidenceKey struct {
 }
 
 func NewConfidenceKey(languageCode, ruleID string) ConfidenceKey {
-	if languageCode == "" || ruleID == "" {
-		panic("language and ruleId required")
-	}
+	// Java: Objects.requireNonNull(lang/ruleId) — empty string is allowed.
 	return ConfidenceKey{LanguageCode: languageCode, RuleID: ruleID}
 }
 

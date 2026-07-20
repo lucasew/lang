@@ -15,7 +15,7 @@ func TestItalianSynthesizer_NoTests(t *testing.T) {
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader("sono\tessere\tVER:ind+pres+1+s\n"))
 	require.NoError(t, err)
 	s := NewItalianSynthesizer(manual)
-	require.Equal(t, "/it/it_synth.dict", s.ResourceFileName)
+	require.Equal(t, "/it/italian_synth.dict", s.ResourceFileName)
 	lemma := "essere"
 	tag := "VER:ind+pres+1+s"
 	tok := languagetool.NewAnalyzedToken("essere", &tag, &lemma)

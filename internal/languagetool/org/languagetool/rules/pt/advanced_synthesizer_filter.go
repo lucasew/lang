@@ -1,6 +1,8 @@
 package pt
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
@@ -29,12 +31,40 @@ func ClearDefaultSynthesize() {
 
 func NewAdvancedSynthesizerFilter() *AdvancedSynthesizerFilter {
 	f := &AdvancedSynthesizerFilter{
-		AbstractAdvancedSynthesizerFilter: &rules.AbstractAdvancedSynthesizerFilter{},
+		AbstractAdvancedSynthesizerFilter: &rules.AbstractAdvancedSynthesizerFilter{
+			// Java AdvancedSynthesizerFilter.isSuggestionException
+			IsSuggestionException: func(token, desiredPostag string) bool {
+				if (desiredPostag == "VMIP1P0" || desiredPostag == "VMIP2P0") && !strings.HasSuffix(token, "s") {
+					return true
+				}
+				return false
+			},
+			// Java getCompositePostag + movePronounTag for postagReplace=keepPronoun
+			GetCompositePostag: func(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace string) string {
+				if postagReplace == "keepPronoun" {
+					return movePronounTag(originalPostag, desiredPostag)
+				}
+				return rules.GetCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace)
+			},
+		},
 	}
 	if defaultSynth != nil {
 		f.Synthesize = resolveDefaultSynth
 	}
 	return f
+}
+
+// movePronounTag ports Portuguese AdvancedSynthesizerFilter.movePronounTag.
+func movePronounTag(sourceTag, destinationTag string) string {
+	sourceTagParts := strings.Split(sourceTag, ":")
+	newTag := destinationTag
+	if len(sourceTagParts) == 2 {
+		destinationTagParts := strings.Split(destinationTag, ":")
+		if len(destinationTagParts) > 0 {
+			newTag = destinationTagParts[0] + ":" + sourceTagParts[1]
+		}
+	}
+	return newTag
 }
 
 func resolveDefaultSynth(lemma, postag string) []string {

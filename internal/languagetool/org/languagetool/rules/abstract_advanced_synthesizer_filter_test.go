@@ -33,7 +33,7 @@ func TestAbstractAdvancedSynthesizerFilter(t *testing.T) {
 
 func TestAbstractAdvancedSynthesizerFilter_PostagReplace(t *testing.T) {
 	// \a1 from lemmaSelect on originalPostag, \b1 from postagSelect on desiredPostag
-	got := getCompositePostag(`(V).`, `(N)N`, "VB", "NN", `\a1X\b1`)
+	got := GetCompositePostag(`(V).`, `(N)N`, "VB", "NN", `\a1X\b1`)
 	require.Equal(t, "VXN", got)
 }
 

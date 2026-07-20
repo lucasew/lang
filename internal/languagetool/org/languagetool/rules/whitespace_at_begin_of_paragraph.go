@@ -5,20 +5,22 @@ import (
 )
 
 // WhiteSpaceAtBeginOfParagraph ports org.languagetool.rules.WhiteSpaceAtBeginOfParagraph.
-// Java: STYLE, Style; default ctor setDefaultOff.
+// Java: STYLE, Style; default ctor setDefaultOff; setOfficeDefaultOn.
 type WhiteSpaceAtBeginOfParagraph struct {
-	Messages   map[string]string
-	Category   *Category
-	IssueType  ITSIssueType
-	DefaultOff bool
+	Messages        map[string]string
+	Category        *Category
+	IssueType       ITSIssueType
+	DefaultOff      bool
+	OfficeDefaultOn bool
 }
 
 func NewWhiteSpaceAtBeginOfParagraph(messages map[string]string) *WhiteSpaceAtBeginOfParagraph {
 	return &WhiteSpaceAtBeginOfParagraph{
-		Messages:   messages,
-		Category:   CatStyle.GetCategory(messages),
-		IssueType:  ITSStyle,
-		DefaultOff: true,
+		Messages:        messages,
+		Category:        CatStyle.GetCategory(messages),
+		IssueType:       ITSStyle,
+		DefaultOff:      true,
+		OfficeDefaultOn: true,
 	}
 }
 
@@ -49,6 +51,11 @@ func (r *WhiteSpaceAtBeginOfParagraph) GetLocQualityIssueType() ITSIssueType {
 }
 
 func (r *WhiteSpaceAtBeginOfParagraph) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// IsOfficeDefaultOn ports Rule.isOfficeDefaultOn.
+func (r *WhiteSpaceAtBeginOfParagraph) IsOfficeDefaultOn() bool {
+	return r != nil && r.OfficeDefaultOn
+}
 
 func isWhitespaceDel(token *languagetool.AnalyzedTokenReadings) bool {
 	return token.IsWhitespace() && token.GetToken() != "\u200B" && !token.IsLinebreak()

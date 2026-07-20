@@ -4,7 +4,8 @@ import "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis
 
 const (
 	CrimeanTatarSynthDict = "/crh/crimean_tatar_synth.dict"
-	CrimeanTatarTagsFile  = "/crh/crimean_tatar_tags.txt"
+	// Java BaseSynthesizer path: crimean_tatar_synth.dict_tags.txt
+	CrimeanTatarTagsFile = "/crh/crimean_tatar_synth.dict_tags.txt"
 )
 
 // CrimeanTatarSynthesizer ports org.languagetool.synthesis.crh.CrimeanTatarSynthesizer.

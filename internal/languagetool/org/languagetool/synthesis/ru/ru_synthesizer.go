@@ -12,8 +12,8 @@ type RussianSynthesizer struct {
 
 func NewRussianSynthesizer(manual *synthesis.ManualSynthesizer) *RussianSynthesizer {
 	base := synthesis.NewBaseSynthesizer("ru", manual)
-	base.ResourceFileName = "/ru/ru_synth.dict"
-	base.TagFileName = "/ru/ru_tags.txt"
+	base.ResourceFileName = "/ru/russian_synth.dict"
+	base.TagFileName = "/ru/tags_russian.txt"
 	return &RussianSynthesizer{BaseSynthesizer: base}
 }
 

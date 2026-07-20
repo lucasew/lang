@@ -22,9 +22,10 @@ func (RegexAntiPatternFilter) AcceptRegexMatch(match *rules.RuleMatch, arguments
 		text = sentence.GetText()
 	}
 	for _, ap := range antiPatterns {
+		// Java Pattern.compile throws on bad syntax (not swallowed).
 		re, err := regexp.Compile(ap)
 		if err != nil {
-			continue
+			panic(err)
 		}
 		locs := re.FindAllStringIndex(text, -1)
 		for _, loc := range locs {

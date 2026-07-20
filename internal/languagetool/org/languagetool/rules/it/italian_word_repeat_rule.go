@@ -1,8 +1,6 @@
 package it
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
@@ -21,18 +19,15 @@ func NewItalianWordRepeatRule(messages map[string]string) *ItalianWordRepeatRule
 }
 
 func (r *ItalianWordRepeatRule) itIgnore(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
-	if position <= 0 {
+	if position <= 0 || tokens[position] == nil || tokens[position-1] == nil {
 		return false
 	}
+	// Java WordRepeatRule.wordRepetitionOf uses Token.equals (case-sensitive).
+	prev, cur := tokens[position-1].GetToken(), tokens[position].GetToken()
 	for _, w := range []string{"così", "passo", "piano", "via"} {
-		if wordRep(tokens, position, w) {
+		if prev == w && cur == w {
 			return true
 		}
 	}
 	return false
-}
-
-func wordRep(tokens []*languagetool.AnalyzedTokenReadings, position int, word string) bool {
-	return strings.EqualFold(tokens[position-1].GetToken(), word) &&
-		strings.EqualFold(tokens[position].GetToken(), word)
 }

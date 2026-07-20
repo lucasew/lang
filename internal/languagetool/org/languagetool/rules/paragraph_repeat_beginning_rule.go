@@ -42,6 +42,16 @@ func (r *ParagraphRepeatBeginningRule) GetID() string {
 	return "PARAGRAPH_REPEAT_BEGINNING_RULE"
 }
 
+// GetDescription ports getDescription (repetition_paragraph_beginning_desc).
+func (r *ParagraphRepeatBeginningRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["repetition_paragraph_beginning_desc"]; s != "" {
+			return s
+		}
+	}
+	return "Paragraphs should not begin with the same words"
+}
+
 // GetCategory ports Rule.getCategory.
 func (r *ParagraphRepeatBeginningRule) GetCategory() *Category {
 	if r == nil {
@@ -61,6 +71,9 @@ func (r *ParagraphRepeatBeginningRule) GetLocQualityIssueType() ITSIssueType {
 // IsDefaultOff ports Rule.isDefaultOff.
 func (r *ParagraphRepeatBeginningRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
+// MinToCheckParagraph ports minToCheckParagraph (Java returns 1).
+func (r *ParagraphRepeatBeginningRule) MinToCheckParagraph() int { return 1 }
+
 func (r *ParagraphRepeatBeginningRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
@@ -69,12 +82,14 @@ func (r *ParagraphRepeatBeginningRule) isArticle(token *languagetool.AnalyzedTok
 	if r.IsArticle != nil {
 		return r.IsArticle(token)
 	}
-	return false
+	// Java ParagraphRepeatBeginningRule.isArticle: hasPosTagStartingWith("DT")
+	return token != nil && token.HasPosTagStartingWith("DT")
 }
 
 // numCharEqualBeginning returns endPos of matching beginning token in lastTokens, or 0.
 func (r *ParagraphRepeatBeginningRule) numCharEqualBeginning(lastTokens, nextTokens []*languagetool.AnalyzedTokenReadings) int {
-	if len(lastTokens) < 2 || len(nextTokens) < 2 {
+	if len(lastTokens) < 2 || len(nextTokens) < 2 ||
+		lastTokens[1].IsWhitespace() || nextTokens[1].IsWhitespace() {
 		return 0
 	}
 	nToken := 1
@@ -118,13 +133,16 @@ func (r *ParagraphRepeatBeginningRule) MatchList(sentences []*languagetool.Analy
 	lastPos := 0
 	lastSentence := sentences[0]
 	lastTokens := lastSentence.GetTokensWithoutWhitespace()
-	msg := r.Messages["repetition_paragraph_beginning_last_msg"]
+	msg := ""
+	if r.Messages != nil {
+		msg = r.Messages["repetition_paragraph_beginning_last_msg"]
+	}
 	if msg == "" {
 		msg = "Paragraphs should not begin with the same words"
 	}
 	for n := 0; n < len(sentences)-1; n++ {
-		// Java uses getText().length() (UTF-16) — use CorrectedTextLength for consistency with other ports
-		nextPos += sentences[n].GetCorrectedTextLength()
+		// Java: nextPos += sentences.get(n).getText().length() (UTF-16)
+		nextPos += utf16Len(sentences[n].GetText())
 		if !r.isParagraphEnd(sentences, n) {
 			continue
 		}

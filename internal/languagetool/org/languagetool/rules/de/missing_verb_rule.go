@@ -119,9 +119,10 @@ func (r *MissingVerbRule) Match(sentence *languagetool.AnalyzedSentence) []*rule
 	}
 	if !verbFound && lastToken != nil &&
 		len(sentence.GetTokensWithoutWhitespace()) >= missingVerbMinTokens {
-		// Java: new RuleMatch(..., msg) only — no shortMessage.
+		// Java: end = lastToken.getStartPos() + lastToken.getToken().length() (UTF-16)
 		msg := "Dieser Satz scheint kein Verb zu enthalten"
-		rm := rules.NewRuleMatch(r, sentence, 0, lastToken.GetStartPos()+len(lastToken.GetToken()), msg)
+		end := lastToken.GetStartPos() + utf16LenDE(lastToken.GetToken())
+		rm := rules.NewRuleMatch(r, sentence, 0, end, msg)
 		return []*rules.RuleMatch{rm}
 	}
 	return nil

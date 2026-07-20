@@ -9,8 +9,8 @@ type RomanianSynthesizer struct { *synthesis.BaseSynthesizer }
 
 func NewRomanianSynthesizer(m *synthesis.ManualSynthesizer) *RomanianSynthesizer {
 	b := synthesis.NewBaseSynthesizer("ro", m)
-	b.ResourceFileName = "/ro/ro_synth.dict"
-	b.TagFileName = "/ro/ro_tags.txt"
+	b.ResourceFileName = "/ro/romanian_synth.dict"
+	b.TagFileName = "/ro/romanian_tags.txt"
 	return &RomanianSynthesizer{BaseSynthesizer: b}
 }
 func (s *RomanianSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {

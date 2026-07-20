@@ -16,32 +16,54 @@ type CatalanUnpairedQuestionMarksRule struct {
 	end      string
 	id       string
 	desc     string
+	// issueType: Java CatalanUnpairedQuestionMarksRule uses Typographical default;
+	// CatalanUnpairedExclamationMarksRule sets Style.
+	issueType rules.ITSIssueType
+	// minToCheckParagraph: Java Exclamation sets 1; Question uses base default.
+	minToCheckParagraph int
 }
 
 func NewCatalanUnpairedQuestionMarksRule(messages map[string]string) *CatalanUnpairedQuestionMarksRule {
 	return &CatalanUnpairedQuestionMarksRule{
-		Messages: messages,
-		start:    "¿",
-		end:      "?",
-		id:       "CA_UNPAIRED_QUESTION",
-		desc:     "Exigeix signe d'interrogació inicial",
+		Messages:  messages,
+		start:     "¿",
+		end:       "?",
+		id:        "CA_UNPAIRED_QUESTION",
+		desc:      "Exigeix signe d'interrogació inicial",
+		issueType: rules.ITSTypographical,
 	}
 }
 
 // NewCatalanUnpairedExclamationMarksRule ports CatalanUnpairedExclamationMarksRule.
 func NewCatalanUnpairedExclamationMarksRule(messages map[string]string) *CatalanUnpairedQuestionMarksRule {
 	return &CatalanUnpairedQuestionMarksRule{
-		Messages: messages,
-		start:    "¡",
-		end:      "!",
-		id:       "CA_UNPAIRED_EXCLAMATION",
-		desc:     "Exigeix signe d'exclamació inicial",
+		Messages:            messages,
+		start:               "¡",
+		end:                 "!",
+		id:                  "CA_UNPAIRED_EXCLAMATION",
+		desc:                "Exigeix signe d'exclamació inicial",
+		issueType:           rules.ITSStyle,
+		minToCheckParagraph: 1,
 	}
 }
 
 func (r *CatalanUnpairedQuestionMarksRule) GetID() string          { return r.id }
 func (r *CatalanUnpairedQuestionMarksRule) GetDescription() string { return r.desc }
 func (r *CatalanUnpairedQuestionMarksRule) IsDefaultOff() bool     { return true }
+
+func (r *CatalanUnpairedQuestionMarksRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.issueType == "" {
+		return rules.ITSTypographical
+	}
+	return r.issueType
+}
+
+func (r *CatalanUnpairedQuestionMarksRule) MinToCheckParagraph() int {
+	if r == nil {
+		return 0
+	}
+	return r.minToCheckParagraph
+}
 
 // MatchList ports CatalanUnpairedQuestionMarksRule.match.
 func (r *CatalanUnpairedQuestionMarksRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {

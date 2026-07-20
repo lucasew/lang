@@ -16,13 +16,16 @@ type PersianSpaceBeforeRule struct {
 
 func NewPersianSpaceBeforeRule(messages map[string]string) *PersianSpaceBeforeRule {
 	base := &rules.AbstractSpaceBeforeRule{
-		Messages:     messages,
-		ID:           "FA_SPACE_BEFORE_CONJUNCTION",
-		Description:  "Checks for missing space before some conjunctions",
-		ShortMsg:     "Missing white space",
-		Suggestion:   "Missing white space before conjunction",
+		ID: "FA_SPACE_BEFORE_CONJUNCTION",
+		// Java PersianSpaceBeforeRule getDescription / getShort / getSuggestion
+		Description:  "بررسی‌کردن فاصله قبل از حرف ربط",
+		ShortMsg:     "فاصلهٔ حذف‌شده",
+		Suggestion:   "فاصلهٔ قبل از حرف ربط حذف شده‌است",
 		Conjunctions: faConjunctions,
+		// Java setDefaultOff()
+		DefaultOff: true,
 	}
+	rules.InitSpaceBeforeMeta(base, messages)
 	return &PersianSpaceBeforeRule{AbstractSpaceBeforeRule: base}
 }
 

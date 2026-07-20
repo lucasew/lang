@@ -112,14 +112,16 @@ func (r *ConsistentApostrophesRule) MatchList(sentences []*languagetool.Analyzed
 			if token == nil {
 				continue
 			}
+			// Java: contains("'") + hasTypographicApostrophe flag (not U+2019 surface alone).
 			t := token.GetToken()
 			var message, repl string
-			if strings.Contains(t, "'") && !strings.Contains(t, "’") {
+			if strings.Contains(t, "'") && !token.HasTypographicApostrophe() {
 				message = "You used a typewriter-style apostrophe here, but a typographic apostrophe elsewhere in this text."
 				repl = strings.ReplaceAll(t, "'", "’")
-			} else if strings.Contains(t, "’") {
+			} else if strings.Contains(t, "'") && token.HasTypographicApostrophe() {
 				message = "You used a typographic apostrophe here, but a typewriter-style apostrophe elsewhere in this text."
-				repl = strings.ReplaceAll(t, "’", "'")
+				// Java: repl = token.getToken() (surface unchanged)
+				repl = t
 			}
 			if message != "" {
 				msg := message + " Both are correct, but consider using the same type everywhere in your text."
@@ -141,10 +143,9 @@ func hasTwoApostropheTypes(sentences []*languagetool.AnalyzedSentence) bool {
 				continue
 			}
 			t := token.GetToken()
-			if strings.Contains(t, "'") && !strings.Contains(t, "’") {
+			if strings.Contains(t, "'") && !token.HasTypographicApostrophe() {
 				hasTypewriter = true
-			}
-			if strings.Contains(t, "’") {
+			} else if strings.Contains(t, "'") && token.HasTypographicApostrophe() {
 				hasTypographic = true
 			}
 			if hasTypewriter && hasTypographic {
@@ -171,8 +172,17 @@ func AnalyzeEnglishPlain(text string) *languagetool.AnalyzedSentence {
 	readings = append(readings, startR)
 	prev := ""
 	for i, tok := range raw {
+		// Java pipeline: typographic ’ may be flagged via hasTypographicApostrophe while
+		// surface often uses straight ' after tokenizer normalization paths.
+		typoApos := strings.Contains(tok, "’")
+		if typoApos {
+			tok = strings.ReplaceAll(tok, "’", "'")
+		}
 		at := languagetool.NewAnalyzedToken(tok, nil, nil)
 		ar := languagetool.NewAnalyzedTokenReadingsAt(at, positions[i])
+		if typoApos {
+			ar.SetTypographicApostrophe(true)
+		}
 		if prev != "" {
 			ar.SetWhitespaceBeforeToken(prev)
 		}

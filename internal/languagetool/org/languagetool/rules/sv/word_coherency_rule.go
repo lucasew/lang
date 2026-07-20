@@ -41,7 +41,7 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
 		ID:          "SV_WORD_COHERENCY",
-		Description: "Konsekvent stavning av ord med flera korrekta former",
+		Description: "Enhetlig och konsekvent stavning av ord när det finns stavningsvarianter att välja på.",
 		WordMap:     d.WordMap,
 		ToBase:      d.ToBase,
 		MessageFn: func(word1, word2 string) string {

@@ -36,6 +36,8 @@ func loadDiacritics() *rules.AbstractSimpleReplaceRule2 {
 			SubRuleSpecificIDs:   true,
 			Category:             rules.CatTypos.GetCategory(nil),
 			IssueType:            rules.ITSMisspelling,
+			// Java getUrl → English terms with diacritical marks (Wikipedia)
+			URL: "https://en.wikipedia.org/wiki/English_terms_with_diacritical_marks",
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/en/diacritics.txt"); err != nil {
 			panic(err)
@@ -60,6 +62,7 @@ func NewEnglishDiacriticsRule(messages map[string]string) *EnglishDiacriticsRule
 	r.Messages = messages
 	r.Category = rules.CatTypos.GetCategory(messages)
 	r.IssueType = rules.ITSMisspelling
+	r.URL = "https://en.wikipedia.org/wiki/English_terms_with_diacritical_marks"
 	return &EnglishDiacriticsRule{AbstractSimpleReplaceRule2: &r}
 }
 

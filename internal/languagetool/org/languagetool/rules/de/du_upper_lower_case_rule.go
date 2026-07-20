@@ -25,9 +25,11 @@ var duLowerWords = map[string]struct{}{
 	"eurer": {}, "euerer": {}, "eurem": {}, "euerem": {}, "eures": {}, "eueres": {},
 }
 
+// Java StringUtils.equalsAny uses these exact strings (including broken "\\u2063" literals).
 var duSkipPrev = map[string]struct{}{
 	"\"": {}, "„": {}, "‚": {}, ":": {}, "»": {}, "«": {}, "“": {}, "-": {}, "–": {},
-	"*": {}, "•": {}, "\u2063": {}, "\u25E6": {}, "\u00B7": {},
+	"*": {}, "•": {},
+	`\u2063`: {}, `\u25E6`: {}, `\u00B7`: {},
 }
 
 func NewDuUpperLowerCaseRule(messages map[string]string) *DuUpperLowerCaseRule {

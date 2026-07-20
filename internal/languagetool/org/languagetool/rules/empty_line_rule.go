@@ -5,22 +5,25 @@ import (
 )
 
 // EmptyLineRule ports org.languagetool.rules.EmptyLineRule.
-// Java: STYLE, Style; default ctor setDefaultOff (defaultActive=false).
+// Java: STYLE, Style; default ctor setDefaultOff (defaultActive=false); setOfficeDefaultOn(); minToCheckParagraph=1.
 type EmptyLineRule struct {
 	Messages                  map[string]string
 	SingleLineBreaksMarksPara bool
 	Category                  *Category
 	IssueType                 ITSIssueType
 	DefaultOff                bool
+	// OfficeDefaultOn ports Rule.setOfficeDefaultOn (Java always On for LO/OO).
+	OfficeDefaultOn bool
 }
 
 func NewEmptyLineRule(messages map[string]string) *EmptyLineRule {
-	// Java EmptyLineRule(messages, lang) → defaultActive false → setDefaultOff().
+	// Java EmptyLineRule(messages, lang) → defaultActive false → setDefaultOff(); setOfficeDefaultOn().
 	return &EmptyLineRule{
-		Messages:   messages,
-		Category:   CatStyle.GetCategory(messages),
-		IssueType:  ITSStyle,
-		DefaultOff: true,
+		Messages:        messages,
+		Category:        CatStyle.GetCategory(messages),
+		IssueType:       ITSStyle,
+		DefaultOff:      true,
+		OfficeDefaultOn: true,
 	}
 }
 
@@ -51,6 +54,12 @@ func (r *EmptyLineRule) GetLocQualityIssueType() ITSIssueType {
 }
 
 func (r *EmptyLineRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// IsOfficeDefaultOn ports Rule.isOfficeDefaultOn.
+func (r *EmptyLineRule) IsOfficeDefaultOn() bool { return r != nil && r.OfficeDefaultOn }
+
+// MinToCheckParagraph ports EmptyLineRule.minToCheckParagraph (Java returns 1).
+func (r *EmptyLineRule) MinToCheckParagraph() int { return 1 }
 
 func (r *EmptyLineRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)

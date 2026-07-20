@@ -5,22 +5,24 @@ import (
 )
 
 // WhiteSpaceBeforeParagraphEnd ports org.languagetool.rules.WhiteSpaceBeforeParagraphEnd.
-// Java: STYLE, Style; default ctor setDefaultOff.
+// Java: STYLE, Style; default ctor setDefaultOff; setOfficeDefaultOn; minToCheckParagraph=0.
 type WhiteSpaceBeforeParagraphEnd struct {
 	Messages                  map[string]string
 	SingleLineBreaksMarksPara bool
 	Category                  *Category
 	IssueType                 ITSIssueType
 	DefaultOff                bool
+	OfficeDefaultOn           bool
 }
 
 func NewWhiteSpaceBeforeParagraphEnd(messages map[string]string) *WhiteSpaceBeforeParagraphEnd {
-	// Java (messages, lang) → defaultActive false → setDefaultOff().
+	// Java (messages, lang) → defaultActive false → setDefaultOff(); setOfficeDefaultOn().
 	return &WhiteSpaceBeforeParagraphEnd{
-		Messages:   messages,
-		Category:   CatStyle.GetCategory(messages),
-		IssueType:  ITSStyle,
-		DefaultOff: true,
+		Messages:        messages,
+		Category:        CatStyle.GetCategory(messages),
+		IssueType:       ITSStyle,
+		DefaultOff:      true,
+		OfficeDefaultOn: true,
 	}
 }
 
@@ -51,6 +53,14 @@ func (r *WhiteSpaceBeforeParagraphEnd) GetLocQualityIssueType() ITSIssueType {
 }
 
 func (r *WhiteSpaceBeforeParagraphEnd) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// IsOfficeDefaultOn ports Rule.isOfficeDefaultOn.
+func (r *WhiteSpaceBeforeParagraphEnd) IsOfficeDefaultOn() bool {
+	return r != nil && r.OfficeDefaultOn
+}
+
+// MinToCheckParagraph ports WhiteSpaceBeforeParagraphEnd.minToCheckParagraph (Java returns 0).
+func (r *WhiteSpaceBeforeParagraphEnd) MinToCheckParagraph() int { return 0 }
 
 func (r *WhiteSpaceBeforeParagraphEnd) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)

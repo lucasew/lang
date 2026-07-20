@@ -15,8 +15,10 @@ type AbstractWordCoherencyRule struct {
 	ID          string
 	Description string
 	WordMap     map[string]map[string]struct{}
-	// Category ports Rule.category (Java MISC).
+	// Category ports Rule.category (Java MISC; languages may override e.g. STYLE).
 	Category *Category
+	// IssueType ports getLocQualityIssueType (optional; PT sets Inconsistency).
+	IssueType ITSIssueType
 	// ToBase maps surface form → uninflected file form (lemma stand-in for replacement casing).
 	// Not an invent expand of inflections — production loads file pairs only; lemmas come from tagger.
 	ToBase map[string]string
@@ -60,6 +62,14 @@ func (r *AbstractWordCoherencyRule) GetCategory() *Category {
 		return nil
 	}
 	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AbstractWordCoherencyRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil {
+		return ""
+	}
+	return r.IssueType
 }
 
 // AddExamplePair ports Rule.addExamplePair.

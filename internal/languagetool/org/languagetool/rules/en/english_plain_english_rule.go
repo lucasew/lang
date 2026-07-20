@@ -23,7 +23,7 @@ func loadPlainEnglish() *rules.AbstractSimpleReplaceRule2 {
 			panic(err)
 		}
 		defer f.Close()
-		// Java EnglishPlainEnglishRule: PLAIN_ENGLISH, Style, fatal outcome → death
+		// Java EnglishPlainEnglishRule: PLAIN_ENGLISH, Style, setDefaultOff, Wikipedia URL
 		base := &rules.AbstractSimpleReplaceRule2{
 			ID:                   "EN_PLAIN_ENGLISH_REPLACE",
 			Description:          "1. Wordiness (General)",
@@ -34,6 +34,8 @@ func loadPlainEnglish() *rules.AbstractSimpleReplaceRule2 {
 			LanguageCode:         "en",
 			Category:             rules.CatPlainEnglish.GetCategory(nil),
 			IssueType:            rules.ITSStyle,
+			DefaultOff:           true,
+			URL:                  "https://en.wikipedia.org/wiki/List_of_plain_English_words_and_phrases",
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/en/wordiness.txt"); err != nil {
 			panic(err)
@@ -58,6 +60,8 @@ func NewEnglishPlainEnglishRule(messages map[string]string) *EnglishPlainEnglish
 	r.Messages = messages
 	r.Category = rules.CatPlainEnglish.GetCategory(messages)
 	r.IssueType = rules.ITSStyle
+	r.DefaultOff = true
+	r.URL = "https://en.wikipedia.org/wiki/List_of_plain_English_words_and_phrases"
 	return &EnglishPlainEnglishRule{AbstractSimpleReplaceRule2: &r}
 }
 

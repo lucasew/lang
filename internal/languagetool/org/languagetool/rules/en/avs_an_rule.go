@@ -122,8 +122,8 @@ func (r *AvsAnRule) GetCorrectExamples() []rules.CorrectExample {
 
 var (
 	cleanupPattern = regexp.MustCompile(`[^αa-zA-Z0-9.;,:']`)
-	// Include curly single quotes ’ (U+2019) used as openers/closers in tests.
-	delimPattern        = regexp.MustCompile(`^[-"“”'‘’()\[\]]+$`)
+	// Java: Pattern.compile("[-\"“'‘()\\[\\]]+") — no ”/’ (U+201D/U+2019).
+	delimPattern = regexp.MustCompile(`^[-"“'‘()\[\]]+$`)
 	dashQuotePattern    = regexp.MustCompile(`[-']`)
 	anPrefixes          = regexp.MustCompile(`(?i)^(unidentif|uni[mn])[a-z]+$`)
 	anExceptionPrefixes = regexp.MustCompile(`(?i)^(eu|one|uni|u[rst][aeiou])[a-z]*$`)

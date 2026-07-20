@@ -106,10 +106,10 @@ func (f *IsEnglishWordFilter) wordIsTagged(word string) bool {
 	return atr.IsTagged()
 }
 
-// skipCorrectedRef mirrors RuleFilterEvaluator skip correction (1-based ref).
+// skipCorrectedRef ports RuleFilter.getSkipCorrectedReference (1-based ref).
 func skipCorrectedRef(tokenPositions []int, refNumber int) int {
-	if len(tokenPositions) == 0 {
-		return refNumber - 1
+	if refNumber < 0 {
+		return refNumber
 	}
 	correctedRef := 0
 	i := 0

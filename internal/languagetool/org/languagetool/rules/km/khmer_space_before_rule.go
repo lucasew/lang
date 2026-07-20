@@ -16,13 +16,13 @@ type KhmerSpaceBeforeRule struct {
 
 func NewKhmerSpaceBeforeRule(messages map[string]string) *KhmerSpaceBeforeRule {
 	base := &rules.AbstractSpaceBeforeRule{
-		Messages:     messages,
 		ID:           "KM_SPACE_BEFORE_CONJUNCTION",
 		Description:  "Checks for missing space before some conjunctions",
 		ShortMsg:     "Missing white space",
 		Suggestion:   "Missing white space before conjunction",
 		Conjunctions: kmConjunctions,
 	}
+	rules.InitSpaceBeforeMeta(base, messages)
 	return &KhmerSpaceBeforeRule{AbstractSpaceBeforeRule: base}
 }
 

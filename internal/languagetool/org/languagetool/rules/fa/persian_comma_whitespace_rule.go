@@ -14,6 +14,8 @@ func NewPersianCommaWhitespaceRule(messages map[string]string) *PersianCommaWhit
 	base := rules.NewCommaWhitespaceRule(messages)
 	base.RuleID = "PERSIAN_COMMA_PARENTHESIS_WHITESPACE"
 	base.CommaCharacter = "،"
+	// Java PersianCommaWhitespaceRule ctor: setDefaultOff()
+	base.DefaultOff = true
 	return &PersianCommaWhitespaceRule{CommaWhitespaceRule: base}
 }
 

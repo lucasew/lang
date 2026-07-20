@@ -9,8 +9,9 @@ type SwedishSynthesizer struct { *synthesis.BaseSynthesizer }
 
 func NewSwedishSynthesizer(m *synthesis.ManualSynthesizer) *SwedishSynthesizer {
 	b := synthesis.NewBaseSynthesizer("sv", m)
-	b.ResourceFileName = "/sv/sv_synth.dict"
-	b.TagFileName = "/sv/sv_tags.txt"
+	b.ResourceFileName = "/sv/swedish_synth.dict"
+	b.TagFileName = "/sv/swedish_synth.dict_tags.txt"
+	b.SorFileName = "/sv/sv.sor"
 	return &SwedishSynthesizer{BaseSynthesizer: b}
 }
 func (s *SwedishSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {

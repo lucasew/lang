@@ -65,13 +65,16 @@ func (inf *Inflector) inflectSingleWord(enToken, dePosTag string) []string {
 }
 
 func (inf *Inflector) getForms(enToken, posTagRegex string) []string {
+	// Java: synthesize(...); empty array if none — no invent of base form on empty.
 	if inf == nil || inf.Synth == nil {
-		return []string{enToken}
+		// No synth available: fail-closed empty (Java always has English synthesizer).
+		return nil
 	}
 	tok := languagetool.NewAnalyzedToken(enToken, strPtr("fake-value"), strPtr(enToken))
 	forms, err := inf.Synth.SynthesizeRE(tok, posTagRegex, true)
-	if err != nil || len(forms) == 0 {
-		return []string{enToken}
+	if err != nil {
+		// Java wraps IOException as RuntimeException
+		panic(err.Error())
 	}
 	return forms
 }

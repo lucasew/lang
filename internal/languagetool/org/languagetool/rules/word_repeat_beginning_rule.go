@@ -98,6 +98,12 @@ func (r *WordRepeatBeginningRule) GetLocQualityIssueType() ITSIssueType {
 	return r.IssueType
 }
 
+// MinToCheckParagraph ports WordRepeatBeginningRule.minToCheckParagraph (Java returns 2).
+func (r *WordRepeatBeginningRule) MinToCheckParagraph() int { return 2 }
+
+// EstimateContextForSureMatch ports TextLevelRule (Java always -1).
+func (r *WordRepeatBeginningRule) EstimateContextForSureMatch() int { return -1 }
+
 func (r *WordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenReadings) bool {
 	if r.IsAdverbFn != nil {
 		return r.IsAdverbFn(token)

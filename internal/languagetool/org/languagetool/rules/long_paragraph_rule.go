@@ -8,10 +8,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-var nonWordRE = regexp.MustCompile(`^[.?!…:;,~’'"„“”»«‚‘›‹()\[\]\-–—*×∗·+÷/=]$`)
-
 // LongParagraphRule ports org.languagetool.rules.LongParagraphRule.
-// Java: STYLE, Style, setDefaultOff(), Tag.picky.
+// Java: STYLE, Style, setDefaultOff(), setOfficeDefaultOn(), Tag.picky; minToCheckParagraph=0.
 type LongParagraphRule struct {
 	Messages map[string]string
 	MaxWords int
@@ -20,31 +18,33 @@ type LongParagraphRule struct {
 	Category                  *Category
 	IssueType                 ITSIssueType
 	DefaultOff                bool
+	OfficeDefaultOn           bool
 	// Tags ports Rule.tags (Java picky).
 	Tags []Tag
 }
 
 func NewLongParagraphRule(messages map[string]string, maxWords int) *LongParagraphRule {
 	return &LongParagraphRule{
-		Messages:   messages,
-		MaxWords:   maxWords,
-		Category:   CatStyle.GetCategory(messages),
-		IssueType:  ITSStyle,
-		DefaultOff: true,
-		Tags:       []Tag{TagPicky},
+		Messages:        messages,
+		MaxWords:        maxWords,
+		Category:        CatStyle.GetCategory(messages),
+		IssueType:       ITSStyle,
+		DefaultOff:      true,
+		OfficeDefaultOn: true,
+		Tags:            []Tag{TagPicky},
 	}
 }
 
 func (r *LongParagraphRule) GetID() string { return "TOO_LONG_PARAGRAPH" }
 
-// GetDescription ports getDescription (long_paragraph_rule_desc).
+// GetDescription ports MessageFormat(long_paragraph_rule_desc, maxWords).
 func (r *LongParagraphRule) GetDescription() string {
 	if r != nil && r.Messages != nil {
 		if s := r.Messages["long_paragraph_rule_desc"]; s != "" {
-			return s
+			return messageFormat0(s, r.MaxWords)
 		}
 	}
-	return "Paragraph is too long"
+	return fmt.Sprintf("Paragraph is too long (more than %d words)", r.MaxWords)
 }
 
 func (r *LongParagraphRule) GetCategory() *Category {
@@ -63,15 +63,29 @@ func (r *LongParagraphRule) GetLocQualityIssueType() ITSIssueType {
 
 func (r *LongParagraphRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
+// IsOfficeDefaultOn ports Rule.isOfficeDefaultOn.
+func (r *LongParagraphRule) IsOfficeDefaultOn() bool { return r != nil && r.OfficeDefaultOn }
+
+// GetTags ports Rule.getTags (Java picky).
+func (r *LongParagraphRule) GetTags() []Tag {
+	if r == nil || len(r.Tags) == 0 {
+		return nil
+	}
+	return append([]Tag(nil), r.Tags...)
+}
+
+// MinToCheckParagraph ports LongParagraphRule.minToCheckParagraph (Java returns 0).
+func (r *LongParagraphRule) MinToCheckParagraph() int { return 0 }
+
 func (r *LongParagraphRule) GetMessage() string {
-	msg := r.Messages["long_paragraph_rule_msg"]
+	msg := ""
+	if r.Messages != nil {
+		msg = r.Messages["long_paragraph_rule_msg"]
+	}
 	if msg == "" {
-		msg = "This paragraph is too long (%d words)"
+		msg = "This paragraph is too long ({0} words)"
 	}
-	if strings.Contains(msg, "%d") || strings.Contains(msg, "{0}") {
-		return fmt.Sprintf(strings.ReplaceAll(msg, "{0}", "%d"), r.MaxWords)
-	}
-	return fmt.Sprintf(msg, r.MaxWords)
+	return messageFormat0(msg, r.MaxWords)
 }
 
 func (r *LongParagraphRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
@@ -94,7 +108,8 @@ func (r *LongParagraphRule) MatchList(sentences []*languagetool.AnalyzedSentence
 		}
 		tokens := sentence.GetTokensWithoutWhitespace()
 		for _, token := range tokens {
-			if !token.IsWhitespace() && !token.IsSentenceStart() && !isNonWordToken(token) {
+			// Java: !token.isWhitespace() && !token.isSentenceStart() && !token.isNonWord()
+			if !token.IsWhitespace() && !token.IsSentenceStart() && !token.IsNonWord() {
 				wordCount++
 				if wordCount == r.MaxWords {
 					endPos = token.GetEndPos() + pos
@@ -124,8 +139,4 @@ func (r *LongParagraphRule) MatchList(sentences []*languagetool.AnalyzedSentence
 		ruleMatches = append(ruleMatches, rm)
 	}
 	return ruleMatches
-}
-
-func isNonWordToken(token *languagetool.AnalyzedTokenReadings) bool {
-	return nonWordRE.MatchString(token.GetToken())
 }

@@ -72,3 +72,27 @@ func (c *CheckConfiguration) GetRuleValues() []string {
 	}
 	return append([]string(nil), c.RuleValues...)
 }
+
+// GetTextSessionID ports CheckConfiguration.getTextSessionID (@Nullable).
+func (c *CheckConfiguration) GetTextSessionID() (string, bool) {
+	if c == nil || c.TextSessionID == "" {
+		return "", false
+	}
+	return c.TextSessionID, true
+}
+
+// GetUsername ports CheckConfiguration.getUsername (@Nullable).
+func (c *CheckConfiguration) GetUsername() (string, bool) {
+	if c == nil || c.Username == "" {
+		return "", false
+	}
+	return c.Username, true
+}
+
+// GetAPIKey ports CheckConfiguration.getAPIKey (@Nullable).
+func (c *CheckConfiguration) GetAPIKey() (string, bool) {
+	if c == nil || c.APIKey == "" {
+		return "", false
+	}
+	return c.APIKey, true
+}

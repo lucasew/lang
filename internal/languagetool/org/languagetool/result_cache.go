@@ -52,19 +52,20 @@ func NewResultCacheExpire(maxSize int, expireAfter time.Duration) *ResultCache {
 }
 
 // MatchesWeigh ports MatchesWeigher.weigh.
+// Java uses String.length() (UTF-16 code units), not UTF-8 byte length.
 // return 1 + sentence text length/75 + matches.size()
 func MatchesWeigh(sentenceText string, matchCount int) int {
-	return 1 + len(sentenceText)/75 + matchCount
+	return 1 + utf16Len(sentenceText)/75 + matchCount
 }
 
 // RemoteMatchesWeigh ports RemoteMatchesWeigher.weigh.
 func RemoteMatchesWeigh(sentenceText string) int {
-	return 1 + len(sentenceText)/75
+	return 1 + utf16Len(sentenceText)/75
 }
 
 // SentenceWeigh ports SentenceWeigher.weigh.
 func SentenceWeigh(text string) int {
-	return 1 + len(text)/75
+	return 1 + utf16Len(text)/75
 }
 
 // inputSentenceKey mirrors InputSentence.equal dimensions used as a Guava cache key.

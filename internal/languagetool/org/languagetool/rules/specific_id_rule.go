@@ -12,9 +12,7 @@ type SpecificIdRule struct {
 }
 
 func NewSpecificIdRule(id, desc string, isPremium bool, category *Category, issueType ITSIssueType, tags []Tag) *SpecificIdRule {
-	if id == "" || desc == "" {
-		panic("id and desc required")
-	}
+	// Java: Objects.requireNonNull(id/desc) — empty strings are allowed.
 	return &SpecificIdRule{
 		ID:          id,
 		Description: desc,

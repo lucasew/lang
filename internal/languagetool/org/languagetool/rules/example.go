@@ -11,10 +11,9 @@ type ExampleSentence struct {
 }
 
 // NewExampleSentence validates optional <marker>…</marker> pairing.
+// Java: Objects.requireNonNull(example) — empty string is allowed; only null rejected.
 func NewExampleSentence(example string) ExampleSentence {
-	if example == "" {
-		panic("example must not be empty")
-	}
+	// Go has no null string; empty is valid (Java requireNonNull allows "").
 	start := strings.Index(example, "<marker>")
 	end := strings.Index(example, "</marker>")
 	if start != -1 && end == -1 {
@@ -23,7 +22,8 @@ func NewExampleSentence(example string) ExampleSentence {
 	if start == -1 && end != -1 {
 		panic(fmt.Sprintf("Example contains </marker> but lacks <marker>:%s", example))
 	}
-	if start > end && end != -1 {
+	// Java: if (markerStart > markerEnd) — after null checks for missing markers.
+	if start > end {
 		panic(fmt.Sprintf("Example <marker> comes before </marker>:%s", example))
 	}
 	return ExampleSentence{Example: example}
@@ -94,10 +94,11 @@ func Fixed(example string) CorrectExample {
 }
 
 // Example is the Java-name twin for building example sentences (Example.wrong / Example.fixed).
+// Java class has private ctor; Go zero value is fine.
 type Example struct{}
 
-// Wrong wraps a wrong-example string.
-func (Example) Wrong(s string) ExampleSentence { return NewExampleSentence(s) }
+// Wrong ports Example.wrong — requires <marker>…</marker>, returns IncorrectExample.
+func (Example) Wrong(s string) IncorrectExample { return Wrong(s) }
 
-// Fixed wraps a fixed-example string.
-func (Example) Fixed(s string) ExampleSentence { return NewExampleSentence(s) }
+// Fixed ports Example.fixed — returns CorrectExample.
+func (Example) Fixed(s string) CorrectExample { return Fixed(s) }

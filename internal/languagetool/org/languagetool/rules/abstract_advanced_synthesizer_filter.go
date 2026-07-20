@@ -23,6 +23,9 @@ type AbstractAdvancedSynthesizerFilter struct {
 	GetNewLemma func(word, newLemma string) string
 	// IsSuggestionException optional; Java language overrides.
 	IsSuggestionException func(token, desiredPostag string) bool
+	// GetCompositePostag optional override of getCompositePostag (e.g. PT keepPronoun).
+	// When nil, package GetCompositePostag is used.
+	GetCompositePostag func(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace string) string
 	// AdaptSuggestion optional language.adaptSuggestion.
 	AdaptSuggestion func(replacement, original string) string
 }
@@ -88,7 +91,11 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 		return nil
 	}
 	if postagReplace != "" {
-		desiredPostag = getCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace)
+		if f.GetCompositePostag != nil {
+			desiredPostag = f.GetCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace)
+		} else {
+			desiredPostag = GetCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace)
+		}
 	}
 
 	isCap := tools.IsCapitalizedWord(patternTokens[lemmaFrom].GetToken())
@@ -172,8 +179,8 @@ func sliceHasString(ss []string, s string) bool {
 	return false
 }
 
-// getCompositePostag ports AbstractAdvancedSynthesizerFilter.getCompositePostag (\aN / \bN).
-func getCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace string) string {
+// GetCompositePostag ports AbstractAdvancedSynthesizerFilter.getCompositePostag (\aN / \bN).
+func GetCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace string) string {
 	aRE, err1 := regexp.Compile("(?i)" + lemmaSelect)
 	bRE, err2 := regexp.Compile("(?i)" + postagSelect)
 	if err1 != nil || err2 != nil {

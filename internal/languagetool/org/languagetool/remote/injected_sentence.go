@@ -19,7 +19,8 @@ func (s InjectedSentence) GetLanguage() string { return s.Language }
 func (s InjectedSentence) GetText() string     { return strings.TrimSpace(s.Text) }
 
 func (s InjectedSentence) String() string {
-	return fmt.Sprintf("Sentence: language='%s', text='%s'", s.Language, s.GetText())
+	// Java toString uses the raw text field (not getText() / trim).
+	return fmt.Sprintf("Sentence: language='%s', text='%s'", s.Language, s.Text)
 }
 
 func (s InjectedSentence) Equal(o InjectedSentence) bool {

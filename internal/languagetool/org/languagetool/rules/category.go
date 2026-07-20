@@ -51,10 +51,8 @@ func NewCategory(id CategoryId, name string) *Category {
 }
 
 // NewCategoryFull builds a category with full options (onByDefault like Java).
+// Java: Objects.requireNonNull(name) — empty string is allowed (only null rejected).
 func NewCategoryFull(id CategoryId, name string, loc CategoryLocation, onByDefault bool, tabName string) *Category {
-	if name == "" {
-		panic("Category name must not be empty")
-	}
 	return &Category{
 		ID:         id,
 		Name:       name,

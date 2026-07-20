@@ -20,6 +20,7 @@ func NewPortugueseSynthesizer(manual *synthesis.ManualSynthesizer) *PortugueseSy
 	base := synthesis.NewBaseSynthesizer("pt", manual)
 	base.ResourceFileName = PortugueseSynthDict
 	base.TagFileName = PortugueseTagsFile
+	base.SorFileName = PortugueseSorFile
 	return &PortugueseSynthesizer{BaseSynthesizer: base}
 }
 

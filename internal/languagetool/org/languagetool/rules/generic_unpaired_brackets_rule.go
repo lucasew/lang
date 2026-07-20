@@ -50,7 +50,16 @@ type GenericUnpairedBracketsRule struct {
 	ruleID            string
 }
 
+// defaultNumerals is Java GenericUnpairedBracketsRule.NUMERALS_EN.
+var defaultNumerals = regexp.MustCompile(`(?i)^\d{1,2}?[a-z']*|M*(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$`)
+
 func NewGenericUnpairedBracketsRule(messages map[string]string, start, end []string) *GenericUnpairedBracketsRule {
+	return NewGenericUnpairedBracketsRuleWithNumerals(messages, start, end, nil)
+}
+
+// NewGenericUnpairedBracketsRuleWithNumerals ports the 4-arg Java ctor (custom numeral pattern).
+// When numerals is nil, uses the default English-style numeral pattern.
+func NewGenericUnpairedBracketsRuleWithNumerals(messages map[string]string, start, end []string, numerals *regexp.Regexp) *GenericUnpairedBracketsRule {
 	if len(start) != len(end) {
 		panic("start/end symbol count mismatch")
 	}
@@ -64,6 +73,9 @@ func NewGenericUnpairedBracketsRule(messages map[string]string, start, end []str
 		}
 		uniqueMap[es] = found == 1
 	}
+	if numerals == nil {
+		numerals = defaultNumerals
+	}
 	return &GenericUnpairedBracketsRule{
 		Messages:     messages,
 		Category:     CatPunctuation.GetCategory(messages),
@@ -71,7 +83,7 @@ func NewGenericUnpairedBracketsRule(messages map[string]string, start, end []str
 		StartSymbols: start,
 		EndSymbols:   end,
 		uniqueMap:    uniqueMap,
-		numerals:     regexp.MustCompile(`(?i)^\d{1,2}?[a-z']*|M*(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$`),
+		numerals:     numerals,
 		ruleID:       "UNPAIRED_BRACKETS",
 	}
 }

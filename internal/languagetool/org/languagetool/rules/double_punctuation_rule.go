@@ -13,6 +13,8 @@ type DoublePunctuationRule struct {
 	CommaCharacter string // override comma character (Arabic/Persian "،")
 	Category       *Category
 	IssueType      ITSIssueType
+	// URL ports Rule.url (Java setUrl).
+	URL string
 	// incorrectExamples / correctExamples port Rule.addExamplePair.
 	incorrectExamples []IncorrectExample
 	correctExamples   []CorrectExample
@@ -38,6 +40,14 @@ func (r *DoublePunctuationRule) GetLocQualityIssueType() ITSIssueType {
 		return ITSTypographical
 	}
 	return r.IssueType
+}
+
+// GetURL ports Rule.getUrl.
+func (r *DoublePunctuationRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
 }
 
 // AddExamplePair ports Rule.addExamplePair.
@@ -75,11 +85,53 @@ func (r *DoublePunctuationRule) GetID() string {
 	return "DOUBLE_PUNCTUATION"
 }
 
+// GetDescription ports DoublePunctuationRule.getDescription (desc_double_punct).
+func (r *DoublePunctuationRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_double_punct"]; s != "" {
+			return s
+		}
+	}
+	return "Two consecutive dots or commas"
+}
+
 func (r *DoublePunctuationRule) GetCommaCharacter() string {
 	if r.CommaCharacter != "" {
 		return r.CommaCharacter
 	}
 	return ","
+}
+
+// getDotMessage ports DoublePunctuationRule.getDotMessage.
+func (r *DoublePunctuationRule) getDotMessage() string {
+	if r.DotMessage != "" {
+		return r.DotMessage
+	}
+	if r.Messages != nil {
+		if s := r.Messages["two_dots"]; s != "" {
+			return s
+		}
+	}
+	return "Two consecutive dots"
+}
+
+// getCommaMessage ports DoublePunctuationRule.getCommaMessage.
+func (r *DoublePunctuationRule) getCommaMessage() string {
+	if r.Messages != nil {
+		if s := r.Messages["two_commas"]; s != "" {
+			return s
+		}
+	}
+	return "Two consecutive commas"
+}
+
+func (r *DoublePunctuationRule) msg(key, def string) string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages[key]; s != "" {
+			return s
+		}
+	}
+	return def
 }
 
 func (r *DoublePunctuationRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
@@ -116,14 +168,9 @@ func (r *DoublePunctuationRule) Match(sentence *languagetool.AnalyzedSentence) [
 			if fromPos < 0 {
 				fromPos = 0
 			}
-			msg := r.DotMessage
-			if msg == "" {
-				msg = r.Messages["two_dots"]
-			}
-			if msg == "" {
-				msg = "Two consecutive dots"
-			}
-			rm := NewRuleMatch(r, sentence, fromPos, startPos+1, msg)
+			// Java: new RuleMatch(..., getDotMessage(), messages.getString("double_dots_short"))
+			rm := NewRuleMatch(r, sentence, fromPos, startPos+1, r.getDotMessage())
+			rm.ShortMessage = r.msg("double_dots_short", "")
 			rm.SuggestedReplacements = []string{".", "…"}
 			ruleMatches = append(ruleMatches, rm)
 			dotCount = 0
@@ -132,11 +179,9 @@ func (r *DoublePunctuationRule) Match(sentence *languagetool.AnalyzedSentence) [
 			if fromPos < 0 {
 				fromPos = 0
 			}
-			msg := r.Messages["two_commas"]
-			if msg == "" {
-				msg = "Two consecutive commas"
-			}
-			rm := NewRuleMatch(r, sentence, fromPos, startPos+1, msg)
+			// Java: new RuleMatch(..., getCommaMessage(), messages.getString("double_commas_short"))
+			rm := NewRuleMatch(r, sentence, fromPos, startPos+1, r.getCommaMessage())
+			rm.ShortMessage = r.msg("double_commas_short", "")
 			rm.SetSuggestedReplacement(commaChar)
 			ruleMatches = append(ruleMatches, rm)
 			commaCount = 0

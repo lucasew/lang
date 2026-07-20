@@ -57,7 +57,9 @@ func TestParseCheckJSON(t *testing.T) {
 	require.Equal(t, "en-US", res.GetLanguageCode())
 	require.Len(t, res.GetMatches(), 1)
 	require.Equal(t, "MORFOLOGIK", res.GetMatches()[0].GetRuleID())
-	require.Equal(t, []string{"hello"}, res.GetMatches()[0].GetReplacements())
+	reps, okReps := res.GetMatches()[0].GetReplacements()
+	require.True(t, okReps)
+	require.Equal(t, []string{"hello"}, reps)
 	require.Equal(t, "LT", res.GetRemoteServer().GetSoftware())
 }
 

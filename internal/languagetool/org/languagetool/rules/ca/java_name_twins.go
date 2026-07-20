@@ -4,23 +4,6 @@ package ca
 // Construct with NewCatalanUnpairedExclamationMarksRule.
 type CatalanUnpairedExclamationMarksRule = CatalanUnpairedQuestionMarksRule
 
-// CatalanMorfologikMultitokenSpeller is the Java-name twin for multitoken speller access.
-type CatalanMorfologikMultitokenSpeller struct {
-	// Factory optional; when nil, GetSuggestions returns nil.
-	Factory MultitokenSpellerFactory
-}
-
-func NewCatalanMorfologikMultitokenSpeller(factory MultitokenSpellerFactory) *CatalanMorfologikMultitokenSpeller {
-	return &CatalanMorfologikMultitokenSpeller{Factory: factory}
-}
-
-func (s *CatalanMorfologikMultitokenSpeller) GetSuggestions(word string) []string {
-	if s == nil {
-		return nil
-	}
-	return GetCatalanMultitokenSpellerSuggestions(s.Factory, word)
-}
-
 // PronomsFeblesHelper is the Java-name twin for weak-pronoun transforms.
 type PronomsFeblesHelper struct{}
 

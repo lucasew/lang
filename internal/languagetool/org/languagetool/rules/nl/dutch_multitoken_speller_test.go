@@ -56,3 +56,8 @@ func TestDiscoverAndLoadDutchMultitokenSpeller(t *testing.T) {
 	require.NotNil(t, sp)
 	require.NotNil(t, sp.IsException)
 }
+
+func TestDutchMultitokenResourcePaths(t *testing.T) {
+	require.Equal(t, []string{"/nl/multiwords.txt", "/spelling_global.txt"}, DutchMultitokenResourcePaths)
+	require.NotNil(t, DutchMultitokenSpellerInstance)
+}
