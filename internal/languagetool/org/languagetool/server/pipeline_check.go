@@ -157,27 +157,12 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	return lt
 }
 
-func (p *Pipeline) cleanMatches(matches []languagetool.LocalMatch) []languagetool.LocalMatch {
-	if p == nil || !p.cleanOverlaps {
-		return matches
-	}
-	// Prefer higher priority for known core grammar IDs over speller on the same span
-	// (Java CleanOverlappingFilter / priority tables — incomplete subset, not invent IDs).
-	for i := range matches {
-		id := matches[i].RuleID
-		if id == "EN_A_VS_AN" || strings.Contains(id, "WORD_REPEAT") ||
-			strings.HasPrefix(id, "EN_") && strings.Contains(id, "_OF") {
-			matches[i].Priority = 5
-		} else if matches[i].Priority == 0 {
-			matches[i].Priority = 1
-		}
-	}
-	return languagetool.CleanOverlappingLocalMatches(matches)
-}
-
 // Check runs configured core (+ optional official grammar) rules on text.
 // Honors pipeline disabled-rule IDs and optional overlap cleaning.
 // Uses multi-threaded Check for multi-sentence texts (pool size = GOMAXPROCS soft).
+//
+// Overlap cleaning is Java JLanguageTool CleanOverlappingFilter via lt.Check
+// (Language.getRulePriority / PriorityForId). No invent rule-ID priority bumps.
 func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 	if p == nil {
 		return nil
@@ -186,6 +171,10 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 	// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends, …).
 	if strings.EqualFold(string(p.settings.Level), string(CheckLevelPicky)) {
 		lt.Level = languagetool.LevelPicky
+	}
+	// Pipeline cleanOverlaps=false → JLanguageTool.setCleanOverlappingMatches(false).
+	if p != nil && !p.cleanOverlaps {
+		lt.DisableCleanOverlapping()
 	}
 	// Heuristic multi-sentence detection avoids a double full Analyze before Check.
 	var matches []languagetool.LocalMatch
@@ -196,7 +185,7 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 	} else {
 		matches = lt.Check(text)
 	}
-	return p.cleanMatches(matches)
+	return matches
 }
 
 // multiSentenceHeuristic reports likely multi-sentence input (terminators + space/capital).
@@ -226,9 +215,11 @@ func (p *Pipeline) CheckAnnotated(at *markup.AnnotatedText) []languagetool.Local
 	if strings.EqualFold(string(p.settings.Level), string(CheckLevelPicky)) {
 		lt.Level = languagetool.LevelPicky
 	}
+	if p != nil && !p.cleanOverlaps {
+		lt.DisableCleanOverlapping()
+	}
 	matches := lt.CheckAnnotated(at)
-	matches = languagetool.ProjectMatchesToOriginal(at, matches)
-	return p.cleanMatches(matches)
+	return languagetool.ProjectMatchesToOriginal(at, matches)
 }
 
 // DisableRuleID records a rule to skip (before SetupFinished).
