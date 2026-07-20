@@ -34,13 +34,19 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 	if err != nil {
 		return 0, err
 	}
-	n := 0
 	// Track default-off categories once (Java Category.isDefaultOff on each rule's category).
 	for _, ar := range abstracts {
 		if ar != nil && ar.CategoryDefaultOff && ar.CategoryID != "" {
 			lt.MarkCategoryDefaultOff(ar.CategoryID)
 		}
 	}
+
+	type builtRule struct {
+		pr   *PatternRule
+		ar   *AbstractPatternRule
+		meta grammarRuleMeta
+	}
+	var built []builtRule
 	for _, ar := range abstracts {
 		if ar == nil || len(ar.PatternTokens) == 0 {
 			continue
@@ -71,16 +77,73 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		msg, suggs := extractSuggestions(pr.Message)
 		pr.Message = msg
 		pr.SuggestionTemplates = append([]string(nil), suggs...)
-		id := pr.GetID()
-		if id == "" {
+		if pr.GetID() == "" {
 			continue
 		}
+		built = append(built, builtRule{
+			pr: pr,
+			ar: ar,
+			meta: grammarRuleMeta{
+				CatID:     ar.CategoryID,
+				CatName:   ar.CategoryName,
+				IssueType: ar.IssueType,
+				URL:       ar.URL,
+				Priority:  ar.Priority,
+				Desc:      ar.Description,
+			},
+		})
+	}
+
+	// Java RepeatedPatternRuleTransformer: min_prev_matches>0 → text-level rule.
+	repeatedByID := map[string][]builtRule{}
+	var repeatedOrder []string
+	var sentenceLevel []builtRule
+	for _, b := range built {
+		if b.pr.MinPrevMatches > 0 {
+			id := b.pr.GetID()
+			if _, ok := repeatedByID[id]; !ok {
+				repeatedOrder = append(repeatedOrder, id)
+			}
+			repeatedByID[id] = append(repeatedByID[id], b)
+			continue
+		}
+		sentenceLevel = append(sentenceLevel, b)
+	}
+
+	n := 0
+	for _, id := range repeatedOrder {
+		group := repeatedByID[id]
+		prs := make([]*PatternRule, 0, len(group))
+		for _, b := range group {
+			prs = append(prs, b.pr)
+		}
+		rep := &RepeatedPatternRule{
+			LanguageCode:             languageCode,
+			PatternRules:             prs,
+			DefaultMaxDistanceTokens: 60,
+		}
+		meta := group[0].meta
+		// Use first rule for default-off / temp-off tracking (shared id).
+		ar0 := group[0].ar
+		lt.AddTextLevelRuleChecker(id, func(sents []*languagetool.AnalyzedSentence) []languagetool.LocalMatch {
+			out := rep.MatchSentences(sents)
+			return enrichLocalMatches(out, "", meta)
+		})
+		if ar0 != nil {
+			if ar0.DefaultTempOff {
+				lt.MarkDefaultTempOff(id)
+			} else if ar0.DefaultOff {
+				lt.MarkDefaultOff(id)
+			}
+		}
+		n++
+	}
+
+	for _, b := range sentenceLevel {
+		pr := b.pr
+		id := pr.GetID()
 		rule := pr
-		catID, catName := ar.CategoryID, ar.CategoryName
-		issueType := ar.IssueType
-		ruleURL := ar.URL
-		rulePrio := ar.Priority
-		desc := ar.Description
+		meta := b.meta
 		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
 			ms, err := rule.Match(s)
 			if err != nil || len(ms) == 0 {
@@ -91,62 +154,14 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 			if s != nil {
 				text = s.GetText()
 			}
-			for i := range out {
-				if out[i].Description == "" {
-					out[i].Description = desc
-				}
-				if out[i].CategoryID == "" {
-					out[i].CategoryID = catID
-				}
-				if out[i].CategoryName == "" {
-					out[i].CategoryName = catName
-				}
-				if out[i].IssueType == "" {
-					// Java: rule/group/category type; then soft id-based fallback.
-					if issueType != "" {
-						out[i].IssueType = issueType
-					} else if catID != "" {
-						switch strings.ToUpper(catID) {
-						case "TYPOS":
-							out[i].IssueType = "misspelling"
-						case "STYLE":
-							out[i].IssueType = "style"
-						case "TYPOGRAPHY":
-							out[i].IssueType = "typographical"
-						case "CASING":
-							out[i].IssueType = "typographical"
-						default:
-							out[i].IssueType = "grammar"
-						}
-					}
-				}
-				if out[i].URL == "" && ruleURL != "" {
-					out[i].URL = ruleURL
-				}
-				// Java Rule.getPriority before Language.getRulePriority overlay.
-				if out[i].Priority == 0 && rulePrio != 0 {
-					out[i].Priority = rulePrio
-				}
-				// Case adjustment when matcher left suggestions (formatMatches already ran).
-				if text != "" {
-					from, to := out[i].FromPos, out[i].ToPos
-					if from >= 0 && to <= len(text) && from < to && len(out[i].Suggestions) > 0 {
-						matched := text[from:to]
-						for j, sug := range out[i].Suggestions {
-							out[i].Suggestions[j] = languagetool.PreserveCase(matched, sug)
-						}
-					}
-				}
-			}
-			return out
+			return enrichLocalMatches(out, text, meta)
 		})
-		// XML default="off" / temp_off → registered but disabled (Java Rule.defaultOff).
-		// temp_off also tracked for enableTempOff / JSON rule.tempOff (Java isDefaultTempOff).
-		// Category default="off" does NOT set rule.defaultOff (Java Category.isDefaultOff only).
-		if ar.DefaultTempOff {
-			lt.MarkDefaultTempOff(id)
-		} else if ar.DefaultOff {
-			lt.MarkDefaultOff(id)
+		if b.ar != nil {
+			if b.ar.DefaultTempOff {
+				lt.MarkDefaultTempOff(id)
+			} else if b.ar.DefaultOff {
+				lt.MarkDefaultOff(id)
+			}
 		}
 		n++
 	}
@@ -155,6 +170,60 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 	// (setDefaultOn / setDefaultOff on matching rule IDs).
 	lt.ApplyVariantDefaultRules()
 	return n, nil
+}
+
+// grammarRuleMeta is match enrichment shared by sentence- and text-level pattern rules.
+type grammarRuleMeta struct {
+	CatID, CatName, IssueType, URL, Desc string
+	Priority                             int
+}
+
+func enrichLocalMatches(out []languagetool.LocalMatch, text string, meta grammarRuleMeta) []languagetool.LocalMatch {
+	for i := range out {
+		if out[i].Description == "" {
+			out[i].Description = meta.Desc
+		}
+		if out[i].CategoryID == "" {
+			out[i].CategoryID = meta.CatID
+		}
+		if out[i].CategoryName == "" {
+			out[i].CategoryName = meta.CatName
+		}
+		if out[i].IssueType == "" {
+			if meta.IssueType != "" {
+				out[i].IssueType = meta.IssueType
+			} else if meta.CatID != "" {
+				switch strings.ToUpper(meta.CatID) {
+				case "TYPOS":
+					out[i].IssueType = "misspelling"
+				case "STYLE":
+					out[i].IssueType = "style"
+				case "TYPOGRAPHY":
+					out[i].IssueType = "typographical"
+				case "CASING":
+					out[i].IssueType = "typographical"
+				default:
+					out[i].IssueType = "grammar"
+				}
+			}
+		}
+		if out[i].URL == "" && meta.URL != "" {
+			out[i].URL = meta.URL
+		}
+		if out[i].Priority == 0 && meta.Priority != 0 {
+			out[i].Priority = meta.Priority
+		}
+		if text != "" {
+			from, to := out[i].FromPos, out[i].ToPos
+			if from >= 0 && to <= len(text) && from < to && len(out[i].Suggestions) > 0 {
+				matched := text[from:to]
+				for j, sug := range out[i].Suggestions {
+					out[i].Suggestions[j] = languagetool.PreserveCase(matched, sug)
+				}
+			}
+		}
+	}
+	return out
 }
 
 // extractSuggestions pulls <suggestion>…</suggestion> from rule messages (Java markup).

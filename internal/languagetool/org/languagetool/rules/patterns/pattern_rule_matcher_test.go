@@ -170,13 +170,22 @@ func TestRepeatedAndConsistencyTransformers(t *testing.T) {
 	require.Equal(t, "STYLE_A", GetMainRuleId("STYLE_A_feat1"))
 	require.Equal(t, "feat1", GetFeature("STYLE_A_feat1"))
 
+	// Java: only getMinPrevMatches() > 0 enters RepeatedPatternRuleTransformer.
 	r1 := NewAbstractPatternRule("REP", "d", "en", nil, false)
+	r1.MinPrevMatches = 2
 	r1.DistanceTokens = 10
 	r2 := NewAbstractPatternRule("REP", "d", "en", nil, false)
+	r2.MinPrevMatches = 2
 	rt := NewRepeatedPatternRuleTransformer("en")
 	rem2, tr2 := TransformPatternRules([]*AbstractPatternRule{r1, r2}, rt)
 	require.Empty(t, rem2)
 	require.Len(t, tr2, 1)
+	// Without min_prev_matches, rules stay remaining (even with shared id).
+	r3 := NewAbstractPatternRule("PLAIN", "d", "en", nil, false)
+	r4 := NewAbstractPatternRule("PLAIN", "d", "en", nil, false)
+	rem3, tr3 := TransformPatternRules([]*AbstractPatternRule{r3, r4}, rt)
+	require.Len(t, rem3, 2)
+	require.Empty(t, tr3)
 }
 
 // Soft path: optional min=0 must backtrack when a later element needs the token

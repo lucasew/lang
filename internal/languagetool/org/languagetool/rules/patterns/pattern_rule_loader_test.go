@@ -98,6 +98,30 @@ func TestPatternRuleLoader_MinPrevMatchesDistanceTokens(t *testing.T) {
 	tr := NewRepeatedPatternRuleTransformer("en")
 	out := tr.Transform(ars)
 	require.NotEmpty(t, out.GetTransformedRules())
+	require.Len(t, out.GetRemainingRules(), 0) // both PLAIN and REP have min_prev>0
+}
+
+// Java RepeatedPatternRule: only emit after min_prev_matches prior hits in text.
+func TestRepeatedPatternRule_MatchSentences(t *testing.T) {
+	// min_prev_matches=2 → third occurrence in document is first reported
+	pr := NewPatternRule("REP_X", "en", []*PatternToken{Token("foo")}, "rep", "again", "")
+	pr.MinPrevMatches = 2
+	pr.DistanceTokens = 100
+	rep := &RepeatedPatternRule{
+		LanguageCode:             "en",
+		PatternRules:             []*PatternRule{pr},
+		DefaultMaxDistanceTokens: 60,
+	}
+	// three sentences each with "foo"
+	s1 := languagetool.AnalyzePlain("foo.")
+	s2 := languagetool.AnalyzePlain("foo.")
+	s3 := languagetool.AnalyzePlain("foo.")
+	ms := rep.MatchSentences([]*languagetool.AnalyzedSentence{s1, s2, s3})
+	require.NotEmpty(t, ms, "third hit should fire after min_prev=2")
+	// only one match (the third occurrence)
+	require.Len(t, ms, 1)
+	// document offset: "foo." + "foo." + "foo." → third at char 8
+	require.Equal(t, 8, ms[0].FromPos)
 }
 
 // Java premium= inheritance: rule > rulegroup > category > file (yes/no).
