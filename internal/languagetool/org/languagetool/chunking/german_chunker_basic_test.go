@@ -162,3 +162,22 @@ func TestGermanChunker_GetBasicChunks_JavaOpenNLPTable(t *testing.T) {
 		})
 	}
 }
+
+// Java GermanChunker.REGEXES2 has 77 build(...) entries — keep list complete.
+func TestGermanRegexes2_CountMatchesJava(t *testing.T) {
+	require.Equal(t, 77, len(germanRegexes2), "REGEXES2 must list every Java build() entry in order")
+	// Patterns previously missing from the Go transcription:
+	need := []string{
+		`<chunk=B-NP & pos=PLU> <chunk=I-NP>* <chunk=B-NP & pos=GEN> <chunk=I-NP>*`,
+		`<pos=PRP> <NP> <pos=ADJ> (<und>|<oder>|<bzw.>) <pos=ADJ> <NP>`,
+		`<pos=PRP> <pos=ADJ> (<und|oder|sowie>) <pos=ADJ> <chunk=B-NP>`,
+		`<pos=PRP> <NP> <pos=ADJ> <NP> (<und|oder>) <NP>`,
+	}
+	have := map[string]bool{}
+	for _, r := range germanRegexes2 {
+		have[r.pattern] = true
+	}
+	for _, p := range need {
+		require.True(t, have[p], "missing REGEXES2 pattern: %s", p)
+	}
+}
