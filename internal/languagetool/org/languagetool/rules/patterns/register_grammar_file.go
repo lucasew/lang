@@ -60,6 +60,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.SourceFile = ar.SourceFile
 		pr.IssueType = ar.IssueType
 		pr.URL = ar.URL
+		pr.Priority = ar.Priority
 		if len(ar.Tags) > 0 {
 			pr.SetTags(ar.Tags)
 		}
@@ -75,6 +76,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		catID, catName := ar.CategoryID, ar.CategoryName
 		issueType := ar.IssueType
 		ruleURL := ar.URL
+		rulePrio := ar.Priority
 		desc := ar.Description
 		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
 			ms, err := rule.Match(s)
@@ -117,6 +119,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 				}
 				if out[i].URL == "" && ruleURL != "" {
 					out[i].URL = ruleURL
+				}
+				// Java Rule.getPriority before Language.getRulePriority overlay.
+				if out[i].Priority == 0 && rulePrio != 0 {
+					out[i].Priority = rulePrio
 				}
 				// Case adjustment when matcher left suggestions (formatMatches already ran).
 				if text != "" {

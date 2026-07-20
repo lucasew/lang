@@ -46,6 +46,8 @@ type PatternRule struct {
 	IssueType string
 	// URL ports Rule.url.
 	URL string
+	// Priority ports Rule.priority (XML prio= inheritance).
+	Priority int
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -136,6 +138,14 @@ func (r *PatternRule) GetLocQualityIssueType() rules.ITSIssueType {
 		return ""
 	}
 	return rules.ITSIssueType(r.IssueType)
+}
+
+// GetPriority ports Rule.getPriority.
+func (r *PatternRule) GetPriority() int {
+	if r == nil {
+		return 0
+	}
+	return r.Priority
 }
 
 // SetDefaultTempOff ports Rule.setDefaultTempOff (defaultOff + defaultTempOff).

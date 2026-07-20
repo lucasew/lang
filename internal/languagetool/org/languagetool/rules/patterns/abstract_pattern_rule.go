@@ -26,6 +26,8 @@ type AbstractPatternRule struct {
 	IssueType string
 	// URL ports Rule.url from XML <url>.
 	URL string
+	// Priority ports Rule.priority from XML prio= (category < group < rule; 0 = unset/inherit).
+	Priority int
 	SuggestionsOutMsg       string
 	SourceFile              string
 	Filter                  RuleFilter

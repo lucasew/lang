@@ -126,6 +126,8 @@ type grammarCategory struct {
 	Type     string         `xml:"type,attr"`
 	// Default ports category default="off"|"on" (Java onByDefault).
 	Default  string         `xml:"default,attr"`
+	// Prio ports category prio="N".
+	Prio     string         `xml:"prio,attr"`
 	Tags     string         `xml:"tags,attr"`      // space-separated Tag names (e.g. picky)
 	ToneTags string         `xml:"tone_tags,attr"` // space-separated ToneTag names
 	Rules    []grammarRule  `xml:"rule"`
@@ -137,8 +139,13 @@ type grammarGroup struct {
 	Name     string        `xml:"name,attr"`
 	// Default ports rulegroup default="off"|"temp_off" (Java ruleGroupDefaultOff/TempOff).
 	Default  string        `xml:"default,attr"`
+	// Prio ports rulegroup prio="N".
+	Prio     string        `xml:"prio,attr"`
+	// Type ports rulegroup type= (Java ruleGroupIssueType).
+	Type     string        `xml:"type,attr"`
 	Tags     string        `xml:"tags,attr"`
 	ToneTags string        `xml:"tone_tags,attr"`
+	URL      string        `xml:"url"`
 	Rules    []grammarRule `xml:"rule"`
 }
 
@@ -146,6 +153,10 @@ type grammarRule struct {
 	ID           string          `xml:"id,attr"`
 	Name         string          `xml:"name,attr"`
 	Default      string          `xml:"default,attr"`
+	// Type ports rule type= (overrides group/category).
+	Type         string          `xml:"type,attr"`
+	// Prio ports rule prio="N".
+	Prio         string          `xml:"prio,attr"`
 	Tags         string          `xml:"tags,attr"`
 	ToneTags     string          `xml:"tone_tags,attr"`
 	GoalSpecific string          `xml:"is_goal_specific,attr"` // "yes" / "true"
@@ -220,20 +231,33 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 		}
 		catTones := parseToneTagsAttr(cat.ToneTags)
 		catTags := parseRuleTagsAttr(cat.Tags)
+		catPrio := parsePrioAttr(cat.Prio)
+		catType := strings.TrimSpace(cat.Type)
 		for _, xr := range cat.Rules {
-			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil, ""); err != nil {
+			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil, "", catPrio, 0, catType, ""); err != nil {
 				return err
 			}
 		}
 		for _, g := range cat.Groups {
 			groupTones := parseToneTagsAttr(g.ToneTags)
 			groupTags := parseRuleTagsAttr(g.Tags)
+			groupPrio := parsePrioAttr(g.Prio)
+			groupType := strings.TrimSpace(g.Type)
+			groupURL := strings.TrimSpace(g.URL)
 			for i, xr := range g.Rules {
 				if xr.ID == "" {
 					xr.ID = g.ID
 				}
-				if err := h.addRule(xr, cat.ID, catTones, groupTones, catTags, groupTags, g.Default); err != nil {
+				if err := h.addRule(xr, cat.ID, catTones, groupTones, catTags, groupTags, g.Default, catPrio, groupPrio, catType, groupType); err != nil {
 					return err
+				}
+				if len(h.LoadedPatternRules) > 0 {
+					// last pattern rule SubID / URL group inherit for group children
+					last := h.LoadedPatternRules[len(h.LoadedPatternRules)-1]
+					last.SubID = fmt.Sprintf("%d", i+1)
+					if last.URL == "" && groupURL != "" {
+						last.URL = groupURL
+					}
 				}
 				if len(h.XMLRuleHandler.Rules) > 0 {
 					h.XMLRuleHandler.Rules[len(h.XMLRuleHandler.Rules)-1].SubID = fmt.Sprintf("%d", i+1)
@@ -330,7 +354,7 @@ func resolveGoalSpecific(ruleAttr, groupAttr, catAttr string) bool {
 	return false
 }
 
-func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag, groupDefault string) error {
+func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag, groupDefault string, catPrio, groupPrio int, catType, groupType string) error {
 	if xr.ID == "" && !h.RelaxedMode {
 		return fmt.Errorf("rule without id in %s", h.SourceFile)
 	}
@@ -341,6 +365,9 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	goalSpecific := strings.EqualFold(xr.GoalSpecific, "yes") || strings.EqualFold(xr.GoalSpecific, "true")
 	// Java PatternRuleHandler: rulegroup default off/temp_off overrides rule-level default.
 	defaultOff, defaultTempOff := resolveRuleDefaultOff(xr.Default, groupDefault)
+	issueType := resolveIssueType(xr.Type, groupType, catType)
+	prio := resolvePriority(catPrio, groupPrio, parsePrioAttr(xr.Prio))
+	ruleURL := strings.TrimSpace(xr.URL)
 	if xr.Regexp != nil {
 		content := strings.TrimSpace(xr.Regexp.Content)
 		re, err := regexp.Compile(content)
@@ -363,6 +390,10 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 			rr.AbstractPatternRule.GoalSpecific = goalSpecific
 			rr.AbstractPatternRule.DefaultOff = defaultOff
 			rr.AbstractPatternRule.DefaultTempOff = defaultTempOff
+			rr.AbstractPatternRule.IssueType = issueType
+			rr.AbstractPatternRule.Priority = prio
+			rr.AbstractPatternRule.URL = ruleURL
+			rr.AbstractPatternRule.SourceFile = h.SourceFile
 		}
 		h.LoadedRegexRules = append(h.LoadedRegexRules, rr)
 		// also as abstract for listing
@@ -374,6 +405,9 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 		abs.GoalSpecific = goalSpecific
 		abs.DefaultOff = defaultOff
 		abs.DefaultTempOff = defaultTempOff
+		abs.IssueType = issueType
+		abs.Priority = prio
+		abs.URL = ruleURL
 		h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 		return nil
 	}
@@ -393,6 +427,10 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	pr.GoalSpecific = goalSpecific
 	pr.DefaultOff = defaultOff
 	pr.DefaultTempOff = defaultTempOff
+	pr.IssueType = issueType
+	pr.Priority = prio
+	pr.URL = ruleURL
+	pr.SourceFile = h.SourceFile
 	if len(tags) > 0 {
 		pr.SetTags(tags)
 	}
@@ -405,6 +443,9 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	abs.GoalSpecific = goalSpecific
 	abs.DefaultOff = defaultOff
 	abs.DefaultTempOff = defaultTempOff
+	abs.IssueType = issueType
+	abs.Priority = prio
+	abs.URL = ruleURL
 	h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 	_ = categoryID
 	return nil

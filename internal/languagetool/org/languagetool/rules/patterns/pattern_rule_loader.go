@@ -105,6 +105,8 @@ type xmlCategory struct {
 	Default string `xml:"default,attr"`
 	// Type ports category type="misspelling|style|…" → rule LocQualityIssueType when rule omits type.
 	Type string `xml:"type,attr"`
+	// Prio ports category prio="N" (Java prioCategoryAttribute; 0 = unset).
+	Prio string `xml:"prio,attr"`
 	Tags       string         `xml:"tags,attr"`
 	ToneTags   string         `xml:"tone_tags,attr"`
 	// GoalSpecific ports is_goal_specific on category (inherited when rule omits it).
@@ -120,6 +122,8 @@ type xmlRuleGroup struct {
 	Default string `xml:"default,attr"`
 	// Type ports rulegroup type="grammar|typographical|…" (Java ruleGroupIssueType).
 	Type string `xml:"type,attr"`
+	// Prio ports rulegroup prio="N" (Java prioRuleGroupAttribute; non-zero overrides category).
+	Prio string `xml:"prio,attr"`
 	Tags  string    `xml:"tags,attr"`
 	ToneTags string `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -136,6 +140,8 @@ type xmlRule struct {
 	Default string     `xml:"default,attr"`
 	// Type ports rule type="…" → LocQualityIssueType (overrides rulegroup/category).
 	Type string `xml:"type,attr"`
+	// Prio ports rule prio="N" (Java prioRuleAttribute; non-zero overrides group/category).
+	Prio string `xml:"prio,attr"`
 	Tags    string     `xml:"tags,attr"`
 	ToneTags string    `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -775,7 +781,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
 	idPrefix := strings.TrimSpace(root.IdPrefix)
-	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string) error {
+	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string, catPrio, groupPrio int) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -853,6 +859,8 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 				// Java: rule url else rulegroup url
 				r.URL = resolveRuleURL(xr.URL, groupURL)
 				r.SourceFile = sourceFile
+				// Java finalize: cat prio then group prio then rule prio (non-zero overwrites).
+				r.Priority = resolvePriority(catPrio, groupPrio, parsePrioAttr(xr.Prio))
 				if defaultOff {
 					r.DefaultOff = true
 				}
@@ -877,8 +885,9 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		// Java: onByDefault = !OFF.equals(attrs.getValue(DEFAULT))
 		catDefaultOff := strings.EqualFold(strings.TrimSpace(cat.Default), XMLOff)
 		catType := strings.TrimSpace(cat.Type)
+		catPrio := parsePrioAttr(cat.Prio)
 		for _, xr := range cat.Rules {
-			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile, catPrio, 0); err != nil {
 				return nil, err
 			}
 		}
@@ -893,13 +902,14 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 			groupTones := parseToneTagsAttr(g.ToneTags)
 			groupType := strings.TrimSpace(g.Type)
 			groupURL := strings.TrimSpace(g.URL)
+			groupPrio := parsePrioAttr(g.Prio)
 			for i, xr := range g.Rules {
 				id := xr.ID
 				if id == "" {
 					id = g.ID
 				}
 				start := len(out)
-				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType, groupType, groupURL, srcFile); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType, groupType, groupURL, srcFile, catPrio, groupPrio); err != nil {
 					return nil, err
 				}
 				// sub id 1-based per XML rule (shared by OR expansions of that rule)
@@ -919,11 +929,40 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, "", "", "", srcFile); err != nil {
+		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, "", "", "", srcFile, 0, 0); err != nil {
 			return nil, err
 		}
 	}
 	return out, nil
+}
+
+// parsePrioAttr ports Integer.parseInt on XML prio= (invalid/empty → 0).
+func parsePrioAttr(s string) int {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return 0
+	}
+	var n int
+	if _, err := fmt.Sscanf(s, "%d", &n); err != nil {
+		return 0
+	}
+	return n
+}
+
+// resolvePriority ports PatternRuleHandler finalize priority:
+// start 0; if cat≠0 use cat; if group≠0 use group; if rule≠0 use rule.
+func resolvePriority(catPrio, groupPrio, rulePrio int) int {
+	prio := 0
+	if catPrio != 0 {
+		prio = catPrio
+	}
+	if groupPrio != 0 {
+		prio = groupPrio
+	}
+	if rulePrio != 0 {
+		prio = rulePrio
+	}
+	return prio
 }
 
 // resolveIssueType ports PatternRuleHandler type inheritance:

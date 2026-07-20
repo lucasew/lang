@@ -64,6 +64,62 @@ func TestPatternRuleLoader_DefaultTempOff(t *testing.T) {
 	require.False(t, byID["O1"].DefaultTempOff)
 }
 
+// Java prio= inheritance: category then group then rule (non-zero overwrites).
+// Twin of grammar-withPrio.xml expectations.
+func TestPatternRuleLoader_PrioInheritance(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category id="CAT-PRIO-5" name="CAT-PRIO-5" prio="5">
+    <rulegroup id="CAT-PRIO-5-RG-PRIO-10" name="g" prio="10">
+      <rule id="CAT-PRIO-5-RG-PRIO-10-R-PRIO-15" prio="15">
+        <pattern><token>fake1</token></pattern>
+        <message>msg1</message>
+      </rule>
+      <rule id="CAT-PRIO-5-RG-PRIO-10-R-PRIO-0">
+        <pattern><token>fake1</token></pattern>
+        <message>msg3</message>
+      </rule>
+    </rulegroup>
+    <rulegroup id="CAT-PRIO-5-RG-PRIO-0" name="g0">
+      <rule id="CAT-PRIO-5-RG-PRIO-0-R-PRIO-0">
+        <pattern><token>fake1</token></pattern>
+        <message>msg3</message>
+      </rule>
+    </rulegroup>
+  </category>
+  <category id="CAT-PRIO-0" name="CAT-PRIO-0">
+    <rule id="CAT-PRIO-0-R-PRIO-0" name="n">
+      <pattern><token>fake1</token></pattern>
+      <message>msg1</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "grammar-withPrio.xml", "xx")
+	require.NoError(t, err)
+	byID := map[string]*AbstractPatternRule{}
+	for _, ar := range ars {
+		byID[ar.ID] = ar
+	}
+	require.Equal(t, 15, byID["CAT-PRIO-5-RG-PRIO-10-R-PRIO-15"].Priority)
+	require.Equal(t, 10, byID["CAT-PRIO-5-RG-PRIO-10-R-PRIO-0"].Priority)
+	require.Equal(t, 5, byID["CAT-PRIO-5-RG-PRIO-0-R-PRIO-0"].Priority)
+	require.Equal(t, 0, byID["CAT-PRIO-0-R-PRIO-0"].Priority)
+
+	// Register → LocalMatch.Priority for CleanOverlapping
+	lt := languagetool.NewJLanguageTool("xx")
+	_, err = RegisterGrammarXML(lt, xml, "grammar-withPrio.xml", "xx")
+	require.NoError(t, err)
+	// Enable only the prio-15 rule for a single match
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		if id != "CAT-PRIO-5-RG-PRIO-10-R-PRIO-15" {
+			lt.DisableRule(id)
+		}
+	}
+	ms := lt.Check("fake1")
+	require.NotEmpty(t, ms)
+	require.Equal(t, 15, ms[0].Priority)
+}
+
 // Java type inheritance: rule > rulegroup > category; url: rule else rulegroup.
 func TestPatternRuleLoader_TypeAndURLInheritance(t *testing.T) {
 	xml := `<?xml version="1.0"?>

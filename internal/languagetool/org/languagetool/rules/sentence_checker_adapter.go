@@ -112,6 +112,12 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 		if g, ok := m.Rule.(interface{ EstimateContextForSureMatch() int }); ok {
 			lm.EstimateContextForSureMatch = g.EstimateContextForSureMatch()
 		}
+		// Java Rule.getPriority (XML prio=); applyRulePriorities may still overlay by id.
+		if g, ok := m.Rule.(interface{ GetPriority() int }); ok {
+			if p := g.GetPriority(); p != 0 {
+				lm.Priority = p
+			}
+		}
 		// Tone tags + goalSpecific for isRuleActiveForLevelAndToneTags.
 		if g, ok := m.Rule.(interface {
 			GetToneTags() []languagetool.ToneTag
