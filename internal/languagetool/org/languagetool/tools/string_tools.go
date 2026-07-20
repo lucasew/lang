@@ -6,6 +6,8 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // --- StringTools ports (org.languagetool.tools.StringTools) ---
@@ -91,6 +93,37 @@ func UppercaseFirstChar(str string) string {
 
 func LowercaseFirstChar(str string) string {
 	return changeFirstCharCase(str, false)
+}
+
+// ConvertToTitleCaseIteratingChars ports StringTools.convertToTitleCaseIteratingChars.
+// Title-cases the first letter of each space- or hyphen-separated segment; lowercases the rest.
+func ConvertToTitleCaseIteratingChars(text string) string {
+	if text == "" {
+		return text
+	}
+	var b strings.Builder
+	b.Grow(len(text))
+	convertNext := true
+	for _, ch := range text {
+		// Java Character.isSpaceChar (Zs) or '-'
+		if unicode.Is(unicode.Zs, ch) || ch == '-' {
+			convertNext = true
+			b.WriteRune(ch)
+			continue
+		}
+		if convertNext {
+			b.WriteRune(unicode.ToTitle(ch))
+			convertNext = false
+		} else {
+			b.WriteRune(unicode.ToLower(ch))
+		}
+	}
+	return b.String()
+}
+
+// NormalizeNFC ports StringTools.normalizeNFC.
+func NormalizeNFC(str string) string {
+	return norm.NFC.String(str)
 }
 
 // PreserveCase ports StringTools.preserveCase(inputString, modelString).

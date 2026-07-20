@@ -64,6 +64,12 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	case "es":
 		// Java SpanishTagger: exact + all-upper title + mente/auto prefixes.
 		tw = spanishTaggerTagWord(wordTagger)
+	case "fr":
+		// Java FrenchTagger: capitalized/all-upper/hyphen-title + oe + prefixes.
+		tw = frenchTaggerTagWord(wordTagger)
+	case "ca":
+		// Java CatalanTagger: all-upper + ment/auto/ela + Valencian POS filter (non-val strips 0*).
+		tw = catalanTaggerTagWord(wordTagger, false)
 	default:
 		// Java BaseTagger: tagLowercaseWithUppercase=true by default (most language taggers).
 		base := tagging.NewBaseTagger(wordTagger, dictPath, langBase, true)
@@ -192,6 +198,283 @@ func spanishTaggerTagWord(wt tagging.WordTagger) func(token string) []TokenTag {
 		}
 		if len(out) == 0 && tools.IsEmoji(token) {
 			add([]TokenTag{{POS: "_emoji_", Lemma: "_emoji_"}})
+		}
+		return out
+	}
+}
+
+// frenchTaggerTagWord ports Java FrenchTagger.tagWord (+ oe fallback) for TagWord inject.
+func frenchTaggerTagWord(wt tagging.WordTagger) func(token string) []TokenTag {
+	if wt == nil {
+		return nil
+	}
+	lookup := func(w string) []TokenTag {
+		tws := wt.Tag(w)
+		if len(tws) == 0 {
+			return nil
+		}
+		out := make([]TokenTag, 0, len(tws))
+		for _, tw := range tws {
+			out = append(out, TokenTag{POS: tw.PosTag, Lemma: tw.Lemma})
+		}
+		return out
+	}
+	verbRE := regexp.MustCompile(`^V .+$`)
+	prefVerbs := regexp.MustCompile(`(?i)^(auto|auto-|re-|sur-)([^-].*[aeiouêàéèíòóïü].+[aeiouêàéèíòóïü].*)$`)
+	nounAdj := regexp.MustCompile(`^[NJ] .+|V ppa.*$`)
+	prefNounAdjHyphen := regexp.MustCompile(`(?i)^(post-|sur-|mini-|méga-|demi-|péri-|anti-|géo-|nord-|sud-|néo-|méga-|ultra-|pro-|inter-|micro-|macro-|sous-|haut-|auto-|ré-|pré-|super-|vice-|hyper-|proto-|grand-|pseudo-)(.+)$`)
+	prefNounAdj := regexp.MustCompile(`(?i)^(mini|méga)([^-].*[aeiouêàéèíòóïü].+[aeiouêàéèíòóïü].*)$`)
+	ambig := map[string]struct{}{
+		"-Le": {}, "-Les": {}, "-La": {}, "-Elle": {}, "-Elles": {}, "-On": {},
+		"-Tu": {}, "-Vous": {}, "-Il": {}, "-Ils": {}, "-Ce": {},
+	}
+
+	return func(token string) []TokenTag {
+		if token == "" {
+			return nil
+		}
+		w := token
+		if len(w) > 1 && strings.Contains(w, "’") {
+			w = strings.ReplaceAll(w, "’", "'")
+		}
+		tagOne := func(word, originalWord string) []TokenTag {
+			lower := strings.ToLower(word)
+			isStartUpper := tools.IsCapitalizedWord(word)
+			isAllUpper := tools.IsAllUppercase(word)
+			_, isAmbig := ambig[originalWord]
+			isHyphenTitle := !isAmbig && strings.Contains(originalWord, "-") &&
+				originalWord == tools.ConvertToTitleCaseIteratingChars(lower)
+			var out []TokenTag
+			seen := map[string]struct{}{}
+			add := func(tags []TokenTag) {
+				for _, t := range tags {
+					key := t.POS + "\x00" + t.Lemma
+					if _, ok := seen[key]; ok {
+						continue
+					}
+					seen[key] = struct{}{}
+					out = append(out, t)
+				}
+			}
+			add(lookup(word))
+			if isAllUpper || isStartUpper || isHyphenTitle {
+				add(lookup(lower))
+			}
+			if len(out) == 0 && isAllUpper {
+				add(lookup(tools.ConvertToTitleCaseIteratingChars(lower)))
+			}
+			if len(out) == 0 {
+				if m := prefVerbs.FindStringSubmatch(word); m != nil {
+					for _, tw := range lookup(strings.ToLower(m[2])) {
+						if tw.POS != "" && verbRE.MatchString(tw.POS) {
+							add([]TokenTag{{POS: tw.POS, Lemma: strings.ToLower(m[1]) + tw.Lemma}})
+						}
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := prefNounAdj.FindStringSubmatch(word); m != nil {
+					for _, tw := range lookup(strings.ToLower(m[2])) {
+						if tw.POS != "" && nounAdj.MatchString(tw.POS) {
+							add([]TokenTag{{POS: tw.POS, Lemma: strings.ToLower(m[1]) + tw.Lemma}})
+						}
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := prefNounAdjHyphen.FindStringSubmatch(word); m != nil {
+					possible := strings.ToLower(m[2])
+					for _, tw := range lookup(possible) {
+						if tw.POS != "" && nounAdj.MatchString(tw.POS) {
+							add([]TokenTag{{POS: tw.POS, Lemma: strings.ToLower(m[1]) + tw.Lemma}})
+						}
+					}
+				}
+			}
+			return out
+		}
+		out := tagOne(w, w)
+		if len(out) == 0 && strings.Contains(strings.ToLower(w), "oe") {
+			alt := strings.ReplaceAll(strings.ReplaceAll(w, "oe", "œ"), "OE", "Œ")
+			out = tagOne(alt, w)
+		}
+		if len(out) == 0 && tools.IsEmoji(token) {
+			return []TokenTag{{POS: "_emoji_", Lemma: "_emoji_"}}
+		}
+		return out
+	}
+}
+
+// catalanTaggerTagWord ports Java CatalanTagger.tag case + additionalTags for TagWord inject.
+// isValencian: strip leading '0' from POS (val) vs drop 0* tags (central).
+func catalanTaggerTagWord(wt tagging.WordTagger, isValencian bool) func(token string) []TokenTag {
+	if wt == nil {
+		return nil
+	}
+	lookup := func(w string) []TokenTag {
+		tws := wt.Tag(w)
+		if len(tws) == 0 {
+			return nil
+		}
+		out := make([]TokenTag, 0, len(tws))
+		for _, tw := range tws {
+			out = append(out, TokenTag{POS: tw.PosTag, Lemma: tw.Lemma})
+		}
+		return out
+	}
+	adjPartFS := regexp.MustCompile(`^VMP00SF.|A[QO].[FC]S.$`)
+	verbRE := regexp.MustCompile(`^V.+$`)
+	prefVerbs := regexp.MustCompile(`(?i)^(auto)(.*[aeiouàéèíòóïü].+[aeiouàéèíòóïü].*)$`)
+	adjCompost := regexp.MustCompile(`(?i)^(.*)o-(.*.*)$`)
+	tresAdj := regexp.MustCompile(`(?i)^(.*)o-(.*)o-(.*.*)$`)
+	altresPref := map[string]struct{}{
+		"greco": {}, "sino": {}, "italo": {}, "franco": {}, "gal·lo": {}, "luso": {},
+		"germano": {}, "hispano": {}, "anglo": {}, "àrabo": {}, "austro": {}, "belgo": {},
+	}
+	noAltresPref := map[string]struct{}{
+		"grego": {}, "xineso": {}, "italiano": {}, "franceso": {},
+		"portugueso": {}, "angleso": {}, "espanyolo": {}, "alemanyo": {}, "arabo": {}, "austríaco": {}, "bèlgico": {},
+	}
+	allUpperExc := map[string]struct{}{"ARNAU": {}, "CRISTIAN": {}, "TOMÀS": {}}
+	wordformHasPostag := func(wordform, postag string) bool {
+		for _, tw := range lookup(wordform) {
+			if tw.POS == postag {
+				return true
+			}
+		}
+		return false
+	}
+	isValidAdjForm := func(stem string) bool {
+		if _, bad := noAltresPref[stem+"o"]; bad {
+			return false
+		}
+		if wordformHasPostag(stem+"a", "AQ0FS0") {
+			return true
+		}
+		_, ok := altresPref[stem+"o"]
+		return ok
+	}
+	filterPOS := func(tags []TokenTag) []TokenTag {
+		if len(tags) == 0 {
+			return tags
+		}
+		var out []TokenTag
+		for _, t := range tags {
+			if t.POS != "" && t.POS[0] == '0' {
+				if isValencian {
+					out = append(out, TokenTag{POS: t.POS[1:], Lemma: t.Lemma})
+				}
+				// non-valencian: drop 0* tags
+				continue
+			}
+			out = append(out, t)
+		}
+		return out
+	}
+
+	return func(token string) []TokenTag {
+		if token == "" {
+			return nil
+		}
+		w := token
+		if len(w) > 1 && strings.Contains(w, "’") {
+			w = strings.ReplaceAll(w, "’", "'")
+		}
+		w = tools.NormalizeNFC(w)
+		lower := strings.ToLower(w)
+		isLower := w == lower
+		isMixed := tools.IsMixedCase(w)
+		isAllUpper := tools.IsAllUppercase(w)
+		var out []TokenTag
+		seen := map[string]struct{}{}
+		add := func(tags []TokenTag) {
+			for _, t := range tags {
+				key := t.POS + "\x00" + t.Lemma
+				if _, ok := seen[key]; ok {
+					continue
+				}
+				seen[key] = struct{}{}
+				out = append(out, t)
+			}
+		}
+		add(lookup(w))
+		if !isLower && !isMixed {
+			add(lookup(lower))
+		}
+		_, exc := allUpperExc[w]
+		if (len(out) == 0 || exc) && isAllUpper {
+			add(lookup(tools.UppercaseFirstChar(lower)))
+		}
+		if len(out) == 0 && !isMixed {
+			if strings.HasSuffix(lower, "ment") {
+				possibleAdj := strings.TrimSuffix(lower, "ment")
+				for _, tw := range lookup(possibleAdj) {
+					if tw.POS != "" && adjPartFS.MatchString(tw.POS) {
+						add([]TokenTag{{POS: "RG", Lemma: lower}})
+						break
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := prefVerbs.FindStringSubmatch(w); m != nil {
+					possibleVerb := tools.NormalizeNFC(strings.ToLower(m[2]))
+					for _, tw := range lookup(possibleVerb) {
+						if tw.Lemma == "nòmer" {
+							continue
+						}
+						if tw.POS != "" && verbRE.MatchString(tw.POS) {
+							add([]TokenTag{{POS: tw.POS, Lemma: strings.ToLower(m[1]) + tw.Lemma}})
+						}
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := adjCompost.FindStringSubmatch(w); m != nil {
+					adj1 := strings.ToLower(m[1])
+					if isValidAdjForm(adj1) {
+						adj2 := strings.ToLower(m[2])
+						for _, tw := range lookup(adj2) {
+							if tw.POS != "" && strings.HasPrefix(tw.POS, "A") {
+								add([]TokenTag{{POS: tw.POS, Lemma: adj1 + "o-" + tw.Lemma}})
+								break
+							}
+						}
+					}
+				}
+			}
+			if len(out) == 0 {
+				if m := tresAdj.FindStringSubmatch(w); m != nil {
+					adj1, adj2 := strings.ToLower(m[1]), strings.ToLower(m[2])
+					if isValidAdjForm(adj1) && isValidAdjForm(adj2) {
+						adj3 := strings.ToLower(m[3])
+						for _, tw := range lookup(adj3) {
+							if tw.POS != "" && strings.HasPrefix(tw.POS, "A") {
+								add([]TokenTag{{POS: tw.POS, Lemma: adj1 + "o-" + adj2 + "o-" + tw.Lemma}})
+								break
+							}
+						}
+					}
+				}
+			}
+			if len(out) == 0 && (strings.Contains(w, "\u0140") || strings.Contains(w, "\u013f")) {
+				possible := strings.ReplaceAll(lower, "\u0140", "l·")
+				add(lookup(possible))
+			}
+			if len(out) == 0 && isValencian && strings.HasSuffix(lower, "iste") {
+				possible := strings.TrimSuffix(lower, "iste") + "ista"
+				for _, tw := range lookup(possible) {
+					switch tw.POS {
+					case "NCCS000":
+						add([]TokenTag{{POS: "NCMS000", Lemma: possible}})
+					case "AQ0CS0":
+						add([]TokenTag{{POS: "AQ0MS0", Lemma: possible}})
+					}
+				}
+			}
+		}
+		out = filterPOS(out)
+		if len(out) == 0 && tools.IsEmoji(token) {
+			return []TokenTag{{POS: "_emoji_", Lemma: "_emoji_"}}
 		}
 		return out
 	}

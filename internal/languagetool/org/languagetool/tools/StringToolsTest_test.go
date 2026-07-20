@@ -249,3 +249,17 @@ func TestStringTools_TitlecaseGlobal(t *testing.T) {
 	require.Equal(t, "Fond du Lac", TitlecaseGlobal("fond du lac"))
 	require.Equal(t, "El Niño de las Islas", TitlecaseGlobal("el niño de Las islas"))
 }
+
+func TestStringTools_ConvertToTitleCaseIteratingChars(t *testing.T) {
+	require.Equal(t, "", ConvertToTitleCaseIteratingChars(""))
+	require.Equal(t, "France", ConvertToTitleCaseIteratingChars("france"))
+	require.Equal(t, "Saint-Étienne", ConvertToTitleCaseIteratingChars("saint-étienne"))
+	require.Equal(t, "A-B", ConvertToTitleCaseIteratingChars("a-b"))
+}
+
+func TestStringTools_NormalizeNFC(t *testing.T) {
+	// é as e + combining acute → precomposed
+	decomposed := "e\u0301"
+	require.Equal(t, "é", NormalizeNFC(decomposed))
+	require.Equal(t, "café", NormalizeNFC("café"))
+}
