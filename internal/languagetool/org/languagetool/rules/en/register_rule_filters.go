@@ -47,7 +47,8 @@ func init() {
 	c.Register("org.languagetool.rules.en.NoDisambiguationEnglishPartialPosTagFilter", func() patterns.RuleFilter {
 		return NewNoDisambiguationEnglishPartialPosTagFilter(nil)
 	})
-	// EnglishPartialPosTagFilter needs tagger+disambiguator; fail-closed until both are wired.
+	// EnglishPartialPosTagFilter: tagger+disambiguator when WireEnglishFilterTagger +
+	// WireEnglishFilterDisambiguator have run; otherwise fail-closed (no invent).
 	c.Register("org.languagetool.rules.en.EnglishPartialPosTagFilter", func() patterns.RuleFilter {
 		return NewEnglishPartialPosTagFilter(nil)
 	})

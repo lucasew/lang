@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ca"
@@ -65,6 +66,9 @@ func RegisterEnglishHybridDisambiguator(lt *languagetool.JLanguageTool, opts *Co
 		return false
 	}
 	lt.Disambiguator = hybrid
+	// Java EnglishPartialPosTagFilter uses Languages.getLanguageForShortCode("en")
+	// tagger+disambiguator process-wide (same hybrid instance language modules share).
+	en.WireEnglishFilterDisambiguator(hybrid)
 	return true
 }
 

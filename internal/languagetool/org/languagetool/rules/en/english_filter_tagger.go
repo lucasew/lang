@@ -78,10 +78,12 @@ func filterTagWordToATR(word string, tw func(string) []languagetool.TokenTag) *l
 }
 
 // ClearEnglishFilterTagger clears the process-wide filter tagger (tests).
+// Also clears the filter disambiguator so PartialPosTagFilter probes fail-closed.
 func ClearEnglishFilterTagger() {
 	filterTagMu.Lock()
 	filterTagWord = nil
 	filterTagMu.Unlock()
+	ClearEnglishFilterDisambiguator()
 	rules.SetDefaultEnglishWordTagger(nil)
 	rules.SetDefaultCheckPostagsTagger(nil)
 }
