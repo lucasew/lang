@@ -61,7 +61,10 @@ func TestEnglishSynthesizer_SynthesizeStringString(t *testing.T) {
 	require.NoError(t, err)
 	require.ElementsMatch(t, []string{"tested", "testing"}, got)
 
-	// determiners
+	// determiners — wire SuggestAorAn (Java AvsAnRule; tests inject when rules/en not imported)
+	injectSuggestAorAn(synth)
+
+	// determiners (Java EnglishSynthesizerTest)
 	got, err = synth.Synthesize(dummyToken("university", "university"), AddDeterminer)
 	require.NoError(t, err)
 	require.Equal(t, []string{"a university", "the university"}, got)
@@ -73,6 +76,23 @@ func TestEnglishSynthesizer_SynthesizeStringString(t *testing.T) {
 	got, err = synth.Synthesize(dummyToken("hour", "hour"), AddIndDeterminer)
 	require.NoError(t, err)
 	require.Equal(t, []string{"an hour"}, got)
+
+	// Java: NN\\+INDT with lemma hour, surface hours
+	got, err = synth.SynthesizeRE(dummyToken("hours", "hour"), `NN\+INDT`, true)
+	require.NoError(t, err)
+	// Manual has no NN for hour — empty without dict; only test path when form exists
+	_ = got
+	// With manual NN form:
+	manual2, err := synthesis.NewManualSynthesizer(strings.NewReader("hour\thour\tNN\n"))
+	require.NoError(t, err)
+	s2 := NewEnglishSynthesizer(manual2)
+	injectSuggestAorAn(s2)
+	got, err = s2.SynthesizeRE(dummyToken("hours", "hour"), `NN\+INDT`, true)
+	require.NoError(t, err)
+	require.Equal(t, []string{"an hour"}, got)
+	got, err = s2.SynthesizeRE(dummyToken("hours", "hour"), `NN\+DT`, true)
+	require.NoError(t, err)
+	require.Equal(t, []string{"the hour"}, got)
 
 	// removed Christmas VBZ
 	got, err = synth.Synthesize(dummyToken("Christmas", "Christmas"), "VBZ")

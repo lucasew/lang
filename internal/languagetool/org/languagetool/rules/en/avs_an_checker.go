@@ -5,11 +5,15 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	synthen "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 )
 
 func init() {
 	// Wire faithful checker for languagetool.SimpleAvsAnChecker / demos.
 	languagetool.PreferredAvsAnChecker = AvsAnSentenceChecker()
+	// EnglishSynthesizer +DT/+INDT use AvsAnRule.suggestAorAn (no soft phonetic invent).
+	avs := NewAvsAnRule(nil)
+	synthen.DefaultSuggestAorAn = avs.SuggestAorAn
 }
 
 // AvsAnSentenceChecker returns a SentenceChecker using the faithful AvsAnRule.

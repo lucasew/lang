@@ -1,10 +1,12 @@
 package en
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 const (
@@ -12,88 +14,217 @@ const (
 	EnglishTagsFile      = "/en/english_tags.txt"
 	EnglishSorFile       = "/en/en.sor"
 
-	// Special synthesizer tags.
+	// Special synthesizer tags (Java EnglishSynthesizer.ADD_*).
 	AddDeterminer    = "+DT"
 	AddIndDeterminer = "+INDT"
 )
 
+// Java EnglishSynthesizer.exceptions (ne'er, e'er, …).
+var englishSynthExceptions = map[string]struct{}{
+	"ne'er": {}, "e'er": {}, "o'er": {}, "ol'": {}, "ma'am": {}, "n't": {}, "informations": {},
+}
+
+// DefaultSuggestAorAn is set by package rules/en to AvsAnRule.SuggestAorAn
+// (avoids synthesis/en → rules/en import cycle). When nil, SuggestAorAn fails
+// closed to the bare word (no soft phonetic invent).
+var DefaultSuggestAorAn func(word string) string
+
 // EnglishSynthesizer ports org.languagetool.synthesis.en.EnglishSynthesizer.
 type EnglishSynthesizer struct {
 	*synthesis.BaseSynthesizer
-	// AorAn chooses "a"/"an" for +INDT/+DT (pluggable).
-	AorAn func(word string) string
+	// SuggestAorAn ports AvsAnRule.suggestAorAn ("a word" / "an word" / word).
+	// Nil → DefaultSuggestAorAn; both nil → bare word (fail-closed).
+	SuggestAorAn func(word string) string
 }
 
 func NewEnglishSynthesizer(manual *synthesis.ManualSynthesizer) *EnglishSynthesizer {
 	base := synthesis.NewBaseSynthesizer("en", manual)
+	// Java: super(SOR_FILE_NAME, RESOURCE_FILENAME, TAGS_FILE_NAME, "en")
+	base.SorFileName = EnglishSorFile
 	base.ResourceFileName = EnglishSynthResource
 	base.TagFileName = EnglishTagsFile
-	return &EnglishSynthesizer{
-		BaseSynthesizer: base,
-		AorAn: defaultAorAn,
-	}
+	return &EnglishSynthesizer{BaseSynthesizer: base}
 }
 
-// defaultAorAn is a lightweight a/an chooser for +DT/+INDT (not full phonetics).
-func defaultAorAn(word string) string {
-	w := strings.ToLower(strings.TrimSpace(word))
-	if w == "" {
-		return "a"
+// INSTANCE ports EnglishSynthesizer.INSTANCE.
+var INSTANCE = NewEnglishSynthesizer(nil)
+
+func (s *EnglishSynthesizer) suggestAorAn(word string) string {
+	if s != nil && s.SuggestAorAn != nil {
+		return s.SuggestAorAn(word)
 	}
-	// silent-h exceptions
-	for _, p := range []string{"hour", "honest", "heir", "honour", "honor"} {
-		if strings.HasPrefix(w, p) {
-			return "an"
+	if DefaultSuggestAorAn != nil {
+		return DefaultSuggestAorAn(word)
+	}
+	// Fail closed without AvsAnRule wiring (no soft invent lexicon).
+	return word
+}
+
+// IsException ports EnglishSynthesizer.isException: leading apostrophe or exceptions list.
+func (s *EnglishSynthesizer) IsException(w string) bool {
+	if strings.HasPrefix(w, "'") {
+		return true
+	}
+	_, ok := englishSynthExceptions[w]
+	return ok
+}
+
+func (s *EnglishSynthesizer) removeExceptions(words []string) []string {
+	if len(words) == 0 {
+		return words
+	}
+	out := make([]string, 0, len(words))
+	for _, w := range words {
+		if !s.IsException(w) {
+			out = append(out, w)
 		}
 	}
-	// "university", "user", "European" use /ju/ → "a"
-	if w[0] == 'u' && len(w) > 1 {
-		// "umbrella" still "an"
-		if strings.HasPrefix(w, "un") && !strings.HasPrefix(w, "uni") {
-			return "an"
-		}
-		if strings.HasPrefix(w, "umb") || strings.HasPrefix(w, "ump") {
-			return "an"
-		}
-		return "a"
+	return out
+}
+
+// Synthesize ports EnglishSynthesizer.synthesize(token, posTag).
+func (s *EnglishSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+	if token == nil {
+		return nil, nil
 	}
-	switch w[0] {
-	case 'a', 'e', 'i', 'o':
-		return "an"
+	if strings.HasPrefix(posTag, synthesis.SpellNumberTag) {
+		return s.BaseSynthesizer.Synthesize(token, posTag)
+	}
+	// Java uses token.getToken() (surface), not lemma, for suggestAorAn / "the …".
+	surface := token.GetToken()
+	aOrAn := s.suggestAorAn(surface)
+	switch posTag {
+	case AddDeterminer:
+		// { aOrAn, "the " + lowercaseFirstCharIfCapitalized(token) }
+		return []string{aOrAn, "the " + tools.LowercaseFirstCharIfCapitalized(surface)}, nil
+	case AddIndDeterminer:
+		return []string{aOrAn}, nil
 	default:
-		return "a"
+		forms, err := s.BaseSynthesizer.Synthesize(token, posTag)
+		if err != nil {
+			return nil, err
+		}
+		return s.removeExceptions(forms), nil
 	}
 }
 
-// SynthesizeRE extends base with +DT / +INDT special tags.
+// SynthesizeRE ports EnglishSynthesizer.synthesize(token, posTag, posTagRegExp)
+// including regexp tags ending with \\+INDT or \\+DT.
 func (s *EnglishSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, posTag string, posTagRegExp bool) ([]string, error) {
 	if token == nil {
 		return nil, nil
 	}
-	word := token.GetToken()
-	if lemma := token.GetLemma(); lemma != nil && *lemma != "" {
-		word = *lemma
+	if strings.HasPrefix(posTag, synthesis.SpellNumberTag) {
+		return s.Synthesize(token, posTag)
 	}
-	switch posTag {
-	case AddDeterminer:
-		art := "a"
-		if s.AorAn != nil {
-			art = s.AorAn(word)
-		}
-		return []string{art + " " + word, "the " + word}, nil
-	case AddIndDeterminer:
-		art := "a"
-		if s.AorAn != nil {
-			art = s.AorAn(word)
-		}
-		return []string{art + " " + word}, nil
-	default:
-		return s.BaseSynthesizer.SynthesizeRE(token, posTag, posTagRegExp)
+	if !posTagRegExp {
+		return s.removeExceptionsFromSynth(token, posTag)
 	}
+	myPosTag := posTag
+	det := ""
+	if strings.HasSuffix(posTag, AddIndDeterminer) {
+		// Java: indexOf(+INDT) - "\\".length()  (pattern is …\\+INDT)
+		idx := strings.Index(myPosTag, AddIndDeterminer)
+		if idx >= 1 && myPosTag[idx-1] == '\\' {
+			myPosTag = myPosTag[:idx-1]
+		} else if idx >= 0 {
+			myPosTag = myPosTag[:idx]
+		}
+		lemma := ""
+		if token.GetLemma() != nil {
+			lemma = *token.GetLemma()
+		}
+		full := s.suggestAorAn(lemma)
+		// det = article + space only (substring to first space inclusive)
+		if sp := strings.IndexByte(full, ' '); sp >= 0 {
+			det = full[:sp+1]
+		}
+	} else if strings.HasSuffix(posTag, AddDeterminer) {
+		idx := strings.Index(myPosTag, AddDeterminer)
+		if idx >= 1 && myPosTag[idx-1] == '\\' {
+			myPosTag = myPosTag[:idx-1]
+		} else if idx >= 0 {
+			myPosTag = myPosTag[:idx]
+		}
+		det = "the "
+	}
+
+	re, err := regexp.Compile("^(?:" + myPosTag + ")$")
+	if err != nil {
+		return nil, err
+	}
+	lemma := ""
+	if token.GetLemma() != nil {
+		lemma = *token.GetLemma()
+	}
+	if lemma == "" {
+		return s.removeExceptions(nil), nil
+	}
+	var results []string
+	for _, tag := range s.possibleTags() {
+		if re.MatchString(tag) {
+			for _, form := range s.lookupLemmaTag(lemma, tag) {
+				results = append(results, det+form)
+			}
+		}
+	}
+	return s.removeExceptions(results), nil
 }
 
-func (s *EnglishSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-	return s.SynthesizeRE(token, posTag, false)
+func (s *EnglishSynthesizer) removeExceptionsFromSynth(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+	forms, err := s.Synthesize(token, posTag)
+	if err != nil {
+		return nil, err
+	}
+	// Synthesize already removeExceptions for non-DT paths; DT paths have no exceptions.
+	return forms, nil
+}
+
+func (s *EnglishSynthesizer) possibleTags() []string {
+	if s == nil || s.BaseSynthesizer == nil {
+		return nil
+	}
+	if len(s.PossibleTags) > 0 {
+		return s.PossibleTags
+	}
+	if s.Manual != nil {
+		var tags []string
+		for t := range s.Manual.GetPossibleTags() {
+			tags = append(tags, t)
+		}
+		return tags
+	}
+	return nil
+}
+
+func (s *EnglishSynthesizer) lookupLemmaTag(lemma, posTag string) []string {
+	if s == nil || s.BaseSynthesizer == nil || lemma == "" {
+		return nil
+	}
+	var out []string
+	if s.Lookup != nil {
+		out = append(out, s.Lookup(lemma, posTag)...)
+	}
+	if s.Manual != nil {
+		out = append(out, s.Manual.Lookup(lemma, posTag)...)
+	}
+	if s.Removal != nil {
+		filtered := out[:0]
+		for _, f := range out {
+			removed := false
+			for _, r := range s.Removal.Lookup(lemma, posTag) {
+				if r == f {
+					removed = true
+					break
+				}
+			}
+			if !removed {
+				filtered = append(filtered, f)
+			}
+		}
+		out = filtered
+	}
+	return out
 }
 
 var _ synthesis.Synthesizer = (*EnglishSynthesizer)(nil)
