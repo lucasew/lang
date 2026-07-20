@@ -22,6 +22,7 @@ var reMatchTag = regexp.MustCompile(`(?is)<match\b([^>]*)(?:/>|>(.*?)</match>)`)
 //  2. rewrite <match no="N" …/> → \u0001\N + Match list (XMLRuleHandler.setMatchElement)
 //  3. addLegacyMatches for bare \N (inMessageOnly)
 //  4. strip SOH markers left in the string
+//
 // Returns cleaned message text and ordered SuggestionMatches for formatMatches.
 func ProcessRuleMessage(raw string) (string, []*Match) {
 	if raw == "" {
@@ -219,6 +220,12 @@ func (c PhraseMatchContext) phraseLen(i int) int {
 // suggestionMatches ordered per backref occurrence (addLegacyMatches).
 // Uses LanguageSynthesizer(langCode) when registered; otherwise surface path.
 // phraseCtx is optional (omit or zero = no phrase list).
+//
+// Control flow matches Java bug-for-bug, including:
+//   - StringTools.isPositiveNumber for the first digit after '\'
+//   - numbersToMatches reuse when matchCounter exceeds suggestionMatches size
+//   - bare-path String.replace of all "\\N" in the unprocessed suffix
+//   - multi-synthesis not advancing errorMessageProcessed (Java TODO)
 func FormatMatches(
 	tokenReadings []*languagetool.AnalyzedTokenReadings,
 	positions []int,
@@ -238,18 +245,32 @@ func FormatMatches(
 	errorMessage := errorMsg
 	errorMessageProcessed := 0
 	matchCounter := 0
+	// Local working list — Java mutates suggestionMatches for reuse (FIXME branch).
+	sm := suggestionMatches
+	// numbersToMatches[j] = matchCounter index used when pattern element j was first resolved.
+	numbersToMatches := make([]int, len(errorMsg))
+	if len(numbersToMatches) == 0 {
+		numbersToMatches = make([]int, 1)
+	}
 
+	// Java: errMarker = indexOf('\\', processed); numberFollows = isPositiveNumber(next)
 	for {
 		backslashPos := -1
 		for i := errorMessageProcessed; i < len(errorMessage); i++ {
-			if errorMessage[i] == '\\' && i+1 < len(errorMessage) && unicode.IsDigit(rune(errorMessage[i+1])) {
-				backslashPos = i
-				break
+			if errorMessage[i] != '\\' || i+1 >= len(errorMessage) {
+				continue
 			}
+			// First digit after \ must be isPositiveNumber (not '0').
+			if !tools.IsPositiveNumber(rune(errorMessage[i+1])) {
+				continue
+			}
+			backslashPos = i
+			break
 		}
 		if backslashPos < 0 {
 			break
 		}
+		// Subsequent digits: Character.isDigit (may include '0' in multi-digit refs).
 		numLen := 1
 		for backslashPos+numLen < len(errorMessage) && unicode.IsDigit(rune(errorMessage[backslashPos+numLen])) {
 			numLen++
@@ -261,8 +282,16 @@ func FormatMatches(
 		}
 		j-- // 0-based pattern element index
 
+		// Java: for (l = 0; l <= Math.min(j, positions.length-1); l++)
 		repTokenPos := 0
-		for l := 0; l <= j && l < len(positions); l++ {
+		maxL := j
+		if len(positions) > 0 && maxL > len(positions)-1 {
+			maxL = len(positions) - 1
+		}
+		if len(positions) == 0 {
+			maxL = -1
+		}
+		for l := 0; l <= maxL; l++ {
 			repTokenPos += positions[l]
 		}
 		nextTokenPos := 0
@@ -271,43 +300,69 @@ func FormatMatches(
 		}
 
 		newWay := false
-		if len(suggestionMatches) > 0 && matchCounter < len(suggestionMatches) {
-			var matches []string
-			if j >= len(positions) {
-				matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode, pctx)
-			} else if j >= 0 && j < len(positions) && positions[j] != 0 {
-				matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode, pctx)
-			} else {
-				matches = []string{""}
-			}
-			leftSide := errorMessage[:backslashPos]
-			rightSide := errorMessage[backslashPos+numLen:]
-			if len(matches) == 1 {
-				if matches[0] == "" {
-					errorMessage = concatWithoutExtraSpace(leftSide, rightSide)
-					errorMessageProcessed = len(leftSide)
-				} else {
-					errorMessage = leftSide + matches[0] + rightSide
-					errorMessageProcessed = len(leftSide) + len(matches[0])
+		if len(sm) > 0 {
+			if matchCounter < len(sm) {
+				// Ensure numbersToMatches can index j (grow if message grew).
+				if j >= 0 && j >= len(numbersToMatches) {
+					grow := make([]int, j+1)
+					copy(grow, numbersToMatches)
+					numbersToMatches = grow
 				}
+				if j >= 0 {
+					numbersToMatches[j] = matchCounter
+				}
+				var matches []string
+				if j >= len(positions) {
+					matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, sm, langCode, pctx)
+				} else if j >= 0 && j < len(positions) && positions[j] != 0 {
+					matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, sm, langCode, pctx)
+				} else {
+					matches = []string{""}
+				}
+				leftSide := errorMessage[:backslashPos]
+				rightSide := errorMessage[backslashPos+numLen:]
+				if len(matches) == 1 {
+					if matches[0] == "" {
+						errorMessage = concatWithoutExtraSpace(leftSide, rightSide)
+						errorMessageProcessed = len(leftSide)
+					} else {
+						errorMessage = leftSide + matches[0] + rightSide
+						errorMessageProcessed = len(leftSide) + len(matches[0])
+					}
+				} else {
+					// Java: TODO compute errorMessageProcessed — leave previous value.
+					errorMessage = formatMultipleSynthesis(matches, leftSide, rightSide)
+				}
+				matchCounter++
+				newWay = true
 			} else {
-				// Java formatMultipleSynthesis
-				errorMessage = formatMultipleSynthesis(matches, leftSide, rightSide)
-				errorMessageProcessed = len(errorMessage)
+				// Java FIXME: reuse Match for pattern element j when counters overrun.
+				if j >= 0 && j < len(numbersToMatches) {
+					reuse := numbersToMatches[j]
+					if reuse >= 0 && reuse < len(sm) {
+						sm = append(sm, sm[reuse])
+					}
+				}
 			}
-			matchCounter++
-			newWay = true
 		}
 		if !newWay {
-			// bare surface replace (no Match config)
+			// bare surface: replace all "\\N" in unprocessed suffix (Java String.replace).
 			tokIdx := firstMatchTok + repTokenPos - 1
 			surface := ""
 			if tokIdx >= 0 && tokIdx < len(tokenReadings) && tokenReadings[tokIdx] != nil {
 				surface = tokenReadings[tokIdx].GetToken()
 			}
-			// replace only this occurrence region
-			errorMessage = errorMessage[:backslashPos] + surface + errorMessage[backslashPos+numLen:]
-			errorMessageProcessed = backslashPos + len(surface)
+			ref := `\` + strconv.Itoa(j+1)
+			// Java computes newErrorMessageProcessed from lastIndexOf before replace.
+			newProcessed := strings.LastIndex(errorMessage, ref) + len(surface)
+			prefix := errorMessage[:errorMessageProcessed]
+			suffix := errorMessage[errorMessageProcessed:]
+			errorMessage = prefix + strings.ReplaceAll(suffix, ref, surface)
+			if newProcessed < errorMessageProcessed {
+				errorMessageProcessed = errorMessageProcessed + len(surface)
+			} else {
+				errorMessageProcessed = newProcessed
+			}
 		}
 	}
 	return removeSuppressMisspelled(errorMessage)
@@ -373,23 +428,20 @@ func formatMultipleSynthesis(matches []string, leftSide, rightSide string) strin
 	return sb.String()
 }
 
+// whitespaceOrPunct ports PatternRuleMatcher.WHITESPACE_OR_PUNCT = [\\s,:;.!?].*
+// Java Matcher.matches() requires the entire rightSide to match.
+var whitespaceOrPunct = regexp.MustCompile(`(?s)[\s,:;.!?].*`)
+
 func concatWithoutExtraSpace(leftSide, rightSide string) string {
+	// Java: left ends with space + right is </suggestion> OR full match of WHITESPACE_OR_PUNCT
 	if (strings.HasSuffix(leftSide, " ") && strings.HasPrefix(rightSide, "</suggestion>")) ||
-		(strings.HasSuffix(leftSide, " ") && rightSide != "" && isWSOrPunct(rightSide[0])) {
+		(strings.HasSuffix(leftSide, " ") && whitespaceOrPunct.MatchString(rightSide)) {
 		return leftSide[:len(leftSide)-1] + rightSide
 	}
 	if strings.HasSuffix(leftSide, "suggestion>") && strings.HasPrefix(rightSide, " ") {
 		return leftSide + rightSide[1:]
 	}
 	return leftSide + rightSide
-}
-
-func isWSOrPunct(b byte) bool {
-	switch b {
-	case ' ', '\t', '\n', ',', ':', ';', '.', '!', '?':
-		return true
-	}
-	return false
 }
 
 // concatMatches ports PatternRuleMatcher.concatMatches (phrase-aware synthesis).

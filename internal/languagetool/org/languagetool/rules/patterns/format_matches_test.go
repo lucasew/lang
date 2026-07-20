@@ -183,3 +183,45 @@ func TestProcessRuleMessage_PleaseSpellMe(t *testing.T) {
 	// after process, suggestion still there; pleasespellme injected before extract
 	require.Contains(t, msg, PleaseSpellMe)
 }
+
+// Twin of PatternRuleMatcher.formatMatches isPositiveNumber gate:
+// backslash + '0' is not a match placeholder (Java StringTools.isPositiveNumber).
+func TestFormatMatches_SkipsBackrefZero(t *testing.T) {
+	toks := []*languagetool.AnalyzedTokenReadings{atr("hello", 0)}
+	m := NewMatch("", "", false, "", "", CaseNone, false, false, IncludeNone)
+	msg := FormatMatches(toks, []int{1}, 0, `keep \0 and \1`, []*Match{m}, "en")
+	require.Contains(t, msg, `\0`)
+	require.Contains(t, msg, "hello")
+	require.NotContains(t, msg, `\1`)
+}
+
+// Twin of numbersToMatches + bare replaceAll interaction (Java FIXME branch).
+// With one Match and three \1: first uses Match (case), second overruns → appends
+// reuse Match then bare-path replaceAll eats remaining \1 in the unprocessed suffix.
+func TestFormatMatches_NumbersToMatchesReuse(t *testing.T) {
+	toks := []*languagetool.AnalyzedTokenReadings{atr("word", 0)}
+	// Case conversion only on Match path — bare path keeps surface "word".
+	m := NewMatch("", "", false, "", "", CaseAllUpper, false, false, IncludeNone)
+	msg := FormatMatches(toks, []int{1}, 0, `\1 \1 \1`, []*Match{m}, "en")
+	// Java: Match → "WORD \1 \1"; overrun+bare replaceAll → "WORD word word"
+	require.Equal(t, "WORD word word", msg)
+}
+
+// Twin of bare-path String.replace: all remaining "\\N" in unprocessed suffix replaced.
+func TestFormatMatches_BareReplaceAllInSuffix(t *testing.T) {
+	toks := []*languagetool.AnalyzedTokenReadings{
+		atr("aa", 0),
+		atr("bb", 3),
+	}
+	// No suggestionMatches → bare path; both \1 become "aa" in one replace.
+	msg := FormatMatches(toks, []int{1, 1}, 0, `\1 and \1`, nil, "en")
+	require.Equal(t, "aa and aa", msg)
+}
+
+func TestConcatWithoutExtraSpace_WhitespaceOrPunct(t *testing.T) {
+	// Java WHITESPACE_OR_PUNCT = [\s,:;.!?].* — Matcher.matches entire rightSide
+	require.Equal(t, "x,", concatWithoutExtraSpace("x ", ","))
+	require.Equal(t, "x!y", concatWithoutExtraSpace("x ", "!y")) // strip left space
+	require.Equal(t, "x y", concatWithoutExtraSpace("x ", "y"))  // no leading punct → keep space
+	require.Equal(t, "a</suggestion>", concatWithoutExtraSpace("a ", "</suggestion>"))
+}

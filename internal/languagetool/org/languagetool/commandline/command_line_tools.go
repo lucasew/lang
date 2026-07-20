@@ -244,7 +244,9 @@ func TagText(w io.Writer, contents string, sentences []string, analyze func(sent
 	}
 }
 
-// ProfileRulesOnText runs each rule function over sentences and prints timing table.
+// ProfileRulesOnText ports CommandLineTools.profileRulesOnText timing table body.
+// matchCount is summed across all iterations like Java (matchCount += rule.match(...).length
+// inside the k-loop). Median of 3 iteration timings is printed as "Time".
 func ProfileRulesOnText(w io.Writer, sentences []string, ruleIDs []string, matchFn func(ruleID, sentence string) int) {
 	if w == nil || matchFn == nil {
 		return
@@ -257,15 +259,11 @@ func ProfileRulesOnText(w io.Writer, sentences []string, ruleIDs []string, match
 		matchCount := 0
 		for k := 0; k < iterations; k++ {
 			start := time.Now()
-			mc := 0
 			for _, s := range sentences {
-				mc += matchFn(id, s)
+				// Java: matchCount += rule.match(sentence).length (all iterations)
+				matchCount += matchFn(id, s)
 			}
 			times[k] = time.Since(start).Milliseconds()
-			matchCount = mc // last iteration count (Java sums across iterations; we report last full pass * iterations-ish)
-			if k == iterations-1 {
-				matchCount = mc
-			}
 		}
 		med := medianMS(times)
 		var rate float64

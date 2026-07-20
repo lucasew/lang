@@ -47,10 +47,14 @@ func TestDisplayTimeStatsAndProfile(t *testing.T) {
 	require.Contains(t, buf.String(), "sentences")
 
 	buf.Reset()
+	// Java profileRulesOnText: matchCount sums over 3 iterations × sentences.
+	// 2 sentences × 1 match × 3 iterations = 6
 	ProfileRulesOnText(&buf, []string{"a", "b"}, []string{"R1"}, func(ruleID, sentence string) int {
 		return 1
 	})
-	require.Contains(t, buf.String(), "R1")
+	out := buf.String()
+	require.Contains(t, out, "R1")
+	require.Contains(t, out, "6", "matchCount must sum across iterations like Java")
 }
 
 func TestLineColumnAt(t *testing.T) {
