@@ -5,16 +5,34 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
+// IrishHybridDisambiguator ports org.languagetool.tagging.disambiguation.ga.IrishHybridDisambiguator.
+// Java: disambiguator.disambiguate(chunker.disambiguate(input)) — multiwords first, then XML.
 type IrishHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	Inner interface { Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence }
+	Chunker interface {
+		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	}
+	Rules interface {
+		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	}
 }
 
-func NewIrishHybridDisambiguator() *IrishHybridDisambiguator { return &IrishHybridDisambiguator{} }
-
-func (d *IrishHybridDisambiguator) Disambiguate(in *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
-	if in == nil { return nil }
-	if d.Inner != nil { return d.Inner.Disambiguate(in) }
-	return in
+func NewIrishHybridDisambiguator() *IrishHybridDisambiguator {
+	return &IrishHybridDisambiguator{}
 }
+
+func (d *IrishHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	if input == nil {
+		return nil
+	}
+	out := input
+	if d.Chunker != nil {
+		out = d.Chunker.Disambiguate(out)
+	}
+	if d.Rules != nil {
+		out = d.Rules.Disambiguate(out)
+	}
+	return out
+}
+
 var _ disambiguation.Disambiguator = (*IrishHybridDisambiguator)(nil)

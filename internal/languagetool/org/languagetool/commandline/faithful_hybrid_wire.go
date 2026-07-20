@@ -12,10 +12,15 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/es"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ga"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/gl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/it"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/nl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
 	rudis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ru"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/sv"
 	ukdis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/uk"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
 )
@@ -99,6 +104,16 @@ func RegisterHybridDisambiguator(lt *languagetool.JLanguageTool, lang string, op
 		return registerUkrainianHybrid(lt, opts)
 	case "ru":
 		return registerRussianHybrid(lt, opts)
+	case "pl":
+		return registerPolishHybrid(lt, opts)
+	case "sv":
+		return registerSwedishHybrid(lt, opts)
+	case "gl":
+		return registerGalicianHybrid(lt, opts)
+	case "ga":
+		return registerIrishHybrid(lt, opts)
+	case "it":
+		return registerItalianRuleDisambiguator(lt, opts)
 	default:
 		return false
 	}
@@ -127,6 +142,110 @@ func registerRussianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOpti
 		return false
 	}
 	lt.Disambiguator = h
+	return true
+}
+
+// registerPolishHybrid ports PolishHybridDisambiguator.
+// Java: MultiWordChunker("/pl/multiwords.txt") defaults; XmlRuleDisambiguator(Polish) no global.
+// Order: chunker.disambiguate(disambiguator.disambiguate(input)) — XML first, then multiwords.
+func registerPolishHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := pl.NewPolishHybridDisambiguator()
+	if p := DiscoverLanguageMultiwords(opts, "pl"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("pl", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerSwedishHybrid ports SwedishHybridDisambiguator (same order as Polish: XML then multiwords).
+func registerSwedishHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := sv.NewSwedishHybridDisambiguator()
+	if p := DiscoverLanguageMultiwords(opts, "sv"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("sv", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerGalicianHybrid ports GalicianHybridDisambiguator.
+// Java order: multiwords first, then XML (disambiguator.disambiguate(chunker.disambiguate(input))).
+func registerGalicianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := gl.NewGalicianHybridDisambiguator()
+	if p := DiscoverLanguageMultiwords(opts, "gl"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("gl", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerIrishHybrid ports IrishHybridDisambiguator (multiwords then XML).
+func registerIrishHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := ga.NewIrishHybridDisambiguator()
+	if p := DiscoverLanguageMultiwords(opts, "ga"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("ga", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerItalianRuleDisambiguator ports ItalianRuleDisambiguator (XML only, no multiwords).
+// Java: new XmlRuleDisambiguator(new Italian()) — no global.
+func registerItalianRuleDisambiguator(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	d := it.NewItalianRuleDisambiguator()
+	if xml := loadXmlRuleDisambiguator("it", opts, false); xml != nil && len(xml.Rules) > 0 {
+		d.Rules = xml.Disambiguate
+	} else {
+		return false
+	}
+	lt.Disambiguator = d
 	return true
 }
 

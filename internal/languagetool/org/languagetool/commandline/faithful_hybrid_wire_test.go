@@ -105,6 +105,40 @@ func TestRegisterHybridDisambiguator_RU(t *testing.T) {
 	require.NotEmpty(t, sents)
 }
 
+func TestRegisterHybridDisambiguator_PL_SV_GL_GA(t *testing.T) {
+	cases := []struct {
+		lang string
+		text string
+	}{
+		{"pl", "To jest test."},
+		{"sv", "Detta är ett test."},
+		{"gl", "Isto é unha proba."},
+		{"ga", "Is tástáil é seo."},
+	}
+	for _, tc := range cases {
+		t.Run(tc.lang, func(t *testing.T) {
+			if DiscoverLanguageMultiwords(nil, tc.lang) == "" && DiscoverLanguageDisambiguationXML(nil, tc.lang) == "" {
+				t.Skipf("no official multiwords/disambiguation for %s", tc.lang)
+			}
+			lt, err := configureCoreLT(tc.lang, &CommandLineOptions{Language: tc.lang})
+			require.NoError(t, err)
+			require.NotNil(t, lt.Disambiguator, "hybrid for %s", tc.lang)
+			sents := lt.Analyze(tc.text)
+			require.NotEmpty(t, sents)
+		})
+	}
+}
+
+func TestRegisterHybridDisambiguator_IT(t *testing.T) {
+	// Java ItalianRuleDisambiguator: XmlRuleDisambiguator only (no multiwords).
+	require.NotEmpty(t, DiscoverLanguageDisambiguationXML(nil, "it"), "it disambiguation.xml")
+	lt, err := configureCoreLT("it", &CommandLineOptions{Language: "it"})
+	require.NoError(t, err)
+	require.NotNil(t, lt.Disambiguator, "ItalianRuleDisambiguator should be wired")
+	sents := lt.Analyze("Questo è un test.")
+	require.NotEmpty(t, sents)
+}
+
 func TestDiscoverLanguageMultiwords_UK(t *testing.T) {
 	p := DiscoverLanguageMultiwords(nil, "uk")
 	require.NotEmpty(t, p)
