@@ -255,9 +255,12 @@ func normalizeJavaRegexp(pat string) string {
 				i += 1 + size
 				continue
 			default:
-				// Java quotes non-alphabetic non-meta: emit the char only.
-				// Alphabetic unknown escapes are left with '\' so compile still fails closed.
-				if unicode.IsLetter(r) {
+				// Java Pattern (OpenJDK): unknown escapes of *ASCII* letters are illegal
+				// (reserved); non-ASCII letters like \ä \ö \ü \ß are treated as the
+				// literal character (backslash dropped). Go RE2 rejects both — drop
+				// the backslash for non-ASCII so DE grammar.xml classes compile.
+				// ASCII unknown (e.g. \q) keep '\' so compile still fails closed.
+				if r < 128 && unicode.IsLetter(r) {
 					b.WriteByte('\\')
 					b.WriteString(pat[i+1 : i+1+size])
 					i += 1 + size

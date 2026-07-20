@@ -151,6 +151,20 @@ func TestNormalizeJavaRegexp_PossessiveQuantifiers(t *testing.T) {
 	require.False(t, m.Matches("xxxx"))
 }
 
+// DE grammar.xml uses [a-z0-9\äöüß]+ — Java drops the backslash for non-ASCII letters.
+func TestNormalizeJavaRegexp_NonASCIILetterEscape(t *testing.T) {
+	// Java Pattern: \ä is literal ä (not an illegal alphabetic escape — only ASCII a-z).
+	require.Equal(t, `[a-z0-9äöüß]+e`, normalizeJavaRegexp(`[a-z0-9\äöüß]+e`))
+	require.Equal(t, `[a-z0-9äöüß]+en`, normalizeJavaRegexp(`[a-z0-9\äöüß]+en`))
+	// Compiles and matches umlaut stems like DE grammar ADJ/PA tokens.
+	m := NewStringMatcher(`[a-z0-9\äöüß]+e`, true, true)
+	require.True(t, m.Matches("schöne"))
+	require.True(t, m.Matches("große"))
+	require.False(t, m.Matches("schön"))
+	// ASCII unknown letter escape still kept (fail closed at compile).
+	require.Equal(t, `\q`, normalizeJavaRegexp(`\q`))
+}
+
 // Java CaseRule emoji antipattern uses UTF-16 surrogate pair ranges.
 func TestNormalizeJavaRegexp_UTF16SurrogatePairRange(t *testing.T) {
 	pat := `[\ud83c\udc00-\ud83c\udfff]+|[\ud83d\udc00-\ud83d\udfff]+|[\u2600-\u27ff]+`
@@ -216,4 +230,14 @@ func TestIsMatchedReadings_ChunkXORNegation(t *testing.T) {
 	require.True(t, m.IsMatchedReadings(atr), "negated surface non-match + non-chunk → match")
 	atr.SetChunkTags([]string{"B-NP"}) // chunkOK true → true^true → fail
 	require.False(t, m.IsMatchedReadings(atr), "negated surface + matching chunk → fail")
+}
+
+// Ensures NewStringMatcher does not panic on DE grammar.xml unnecessary umlaut escapes.
+func TestStringMatcher_DEUmlautClassNoPanic(t *testing.T) {
+	// From de/grammar.xml ADJ/PA surface patterns
+	require.NotPanics(t, func() {
+		m := NewStringMatcher(`[a-z0-9\äöüß]+e`, true, true)
+		require.True(t, m.Matches("leise"))
+		require.True(t, m.Matches("große"))
+	})
 }
