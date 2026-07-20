@@ -158,17 +158,17 @@ func (r *CommaWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) []*
 			}
 			toPos := tokens[i].GetEndPos()
 			text := sentence.GetText()
-			if toPos <= len(text) && toPos <= utf16Len(text) {
-				// substring by UTF-16 indices is complex; use rune approx for BMP tests
-				// GetText returns original; compare marked region via byte for BMP
-			}
-			// Java: text.substring(fromPos, toPos) with UTF-16 indices
-			marked := utf16Substring(text, fromPos, toPos)
-			if marked == suggestionText && !twoSuggestions {
-				prevPrevToken = prevToken
-				prevToken = token
-				prevWhite = isWhitespace && !tokens[i].IsFieldCode()
-				continue
+			// Java: if (toPos < text.length()) { marked = text.substring(fromPos, toPos); ... }
+			// text.length() is UTF-16; only skip when marked already equals the suggestion
+			// and the match is not at the end of the string (strict <).
+			if toPos < utf16Len(text) {
+				marked := utf16Substring(text, fromPos, toPos)
+				if marked == suggestionText && !twoSuggestions {
+					prevPrevToken = prevToken
+					prevToken = token
+					prevWhite = isWhitespace && !tokens[i].IsFieldCode()
+					continue
+				}
 			}
 			rm := NewRuleMatch(r, sentence, fromPos, toPos, msg)
 			if twoSuggestions {
@@ -208,7 +208,8 @@ func isWhitespaceToken(token *languagetool.AnalyzedTokenReadings) bool {
 }
 
 func isQuote(str string) bool {
-	if len([]rune(str)) != 1 {
+	// Java: str.length() == 1 (UTF-16 code units)
+	if utf16Len(str) != 1 {
 		return false
 	}
 	c := []rune(str)[0]
@@ -216,7 +217,8 @@ func isQuote(str string) bool {
 }
 
 func isHyphenOrComma(str string) bool {
-	if len([]rune(str)) != 1 {
+	// Java: str.length() == 1
+	if utf16Len(str) != 1 {
 		return false
 	}
 	c := []rune(str)[0]
@@ -224,6 +226,7 @@ func isHyphenOrComma(str string) bool {
 }
 
 func isDigitOrDot(str string) bool {
+	// Java: isEmpty / charAt(0)
 	if str == "" {
 		return false
 	}
@@ -232,6 +235,7 @@ func isDigitOrDot(str string) bool {
 }
 
 func isLeftBracket(str string) bool {
+	// Java: isEmpty / charAt(0) == '('
 	if str == "" {
 		return false
 	}
@@ -246,6 +250,7 @@ func isRightBracket(str string) bool {
 }
 
 func containsDigit(str string) bool {
+	// Java: Character.isDigit(str.charAt(i)) over UTF-16 units
 	for _, r := range str {
 		if unicode.IsDigit(r) {
 			return true
@@ -254,9 +259,8 @@ func containsDigit(str string) bool {
 	return false
 }
 
+// utf16Substring ports Java String.substring(from, to) with UTF-16 indices.
 func utf16Substring(s string, from, to int) string {
-	// Convert Java UTF-16 indices to Go string slice via runes for BMP-heavy tests
-	// Full UTF-16: encode then slice
 	u := []uint16{}
 	for _, r := range s {
 		if r >= 0x10000 {

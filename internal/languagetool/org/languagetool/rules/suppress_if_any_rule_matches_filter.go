@@ -69,16 +69,22 @@ func (f *SuppressIfAnyRuleMatchesFilter) AcceptRuleMatch(match *RuleMatch, argum
 }
 
 // ShouldSuppress is true if any replacement creates an overlapping match for any ruleIDs.
+// Java: sentence.substring(0, fromPos) + replacement + sentence.substring(toPos)
+// — fromPos/toPos are UTF-16 indices (Java String), not Go UTF-8 byte offsets.
 func (f *SuppressIfAnyRuleMatchesFilter) ShouldSuppress(sentence string, fromPos, toPos int, replacements []string, ruleIDsCSV string) bool {
 	if f.MatchesInSentence == nil {
 		return false
 	}
 	ids := strings.Split(ruleIDsCSV, ",")
+	textLen := utf16Len(sentence)
 	for _, replacement := range replacements {
-		if fromPos < 0 || toPos > len(sentence) || fromPos > toPos {
+		// Java String.substring throws on invalid ranges; skip only invalid inputs
+		// that would not appear from RuleMatch (keep fail-closed non-suppress).
+		if fromPos < 0 || toPos > textLen || fromPos > toPos {
 			continue
 		}
-		newSentence := sentence[:fromPos] + replacement + sentence[toPos:]
+		// Java: substring(0, fromPos) + replacement + substring(toPos)
+		newSentence := utf16Substring(sentence, 0, fromPos) + replacement + utf16Substring(sentence, toPos, textLen)
 		for _, id := range ids {
 			id = strings.TrimSpace(id)
 			for _, m := range f.MatchesInSentence(id, newSentence) {

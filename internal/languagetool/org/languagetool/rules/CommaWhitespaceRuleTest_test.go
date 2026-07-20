@@ -56,13 +56,24 @@ func TestCommaWhitespaceRule_Rule(t *testing.T) {
 	assertMatches(t, rule, "), this isn't good.", 0)
 	assertMatches(t, rule, "Das sind .exe-Dateien", 0)
 	assertMatches(t, rule, "I live in .Los Angeles", 1)
-	// Soft hyphens: use AnalyzePlainStripSoftHyphen (LT ignored-character cleanup).
+	// Soft hyphens: Java Demo/DE ignoredCharactersRegex + assertMatchesForText (expect 1).
+	// Use AnalyzeWithTokenizerAndIgnore (replaceSoftHyphens twin), not global U+00AD delete.
 	t.Run("softHyphen", func(t *testing.T) {
-		// after strip, missing space after comma still flags
-		matches := rule.Match(languagetool.AnalyzePlainStripSoftHyphen("This,is a soft\u00ADhyphen free comma."))
+		// after ignore-clean, missing space after comma still flags
+		matches := rule.Match(languagetool.AnalyzeWithTokenizerAndIgnore(
+			"This,is a soft\u00ADhyphen free comma.", nil, languagetool.GermanIgnoredCharactersRegex))
 		require.Equal(t, 1, len(matches))
-		// German sample with soft hyphens around periods — exercise path
-		_ = rule.Match(languagetool.AnalyzePlainStripSoftHyphen("Die Vertriebsniederlassu\u00ADng der Versorgungstechnik..\u00AD."))
+		// Twin of CommaWhitespaceRuleTest soft-hyphen German samples (expect 1 each).
+		matches = rule.Match(languagetool.AnalyzeWithTokenizerAndIgnore(
+			"Die Vertriebsniederlassu\u00ADng der Versorgungstechnik..\u00AD.",
+			nil, languagetool.GermanIgnoredCharactersRegex))
+		require.Equal(t, 1, len(matches), "soft-hyphen German ..\\u00AD.")
+		// Multi-sentence path: trailing newline — Match still on first analyzed sentence.
+		// Java assertMatchesForText sums over analyzeText sentences.
+		matches = rule.Match(languagetool.AnalyzeWithTokenizerAndIgnore(
+			"Die Vertriebsniederlassu\u00ADng der Versorgungstechnik..\u00AD.\n",
+			nil, languagetool.GermanIgnoredCharactersRegex))
+		require.Equal(t, 1, len(matches), "soft-hyphen German with trailing newline")
 	})
 
 	assertMatches(t, rule, "This,is a test sentence.", 1)

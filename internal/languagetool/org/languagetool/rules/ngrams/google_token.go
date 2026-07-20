@@ -1,6 +1,8 @@
 package ngrams
 
 import (
+	"unicode/utf16"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -39,7 +41,13 @@ func (g GoogleToken) IsWhitespace() bool {
 
 func (g GoogleToken) String() string { return g.Token }
 
+// javaStringLen ports Java String.length() (UTF-16 code units).
+func javaStringLen(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
 // GetGoogleTokens tokenizes sentence for Google ngram style (skip whitespace tokens).
+// Positions are UTF-16 indices (Java: startPos += token.length()).
 func GetGoogleTokens(sentence string, addStartToken bool, tokenize TokenizerFunc) []GoogleToken {
 	if tokenize == nil {
 		panic("tokenizer required")
@@ -51,15 +59,17 @@ func GetGoogleTokens(sentence string, addStartToken bool, tokenize TokenizerFunc
 	tokens := tokenize(sentence)
 	startPos := 0
 	for _, token := range tokens {
+		tLen := javaStringLen(token)
 		if !tools.IsWhitespace(token) {
-			result = append(result, NewGoogleToken(token, startPos, startPos+len(token)))
+			result = append(result, NewGoogleToken(token, startPos, startPos+tLen))
 		}
-		startPos += len(token)
+		startPos += tLen
 	}
 	return result
 }
 
 // GetGoogleTokensFromSentence adds POS tags when span matches a single LT token trivially.
+// Ports GoogleToken.getGoogleTokens(AnalyzedSentence, …).
 func GetGoogleTokensFromSentence(sentence *languagetool.AnalyzedSentence, addStartToken bool, tokenize TokenizerFunc) []GoogleToken {
 	if sentence == nil {
 		return GetGoogleTokens("", addStartToken, tokenize)
@@ -72,38 +82,34 @@ func GetGoogleTokensFromSentence(sentence *languagetool.AnalyzedSentence, addSta
 	tokens := tokenize(text)
 	startPos := 0
 	for _, token := range tokens {
+		tLen := javaStringLen(token)
 		if !tools.IsWhitespace(token) {
-			endPos := startPos + len(token)
+			endPos := startPos + tLen
 			pos := findOriginalAnalyzedTokens(sentence, startPos, endPos)
 			result = append(result, NewGoogleTokenWithPOS(token, startPos, endPos, pos))
 		}
-		startPos += len(token)
+		startPos += tLen
 	}
 	return result
 }
 
+// findOriginalAnalyzedTokens ports GoogleToken.findOriginalAnalyzedTokens:
+// exact start/end match on tokensWithoutWhitespace only (no soft surface invent).
 func findOriginalAnalyzedTokens(sentence *languagetool.AnalyzedSentence, startPos, endPos int) []*languagetool.AnalyzedToken {
-	// Exact span match first.
-	for _, tr := range sentence.GetTokens() {
-		if tr == nil {
-			continue
-		}
-		if tr.GetStartPos() == startPos && tr.GetEndPos() == endPos {
-			return tr.GetReadings()
-		}
+	if sentence == nil {
+		return nil
 	}
-	// Soft: token surface equality when positions differ (tokenizer vs analyzer).
-	// Prefer non-blank tokens whose GetToken matches the substring length span loosely.
+	var out []*languagetool.AnalyzedToken
 	for _, tr := range sentence.GetTokensWithoutWhitespace() {
 		if tr == nil {
 			continue
 		}
-		// cover when analyzer start aligns and length matches end-start
-		if tr.GetStartPos() == startPos && tr.GetEndPos()-tr.GetStartPos() == endPos-startPos {
-			return tr.GetReadings()
+		if tr.GetStartPos() == startPos && tr.GetEndPos() == endPos {
+			// Java HashSet of readings; order is not API-stable — keep GetReadings order.
+			out = append(out, tr.GetReadings()...)
 		}
 	}
-	return nil
+	return out
 }
 
 // GetGoogleTokensForString ports GoogleTokenUtil.getGoogleTokensForString.
