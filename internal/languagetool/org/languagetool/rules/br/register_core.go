@@ -7,25 +7,44 @@ import (
 )
 
 // RegisterCoreBretonRules ports Breton.getRelevantRules / createDefaultSpellingRule.
-// Java: CommaWhitespace, DoublePunctuation, MorfologikBretonSpeller, UppercaseSentenceStart,
-// MultipleWhitespace, SentenceWhitespace, TopoReplace — no WordRepeat / WordRepeatBeginning /
-// BretonCompoundRule (those types exist but are not in getRelevantRules).
+// Java list only (no invent SharedLayout extras: unpaired brackets, empty line, long
+// paragraph, paragraph-repeat beginning, whitespace-before-punct, etc.).
 func RegisterCoreBretonRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
-	rules.RegisterSharedLayoutRules(lt, "br")
+
+	// Java order: CommaWhitespace, DoublePunctuation, Morfologik, Uppercase,
+	// MultipleWhitespace, SentenceWhitespace, TopoReplace.
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
+
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+
+	// Java createDefaultSpellingRule → MorfologikBretonSpellerRule.
+	sp := NewMorfologikBretonSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(MorfologikBretonSpellerRuleDict); p != "" {
+		_ = p // binary CFSA2 optional — fail-closed map Words when missing
+	}
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
+
+	up := rules.NewUppercaseSentenceStartRule(nil, "br")
+	lt.AddRuleChecker(up.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	sw := rules.NewSentenceWhitespaceRule(nil)
+	lt.AddTextLevelRuleChecker(sw.GetID(), rules.AsTextLevelChecker(sw.MatchList))
 
 	// Official topo.txt place-name replace (embedded from upstream).
 	tr := NewTopoReplaceRule(nil)
 	lt.AddRuleChecker(tr.GetID(), rules.AsSentenceCheckerSimple(tr.Match))
-
-	// Java createDefaultSpellingRule → MorfologikBretonSpellerRule.
-	// Always full Match (IgnoreTaggedWords + hyphen tokenizingPattern).
-	sp := NewMorfologikBretonSpellerRule()
-	if p := morfologik.DiscoverLanguageDict(MorfologikBretonSpellerRuleDict); p != "" {
-		// Binary CFSA2 optional — fail-closed map Words when missing.
-		_ = p
-	}
-	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }
