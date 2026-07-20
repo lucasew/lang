@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	arsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ar"
 	desynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/de"
 	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 	plsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/pl"
@@ -35,6 +36,12 @@ func OpenLanguageSynthesizer(langShort, dictPath string) synthesis.Synthesizer {
 	case "pl":
 		// PolishSynthesizer.getPosTagCorrection for setpos (not plain BaseSynthesizer).
 		if s := plsynth.OpenPolishSynthesizerFromDictPath(dictPath); s != nil {
+			return s
+		}
+		return nil
+	case "ar":
+		// ArabicSynthesizer.getPosTagCorrection → correctTag (conj/def/pronoun flags).
+		if s := arsynth.OpenArabicSynthesizerFromDictPath(dictPath); s != nil {
 			return s
 		}
 		return nil

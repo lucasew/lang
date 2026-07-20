@@ -242,6 +242,37 @@ func (m *ArabicTagManager) GetConjunctionPrefix(postag string) string {
 	}
 }
 
+// GetJarPrefix ports ArabicTagManager.getJarPrefix.
+func (m *ArabicTagManager) GetJarPrefix(postag string) string {
+	if postag == "" || !m.IsNoun(postag) {
+		return ""
+	}
+	switch m.GetFlag(postag, "JAR") {
+	case 'L':
+		return "ل"
+	case 'K':
+		return "ك"
+	case 'B':
+		return "ب"
+	default:
+		return ""
+	}
+}
+
+// GetDefinitePrefix ports ArabicTagManager.getDefinitePrefix (ال / ل with jar ل).
+func (m *ArabicTagManager) GetDefinitePrefix(postag string) string {
+	if postag == "" {
+		return ""
+	}
+	if m.IsNoun(postag) && m.GetFlag(postag, "PRONOUN") == 'L' {
+		if m.HasJar(postag) && m.GetJarPrefix(postag) == "ل" {
+			return "ل"
+		}
+		return "ال"
+	}
+	return ""
+}
+
 func (m *ArabicTagManager) UnifyPronounTag(postag string) string {
 	if m.IsAttached(postag) {
 		return m.SetFlag(postag, "PRONOUN", 'H')

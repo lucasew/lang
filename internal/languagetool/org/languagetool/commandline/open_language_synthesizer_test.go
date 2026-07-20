@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	arsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ar"
 	plsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/pl"
 	"github.com/stretchr/testify/require"
 )
@@ -70,6 +71,26 @@ func TestOpenLanguageSynthesizer_PolishGetPosTagCorrection(t *testing.T) {
 func TestOpenLanguageSynthesizer_Missing(t *testing.T) {
 	require.Nil(t, OpenLanguageSynthesizer("pl", ""))
 	require.Nil(t, OpenLanguageSynthesizer("pl", filepath.Join(t.TempDir(), "nope.dict")))
+	require.Nil(t, OpenLanguageSynthesizer("ar", ""))
+}
+
+func TestOpenLanguageSynthesizer_ArabicGetPosTagCorrection(t *testing.T) {
+	p := DiscoverLanguageSynthDict(nil, "ar")
+	if p == "" {
+		t.Skip("arabic_synth.dict not found")
+	}
+	s := OpenLanguageSynthesizer("ar", p)
+	require.NotNil(t, s)
+	as, ok := s.(*arsynth.ArabicSynthesizer)
+	require.True(t, ok, "createDefaultSynthesizer(ar) must be ArabicSynthesizer")
+	// correctTag clears conj (pos 9) and definite pronoun (pos 11)
+	src := string([]rune("Nxx-M1I-xW-L"))
+	got := as.GetPosTagCorrection(src)
+	require.Equal(t, as.CorrectTag(src), got)
+	runes := []rune(got)
+	require.Len(t, runes, 12)
+	require.Equal(t, '-', runes[9], "CONJ cleared")
+	require.Equal(t, '-', runes[11], "definite PRONOUN cleared")
 }
 
 func TestLanguageSynthInspirationRels_Serbian(t *testing.T) {
