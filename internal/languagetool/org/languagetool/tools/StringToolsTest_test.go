@@ -135,6 +135,14 @@ func TestStringTools_IsPositiveNumber(t *testing.T) {
 	require.Equal(t, true, IsPositiveNumber('\u0967')) // DEVANAGARI DIGIT ONE
 }
 
+func TestStringTools_LoadLinesFromReader(t *testing.T) {
+	// Java loadLines: skip empty and lines starting with '#'
+	in := strings.NewReader("# comment\n\nfoo\n#bar\nbaz\n")
+	lines, err := LoadLinesFromReader(in)
+	require.NoError(t, err)
+	require.Equal(t, []string{"foo", "baz"}, lines)
+}
+
 func TestStringTools_IsEmpty(t *testing.T) {
 	require.Equal(t, true, IsEmptyStr(""))
 	require.Equal(t, false, IsEmptyStr("a"))

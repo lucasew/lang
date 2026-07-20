@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
@@ -1836,29 +1837,45 @@ func SimpleAvsAnChecker() SentenceChecker {
 	return func(*AnalyzedSentence) []LocalMatch { return nil }
 }
 
-// CorrectTextFromLocalMatches applies first suggestion of each match (byte offsets; ASCII-safe).
-// Ports Tools.correctTextFromMatches without importing tools package.
+// CorrectTextFromLocalMatches ports Tools.correctTextFromMatches (UTF-16 positions).
+// Same algorithm as tools.CorrectTextFromMatches; kept here to avoid import cycles.
+// Match order is caller order (Java does not re-sort).
 func CorrectTextFromLocalMatches(contents string, matches []LocalMatch) string {
 	if len(matches) == 0 {
 		return contents
 	}
-	sb := []byte(contents)
-	// sort by FromPos ascending so offset adjustments work left-to-right
-	sorted := append([]LocalMatch(nil), matches...)
-	sort.SliceStable(sorted, func(i, j int) bool { return sorted[i].FromPos < sorted[j].FromPos })
+	sb := utf16.Encode([]rune(contents))
+	var errors []string
+	for _, rm := range matches {
+		if len(rm.Suggestions) == 0 {
+			continue
+		}
+		if rm.FromPos < 0 || rm.ToPos > len(sb) || rm.FromPos > rm.ToPos {
+			errors = append(errors, "")
+			continue
+		}
+		errors = append(errors, string(utf16.Decode(sb[rm.FromPos:rm.ToPos])))
+	}
 	offset := 0
-	for _, rm := range sorted {
+	counter := 0
+	for _, rm := range matches {
 		if len(rm.Suggestions) == 0 {
 			continue
 		}
 		repl := rm.Suggestions[0]
 		from := rm.FromPos - offset
 		to := rm.ToPos - offset
-		if from < 0 || to < from || to > len(sb) {
-			continue
+		if from >= 0 && to >= from && to <= len(sb) &&
+			counter < len(errors) && errors[counter] == string(utf16.Decode(sb[from:to])) {
+			replU := utf16.Encode([]rune(repl))
+			nb := make([]uint16, 0, len(sb)-(to-from)+len(replU))
+			nb = append(nb, sb[:from]...)
+			nb = append(nb, replU...)
+			nb = append(nb, sb[to:]...)
+			sb = nb
+			offset += (rm.ToPos - rm.FromPos) - len(replU)
 		}
-		sb = append(sb[:from], append([]byte(repl), sb[to:]...)...)
-		offset += (to - from) - len(repl)
+		counter++
 	}
-	return string(sb)
+	return string(utf16.Decode(sb))
 }

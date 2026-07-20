@@ -16,6 +16,22 @@ func TestTools_languagetool_core_CorrectTextFromMatches(t *testing.T) {
 	require.Equal(t, "I've had", CorrectTextFromMatches("I've have", matches))
 }
 
+// UTF-16 positions: "café X" — é is one UTF-16 unit (U+00E9), not two UTF-8 bytes.
+func TestTools_CorrectTextFromMatches_UTF16(t *testing.T) {
+	// "café X" UTF-16 units: c a f é space X → positions 0..5; "X" at 5..6
+	src := "café X"
+	matches := []TextMatch{
+		{FromPos: 5, ToPos: 6, SuggestedReplacements: []string{"Y"}},
+	}
+	require.Equal(t, "café Y", CorrectTextFromMatches(src, matches))
+	// already-corrected skip: two overlapping matches same span, first wins
+	matches2 := []TextMatch{
+		{FromPos: 5, ToPos: 6, SuggestedReplacements: []string{"Y"}},
+		{FromPos: 5, ToPos: 6, SuggestedReplacements: []string{"Z"}},
+	}
+	require.Equal(t, "café Y", CorrectTextFromMatches(src, matches2))
+}
+
 // Port of ToolsTest.testSelectRules
 func TestTools_languagetool_core_SelectRules(t *testing.T) {
 	newDemo := func() *RuleSelector {
@@ -78,4 +94,11 @@ func TestTools_languagetool_core_SelectRules(t *testing.T) {
 	rs.SelectRules(nil, set("CASING"), nil, nil, true, false)
 	require.False(t, rs.Has("DEMO_RULE"))
 	require.True(t, rs.Has("OTHER_RULE"))
+
+	// enableTempOff activates default temp_off rules (Java Tools.selectRules)
+	rs = newDemo()
+	rs.SetDefaultTempOff("TEMP_OFF_RULE")
+	require.False(t, rs.Has("TEMP_OFF_RULE"))
+	rs.SelectRules(nil, nil, nil, nil, false, true)
+	require.True(t, rs.Has("TEMP_OFF_RULE"))
 }

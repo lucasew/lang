@@ -522,6 +522,25 @@ func ReadStream(r io.Reader) (string, error) {
 	return sb.String(), nil
 }
 
+// LoadLinesFromReader ports the body of StringTools.loadLines (skip empty and '#' comments).
+// Java loadLines(path) opens the resource via DataBroker; callers supply the opened Reader here.
+func LoadLinesFromReader(r io.Reader) ([]string, error) {
+	sc := bufio.NewScanner(r)
+	sc.Buffer(make([]byte, 0, 64*1024), 16*1024*1024)
+	var out []string
+	for sc.Scan() {
+		line := sc.Text()
+		if line == "" || line[0] == '#' {
+			continue
+		}
+		out = append(out, line)
+	}
+	if err := sc.Err(); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Java: Pattern.compile("[\\p{IsPunctuation}']") — entire string is one punct char (or apostrophe).
 var punctuationMarkRE = regexp.MustCompile(`^[\p{P}']$`)
 

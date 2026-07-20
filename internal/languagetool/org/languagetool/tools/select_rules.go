@@ -9,14 +9,17 @@ type RuleSelector struct {
 	CategoryOf map[string]string
 	// All is the full registry of known rules (for enable-only rebuilds).
 	All map[string]struct{}
+	// DefaultTempOff ports Rule.isDefaultTempOff — enabled only when enableTempOff.
+	DefaultTempOff map[string]struct{}
 }
 
 // NewRuleSelector seeds rules (default category MISC).
 func NewRuleSelector(ruleIDs ...string) *RuleSelector {
 	rs := &RuleSelector{
-		Active:     map[string]struct{}{},
-		CategoryOf: map[string]string{},
-		All:        map[string]struct{}{},
+		Active:         map[string]struct{}{},
+		CategoryOf:     map[string]string{},
+		All:            map[string]struct{}{},
+		DefaultTempOff: map[string]struct{}{},
 	}
 	for _, id := range ruleIDs {
 		rs.Active[id] = struct{}{}
@@ -24,6 +27,27 @@ func NewRuleSelector(ruleIDs ...string) *RuleSelector {
 		rs.CategoryOf[id] = "MISC"
 	}
 	return rs
+}
+
+// SetDefaultTempOff marks a rule as default temp_off (Java Rule.isDefaultTempOff).
+func (rs *RuleSelector) SetDefaultTempOff(ruleID string) {
+	if rs == nil {
+		return
+	}
+	if rs.DefaultTempOff == nil {
+		rs.DefaultTempOff = map[string]struct{}{}
+	}
+	if rs.All == nil {
+		rs.All = map[string]struct{}{}
+	}
+	rs.DefaultTempOff[ruleID] = struct{}{}
+	rs.All[ruleID] = struct{}{}
+	if rs.CategoryOf == nil {
+		rs.CategoryOf = map[string]string{}
+	}
+	if _, ok := rs.CategoryOf[ruleID]; !ok {
+		rs.CategoryOf[ruleID] = "MISC"
+	}
 }
 
 // SetCategory assigns a category ID to a rule.
@@ -42,67 +66,69 @@ func (rs *RuleSelector) SetCategory(ruleID, categoryID string) {
 }
 
 // SelectRules ports Tools.selectRules category/rule enable-disable matrix.
+// Order matches Java: enableTempOff → disable categories → enable categories
+// (+ useEnabledOnly category filter) → disable rules → enable rules
+// (+ useEnabledOnly rule filter).
 func (rs *RuleSelector) SelectRules(
 	disabledCategories, enabledCategories map[string]struct{},
 	disabledRules, enabledRules map[string]struct{},
 	useEnabledOnly, enableTempOff bool,
 ) {
-	_ = enableTempOff
 	if rs == nil {
 		return
 	}
 	if rs.Active == nil {
 		rs.Active = map[string]struct{}{}
 	}
-	if useEnabledOnly {
-		// Start from empty, then enable categories/rules.
-		// Java: enableTempOff false → disable all first when useEnabledOnly.
-		// ToolsTest: empty sets with useEnabledOnly=true still keeps DEMO_RULE —
-		// meaning default-on rules stay unless something is restricted.
-		// Match ToolsTest: only clear when there is an explicit enabled filter.
-		if len(enabledCategories) > 0 || len(enabledRules) > 0 {
-			rs.Active = map[string]struct{}{}
-			for id, cat := range rs.CategoryOf {
-				if _, on := enabledCategories[cat]; on {
-					rs.Active[id] = struct{}{}
-				}
-			}
-			for id := range enabledRules {
-				rs.Active[id] = struct{}{}
-			}
-		}
-		// still apply disables
-		for id, cat := range rs.CategoryOf {
-			if _, off := disabledCategories[cat]; off {
-				delete(rs.Active, id)
-			}
-		}
-		for id := range disabledRules {
-			delete(rs.Active, id)
-		}
-		// re-enable explicit
-		for id := range enabledRules {
+	// Java: if (enableTempOff) enable default temp_off rules first.
+	if enableTempOff {
+		for id := range rs.DefaultTempOff {
 			rs.Active[id] = struct{}{}
 		}
-		return
 	}
-
-	// Normal mode: start from current Active (all default-on)
+	// disable categories
 	for id, cat := range rs.CategoryOf {
 		if _, off := disabledCategories[cat]; off {
 			delete(rs.Active, id)
 		}
 	}
+	// enable categories (+ useEnabledOnly: disable rules outside enabled categories)
+	if len(enabledCategories) > 0 {
+		for id, cat := range rs.CategoryOf {
+			if _, on := enabledCategories[cat]; on {
+				rs.Active[id] = struct{}{}
+			}
+		}
+		if useEnabledOnly {
+			for id, cat := range rs.CategoryOf {
+				if _, on := enabledCategories[cat]; !on {
+					delete(rs.Active, id)
+				}
+			}
+		}
+	}
+	// disable rules explicitly
 	for id := range disabledRules {
 		delete(rs.Active, id)
 	}
-	for id, cat := range rs.CategoryOf {
-		if _, on := enabledCategories[cat]; on {
+	// enable rules (+ useEnabledOnly: disable rules not in enabled set)
+	if len(enabledRules) > 0 {
+		for id := range enabledRules {
 			rs.Active[id] = struct{}{}
 		}
-	}
-	for id := range enabledRules {
-		rs.Active[id] = struct{}{}
+		if useEnabledOnly {
+			// Java: disable unless enabledRules contains fullId or id.
+			// RuleSelector tracks id only (no sub-ids).
+			for id := range rs.All {
+				if _, on := enabledRules[id]; !on {
+					delete(rs.Active, id)
+				}
+			}
+			// re-assert enabled (All may not list an ad-hoc id)
+			for id := range enabledRules {
+				rs.Active[id] = struct{}{}
+			}
+		}
 	}
 }
 
