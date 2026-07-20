@@ -14,19 +14,20 @@ func TestApiV2_MatchCategory(t *testing.T) {
 		"text":     "This is an test.",
 	})
 	require.NoError(t, err)
-	require.Contains(t, r.Body, `"id":"GRAMMAR"`)
+	// Java AvsAnRule: Categories.MISC + ITSIssueType.Misspelling
+	require.Contains(t, r.Body, `"id":"MISC"`)
 	require.Contains(t, r.Body, "Wrong article")
 	require.Contains(t, r.Body, "shortMessage")
-	require.Contains(t, r.Body, "Use of 'a' versus 'an'")
+	require.Contains(t, r.Body, "Use of 'a' vs. 'an'")
 }
 
 func TestApiV2_DisabledCategories(t *testing.T) {
 	api := NewApiV2(nil, nil)
-	// a/an is GRAMMAR — disabling GRAMMAR should suppress it
+	// a/an is MISC — disabling MISC should suppress it
 	r, err := api.Handle("check", map[string]string{
 		"language":           "en",
 		"text":               "This is an test.",
-		"disabledCategories": "GRAMMAR",
+		"disabledCategories": "MISC",
 	})
 	require.NoError(t, err)
 	require.NotContains(t, r.Body, "EN_A_VS_AN")
@@ -42,7 +43,7 @@ func TestApiV2_EnabledCategoriesOnly(t *testing.T) {
 		"enabledCategories": "TYPOS",
 	})
 	require.NoError(t, err)
-	// grammar match should be filtered out when only TYPOS enabled
+	// MISC a/an match should be filtered out when only TYPOS enabled
 	require.NotContains(t, r.Body, "EN_A_VS_AN")
 }
 
