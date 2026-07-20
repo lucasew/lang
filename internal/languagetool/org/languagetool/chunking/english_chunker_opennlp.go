@@ -4,6 +4,7 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -98,6 +99,7 @@ func cleanZeroWidthWhitespaces(tokens []string) []string {
 	for _, token := range tokens {
 		splits := strings.Split(token, "\uFEFF")
 		for _, split := range splits {
+			// Java: split.length() == 0
 			if len(split) == 0 {
 				clean = append(clean, "")
 			} else {
@@ -108,14 +110,39 @@ func cleanZeroWidthWhitespaces(tokens []string) []string {
 	return clean
 }
 
+// javaStringLen ports Java String.length() (UTF-16 code units).
+func javaStringLen(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
+// javaTrimIsEmpty ports Java token.trim().isEmpty() —
+// String.trim only strips code units <= ' ' (not NBSP / other Zs).
+func javaTrimIsEmpty(token string) bool {
+	start, end := 0, len(token)
+	for start < end && token[start] <= ' ' {
+		start++
+	}
+	for end > start && token[end-1] <= ' ' {
+		end--
+	}
+	return start >= end
+}
+
+// characterIsSpaceChar ports Character.isSpaceChar for a BMP code unit.
+func characterIsSpaceChar(cu uint16) bool {
+	r := rune(cu)
+	return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
+}
+
 // getTokensWithTokenReadings ports EnglishChunker.getTokensWithTokenReadings —
-// OpenNLP token positions are cumulative lengths without whitespace.
+// OpenNLP token positions are cumulative UTF-16 lengths without whitespace.
 func getTokensWithTokenReadings(tokenReadings []*languagetool.AnalyzedTokenReadings, tokens, chunkTags []string) []ChunkTaggedToken {
 	result := make([]ChunkTaggedToken, 0, len(chunkTags))
 	pos := 0
 	for i, chunkTag := range chunkTags {
 		startPos := pos
-		endPos := startPos + len(tokens[i])
+		// Java: endPos = startPos + tokens[i].length()
+		endPos := startPos + javaStringLen(tokens[i])
 		readings := getAnalyzedTokenReadingsFor(startPos, endPos, tokenReadings)
 		// Java: new ChunkTag(chunkTag) — empty throws IllegalArgumentException.
 		// Do not invent "O" for missing tags (soft invent removed).
@@ -149,14 +176,18 @@ func getAnalyzedTokenReadingsFor(startPos, endPos int, tokenReadings []*language
 			continue
 		}
 		token := tokenReading.GetToken()
-		if strings.TrimSpace(token) == "" ||
-			(len(token) == 1 && unicode.IsSpace(rune(token[0]))) {
-			// OpenNLP result has no whitespace tokens; skip without advancing
-			// (Java: continue without pos += length).
+		// Java: token.trim().isEmpty() || (token.length() == 1 && Character.isSpaceChar(charAt(0)))
+		// needed for non-breaking space (NBSP is not stripped by String.trim).
+		if javaTrimIsEmpty(token) {
+			// OpenNLP result has no whitespace tokens; skip without advancing.
+			continue
+		}
+		u := utf16.Encode([]rune(token))
+		if len(u) == 1 && characterIsSpaceChar(u[0]) {
 			continue
 		}
 		tokenStart := pos
-		tokenEnd := pos + len(token)
+		tokenEnd := pos + len(u)
 		if tokenStart == startPos && tokenEnd == endPos {
 			return tokenReading
 		}
