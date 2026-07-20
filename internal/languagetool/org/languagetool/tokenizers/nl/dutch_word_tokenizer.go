@@ -2,6 +2,7 @@ package nl
 
 import (
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
@@ -30,29 +31,29 @@ func (w *DutchWordTokenizer) Tokenize(text string) []string {
 	var l []string
 	for _, token := range raw {
 		origToken := token
-		if len([]rune(token)) > 1 {
-			if startsWithQuote(token) && endsWithQuote(token) && len([]rune(token)) > 2 {
-				rs := []rune(token)
-				l = append(l, string(rs[0]))
-				l = append(l, string(rs[1:len(rs)-1]))
-				l = append(l, string(rs[len(rs)-1]))
+		// Java: token.length() / substring on UTF-16 code units
+		if tokenizers.UTF16Len(token) > 1 {
+			if startsWithQuote(token) && endsWithQuote(token) && tokenizers.UTF16Len(token) > 2 {
+				n := tokenizers.UTF16Len(token)
+				l = append(l, utf16Sub(token, 0, 1))
+				l = append(l, utf16Sub(token, 1, n-1))
+				l = append(l, utf16Sub(token, n-1, n))
 			} else if endsWithQuote(token) {
 				cnt := 0
 				for endsWithQuote(token) {
-					rs := []rune(token)
-					token = string(rs[:len(rs)-1])
+					n := tokenizers.UTF16Len(token)
+					token = utf16Sub(token, 0, n-1)
 					cnt++
 				}
 				l = append(l, token)
-				origRunes := []rune(origToken)
-				for i := len(origRunes) - cnt; i < len(origRunes); i++ {
-					l = append(l, string(origRunes[i]))
+				origN := tokenizers.UTF16Len(origToken)
+				for i := origN - cnt; i < origN; i++ {
+					l = append(l, utf16Sub(origToken, i, i+1))
 				}
 			} else if startsWithQuote(token) {
 				for startsWithQuote(token) {
-					rs := []rune(token)
-					l = append(l, string(rs[0]))
-					token = string(rs[1:])
+					l = append(l, utf16Sub(token, 0, 1))
+					token = utf16Sub(token, 1, tokenizers.UTF16Len(token))
 				}
 				l = append(l, token)
 			} else {
@@ -63,6 +64,21 @@ func (w *DutchWordTokenizer) Tokenize(text string) []string {
 		}
 	}
 	return tokenizers.JoinEMailsAndUrls(l)
+}
+
+// utf16Sub ports Java String.substring(from, to) with UTF-16 indices.
+func utf16Sub(s string, from, to int) string {
+	u := utf16.Encode([]rune(s))
+	if from < 0 {
+		from = 0
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	return string(utf16.Decode(u[from:to]))
 }
 
 func startsWithQuote(token string) bool {

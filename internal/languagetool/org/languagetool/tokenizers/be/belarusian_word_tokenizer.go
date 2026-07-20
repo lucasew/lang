@@ -29,7 +29,7 @@ func (w *BelarusianWordTokenizer) Tokenize(text string) []string {
 	joined := tokenizers.JoinEMailsAndUrls(raw)
 	var out []string
 	for _, token := range joined {
-		if len([]rune(token)) > 1 {
+		if tokenizers.UTF16Len(token) > 1 {
 			out = append(out, strings.ReplaceAll(token, "’", "'"))
 		} else {
 			out = append(out, token)

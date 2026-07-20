@@ -3,7 +3,6 @@ package pl
 import (
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
@@ -27,11 +26,11 @@ type PolishHyphenTagger interface {
 
 // PolishTokenReadings minimal readings for hyphen decisions.
 type PolishTokenReadings struct {
-	IsTagged       bool
-	HasAdja        bool // pos tag "adja"
-	HasAdjPartial  bool // partial "adj:"
+	IsTagged        bool
+	HasAdja         bool // pos tag "adja"
+	HasAdjPartial   bool // partial "adj:"
 	HasSubstPartial bool
-	HasNumPartial  bool
+	HasNumPartial   bool
 }
 
 func NewPolishWordTokenizer() *PolishWordTokenizer {
@@ -57,7 +56,7 @@ func (w *PolishWordTokenizer) Tokenize(text string) []string {
 	raw := splitKeepDelims(text, w.plTokenizing)
 	var l []string
 	for _, token := range raw {
-		if utf8.RuneCountInString(token) > 1 {
+		if tokenizers.UTF16Len(token) > 1 {
 			if strings.HasSuffix(token, "-") {
 				l = append(l, token[:len(token)-1], "-")
 			} else if token[0] == '-' {

@@ -89,7 +89,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 
 | # | Java area (examples) | Check | Status |
 |---|----------------------|--------|--------|
-| 3.A.1 | Tokenizers (word + sentence / SRX) | 1:1 with Java for supported langs | [ ] partial |
+| 3.A.1 | Tokenizers (word + sentence / SRX) | 1:1 with Java for supported langs | [ ] partial; UK N_DASH_SPACE lookahead twin; NL/BE/PL/CA/DE-compound length UTF-16 |
 | 3.A.2 | Taggers (Morfologik / language-specific) | 1:1 readings | [ ] startPos UTF-16 twin BaseTagger; readings still partial per lang |
 | 3.A.3 | `MultiWordChunker` | Official multiwords only | [ ] EN hybrid multiword stage |
 | 3.A.4 | `XmlRuleDisambiguator` | Full lang XML + global when Java enables | [ ] EN hybrid wires official XML+global; loader has rulegroup/`and`/`marker` |

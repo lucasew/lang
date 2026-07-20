@@ -166,7 +166,7 @@ func wordsToAddCA(s string) []string {
 	}
 	// Java String.length is UTF-16 units; a lone ’ (U+2019) has length 1 there but
 	// 3 bytes in Go — use rune count so we do not byte-split the quote.
-	if (strings.HasSuffix(s, "'") || strings.HasSuffix(s, "’")) && utf8.RuneCountInString(s) > 1 {
+	if (strings.HasSuffix(s, "'") || strings.HasSuffix(s, "’")) && tokenizers.UTF16Len(s) > 1 {
 		_, size := utf8.DecodeLastRuneInString(s)
 		l = append(l, wordsToAddCA(s[:len(s)-size])...)
 		l = append(l, s[len(s)-size:])

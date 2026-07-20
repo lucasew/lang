@@ -2,10 +2,10 @@ package de
 
 import (
 	"bufio"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"io"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 )
 
 // GermanCompoundTokenizer ports tokenizers.de.GermanCompoundTokenizer
@@ -160,7 +160,7 @@ func (t *GermanCompoundTokenizer) Tokenize(text string) []string {
 		return nil
 	}
 	// skip short / non-letter
-	if utf8.RuneCountInString(text) < 6 {
+	if tokenizers.UTF16Len(text) < 6 {
 		return []string{text}
 	}
 	low := strings.ToLower(text)
@@ -188,7 +188,7 @@ func (t *GermanCompoundTokenizer) AllSplits(text string) [][]string {
 	if t == nil || text == "" {
 		return nil
 	}
-	if utf8.RuneCountInString(text) < 6 {
+	if tokenizers.UTF16Len(text) < 6 {
 		return nil
 	}
 	low := strings.ToLower(text)
