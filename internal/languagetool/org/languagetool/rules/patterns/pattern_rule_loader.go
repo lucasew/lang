@@ -1066,7 +1066,7 @@ func resolveRuleDefaultOff(ruleDefault, groupDefault string) (defaultOff, defaul
 }
 
 // antiPatternsFromXML builds PatternRule antipatterns from XML <antipattern> blocks.
-// Java: DisambiguationPatternRule with IMMUNIZE; Go Match uses overlap suppress equivalent.
+// Java: DisambiguationPatternRule with IMMUNIZE; PatternRule.Match immunizes + rematches.
 // OR groups and phraserefs are expanded (same as createRules).
 func antiPatternsFromXML(ruleID, languageCode string, aps []xmlPattern, cfg *UnifierConfiguration, phraseMap map[string][][]*PatternToken) []*PatternRule {
 	if len(aps) == 0 {

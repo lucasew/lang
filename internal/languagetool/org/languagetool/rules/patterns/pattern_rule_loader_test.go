@@ -691,7 +691,7 @@ func TestPatternRuleMatcher_MultitokenFilterFailClosed(t *testing.T) {
 	require.Empty(t, ms, "no multitoken dict → filter drops (fail-closed)")
 }
 
-// Java: rules with <antipattern> load (not skipped); Match suppresses overlapping hits.
+// Java PatternRule.checkForAntiPatterns: IMMUNIZE via antipattern then rematch.
 func TestPatternRuleLoader_AntiPatternsLoaded(t *testing.T) {
 	xml := `<?xml version="1.0"?>
 <rules>
@@ -947,3 +947,5 @@ func TestPatternRuleLoader_ToneTagsAndPicky(t *testing.T) {
 	lt.SetToneTags(languagetool.ToneFormal)
 	require.NotEmpty(t, lt.Check("foo bar"))
 }
+
+

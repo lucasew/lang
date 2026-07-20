@@ -17,7 +17,8 @@ type PatternRule struct {
 	Message      string
 	ShortMessage string
 	Tags         []rules.Tag
-	// AntiPatterns ports Java AbstractPatternRule anti-patterns (suppress overlapping matches).
+	// AntiPatterns ports Java AbstractPatternRule anti-patterns (IMMUNIZE via
+	// DisambiguationPatternRule; Match re-runs on immunized sentence).
 	AntiPatterns []*PatternRule
 	// Filter / FilterArgs port AbstractPatternRule filter applied after pattern match.
 	Filter     RuleFilter
@@ -242,27 +243,124 @@ func NewFalseFriendPatternRule(id, languageCode string, tokens []*PatternToken, 
 	return &FalseFriendPatternRule{PatternRule: pr}
 }
 
-// Match runs a simplified PatternRuleMatcher against the sentence.
-// Java: matches suppressed when an antipattern overlaps (AbstractPatternRulePerformer).
+// Match ports PatternRule.match: PatternRuleMatcher then checkForAntiPatterns.
 func (r *PatternRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
-	found, err := NewPatternRuleMatcherFromPattern(r).Match(sentence)
-	if err != nil || len(found) == 0 || len(r.AntiPatterns) == 0 {
+	matcher := NewPatternRuleMatcherFromPattern(r)
+	found, err := matcher.Match(sentence)
+	if err != nil {
 		return found, err
 	}
-	var kept []*rules.RuleMatch
-	for _, rm := range found {
-		if rm == nil {
-			continue
-		}
-		if keepByGrammarAntiPatterns(r.AntiPatterns, sentence, rm.FromPos, rm.ToPos) {
-			kept = append(kept, rm)
-		}
-	}
-	return kept, nil
+	return r.checkForAntiPatterns(sentence, matcher, found)
 }
 
-// keepByGrammarAntiPatterns returns false when any antipattern match overlaps [from,to].
-// Same overlap test as DisambiguationPatternRule.keepByDisambig / Java PatternRuleMatcher.
+// checkForAntiPatterns ports PatternRule.checkForAntiPatterns:
+// if any match and antipatterns exist, immunize via getSentenceWithImmunization
+// and re-match when any token was immunized (Java PatternRuleMatcher skips them).
+func (r *PatternRule) checkForAntiPatterns(
+	sentence *languagetool.AnalyzedSentence,
+	matcher *PatternRuleMatcher,
+	matches []*rules.RuleMatch,
+) ([]*rules.RuleMatch, error) {
+	if r == nil || len(matches) == 0 || len(r.AntiPatterns) == 0 {
+		return matches, nil
+	}
+	immunized := sentenceWithImmunization(sentence, r.AntiPatterns)
+	if immunized == nil || !sentenceHasImmunizedToken(immunized) {
+		return matches, nil
+	}
+	return matcher.Match(immunized)
+}
+
+// sentenceWithImmunization ports Rule.getSentenceWithImmunization for grammar
+// <antipattern>s stored as PatternRule (Java: DisambiguationPatternRule IMMUNIZE).
+func sentenceWithImmunization(sentence *languagetool.AnalyzedSentence, antis []*PatternRule) *languagetool.AnalyzedSentence {
+	if sentence == nil || len(antis) == 0 {
+		return sentence
+	}
+	immunized := sentence.Copy(sentence)
+	if immunized == nil {
+		return sentence
+	}
+	// Java AnalyzedSentence.copy reuses source getTokensWithoutWhitespace() refs.
+	// Rebuild so nonBlank views the copy's tokens — IMMUNIZE then shows on getTokens()
+	// (PatternRule.checkForAntiPatterns anyMatch isImmunized) and rematch SkipImmunized.
+	immunized = languagetool.NewAnalyzedSentence(immunized.GetTokens())
+	for _, ap := range antis {
+		if ap == nil || len(ap.Tokens) == 0 {
+			continue
+		}
+		// Java AbstractPatternRulePerformer (disambig) does not skip immunized tokens
+		// while applying IMMUNIZE antipatterns.
+		am := NewPatternRuleMatcherFromPattern(ap)
+		am.SkipImmunized = false
+		antiMatches, err := am.Match(immunized)
+		if err != nil || len(antiMatches) == 0 {
+			continue
+		}
+		nws := immunized.GetTokensWithoutWhitespace()
+		for _, m := range antiMatches {
+			if m == nil {
+				continue
+			}
+			first, last := matchSpanTokenIndices(nws, m.FromPos, m.ToPos)
+			if first < 0 || last < 0 {
+				continue
+			}
+			for i := first; i <= last && i < len(nws); i++ {
+				if nws[i] != nil {
+					nws[i].Immunize(0)
+				}
+			}
+		}
+	}
+	return immunized
+}
+
+func sentenceHasImmunizedToken(sentence *languagetool.AnalyzedSentence) bool {
+	if sentence == nil {
+		return false
+	}
+	for _, t := range sentence.GetTokens() {
+		if t != nil && t.IsImmunized() {
+			return true
+		}
+	}
+	return false
+}
+
+// matchSpanTokenIndices maps a RuleMatch char span to non-whitespace token indices
+// (same approach as DisambiguationPatternRule.Replace).
+func matchSpanTokenIndices(nws []*languagetool.AnalyzedTokenReadings, fromPos, toPos int) (first, last int) {
+	first, last = -1, -1
+	for i, t := range nws {
+		if t == nil {
+			continue
+		}
+		if t.GetStartPos() == fromPos {
+			first = i
+		}
+		if t.GetEndPos() == toPos || t.GetStartPos()+len(t.GetToken()) == toPos {
+			last = i
+		}
+	}
+	if first < 0 {
+		for i, t := range nws {
+			if t == nil {
+				continue
+			}
+			if t.GetStartPos() >= fromPos && (first < 0 || t.GetStartPos() < nws[first].GetStartPos()) {
+				first = i
+			}
+			if t.GetStartPos() < toPos {
+				last = i
+			}
+		}
+	}
+	return first, last
+}
+
+// keepByGrammarAntiPatterns is retained for disambig-style overlap tests; PatternRule.Match
+// uses immunization rematch (Java checkForAntiPatterns) instead.
 func keepByGrammarAntiPatterns(antis []*PatternRule, sentence *languagetool.AnalyzedSentence, fromPos, toPos int) bool {
 	for _, ap := range antis {
 		if ap == nil || len(ap.Tokens) == 0 {
