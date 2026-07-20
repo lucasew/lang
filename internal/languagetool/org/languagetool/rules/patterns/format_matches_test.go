@@ -96,18 +96,22 @@ func TestToFinalString_WithManualSynthesizer(t *testing.T) {
 	forms := ms.ToFinalString("en-test-synth")
 	require.Equal(t, []string{"cats"}, forms)
 
-	// empty synthesis → (token)
+	// exact postag empty synth → empty array (Java TreeSet.toArray), not invent "(token)"
 	m2 := NewMatch("VBZ", "", false, "", "", CaseNone, false, false, IncludeNone)
 	ms2 := NewMatchStateWithSynth(m2, LanguageSynthesizer("en-test-synth"))
 	ms2.SetToken(tok)
 	forms2 := ms2.ToFinalString("en-test-synth")
-	require.Equal(t, []string{"(cat)"}, forms2)
+	require.Empty(t, forms2)
+
+	// postag_regexp empty synth → "(token)" only on regexp branch
+	mEmptyRE := NewMatch("ZZZ.*", "", true, "", "", CaseNone, false, false, IncludeNone)
+	msEmptyRE := NewMatchStateWithSynth(mEmptyRE, LanguageSynthesizer("en-test-synth"))
+	msEmptyRE.SetToken(tok)
+	require.Equal(t, []string{"(cat)"}, msEmptyRE.ToFinalString("en-test-synth"))
 
 	// postag_regexp with replace via GetTargetPosTag path
-	m3 := NewMatch("NN.*", "NNS", true, "", "", CaseNone, false, false, IncludeNone)
-	// Wait: postag is regexp pattern, postag_replace transforms matched tag
 	// match postag="NN.*" postag_regexp="yes" postag_replace="NNS" → target NNS
-	m3 = NewMatch("NN.*", "NNS", true, "", "", CaseNone, false, false, IncludeNone)
+	m3 := NewMatch("NN.*", "NNS", true, "", "", CaseNone, false, false, IncludeNone)
 	ms3 := NewMatchStateWithSynth(m3, LanguageSynthesizer("en-test-synth"))
 	ms3.SetToken(tok)
 	forms3 := ms3.ToFinalString("en-test-synth")

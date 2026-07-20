@@ -226,8 +226,8 @@ func (s *MatchState) getNewToken(numRead int, token string) []*languagetool.Anal
 }
 
 // ToFinalString ports MatchState.toFinalString.
-// When Synthesizer is nil and postag is set, returns surface after regex (Java synthesizer==null).
-// Empty synthesis yields "(token)" like Java — not an invent form.
+// When Synthesizer is nil and postag is set, returns surface (Java synthesizer==null).
+// Empty regexp synthesis → "(token)"; empty exact-tag synthesis → empty array (Java TreeSet).
 func (s *MatchState) ToFinalString(langCode string) []string {
 	if s == nil {
 		return []string{""}
@@ -296,6 +296,7 @@ func (s *MatchState) ToFinalString(langCode string) []string {
 }
 
 func (s *MatchState) synthesizeExactPOS(posTag string) []string {
+	// Java non-regexp branch: TreeSet → toArray; empty when no forms (no paren invent).
 	wordForms := map[string]struct{}{}
 	readings := s.FormattedToken.GetReadings()
 	for _, r := range readings {
@@ -312,7 +313,7 @@ func (s *MatchState) synthesizeExactPOS(posTag string) []string {
 			}
 		}
 	}
-	return sortedFormsOrParen(wordForms, s.FormattedToken.GetToken())
+	return sortedWordForms(wordForms)
 }
 
 func (s *MatchState) synthesizeRegexpPOS(posTag string) []string {
@@ -360,13 +361,16 @@ func (s *MatchState) synthesizeRegexpPOS(posTag string) []string {
 			}
 		}
 	}
-	return sortedFormsOrParen(wordForms, s.FormattedToken.GetToken())
+	// Java regexp branch only: empty → "(" + token + ")"
+	if len(wordForms) == 0 {
+		return []string{"(" + s.FormattedToken.GetToken() + ")"}
+	}
+	return sortedWordForms(wordForms)
 }
 
-func sortedFormsOrParen(wordForms map[string]struct{}, token string) []string {
+func sortedWordForms(wordForms map[string]struct{}) []string {
 	if len(wordForms) == 0 {
-		// Java: "(" + token + ")" when synthesis finds nothing
-		return []string{"(" + token + ")"}
+		return nil
 	}
 	out := make([]string, 0, len(wordForms))
 	for f := range wordForms {
