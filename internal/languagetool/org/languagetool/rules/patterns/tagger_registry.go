@@ -58,9 +58,16 @@ func LanguageTagWord(lang, token string) []languagetool.TokenTag {
 	return fn(token)
 }
 
-// IsUnknownToTagger ports Java lemma==null && hasNoTag for a surface form.
-// No registered tagger → false (leave form; no invent misspell).
-// Registered tagger with empty readings → true (unknown).
+// IsUnknownToTagger ports MatchState.toFinalString suppress_misspelled check:
+//
+//	AnalyzedToken t0 = tagger.tag(...).get(i).getAnalyzedToken(0);
+//	if (t0.getLemma() == null && t0.hasNoTag()) → MISTAKE
+//
+// AnalyzedToken.hasNoTag: posTag==null || SENTENCE_END || PARAGRAPH_END
+// (SENTENCE_START is a real tag — not hasNoTag).
+// Only the first reading is consulted (Java getAnalyzedToken(0)).
+// No registered tagger → false (leave form; incomplete, no invent misspell).
+// Empty tagger result → true (unknown / no readings).
 func IsUnknownToTagger(lang, word string) bool {
 	if word == "" {
 		return true
@@ -69,16 +76,18 @@ func IsUnknownToTagger(lang, word string) bool {
 	if fn == nil {
 		return false
 	}
-	// Java tags the whole string as one unit (including multiword +DT forms).
+	// Java tags each formatted string as one unit (including multiword +DT forms).
 	tags := fn(word)
 	if len(tags) == 0 {
 		return true
 	}
-	for _, t := range tags {
-		if t.POS != "" && t.POS != languagetool.SentenceStartTagName &&
-			t.POS != languagetool.SentenceEndTagName && t.POS != languagetool.ParagraphEndTagName {
-			return false
-		}
-	}
-	return true
+	// First reading only (getAnalyzedToken(0)).
+	t0 := tags[0]
+	// hasNoTag: null POS or sentence/paragraph end markers (not SENTENCE_START).
+	hasNoTag := t0.POS == "" ||
+		t0.POS == languagetool.SentenceEndTagName ||
+		t0.POS == languagetool.ParagraphEndTagName
+	// lemma == null (empty string is Go's stand-in for Java null lemma)
+	lemmaNull := t0.Lemma == ""
+	return lemmaNull && hasNoTag
 }
