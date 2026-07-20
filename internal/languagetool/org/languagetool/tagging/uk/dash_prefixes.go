@@ -2,6 +2,7 @@ package uk
 
 import (
 	"bufio"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -11,10 +12,10 @@ import (
 
 // Official /uk/dash_prefixes.txt and dash_prefixes_invalid.txt (Java CompoundTagger).
 var (
-	dashPrefOnce         sync.Once
-	dashPrefixes         map[string]string // prefix → extra tag (may be empty or "alt")
-	dashPrefixesInvalid  map[string]struct{}
-	noDashPrefixes       map[string]struct{}
+	dashPrefOnce        sync.Once
+	dashPrefixes        map[string]string // prefix → extra tag (may be empty or "alt")
+	dashPrefixesInvalid map[string]struct{}
+	noDashPrefixes      map[string]struct{}
 )
 
 func loadDashPrefixResources() {
@@ -195,8 +196,8 @@ func NoDashPrefixList() []string {
 	// simple length-desc sort
 	for i := 0; i < len(out); i++ {
 		for j := i + 1; j < len(out); j++ {
-			if len([]rune(out[j])) > len([]rune(out[i])) ||
-				(len([]rune(out[j])) == len([]rune(out[i])) && out[j] < out[i]) {
+			if tagging.UTF16Len(out[j]) > tagging.UTF16Len(out[i]) ||
+				(tagging.UTF16Len(out[j]) == tagging.UTF16Len(out[i]) && out[j] < out[i]) {
 				out[i], out[j] = out[j], out[i]
 			}
 		}

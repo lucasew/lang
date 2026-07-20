@@ -192,4 +192,3 @@ func isOAdjLeft(leftWord string) bool {
 	}
 	return false
 }
-

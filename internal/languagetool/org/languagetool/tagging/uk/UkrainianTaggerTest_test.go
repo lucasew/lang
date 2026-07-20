@@ -83,7 +83,7 @@ func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
 	// Short endings: LetterEndingForNumericHelper (no invent).
 	// Long right halves: Java wordTagger only — inject right lemmas.
 	wt := tagging.MapWordTagger{
-		"річному":     {tagging.NewTaggedWord("річний", "adj:m:v_dav")},
+		"річному":    {tagging.NewTaggedWord("річний", "adj:m:v_dav")},
 		"відсотково": {tagging.NewTaggedWord("відсотково", "adv")},
 	}
 	tg := NewUkrainianTagger(wt)
@@ -106,11 +106,11 @@ func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
 func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
 	// directional compounds: Java oAdjMatch needs left evidence + right adj from wordTagger
 	wt := tagging.MapWordTagger{
-		"південно":  {tagging.NewTaggedWord("південно", "adv")},
-		"північно":  {tagging.NewTaggedWord("північно", "adv")},
-		"Західній":  {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
-		"західній":  {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
-		"східного":  {tagging.NewTaggedWord("східний", "adj:m:v_rod")},
+		"південно": {tagging.NewTaggedWord("південно", "adv")},
+		"північно": {tagging.NewTaggedWord("північно", "adv")},
+		"Західній": {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
+		"західній": {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
+		"східного": {tagging.NewTaggedWord("східний", "adj:m:v_rod")},
 	}
 	tg := NewUkrainianTagger(wt)
 	out := tg.Tag([]string{"Південно-Західній", "північно-східного"})

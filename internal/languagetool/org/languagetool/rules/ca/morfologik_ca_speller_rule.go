@@ -1,6 +1,7 @@
 package ca
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -87,8 +88,8 @@ var (
 		"post": {}, "retro": {}, "semi": {}, "super": {}, "trans": {}, "pro": {}, "g": {},
 		"l": {}, "m": {}, "e": {}, "pos": {}, "acost": {},
 	}
-	caEspaiAmbSufixNo = map[string]struct{}{"mi": {}, "lis": {}}
-	caEspaiAmbSufixSi = map[string]struct{}{"a": {}, "o": {}, "i": {}}
+	caEspaiAmbSufixNo  = map[string]struct{}{"mi": {}, "lis": {}}
+	caEspaiAmbSufixSi  = map[string]struct{}{"a": {}, "o": {}, "i": {}}
 	caParticulaInicial = map[string]struct{}{
 		"amb": {}, "sota": {}, "no": {}, "en": {}, "a": {}, "el": {}, "els": {}, "al": {}, "als": {},
 		"pel": {}, "pels": {}, "del": {}, "dels": {}, "de": {}, "per": {}, "un": {}, "uns": {},
@@ -161,14 +162,14 @@ func (r *MorfologikCatalanSpellerRule) orderCatalanSuggestions(suggestions []str
 			if _, bad := caEspaiAmbSufixNo[strings.ToLower(parts[1])]; bad {
 				continue
 			}
-			if len([]rune(parts[1])) == 1 {
+			if tokenizers.UTF16Len(parts[1]) == 1 {
 				if _, ok := caEspaiAmbSufixSi[strings.ToLower(parts[1])]; !ok {
 					continue
 				}
 			}
 			// preposition + inflected verb drop needs TagPOS (incomplete without it)
 			// participle / balear / pronoun reorder needs TagPOS
-			if len([]rune(parts[1])) > 1 {
+			if tokenizers.UTF16Len(parts[1]) > 1 {
 				if _, ok := caParticulaInicial[strings.ToLower(parts[0])]; ok {
 					pos := diacriticFrontPosCA(out, wordWithoutDiacritics)
 					out = insertAtCA(out, pos, sug)
@@ -306,4 +307,3 @@ func matchSurfaceCA(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) str
 
 // UseInOffice ports useInOffice() — force-enable in LO/OO extension.
 func (r *MorfologikCatalanSpellerRule) UseInOffice() bool { return true }
-

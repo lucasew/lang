@@ -1,9 +1,9 @@
 package uk
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -29,11 +29,13 @@ func ukrLettersOnly(word string) bool {
 
 // GuessOtherTagsReadings ports CompoundTagger.guessOtherTagsInternal ending
 // paradigms for capitalized proper names (no invent dictionary of names):
-//   *штрассе / *штрасе → noun:inanim:f:…:nv:prop[:alt]
-//   *дзе / *швілі / *іані → noun:inanim:m|f:…:nv:prop:lname
+//
+//	*штрассе / *штрасе → noun:inanim:f:…:nv:prop[:alt]
+//	*дзе / *швілі / *іані → noun:inanim:m|f:…:nv:prop:lname
+//
 // No-dash prefix compounds stay in TryNoDashPrefixTags (already dict-gated).
 func GuessOtherTagsReadings(token string) []*languagetool.AnalyzedToken {
-	if token == "" || utf8.RuneCountInString(token) <= 7 {
+	if token == "" || tagging.UTF16Len(token) <= 7 {
 		return nil
 	}
 	if !ukrLettersOnly(token) {

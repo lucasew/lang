@@ -3,7 +3,6 @@ package uk
 import (
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -26,7 +25,7 @@ var badOrSubstRE = regexp.MustCompile(`(?s).*(?:bad|subst).*`)
 // NumericLongFormReadings ports UkrainianTagger.additionalTags RICCHA + OTYI arms.
 // Dict-gated via wordTagger; empty when groups lack num POS or end-word untagged.
 func NumericLongFormReadings(word string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
-	if tagWord == nil || utf8.RuneCountInString(word) < 10 {
+	if tagWord == nil || tagging.UTF16Len(word) < 10 {
 		return nil
 	}
 	if rs := ricchaReadings(word, tagWord); len(rs) > 0 {
@@ -58,7 +57,7 @@ func ricchaReadings(word string, tagWord func(string) []tagging.TaggedWord) []*l
 		}
 		lemma := tw.Lemma
 		// Java: concatGroups(1,3) + lemma.substring(3)  — strip "сто" from lemma
-		if len([]rune(lemma)) >= 3 {
+		if tagging.UTF16Len(lemma) >= 3 {
 			// substring(3) is byte index for BMP-safe "сто" (3 runes = 6 bytes for UTF-8)
 			// "сто" is 3 runes, 6 bytes in UTF-8
 			if strings.HasPrefix(strings.ToLower(lemma), "сто") {

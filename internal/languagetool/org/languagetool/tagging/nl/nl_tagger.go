@@ -3,7 +3,6 @@ package nl
 import (
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -168,7 +167,7 @@ func (t *DutchTagger) tagOne(originalWord string, startPos int) *languagetool.An
 		}
 
 		// Tag unknown compound words (Java: word.length() > 5)
-		if len(l) == 0 && utf8.RuneCountInString(word) > 5 && t.GetCompoundParts != nil {
+		if len(l) == 0 && tagging.UTF16Len(word) > 5 && t.GetCompoundParts != nil {
 			parts := t.GetCompoundParts(word)
 			if len(parts) == 2 {
 				part1, part2 := parts[0], parts[1]

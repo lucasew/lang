@@ -1,6 +1,7 @@
 package es
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
 
@@ -92,7 +93,7 @@ func (r *MorfologikSpanishSpellerRule) additionalTopSpanishSuggestions(word stri
 	if parts := splitDigitsAtEndES(word); len(parts) == 2 {
 		p0 := parts[0]
 		_, shortOK := spanishSplitDigitsAtEnd[strings.ToLower(p0)]
-		if r.isTagged(p0) && (len([]rune(p0)) > 2 || shortOK) {
+		if r.isTagged(p0) && (tokenizers.UTF16Len(p0) > 2 || shortOK) {
 			return []string{strings.Join(parts, " ")}
 		}
 	}
@@ -244,4 +245,3 @@ func orderSpanishSuggestions(suggestions []string, word string) []string {
 
 // UseInOffice ports useInOffice() — force-enable in LO/OO extension.
 func (r *MorfologikSpanishSpellerRule) UseInOffice() bool { return true }
-

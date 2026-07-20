@@ -12,16 +12,16 @@ import (
 // Ports CompoundTagger.tagMatch + agreement helpers (getAgreedPosTag, tryAnimInanim, …).
 
 var (
-	extraTagsRE           = regexp.MustCompile(`:bad`)
-	extraTagsDropRE       = regexp.MustCompile(`:(?:comp.|np|ns|slang|xp[1-9]|predic|insert)`)
+	extraTagsRE            = regexp.MustCompile(`:bad`)
+	extraTagsDropRE        = regexp.MustCompile(`:(?:comp.|np|ns|slang|xp[1-9]|predic|insert)`)
 	extraTagsDropNoninflRE = regexp.MustCompile(`:(?:comp.|np|ns|slang|xp[1-9]|insert)`)
-	stdNounTagRE          = regexp.MustCompile(`^noun:(?:in)?anim:(.):(v_...).*$`)
-	singRegexF            = regexp.MustCompile(`:[mfn]:`)
-	mnpNazRE              = regexp.MustCompile(`^.*?:[mnp]:v_naz.*$`)
-	mnpZnaRE              = regexp.MustCompile(`^.*?:[mnp]:v_zna.*$`)
-	mnpRodRE              = regexp.MustCompile(`^.*?:[mnp]:v_rod.*$`)
-	stripPerfImperfRE     = regexp.MustCompile(`:(?:im)?perf|:adjp:(?:actv|pasv)`)
-	adjpStripRE           = regexp.MustCompile(`:adjp:(?:actv|pasv):(?:im)?perf`)
+	stdNounTagRE           = regexp.MustCompile(`^noun:(?:in)?anim:(.):(v_...).*$`)
+	singRegexF             = regexp.MustCompile(`:[mfn]:`)
+	mnpNazRE               = regexp.MustCompile(`^.*?:[mnp]:v_naz.*$`)
+	mnpZnaRE               = regexp.MustCompile(`^.*?:[mnp]:v_zna.*$`)
+	mnpRodRE               = regexp.MustCompile(`^.*?:[mnp]:v_rod.*$`)
+	stripPerfImperfRE      = regexp.MustCompile(`:(?:im)?perf|:adjp:(?:actv|pasv)`)
+	adjpStripRE            = regexp.MustCompile(`:adjp:(?:actv|pasv):(?:im)?perf`)
 
 	// local copies of LemmaHelper lists (tagging/uk cannot import rules/uk).
 	tagMatchDaysOfWeek = []string{"понеділок", "вівторок", "середа", "четвер", "п'ятниця", "субота", "неділя"}
@@ -326,7 +326,7 @@ func getAgreedPosTag(leftPosTag, rightPosTag string, leftNv bool, word string) s
 	}
 	if ml[1] != mr[1] {
 		// gender mix: only for longer compounds
-		if len([]rune(word)) < 10 {
+		if tagging.UTF16Len(word) < 10 {
 			return ""
 		}
 	}

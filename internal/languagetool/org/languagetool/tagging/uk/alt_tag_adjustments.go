@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -42,7 +41,7 @@ func AltTagAdjustReadings(word string, tagWord func(string) []tagging.TaggedWord
 
 // capsInsideAltReadings: length>5, mixed-case interior, tag lower + :alt.
 func capsInsideAltReadings(word string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
-	if utf8.RuneCountInString(word) <= 5 {
+	if tagging.UTF16Len(word) <= 5 {
 		return nil
 	}
 	// Java UNICODE_CASE CAPS_INSIDE — require an interior upper after a lower Cyrillic.
@@ -78,7 +77,7 @@ func isCyrLetter(r rune) bool {
 
 // zLabialAltReadings: з/З before кптфх → с/С + :alt; lemma maps с back to з.
 func zLabialAltReadings(word string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
-	if utf8.RuneCountInString(word) <= 5 {
+	if tagging.UTF16Len(word) <= 5 {
 		return nil
 	}
 	rs := []rune(word)
@@ -130,7 +129,7 @@ func zLabialAltReadings(word string, tagWord func(string) []tagging.TaggedWord) 
 
 // yiToIAltReadings: дївчина-style consonant+ї → і + :alt.
 func yiToIAltReadings(word string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
-	if utf8.RuneCountInString(word) <= 3 || !strings.Contains(strings.ToLower(word), "ї") {
+	if tagging.UTF16Len(word) <= 3 || !strings.Contains(strings.ToLower(word), "ї") {
 		return nil
 	}
 	adjusted := yiPatternRE.ReplaceAllString(word, "${1}і")

@@ -161,13 +161,13 @@ func (t *GermanTagger) tagElativeUnknown(word string) []*languagetool.AnalyzedTo
 		return nil
 	}
 	lastPart := reElativePrefix.ReplaceAllString(word, "")
-	if len([]rune(lastPart)) <= 3 {
+	if tagging.UTF16Len(lastPart) <= 3 {
 		return nil
 	}
 	firstPart := strings.TrimSuffix(word, lastPart)
 	var readings []*languagetool.AnalyzedToken
 	for _, tw := range t.TagWordExact(lastPart) {
-		if len([]rune(firstPart)) == 2 && strings.HasPrefix(tw.PosTag, "VER") {
+		if tagging.UTF16Len(firstPart) == 2 && strings.HasPrefix(tw.PosTag, "VER") {
 			continue
 		}
 		lemma := firstPart + tw.Lemma

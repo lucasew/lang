@@ -3,7 +3,6 @@ package uk
 import (
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -29,7 +28,7 @@ func CompoundWithQuotesReadings(word string, retag func(adjusted string) []*lang
 		return nil
 	}
 	// Java: length >= 6 inside hyphen branch (length >= 3 && indexOf('-') > 0)
-	if utf8.RuneCountInString(word) < 6 {
+	if tagging.UTF16Len(word) < 6 {
 		return nil
 	}
 	if !strings.Contains(word, "-") && !strings.Contains(word, "\u2013") {
@@ -148,7 +147,7 @@ func BracketAltReadings(word string, tagWord func(string) []tagging.TaggedWord) 
 // SolidLeftOAdjInvalidReadings ports getAnalyzedTokens LEFT_O_ADJ_INVALID_PATTERN solid form.
 // length >= 9; retag rest as adj; lemma = prefix + adj lemma.
 func SolidLeftOAdjInvalidReadings(word string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
-	if tagWord == nil || utf8.RuneCountInString(word) < 9 {
+	if tagWord == nil || tagging.UTF16Len(word) < 9 {
 		return nil
 	}
 	// only when no hyphen (solid) — hyphen path is oAdjMatch

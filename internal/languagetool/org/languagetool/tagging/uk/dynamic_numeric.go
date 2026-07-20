@@ -211,4 +211,3 @@ func MissingApostropheCandidates(token string) []string {
 	}
 	return out
 }
-

@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -244,7 +243,7 @@ func DynamicNoDashSolidHasTags(token string, tagWord func(string) []tagging.Tagg
 		return false
 	}
 	noDash := strings.ReplaceAll(t, "-", "")
-	if utf8.RuneCountInString(noDash) < 2 {
+	if tagging.UTF16Len(noDash) < 2 {
 		return false
 	}
 	return len(tagAsIsAndWithLowerCase(noDash, tagWord)) > 0

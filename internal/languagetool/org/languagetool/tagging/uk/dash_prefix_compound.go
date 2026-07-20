@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -81,7 +80,7 @@ func DynamicSingleLetterRedupReadings(token string, tagWord func(string) []taggi
 	}
 	i := strings.Index(t, "-")
 	left, right := t[:i], t[i+1:]
-	if utf8.RuneCountInString(left) != 1 || utf8.RuneCountInString(right) <= 3 {
+	if tagging.UTF16Len(left) != 1 || tagging.UTF16Len(right) <= 3 {
 		return nil
 	}
 	leftLow := strings.ToLower(left)

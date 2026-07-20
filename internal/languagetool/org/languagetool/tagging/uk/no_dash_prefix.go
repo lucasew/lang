@@ -23,7 +23,7 @@ func DynamicNoDashPrefixReadings(word string, tagWord func(string) []tagging.Tag
 	if tagWord == nil || word == "" {
 		return nil
 	}
-	if utf8.RuneCountInString(word) <= 7 || !ukrLettersOnly(word) {
+	if tagging.UTF16Len(word) <= 7 || !ukrLettersOnly(word) {
 		return nil
 	}
 	// Java: capitalized ending paradigms first (GuessOtherTagsReadings)
@@ -55,7 +55,7 @@ func DynamicNoDashPrefixReadings(word string, tagWord func(string) []tagging.Tag
 			right = string(rr[1:])
 			apo = "'"
 		}
-		if utf8.RuneCountInString(right) < 2 {
+		if tagging.UTF16Len(right) < 2 {
 			continue
 		}
 
@@ -75,7 +75,7 @@ func DynamicNoDashPrefixReadings(word string, tagWord func(string) []tagging.Tag
 		}
 
 		// right length >= 4 && ! isCapitalizedWord(right)
-		if utf8.RuneCountInString(right) < 4 || tools.IsCapitalizedWord(right) {
+		if tagging.UTF16Len(right) < 4 || tools.IsCapitalizedWord(right) {
 			continue
 		}
 

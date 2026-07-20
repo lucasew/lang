@@ -50,7 +50,7 @@ func loadOldSpelling() (map[string]string, []string) {
 			keys = append(keys, k)
 		}
 		sort.Slice(keys, func(i, j int) bool {
-			return len([]rune(keys[i])) > len([]rune(keys[j]))
+			return utf16Len(keys[i]) > utf16Len(keys[j])
 		})
 		oldSpellingMap = m
 		oldSpellingKeys = keys

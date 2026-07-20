@@ -137,6 +137,7 @@ func tagBothCases(word string, tagWord func(string) []tagging.TaggedWord, posRE 
 //  2. parts>=3, unique>1, first not dash prefix/invalid:
 //     merge hyphens away → dict + :alt
 //     collapseStretch → dict + :alt
+//
 // Intj redup is handled by DynamicIntjRedupReadings.
 func DynamicMultiHyphenStretchReadings(token string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
 	if token == "" || !strings.Contains(token, "-") {
@@ -217,4 +218,3 @@ func taggedWordsToSurfaceTokens(surface string, words []tagging.TaggedWord) []*l
 	}
 	return out
 }
-

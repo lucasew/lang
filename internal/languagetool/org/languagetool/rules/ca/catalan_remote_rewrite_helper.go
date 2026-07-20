@@ -1,6 +1,7 @@
 package ca
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"os"
 	"strconv"
 	"strings"
@@ -46,5 +47,5 @@ func (c CatalanRemoteRewriteConfig) AcceptsSentence(sentence string) bool {
 	if max <= 0 {
 		max = 1200
 	}
-	return len([]rune(strings.TrimSpace(sentence))) <= max && strings.TrimSpace(sentence) != ""
+	return tokenizers.UTF16Len(strings.TrimSpace(sentence)) <= max && strings.TrimSpace(sentence) != ""
 }

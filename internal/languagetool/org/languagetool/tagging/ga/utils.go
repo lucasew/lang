@@ -1,6 +1,7 @@
 package ga
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"strings"
 	"unicode"
 )
@@ -106,7 +107,7 @@ func Eclipse(in string) string {
 
 // UnLenite removes h after first character when present.
 func UnLenite(in string) string {
-	if len([]rune(in)) < 2 {
+	if tagging.UTF16Len(in) < 2 {
 		return ""
 	}
 	r := []rune(in)
@@ -202,7 +203,7 @@ func UnEclipseChar(in string, first, second rune) string {
 
 // UnEclipse ports Utils.unEclipse (returns "" for Java null).
 func UnEclipse(in string) string {
-	if len([]rune(in)) <= 2 {
+	if tagging.UTF16Len(in) <= 2 {
 		return ""
 	}
 	r := []rune(in)

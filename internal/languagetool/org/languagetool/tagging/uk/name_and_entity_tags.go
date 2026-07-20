@@ -80,7 +80,7 @@ func capitalizeProperName(word string) string {
 // AllCapsPropReadings ports UkrainianTagger ALLCAPS → capitalizeProperName + dict re-tag
 // for noun.*:prop|noninfl. Fail closed without dictionary (no soft invent prop POS).
 func AllCapsPropReadings(token string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
-	if tagWord == nil || len([]rune(token)) <= 2 || !isAllUppercaseUk(token) {
+	if tagWord == nil || tagging.UTF16Len(token) <= 2 || !isAllUppercaseUk(token) {
 		return nil
 	}
 	// skip pure latin romans (handled as number:latin)

@@ -3,7 +3,6 @@ package uk
 import (
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
@@ -26,7 +25,7 @@ func DynamicNumrAdjReadings(token string, tagWord func(string) []tagging.TaggedW
 	}
 	leftWord := token[:dash]
 	rightWord := token[dash+1:]
-	if utf8.RuneCountInString(leftWord) < 2 {
+	if tagging.UTF16Len(leftWord) < 2 {
 		return nil
 	}
 	if !reNumrAdjLeft.MatchString(leftWord) {

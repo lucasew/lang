@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
@@ -44,7 +43,7 @@ func DynamicBadSuffixReadings(token string, tagWord func(string) []tagging.Tagge
 	dash := strings.LastIndex(token, "-")
 	leftWord := token[:dash]
 	rightWord := token[dash+1:]
-	if utf8.RuneCountInString(leftWord) <= 1 {
+	if tagging.UTF16Len(leftWord) <= 1 {
 		return nil
 	}
 	// Java BAD_SUFFIX.contains(rightWord) — list entries are lowercase

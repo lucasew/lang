@@ -1,6 +1,7 @@
 package fr
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -53,7 +54,7 @@ func (r *MorfologikFrenchSpellerRule) Match(sentence *languagetool.AnalyzedSente
 		var top []string
 		if t := additionalTopFrenchSuggestions(word); len(t) > 0 {
 			top = append(top, t...)
-		} else if parts := splitCamelCase(word); len(parts) > 1 && len([]rune(parts[0])) > 1 {
+		} else if parts := splitCamelCase(word); len(parts) > 1 && tokenizers.UTF16Len(parts[0]) > 1 {
 			ok := true
 			for _, p := range parts {
 				if r.wordIsMisspelled(p) {

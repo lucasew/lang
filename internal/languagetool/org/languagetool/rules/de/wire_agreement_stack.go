@@ -1,6 +1,7 @@
 package de
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"strings"
 	"sync"
 
@@ -210,7 +211,7 @@ func compoundPhraseAgreementOK(tagger *detag.GermanTagger, parts []string) bool 
 			toks = append(toks, tr)
 		}
 		if i < len(parts) {
-			pos += len([]rune(parts[i])) + 1
+			pos += tokenizers.UTF16Len(parts[i]) + 1
 		}
 	}
 	sent := languagetool.NewAnalyzedSentence(toks)

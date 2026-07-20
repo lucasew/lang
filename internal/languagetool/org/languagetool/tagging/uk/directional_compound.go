@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
@@ -123,7 +122,7 @@ func DynamicDirectionalAdjReadings(token string, tagWord func(string) []tagging.
 	}
 	leftWord := token[:dash]
 	rightWord := token[dash+1:]
-	if utf8.RuneCountInString(leftWord) < 3 {
+	if tagging.UTF16Len(leftWord) < 3 {
 		return nil
 	}
 	leftLow := strings.ToLower(leftWord)
@@ -243,7 +242,7 @@ func MissingHyphenCandidates(token string) []string {
 		cand := string(rs[:len(pr)]) + "-" + string(rs[len(pr):])
 		out = append(out, cand)
 	}
-	if strings.HasSuffix(lower, "небудь") && len([]rune(lower)) > len([]rune("небудь"))+2 {
+	if strings.HasSuffix(lower, "небудь") && tagging.UTF16Len(lower) > tagging.UTF16Len("небудь")+2 {
 		rs := []rune(token)
 		suf := []rune("небудь")
 		stem := string(rs[:len(rs)-len(suf)])

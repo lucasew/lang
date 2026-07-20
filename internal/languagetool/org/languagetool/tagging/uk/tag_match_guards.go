@@ -2,18 +2,17 @@ package uk
 
 import (
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
 // AllowFullTagMatch ports doGuessCompoundTag guards immediately before tagMatch:
-//  - left has "pron" without "numr" → no
-//  - right is part|conj|…:pron (unless both numr) and left≠right → no
-//  - left empty dict → no
-//  - left length ≤ 2 and not intj → no (unless intj)
-//  - solid no-dash already tagged → no (caller may also use DynamicNoDashSolidHasTags)
+//   - left has "pron" without "numr" → no
+//   - right is part|conj|…:pron (unless both numr) and left≠right → no
+//   - left empty dict → no
+//   - left length ≤ 2 and not intj → no (unless intj)
+//   - solid no-dash already tagged → no (caller may also use DynamicNoDashSolidHasTags)
 func AllowFullTagMatch(token string, tagWord func(string) []tagging.TaggedWord) bool {
 	if tagWord == nil || token == "" || !strings.Contains(token, "-") {
 		return false
@@ -61,7 +60,7 @@ func AllowFullTagMatch(token string, tagWord func(string) []tagging.TaggedWord) 
 		return false
 	}
 	hasIntj := hasPosStartInTags(leftTags, "intj")
-	if utf8.RuneCountInString(left) <= 2 && !hasIntj {
+	if tagging.UTF16Len(left) <= 2 && !hasIntj {
 		return false
 	}
 	return true

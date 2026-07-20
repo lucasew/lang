@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 const (
@@ -119,7 +120,7 @@ func getTitleCaseIndexes(tokens []*languagetool.AnalyzedTokenReadings, startInde
 			break
 		}
 		r, _ := utf8.DecodeRuneInString(t)
-		if unicode.IsUpper(r) || prev.IsWhitespace() || utf8.RuneCountInString(t) < 3 {
+		if unicode.IsUpper(r) || prev.IsWhitespace() || tokenizers.UTF16Len(t) < 3 {
 			fromIndex--
 			continue
 		}
@@ -144,7 +145,7 @@ func getTitleCaseIndexes(tokens []*languagetool.AnalyzedTokenReadings, startInde
 			break
 		}
 		r, _ := utf8.DecodeRuneInString(t)
-		if unicode.IsUpper(r) || next.IsWhitespace() || utf8.RuneCountInString(t) < 3 {
+		if unicode.IsUpper(r) || next.IsWhitespace() || tokenizers.UTF16Len(t) < 3 {
 			toIndex++
 			continue
 		}

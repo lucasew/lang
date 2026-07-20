@@ -30,12 +30,12 @@ var (
 	AdjCompRegex = regexp.MustCompile(`:comp[bcs]`)
 
 	// Common POS patterns (Java public static finals).
-	NounVNazPattern  = regexp.MustCompile(`^noun.*:v_naz.*$`)
-	AdjVNazPattern   = regexp.MustCompile(`^adj:.:v_naz.*$`)
-	VerbInfPattern   = regexp.MustCompile(`^verb.*:inf.*$`)
-	AdjVKlyPattern   = regexp.MustCompile(`^adj:.:v_kly.*$`)
-	VerbPattern      = regexp.MustCompile(`^verb.*$`)
-	VerbAdvpPattern  = regexp.MustCompile(`^(?:verb|advp).*$`)
+	NounVNazPattern = regexp.MustCompile(`^noun.*:v_naz.*$`)
+	AdjVNazPattern  = regexp.MustCompile(`^adj:.:v_naz.*$`)
+	VerbInfPattern  = regexp.MustCompile(`^verb.*:inf.*$`)
+	AdjVKlyPattern  = regexp.MustCompile(`^adj:.:v_kly.*$`)
+	VerbPattern     = regexp.MustCompile(`^verb.*$`)
+	VerbAdvpPattern = regexp.MustCompile(`^(?:verb|advp).*$`)
 
 	wordPattern          = regexp.MustCompile(`(?i)^[а-яіїєґa-z'\-]+$`)
 	predictInsertPattern = regexp.MustCompile(`^noninfl:(?:predic|insert).*$`)

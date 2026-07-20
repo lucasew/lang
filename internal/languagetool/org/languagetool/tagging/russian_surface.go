@@ -12,7 +12,7 @@ const (
 // strip combining acute/grave on vowels, map ʼ → ъ.
 // mayMissingYo is the first-stage Java flag (before dictionary confirmation).
 func NormalizeRussianSurface(word string) (normalized string, mayMissingYo bool) {
-	if len([]rune(word)) <= 1 {
+	if UTF16Len(word) <= 1 {
 		return word, false
 	}
 	// Java mayMissingYo conditions (before replace):
