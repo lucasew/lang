@@ -153,3 +153,40 @@ func TestRegisterBinaryPOSTagger_ItalianISO885915(t *testing.T) {
 	}
 	require.True(t, found, "tags=%v", tags)
 }
+
+func TestRegisterBinaryPOSTagger_Galician(t *testing.T) {
+	wd, err := os.Getwd()
+	require.NoError(t, err)
+	var dictPath string
+	dir := wd
+	for i := 0; i < 12; i++ {
+		cand := filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", "gl",
+			"src", "main", "resources", "org", "languagetool", "resource", "gl", "galician.dict")
+		if st, e := os.Stat(cand); e == nil && st.Mode().IsRegular() {
+			dictPath = cand
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	if dictPath == "" {
+		t.Skip("galician.dict not in tree")
+	}
+	lt := NewJLanguageTool("gl")
+	require.True(t, RegisterBinaryPOSTagger(lt, dictPath))
+	tags := lt.TagWord("casa")
+	require.NotEmpty(t, tags)
+	var hasNCFS bool
+	for _, tg := range tags {
+		if tg.POS == "NCFS000" && tg.Lemma == "casa" {
+			hasNCFS = true
+		}
+	}
+	require.True(t, hasNCFS, "tags=%v", tags)
+	// Title case lower-merge
+	tags2 := lt.TagWord("Casa")
+	require.NotEmpty(t, tags2)
+}

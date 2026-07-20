@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
@@ -13,6 +14,12 @@ import (
 	estok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/es"
 	frtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/fr"
 	pttok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pt"
+)
+
+var (
+	glAdjPartFSTagWord        = regexp.MustCompile(`^V.P..SF.|A[QO].[FC][SN].$`)
+	glVerbTagWord             = regexp.MustCompile(`^V.+`)
+	glPrefixesForVerbsTagWord = regexp.MustCompile(`(?i)^(auto|re)(...+)$`)
 )
 
 // RegisterBinaryPOSTagger installs lt.TagWord from a Morfologik POS dictionary
@@ -48,6 +55,9 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 		// Java RussianTagger: accent strip then BaseTagger.getAnalyzedTokens.
 		// MayMissingYO is chunk-level (full Tagger.tag); TagWord inject is POS only.
 		tw = russianTaggerTagWord(wordTagger, dictPath)
+	case "gl":
+		// Java GalicianTagger: exact lookups + mente/auto|re prefixes (not BaseTagger alone).
+		tw = galicianTaggerTagWord(wordTagger)
 	default:
 		// Java BaseTagger: tagLowercaseWithUppercase=true by default (most language taggers).
 		base := tagging.NewBaseTagger(wordTagger, dictPath, langBase, true)
@@ -56,6 +66,72 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	lt.TagWord = tw
 	wireTokenizerIsTaggedFromPOS(lt.GetLanguageCode(), tw)
 	return true
+}
+
+// galicianTaggerTagWord ports Java GalicianTagger.tag case + additionalTags for TagWord inject.
+func galicianTaggerTagWord(wt tagging.WordTagger) func(token string) []TokenTag {
+	if wt == nil {
+		return nil
+	}
+	lookup := func(w string) []TokenTag {
+		tws := wt.Tag(w)
+		if len(tws) == 0 {
+			return nil
+		}
+		out := make([]TokenTag, 0, len(tws))
+		for _, tw := range tws {
+			out = append(out, TokenTag{POS: tw.PosTag, Lemma: tw.Lemma})
+		}
+		return out
+	}
+	return func(token string) []TokenTag {
+		if token == "" {
+			return nil
+		}
+		w := strings.ReplaceAll(token, "’", "'")
+		lower := strings.ToLower(w)
+		isLower := w == lower
+		isMixed := tools.IsMixedCase(w)
+		var out []TokenTag
+		seen := map[string]struct{}{}
+		add := func(tags []TokenTag) {
+			for _, t := range tags {
+				key := t.POS + "\x00" + t.Lemma
+				if _, ok := seen[key]; ok {
+					continue
+				}
+				seen[key] = struct{}{}
+				out = append(out, t)
+			}
+		}
+		add(lookup(w))
+		if !isLower && !isMixed {
+			add(lookup(lower))
+		}
+		if len(out) == 0 && !isMixed {
+			// -mente adverbs of manner (RM)
+			if strings.HasSuffix(lower, "mente") {
+				possibleAdj := strings.TrimSuffix(lower, "mente")
+				for _, tw := range lookup(possibleAdj) {
+					if tw.POS != "" && glAdjPartFSTagWord.MatchString(tw.POS) {
+						add([]TokenTag{{POS: "RM", Lemma: lower}})
+						break
+					}
+				}
+			}
+			// auto|re + verb
+			if m := glPrefixesForVerbsTagWord.FindStringSubmatch(w); m != nil && len(out) == 0 {
+				pref := strings.ToLower(m[1])
+				possibleVerb := strings.ToLower(m[2])
+				for _, tw := range lookup(possibleVerb) {
+					if tw.POS != "" && glVerbTagWord.MatchString(tw.POS) {
+						add([]TokenTag{{POS: tw.POS, Lemma: pref + tw.Lemma}})
+					}
+				}
+			}
+		}
+		return out
+	}
 }
 
 // russianTaggerTagWord ports Java RussianTagger.tag for TagWord inject:
