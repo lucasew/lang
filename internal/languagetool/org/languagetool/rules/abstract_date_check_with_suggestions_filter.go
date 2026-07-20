@@ -68,7 +68,7 @@ func (f *AbstractDateCheckWithSuggestionsFilter) AcceptRuleMatch(
 		return out
 	}
 	if f.ErrorMessageWrongYear != "" {
-		if _, err := f.parseDate(resolved); err != nil {
+		if _, _, err := f.parseDate(resolved); err != nil {
 			return NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), f.ErrorMessageWrongYear)
 		}
 	}
