@@ -117,11 +117,9 @@ func getTokensWithTokenReadings(tokenReadings []*languagetool.AnalyzedTokenReadi
 		startPos := pos
 		endPos := startPos + len(tokens[i])
 		readings := getAnalyzedTokenReadingsFor(startPos, endPos, tokenReadings)
-		ct := chunkTag
-		if ct == "" {
-			ct = "O"
-		}
-		result = append(result, NewChunkTaggedToken(tokens[i], []ChunkTag{NewChunkTag(ct)}, readings))
+		// Java: new ChunkTag(chunkTag) — empty throws IllegalArgumentException.
+		// Do not invent "O" for missing tags (soft invent removed).
+		result = append(result, NewChunkTaggedToken(tokens[i], []ChunkTag{NewChunkTag(chunkTag)}, readings))
 		pos = endPos
 	}
 	return result

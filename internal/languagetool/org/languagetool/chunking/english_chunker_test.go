@@ -37,3 +37,24 @@ func TestEnglishChunker_NoInventPOSBIO(t *testing.T) {
 	// Struct has no invent knobs (compile-time: only Filter remains).
 	_ = c
 }
+
+// Twin of Java ChunkTag ctor: empty chunk tag is illegal (do not invent "O").
+func TestGetTokensWithTokenReadings_EmptyChunkTagPanics(t *testing.T) {
+	require.Panics(t, func() {
+		_ = getTokensWithTokenReadings(nil, []string{"a"}, []string{""})
+	})
+}
+
+// Twin of EnglishChunker.cleanZeroWidthWhitespaces quirk: non-empty split re-adds full token.
+func TestCleanZeroWidthWhitespaces_JavaQuirk(t *testing.T) {
+	// token without U+FEFF unchanged as one entry
+	require.Equal(t, []string{"hello"}, cleanZeroWidthWhitespaces([]string{"hello"}))
+	// U+FEFF-only: split yields ["",""] → two empty strings
+	got := cleanZeroWidthWhitespaces([]string{"\uFEFF"})
+	require.Equal(t, []string{"", ""}, got)
+	// non-empty parts re-add FULL token (not the split piece) — Java bug-for-bug
+	tok := "a\uFEFFb"
+	got2 := cleanZeroWidthWhitespaces([]string{tok})
+	// split → ["a","b"] both non-empty → [tok, tok]
+	require.Equal(t, []string{tok, tok}, got2)
+}
