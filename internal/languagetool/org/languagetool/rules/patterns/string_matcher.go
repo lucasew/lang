@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"fmt"
 	"regexp"
 	"sort"
 	"strings"
@@ -24,6 +25,9 @@ type StringMatcher struct {
 	possibleSorted []string
 	// re is used when possible values cannot be enumerated and substrings are not sufficient
 	re *regexp.Regexp
+	// javaRE is used when the pattern needs Java lookaround (RE2 cannot compile it).
+	// Unavoidable Go mapping of java.util.regex for LT XML postag/surface regexps.
+	javaRE *javaRegexp
 	// required ports getRequiredSubstrings filter (and checkCanReplaceRegex when sufficient)
 	required *Substrings
 	// substringsSufficient when true, required alone decides matches (no regex)
@@ -40,6 +44,9 @@ func NewStringMatcher(pattern string, isRegExp, caseSensitive bool) *StringMatch
 	if !isRegExp || pattern == "\\0" {
 		return stringEqualsMatcher(pattern, isRegExp, caseSensitive)
 	}
+	// Map Java/PCRE surface that RE2 rejects (\u, lookaround after flags strip).
+	pattern = normalizeJavaRegexp(pattern)
+
 	// always compile to validate syntax (Java Pattern.compile)
 	flags := ""
 	if !caseSensitive {
@@ -47,6 +54,19 @@ func NewStringMatcher(pattern string, isRegExp, caseSensitive bool) *StringMatch
 	}
 	re, err := regexp.Compile(flags + "^(?:" + pattern + ")$")
 	if err != nil {
+		// Java supports (?!...) / (?=...); RE2 does not. Use lookaround engine.
+		if needsJavaRegexp(pattern) {
+			jr, jerr := compileJavaRegexp(pattern, caseSensitive)
+			if jerr != nil {
+				panic(fmt.Errorf("StringMatcher: java lookaround compile failed for %q: %v (re2: %v)", pattern, jerr, err))
+			}
+			return &StringMatcher{
+				Pattern:       pattern,
+				CaseSensitive: caseSensitive,
+				IsRegExp:      true,
+				javaRE:        jr,
+			}
+		}
 		panic(err) // match Java PatternSyntaxException
 	}
 
@@ -167,6 +187,9 @@ func (m *StringMatcher) Matches(s string) bool {
 	}
 	if m.substringsSufficient {
 		return true
+	}
+	if m.javaRE != nil {
+		return m.javaRE.fullMatch(s)
 	}
 	if m.re != nil {
 		return m.re.MatchString(s)
