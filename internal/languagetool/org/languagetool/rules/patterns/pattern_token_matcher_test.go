@@ -54,6 +54,30 @@ func TestPatternTokenMatcher_TextMatcherAndGetTestToken(t *testing.T) {
 	require.False(t, hasStringThatMustMatch(ws))
 }
 
+func TestPatternTokenMatcher_AndGroupCheck(t *testing.T) {
+	// Base surface + and-group POS on different readings (Java andGroupCheck OR).
+	base := NewPatternToken("bank", false, false, false)
+	andPOS := NewPatternToken("", false, false, false)
+	andPOS.SetPosToken(PosToken{PosTag: "NN"})
+	base.AddAndGroupElement(andPOS)
+	m := NewPatternTokenMatcher(base)
+
+	nn := "NN"
+	vb := "VB"
+	// reading0: bank/VB, reading1: bank/NN — base matches both; and POS needs NN
+	atr := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("bank", &vb, nil),
+		languagetool.NewAnalyzedToken("bank", &nn, nil),
+	}, 0)
+	require.True(t, m.IsMatchedReadings(atr))
+
+	// only VB readings → and-group POS fails
+	atrVB := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("bank", &vb, nil),
+	}, 0)
+	require.False(t, m.IsMatchedReadings(atrVB))
+}
+
 // Faithful: untagged tokens do not soft-accept open-class POS patterns.
 // Ports PatternToken.isPosTokenMatched + PosToken.posUnknown.
 func TestPatternTokenMatcher_UntaggedPOSStrict(t *testing.T) {

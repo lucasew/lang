@@ -16,8 +16,10 @@ type PatternTokenMatcher struct {
 	Base *PatternToken
 	// patternToken is the working token after resolveReference (Java patternToken field).
 	patternToken *PatternToken
-	// andMatchers are AndGroup members after prepareAndGroup/resolveReference.
+	// andMatchers ports PatternTokenMatcher.andGroup (members after prepareAndGroup).
 	andMatchers []*PatternTokenMatcher
+	// andGroupCheck ports andGroupCheck[0]=base, [1..]=and members (OR across readings).
+	andGroupCheck []bool
 	// textMatcher ports PatternToken.textMatcher (StringMatcher.create).
 	textMatcher *StringMatcher
 	// StrictPOS: untagged tokens only match postag=UNKNOWN (Java with a real tagger).
@@ -28,6 +30,18 @@ type PatternTokenMatcher struct {
 func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
 	m := &PatternTokenMatcher{Base: pt, patternToken: pt, StrictPOS: true}
 	m.recompileTextMatcher()
+	// Java ctor: pre-build andGroup matchers when hasAndGroup.
+	if pt != nil && len(pt.AndGroup) > 0 {
+		m.andMatchers = make([]*PatternTokenMatcher, 0, len(pt.AndGroup))
+		for _, andPt := range pt.AndGroup {
+			if andPt == nil {
+				continue
+			}
+			am := NewPatternTokenMatcher(andPt)
+			am.StrictPOS = true
+			m.andMatchers = append(m.andMatchers, am)
+		}
+	}
 	return m
 }
 
@@ -85,22 +99,62 @@ func (m *PatternTokenMatcher) ResolveReference(firstMatchToken int, tokens []*la
 }
 
 // PrepareAndGroup ports PatternTokenMatcher.prepareAndGroup:
-// resolve references on each AndGroup member before and-group checks.
+// resolve references on each AndGroup member and reset andGroupCheck.
 func (m *PatternTokenMatcher) PrepareAndGroup(firstMatchToken int, tokens []*languagetool.AnalyzedTokenReadings, langCode string) {
 	if m == nil || m.Base == nil || len(m.Base.AndGroup) == 0 {
-		m.andMatchers = nil
+		m.andGroupCheck = nil
 		return
 	}
-	m.andMatchers = make([]*PatternTokenMatcher, 0, len(m.Base.AndGroup))
-	for _, andPt := range m.Base.AndGroup {
-		if andPt == nil {
+	if len(m.andMatchers) == 0 {
+		for _, andPt := range m.Base.AndGroup {
+			if andPt == nil {
+				continue
+			}
+			am := NewPatternTokenMatcher(andPt)
+			am.StrictPOS = m.StrictPOS
+			m.andMatchers = append(m.andMatchers, am)
+		}
+	}
+	for _, am := range m.andMatchers {
+		if am != nil {
+			am.StrictPOS = m.StrictPOS
+			am.ResolveReference(firstMatchToken, tokens, langCode)
+		}
+	}
+	// Java: andGroupCheck = new boolean[andGroup.size() + 1]; fill false
+	m.andGroupCheck = make([]bool, len(m.andMatchers)+1)
+}
+
+// AddMemberAndGroup ports PatternTokenMatcher.addMemberAndGroup.
+func (m *PatternTokenMatcher) AddMemberAndGroup(token *languagetool.AnalyzedToken) {
+	if m == nil || m.active() == nil || !m.active().HasAndGroup() || len(m.andGroupCheck) == 0 {
+		return
+	}
+	for i, am := range m.andMatchers {
+		if i+1 >= len(m.andGroupCheck) || m.andGroupCheck[i+1] {
 			continue
 		}
-		am := NewPatternTokenMatcher(andPt)
-		am.StrictPOS = m.StrictPOS
-		am.ResolveReference(firstMatchToken, tokens, langCode)
-		m.andMatchers = append(m.andMatchers, am)
+		if am != nil && am.IsMatched(token) {
+			m.andGroupCheck[i+1] = true
+		}
 	}
+}
+
+// CheckAndGroup ports PatternTokenMatcher.checkAndGroup.
+func (m *PatternTokenMatcher) CheckAndGroup(previousValue bool) bool {
+	if m == nil || m.active() == nil || !m.active().HasAndGroup() {
+		return previousValue
+	}
+	all := true
+	for _, v := range m.andGroupCheck {
+		all = all && v
+	}
+	return all
+}
+
+// HasAndGroup reports whether the base pattern token has an and-group.
+func (m *PatternTokenMatcher) HasAndGroup() bool {
+	return m != nil && m.Base != nil && m.Base.HasAndGroup()
 }
 
 // normalizeJavaRegexp maps Java/PCRE constructs used in LT XML to Go RE2.
@@ -153,13 +207,20 @@ func (m *PatternTokenMatcher) GetPatternToken() *PatternToken {
 	return m.active()
 }
 
-// IsMatched checks whether a single AnalyzedToken matches the pattern token.
-// Ports PatternToken.isMatched — Java uses XOR for negation and posNegation with
-// operator precedence (^ binds tighter than &&):
-//
-//	hasString: (textMatch ^ negation) && (posMatch ^ posNegation)
-//	no string: !negation && (posMatch ^ posNegation)
+// IsMatched ports PatternTokenMatcher.isMatched — PatternToken.isMatched plus
+// andGroupCheck[0] side effect when hasAndGroup (Java).
 func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool {
+	matched := m.isMatchedToken(token)
+	if m != nil && m.active() != nil && m.active().HasAndGroup() && len(m.andGroupCheck) > 0 {
+		m.andGroupCheck[0] = m.andGroupCheck[0] || matched
+	}
+	return matched
+}
+
+// isMatchedToken ports PatternToken.isMatched (no and-group bookkeeping).
+// Java XOR: hasString (textMatch ^ negation) && (posMatch ^ posNegation);
+// no string: !negation && (posMatch ^ posNegation).
+func (m *PatternTokenMatcher) isMatchedToken(token *languagetool.AnalyzedToken) bool {
 	if m == nil || m.active() == nil || token == nil {
 		return false
 	}
@@ -306,8 +367,8 @@ func (m *PatternTokenMatcher) CollectMatchedReadings(atr *languagetool.AnalyzedT
 }
 
 // IsMatchedReadings evaluates the pattern token against all readings.
-// Ports AbstractPatternRulePerformer.testAllReadings order for one token:
-// reading match → exceptions → chunk (XOR negation) → and-group chunks.
+// Ports AbstractPatternRulePerformer.testAllReadings for one token index
+// (without prevElement/next-exception window — those live in matchFrom).
 func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenReadings) bool {
 	if atr == nil {
 		return false
@@ -322,31 +383,67 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 		}
 	}
 
+	// Reset and-group accumulators (Java prepareAndGroup before the reading loop).
+	if pt.HasAndGroup() {
+		if len(m.andMatchers) == 0 {
+			m.PrepareAndGroup(-1, nil, "")
+		} else {
+			m.andGroupCheck = make([]bool, len(m.andMatchers)+1)
+		}
+	}
+
+	readings := atr.GetReadings()
 	anyMatched := false
-	if len(pt.AndGroup) > 0 {
-		anyMatched = m.matchAndGroupReadings(atr)
-	} else {
-		for _, r := range atr.GetReadings() {
-			if r == nil {
-				continue
-			}
-			if m.IsMatched(r) {
-				anyMatched = true
-				break
+	for i, r := range readings {
+		if r == nil {
+			continue
+		}
+		// Java: if (!anyMatched) { anyMatched = readingMatches = isMatched(...) }
+		// When groups/and: also isMatched on later readings for andGroupCheck[0].
+		readingMatches := false
+		if !anyMatched || pt.HasAndGroup() {
+			readingMatches = m.IsMatched(r)
+			if !anyMatched {
+				anyMatched = readingMatches
 			}
 		}
+
+		// Java short-circuit (prevElement==null branch of testAllReadings)
 		if !anyMatched {
-			// Faithful: untagged surface — only UNKNOWN postag patterns can match.
-			// Chunk-only / empty-surface tokens: IsMatched with no string is !negation
-			// (and optional POS); chunk gate applied below (Java).
-			probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
-			probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
-			if m.IsMatched(probe) {
-				anyMatched = true
-				// Exception check for untagged probe path (no readings matched).
-				if m.isExceptionMatchedCompletely(probe) {
+			if pt.GetPOStag() == "" {
+				if pt.IsInflected() {
+					if atr.HasSameLemmas() {
+						return false
+					}
+				} else {
 					return false
 				}
+			} else if !pt.GetPOSNegation() && !atr.IsTagged() {
+				return false
+			}
+		}
+
+		// Java groupsOrUnification + testAndGroup
+		if pt.HasAndGroup() {
+			m.AddMemberAndGroup(r)
+			if i == len(readings)-1 {
+				anyMatched = anyMatched && m.CheckAndGroup(true)
+			}
+		}
+	}
+
+	if !anyMatched && len(readings) == 0 {
+		// Empty readings: probe surface (chunk-only / untagged paths).
+		probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
+		probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
+		if m.IsMatched(probe) {
+			anyMatched = true
+			if pt.HasAndGroup() {
+				m.AddMemberAndGroup(probe)
+				anyMatched = m.CheckAndGroup(true)
+			}
+			if anyMatched && m.isExceptionMatchedCompletely(probe) {
+				return false
 			}
 		}
 	}
@@ -362,15 +459,13 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 		chunkOK := chunkTagMatches(atr, pt.ChunkTag, pt.ChunkTagRegexp)
 		anyMatched = anyMatched && (chunkOK != pt.Negation)
 	}
-	// Java and-group chunk tags (no XOR with negation).
+	// Java: and-group chunk tags with XOR negation
 	for _, andTok := range pt.AndGroup {
 		if andTok == nil || andTok.ChunkTag == "" {
 			continue
 		}
-		if !chunkTagMatches(atr, andTok.ChunkTag, andTok.ChunkTagRegexp) {
-			anyMatched = false
-			break
-		}
+		chunkOK := chunkTagMatches(atr, andTok.ChunkTag, andTok.ChunkTagRegexp)
+		anyMatched = anyMatched && (chunkOK != andTok.Negation)
 	}
 	return anyMatched
 }

@@ -196,6 +196,37 @@ func (p *PatternToken) HasOrGroup() bool {
 	return p != nil && len(p.OrGroup) > 0
 }
 
+// HasAndGroup ports PatternToken.hasAndGroup.
+func (p *PatternToken) HasAndGroup() bool {
+	return p != nil && len(p.AndGroup) > 0
+}
+
+// GetPOStag ports PatternToken.getPOStag.
+func (p *PatternToken) GetPOStag() string {
+	if p == nil || p.Pos == nil {
+		return ""
+	}
+	return p.Pos.PosTag
+}
+
+// GetPOSNegation ports PatternToken.getPOSNegation.
+func (p *PatternToken) GetPOSNegation() bool {
+	return p != nil && p.Pos != nil && p.Pos.Negate
+}
+
+// IsInflected ports PatternToken.isInflected.
+func (p *PatternToken) IsInflected() bool {
+	return p != nil && p.MatchInflected
+}
+
+// HasCurrentOrNextExceptions ports PatternToken.hasCurrentOrNextExceptions.
+func (p *PatternToken) HasCurrentOrNextExceptions() bool {
+	if p == nil {
+		return false
+	}
+	return p.HasCurrentException() || p.HasNextException()
+}
+
 // AddCurrentException ports PatternToken.addException(scopeNext=false, scopePrevious=false).
 func (p *PatternToken) AddCurrentException(ex *PatternToken) {
 	if p == nil || ex == nil {
