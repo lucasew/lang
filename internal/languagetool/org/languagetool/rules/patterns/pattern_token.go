@@ -4,7 +4,14 @@ import (
 	"sort"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
+
+// NormalizeTextPattern ports PatternToken.normalizeTextPattern —
+// null → "" ; StringTools.trimWhitespace.
+func NormalizeTextPattern(token string) string {
+	return tools.TrimWhitespace(token)
+}
 
 // PosToken ports PatternToken.PosToken.
 type PosToken struct {
@@ -413,7 +420,11 @@ func (p *PatternToken) calcOwnPossibleStringValues() []string {
 		return nil
 	}
 	// Java: return textMatcher.getPossibleValues();
-	m := NewStringMatcher(p.Token, p.Regexp, p.CaseSensitive)
+	pat := NormalizeTextPattern(p.Token)
+	if p.Regexp {
+		pat = normalizeJavaRegexp(pat)
+	}
+	m := NewStringMatcher(pat, p.Regexp, p.CaseSensitive)
 	vals := m.GetPossibleValues()
 	if vals == nil || len(vals) == 0 {
 		return nil

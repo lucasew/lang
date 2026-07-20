@@ -5,14 +5,12 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // PatternTokenMatcher ports org.languagetool.rules.patterns.PatternTokenMatcher.
-// Matching is Java-faithful: surface/regexp + real POS tags only.
+// Matching is Java-faithful: surface/regexp via StringMatcher + real POS tags only.
 // Soft invent (closed-class surface lists, untagged open-class accept, soft lemmas)
 // is not part of this twin — see docs/faithful-port-policy.md.
 type PatternTokenMatcher struct {
@@ -21,8 +19,8 @@ type PatternTokenMatcher struct {
 	patternToken *PatternToken
 	// andMatchers are AndGroup members after prepareAndGroup/resolveReference.
 	andMatchers []*PatternTokenMatcher
-	// compiled RE for Token when Regexp is set
-	tokenRE *regexp.Regexp
+	// textMatcher ports PatternToken.textMatcher (StringMatcher.create).
+	textMatcher *StringMatcher
 	// StrictPOS: untagged tokens only match postag=UNKNOWN (Java with a real tagger).
 	// Default true for faithful matching; soft false is not used inside the wall.
 	StrictPOS bool
@@ -30,25 +28,29 @@ type PatternTokenMatcher struct {
 
 func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
 	m := &PatternTokenMatcher{Base: pt, patternToken: pt, StrictPOS: true}
-	m.recompileTokenRE()
+	m.recompileTextMatcher()
 	return m
 }
 
-func (m *PatternTokenMatcher) recompileTokenRE() {
-	m.tokenRE = nil
+// recompileTextMatcher ports PatternToken.setTextMatcher /
+// StringMatcher.create(normalizeTextPattern(token), regExp, caseSensitive).
+func (m *PatternTokenMatcher) recompileTextMatcher() {
+	m.textMatcher = nil
 	pt := m.active()
-	if pt != nil && pt.Regexp && pt.Token != "" {
-		flags := ""
-		pat := normalizeJavaRegexp(pt.Token)
-		if !pt.CaseSensitive && !strings.Contains(pat, `\p{`) {
-			flags = "(?i)"
-		}
-		re, err := regexp.Compile(flags + "^(?:" + pat + ")$")
-		if err == nil {
-			m.tokenRE = re
-		}
+	if pt == nil {
+		return
 	}
+	pat := NormalizeTextPattern(pt.Token)
+	if pt.Regexp {
+		// Go RE2 mapping of Java \uXXXX / inline flags (not a semantic invent).
+		pat = normalizeJavaRegexp(pat)
+	}
+	// Empty pattern: Java TEST_STRING_MASK off — still build matcher for getString parity.
+	m.textMatcher = NewStringMatcher(pat, pt.Regexp, pt.CaseSensitive)
 }
+
+// recompileTokenRE is kept as an alias for call sites that still use the old name.
+func (m *PatternTokenMatcher) recompileTokenRE() { m.recompileTextMatcher() }
 
 // active returns the working PatternToken (compiled reference or base).
 func (m *PatternTokenMatcher) active() *PatternToken {
@@ -167,17 +169,12 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 	if pt.WhitespaceBefore != nil && token.IsWhitespaceBefore() != *pt.WhitespaceBefore {
 		return false
 	}
-	// Java TEST_STRING_MASK: non-empty string element.
-	hasSurface := pt.Token != ""
+	// Java TEST_STRING_MASK: !StringTools.isEmpty(textMatcher.pattern) after normalize.
+	hasSurface := NormalizeTextPattern(pt.Token) != ""
 	surfaceMatch := false
 	if hasSurface {
-		surfaceMatch = m.matchSurface(token.GetToken())
-		if pt.MatchInflected && !surfaceMatch {
-			// Java getTestToken: lemma when inflected, else surface.
-			if lem := token.GetLemma(); lem != nil && *lem != "" {
-				surfaceMatch = m.matchSurface(*lem)
-			}
-		}
+		// Java: textMatcher.matches(getTestToken(token)) — single string, not surface-then-lemma.
+		surfaceMatch = m.matchSurface(getTestToken(pt, token))
 	}
 	posNegation := pt.Pos != nil && pt.Pos.Negate
 	posMatch := true
@@ -186,10 +183,8 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		posMatch = false
 		if pos != nil && *pos != "" {
 			if pt.Pos.Regexp {
-				re, err := regexp.Compile("^(?:" + normalizeJavaRegexp(pt.Pos.PosTag) + ")$")
-				if err == nil {
-					posMatch = re.MatchString(*pos)
-				}
+				// Java PosToken: StringMatcher.regexp(posTag)
+				posMatch = NewStringMatcherRegexp(normalizeJavaRegexp(pt.Pos.PosTag)).Matches(*pos)
 			} else {
 				posMatch = *pos == pt.Pos.PosTag
 			}
@@ -203,6 +198,16 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		return (surfaceMatch != pt.Negation) && (posMatch != posNegation)
 	}
 	return !pt.Negation && (posMatch != posNegation)
+}
+
+// getTestToken ports PatternToken.getTestToken — when inflected, lemma if non-null else surface.
+func getTestToken(pt *PatternToken, token *languagetool.AnalyzedToken) string {
+	if pt != nil && pt.MatchInflected {
+		if lem := token.GetLemma(); lem != nil {
+			return *lem
+		}
+	}
+	return token.GetToken()
 }
 
 // IsMatchedByPreviousException ports PatternToken.isMatchedByPreviousException
@@ -285,24 +290,12 @@ func matchExceptionSurface(surface, exc string, isRE, caseSensitive bool) bool {
 	if exc == "" {
 		return false
 	}
-	surface = normalizeApostrophes(surface)
-	exc = normalizeApostrophes(exc)
+	// Java exception PatternToken also uses StringMatcher.create(normalizeTextPattern(...)).
+	pat := NormalizeTextPattern(exc)
 	if isRE {
-		flags := ""
-		pat := normalizeJavaRegexp(exc)
-		if !caseSensitive && !strings.Contains(pat, `\p{`) {
-			flags = "(?i)"
-		}
-		re, err := regexp.Compile(flags + "^(?:" + pat + ")$")
-		if err != nil {
-			return false
-		}
-		return re.MatchString(surface)
+		pat = normalizeJavaRegexp(pat)
 	}
-	if caseSensitive {
-		return surface == exc
-	}
-	return strings.EqualFold(surface, exc)
+	return NewStringMatcher(pat, isRE, caseSensitive).Matches(surface)
 }
 
 // CollectMatchedReadings returns readings that satisfy IsMatched (for Unifier).
@@ -576,61 +569,20 @@ func chunkTagMatches(atr *languagetool.AnalyzedTokenReadings, want string, isReg
 	return false
 }
 
-// matchSurface ports Java string/regexp surface match (no soft morphology invent).
+// matchSurface ports textMatcher.matches(s) for a candidate surface/lemma string.
 func (m *PatternTokenMatcher) matchSurface(surface string) bool {
-	pt := m.active()
-	if pt == nil {
+	if m == nil {
 		return false
 	}
-	if pt.Token == "" {
+	if m.textMatcher == nil {
+		m.recompileTextMatcher()
+	}
+	if m.textMatcher == nil {
+		return false
+	}
+	// Empty pattern string always "matches" for TEST_STRING_MASK-off callers.
+	if m.textMatcher.Pattern == "" && !m.textMatcher.IsRegExp {
 		return true
 	}
-	rawSurface := surface
-	surface = normalizeApostrophes(surface)
-	want := normalizeApostrophes(pt.Token)
-	// Arabic: equality may compare undiacritized forms (tagger strips tashkeel for lookup).
-	// Do not strip before regexp — patterns like .*اً$ need tanwin.
-	surfaceNT, wantNT := surface, want
-	if hasArabic(surface) || hasArabic(pt.Token) {
-		surfaceNT = tools.RemoveTashkeel(surface)
-		wantNT = tools.RemoveTashkeel(want)
-	}
-	if pt.Regexp {
-		if m.tokenRE == nil {
-			return false
-		}
-		return m.tokenRE.MatchString(rawSurface) || m.tokenRE.MatchString(surface)
-	}
-	if pt.CaseSensitive {
-		return rawSurface == pt.Token || surface == want ||
-			(surfaceNT != surface && surfaceNT == wantNT)
-	}
-	if strings.EqualFold(surface, want) || strings.EqualFold(rawSurface, pt.Token) {
-		return true
-	}
-	if surfaceNT != surface || wantNT != want {
-		if strings.EqualFold(surfaceNT, wantNT) {
-			return true
-		}
-	}
-	return false
-}
-
-func hasArabic(s string) bool {
-	for _, r := range s {
-		if unicode.In(r, unicode.Arabic) {
-			return true
-		}
-	}
-	return false
-}
-
-func normalizeApostrophes(s string) string {
-	if s == "" {
-		return s
-	}
-	s = strings.ReplaceAll(s, "\u2019", "'")
-	s = strings.ReplaceAll(s, "\u02BC", "'")
-	s = strings.ReplaceAll(s, "\u2018", "'")
-	return s
+	return m.textMatcher.Matches(surface)
 }

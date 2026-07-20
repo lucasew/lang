@@ -167,7 +167,8 @@ func hasStringThatMustMatch(token *PatternToken) bool {
 	if token.MinOccurrence == 0 {
 		return false
 	}
-	return token.Token != ""
+	// Java: !StringTools.isEmpty(textMatcher.pattern) after normalizeTextPattern
+	return NormalizeTextPattern(token.Token) != ""
 }
 
 func canMatchSentenceStart(token *PatternToken) bool {

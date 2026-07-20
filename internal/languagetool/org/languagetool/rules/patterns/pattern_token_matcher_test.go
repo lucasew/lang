@@ -25,6 +25,35 @@ func TestPatternTokenMatcher(t *testing.T) {
 	require.True(t, pm.IsMatched(languagetool.NewAnalyzedToken("dog", &pos, nil)))
 }
 
+func TestPatternTokenMatcher_TextMatcherAndGetTestToken(t *testing.T) {
+	// Inflected: Java getTestToken uses lemma when non-null (not surface-then-lemma).
+	pt := NewPatternToken("run", false, false, true)
+	m := NewPatternTokenMatcher(pt)
+	require.NotNil(t, m.textMatcher)
+	// surface "running" with lemma "run" → match via lemma only
+	lem := "run"
+	tok := languagetool.NewAnalyzedToken("running", nil, &lem)
+	require.True(t, m.IsMatched(tok))
+	// surface equals pattern but lemma differs → no match when lemma non-null
+	other := "ran"
+	tok2 := languagetool.NewAnalyzedToken("run", nil, &other)
+	require.False(t, m.IsMatched(tok2))
+	// null lemma → fall back to surface
+	tok3 := languagetool.NewAnalyzedToken("run", nil, nil)
+	require.True(t, m.IsMatched(tok3))
+
+	// StringMatcher required-substrings path for regexp tokens
+	rePt := NewPatternToken("foo.*bar", false, true, false)
+	require.True(t, NewPatternTokenMatcher(rePt).IsMatched(
+		languagetool.NewAnalyzedToken("fooXbar", nil, nil)))
+	require.False(t, NewPatternTokenMatcher(rePt).IsMatched(
+		languagetool.NewAnalyzedToken("foXbar", nil, nil)))
+
+	// whitespace-only pattern → no TEST_STRING_MASK (empty after normalize)
+	ws := NewPatternToken("   ", false, false, false)
+	require.False(t, hasStringThatMustMatch(ws))
+}
+
 // Faithful: untagged tokens do not soft-accept open-class POS patterns.
 func TestPatternTokenMatcher_UntaggedPOSStrict(t *testing.T) {
 	nn := Pos("NN.*")
