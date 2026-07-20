@@ -5,13 +5,15 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // FindSuggestionsFilter ports org.languagetool.rules.en.FindSuggestionsFilter
 // (extends AbstractFindSuggestionsFilter with EN speller + EnglishTagger).
 //
-// Default hooks use process-wide FilterDict* / FilterSuggestionMatchesPostag
-// from WireEnglishFilterSpeller / WireEnglishFilterTagger.
+// Default hooks use process-wide FilterDict* / FilterTagWord from
+// WireEnglishFilterSpeller / WireEnglishFilterTagger, and LanguageSynthesizer("en")
+// for replacements2 (Java getSynthesizer().synthesize(at, desiredPostag, true)).
 // Without a speller dict, Accept fails closed (Java always has MorfologikSpeller when resource exists).
 type FindSuggestionsFilter struct {
 	*rules.AbstractFindSuggestionsFilter
@@ -27,10 +29,28 @@ func NewFindSuggestionsFilter() *FindSuggestionsFilter {
 				}
 				return FilterDictSuggest(atr.GetToken())
 			},
-			// Java: getTagger().tag(suggestion).matchesPosTagRegex(desiredPostag)
+			// Java: getTagger() → EnglishTagger.INSTANCE
+			Tag: FilterTagWord,
+			// Java: getSynthesizer().synthesize(at, desiredPostag, true) when tagger path unused
+			Synthesize: englishFindSuggestionsSynthesize,
+			// Keep for tests that probe MatchesDesiredPostag without Tag
 			MatchesDesiredPostag: FilterSuggestionMatchesPostag,
 		},
 	}
+}
+
+// englishFindSuggestionsSynthesize ports AbstractFindSuggestionsFilter synth path:
+// language.getSynthesizer().synthesize(token, desiredPostag, true).
+func englishFindSuggestionsSynthesize(tok *languagetool.AnalyzedToken, postagRE string) []string {
+	s := patterns.LanguageSynthesizer("en")
+	if s == nil || tok == nil {
+		return nil
+	}
+	forms, err := s.SynthesizeRE(tok, postagRE, true)
+	if err != nil || len(forms) == 0 {
+		return nil
+	}
+	return forms
 }
 
 // AcceptRuleMatch ports AbstractFindSuggestionsFilter.acceptRuleMatch with EN fail-closed gates.

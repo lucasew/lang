@@ -106,6 +106,16 @@ func FilterTaggerAvailable() bool {
 	return getFilterTagWord() != nil
 }
 
+// FilterTagWord ports getTagger().tag(singletonList(word)).get(0) for filters.
+// Without a wired dict, returns nil (fail-closed — no invent POS/lemma).
+func FilterTagWord(word string) *languagetool.AnalyzedTokenReadings {
+	tw := getFilterTagWord()
+	if tw == nil {
+		return nil
+	}
+	return filterTagWordToATR(word, tw)
+}
+
 // FilterSuggestionMatchesPostag tags suggestion with EnglishTagger-equivalent
 // lookup and tests MatchesPosTagRegex(desiredPostag).
 // Without a tagger, returns false (fail-closed: do not invent POS matches).
@@ -113,28 +123,11 @@ func FilterSuggestionMatchesPostag(suggestion, desiredPostag string) bool {
 	if desiredPostag == "" {
 		return false
 	}
-	tw := getFilterTagWord()
-	if tw == nil {
+	atr := FilterTagWord(suggestion)
+	if atr == nil {
 		return false
 	}
-	tags := tw(suggestion)
-	if len(tags) == 0 {
-		return false
-	}
-	readings := make([]*languagetool.AnalyzedToken, 0, len(tags))
-	for _, t := range tags {
-		var pos, lemma *string
-		if t.POS != "" {
-			p := t.POS
-			pos = &p
-		}
-		if t.Lemma != "" {
-			l := t.Lemma
-			lemma = &l
-		}
-		readings = append(readings, languagetool.NewAnalyzedToken(suggestion, pos, lemma))
-	}
-	atr := languagetool.NewAnalyzedTokenReadingsList(readings, 0)
+	// Untagged empty readings: MatchesPosTagRegex false
 	return atr.MatchesPosTagRegex(desiredPostag)
 }
 
