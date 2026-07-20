@@ -7,7 +7,9 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
-// RegisterCorePolishRules installs shared layout + Polish word-repeat + beginning.
+// RegisterCorePolishRules ports Polish.getRelevantRules / createDefaultSpellingRule.
+// Java registers WordRepeatRule + PolishWordRepeatRule — no WordRepeatBeginning.
+// (Generic WordRepeatRule still incomplete here; PolishWordRepeatRule is the PL-specific twin.)
 func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -16,12 +18,6 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	rules.RegisterSharedLayoutRules(lt, "pl")
 	wr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Trzy kolejne zdania zaczynają się od tego samego słowa.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)

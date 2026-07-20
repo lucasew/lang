@@ -5,19 +5,15 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreSlovakRules installs shared layout + language word-repeat + beginning.
+// RegisterCoreSlovakRules ports Slovak.getRelevantRules / createDefaultSpellingRule.
+// Java: WordRepeatRule (default WORD_REPEAT_RULE id) — no WordRepeatBeginning.
 func RegisterCoreSlovakRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	rules.RegisterSharedLayoutRules(lt, "sk")
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Opakovanie"})
+	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Opakovanie"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Tri vety po sebe začínajú rovnakým slovom.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official compounds.txt (embedded from upstream).
 	cr := NewCompoundRule(nil)

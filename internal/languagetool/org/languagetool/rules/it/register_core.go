@@ -6,7 +6,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
-// RegisterCoreItalianRules installs shared layout + Italian word-repeat + beginning.
+// RegisterCoreItalianRules ports Italian.getRelevantRules / createDefaultSpellingRule.
+// Java: ItalianWordRepeatRule only — no WordRepeatBeginning.
 func RegisterCoreItalianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -14,13 +15,6 @@ func RegisterCoreItalianRules(lt *languagetool.JLanguageTool) {
 	rules.RegisterSharedLayoutRules(lt, "it")
 	wr := NewItalianWordRepeatRule(map[string]string{"repetition": "Ripetizione di parola"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Tre frasi successive iniziano con la stessa parola.",
-		"desc_repetition_beginning_adv":  "Tre frasi successive iniziano con lo stesso avverbio.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Java createDefaultSpellingRule → MorfologikItalianSpellerRule.
 	// Always register full Match (orderSuggestions capitalization drop); wire filter

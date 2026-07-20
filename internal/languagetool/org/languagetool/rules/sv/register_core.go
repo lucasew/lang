@@ -5,20 +5,15 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreSwedishRules installs shared layout + language word-repeat + beginning.
+// RegisterCoreSwedishRules ports Swedish.getRelevantRules / createDefaultSpellingRule.
+// Java: WordRepeatRule (default WORD_REPEAT_RULE id) — no WordRepeatBeginning.
 func RegisterCoreSwedishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	rules.RegisterSharedLayoutRules(lt, "sv")
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Ordrepetition"})
+	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Ordrepetition"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Tre meningar i rad börjar med samma ord.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official coherency.txt (embedded from upstream).
 	wc := NewWordCoherencyRule(nil)

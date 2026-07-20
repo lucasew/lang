@@ -6,9 +6,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreDutchRules installs Dutch.getRelevantRules surface (class getId parity)
-// plus word-repeat helpers used by shared layout languages.
-// Soft invent token sequences are not registered (incomplete without grammar.xml).
+// RegisterCoreDutchRules ports Dutch.getRelevantRules surface (class getId parity).
+// Java has no WordRepeatRule / WordRepeatBeginning — do not invent them.
 func RegisterCoreDutchRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -26,14 +25,6 @@ func RegisterCoreDutchRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(ubr.GetID(), rules.AsTextLevelChecker(ubr.MatchList))
 	sw := NewSentenceWhitespaceRule(nil)
 	lt.AddTextLevelRuleChecker(sw.GetID(), rules.AsTextLevelChecker(sw.MatchList))
-
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Woordherhaling"})
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Drie opeenvolgende zinnen beginnen met hetzelfde woord.",
-		"desc_repetition_beginning_adv":  "Drie opeenvolgende zinnen beginnen met hetzelfde bijwoord.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
 	// Java: new LongSentenceRule(messages, userConfig, 40)
 	ls := NewLongSentenceRule(map[string]string{

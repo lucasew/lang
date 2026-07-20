@@ -6,20 +6,14 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreGalicianRules installs shared layout + language word-repeat + beginning.
+// RegisterCoreGalicianRules ports Galician.getRelevantRules / createDefaultSpellingRule.
+// Java has no WordRepeatRule / WordRepeatBeginning (ParagraphRepeatBeginning via layout).
 func RegisterCoreGalicianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	lt.PriorityForId = language.GalicianPriorityForId
 	rules.RegisterSharedLayoutRules(lt, "gl")
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Repetición"})
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Tres frases sucesivas comezan coa mesma palabra.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)

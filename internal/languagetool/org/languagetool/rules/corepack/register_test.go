@@ -16,10 +16,10 @@ func TestRegister_MultiLang(t *testing.T) {
 	}{
 		{"en", "This is an test.", "EN_A_VS_AN"},
 		{"de", "Ein Test Test.", "GERMAN_WORD_REPEAT_RULE"},
-		{"sv", "hej hej", "SV_WORD_REPEAT_RULE"},
+		{"sv", "hej hej", "WORD_REPEAT_RULE"},
 		// da: Java WORD_REPEAT only via grammar.xml — no class WordRepeat in getRelevantRules
-		{"gl", "ola ola", "GL_WORD_REPEAT_RULE"},
-		{"sk", "test test", "SK_WORD_REPEAT_RULE"},
+		// gl/nl: Java has no WordRepeat — covered in pack tests / not MultiLang
+		{"sk", "test test", "WORD_REPEAT_RULE"},
 		{"el", "γεια γεια", "EL_WORD_REPEAT_RULE"},
 		{"ro", "test test", "RO_WORD_REPEAT_RULE"},
 		{"pt-BR", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
