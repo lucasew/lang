@@ -149,15 +149,25 @@ func TestGermanChunker_GetBasicChunks_JavaOpenNLPTable(t *testing.T) {
 			require.Len(t, basic, len(ann))
 			for i, a := range ann {
 				require.Equal(t, a.token, basic[i].Token)
-				got := "O"
-				if len(basic[i].ChunkTags) > 0 {
-					got = basic[i].ChunkTags[0].String()
-				}
+				// Java assertChunks: expected tag must be *contained* (add semantics may
+				// leave both B-NP and I-NP after overlapping REGEXES1 matches).
 				want := a.bio
 				if want == "" {
 					want = "O"
 				}
-				require.Equal(t, want, got, "token %q in %q", a.token, tc)
+				var tags []string
+				for _, ct := range basic[i].ChunkTags {
+					tags = append(tags, ct.String())
+				}
+				if want == "O" {
+					// O only, or empty-as-O after all patterns miss
+					if len(tags) == 0 {
+						continue
+					}
+					require.Contains(t, tags, "O", "token %q in %q tags=%v", a.token, tc, tags)
+					continue
+				}
+				require.Contains(t, tags, want, "token %q in %q tags=%v", a.token, tc, tags)
 			}
 		})
 	}
@@ -180,4 +190,32 @@ func TestGermanRegexes2_CountMatchesJava(t *testing.T) {
 	for _, p := range need {
 		require.True(t, have[p], "missing REGEXES2 pattern: %s", p)
 	}
+}
+
+// Java doApplyRegex adds B-NP/I-NP; overlapping REGEXES1 may leave both tags.
+// assertChunks uses contains — not last-write-wins overwrite.
+func TestGermanChunker_Regexes1_AddSemanticsNotOverwrite(t *testing.T) {
+	// "ihrer drei Autos": PRO? ZAL SUB → ihrer/B drei/I Autos/I
+	// SUB+ can also match Autos alone → B-NP added alongside I-NP.
+	ann := parseBasicAnnotation("Eines ihrer/B drei/I Autos/I ist blau")
+	tokens := tokensFromBasicAnno(ann)
+	basic := NewGermanChunker().GetBasicChunks(tokens)
+	require.GreaterOrEqual(t, len(basic), 4)
+	// Find Autos
+	var autos *ChunkTaggedToken
+	for i := range basic {
+		if basic[i].Token == "Autos" {
+			autos = &basic[i]
+			break
+		}
+	}
+	require.NotNil(t, autos)
+	var tags []string
+	for _, ct := range autos.ChunkTags {
+		tags = append(tags, ct.String())
+	}
+	require.Contains(t, tags, "I-NP")
+	// Overlap with bare SUB+ may also add B-NP (Java add semantics).
+	// Accept either I-only or I+B; reject pure overwrite that drops I-NP.
+	require.Contains(t, tags, "I-NP")
 }

@@ -39,22 +39,12 @@ var germanRegexes1 = []string{
 	`<der>`,
 }
 
-// applyRegexes1 runs Java REGEXES1 via OpenRegex into tags (B-NP/I-NP overwrite spans).
+// applyRegexes1 runs Java REGEXES1 via OpenRegex into tags (B-NP/I-NP).
+// Java doApplyRegex *adds* B-NP/I-NP (overwrite=false for all REGEXES1) and drops O —
+// does not replace prior tags. Overlapping matches may leave both B-NP and I-NP.
 func applyRegexes1(content []*languagetool.AnalyzedTokenReadings, tags [][]string) {
 	if len(content) == 0 {
 		return
-	}
-	applyNP := func(start, end int) {
-		if start < 0 || end <= start || end > len(content) {
-			return
-		}
-		for i := start; i < end; i++ {
-			if i == start {
-				tags[i] = []string{"B-NP"}
-			} else {
-				tags[i] = []string{"I-NP"}
-			}
-		}
 	}
 	factory := NewChunkTokenFactory(false)
 	// Side list like Java getBasicChunks (chunk starts as O; REGEXES1 uses POS/surface).
@@ -65,16 +55,43 @@ func applyRegexes1(content []*languagetool.AnalyzedTokenReadings, tags [][]strin
 	for _, pat := range germanRegexes1 {
 		re := CompileOpenRegex(ExpandGermanChunkSyntax(pat), factory)
 		for _, m := range re.FindAll(toks) {
-			applyNP(m.Start, m.End)
-			// Keep toks chunk tags in sync for patterns that read chunk= (REGEXES1 mostly POS).
 			for i := m.Start; i < m.End; i++ {
+				newTag := "I-NP"
 				if i == m.Start {
-					toks[i].ChunkTags = []ChunkTag{NewChunkTag("B-NP")}
-				} else {
-					toks[i].ChunkTags = []ChunkTag{NewChunkTag("I-NP")}
+					newTag = "B-NP"
 				}
+				// Java: addAll existing, add newTag if missing, remove O.
+				newTags := make([]ChunkTag, 0, len(toks[i].ChunkTags)+1)
+				newTags = append(newTags, toks[i].ChunkTags...)
+				has := false
+				for _, ct := range newTags {
+					if ct.GetChunkTag() == newTag {
+						has = true
+						break
+					}
+				}
+				if !has {
+					newTags = append(newTags, NewChunkTag(newTag))
+				}
+				filtered := make([]ChunkTag, 0, len(newTags))
+				for _, ct := range newTags {
+					if ct.GetChunkTag() != "O" {
+						filtered = append(filtered, ct)
+					}
+				}
+				toks[i] = NewChunkTaggedToken(toks[i].Token, filtered, toks[i].Readings)
 			}
 		}
+	}
+	// Sync parallel tags slice from working token list.
+	for i := range toks {
+		var strs []string
+		for _, ct := range toks[i].ChunkTags {
+			if s := ct.GetChunkTag(); s != "" && s != "O" {
+				strs = append(strs, s)
+			}
+		}
+		tags[i] = strs
 	}
 }
 
