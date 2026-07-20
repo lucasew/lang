@@ -14,6 +14,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/fr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
+	rudis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ru"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 	ukdis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/uk"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
@@ -96,9 +97,37 @@ func RegisterHybridDisambiguator(lt *languagetool.JLanguageTool, lang string, op
 		return registerDutchHybrid(lt, opts)
 	case "uk":
 		return registerUkrainianHybrid(lt, opts)
+	case "ru":
+		return registerRussianHybrid(lt, opts)
 	default:
 		return false
 	}
+}
+
+// registerRussianHybrid ports RussianHybridDisambiguator wiring.
+// Java: MultiWordChunker.getInstance("/ru/multiwords.txt") → false,false,false
+// then XmlRuleDisambiguator(Russian) without global disambiguation.
+func registerRussianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := rudis.NewRussianHybridDisambiguator()
+	// Java: MultiWordChunker.getInstance("/ru/multiwords.txt") — defaults false,false,false.
+	if p := DiscoverLanguageMultiwords(opts, "ru"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	// Java: new XmlRuleDisambiguator(Russian.getInstance()) — useGlobalDisambiguation false.
+	if xml := loadXmlRuleDisambiguator("ru", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
 }
 
 // registerUkrainianHybrid ports UkrainianHybridDisambiguator wiring.

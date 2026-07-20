@@ -92,6 +92,19 @@ func TestRegisterHybridDisambiguator_UK(t *testing.T) {
 	require.NotEmpty(t, sents)
 }
 
+func TestRegisterHybridDisambiguator_RU(t *testing.T) {
+	// Official multiwords and/or disambiguation.xml under inspiration.
+	require.NotEmpty(t, DiscoverLanguageMultiwords(nil, "ru"), "ru multiwords.txt")
+	require.NotEmpty(t, DiscoverLanguageDisambiguationXML(nil, "ru"), "ru disambiguation.xml")
+
+	lt, err := configureCoreLT("ru", &CommandLineOptions{Language: "ru"})
+	require.NoError(t, err)
+	require.NotNil(t, lt.Disambiguator, "RussianHybridDisambiguator should be wired")
+
+	sents := lt.Analyze("Это простое предложение.")
+	require.NotEmpty(t, sents)
+}
+
 func TestDiscoverLanguageMultiwords_UK(t *testing.T) {
 	p := DiscoverLanguageMultiwords(nil, "uk")
 	require.NotEmpty(t, p)
