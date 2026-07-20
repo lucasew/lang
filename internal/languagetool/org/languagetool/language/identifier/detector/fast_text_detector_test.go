@@ -32,3 +32,9 @@ func TestFastTextCanDetect(t *testing.T) {
 	require.Contains(t, m, "en")
 	require.NotContains(t, m, "de")
 }
+
+func TestFastTextException(t *testing.T) {
+	e := NewFastTextException("bad", true)
+	require.Equal(t, "bad", e.Error())
+	require.True(t, e.IsDisabled())
+}

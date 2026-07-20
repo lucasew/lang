@@ -8,7 +8,7 @@
 
 - [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions
 - [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions.OutputFormat
-- [ ] org/languagetool/commandline/CommandLineParser.java::CommandLineParser
+- [x] org/languagetool/commandline/CommandLineParser.java::CommandLineParser
 - [ ] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
 - [ ] org/languagetool/commandline/Main.java::Main
 - [x] org/languagetool/commandline/Main.java::Main.SystemExitHandler
@@ -47,7 +47,7 @@
 - [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
 - [x] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
 - [x] org/languagetool/LanguageWithModel.java::LanguageWithModel
-- [ ] org/languagetool/Languages.java::Languages
+- [x] org/languagetool/Languages.java::Languages
 - [x] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
 - [x] org/languagetool/LinguServices.java::LinguServices
 - [x] org/languagetool/LtBuildInfo.java::LtBuildInfo
@@ -124,15 +124,15 @@
 - [x] org/languagetool/language/identifier/SimpleLanguageIdentifier.java::SimpleLanguageIdentifier
 - [x] org/languagetool/language/identifier/detector/CommonWordsDetector.java::CommonWordsDetector
 - [x] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector
-- [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector.FastTextException
+- [x] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector.FastTextException
 - [x] org/languagetool/language/identifier/detector/NGramDetector.java::NGramDetector
 - [x] org/languagetool/language/identifier/detector/UnicodeBasedDetector.java::UnicodeBasedDetector
-- [ ] org/languagetool/languagemodel/BaseLanguageModel.java::BaseLanguageModel
-- [ ] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
-- [ ] org/languagetool/languagemodel/LuceneLanguageModel.java::LuceneLanguageModel
-- [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel
+- [x] org/languagetool/languagemodel/BaseLanguageModel.java::BaseLanguageModel
+- [x] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
+- [x] org/languagetool/languagemodel/LuceneLanguageModel.java::LuceneLanguageModel
+- [x] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel
 - [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel.LuceneSearcher
-- [ ] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
+- [x] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
 - [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel
 - [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel.Request
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc

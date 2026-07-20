@@ -37,3 +37,15 @@ func TestParseApplyFlag(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, opts.IsApplySuggestions())
 }
+
+func TestCommandLineParser_TooManyArgs(t *testing.T) {
+	p := &CommandLineParser{}
+	args := make([]string, 15)
+	for i := range args {
+		args[i] = "x"
+	}
+	_, err := p.ParseOptions(args)
+	require.Error(t, err)
+	var w WrongParameterNumberException
+	require.ErrorAs(t, err, &w)
+}

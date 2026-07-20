@@ -43,6 +43,12 @@ type Languages struct {
 // GlobalLanguages is the package singleton.
 var GlobalLanguages = &Languages{}
 
+// NoopLanguageCode is the short code for Java NoopLanguage ("zz").
+const NoopLanguageCode = "zz"
+
+// NoopLanguageMeta is a stand-in for Languages.NOOP_LANGUAGE.
+var NoopLanguageMeta = LanguageMeta{Name: "NoopLanguage", Code: NoopLanguageCode}
+
 // Register adds a static language definition.
 func (L *Languages) Register(lang LanguageMeta) {
 	L.mu.Lock()
@@ -126,7 +132,8 @@ func (L *Languages) GetLanguageForShortCode(code string) LanguageMeta {
 	if m, ok := L.findLanguage(code); ok {
 		return m
 	}
-	panic(fmt.Sprintf("'%s' is not a language code known to LanguageTool.", code))
+	// Java empty noop list path
+	return L.GetLanguageForShortCodeWithNoop(code, nil)
 }
 
 // IsLanguageSupported is true if a language with the short code is registered.
@@ -172,4 +179,89 @@ func (L *Languages) ClearDynamic() {
 	L.mu.Lock()
 	L.dynamic = nil
 	L.mu.Unlock()
+}
+
+// GetLanguageForShortCodeWithNoop ports getLanguageForShortCode(langCode, noopLanguageCodes).
+// Returns NoopLanguageMeta when code is listed in noopLanguageCodes and not otherwise found.
+func (L *Languages) GetLanguageForShortCodeWithNoop(code string, noopLanguageCodes []string) LanguageMeta {
+	if err := ValidateLanguageCodeFormat(code); err != nil {
+		panic(err.Error())
+	}
+	if m, ok := L.findLanguage(code); ok {
+		return m
+	}
+	for _, n := range noopLanguageCodes {
+		if strings.EqualFold(n, code) {
+			return NoopLanguageMeta
+		}
+	}
+	panic(fmt.Sprintf("'%s' is not a language code known to LanguageTool. Supported language codes are: %s. See https://dev.languagetool.org/java-api for details.",
+		code, strings.Join(L.GetLangCodes(), ", ")))
+}
+
+// GetLangCodes ports getLangCodes — sorted shortCodeWithCountryAndVariant list.
+func (L *Languages) GetLangCodes() []string {
+	L.mu.RLock()
+	defer L.mu.RUnlock()
+	var codes []string
+	seen := map[string]struct{}{}
+	for _, l := range append(append([]LanguageMeta{}, L.static...), L.dynamic...) {
+		c := l.GetShortCodeWithCountryAndVariant()
+		if _, ok := seen[c]; ok {
+			continue
+		}
+		seen[c] = struct{}{}
+		codes = append(codes, c)
+	}
+	// sort
+	for i := 0; i < len(codes); i++ {
+		for j := i + 1; j < len(codes); j++ {
+			if codes[j] < codes[i] {
+				codes[i], codes[j] = codes[j], codes[i]
+			}
+		}
+	}
+	return codes
+}
+
+// HasPremiumClass ports Languages.hasPremium(className) — premium language class names.
+func HasPremiumClass(className string) bool {
+	// Java regex list of premium language classes
+	premium := []string{
+		"Portuguese", "AngolaPortuguese", "BrazilianPortuguese", "MozambiquePortuguese", "PortugalPortuguese",
+		"German", "GermanyGerman", "AustrianGerman", "SwissGerman",
+		"Dutch", "French", "Spanish",
+		"English", "AustralianEnglish", "AmericanEnglish", "BritishEnglish", "CanadianEnglish", "NewZealandEnglish", "SouthAfricanEnglish",
+	}
+	prefix := "org.languagetool.language."
+	if !strings.HasPrefix(className, prefix) {
+		return false
+	}
+	simple := strings.TrimPrefix(className, prefix)
+	for _, p := range premium {
+		if simple == p {
+			return true
+		}
+	}
+	return false
+}
+
+// GetOrAddLanguageByClassName ports getOrAddLanguageByClassName for registered metas.
+// When not found, panics (classpath ClassBroker not available for arbitrary classes).
+func (L *Languages) GetOrAddLanguageByClassName(className string) LanguageMeta {
+	// Match by simple name suffix of registered entries is not possible without class map;
+	// look for Name matching last segment.
+	simple := className
+	if i := strings.LastIndex(className, "."); i >= 0 {
+		simple = className[i+1:]
+	}
+	L.mu.RLock()
+	for _, l := range append(append([]LanguageMeta{}, L.static...), L.dynamic...) {
+		if l.Name == simple || strings.EqualFold(l.Code, simple) {
+			L.mu.RUnlock()
+			return l
+		}
+	}
+	L.mu.RUnlock()
+	panic(fmt.Sprintf("Class '%s' could not be found in classpath", className))
 }

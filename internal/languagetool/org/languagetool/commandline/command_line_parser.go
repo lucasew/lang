@@ -13,8 +13,13 @@ type CommandLineParser struct{}
 func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, error) {
 	opts := NewCommandLineOptions()
 	if len(args) == 0 {
+		// Product convenience: empty args → usage (Java throws WrongParameterNumberException).
 		opts.SetPrintUsage(true)
 		return opts, nil
+	}
+	// Java: args.length > 14 → WrongParameterNumberException
+	if len(args) > 14 {
+		return nil, WrongParameterNumberException{}
 	}
 	for i := 0; i < len(args); i++ {
 		a := args[i]

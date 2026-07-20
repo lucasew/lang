@@ -43,3 +43,22 @@ func TestLanguages_GetCopy(t *testing.T) {
 	withDemo := L.GetWithDemoLanguage()
 	require.GreaterOrEqual(t, len(withDemo), 1)
 }
+
+func TestLanguages_NoopCodes(t *testing.T) {
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English", Code: "en-US"})
+	m := L.GetLanguageForShortCodeWithNoop("tl", []string{"tl"})
+	require.Equal(t, NoopLanguageCode, m.GetShortCode())
+	require.Panics(t, func() { L.GetLanguageForShortCodeWithNoop("xx-YY", nil) })
+	require.True(t, HasPremiumClass("org.languagetool.language.English"))
+	require.False(t, HasPremiumClass("org.languagetool.language.Polish"))
+	codes := L.GetLangCodes()
+	require.Contains(t, codes, "en-US")
+}
+
+func TestLanguages_GetOrAddByClassName(t *testing.T) {
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English", Code: "en"})
+	m := L.GetOrAddLanguageByClassName("org.languagetool.language.English")
+	require.Equal(t, "en", m.Code)
+}

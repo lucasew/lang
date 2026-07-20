@@ -21,7 +21,22 @@ type FastTextException struct {
 	Disabled bool
 }
 
-func (e *FastTextException) Error() string { return e.Msg }
+func (e *FastTextException) Error() string {
+	if e == nil {
+		return "FastTextException"
+	}
+	return e.Msg
+}
+
+// NewFastTextException ports FastTextException(String message, boolean disabled).
+func NewFastTextException(message string, disabled bool) *FastTextException {
+	return &FastTextException{Msg: message, Disabled: disabled}
+}
+
+// IsDisabled ports isDisabled (Lombok/boolean field).
+func (e *FastTextException) IsDisabled() bool {
+	return e != nil && e.Disabled
+}
 
 // FastTextDetector ports org.languagetool.language.identifier.detector.FastTextDetector.
 // Can run a real fastText binary or use a pluggable Runner for tests.

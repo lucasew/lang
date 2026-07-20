@@ -30,10 +30,8 @@ func (m *BaseLanguageModel) GetPseudoProbabilityStupidBackoff(context []string) 
 	for len(backoff) > 0 {
 		count := m.tryGetCount(backoff)
 		if count != 0 {
+			// Java: baseCount may be 0 → +Inf probability (no soft clamp).
 			baseCount := m.tryGetCount(backoff[:len(backoff)-1])
-			if baseCount == 0 {
-				baseCount = 1
-			}
 			prob := float64(count) / float64(baseCount)
 			coverageRate := float32(coverage) / float32(maxCoverage)
 			return ngrams.NewProbability(lambda*prob, coverageRate, -1)
