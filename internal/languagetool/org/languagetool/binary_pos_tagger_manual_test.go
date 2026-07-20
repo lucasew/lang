@@ -85,3 +85,35 @@ func TestRegisterBinaryPOSTagger_PolishCaseMerge(t *testing.T) {
 	}
 	require.True(t, hasLemma, "tags=%v", tags)
 }
+
+// Java RussianTagger strips combining acute before dict lookup.
+func TestRegisterBinaryPOSTagger_RussianAccentStrip(t *testing.T) {
+	wd, err := os.Getwd()
+	require.NoError(t, err)
+	var dictPath string
+	dir := wd
+	for i := 0; i < 12; i++ {
+		cand := filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", "ru",
+			"src", "main", "resources", "org", "languagetool", "resource", "ru", "russian.dict")
+		if st, e := os.Stat(cand); e == nil && st.Mode().IsRegular() {
+			dictPath = cand
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	if dictPath == "" {
+		t.Skip("russian.dict not in tree")
+	}
+	lt := NewJLanguageTool("ru")
+	require.True(t, RegisterBinaryPOSTagger(lt, dictPath))
+	// дом is in russian.dict; stressed д + о́ + м should still tag after strip
+	plain := lt.TagWord("дом")
+	require.NotEmpty(t, plain, "дом")
+	stressed := "д" + "о\u0301" + "м"
+	got := lt.TagWord(stressed)
+	require.NotEmpty(t, got, "stressed дом should tag after accent strip")
+}

@@ -1,11 +1,8 @@
 package ru
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 const RussianDictPath = "/ru/russian.dict"
@@ -16,7 +13,8 @@ type RussianTagger struct {
 }
 
 func NewRussianTagger(wt tagging.WordTagger) *RussianTagger {
-	return &RussianTagger{BaseTagger: tagging.NewBaseTagger(wt, RussianDictPath, "ru", false)}
+	// Java BaseTagger("/ru/russian.dict", Locale("ru")) — tagLowercaseWithUppercase true by default.
+	return &RussianTagger{BaseTagger: tagging.NewBaseTagger(wt, RussianDictPath, "ru", true)}
 }
 
 func (t *RussianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
@@ -26,24 +24,25 @@ func (t *RussianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
-		w := word
-		if strings.Contains(w, "’") {
-			w = strings.ReplaceAll(w, "’", "'")
-		}
+		// Java: accent strip + ʼ→ъ, then getAnalyzedTokens (BaseTagger case-merge).
+		norm, mayYo := tagging.NormalizeRussianSurface(word)
 		var readings []*languagetool.AnalyzedToken
-		for _, tw := range t.TagWord(w) {
+		for _, tw := range t.TagWord(norm) {
+			// Readings keep original surface form (Java asAnalyzedTokenListForTaggedWords(word, …)).
 			readings = append(readings, tagged(word, tw))
-		}
-		lower := strings.ToLower(w)
-		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
-			for _, tw := range t.TagWord(lower) {
-				readings = append(readings, tagged(word, tw))
-			}
 		}
 		if len(readings) == 0 {
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
-		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+		atr := languagetool.NewAnalyzedTokenReadingsList(readings, pos)
+		if tagging.RussianMayMissingYoConfirmed(norm, mayYo, t.GetWordTagger()) {
+			// Java: atr.setChunkTags([MayMissingYO])
+			// AnalyzedTokenReadings chunk tags — set if API exists.
+			if atr != nil {
+				atr.SetChunkTags([]string{"MayMissingYO"})
+			}
+		}
+		out = append(out, atr)
 		pos += len([]rune(word))
 	}
 	return out

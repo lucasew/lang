@@ -6,6 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/text/encoding"
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/encoding/unicode"
 )
 
 // Dictionary is FSA + metadata (.dict + .info).
@@ -72,12 +76,17 @@ func readInfo(path string) (map[string]string, error) {
 	return m, sc.Err()
 }
 
-// Lookup returns morphological analyses for word (UTF-8).
+// Lookup returns morphological analyses for word (UTF-8 Go string).
+// Query and decoded stem/tag use fsa.dict.encoding from the .info file
+// (e.g. koi8-r for russian.dict, UTF-8 for polish.dict).
 func (d *Dictionary) Lookup(word string) ([]WordForm, error) {
 	if word == "" {
 		return nil, nil
 	}
-	seq := []byte(word)
+	seq, err := d.encodeBytes(word)
+	if err != nil || len(seq) == 0 {
+		return nil, err
+	}
 	// separator must not appear in input
 	for _, b := range seq {
 		if b == d.Separator {
@@ -113,13 +122,20 @@ func (d *Dictionary) Lookup(word string) ([]WordForm, error) {
 		if sepPos < 0 {
 			sepPos = len(ba)
 		}
-		stem, err := d.decodeStem(seq, ba[:sepPos])
+		stemBytes, err := d.decodeStemBytes(seq, ba[:sepPos])
+		if err != nil {
+			return nil, err
+		}
+		stem, err := d.decodeString(stemBytes)
 		if err != nil {
 			return nil, err
 		}
 		tag := ""
 		if sepPos < len(ba) {
-			tag = string(ba[sepPos+1:])
+			tag, err = d.decodeString(ba[sepPos+1:])
+			if err != nil {
+				return nil, err
+			}
 		}
 		out = append(out, WordForm{Stem: stem, Tag: tag})
 	}
@@ -137,8 +153,64 @@ func (d *Dictionary) Contains(word string) bool {
 	}
 	// Speller dictionaries: word may be exact final path without stem encoding like POS dicts.
 	// Try exact match of word itself as full sequence.
-	kind, _, _ := d.FSA.Match([]byte(word), d.FSA.RootNode())
+	seq, err := d.encodeBytes(word)
+	if err != nil {
+		return false
+	}
+	kind, _, _ := d.FSA.Match(seq, d.FSA.RootNode())
 	return kind == ExactMatch
+}
+
+// encodeBytes converts a UTF-8 Go string to the dictionary's byte encoding.
+func (d *Dictionary) encodeBytes(s string) ([]byte, error) {
+	enc := d.charset()
+	if enc == nil {
+		return []byte(s), nil
+	}
+	return enc.NewEncoder().Bytes([]byte(s))
+}
+
+// decodeString converts dictionary bytes to a UTF-8 Go string.
+func (d *Dictionary) decodeString(b []byte) (string, error) {
+	enc := d.charset()
+	if enc == nil {
+		return string(b), nil
+	}
+	out, err := enc.NewDecoder().Bytes(b)
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
+}
+
+// charset returns the encoding for fsa.dict.encoding (nil = raw UTF-8 bytes).
+func (d *Dictionary) charset() encoding.Encoding {
+	if d == nil {
+		return nil
+	}
+	name := strings.ToLower(strings.TrimSpace(d.Encoding))
+	switch name {
+	case "", "utf-8", "utf8":
+		return nil
+	case "koi8-r", "koi8r":
+		return charmap.KOI8R
+	case "iso-8859-1", "iso8859-1", "latin1", "latin-1":
+		return charmap.ISO8859_1
+	case "iso-8859-2", "iso8859-2", "latin2":
+		return charmap.ISO8859_2
+	case "windows-1250", "cp1250":
+		return charmap.Windows1250
+	case "windows-1251", "cp1251":
+		return charmap.Windows1251
+	case "windows-1252", "cp1252":
+		return charmap.Windows1252
+	case "iso-8859-15":
+		return charmap.ISO8859_15
+	default:
+		// Unknown: treat as UTF-8 (Java would use Charset.forName and fail/replace).
+		_ = unicode.UTF8
+		return nil
+	}
 }
 
 func (d *Dictionary) encoderPrefixBytes() int {
@@ -158,22 +230,22 @@ func (d *Dictionary) encoderPrefixBytes() int {
 	}
 }
 
-func (d *Dictionary) decodeStem(source, encoded []byte) (string, error) {
+// decodeStemBytes returns stem bytes in the dictionary encoding (before charset decode).
+func (d *Dictionary) decodeStemBytes(source, encoded []byte) ([]byte, error) {
 	switch d.Encoder {
 	case "NONE":
-		return string(encoded), nil
+		return encoded, nil
 	case "SUFFIX":
-		return decodeTrimSuffix(source, encoded), nil
+		return []byte(decodeTrimSuffix(source, encoded)), nil
 	case "PREFIX":
-		// EncoderType.PREFIX → TrimPrefixAndSuffixEncoder
-		return decodeTrimPrefixAndSuffix(source, encoded), nil
+		return []byte(decodeTrimPrefixAndSuffix(source, encoded)), nil
 	case "INFIX", "PREFIX_INFIX", "TRIM_INFIX_AND_SUFFIX":
-		return decodeTrimInfixAndSuffix(source, encoded), nil
+		return []byte(decodeTrimInfixAndSuffix(source, encoded)), nil
 	default:
 		if len(encoded) == 0 {
-			return string(source), nil
+			return source, nil
 		}
-		return decodeTrimSuffix(source, encoded), nil
+		return []byte(decodeTrimSuffix(source, encoded)), nil
 	}
 }
 

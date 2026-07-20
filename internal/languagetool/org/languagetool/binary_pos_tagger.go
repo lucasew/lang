@@ -39,11 +39,16 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	}
 	langBase := languageBaseFromPath(dictPath, lt.GetLanguageCode())
 	var tw func(token string) []TokenTag
-	if langBase == "pl" {
+	switch langBase {
+	case "pl":
 		// Java PolishTagger.tag (exact WordTagger lookups + case merge).
 		// Inline to avoid import cycle: languagetool → tagging/pl → languagetool.
 		tw = polishTaggerCaseTagWord(wordTagger)
-	} else {
+	case "ru":
+		// Java RussianTagger: accent strip then BaseTagger.getAnalyzedTokens.
+		// MayMissingYO is chunk-level (full Tagger.tag); TagWord inject is POS only.
+		tw = russianTaggerTagWord(wordTagger, dictPath)
+	default:
 		// Java BaseTagger: tagLowercaseWithUppercase=true by default (most language taggers).
 		base := tagging.NewBaseTagger(wordTagger, dictPath, langBase, true)
 		tw = baseTaggerToTagWord(base)
@@ -51,6 +56,23 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	lt.TagWord = tw
 	wireTokenizerIsTaggedFromPOS(lt.GetLanguageCode(), tw)
 	return true
+}
+
+// russianTaggerTagWord ports Java RussianTagger.tag for TagWord inject:
+// NormalizeRussianSurface then BaseTagger case-merge on the normalized form.
+func russianTaggerTagWord(wt tagging.WordTagger, dictPath string) func(token string) []TokenTag {
+	if wt == nil {
+		return nil
+	}
+	base := tagging.NewBaseTagger(wt, dictPath, "ru", true)
+	inner := baseTaggerToTagWord(base)
+	return func(token string) []TokenTag {
+		if token == "" {
+			return nil
+		}
+		norm, _ := tagging.NormalizeRussianSurface(token)
+		return inner(norm)
+	}
 }
 
 // polishTaggerCaseTagWord ports Java PolishTagger.tag case logic for TagWord inject:
