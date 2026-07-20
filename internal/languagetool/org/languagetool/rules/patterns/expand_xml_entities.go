@@ -159,6 +159,18 @@ func readEntRelative(baseDir, systemId string) (string, error) {
 	if b, err := os.ReadFile(cand); err == nil {
 		return string(b), nil
 	}
+	// Basename next to XML (…/resource/pt/entities/foo.ent when XML is …/resource/pt/).
+	baseName := filepath.Base(systemId)
+	if strings.HasSuffix(strings.ToLower(baseName), ".ent") {
+		for _, try := range []string{
+			filepath.Join(baseDir, "entities", baseName),
+			filepath.Join(baseDir, baseName),
+		} {
+			if b, err := os.ReadFile(try); err == nil {
+				return string(b), nil
+			}
+		}
+	}
 	// Fallbacks for vendored layouts that strip intermediate path segments.
 	// Java getPathFromLTResourceFolder: after */resource/ strip ../
 	if i := strings.Index(systemId, "resource/"); i >= 0 {
@@ -176,6 +188,14 @@ func readEntRelative(baseDir, systemId string) (string, error) {
 			if b, err := os.ReadFile(try); err == nil {
 				return string(b), nil
 			}
+			// inspiration languagetool-language-modules/{lang}/.../resource/{lang}/entities
+			if lang := firstPathSegment(rel); lang != "" {
+				try = filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", lang,
+					"src", "main", "resources", "org", "languagetool", "resource", rel)
+				if b, err := os.ReadFile(try); err == nil {
+					return string(b), nil
+				}
+			}
 			parent := filepath.Dir(dir)
 			if parent == dir {
 				break
@@ -184,6 +204,18 @@ func readEntRelative(baseDir, systemId string) (string, error) {
 		}
 	}
 	return "", os.ErrNotExist
+}
+
+// firstPathSegment returns the first non-empty path component (lang code in resource/pt/…).
+func firstPathSegment(rel string) string {
+	rel = strings.Trim(filepath.ToSlash(rel), "/")
+	if rel == "" {
+		return ""
+	}
+	if i := strings.IndexByte(rel, '/'); i >= 0 {
+		return rel[:i]
+	}
+	return rel
 }
 
 // ReadExpandedGrammarFile reads path and expands LT entities (including .ent SYSTEM).

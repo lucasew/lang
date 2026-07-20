@@ -694,10 +694,12 @@ func DiscoverLanguageDisambiguationXML(opts *CommandLineOptions, lang string) st
 			}
 		}
 	}
+	// Prefer inspiration (full SYSTEM .ent layout) over testdata/upstream copies that
+	// often lack entities/*.ent — empty entity expand makes regexp tokens match all tokens.
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", base, "resource", "disambiguation.xml"),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
 			"src", "main", "resources", "org", "languagetool", "resource", base, "disambiguation.xml"),
+		filepath.Join("testdata", "upstream", base, "resource", "disambiguation.xml"),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p

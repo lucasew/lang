@@ -16,7 +16,8 @@ func TestGolden_UnpairedBrackets(t *testing.T) {
 	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
 	found := false
 	for _, f := range findings {
-		if f.Rule == "UNPAIRED_BRACKETS" {
+		// Java EnglishUnpairedBracketsRule.getId() → EN_UNPAIRED_BRACKETS (not bare UNPAIRED_BRACKETS)
+		if f.Rule == "EN_UNPAIRED_BRACKETS" {
 			found = true
 			require.Equal(t, "typographical", f.Type)
 			require.Equal(t, "warning", f.Severity)

@@ -1,6 +1,9 @@
 package rules
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -320,4 +323,56 @@ func TestDisambigLoader_TokenMatchReference(t *testing.T) {
 	require.True(t, ars[1].Tokens[1].GetMatch().SetsPos())
 	require.True(t, ars[1].Tokens[1].GetMatch().IsPostagRegexp())
 	require.Equal(t, "N:([fm]):(sg):(acc)", ars[1].Tokens[1].GetMatch().GetPosTag())
+}
+
+// Java pt/disambiguation.xml NUMBER rules use &numero_por_extenso_* from entities/misc.ent.
+// Without SYSTEM .ent baseDir expand, empty regexp surfaces match every token (including SENT_START).
+func TestDisambiguationRuleLoader_PT_EntityExpansion(t *testing.T) {
+	candidates := []string{
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "pt",
+			"src", "main", "resources", "org", "languagetool", "resource", "pt", "disambiguation.xml"),
+	}
+	wd, _ := os.Getwd()
+	var path string
+	for dir := wd; ; dir = filepath.Dir(dir) {
+		for _, rel := range candidates {
+			p := filepath.Join(dir, rel)
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				path = p
+				break
+			}
+		}
+		if path != "" {
+			break
+		}
+		if filepath.Dir(dir) == dir {
+			break
+		}
+	}
+	if path == "" {
+		t.Skip("no official pt disambiguation.xml")
+	}
+	f, err := os.Open(path)
+	require.NoError(t, err)
+	defer f.Close()
+	rules, _, err := NewDisambiguationRuleLoader().GetRulesAndUnifierFromReader(f, "pt", path)
+	require.NoError(t, err)
+	require.NotEmpty(t, rules)
+	// NUMBER rule with &numero_por_extenso_MP; must expand to real alternation (uns|dois|…)
+	found := false
+	for _, r := range rules {
+		if r == nil || r.GetID() != "NUMBER" || r.Action != ActionAdd {
+			continue
+		}
+		if len(r.Tokens) == 0 || r.Tokens[0] == nil {
+			continue
+		}
+		surf := r.Tokens[0].Token
+		if strings.Contains(surf, "uns|dois") || strings.Contains(surf, "zero|") {
+			found = true
+			require.NotEmpty(t, surf, "entity-expanded surface must not be empty")
+			break
+		}
+	}
+	require.True(t, found, "expected NUMBER ADD rule with expanded numero_por_extenso surface")
 }

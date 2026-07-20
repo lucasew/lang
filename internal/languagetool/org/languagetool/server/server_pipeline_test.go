@@ -32,17 +32,7 @@ func TestHTTPServerConfigDefaults(t *testing.T) {
 	require.Equal(t, []string{"FOO", "BAR"}, c.DisabledRuleIDs)
 }
 
-func TestRequestCounter(t *testing.T) {
-	c := NewRequestCounter()
-	require.Equal(t, 1, c.IncrementRequestCount())
-	c.IncrementHandleCount("1.1.1.1", 10)
-	c.IncrementHandleCount("2.2.2.2", 11)
-	require.Equal(t, 2, c.HandleCount())
-	require.Equal(t, 2, c.DistinctIPs())
-	c.DecrementHandleCount(10)
-	require.Equal(t, 1, c.HandleCount())
-	require.Equal(t, 1, c.DistinctIPs())
-}
+// TestRequestCounter lives in request_counter_test.go (full twin coverage).
 
 func TestErrorRequestLimiter(t *testing.T) {
 	e := NewErrorRequestLimiter(2, 60)

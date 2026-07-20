@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -32,8 +33,15 @@ func (l *DisambiguationRuleLoader) GetRulesAndUnifierFromReader(r io.Reader, lan
 	if err != nil {
 		return nil, nil, err
 	}
-	// Official LT disambiguation.xml uses custom DTD entities.
-	data = patterns.ExpandLTXMLEntities(data)
+	// Official LT disambiguation.xml uses custom DTD + SYSTEM .ent includes
+	// (e.g. pt entities/misc.ent for &numero_por_extenso_*). Java SAX resolves
+	// SYSTEM paths against the document base; without baseDir unknown entities
+	// expand to "" → empty regexp tokens match every word (including SENT_START).
+	baseDir := ""
+	if xmlPath != "" {
+		baseDir = filepath.Dir(xmlPath)
+	}
+	data = patterns.ExpandLTXMLEntitiesWithBase(baseDir, data)
 	return l.parse(data, languageCode, xmlPath)
 }
 

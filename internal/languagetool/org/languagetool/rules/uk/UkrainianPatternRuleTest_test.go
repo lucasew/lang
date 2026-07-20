@@ -9,9 +9,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of UkrainianPatternRuleTest.testRules
+// ukTestSentence prepends SENT_START like Java AnalyzedSentence / PatternRuleMatcher tests.
+// Without it AbstractTokenBasedRule.canBeIgnoredFor drops short token lists (Java minTokenCount).
+func ukTestSentence(toks ...*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedSentence {
+	ss := languagetool.SentenceStartTagName
+	start := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0)
+	all := make([]*languagetool.AnalyzedTokenReadings, 0, len(toks)+1)
+	all = append(all, start)
+	all = append(all, toks...)
+	return languagetool.NewAnalyzedSentence(all)
+}
+
+// Port of UkrainianPatternRuleTest.testRules (full runGrammarRulesFromXmlTest deferred).
+// Synthetic two-token rule exercises matcher with Java-shaped sentence (SENT_START + tokens).
 func TestUkrainianPatternRule_Rules(t *testing.T) {
-	// synthetic two-token rule: "це" + "тест"
 	r := patterns.NewPatternRule(
 		"UK_DEMO", "uk",
 		[]*patterns.PatternToken{patterns.Token("це"), patterns.Token("тест")},
@@ -23,7 +34,7 @@ func TestUkrainianPatternRule_Rules(t *testing.T) {
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("це", nil, nil), 0),
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("тест", nil, nil), 3),
 	}
-	matches, err := r.Match(languagetool.NewAnalyzedSentence(toks))
+	matches, err := r.Match(ukTestSentence(toks...))
 	require.NoError(t, err)
 	require.NotEmpty(t, matches)
 	// no match
@@ -31,7 +42,7 @@ func TestUkrainianPatternRule_Rules(t *testing.T) {
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("інше", nil, nil), 0),
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("слово", nil, nil), 5),
 	}
-	matches2, err := r.Match(languagetool.NewAnalyzedSentence(toks2))
+	matches2, err := r.Match(ukTestSentence(toks2...))
 	require.NoError(t, err)
 	require.Empty(t, matches2)
 }
