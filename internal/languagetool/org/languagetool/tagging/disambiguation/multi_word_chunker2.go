@@ -154,12 +154,19 @@ func (c *MultiWordChunker2) matches(matchText string, tok *languagetool.Analyzed
 	return matchText == tok.GetToken()
 }
 
+// prepareNewReading ports MultiWordChunker2.prepareNewReading / setAndAnnotate.
+// Java always builds a new AnalyzedTokenReadings (does not mutate the input token).
 func (c *MultiWordChunker2) prepareNewReading(lemma, tok string, token *languagetool.AnalyzedTokenReadings, tag string) *languagetool.AnalyzedTokenReadings {
 	pos := tag
 	newTok := languagetool.NewAnalyzedToken(tok, &pos, &lemma)
-	if c.RemoveOtherReadings {
-		return languagetool.NewAnalyzedTokenReadings(newTok)
+	var readings []*languagetool.AnalyzedToken
+	if token != nil && !c.RemoveOtherReadings {
+		readings = append(readings, token.GetReadings()...)
 	}
-	token.AddReading(newTok, "MULTIWORD_CHUNKER")
-	return token
+	readings = append(readings, newTok)
+	if token == nil {
+		return languagetool.NewAnalyzedTokenReadingsList(readings, 0)
+	}
+	// Java: new AnalyzedTokenReadings(oldReading, newAnalyzedTokenList, "MULTIWORD_CHUNKER")
+	return languagetool.NewAnalyzedTokenReadingsFromOld(token, readings, "MULTIWORD_CHUNKER")
 }

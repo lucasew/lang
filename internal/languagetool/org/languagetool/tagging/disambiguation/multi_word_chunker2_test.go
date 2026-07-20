@@ -16,6 +16,8 @@ func TestMultiWordChunker2(t *testing.T) {
 		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
 		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("York", nil, nil)),
 	}
+	// Snapshot original readings count so we can prove input is not mutated.
+	origNewReadings := len(toks[1].GetReadings())
 	out := c.Disambiguate(languagetool.NewAnalyzedSentence(toks))
 	found := false
 	for _, tok := range out.GetTokens() {
@@ -26,4 +28,27 @@ func TestMultiWordChunker2(t *testing.T) {
 		}
 	}
 	require.True(t, found)
+	// Java setAndAnnotate builds a new ATR — input token readings stay unchanged.
+	require.Equal(t, origNewReadings, len(toks[1].GetReadings()), "must not mutate input tokens")
+	// Output "New" must be a different ATR with the multiword reading attached.
+	outNew := out.GetTokens()[1]
+	require.NotSame(t, toks[1], outNew)
+	require.Greater(t, len(outNew.GetReadings()), origNewReadings)
+}
+
+func TestMultiWordChunker2_RemoveOtherReadings(t *testing.T) {
+	c := NewMultiWordChunker2([]string{"foo bar\tMW"}, false)
+	c.SetRemoveOtherReadings(true)
+	c.SetWrapTag(false)
+	nn := "NN"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("foo", &nn, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("bar", &nn, nil)),
+	}
+	out := c.Disambiguate(languagetool.NewAnalyzedSentence(toks))
+	foo := out.GetTokens()[1]
+	require.Len(t, foo.GetReadings(), 1)
+	require.Equal(t, "MW", *foo.GetReadings()[0].GetPOSTag())
 }
