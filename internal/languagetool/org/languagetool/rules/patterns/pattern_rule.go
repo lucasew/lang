@@ -50,6 +50,10 @@ type PatternRule struct {
 	Priority int
 	// Premium ports Rule.isPremium (XML premium= inheritance).
 	Premium bool
+	// MinPrevMatches ports AbstractPatternRule.minPrevMatches (XML min_prev_matches).
+	MinPrevMatches int
+	// DistanceTokens ports AbstractPatternRule.distanceTokens (XML distance_tokens).
+	DistanceTokens int
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -160,6 +164,22 @@ func (r *PatternRule) SetPremium(v bool) {
 	if r != nil {
 		r.Premium = v
 	}
+}
+
+// GetMinPrevMatches ports AbstractPatternRule.getMinPrevMatches.
+func (r *PatternRule) GetMinPrevMatches() int {
+	if r == nil {
+		return 0
+	}
+	return r.MinPrevMatches
+}
+
+// GetDistanceTokens ports AbstractPatternRule.getDistanceTokens.
+func (r *PatternRule) GetDistanceTokens() int {
+	if r == nil {
+		return 0
+	}
+	return r.DistanceTokens
 }
 
 // SetDefaultTempOff ports Rule.setDefaultTempOff (defaultOff + defaultTempOff).

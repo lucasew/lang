@@ -64,6 +64,42 @@ func TestPatternRuleLoader_DefaultTempOff(t *testing.T) {
 	require.False(t, byID["O1"].DefaultTempOff)
 }
 
+// Java min_prev_matches / distance_tokens on rulegroup (style REP_* rules).
+func TestPatternRuleLoader_MinPrevMatchesDistanceTokens(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category id="STYLE" name="Style">
+    <rulegroup id="REP_PASSIVE" name="rep" min_prev_matches="4" distance_tokens="80" tags="picky">
+      <rule>
+        <pattern><token>was</token><token>done</token></pattern>
+        <message>passive</message>
+      </rule>
+    </rulegroup>
+    <rule id="PLAIN" min_prev_matches="2">
+      <pattern><token>x</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "style.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+	byID := map[string]*AbstractPatternRule{}
+	for _, ar := range ars {
+		byID[ar.ID] = ar
+	}
+	require.Equal(t, 4, byID["REP_PASSIVE"].MinPrevMatches)
+	require.Equal(t, 80, byID["REP_PASSIVE"].DistanceTokens)
+	require.Equal(t, []rules.Tag{rules.TagPicky}, byID["REP_PASSIVE"].Tags)
+	require.Equal(t, 2, byID["PLAIN"].MinPrevMatches)
+	require.Equal(t, 0, byID["PLAIN"].DistanceTokens)
+
+	// Transformer marks min_prev_matches > 0 for text-level wrap
+	tr := NewRepeatedPatternRuleTransformer("en")
+	out := tr.Transform(ars)
+	require.NotEmpty(t, out.GetTransformedRules())
+}
+
 // Java premium= inheritance: rule > rulegroup > category > file (yes/no).
 func TestPatternRuleLoader_PremiumInheritance(t *testing.T) {
 	xml := `<?xml version="1.0"?>

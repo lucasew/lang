@@ -39,11 +39,11 @@ func (t *RepeatedPatternRuleTransformer) Transform(rules []*AbstractPatternRule)
 	var transformed []any
 	for _, id := range order {
 		group := byID[id]
-		// only multi-member groups (or those marked with distance) become text-level
+		// Java: apply when getMinPrevMatches() > 0 (or multi-subid / distance_tokens set).
 		wantTransform := len(group) > 1
 		if !wantTransform {
 			for _, r := range group {
-				if r.DistanceTokens > 0 {
+				if r.MinPrevMatches > 0 || r.DistanceTokens > 0 {
 					wantTransform = true
 					break
 				}

@@ -62,6 +62,8 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.URL = ar.URL
 		pr.Priority = ar.Priority
 		pr.Premium = ar.Premium
+		pr.MinPrevMatches = ar.MinPrevMatches
+		pr.DistanceTokens = ar.DistanceTokens
 		if len(ar.Tags) > 0 {
 			pr.SetTags(ar.Tags)
 		}

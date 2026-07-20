@@ -46,7 +46,11 @@ type AbstractPatternRule struct {
 	// InterpretPreDisambig ports pattern raw_pos="yes".
 	InterpretPreDisambig bool
 	LineNumber           int
-	DistanceTokens       int
+	// DistanceTokens ports AbstractPatternRule.distanceTokens (XML distance_tokens).
+	DistanceTokens int
+	// MinPrevMatches ports AbstractPatternRule.minPrevMatches (XML min_prev_matches).
+	// When > 0, RepeatedPatternRuleTransformer wraps the rule as text-level.
+	MinPrevMatches int
 	Premium              bool
 	// DefaultOff is true when XML default="off" or default="temp_off" (Java Rule.defaultOff).
 	DefaultOff bool
@@ -92,9 +96,27 @@ func (r *AbstractPatternRule) SetMessage(m string)      { r.Message = m }
 func (r *AbstractPatternRule) SetShortMessage(m string) { r.ShortMessage = m }
 func (r *AbstractPatternRule) SetFilter(f RuleFilter)   { r.Filter = f }
 func (r *AbstractPatternRule) SetFilterArgs(a string)   { r.FilterArgs = a }
-func (r *AbstractPatternRule) GetDistanceTokens() int   { return r.DistanceTokens }
-func (r *AbstractPatternRule) IsPremium() bool          { return r.Premium }
-func (r *AbstractPatternRule) SetPremium(v bool)        { r.Premium = v }
+func (r *AbstractPatternRule) GetDistanceTokens() int {
+	if r == nil {
+		return 0
+	}
+	return r.DistanceTokens
+}
+
+// GetMinPrevMatches ports AbstractPatternRule.getMinPrevMatches.
+func (r *AbstractPatternRule) GetMinPrevMatches() int {
+	if r == nil {
+		return 0
+	}
+	return r.MinPrevMatches
+}
+
+func (r *AbstractPatternRule) IsPremium() bool   { return r != nil && r.Premium }
+func (r *AbstractPatternRule) SetPremium(v bool) {
+	if r != nil {
+		r.Premium = v
+	}
+}
 
 // GetToneTags ports Rule.getToneTags.
 func (r *AbstractPatternRule) GetToneTags() []languagetool.ToneTag {

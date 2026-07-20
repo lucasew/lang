@@ -130,6 +130,10 @@ type xmlRuleGroup struct {
 	Prio string `xml:"prio,attr"`
 	// Premium ports rulegroup premium="yes|no" (Java premiumRuleGroupAttribute).
 	Premium string `xml:"premium,attr"`
+	// MinPrevMatches ports rulegroup min_prev_matches (Java ruleGroupMinPrevMatches).
+	MinPrevMatches string `xml:"min_prev_matches,attr"`
+	// DistanceTokens ports rulegroup distance_tokens (Java ruleGroupDistanceTokens).
+	DistanceTokens string `xml:"distance_tokens,attr"`
 	Tags  string    `xml:"tags,attr"`
 	ToneTags string `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -150,6 +154,10 @@ type xmlRule struct {
 	Prio string `xml:"prio,attr"`
 	// Premium ports rule premium="yes|no" (overrides group/category/file).
 	Premium string `xml:"premium,attr"`
+	// MinPrevMatches ports rule min_prev_matches (inherits rulegroup when unset).
+	MinPrevMatches string `xml:"min_prev_matches,attr"`
+	// DistanceTokens ports rule distance_tokens (inherits rulegroup when unset).
+	DistanceTokens string `xml:"distance_tokens,attr"`
 	Tags    string     `xml:"tags,attr"`
 	ToneTags string    `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -789,7 +797,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
 	idPrefix := strings.TrimSpace(root.IdPrefix)
-	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string, catPrio, groupPrio int, filePremium, catPremium, groupPremium string) error {
+	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string, catPrio, groupPrio int, filePremium, catPremium, groupPremium string, groupMinPrev, groupDistTok int) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -871,6 +879,9 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 				r.Priority = resolvePriority(catPrio, groupPrio, parsePrioAttr(xr.Prio))
 				// Java prepareRule setPremium(isPremiumRule): rule > group > category > file.
 				r.Premium = resolvePremium(xr.Premium, groupPremium, catPremium, filePremium)
+				// Java: rule attr or inherit ruleGroupMinPrevMatches / ruleGroupDistanceTokens.
+				r.MinPrevMatches = resolveIntAttr(xr.MinPrevMatches, groupMinPrev)
+				r.DistanceTokens = resolveIntAttr(xr.DistanceTokens, groupDistTok)
 				if defaultOff {
 					r.DefaultOff = true
 				}
@@ -899,7 +910,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		catPrio := parsePrioAttr(cat.Prio)
 		catPremium := strings.TrimSpace(cat.Premium)
 		for _, xr := range cat.Rules {
-			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile, catPrio, 0, filePremium, catPremium, ""); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile, catPrio, 0, filePremium, catPremium, "", 0, 0); err != nil {
 				return nil, err
 			}
 		}
@@ -916,13 +927,15 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 			groupURL := strings.TrimSpace(g.URL)
 			groupPrio := parsePrioAttr(g.Prio)
 			groupPremium := strings.TrimSpace(g.Premium)
+			groupMinPrev := parsePrioAttr(g.MinPrevMatches) // same int parse as prio
+			groupDistTok := parsePrioAttr(g.DistanceTokens)
 			for i, xr := range g.Rules {
 				id := xr.ID
 				if id == "" {
 					id = g.ID
 				}
 				start := len(out)
-				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType, groupType, groupURL, srcFile, catPrio, groupPrio, filePremium, catPremium, groupPremium); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType, groupType, groupURL, srcFile, catPrio, groupPrio, filePremium, catPremium, groupPremium, groupMinPrev, groupDistTok); err != nil {
 					return nil, err
 				}
 				// sub id 1-based per XML rule (shared by OR expansions of that rule)
@@ -942,11 +955,20 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, "", "", "", srcFile, 0, 0, filePremium, "", ""); err != nil {
+		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, "", "", "", srcFile, 0, 0, filePremium, "", "", 0, 0); err != nil {
 			return nil, err
 		}
 	}
 	return out, nil
+}
+
+// resolveIntAttr ports rule attr with inheritance: if ruleAttr set use it, else inherit.
+func resolveIntAttr(ruleAttr string, inherit int) int {
+	s := strings.TrimSpace(ruleAttr)
+	if s == "" {
+		return inherit
+	}
+	return parsePrioAttr(s)
 }
 
 // resolvePremium ports PatternRuleHandler isPremiumRule:
