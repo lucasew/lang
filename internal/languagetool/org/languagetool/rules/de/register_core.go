@@ -185,9 +185,8 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	sva := WireSubjectVerbAgreementRule(nil)
 	lt.AddRuleChecker(sva.GetID(), rules.AsSentenceCheckerSimple(sva.Match))
 	va := WireVerbAgreementRule(nil)
-	lt.AddRuleChecker(va.GetID(), rules.AsSentenceCheckerSimple(va.Match))
-	// TextLevel multi-sentence path for VerbAgreement (comma+conjunction splits).
-	lt.AddTextLevelRuleChecker(va.GetID()+"_TEXTLEVEL", rules.AsTextLevelChecker(va.MatchList))
+	// Java VerbAgreementRule is a text-level rule (match(List)); register once under DE_VERBAGREEMENT.
+	lt.AddTextLevelRuleChecker(va.GetID(), rules.AsTextLevelChecker(va.MatchList))
 
 	// MissingVerbRule (Java default off).
 	mv := WireMissingVerbRule(NewMissingVerbRule(nil))
@@ -255,9 +254,7 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(repBegin.GetID(), rules.AsTextLevelChecker(repBegin.MatchList))
 	lt.MarkDefaultOff(repBegin.GetID())
 
-	// Prohibited compounds (Java needs LM; without Frequency Match fails closed).
-	pc := NewProhibitedCompoundRule(nil)
-	lt.AddRuleChecker(pc.GetID(), rules.AsSentenceCheckerSimple(pc.Match))
+	// ProhibitedCompoundRule is getRelevantLanguageModelRules (needs LM) — not invent here.
 
 	// Du/du casing consistency (text-level).
 	duRule := NewDuUpperLowerCaseRule(nil)
@@ -301,10 +298,7 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(shortSents.GetID(), rules.AsTextLevelChecker(shortSents.MatchList))
 	lt.MarkDefaultOff(shortSents.GetID())
 
-	// Confusion probability (LM rule; Match nil without language model — fail closed).
-	conf := NewGermanConfusionProbabilityRule(nil)
-	lt.AddRuleChecker(conf.GetID(), rules.AsSentenceCheckerSimple(conf.Match))
-	// Java is language-model rule (only when LM present); keep registered but no false hits.
+	// GermanConfusionProbabilityRule / UpperCaseNgramRule are getRelevantLanguageModel* — not invent here.
 
 	// Readability (Java default off): easy + difficult variants.
 	readEasy := NewGermanReadabilityRule(nil, true)
@@ -313,11 +307,6 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	readDiff := NewGermanReadabilityRule(nil, false)
 	lt.AddTextLevelRuleChecker(readDiff.GetID(), rules.AsTextLevelChecker(readDiff.MatchList))
 	lt.MarkDefaultOff(readDiff.GetID())
-
-	// Upper-case n-gram (Java defaultTempOff; needs LM — fail closed without hook).
-	ucN := NewUpperCaseNgramRule(nil)
-	lt.AddRuleChecker(ucN.GetID(), rules.AsSentenceCheckerSimple(ucN.Match))
-	lt.MarkDefaultOff(ucN.GetID())
 
 	// CompoundInfinitivRule (Java German.getRelevantRules).
 	// Match needs ZUS + VER:INF; untagged input fails closed (no surface invent).

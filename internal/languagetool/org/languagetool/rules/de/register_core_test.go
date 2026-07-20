@@ -111,7 +111,10 @@ func TestRegisterCoreGermanRules_AgreementIDsRegistered(t *testing.T) {
 	require.Contains(t, off, "STYLE_REPEATED_SENTENCE_BEGINNING")
 	require.Contains(t, off, "READABILITY_RULE_SIMPLE_DE")
 	require.Contains(t, off, "READABILITY_RULE_DIFFICULT_DE")
-	require.Contains(t, off, "DE_UPPER_CASE_NGRAM")
+	// LM rules (getRelevantLanguageModel*) are not invent-registered in getRelevantRules path.
+	require.NotContains(t, ids, "DE_UPPER_CASE_NGRAM")
+	require.NotContains(t, ids, "DE_PROHIBITED_COMPOUNDS")
+	require.NotContains(t, ids, "DE_CONFUSION_RULE")
 	require.Contains(t, ids, "DE_DU_UPPER_LOWER")
 	require.Contains(t, ids, "DE_WIEDER_VS_WIDER")
 	require.Contains(t, ids, "GERMAN_PARAGRAPH_REPEAT_BEGINNING_RULE")
@@ -121,10 +124,8 @@ func TestRegisterCoreGermanRules_AgreementIDsRegistered(t *testing.T) {
 	require.Contains(t, ids, "DE_UNPAIRED_QUOTES")
 	require.Contains(t, ids, "OLD_SPELLING_RULE")
 	require.Contains(t, ids, "REDUNDANT_MODAL_VERB")
-	require.Contains(t, ids, "DE_PROHIBITED_COMPOUNDS")
 	require.Contains(t, ids, "DE_SENTENCE_WHITESPACE")
 	require.Contains(t, ids, "DE_DOUBLE_PUNCTUATION")
-	require.Contains(t, ids, "DE_CONFUSION_RULE")
 	require.Contains(t, off, "FILLER_WORDS_DE")
 	require.Contains(t, off, "STYLE_REPEATED_SHORT_SENTENCES")
 	// de (Germany): German compounds + GERMAN_SPELLER_RULE
