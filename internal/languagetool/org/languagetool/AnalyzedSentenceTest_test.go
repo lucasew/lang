@@ -52,3 +52,28 @@ func TestAnalyzedSentence_SetsAndPosition(t *testing.T) {
 	_ = tok
 	_ = sp
 }
+
+// Java toString includes chunk tags when includeChunks=true.
+func TestAnalyzedSentence_ToString_ChunkTags(t *testing.T) {
+	pos, lemma := "POS", "lemma"
+	w := NewAnalyzedTokenReadings(NewAnalyzedToken("word", &pos, &lemma))
+	w.SetChunkTags([]string{"B-NP", "NPP"})
+	sent := NewAnalyzedSentence([]*AnalyzedTokenReadings{w})
+	// Sentence toString uses AnalyzedToken.toString (no whitespace '*'); chunk tags like ATR.
+	require.Equal(t, "word[lemma/POS,B-NP|NPP]", sent.String())
+	// toShortString drops chunk tags (includeChunks=false)
+	require.Equal(t, "word[lemma/POS]", sent.ToShortString(","))
+}
+
+func TestAnalyzedSentence_TokenLemmaOffsets(t *testing.T) {
+	pos, lemma := "NN", "House"
+	w := NewAnalyzedTokenReadings(NewAnalyzedToken("Houses", &pos, &lemma))
+	sent := NewAnalyzedSentence([]*AnalyzedTokenReadings{w})
+	require.Equal(t, []int{0}, sent.GetTokenOffsets("houses"))
+	require.Equal(t, []int{0}, sent.GetLemmaOffsets("house"))
+	_, ok := sent.GetTokenSet()["houses"]
+	require.True(t, ok)
+	_, ok = sent.GetLemmaSet()["house"]
+	require.True(t, ok)
+	require.Contains(t, sent.GetAnnotations(), "Disambiguator log:")
+}

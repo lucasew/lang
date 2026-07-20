@@ -4,13 +4,19 @@ import (
 	"strings"
 )
 
-// AnalyzedSentence ports org.languagetool.AnalyzedSentence (subset for unit tests).
+// AnalyzedSentence ports org.languagetool.AnalyzedSentence.
 type AnalyzedSentence struct {
-	tokens                      []*AnalyzedTokenReadings
-	preDisambigTokens           []*AnalyzedTokenReadings
-	nonBlankTokens              []*AnalyzedTokenReadings
-	nonBlankPreDisambigTokens   []*AnalyzedTokenReadings
-	whPositions                 []int
+	tokens                    []*AnalyzedTokenReadings
+	preDisambigTokens         []*AnalyzedTokenReadings
+	nonBlankTokens            []*AnalyzedTokenReadings
+	nonBlankPreDisambigTokens []*AnalyzedTokenReadings
+	whPositions               []int
+	// tokenOffsets / lemmaOffsets: lowercase → indices in nonBlankTokens (Java maps).
+	tokenOffsets map[string][]int
+	lemmaOffsets map[string][]int
+	// text caches getText() (Java volatile String text).
+	text       string
+	textCached bool
 }
 
 func NewAnalyzedSentence(words []*AnalyzedTokenReadings) *AnalyzedSentence {
@@ -18,20 +24,68 @@ func NewAnalyzedSentence(words []*AnalyzedTokenReadings) *AnalyzedSentence {
 }
 
 func NewAnalyzedSentenceFull(tokens, preDisambig []*AnalyzedTokenReadings) *AnalyzedSentence {
+	// Java primitives are pass-by-value: each getNonBlankReadings starts counters at 0;
+	// the shared mapping array is overwritten by the second call.
 	mapping := make([]int, len(tokens)+1)
 	nonBlank := getNonBlankReadings(tokens, mapping)
-	// rebuild mapping for preDisambig independently like Java does with same vars (shared counters - see Java)
-	// Java reuses whCounter/nonWhCounter/mapping for second call - BUG-compatible?
-	// Actually Java passes same variables so second call continues counters. For equal arrays it's ok.
 	s := &AnalyzedSentence{
 		tokens:            tokens,
 		preDisambigTokens: preDisambig,
 		whPositions:       mapping,
 		nonBlankTokens:    nonBlank,
 	}
-	// second non-blank pass like Java constructor - uses same mapping array
 	s.nonBlankPreDisambigTokens = getNonBlankReadings(preDisambig, mapping)
+	s.tokenOffsets = indexTokens(nonBlank)
+	s.lemmaOffsets = indexLemmas(nonBlank)
 	return s
+}
+
+// newAnalyzedSentencePrivate ports the package-private copy constructor.
+func newAnalyzedSentencePrivate(tokens []*AnalyzedTokenReadings, mapping []int, nonBlank, nonBlankPre []*AnalyzedTokenReadings) *AnalyzedSentence {
+	s := &AnalyzedSentence{
+		tokens:                    tokens,
+		preDisambigTokens:         tokens, // Java sets preDisambigTokens = tokens
+		whPositions:               mapping,
+		nonBlankTokens:            nonBlank,
+		nonBlankPreDisambigTokens: nonBlankPre,
+	}
+	s.tokenOffsets = indexTokens(nonBlank)
+	s.lemmaOffsets = indexLemmas(nonBlank)
+	return s
+}
+
+func indexTokens(tokens []*AnalyzedTokenReadings) map[string][]int {
+	result := make(map[string][]int, len(tokens))
+	for i, t := range tokens {
+		if t == nil {
+			continue
+		}
+		key := strings.ToLower(t.GetToken())
+		result[key] = append(result[key], i)
+	}
+	return result
+}
+
+func indexLemmas(tokens []*AnalyzedTokenReadings) map[string][]int {
+	result := make(map[string][]int, len(tokens))
+	for i, tr := range tokens {
+		if tr == nil {
+			continue
+		}
+		for j := 0; j < tr.GetReadingsLength(); j++ {
+			tok := tr.GetAnalyzedToken(j)
+			key := tok.GetToken()
+			if lem := tok.GetLemma(); lem != nil {
+				key = *lem
+			}
+			key = strings.ToLower(key)
+			list := result[key]
+			if len(list) == 0 || list[len(list)-1] != i {
+				result[key] = append(list, i)
+			}
+		}
+	}
+	return result
 }
 
 func getNonBlankReadings(tokens []*AnalyzedTokenReadings, mapping []int) []*AnalyzedTokenReadings {
@@ -103,8 +157,8 @@ func cloneAnalyzedTokenSlice(in []*AnalyzedTokenReadings) []*AnalyzedTokenReadin
 }
 
 // Copy ports AnalyzedSentence.copy.
-// Token readings are deep-copied so immunization / IGNORE_SPELLING antipatterns
-// (Rule.getSentenceWithImmunization) can mutate the copy without affecting the original.
+// Token array is deep-copied; nonBlank slices keep the Java references from the source
+// (private ctor reuses sentence.getTokensWithoutWhitespace() arrays).
 func (s *AnalyzedSentence) Copy(sentence *AnalyzedSentence) *AnalyzedSentence {
 	if sentence == nil {
 		return nil
@@ -117,85 +171,28 @@ func (s *AnalyzedSentence) Copy(sentence *AnalyzedSentence) *AnalyzedSentence {
 		}
 		copyTokens[i] = NewAnalyzedTokenReadingsFromOld(analyzedTokens, analyzedTokens.GetReadings(), "")
 	}
-	// Rebuild non-blank slice from the *copy* tokens (same criteria as getNonBlankReadings;
-	// Java copy does not share AnalyzedTokenReadings references with the original).
-	var mapping []int
-	nonBlank := getNonBlankReadings(copyTokens, mapping)
-	return &AnalyzedSentence{
-		tokens:                    copyTokens,
-		preDisambigTokens:         copyTokens,
-		whPositions:               append([]int(nil), sentence.whPositions...),
-		nonBlankTokens:            nonBlank,
-		nonBlankPreDisambigTokens: nonBlank,
-	}
+	return newAnalyzedSentencePrivate(
+		copyTokens,
+		append([]int(nil), sentence.whPositions...),
+		sentence.GetTokensWithoutWhitespace(),
+		sentence.GetPreDisambigTokensWithoutWhitespace(),
+	)
 }
 
 func (s *AnalyzedSentence) String() string {
 	return s.ToStringDelim(",")
 }
 
+// ToStringDelim ports toString(readingDelimiter) with chunk tags included.
 func (s *AnalyzedSentence) ToStringDelim(readingDelimiter string) string {
-	var sb strings.Builder
-	for _, element := range s.tokens {
-		if !element.IsWhitespace() {
-			sb.WriteString(element.GetToken())
-			sb.WriteByte('[')
-		}
-		readings := element.GetReadings()
-		for i, token := range readings {
-			posTag := token.GetPOSTag()
-			if element.IsSentenceStart() {
-				sb.WriteString("<S>")
-			} else if posTag != nil && *posTag == SentenceEndTagName {
-				sb.WriteString("</S>")
-			} else if posTag != nil && *posTag == ParagraphEndTagName {
-				sb.WriteString("<P/>")
-			} else {
-				if !element.IsWhitespace() {
-					sb.WriteString(token.String())
-					if i+1 < len(readings) {
-						// only delimiter between non-special readings — Java uses iterator.hasNext after current
-						// Special tags don't use delimiter the same way; match Java loop structure:
-					}
-				}
-			}
-			// Java: delimiter when hasNext and not the special cases that don't append token
-			if !element.IsWhitespace() && i+1 < len(readings) {
-				// peek next - Java appends delimiter after appending token if hasNext
-				// For SENT_END path no delimiter before next
-				next := readings[i+1]
-				npt := next.GetPOSTag()
-				curIsSpecial := element.IsSentenceStart() ||
-					(posTag != nil && (*posTag == SentenceEndTagName || *posTag == ParagraphEndTagName))
-				nextIsSpecial := npt != nil && (*npt == SentenceEndTagName || *npt == ParagraphEndTagName)
-				if !curIsSpecial && !element.IsSentenceStart() {
-					if posTag == nil || (*posTag != SentenceEndTagName && *posTag != ParagraphEndTagName) {
-						if !nextIsSpecial || true {
-							// Java always appends delimiter if hasNext after processing current in the else branch only
-						}
-					}
-				}
-			}
-		}
-		// Simpler faithful rewrite matching Java structure exactly:
-		_ = readings
-		if false {
-			sb.WriteString(readingDelimiter)
-		}
-		if !element.IsWhitespace() {
-			if element.IsImmunized() {
-				sb.WriteString("{!}")
-			}
-			sb.WriteByte(']')
-		} else {
-			sb.WriteByte(' ')
-		}
-	}
-	// The above loop is incomplete — rewrite cleanly below
 	return s.toStringJava(readingDelimiter, true)
 }
 
+// toStringJava ports private toString(readingDelimiter, includeChunks).
 func (s *AnalyzedSentence) toStringJava(readingDelimiter string, includeChunks bool) string {
+	if s == nil {
+		return ""
+	}
 	var sb strings.Builder
 	for _, element := range s.tokens {
 		if !element.IsWhitespace() {
@@ -224,6 +221,13 @@ func (s *AnalyzedSentence) toStringJava(readingDelimiter string, includeChunks b
 			}
 		}
 		if !element.IsWhitespace() {
+			// Java: if (includeChunks && element.getChunkTags().size() > 0)
+			if includeChunks {
+				if tags := element.GetChunkTags(); len(tags) > 0 {
+					sb.WriteByte(',')
+					sb.WriteString(strings.Join(tags, "|"))
+				}
+			}
 			if element.IsImmunized() {
 				sb.WriteString("{!}")
 			}
@@ -235,36 +239,79 @@ func (s *AnalyzedSentence) toStringJava(readingDelimiter string, includeChunks b
 	return sb.String()
 }
 
+// Equals ports AnalyzedSentence.equals:
+// Arrays.equals(nonBlankTokens) && Arrays.equals(tokens) && Arrays.equals(whPositions).
 func (s *AnalyzedSentence) Equals(o *AnalyzedSentence) bool {
 	if s == o {
 		return true
 	}
-	if o == nil {
+	if s == nil || o == nil {
 		return false
 	}
-	if len(s.tokens) != len(o.tokens) || len(s.nonBlankTokens) != len(o.nonBlankTokens) {
+	if !equalIntSlice(s.whPositions, o.whPositions) {
 		return false
 	}
-	// Java uses Arrays.equals on token arrays (reference equality of elements for ATR)
-	// After copy, elements are new objects so equals of ATR matters - Java AnalyzedTokenReadings equals?
-	// Arrays.equals uses Object.equals. AnalyzedTokenReadings may not override equals → reference equality.
-	// Test: after copy, equals true; after immunize original, not equal.
-	// So equals is reference equality of arrays contents - after copy, new ATR objects, Arrays.equals uses equals().
-	// If ATR doesn't override equals, copy would NOT equal original. But test expects equal.
-	// Check if ATR has equals...
-	return s.equalTokens(s.tokens, o.tokens) && s.equalTokens(s.nonBlankTokens, o.nonBlankTokens)
+	return equalATRSlice(s.nonBlankTokens, o.nonBlankTokens) && equalATRSlice(s.tokens, o.tokens)
 }
 
-func (s *AnalyzedSentence) equalTokens(a, b []*AnalyzedTokenReadings) bool {
+func equalIntSlice(a, b []int) bool {
 	if len(a) != len(b) {
 		return false
 	}
 	for i := range a {
-		if a[i].String() != b[i].String() {
+		if a[i] != b[i] {
 			return false
 		}
 	}
 	return true
+}
+
+func equalATRSlice(a, b []*AnalyzedTokenReadings) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] == b[i] {
+			continue
+		}
+		if a[i] == nil || b[i] == nil || !a[i].Equals(b[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+// HashCode ports AnalyzedSentence.hashCode (Objects.hash(nonBlankTokens, tokens, whPositions)).
+func (s *AnalyzedSentence) HashCode() int {
+	if s == nil {
+		return 0
+	}
+	h := 1
+	h = 31*h + atrArrayHash(s.nonBlankTokens)
+	h = 31*h + atrArrayHash(s.tokens)
+	h = 31*h + intArrayHash(s.whPositions)
+	return h
+}
+
+func atrArrayHash(a []*AnalyzedTokenReadings) int {
+	// Arrays.hashCode
+	h := 1
+	for _, t := range a {
+		th := 0
+		if t != nil {
+			th = t.HashCode()
+		}
+		h = 31*h + th
+	}
+	return h
+}
+
+func intArrayHash(a []int) int {
+	h := 1
+	for _, v := range a {
+		h = 31*h + v
+	}
+	return h
 }
 
 // GetCorrectedTextLength ports AnalyzedSentence.getCorrectedTextLength:
@@ -299,67 +346,83 @@ func (s *AnalyzedSentence) GetCorrectedTextLength() int {
 
 // GetText ports AnalyzedSentence.getText — original text by concatenating tokens.
 func (s *AnalyzedSentence) GetText() string {
+	if s == nil {
+		return ""
+	}
+	if s.textCached {
+		return s.text
+	}
 	var b strings.Builder
 	for _, element := range s.tokens {
-		b.WriteString(element.GetToken())
+		if element != nil {
+			b.WriteString(element.GetToken())
+		}
 	}
-	return b.String()
+	s.text = b.String()
+	s.textCached = true
+	return s.text
 }
 
-// GetTokenSet ports getTokenSet — lowercased unique tokens (non-whitespace).
+// GetTokenSet ports getTokenSet — keySet of tokenOffsets (lowercased non-blank tokens).
 func (s *AnalyzedSentence) GetTokenSet() map[string]struct{} {
 	out := map[string]struct{}{}
 	if s == nil {
 		return out
 	}
-	for _, t := range s.nonBlankTokens {
-		if t == nil {
-			continue
-		}
-		out[strings.ToLower(t.GetToken())] = struct{}{}
+	for k := range s.tokenOffsets {
+		out[k] = struct{}{}
 	}
 	return out
 }
 
-// GetLemmaSet ports getLemmaSet — lowercased unique lemmas.
+// GetLemmaSet ports getLemmaSet — keySet of lemmaOffsets
+// (lowercase lemma, or surface token when lemma is null).
 func (s *AnalyzedSentence) GetLemmaSet() map[string]struct{} {
 	out := map[string]struct{}{}
 	if s == nil {
 		return out
 	}
-	for _, t := range s.nonBlankTokens {
-		if t == nil {
-			continue
-		}
-		for _, r := range t.GetReadings() {
-			if r == nil {
-				continue
-			}
-			if l := r.GetLemma(); l != nil && *l != "" {
-				out[strings.ToLower(*l)] = struct{}{}
-			}
-		}
+	for k := range s.lemmaOffsets {
+		out[k] = struct{}{}
 	}
 	return out
 }
 
-// ToShortString ports toShortString(readingDelimiter).
-func (s *AnalyzedSentence) ToShortString(readingDelimiter string) string {
-	return s.ToStringDelim(readingDelimiter)
+// GetTokenOffsets ports getTokenOffsets — non-blank indices for a lowercased token, or nil.
+func (s *AnalyzedSentence) GetTokenOffsets(token string) []int {
+	if s == nil {
+		return nil
+	}
+	return s.tokenOffsets[strings.ToLower(token)]
 }
 
-// GetAnnotations ports getAnnotations — disambiguator annotation dump (best-effort).
+// GetLemmaOffsets ports getLemmaOffsets — non-blank indices for a lowercased lemma key, or nil.
+func (s *AnalyzedSentence) GetLemmaOffsets(lemma string) []int {
+	if s == nil {
+		return nil
+	}
+	return s.lemmaOffsets[strings.ToLower(lemma)]
+}
+
+// ToShortString ports toShortString(readingDelimiter) — includeChunks=false.
+func (s *AnalyzedSentence) ToShortString(readingDelimiter string) string {
+	return s.toStringJava(readingDelimiter, false)
+}
+
+// GetAnnotations ports getAnnotations — disambiguator actions log.
 func (s *AnalyzedSentence) GetAnnotations() string {
 	if s == nil {
-		return ""
+		return "Disambiguator log: \n"
 	}
 	var b strings.Builder
-	for _, t := range s.tokens {
-		if t == nil {
+	b.WriteString("Disambiguator log: \n")
+	for _, element := range s.tokens {
+		if element == nil || element.IsWhitespace() {
 			continue
 		}
-		if a := t.GetHistoricalAnnotations(); a != "" {
+		if a := element.GetHistoricalAnnotations(); a != "" {
 			b.WriteString(a)
+			b.WriteByte('\n')
 		}
 	}
 	return b.String()
