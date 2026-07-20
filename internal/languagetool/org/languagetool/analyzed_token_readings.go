@@ -703,16 +703,7 @@ func (r *AnalyzedTokenReadings) areLemmasSame() bool {
 }
 
 func (r *AnalyzedTokenReadings) GetEndPos() int {
-	// Java: startPos + token.length() UTF-16
-	n := 0
-	for _, rr := range r.token {
-		if rr >= 0x10000 {
-			n += 2
-		} else {
-			n++
-		}
-	}
-	// simpler with utf16
+	// Java: startPos + token.length() (UTF-16 code units)
 	return r.startPos + utf16Len(r.token)
 }
 
