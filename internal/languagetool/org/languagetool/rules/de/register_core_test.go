@@ -44,9 +44,10 @@ func TestRegisterCoreGermanRules_TextLevel(t *testing.T) {
 	}
 	require.True(t, found, "%+v", m)
 
-	// long sentence (41+ words). Disable overlapping cleanup: STYLE priority and
-	// shorter matches (uppercase / speller) otherwise hide TOO_LONG_SENTENCE_DE
-	// in CleanOverlappingLocalMatches (Java also demotes picky long-sentence).
+	// long sentence (41+ words). Java LongSentenceRule is Tag.picky — only active at
+	// Level.PICKY (isRuleActiveForLevelAndToneTags). Disable overlapping cleanup so
+	// STYLE/shorter matches do not hide TOO_LONG_SENTENCE_DE after demotion.
+	lt.Level = languagetool.LevelPicky
 	lt.DisableCleanOverlapping()
 	cycle := []string{"Eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn"}
 	var b strings.Builder
