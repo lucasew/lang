@@ -41,19 +41,23 @@ func TestPipeline_CheckGerman(t *testing.T) {
 }
 
 func TestPipeline_CheckMultiLang(t *testing.T) {
+	// Java getRelevantRules class getId only — no invent FR_/NL_ word-repeat.
+	// FR/NL have no WordRepeatRule in Java; use WHITESPACE_RULE (MultipleWhitespace).
+	// PL generic WordRepeatRule id is WORD_REPEAT_RULE; PL_WORD_REPEAT is Advanced (POS).
+	// RU RussianSimpleWordRepeatRule keeps WordRepeatRule id WORD_REPEAT_RULE.
 	cases := []struct {
 		lang string
 		text string
 		id   string
 	}{
-		{"fr", "bonjour bonjour", "FR_WORD_REPEAT_RULE"},
+		{"fr", "bonjour  monde", "WHITESPACE_RULE"},
 		{"es", "hola hola", "SPANISH_WORD_REPEAT_RULE"},
-		{"nl", "hallo hallo", "NL_WORD_REPEAT_RULE"},
-		{"pl", "test test", "PL_WORD_REPEAT"},
+		{"nl", "hallo  wereld", "WHITESPACE_RULE"},
+		{"pl", "test test", "WORD_REPEAT_RULE"},
 		{"uk", "без без", "UKRAINIAN_WORD_REPEAT_RULE"},
 		{"it", "ciao ciao", "ITALIAN_WORD_REPEAT_RULE"},
 		{"pt", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
-		{"ru", "тест тест", "RU_WORD_REPEAT_SIMPLE"},
+		{"ru", "тест тест", "WORD_REPEAT_RULE"},
 		{"ca", "hola hola", "CATALAN_WORD_REPEAT_RULE"},
 	}
 	for _, tc := range cases {

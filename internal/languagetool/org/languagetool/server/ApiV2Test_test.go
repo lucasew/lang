@@ -53,12 +53,14 @@ func TestApiV2_CheckEngine(t *testing.T) {
 	require.Contains(t, r.Body, "EN_A_VS_AN")
 	require.Contains(t, r.Body, `"matches"`)
 
+	// Java French has no WordRepeatRule — double space hits WHITESPACE_RULE.
 	r2, err := api.Handle("check", map[string]string{
 		"language": "fr",
-		"text":     "bonjour bonjour",
+		"text":     "bonjour  monde",
 	})
 	require.NoError(t, err)
-	require.Contains(t, r2.Body, "FR_WORD_REPEAT_RULE")
+	require.Contains(t, r2.Body, "WHITESPACE_RULE")
+	require.NotContains(t, r2.Body, "FR_WORD_REPEAT_RULE")
 }
 
 func TestApiV2_CheckJSONP(t *testing.T) {

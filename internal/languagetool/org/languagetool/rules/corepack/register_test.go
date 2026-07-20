@@ -61,6 +61,19 @@ func TestRegister_French_NoInventWordRepeat(t *testing.T) {
 	}
 }
 
+// Java Dutch has no WordRepeatRule / WordRepeatBeginning in getRelevantRules.
+func TestRegister_Dutch_NoInventWordRepeat(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("nl")
+	corepack.Register(lt, "nl")
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "NL_WORD_REPEAT_RULE")
+	require.NotContains(t, ids, "NL_WORD_REPEAT_BEGINNING_RULE")
+	require.NotContains(t, ids, "WORD_REPEAT_RULE")
+	for _, m := range lt.Check("test test") {
+		require.NotContains(t, m.RuleID, "WORD_REPEAT")
+	}
+}
+
 func TestRegister_GenericPacks(t *testing.T) {
 	// eo/sr still have word-repeat; be has no Java WordRepeat (replace/speller only)
 	for _, code := range []string{"eo", "sr"} {
