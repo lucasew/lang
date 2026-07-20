@@ -55,9 +55,11 @@ func filterTagWordToATR(word string, tw func(string) []languagetool.TokenTag) *l
 	if tw == nil {
 		return nil
 	}
+	// Java BaseTagger.tag always returns one AnalyzedTokenReadings per input token
+	// (untagged when the dict has no entry). Never build ATR from an empty list.
 	tags := tw(word)
 	if len(tags) == 0 {
-		return languagetool.NewAnalyzedTokenReadingsList(nil, 0)
+		return languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(word, nil, nil))
 	}
 	readings := make([]*languagetool.AnalyzedToken, 0, len(tags))
 	for _, t := range tags {

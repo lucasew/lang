@@ -183,6 +183,10 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 		return nil
 	}
 	lt := p.newConfiguredLT()
+	// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends, …).
+	if strings.EqualFold(string(p.settings.Level), string(CheckLevelPicky)) {
+		lt.Level = languagetool.LevelPicky
+	}
 	// Heuristic multi-sentence detection avoids a double full Analyze before Check.
 	var matches []languagetool.LocalMatch
 	if multiSentenceHeuristic(text) {
@@ -219,6 +223,9 @@ func (p *Pipeline) CheckAnnotated(at *markup.AnnotatedText) []languagetool.Local
 		return nil
 	}
 	lt := p.newConfiguredLT()
+	if strings.EqualFold(string(p.settings.Level), string(CheckLevelPicky)) {
+		lt.Level = languagetool.LevelPicky
+	}
 	matches := lt.CheckAnnotated(at)
 	matches = languagetool.ProjectMatchesToOriginal(at, matches)
 	return p.cleanMatches(matches)

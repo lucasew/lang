@@ -47,5 +47,6 @@ func TestHTTP_E2E_CheckAndLanguages(t *testing.T) {
 	require.Equal(t, 200, w.Code)
 	body, _ := io.ReadAll(w.Body)
 	require.Contains(t, string(body), "EN_A_VS_AN")
-	require.Contains(t, string(body), `"typeName":"grammar"`)
+	// Java AvsAnRule: setLocQualityIssueType(ITSIssueType.Misspelling)
+	require.Contains(t, string(body), `"typeName":"misspelling"`)
 }

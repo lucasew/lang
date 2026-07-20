@@ -17,9 +17,11 @@ func TestApiV2_MotherTongueFalseFriends(t *testing.T) {
 	t.Setenv("LANG_FALSEFRIENDS_FILE", path)
 
 	api := NewApiV2(nil, nil)
+	// Java FalseFriendPatternRule is Tag.picky — only active at Level.PICKY.
 	r, err := api.Handle("check", map[string]string{
 		"language":     "en",
 		"motherTongue": "de",
+		"level":        "picky",
 		"text":         "This is a gift for you.",
 	})
 	require.NoError(t, err)

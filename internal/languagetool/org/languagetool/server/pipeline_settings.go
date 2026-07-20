@@ -26,6 +26,9 @@ type PipelineSettings struct {
 	UserConfigKey string
 	// GlobalConfigKey is a stable stand-in for GlobalConfig identity.
 	GlobalConfigKey string
+	// Level is the check level (DEFAULT / PICKY). Empty means DEFAULT.
+	// Java JLanguageTool.Level filters Tag.picky rules (false friends, long sentence, …).
+	Level CheckLevel
 }
 
 func NewPipelineSettings(langCode string, userKey string) PipelineSettings {

@@ -43,6 +43,9 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	if opts.MotherTongue != "" {
 		settings.MotherTongueCode = opts.MotherTongue
 	}
+	if opts.Level != "" {
+		settings.Level = opts.Level
+	}
 	settings.Query.DisabledRules = append([]string(nil), opts.Disabled...)
 	settings.Query.EnabledRules = append([]string(nil), opts.Enabled...)
 	settings.Query.UseEnabledOnly = opts.UseEnabledOnly
