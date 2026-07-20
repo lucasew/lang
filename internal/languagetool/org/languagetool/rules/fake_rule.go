@@ -2,10 +2,20 @@ package rules
 
 import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
 
-// Tag ports org.languagetool.Tag (subset used by filters).
+// Tag ports org.languagetool.Tag (all-lowercase enum names).
 type Tag string
 
-const TagPicky Tag = "picky"
+const (
+	TagPicky        Tag = "picky"
+	TagAcademic     Tag = "academic"
+	TagClarity      Tag = "clarity"
+	TagProfessional Tag = "professional"
+	TagCreative     Tag = "creative"
+	TagCustomer     Tag = "customer"
+	TagJobApp       Tag = "jobapp"
+	TagObjective    Tag = "objective"
+	TagElegant      Tag = "elegant"
+)
 
 // FakeRule ports org.languagetool.rules.FakeRule for unit tests.
 type FakeRule struct {
