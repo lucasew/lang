@@ -1,6 +1,10 @@
 package identifier
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+)
 
 // LanguageIdentifierService ports
 // org.languagetool.language.identifier.LanguageIdentifierService as a process singleton.
@@ -94,11 +98,18 @@ func (s *LanguageIdentifierService) GetSimpleLanguageIdentifier(preferred []stri
 	return s.simpleIdentifier
 }
 
-// CanLanguageBeDetected is true if langCode is in supported or additional lists.
+// CanLanguageBeDetected ports LanguageIdentifierService.canLanguageBeDetected.
+// When supported is nil, uses Languages.isLanguageSupported via GlobalLanguages.
 func CanLanguageBeDetected(langCode string, supported, additional []string) bool {
-	for _, s := range supported {
-		if s == langCode {
+	if supported == nil {
+		if languagetool.GlobalLanguages.IsLanguageSupported(langCode) {
 			return true
+		}
+	} else {
+		for _, s := range supported {
+			if s == langCode {
+				return true
+			}
 		}
 	}
 	for _, s := range additional {
@@ -107,4 +118,9 @@ func CanLanguageBeDetected(langCode string, supported, additional []string) bool
 		}
 	}
 	return false
+}
+
+// CanLanguageBeDetected method ports INSTANCE.canLanguageBeDetected(lang, additional).
+func (s *LanguageIdentifierService) CanLanguageBeDetected(langCode string, additional []string) bool {
+	return CanLanguageBeDetected(langCode, nil, additional)
 }

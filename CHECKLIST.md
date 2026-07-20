@@ -117,16 +117,16 @@
 - [x] org/languagetool/language/LanguageBuilder.java::LanguageBuilder
 - [x] org/languagetool/language/LanguageBuilder.java::LanguageBuilder.ExtendedLanguage
 - [x] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
-- [ ] org/languagetool/language/identifier/DefaultLanguageIdentifier.java::DefaultLanguageIdentifier
+- [x] org/languagetool/language/identifier/DefaultLanguageIdentifier.java::DefaultLanguageIdentifier
 - [x] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier
 - [x] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
 - [x] org/languagetool/language/identifier/LanguageIdentifierService.java::LanguageIdentifierService
-- [ ] org/languagetool/language/identifier/SimpleLanguageIdentifier.java::SimpleLanguageIdentifier
-- [ ] org/languagetool/language/identifier/detector/CommonWordsDetector.java::CommonWordsDetector
-- [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector
+- [x] org/languagetool/language/identifier/SimpleLanguageIdentifier.java::SimpleLanguageIdentifier
+- [x] org/languagetool/language/identifier/detector/CommonWordsDetector.java::CommonWordsDetector
+- [x] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector
 - [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector.FastTextException
-- [ ] org/languagetool/language/identifier/detector/NGramDetector.java::NGramDetector
-- [ ] org/languagetool/language/identifier/detector/UnicodeBasedDetector.java::UnicodeBasedDetector
+- [x] org/languagetool/language/identifier/detector/NGramDetector.java::NGramDetector
+- [x] org/languagetool/language/identifier/detector/UnicodeBasedDetector.java::UnicodeBasedDetector
 - [ ] org/languagetool/languagemodel/BaseLanguageModel.java::BaseLanguageModel
 - [ ] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
 - [ ] org/languagetool/languagemodel/LuceneLanguageModel.java::LuceneLanguageModel

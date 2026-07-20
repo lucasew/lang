@@ -2,14 +2,17 @@ package identifier
 
 import (
 	"math"
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier/detector"
 )
 
-// SpellerFunc reports whether a word is misspelled for a language.
+// SpellerFunc reports whether a word is misspelled for a language (Java SpellingCheckRule.isMisspelled).
 type SpellerFunc func(word string) bool
+
+var simpleWhitespace = regexp.MustCompile(`\s+`)
 
 // SimpleLanguageIdentifier ports
 // org.languagetool.language.identifier.SimpleLanguageIdentifier.
@@ -18,9 +21,9 @@ type SimpleLanguageIdentifier struct {
 	BaseLanguageIdentifier
 	// Spellers maps short lang code → isMisspelled.
 	Spellers map[string]SpellerFunc
-	// Unicode optional script dominance helper.
+	// Unicode optional script dominance helper (Java UNICODE_BASED_LANG_IDENTIFIER).
 	Unicode *detector.UnicodeBasedDetector
-	// CommonWords optional boost.
+	// CommonWords optional boost (Java COMMON_WORDS_LANG_IDENTIFIER).
 	CommonWords *detector.CommonWordsDetector
 }
 
@@ -31,6 +34,7 @@ func NewSimpleLanguageIdentifier(maxLength int) *SimpleLanguageIdentifier {
 	return &SimpleLanguageIdentifier{
 		BaseLanguageIdentifier: NewBaseLanguageIdentifier(maxLength),
 		Spellers:               map[string]SpellerFunc{},
+		Unicode:                detector.NewUnicodeBasedDetector(),
 	}
 }
 
@@ -43,7 +47,6 @@ func NewSimpleLanguageIdentifierWith(preferred []string, spellers map[string]Spe
 				s.Spellers[code] = fn
 			}
 		}
-		// also keep others if map larger
 		for k, fn := range spellers {
 			if _, ok := s.Spellers[k]; !ok {
 				s.Spellers[k] = fn
@@ -61,21 +64,48 @@ func (s *SimpleLanguageIdentifier) RegisterSpeller(langCode string, fn SpellerFu
 	s.Spellers[langCode] = fn
 }
 
-// Detect scores languages by inverse spelling error rate.
+// Detect ports detectLanguage(cleanText, noop, preferred).
 func (s *SimpleLanguageIdentifier) Detect(cleanText string, noopLangs, preferredLangs []string) *languagetool.DetectedLanguage {
-	if s == nil || strings.TrimSpace(cleanText) == "" {
+	if s == nil {
 		return nil
 	}
-	words := strings.Fields(cleanText)
-	if len(words) == 0 {
+	if noopLangs == nil {
+		noopLangs = []string{}
+	}
+	if preferredLangs == nil {
+		preferredLangs = []string{}
+	}
+
+	var unicodeFn func(string) []string
+	if s.Unicode != nil {
+		unicodeFn = s.Unicode.GetDominantLangCodes
+	}
+	parsed := PrepareDetectLanguage(cleanText, noopLangs, preferredLangs, unicodeFn)
+	if parsed == nil {
+		// Java: return new DetectedLanguage(null, new NoopLanguage());
+		src := "noop"
+		dl := languagetool.NewDetectedLanguageFull("", "zz", 1.0, &src)
+		return &dl
+	}
+	additionalLangs := parsed.AdditionalLangs
+	preferred := parsed.PreferredLangs
+
+	if strings.TrimSpace(cleanText) == "" {
+		return nil
+	}
+	words := simpleWhitespace.Split(strings.TrimSpace(cleanText), -1)
+	// Java split can yield empty leading element for leading whitespace — TrimSpace first
+	if len(words) == 1 && words[0] == "" {
 		return nil
 	}
 
-	dominant := map[string]bool{}
+	var dominant []string
 	if s.Unicode != nil {
-		for _, c := range s.Unicode.GetDominantLangCodes(cleanText) {
-			dominant[c] = true
-		}
+		dominant = s.Unicode.GetDominantLangCodes(cleanText)
+	}
+	dominantSet := map[string]bool{}
+	for _, c := range dominant {
+		dominantSet[c] = true
 	}
 
 	scores := map[string]float64{}
@@ -84,44 +114,42 @@ func (s *SimpleLanguageIdentifier) Detect(cleanText string, noopLangs, preferred
 		if spell == nil {
 			continue
 		}
-		// filter by dominant script when available
-		if len(dominant) > 0 {
-			if !dominant[code] {
-				// allow latin langs when no dominant non-latin
-				nonLatin := false
-				for d := range dominant {
-					if isNonLatinLang(d) {
-						nonLatin = true
-						break
-					}
-				}
-				if nonLatin {
-					continue
-				}
-			}
-		} else if isNonLatinLang(code) {
-			// skip non-latin spellers when no dominant non-latin signal
+		// Java: dominant.contains(key) ^ (dominant.isEmpty() && !NON_LATIN.contains(key))
+		inDom := dominantSet[code]
+		emptyDomAndLatin := len(dominant) == 0 && !isNonLatinLang(code)
+		if inDom == emptyDomAndLatin { // !(a XOR b)
 			continue
 		}
 		var errors float64
 		for _, w := range words {
+			if w == "" {
+				continue
+			}
 			if spell(w) {
 				errors++
 			}
 		}
-		scores[code] = 1.0 - errors/float64(len(words))
+		nWords := float64(len(words))
+		if nWords == 0 {
+			continue
+		}
+		scores[code] = 1.0 - errors/nWords
 	}
 	if len(scores) == 0 {
 		scores["zz"] = 1.0
 	}
 
-	// common-words boost when low confidence / ties
-	maxVal, ties := maxScoreStats(scores)
+	// common-words boost when low confidence / ties (Java order before preferred filter)
+	_, ties := maxScoreStats(scores)
 	topCode, topScore := highestScore(scores)
 	if topScore < ScoreThreshold || topCode == "zz" || ties > 1 {
 		if s.CommonWords != nil {
-			// boost known word counts when available
+			baseHandled := map[string]struct{}{}
 			for code, n := range s.CommonWords.GetKnownWordsPerLanguage(cleanText) {
+				if _, ok := baseHandled[code]; ok {
+					continue
+				}
+				baseHandled[code] = struct{}{}
 				if old, ok := scores[code]; ok {
 					scores[code] = old + float64(n)
 				} else {
@@ -132,12 +160,17 @@ func (s *SimpleLanguageIdentifier) Detect(cleanText string, noopLangs, preferred
 			topCode, topScore = highestScore(scores)
 		}
 	}
-	_ = maxVal
 
-	// preferred-lang filter for short text
-	if len(cleanText) < ConsiderOnlyPreferredThreshold && len(preferredLangs) > 0 {
+	// Special case no vs da (before preferred filter in Java)
+	if containsStr(preferred, "no") && !containsStr(preferred, "da") {
+		delete(scores, "da")
+		topCode, topScore = highestScore(scores)
+	}
+
+	// short text preferred filter
+	if len(cleanText) < ConsiderOnlyPreferredThreshold && len(preferred) > 0 {
 		for k := range scores {
-			if !containsStr(preferredLangs, k) {
+			if !containsStr(preferred, k) {
 				delete(scores, k)
 			}
 		}
@@ -145,25 +178,23 @@ func (s *SimpleLanguageIdentifier) Detect(cleanText string, noopLangs, preferred
 		topCode, topScore = highestScore(scores)
 	}
 
-	// special: no vs da
-	if containsStr(preferredLangs, "no") && !containsStr(preferredLangs, "da") {
-		delete(scores, "da")
-		topCode, topScore = highestScore(scores)
-	}
-
-	if topCode == "" || topCode == "zz" {
+	if topCode == "" {
 		return nil
 	}
-	// noop langs
-	if containsStr(noopLangs, topCode) {
-		return nil
+	// Java: canLanguageBeDetected(key, additionalLangs)
+	// Java: LanguageIdentifierService.INSTANCE.canLanguageBeDetected(key, additionalLangs)
+	// When GlobalLanguages is empty (tests), treat registered spellers as supported.
+	if !CanLanguageBeDetected(topCode, nil, additionalLangs) {
+		if _, ok := s.Spellers[topCode]; !ok || topCode == "zz" {
+			return nil
+		}
 	}
 	src := source
 	dl := languagetool.NewDetectedLanguageFull("", topCode, float32(topScore), &src)
 	return &dl
 }
 
-func (s *SimpleLanguageIdentifier) Scores(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool, count int) []languagetool.DetectedLanguage {
+func (s *SimpleLanguageIdentifier) Scores(cleanText string, noopLangs, preferredLangs []string, _ bool, count int) []languagetool.DetectedLanguage {
 	d := s.Detect(cleanText, noopLangs, preferredLangs)
 	if d == nil {
 		return nil
