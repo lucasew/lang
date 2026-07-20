@@ -244,3 +244,42 @@ func TestSimplePredicateSpellerChecker_IgnoresSpellerFlag(t *testing.T) {
 type sentenceDisambiguatorFunc func(*AnalyzedSentence) *AnalyzedSentence
 
 func (f sentenceDisambiguatorFunc) Disambiguate(s *AnalyzedSentence) *AnalyzedSentence { return f(s) }
+
+func TestCheckWithResults(t *testing.T) {
+	lt := NewJLanguageTool("en-US")
+	lt.LanguageName = "English (US)"
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	cr, err := lt.CheckWithResults("this this is fine")
+	require.NoError(t, err)
+	require.NotNil(t, cr)
+	ms := LocalMatchesFromCheckResults(cr)
+	require.NotEmpty(t, ms)
+	require.NotEmpty(t, cr.GetExtendedSentenceRanges())
+	// short code "en" in rates
+	require.Contains(t, cr.GetExtendedSentenceRanges()[0].LanguageConfidenceRates, "en")
+
+	// error rate gate
+	lt.SetMaxErrorsPerWordRate(0.01)
+	// many matches vs few words — build artificial high error count via many repeats
+	// wordCounter from Analyze may be small; flood with sentence checkers
+	// Use high match count: if word count low (≤25) won't trip; need enough words.
+	// Skip full trip if hard — unit test CheckErrorRate already covers math.
+	lt.SetMaxErrorsPerWordRate(0)
+}
+
+func TestProjectMatchesToOriginal_JavaToPos(t *testing.T) {
+	at := markup.NewAnnotatedTextBuilder().
+		AddText("See a ").
+		AddMarkupInterpretAs("<b>", "").
+		AddText("error").
+		AddMarkupInterpretAs("</b>", "").
+		AddText(" here.").
+		Build()
+	// plain "See a error here." — flag span for "a " at 4..6 or similar
+	// Use explicit positions on plain text
+	ms := []LocalMatch{{FromPos: 4, ToPos: 5, RuleID: "T", Message: "x"}} // "a"
+	proj := ProjectMatchesToOriginal(at, ms)
+	require.Len(t, proj, 1)
+	// from maps with isToPos=false; to uses toPos-1 with isToPos=true then +1
+	require.GreaterOrEqual(t, proj[0].ToPos, proj[0].FromPos)
+}

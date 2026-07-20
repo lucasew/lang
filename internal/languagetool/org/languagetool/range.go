@@ -1,5 +1,7 @@
 package languagetool
 
+import "fmt"
+
 // Range ports org.languagetool.Range — text span with guessed language.
 type Range struct {
 	FromPos int
@@ -19,4 +21,17 @@ func (r Range) GetLang() string { return r.Lang }
 
 func (r Range) Equal(o Range) bool {
 	return r.FromPos == o.FromPos && r.ToPos == o.ToPos && r.Lang == o.Lang
+}
+
+// HashCode ports Range.hashCode (Objects.hash(fromPos, toPos, lang)).
+func (r Range) HashCode() int {
+	h := 1
+	h = 31*h + r.FromPos
+	h = 31*h + r.ToPos
+	h = 31*h + stringHash(r.Lang)
+	return h
+}
+
+func (r Range) String() string {
+	return fmt.Sprintf("%d-%d:%s", r.FromPos, r.ToPos, r.Lang)
 }

@@ -218,6 +218,10 @@ func (lt *JLanguageTool) CheckAnnotated(at *markup.AnnotatedText) []LocalMatch {
 }
 
 // ProjectMatchesToOriginal maps plain-text LocalMatch offsets to original markup offsets.
+// Java adjustRuleMatchPos / text-level path:
+//
+//	fromPos = getOriginalTextPositionFor(fromPos, false)
+//	toPos   = getOriginalTextPositionFor(toPos - 1, true) + 1
 func ProjectMatchesToOriginal(at *markup.AnnotatedText, matches []LocalMatch) []LocalMatch {
 	if at == nil || len(matches) == 0 {
 		return matches
@@ -225,8 +229,80 @@ func ProjectMatchesToOriginal(at *markup.AnnotatedText, matches []LocalMatch) []
 	out := make([]LocalMatch, len(matches))
 	for i, m := range matches {
 		out[i] = m
-		out[i].FromPos = at.GetOriginalTextPositionFor(m.FromPos, false)
-		out[i].ToPos = at.GetOriginalTextPositionFor(m.ToPos, true)
+		from := m.FromPos
+		to := m.ToPos
+		if from < 0 {
+			from = 0
+		}
+		out[i].FromPos = at.GetOriginalTextPositionFor(from, false)
+		if to <= 0 {
+			out[i].ToPos = out[i].FromPos
+		} else {
+			out[i].ToPos = at.GetOriginalTextPositionFor(to-1, true) + 1
+		}
+	}
+	return out
+}
+
+// CheckWithResults ports TextCheckCallable.call() surface for plain text:
+// runs Check (mode-filtered matches), builds ExtendedSentenceRanges via
+// computeSentenceData + whitespace-fix ranges, and applies maxErrorsPerWordRate.
+// IgnoredRanges stay empty until language-detection matches are wired.
+func (lt *JLanguageTool) CheckWithResults(text string) (*CheckResults, error) {
+	if lt == nil {
+		return NewCheckResults(nil, nil), nil
+	}
+	matches := lt.Check(text)
+
+	// Sentence texts + analysis for ExtendedSentenceRange (TextCheckCallable path).
+	sents := lt.Analyze(text)
+	texts := make([]string, len(sents))
+	for i, s := range sents {
+		if s != nil {
+			texts[i] = s.GetText()
+		}
+	}
+	// Default SRX uses singleLineBreaksMarksPara=false.
+	data := ComputeSentenceData(sents, texts, false)
+	lang := lt.LanguageCode
+	if lang == "" {
+		lang = "?"
+	}
+	// short code only for rates map (Java language.getShortCode())
+	short := lang
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		short = lang[:i]
+	}
+	ext := make([]ExtendedSentenceRange, 0, len(data))
+	wordCounter := 0
+	for _, sd := range data {
+		ext = append(ext, BuildExtendedSentenceRange(sd, short))
+		wordCounter += sd.WordCount
+	}
+	name := lt.LanguageName
+	if name == "" {
+		name = lang
+	}
+	if err := CheckErrorRate(len(matches), wordCounter, lt.MaxErrorsPerWordRate, name, utf16Len(text)); err != nil {
+		return nil, err
+	}
+	anyMatches := make([]any, len(matches))
+	for i := range matches {
+		anyMatches[i] = matches[i]
+	}
+	return NewCheckResultsFull(anyMatches, nil, ext), nil
+}
+
+// LocalMatchesFromCheckResults unpacks LocalMatch values from CheckResults.RuleMatches.
+func LocalMatchesFromCheckResults(cr *CheckResults) []LocalMatch {
+	if cr == nil {
+		return nil
+	}
+	out := make([]LocalMatch, 0, len(cr.RuleMatches))
+	for _, m := range cr.RuleMatches {
+		if lm, ok := m.(LocalMatch); ok {
+			out = append(out, lm)
+		}
 	}
 	return out
 }
