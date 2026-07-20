@@ -328,7 +328,9 @@ func (m *PatternTokenMatcher) CollectMatchedReadings(atr *languagetool.AnalyzedT
 	return out
 }
 
-// IsMatchedReadings evaluates the pattern token against all readings (Java-style).
+// IsMatchedReadings evaluates the pattern token against all readings.
+// Ports AbstractPatternRulePerformer.testAllReadings order for one token:
+// reading match → exceptions → chunk (XOR negation) → and-group chunks.
 func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenReadings) bool {
 	if atr == nil {
 		return false
@@ -342,41 +344,58 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 			return false
 		}
 	}
-	if pt.ChunkTag != "" {
-		if !chunkTagMatches(atr, pt.ChunkTag, pt.ChunkTagRegexp) {
-			return false
-		}
-	}
-	if len(pt.AndGroup) > 0 {
-		if !m.matchAndGroupReadings(atr) {
-			return false
-		}
-		return !m.anyReadingExceptionMatched(atr)
-	}
+
 	anyMatched := false
-	for _, r := range atr.GetReadings() {
-		if r == nil {
+	if len(pt.AndGroup) > 0 {
+		anyMatched = m.matchAndGroupReadings(atr)
+	} else {
+		for _, r := range atr.GetReadings() {
+			if r == nil {
+				continue
+			}
+			if m.IsMatched(r) {
+				anyMatched = true
+				break
+			}
+		}
+		if !anyMatched {
+			// Faithful: untagged surface — only UNKNOWN postag patterns can match.
+			// Chunk-only / empty-surface tokens: IsMatched with no string is !negation
+			// (and optional POS); chunk gate applied below (Java).
+			probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
+			probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
+			if m.IsMatched(probe) {
+				anyMatched = true
+				// Exception check for untagged probe path (no readings matched).
+				if m.isExceptionMatchedCompletely(probe) {
+					return false
+				}
+			}
+		}
+	}
+
+	if anyMatched {
+		if m.anyReadingExceptionMatched(atr) {
+			return false
+		}
+	}
+
+	// Java: anyMatched &= chunkMatch ^ getNegation()
+	if pt.ChunkTag != "" {
+		chunkOK := chunkTagMatches(atr, pt.ChunkTag, pt.ChunkTagRegexp)
+		anyMatched = anyMatched && (chunkOK != pt.Negation)
+	}
+	// Java and-group chunk tags (no XOR with negation).
+	for _, andTok := range pt.AndGroup {
+		if andTok == nil || andTok.ChunkTag == "" {
 			continue
 		}
-		if m.IsMatched(r) {
-			anyMatched = true
+		if !chunkTagMatches(atr, andTok.ChunkTag, andTok.ChunkTagRegexp) {
+			anyMatched = false
 			break
 		}
 	}
-	if !anyMatched {
-		// Chunk-only pattern tokens (empty surface/POS): chunk already matched above.
-		if pt.Token == "" && (pt.Pos == nil || pt.Pos.PosTag == "") && pt.ChunkTag != "" {
-			return !m.anyReadingExceptionMatched(atr)
-		}
-		// Faithful: untagged surface — only UNKNOWN postag patterns can match.
-		probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
-		probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
-		if !m.IsMatched(probe) {
-			return false
-		}
-		return !m.isExceptionMatchedCompletely(probe)
-	}
-	return !m.anyReadingExceptionMatched(atr)
+	return anyMatched
 }
 
 func (m *PatternTokenMatcher) anyReadingExceptionMatched(atr *languagetool.AnalyzedTokenReadings) bool {

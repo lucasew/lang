@@ -62,4 +62,43 @@ func TestIsMatchedReadings_ChunkTag(t *testing.T) {
 	require.True(t, m.IsMatchedReadings(atr))
 	atr.SetChunkTags([]string{"I-VP"})
 	require.False(t, m.IsMatchedReadings(atr))
+
+	// Chunk-only (empty surface): chunk required when negation=false.
+	ptChunkOnly := NewPatternToken("", false, false, false)
+	ptChunkOnly.SetChunkTag("B-NP", false)
+	mChunkOnly := NewPatternTokenMatcher(ptChunkOnly)
+	atr.SetChunkTags([]string{"B-NP"})
+	require.True(t, mChunkOnly.IsMatchedReadings(atr))
+	atr.SetChunkTags([]string{"I-VP"})
+	require.False(t, mChunkOnly.IsMatchedReadings(atr))
+
+	// And-group chunk tags (Java testAllReadings and-group chunk loop).
+	base := NewPatternToken("house", false, false, false)
+	andC := NewPatternToken("", false, false, false)
+	andC.SetChunkTag("B-NP", false)
+	base.AddAndGroupElement(andC)
+	mAnd := NewPatternTokenMatcher(base)
+	atr.SetChunkTags([]string{"B-NP"})
+	require.True(t, mAnd.IsMatchedReadings(atr), "and-group chunk B-NP required")
+	atr.SetChunkTags([]string{"I-VP"})
+	require.False(t, mAnd.IsMatchedReadings(atr), "and-group chunk mismatch fails")
+}
+
+// Java: anyMatched &= chunkMatch ^ getNegation() after surface/POS match.
+func TestIsMatchedReadings_ChunkXORNegation(t *testing.T) {
+	// Surface "x" with Negation: "y" matches ((false^true)=true); chunk B-NP ^ true
+	// requires non-B-NP for overall match.
+	pt := NewPatternToken("x", false, false, false)
+	pt.SetNegation(true)
+	pt.SetChunkTag("B-NP", false)
+	m := NewPatternTokenMatcher(pt)
+	pos := "NN"
+	atr := languagetool.NewAnalyzedTokenReadingsList(
+		[]*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken("y", &pos, nil)},
+		0,
+	)
+	atr.SetChunkTags([]string{"I-VP"}) // chunkOK false → false^true → keep match
+	require.True(t, m.IsMatchedReadings(atr), "negated surface non-match + non-chunk → match")
+	atr.SetChunkTags([]string{"B-NP"}) // chunkOK true → true^true → fail
+	require.False(t, m.IsMatchedReadings(atr), "negated surface + matching chunk → fail")
 }
