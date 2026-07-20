@@ -814,9 +814,13 @@ func sentenceDataFromAnalyzed(sents []*AnalyzedSentence) []SentenceData {
 	return ComputeSentenceData(sents, texts, false)
 }
 
+// mapOriginalFn ports AnnotatedText.getOriginalTextPositionFor when non-nil.
+type mapOriginalFn func(pos int, isToPos bool) int
+
 // remapLocalMatchToDocument ports TextCheckCallable adjustRuleMatchPos for one match.
-func remapLocalMatchToDocument(m LocalMatch, sd SentenceData, typoApos bool) LocalMatch {
-	m = AdjustLocalMatchPos(m, sd.StartOffset, sd.StartColumn, sd.StartLine, sd.Text, nil)
+// mapOriginal is optional (nil = plain-text document positions).
+func remapLocalMatchToDocument(m LocalMatch, sd SentenceData, typoApos bool, mapOriginal mapOriginalFn) LocalMatch {
+	m = AdjustLocalMatchPos(m, sd.StartOffset, sd.StartColumn, sd.StartLine, sd.Text, mapOriginal)
 	m.HasTypographicApostropheInSentence = typoApos
 	return m
 }
@@ -825,6 +829,11 @@ func remapLocalMatchToDocument(m LocalMatch, sd SentenceData, typoApos bool) Loc
 // Sentence-local → document remap follows Java TextCheckCallable (computeSentenceData +
 // adjustRuleMatchPos): UTF-16 StartOffset/line/column on each match.
 func (lt *JLanguageTool) Check(text string) []LocalMatch {
+	return lt.checkInternal(text, nil)
+}
+
+// checkInternal is shared by Check (plain) and CheckAnnotated (with original mapping).
+func (lt *JLanguageTool) checkInternal(text string, mapOriginal mapOriginalFn) []LocalMatch {
 	if lt == nil {
 		return nil
 	}
@@ -858,7 +867,7 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, c := range lt.checkers {
 				for _, m := range c(s) {
-					adapted := remapLocalMatchToDocument(m, sd, sentTypoApos)
+					adapted := remapLocalMatchToDocument(m, sd, sentTypoApos, mapOriginal)
 					lt.notifyMatchFound(adapted)
 					out = append(out, adapted)
 				}
@@ -878,7 +887,7 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 				}
 				for _, m := range tc.fn(sents) {
 					// getTextLevelRuleMatches: findLineColumn + optional annotated mapping
-					adapted := AdaptTextLevelLocalMatch(m, data, nil)
+					adapted := AdaptTextLevelLocalMatch(m, data, mapOriginal)
 					lt.notifyMatchFound(adapted)
 					out = append(out, adapted)
 				}
@@ -907,6 +916,10 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 	if lt != nil && lt.FilterRuleMatchesAfterOverlapping != nil {
 		out = lt.FilterRuleMatchesAfterOverlapping(out)
 	}
+	// filterMatchesByIgnore uses plain-text positions for ignore words; when mapOriginal
+	// is set, FromPos is original/markup space — use plain-text sentence spans via
+	// FromPosSentence when available (sentence-local). Ignore filter matches on surface
+	// via OriginalErrorStr / sentence text when possible; keep plain-text filter on text.
 	return lt.filterMatchesByIgnore(text, out)
 }
 

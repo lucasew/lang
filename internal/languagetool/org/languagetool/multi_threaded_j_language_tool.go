@@ -299,7 +299,7 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 			}
 			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, m := range results[i].matches {
-				adapted := remapLocalMatchToDocument(m, sd, sentTypoApos)
+				adapted := remapLocalMatchToDocument(m, sd, sentTypoApos, nil)
 				lt.notifyMatchFound(adapted)
 				out = append(out, adapted)
 			}

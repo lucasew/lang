@@ -208,13 +208,31 @@ func PreserveCase(matched, suggestion string) string {
 	return suggestion
 }
 
-// CheckAnnotated runs Check on plain text extracted from AnnotatedText.
-// Match offsets are in plain-text space (use AnnotatedText mapping to project).
+// CheckAnnotated ports check(AnnotatedText): analyze plain text, then map match
+// offsets to original markup positions via getOriginalTextPositionFor (same as
+// TextCheckCallable adjustRuleMatchPos / getTextLevelRuleMatches).
 func (lt *JLanguageTool) CheckAnnotated(at *markup.AnnotatedText) []LocalMatch {
 	if lt == nil || at == nil {
 		return nil
 	}
-	return lt.Check(at.GetPlainText())
+	plain := at.GetPlainText()
+	mapper := func(pos int, isToPos bool) int {
+		return at.GetOriginalTextPositionFor(pos, isToPos)
+	}
+	return lt.checkInternal(plain, mapper)
+}
+
+// CheckAnnotatedWithResults ports CheckWithResults for AnnotatedText (original offsets).
+func (lt *JLanguageTool) CheckAnnotatedWithResults(at *markup.AnnotatedText) (*CheckResults, error) {
+	if lt == nil || at == nil {
+		return NewCheckResults(nil, nil), nil
+	}
+	plain := at.GetPlainText()
+	mapper := func(pos int, isToPos bool) int {
+		return at.GetOriginalTextPositionFor(pos, isToPos)
+	}
+	matches := lt.checkInternal(plain, mapper)
+	return lt.checkResultsFromMatches(plain, matches)
 }
 
 // ProjectMatchesToOriginal maps plain-text LocalMatch offsets to original markup offsets.
@@ -252,16 +270,17 @@ func (lt *JLanguageTool) CheckWithResults(text string) (*CheckResults, error) {
 	if lt == nil {
 		return NewCheckResults(nil, nil), nil
 	}
-	matches := lt.Check(text)
+	return lt.checkResultsFromMatches(text, lt.Check(text))
+}
 
-	// Sentence texts + analysis for ExtendedSentenceRange (TextCheckCallable path).
+// checkResultsFromMatches builds CheckResults (extended ranges, ignore ranges, error rate).
+func (lt *JLanguageTool) checkResultsFromMatches(text string, matches []LocalMatch) (*CheckResults, error) {
 	sents := lt.Analyze(text)
 	data := sentenceDataFromAnalyzed(sents)
 	lang := lt.LanguageCode
 	if lang == "" {
 		lang = "?"
 	}
-	// short code only for rates map (Java language.getShortCode())
 	short := lang
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		short = lang[:i]
@@ -272,19 +291,29 @@ func (lt *JLanguageTool) CheckWithResults(text string) (*CheckResults, error) {
 		ext = append(ext, BuildExtendedSentenceRange(sd, short))
 		wordCounter += sd.WordCount
 	}
-	// getOtherRuleMatches: NewLanguageMatches → ignore range + confidence update
+	// getOtherRuleMatches: NewLanguageMatches → ignore range + confidence update.
+	// Prefer sentence-local positions when FromPos is already in original/markup space.
 	var ignore []Range
 	for _, m := range matches {
 		if len(m.NewLanguageMatches) == 0 || len(data) == 0 {
 			continue
 		}
-		sd := findSentenceContaining(data, m.FromPos)
+		pos := m.FromPos
+		if m.FromPosSentence >= 0 && m.SentenceText != "" {
+			// locate sentence by text when possible
+			for _, sd := range data {
+				if sd.Text == m.SentenceText {
+					pos = sd.StartOffset
+					break
+				}
+			}
+		}
+		sd := findSentenceContaining(data, pos)
 		from := sd.StartOffset
 		to := sd.StartOffset + utf16Len(sd.Text)
-		// Match ExtendedSentenceRange for this sentence (by start offset when possible).
 		var extPtr *ExtendedSentenceRange
 		for i := range ext {
-			if ext[i].FromPos == from || (ext[i].FromPos <= m.FromPos && m.FromPos < ext[i].ToPos) {
+			if ext[i].FromPos == from || (ext[i].FromPos <= from && from < ext[i].ToPos) {
 				extPtr = &ext[i]
 				break
 			}

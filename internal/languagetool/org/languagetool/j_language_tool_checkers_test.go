@@ -283,3 +283,32 @@ func TestProjectMatchesToOriginal_JavaToPos(t *testing.T) {
 	// from maps with isToPos=false; to uses toPos-1 with isToPos=true then +1
 	require.GreaterOrEqual(t, proj[0].ToPos, proj[0].FromPos)
 }
+
+func TestCheckAnnotated_MapsDuringAdjust(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("EN_A_VS_AN", SimpleAvsAnChecker())
+	// plain "See a error here." with <b> around "error"
+	at := markup.NewAnnotatedTextBuilder().
+		AddText("See a ").
+		AddMarkupInterpretAs("<b>", "").
+		AddText("error").
+		AddMarkupInterpretAs("</b>", "").
+		AddText(" here.").
+		Build()
+	// CheckAnnotated should return original-space offsets (not plain)
+	ms := lt.CheckAnnotated(at)
+	require.NotEmpty(t, ms)
+	// plain positions would put "a " around 4..5; original has markup before "error"
+	// "See a " = 6, then <b> markup so "a" at same plain 4 but original may shift after markup for later spans
+	// At least FromPos/ToPos should be mappable and ToPos > FromPos
+	for _, m := range ms {
+		require.Greater(t, m.ToPos, m.FromPos)
+	}
+	// Compare to plain Check + Project
+	plain := lt.Check(at.GetPlainText())
+	proj := ProjectMatchesToOriginal(at, plain)
+	require.Len(t, ms, len(proj))
+	// Offsets should match projection of plain-check results
+	require.Equal(t, proj[0].FromPos, ms[0].FromPos)
+	require.Equal(t, proj[0].ToPos, ms[0].ToPos)
+}
