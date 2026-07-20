@@ -204,10 +204,15 @@ func (d *Dictionary) charset() encoding.Encoding {
 		return charmap.Windows1251
 	case "windows-1252", "cp1252":
 		return charmap.Windows1252
-	case "iso-8859-15":
+	case "iso-8859-15", "iso8859-15", "latin9", "latin-9":
 		return charmap.ISO8859_15
+	case "iso-8859-7", "iso8859-7", "greek":
+		// Greek hunspell el_GR.dict (Java Charset ISO-8859-7).
+		return charmap.ISO8859_7
+	case "iso-8859-9", "iso8859-9", "latin5":
+		return charmap.ISO8859_9
 	default:
-		// Unknown: treat as UTF-8 (Java would use Charset.forName and fail/replace).
+		// Unknown: treat as UTF-8 bytes (Java Charset.forName would throw).
 		_ = unicode.UTF8
 		return nil
 	}

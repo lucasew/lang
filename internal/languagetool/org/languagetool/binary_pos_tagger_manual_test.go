@@ -117,3 +117,39 @@ func TestRegisterBinaryPOSTagger_RussianAccentStrip(t *testing.T) {
 	got := lt.TagWord(stressed)
 	require.NotEmpty(t, got, "stressed дом should tag after accent strip")
 }
+
+// italian.dict is ISO-8859-15; Lookup must honor fsa.dict.encoding.
+func TestRegisterBinaryPOSTagger_ItalianISO885915(t *testing.T) {
+	wd, err := os.Getwd()
+	require.NoError(t, err)
+	var dictPath string
+	dir := wd
+	for i := 0; i < 12; i++ {
+		cand := filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", "it",
+			"src", "main", "resources", "org", "languagetool", "resource", "it", "italian.dict")
+		if st, e := os.Stat(cand); e == nil && st.Mode().IsRegular() {
+			dictPath = cand
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	if dictPath == "" {
+		t.Skip("italian.dict not in tree")
+	}
+	lt := NewJLanguageTool("it")
+	require.True(t, RegisterBinaryPOSTagger(lt, dictPath))
+	tags := lt.TagWord("casa")
+	require.NotEmpty(t, tags)
+	found := false
+	for _, tg := range tags {
+		if tg.Lemma == "casa" || tg.POS != "" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "tags=%v", tags)
+}

@@ -7,7 +7,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-const GalicianDictPath = "/gl/gl.dict"
+// Java GalicianTagger / BaseTagger resource path.
+const GalicianDictPath = "/gl/galician.dict"
 
 type GalicianTagger struct { *tagging.BaseTagger }
 
