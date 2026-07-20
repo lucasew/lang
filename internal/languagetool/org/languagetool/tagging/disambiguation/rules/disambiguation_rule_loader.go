@@ -56,10 +56,13 @@ type disambigRoot struct {
 }
 
 // disambigRuleGroup ports <rulegroup id="…" name="…"> containing nested <rule>.
+// Rulegroup-level <antipattern> is shared by every rule in the group (Java
+// DisambiguationRuleHandler.rulegroupAntiPatterns + setAntiPatterns).
 type disambigRuleGroup struct {
-	ID    string         `xml:"id,attr"`
-	Name  string         `xml:"name,attr"`
-	Rules []disambigRule `xml:"rule"`
+	ID           string            `xml:"id,attr"`
+	Name         string            `xml:"name,attr"`
+	AntiPatterns []disambigPattern `xml:"antipattern"`
+	Rules        []disambigRule    `xml:"rule"`
 }
 
 // disambigUnification ports Java <unification feature="…">.
@@ -73,12 +76,21 @@ type disambigEquivalence struct {
 	Token disambigToken `xml:"token"`
 }
 
+// disambigFilter ports Java <filter class="…" args="…"/> on a disambiguation rule.
+// Wired via setRuleFilter → keepDespiteFilter (RuleFilter.matches).
+type disambigFilter struct {
+	Class string `xml:"class,attr"`
+	Args  string `xml:"args,attr"`
+}
+
 type disambigRule struct {
 	ID           string            `xml:"id,attr"`
 	Name         string            `xml:"name,attr"`
 	AntiPatterns []disambigPattern `xml:"antipattern"`
 	Pattern      disambigPattern   `xml:"pattern"`
-	Disambig     disambigElem      `xml:"disambig"`
+	// Filter ports Java DisambiguationRuleHandler case "filter".
+	Filter   *disambigFilter `xml:"filter"`
+	Disambig disambigElem    `xml:"disambig"`
 }
 
 // disambigPattern holds pattern children in document order: <token> and/or <and>.
@@ -214,8 +226,10 @@ type disambigToken struct {
 	CaseSensitive string `xml:"case_sensitive,attr"`
 	Inflected     string `xml:"inflected,attr"`
 	Negate        string `xml:"negate,attr"`
-	Postag        string `xml:"postag,attr"`
-	PostagRegexp  string `xml:"postag_regexp,attr"`
+	// NegatePos ports negate_pos="yes" on the token POS itself (not only exception).
+	NegatePos    string `xml:"negate_pos,attr"`
+	Postag       string `xml:"postag,attr"`
+	PostagRegexp string `xml:"postag_regexp,attr"`
 	// Marker is soft extract for Java <marker>…</marker> (which tokens REPLACE/FILTER target).
 	Marker string `xml:"marker,attr"`
 	// SpaceBefore ports spacebefore="yes|no".
@@ -309,27 +323,45 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 			}
 		}
 	}
-	// Flatten top-level rules + rulegroup nested rules (Java DisambiguationRuleHandler).
-	var flat []disambigRule
-	flat = append(flat, root.Rules...)
-	for _, g := range root.RuleGroups {
-		flat = append(flat, g.Rules...)
-	}
-
+// Flatten top-level rules + rulegroup nested rules (Java DisambiguationRuleHandler).
+	// Rulegroup: inherit id/name when missing; share rulegroup-level antipatterns.
 	var out []*DisambiguationPatternRule
-	for _, xr := range flat {
-		rule := buildDisambiguationPatternRule(xr, languageCode, cfg)
+	for _, xr := range root.Rules {
+		rule := buildDisambiguationPatternRule(xr, languageCode, cfg, nil)
 		if rule == nil {
 			continue
 		}
 		out = append(out, rule)
+	}
+	for _, g := range root.RuleGroups {
+		groupAPs := g.AntiPatterns
+		for i, xr := range g.Rules {
+			// Java: if inRuleGroup && id/name == null → use ruleGroupId/Name.
+			if strings.TrimSpace(xr.ID) == "" {
+				xr.ID = g.ID
+			}
+			if strings.TrimSpace(xr.Name) == "" {
+				xr.Name = g.Name
+			}
+			// subId is 1-based within the group (Java subId++ on each rule start).
+			rule := buildDisambiguationPatternRule(xr, languageCode, cfg, groupAPs)
+			if rule == nil {
+				continue
+			}
+			if rule.PatternRule != nil {
+				// Java: setSubId(inRuleGroup ? Integer.toString(subId) : "1")
+				rule.SubID = fmt.Sprintf("%d", i+1)
+			}
+			out = append(out, rule)
+		}
 	}
 	return out, cfg, nil
 }
 
 // buildDisambiguationPatternRule converts one XML rule. Skips rules with empty patterns
 // (would match everything — not Java-faithful; usually a parse bug).
-func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *patterns.UnifierConfiguration) *DisambiguationPatternRule {
+// groupAntiPatterns are rulegroup-shared antipatterns (Java rulegroupAntiPatterns); may be nil.
+func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *patterns.UnifierConfiguration, groupAntiPatterns []disambigPattern) *DisambiguationPatternRule {
 	var tokens []*patterns.PatternToken
 	anyMarker := false
 	for _, xt := range xr.Pattern.Tokens {
@@ -342,6 +374,16 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	}
 	if len(tokens) == 0 {
 		return nil
+	}
+	// Java XMLRuleHandler.setRuleFilter: both class and args non-null to attach.
+	// Unknown filter class → skip rule (fail-closed; never disambiguate without the filter gate).
+	// Same policy as PatternRuleLoader for unsupported filters.
+	if xr.Filter != nil && strings.TrimSpace(xr.Filter.Class) != "" {
+		if strings.TrimSpace(xr.Filter.Args) == "" {
+			// Java: filterArgs null → setRuleFilter no-op; still load rule without filter.
+		} else if !patterns.GlobalRuleFilterCreator.HasFilter(strings.TrimSpace(xr.Filter.Class)) {
+			return nil
+		}
 	}
 	action := ActionReplace
 	if xr.Disambig.Action != "" {
@@ -357,6 +399,21 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 		startCorr, endCorr := patterns.PositionCorrectionsFromTokens(tokens)
 		rule.StartPositionCorrection = startCorr
 		rule.EndPositionCorrection = endCorr
+		// Java: setSubId(inRuleGroup ? … : "1"); rulegroup path overwrites SubID after build.
+		if rule.SubID == "" {
+			rule.SubID = "1"
+		}
+	}
+	// Java setRuleFilter(filterClassName, filterArgs, rule) for DisambiguationPatternRule.
+	if xr.Filter != nil {
+		class := strings.TrimSpace(xr.Filter.Class)
+		args := strings.TrimSpace(xr.Filter.Args)
+		if class != "" && args != "" {
+			if f, ok := patterns.GlobalRuleFilterCreator.TryGetFilter(class); ok {
+				rule.Filter = f
+				rule.FilterArgs = args
+			}
+		}
 	}
 	if action == ActionUnify {
 		for _, f := range strings.Split(xr.Disambig.Features, ",") {
@@ -384,35 +441,45 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 		}
 		rule.SetNewInterpretations(readings)
 	}
-	// Java <antipattern>.
-	if len(xr.AntiPatterns) > 0 {
-		var aps []*patterns.AbstractTokenBasedRule
-		for i, ap := range xr.AntiPatterns {
-			var apToks []*patterns.PatternToken
-			anyMarker := false
-			for _, xt := range ap.Tokens {
-				if strings.EqualFold(xt.Marker, "yes") {
-					anyMarker = true
-				}
-			}
-			for _, xt := range ap.Tokens {
-				apToks = append(apToks, disambigTokenFromXML(xt, anyMarker))
-			}
-			if len(apToks) == 0 {
-				continue
-			}
-			aps = append(aps, patterns.NewAbstractTokenBasedRule(
-				fmt.Sprintf("%s_anti_%d", xr.ID, i),
-				"antipattern",
-				languageCode,
-				apToks,
-			))
+	// Java: rulegroup antipatterns first, then rule antipatterns (setAntiPatterns appends).
+	if len(groupAntiPatterns) > 0 {
+		if aps := antiPatternsFromDisambigXML(xr.ID, languageCode, groupAntiPatterns, "group_anti"); len(aps) > 0 {
+			rule.SetAntiPatterns(aps)
 		}
-		if len(aps) > 0 {
+	}
+	if len(xr.AntiPatterns) > 0 {
+		if aps := antiPatternsFromDisambigXML(xr.ID, languageCode, xr.AntiPatterns, "anti"); len(aps) > 0 {
 			rule.SetAntiPatterns(aps)
 		}
 	}
 	return rule
+}
+
+// antiPatternsFromDisambigXML builds antipattern token rules (shared by rule + rulegroup).
+func antiPatternsFromDisambigXML(ruleID, languageCode string, patternsXML []disambigPattern, idSuffix string) []*patterns.AbstractTokenBasedRule {
+	var aps []*patterns.AbstractTokenBasedRule
+	for i, ap := range patternsXML {
+		var apToks []*patterns.PatternToken
+		anyMarker := false
+		for _, xt := range ap.Tokens {
+			if strings.EqualFold(xt.Marker, "yes") {
+				anyMarker = true
+			}
+		}
+		for _, xt := range ap.Tokens {
+			apToks = append(apToks, disambigTokenFromXML(xt, anyMarker))
+		}
+		if len(apToks) == 0 {
+			continue
+		}
+		aps = append(aps, patterns.NewAbstractTokenBasedRule(
+			fmt.Sprintf("%s_%s_%d", ruleID, idSuffix, i),
+			"antipattern",
+			languageCode,
+			apToks,
+		))
+	}
+	return aps
 }
 
 // matchFromDisambigXML ports DisambiguationRuleHandler MATCH under DISAMBIG → posSelector.
@@ -473,6 +540,7 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 		pt.SetPosToken(patterns.PosToken{
 			PosTag: xt.Postag,
 			Regexp: strings.EqualFold(xt.PostagRegexp, "yes"),
+			Negate: strings.EqualFold(xt.NegatePos, "yes"),
 		})
 	}
 	// Java: default InsideMarker=true when the pattern has no <marker>.

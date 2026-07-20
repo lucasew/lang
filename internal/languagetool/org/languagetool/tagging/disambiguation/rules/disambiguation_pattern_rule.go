@@ -91,9 +91,12 @@ func (r *DisambiguationPatternRule) SetUntouchedExamples(ex []string) {
 
 func (r *DisambiguationPatternRule) GetUntouchedExamples() []string { return r.UntouchedExamples }
 
-// SetAntiPatterns ports AbstractPatternRule.setAntiPatterns for soft disambig.
+// SetAntiPatterns ports AbstractPatternRule.setAntiPatterns (appends, Java addAll).
 func (r *DisambiguationPatternRule) SetAntiPatterns(aps []*patterns.AbstractTokenBasedRule) {
-	r.AntiPatterns = append([]*patterns.AbstractTokenBasedRule(nil), aps...)
+	if r == nil || len(aps) == 0 {
+		return
+	}
+	r.AntiPatterns = append(r.AntiPatterns, aps...)
 }
 
 // Replace applies the disambiguation pattern to the sentence.

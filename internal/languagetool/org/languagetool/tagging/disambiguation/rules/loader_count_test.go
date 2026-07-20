@@ -83,4 +83,18 @@ func TestLoadOfficialENDisambiguationCount(t *testing.T) {
 	if !found {
 		t.Fatal("EXCEPT_NOT_VERB not loaded (marker parse failed)")
 	}
+	// Rulegroup-level antipatterns (e.g. HOPE_VB) shared with every child rule.
+	withGroupAP := 0
+	for _, r := range rules {
+		if r == nil {
+			continue
+		}
+		if r.GetID() == "HOPE_VB" && len(r.AntiPatterns) > 0 {
+			withGroupAP++
+		}
+	}
+	t.Logf("hopeVBWithAP=%d", withGroupAP)
+	if withGroupAP < 1 {
+		t.Fatal("HOPE_VB rulegroup antipatterns not attached to child rules")
+	}
 }

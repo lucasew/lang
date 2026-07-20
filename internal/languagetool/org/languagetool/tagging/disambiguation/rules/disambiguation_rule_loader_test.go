@@ -83,6 +83,106 @@ func TestDisambigLoader_MatchElement(t *testing.T) {
 	require.Equal(t, "noun:inanim:m:v_rod", ars[1].MatchElement.GetPosTag())
 }
 
+func TestDisambigLoader_FilterElement(t *testing.T) {
+	// Java setRuleFilter → PatternRule.Filter / FilterArgs for keepDespiteFilter.
+	// IsEnglishWordFilter is registered in patterns.default_rule_filters (core).
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="ENG" name="english filter">
+    <pattern>
+      <token>hello</token>
+      <token>world</token>
+    </pattern>
+    <filter class="org.languagetool.rules.IsEnglishWordFilter" args="formPositions:1,2"/>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="NO_ARGS" name="filter without args is ignored">
+    <pattern><token>x</token></pattern>
+    <filter class="org.languagetool.rules.IsEnglishWordFilter"/>
+    <disambig postag="NN"/>
+  </rule>
+  <rule id="UNKNOWN_FILTER" name="unknown filter skips rule">
+    <pattern><token>y</token></pattern>
+    <filter class="org.languagetool.rules.DoesNotExistFilter" args="a:b"/>
+    <disambig postag="NN"/>
+  </rule>
+</rules>`
+	ars, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t.xml")
+	require.NoError(t, err)
+	require.Len(t, ars, 2) // UNKNOWN_FILTER skipped
+
+	require.Equal(t, "ENG", ars[0].ID)
+	require.NotNil(t, ars[0].Filter)
+	require.Equal(t, "formPositions:1,2", ars[0].FilterArgs)
+
+	// Java setRuleFilter requires both class and args; args missing → no filter attached
+	require.Equal(t, "NO_ARGS", ars[1].ID)
+	require.Nil(t, ars[1].Filter)
+	require.Empty(t, ars[1].FilterArgs)
+}
+
+func TestDisambigLoader_RuleGroupAntipatternAndID(t *testing.T) {
+	// Java: rulegroup antipatterns shared; id/name inherit; subId 1-based.
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="HOPE_VB" name="hope as verb">
+    <antipattern>
+      <token postag="DT"/>
+      <token>hopes</token>
+    </antipattern>
+    <rule>
+      <pattern>
+        <token>hopes</token>
+      </pattern>
+      <disambig action="filter" postag="VB.*"/>
+    </rule>
+    <rule id="HOPE_EXPLICIT" name="explicit id">
+      <pattern>
+        <token>hope</token>
+      </pattern>
+      <antipattern>
+        <token>no</token>
+        <token>hope</token>
+      </antipattern>
+      <disambig action="filter" postag="VB"/>
+    </rule>
+  </rulegroup>
+</rules>`
+	ars, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t.xml")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+
+	// first rule inherits group id/name; subId=1; only group AP
+	require.Equal(t, "HOPE_VB", ars[0].ID)
+	require.Equal(t, "hope as verb", ars[0].Description)
+	require.Equal(t, "1", ars[0].SubID)
+	require.Len(t, ars[0].AntiPatterns, 1)
+	require.Equal(t, "DT", ars[0].AntiPatterns[0].Tokens[0].Pos.PosTag)
+
+	// second: own id; subId=2; group AP + rule AP (append)
+	require.Equal(t, "HOPE_EXPLICIT", ars[1].ID)
+	require.Equal(t, "explicit id", ars[1].Description)
+	require.Equal(t, "2", ars[1].SubID)
+	require.Len(t, ars[1].AntiPatterns, 2)
+}
+
+func TestDisambigLoader_TokenNegatePos(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="NP" name="negate pos">
+    <pattern>
+      <token postag="NN" negate_pos="yes"/>
+    </pattern>
+    <disambig postag="JJ"/>
+  </rule>
+</rules>`
+	ars, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t.xml")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.NotNil(t, ars[0].Tokens[0].Pos)
+	require.True(t, ars[0].Tokens[0].Pos.Negate)
+}
+
 func TestDisambigLoader_TokenMatchReference(t *testing.T) {
 	// CA-style: <token><match no="0"/></token> under marker
 	xml := `<?xml version="1.0"?>
