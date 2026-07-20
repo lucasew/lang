@@ -10,8 +10,6 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
-	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 )
 
 // newConfiguredLT builds a language tool aligned with commandline.configureCoreLT
@@ -65,7 +63,7 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		}
 		// Java English.createDefaultSynthesizer for pattern match suggestions.
 		if synthPath := commandline.DiscoverEnglishSynthDict(nil); synthPath != "" {
-			if synth := ensynth.OpenEnglishSynthesizerFromDictPath(synthPath); synth != nil {
+			if synth := commandline.OpenLanguageSynthesizer("en", synthPath); synth != nil {
 				patterns.RegisterLanguageSynthesizer("en", synth)
 				patterns.RegisterLanguageSynthesizer(lang, synth)
 			}
@@ -86,8 +84,9 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		if posPath := commandline.DiscoverLanguagePOSDict(nil, base); posPath != "" {
 			_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
 		}
+		// Java createDefaultSynthesizer (DE/PL language-specific; others Base).
 		if synthPath := commandline.DiscoverLanguageSynthDict(nil, base); synthPath != "" {
-			if synth := synthesis.OpenBaseSynthesizerFromDictPath(base, synthPath); synth != nil {
+			if synth := commandline.OpenLanguageSynthesizer(base, synthPath); synth != nil {
 				patterns.RegisterLanguageSynthesizer(base, synth)
 				patterns.RegisterLanguageSynthesizer(lang, synth)
 			}

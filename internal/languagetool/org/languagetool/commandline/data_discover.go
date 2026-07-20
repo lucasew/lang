@@ -197,26 +197,52 @@ func DiscoverEnglishSynthDict(opts *CommandLineOptions) string {
 	return ""
 }
 
-// languageSynthDictNames maps short code → official *_synth.dict basename (Java resource).
+// languageSynthDictNames maps short code → official *_synth.dict basename
+// (Java *Synthesizer.RESOURCE_FILENAME under org/languagetool/resource/{lang}/).
+// Names match Java createDefaultSynthesizer resources exactly — not invent.
 var languageSynthDictNames = map[string]string{
-	"en": "english_synth.dict",
-	"pl": "polish_synth.dict",
-	"it": "italian_synth.dict",
-	"ru": "russian_synth.dict",
-	"ro": "romanian_synth.dict",
-	"sk": "slovak_synth.dict",
-	"sv": "swedish_synth.dict",
-	"el": "greek_synth.dict",
-	"gl": "galician_synth.dict",
-	"ar": "arabic_synth.dict",
-	// Java UkrainianSynthesizer.RESOURCE_FILENAME
-	"uk": "ukrainian_synth.dict",
-	// Java Serbian ekavian: /sr/dictionary/ekavian/serbian_synth.dict
-	"sr": "serbian_synth.dict",
+	"en":  "english_synth.dict",
+	"pl":  "polish_synth.dict",
+	"it":  "italian_synth.dict",
+	"ru":  "russian_synth.dict",
+	"ro":  "romanian_synth.dict",
+	"sk":  "slovak_synth.dict",
+	"sv":  "swedish_synth.dict",
+	"el":  "greek_synth.dict",
+	"gl":  "galician_synth.dict",
+	"ar":  "arabic_synth.dict",
+	"uk":  "ukrainian_synth.dict",
+	"nl":  "dutch_synth.dict",         // DutchSynthesizer
+	"fr":  "french_synth.dict",        // FrenchSynthesizer
+	"de":  "german_synth.dict",        // GermanSynthesizer
+	"pt":  "portuguese_synth.dict",    // PortugueseSynthesizer
+	"ga":  "irish_synth.dict",         // IrishSynthesizer
+	"crh": "crimean_tatar_synth.dict", // CrimeanTatarSynthesizer
+	"ca":  "ca-ES_synth.dict",         // CatalanSynthesizer (/ca/ca-ES_synth.dict)
+	"es":  "es-ES_synth.dict",         // SpanishSynthesizer (/es/es-ES_synth.dict)
+	"sr":  "serbian_synth.dict",       // Ekavian/Jekavian under dictionary/
+}
+
+// languageSynthInspirationRels returns walk-up relative paths for Java resource layout.
+// Serbian lives under resource/sr/dictionary/{ekavian,jekavian}/ (not resource/sr/).
+func languageSynthInspirationRels(base, name string) []string {
+	mod := filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
+		"src", "main", "resources", "org", "languagetool", "resource")
+	switch base {
+	case "sr":
+		// Java EkavianSynthesizer first (Serbian default), then Jekavian, then flat fallback.
+		return []string{
+			filepath.Join(mod, "sr", "dictionary", "ekavian", name),
+			filepath.Join(mod, "sr", "dictionary", "jekavian", name),
+			filepath.Join(mod, "sr", name),
+		}
+	default:
+		return []string{filepath.Join(mod, base, name)}
+	}
 }
 
 // DiscoverLanguageSynthDict finds *_synth.dict for lang (Java createDefaultSynthesizer resource).
-// Order: LANG_{CODE}_SYNTH_DICT, sibling of POS dict, inspiration module resource.
+// Order: LANG_{CODE}_SYNTH_DICT, sibling of POS dict, --data-dir, inspiration module resource.
 func DiscoverLanguageSynthDict(opts *CommandLineOptions, lang string) string {
 	base := lang
 	if i := strings.IndexByte(lang, '-'); i > 0 {
@@ -239,11 +265,23 @@ func DiscoverLanguageSynthDict(opts *CommandLineOptions, lang string) string {
 	if name == "" {
 		return ""
 	}
-	// Sibling of POS dict directory
+	// Sibling of POS dict directory (same resource/{lang}/ folder as Java).
 	if pos := DiscoverLanguagePOSDict(opts, base); pos != "" {
 		cand := filepath.Join(filepath.Dir(pos), name)
 		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
 			return cand
+		}
+		// Serbian POS may live under dictionary/ekavian; try sibling dirs.
+		if base == "sr" {
+			for _, sub := range []string{
+				filepath.Join(filepath.Dir(pos), name),
+				filepath.Join(filepath.Dir(pos), "ekavian", name),
+				filepath.Join(filepath.Dir(filepath.Dir(pos)), "ekavian", name),
+			} {
+				if st, err := os.Stat(sub); err == nil && st.Mode().IsRegular() {
+					return sub
+				}
+			}
 		}
 	}
 	if opts != nil && opts.GetDataDir() != "" {
@@ -255,12 +293,18 @@ func DiscoverLanguageSynthDict(opts *CommandLineOptions, lang string) string {
 				return rel
 			}
 		}
+		if base == "sr" {
+			for _, rel := range []string{
+				filepath.Join(opts.GetDataDir(), "sr", "dictionary", "ekavian", name),
+				filepath.Join(opts.GetDataDir(), "sr", "dictionary", "jekavian", name),
+			} {
+				if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+					return rel
+				}
+			}
+		}
 	}
-	relPaths := []string{
-		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
-			"src", "main", "resources", "org", "languagetool", "resource", base, name),
-	}
-	for _, rel := range relPaths {
+	for _, rel := range languageSynthInspirationRels(base, name) {
 		if p := WalkUpFind("", rel); p != "" {
 			return p
 		}

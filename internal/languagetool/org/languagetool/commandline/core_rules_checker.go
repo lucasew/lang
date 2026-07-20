@@ -20,8 +20,6 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	rulespt "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
 	rulesru "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
-	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -221,7 +219,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			// Java English.createDefaultSynthesizer() → EnglishSynthesizer.INSTANCE
 			// for pattern <match postag="…"/> suggestions (RegisterLanguageSynthesizer).
 			if synthPath := DiscoverEnglishSynthDict(opts); synthPath != "" {
-				if synth := ensynth.OpenEnglishSynthesizerFromDictPath(synthPath); synth != nil {
+				if synth := OpenLanguageSynthesizer("en", synthPath); synth != nil {
 					patterns.RegisterLanguageSynthesizer("en", synth)
 					patterns.RegisterLanguageSynthesizer(lang, synth)
 				}
@@ -253,9 +251,10 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 					}
 				}
 			}
-			// Java createDefaultSynthesizer when *_synth.dict is present.
+			// Java createDefaultSynthesizer when *_synth.dict is present
+			// (EN/DE/PL language-specific types; other langs BaseSynthesizer).
 			if synthPath := DiscoverLanguageSynthDict(opts, base); synthPath != "" {
-				if synth := synthesis.OpenBaseSynthesizerFromDictPath(base, synthPath); synth != nil {
+				if synth := OpenLanguageSynthesizer(base, synthPath); synth != nil {
 					patterns.RegisterLanguageSynthesizer(base, synth)
 					patterns.RegisterLanguageSynthesizer(lang, synth)
 				}
