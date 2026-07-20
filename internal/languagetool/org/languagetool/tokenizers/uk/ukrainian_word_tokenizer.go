@@ -411,83 +411,72 @@ func breakLeadingSignedNumber(text string) string {
 }
 
 func breakNDashSpace(text string) string {
-	// ([letter/digit])(–\s) not followed by та|чи|і|й + space
-	re := regexp.MustCompile(`(?i)([а-яіїєґa-z0-9])(\x{2013}[\s\x{00A0}\x{202F}])`)
+	// Java N_DASH_SPACE_PATTERN:
+	// ([а-яіїєґa-z0-9])(\u2013\h)(?!(та|чи|і|й)[\h\v])  CASE_INSENSITIVE|UNICODE_CASE
+	// RE2 has no lookahead — skip break only when rest matches (та|чи|і|й)+whitespace.
+	re := nDashSpace
 	var b strings.Builder
 	last := 0
-	for _, loc := range re.FindAllStringIndex(text, -1) {
-		rest := text[loc[1]:]
-		skip := false
-		for _, w := range []string{"та", "чи", "і", "й"} {
-			if len(rest) >= len(w)+1 {
-				// case-insensitive prefix check for Ukrainian is fine on lower
-				if strings.HasPrefix(strings.ToLower(rest), w) {
-					r, _ := utf8.DecodeRuneInString(rest[len([]rune(w))*0+len(w):]) // wrong
-					_ = r
-				}
-			}
-			wl := len(w)
-			if len(rest) >= wl {
-				prefix := rest[:wl]
-				// rune-safe lower compare
-				if strings.EqualFold(prefix, w) {
-					if len(rest) == wl || isSpaceLike(rune(rest[wl])) {
-						// for multi-byte space rest[wl] may be wrong - use runes
-						rr := []rune(rest)
-						wr := []rune(w)
-						if len(rr) >= len(wr) && strings.EqualFold(string(rr[:len(wr)]), w) {
-							if len(rr) == len(wr) || isSpaceLike(rr[len(wr)]) {
-								skip = true
-								break
-							}
-						}
-					}
-				}
-			}
+	for _, loc := range re.FindAllStringSubmatchIndex(text, -1) {
+		// loc: full, g1, g2 — byte indices
+		full0, full1 := loc[0], loc[1]
+		rest := text[full1:]
+		// Java negative lookahead: do not break when (та|чи|і|й)[\h\v] follows
+		if followedByConjunctionHV(rest) {
+			b.WriteString(text[last:full1])
+			last = full1
+			continue
 		}
-		// simpler skip check
-		skip = followedByConjunction(rest)
-		b.WriteString(text[last:loc[0]])
-		m := text[loc[0]:loc[1]]
-		if skip {
-			b.WriteString(m)
-		} else {
-			// insert break after letter part
-			sub := re.FindStringSubmatch(m)
-			if len(sub) == 3 {
-				b.WriteString(sub[1] + breakingPlaceholder + sub[2])
-			} else {
-				b.WriteString(m)
-			}
-		}
-		last = loc[1]
+		b.WriteString(text[last:full0])
+		// groups: letter, ndash+space
+		g1 := text[loc[2]:loc[3]]
+		g2 := text[loc[4]:loc[5]]
+		b.WriteString(g1 + breakingPlaceholder + g2)
+		last = full1
 	}
 	b.WriteString(text[last:])
 	return b.String()
 }
 
-func followedByConjunction(rest string) bool {
+// followedByConjunctionHV ports Java (?=(та|чи|і|й)[\h\v]) for the negative lookahead.
+// Conjunction alone at end of string does NOT block (Java requires whitespace after).
+func followedByConjunctionHV(rest string) bool {
 	rr := []rune(strings.ToLower(rest))
 	for _, w := range []string{"та", "чи", "і", "й"} {
 		wr := []rune(w)
-		if len(rr) < len(wr) {
+		if len(rr) < len(wr)+1 {
 			continue
 		}
-		ok := true
+		match := true
 		for i := range wr {
 			if rr[i] != wr[i] {
-				ok = false
+				match = false
 				break
 			}
 		}
-		if !ok {
+		if !match {
 			continue
 		}
-		if len(rr) == len(wr) || isSpaceLike(rr[len(wr)]) {
+		// Java [\h\v] after conjunction
+		if isJavaHOrVSpace(rr[len(wr)]) {
 			return true
 		}
 	}
 	return false
+}
+
+// isJavaHOrVSpace approximates Java Pattern \h (horizontal) | \v (vertical) whitespace.
+func isJavaHOrVSpace(r rune) bool {
+	switch r {
+	case '\t', '\n', '\v', '\f', '\r', ' ', '\u00A0', '\u1680', '\u180E',
+		'\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006',
+		'\u2007', '\u2008', '\u2009', '\u200A', '\u200B', // ZWSP appears in some \h tables
+		'\u2028', '\u2029', // line/paragraph separator (\v)
+		'\u202F', '\u205F', '\u3000':
+		return true
+	default:
+		return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
+	}
 }
 
 func isSpaceLike(r rune) bool {
