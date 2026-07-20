@@ -108,3 +108,25 @@ func utf16Len(s string) int {
 	}
 	return n
 }
+
+// CheckBitextWithLanguageTools ports Tools.checkBitext(src, trg, srcLt, trgLt, bRules):
+//
+//	srcText = srcLt.getAnalyzedSentence(src)
+//	trgText = trgLt.getAnalyzedSentence(trg)
+//	matches = trgLt.checkAnalyzedSentence(NORMAL, activeRules, trgText, true)
+//	+ bitext rules with column/line adjustment
+//
+// When rulesList is nil, uses RelevantBitextRules() only (not full getBitextRules).
+func CheckBitextWithLanguageTools(
+	srcText, trgText string,
+	srcLT, trgLT *languagetool.JLanguageTool,
+	rulesList []BitextRule,
+) []languagetool.LocalMatch {
+	if srcLT == nil || trgLT == nil {
+		return nil
+	}
+	src := srcLT.GetAnalyzedSentence(srcText)
+	trg := trgLT.GetAnalyzedSentence(trgText)
+	mono := trgLT.CheckAnalyzedSentence(trg)
+	return CheckBitextFull(src, trg, trgText, mono, rulesList)
+}

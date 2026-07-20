@@ -107,3 +107,53 @@ func TestGetBitextRules_IncludesBuiltins(t *testing.T) {
 	require.True(t, ids["SAME_TRANSLATION"])
 	require.True(t, ids["DIFFERENT_PUNCTUATION"])
 }
+
+// Full Tools.checkBitext path: getBitextRules + getAnalyzedSentence + checkAnalyzedSentence + bitext.
+func TestToolsCheckBitext_WithLanguageTools_ACTUAL(t *testing.T) {
+	ffPath := findPath(filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
+		"org", "languagetool", "rules", "false-friends.xml"))
+	if ffPath == "" {
+		t.Skip("false-friends.xml missing")
+	}
+	plDict := commandline.DiscoverLanguagePOSDict(nil, "pl")
+	if plDict == "" {
+		t.Skip("PL POS dict required")
+	}
+	rules, err := LoadGetBitextRulesFromPaths("en", "pl", "", ffPath, "")
+	require.NoError(t, err)
+	// Keep ACTUAL only so monolingual noise does not hide the twin
+	var actual []bitext.BitextRule
+	for _, r := range rules {
+		if r != nil && r.GetID() == "ACTUAL" {
+			actual = append(actual, r)
+		}
+	}
+	require.NotEmpty(t, actual)
+
+	enLT := languagetool.NewJLanguageTool("en")
+	plLT := languagetool.NewJLanguageTool("pl")
+	require.True(t, languagetool.RegisterBinaryPOSTagger(plLT, plDict))
+	if enDict := commandline.DiscoverEnglishPOSDict(nil); enDict != "" {
+		_ = languagetool.RegisterBinaryPOSTagger(enLT, enDict)
+	}
+	// Register a mono rule that would fire on target — ensure bitext still present
+	plLT.AddRuleChecker("MONO_NOISE", func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
+		return nil // no noise
+	})
+
+	ms := bitext.CheckBitextWithLanguageTools(
+		"This is not actual.",
+		"To nie jest aktualne.",
+		enLT, plLT, actual,
+	)
+	require.NotEmpty(t, ms)
+	found := false
+	for _, m := range ms {
+		if m.RuleID == "ACTUAL" {
+			found = true
+			require.Equal(t, 12, m.FromPos)
+			require.Equal(t, 20, m.ToPos)
+		}
+	}
+	require.True(t, found, "%+v", ms)
+}
