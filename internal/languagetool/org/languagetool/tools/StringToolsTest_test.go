@@ -130,6 +130,9 @@ func TestStringTools_IsWhitespace(t *testing.T) {
 func TestStringTools_IsPositiveNumber(t *testing.T) {
 	require.Equal(t, true, IsPositiveNumber('3'))
 	require.Equal(t, false, IsPositiveNumber('a'))
+	// Java: Character.isDigit && ch != '0'
+	require.Equal(t, false, IsPositiveNumber('0'))
+	require.Equal(t, true, IsPositiveNumber('\u0967')) // DEVANAGARI DIGIT ONE
 }
 
 func TestStringTools_IsEmpty(t *testing.T) {
