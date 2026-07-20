@@ -63,7 +63,7 @@ func RegisterCoreDutchRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 
 	// Java LongParagraphRule 5-arg always setDefaultOff (defaultActive param unused).
-	lp := NewLongParagraphRule(map[string]string{
+	lp := rules.NewLongParagraphRule(map[string]string{
 		"long_paragraph_rule_msg": "Deze alinea is te lang (%d woorden)",
 	}, 220)
 	lt.AddTextLevelRuleChecker(lp.GetID(), rules.AsTextLevelChecker(lp.MatchList))
