@@ -193,6 +193,19 @@ func TestProcessRuleMessage_PleaseSpellMe(t *testing.T) {
 	require.Contains(t, msg, PleaseSpellMe)
 }
 
+// Twin of XMLRuleHandler.addLegacyMatches: SOH-prefixed backref needs a matching
+// <match> element — Java IndexOutOfBoundsException; do not invent bare Match.
+func TestAddLegacyMatches_IncompleteSOHPairingPanics(t *testing.T) {
+	// SOH + \1 without any existing match configs
+	msg := string([]byte{0x01}) + `\1`
+	require.Panics(t, func() {
+		_ = addLegacyMatches(nil, msg)
+	})
+	require.Panics(t, func() {
+		_ = addLegacyMatches([]*Match{}, msg)
+	})
+}
+
 // Twin of PatternRuleMatcher.formatMatches isPositiveNumber gate:
 // backslash + '0' is not a match placeholder (Java StringTools.isPositiveNumber).
 func TestFormatMatches_SkipsBackrefZero(t *testing.T) {

@@ -168,26 +168,27 @@ func parseXMLAttrs(tag string) map[string]string {
 // addLegacyMatches ports XMLRuleHandler.addLegacyMatches.
 // existing are Matches from real <match> tags in document order of SOH markers.
 func addLegacyMatches(existing []*Match, messageStr string) []*Match {
+	// Ports XMLRuleHandler.addLegacyMatches (message scan + SOH-prefixed real matches).
+	// Java: Character.isDigit for first digit after '\' (includes '0').
 	var sugMatch []*Match
 	matchCounter := 0
 	for i := 0; i < len(messageStr); i++ {
 		if messageStr[i] != '\\' || i+1 >= len(messageStr) {
 			continue
 		}
+		// Java Character.isDigit — Unicode digits allowed (not invent IsPositiveNumber here).
 		if !unicode.IsDigit(rune(messageStr[i+1])) {
 			continue
 		}
 		// preceded by SOH → real <match>
 		if i > 0 && messageStr[i-1] == matchMarker[0] {
-			if matchCounter < len(existing) {
-				sugMatch = append(sugMatch, existing[matchCounter])
-				matchCounter++
-			} else {
-				// incomplete pairing — fall back to bare ref Match
-				mw := NewMatch("", "", false, "", "", CaseNone, false, false, IncludeNone)
-				mw.SetInMessageOnly(true)
-				sugMatch = append(sugMatch, mw)
+			// Java: existingSugMatches.get(matchCounter) — AIOOBE if incomplete pairing.
+			// Do not invent a bare Match fallback.
+			if matchCounter >= len(existing) {
+				panic("addLegacyMatches: SOH-prefixed backref without matching <match> element")
 			}
+			sugMatch = append(sugMatch, existing[matchCounter])
+			matchCounter++
 		} else {
 			mw := NewMatch("", "", false, "", "", CaseNone, false, false, IncludeNone)
 			mw.SetInMessageOnly(true)
