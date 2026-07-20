@@ -249,6 +249,12 @@ type LocalMatch struct {
 	// HasTypographicApostropheInSentence ports anyMatch(token.hasTypographicApostrophe)
 	// on the analyzed sentence (Catalan.adjustCatalanMatch). Check stamps from tokens.
 	HasTypographicApostropheInSentence bool
+	// Line/EndLine/Column/EndColumn port RuleMatch line/column after adjustRuleMatchPos
+	// (zero-based; default -1 when unset).
+	Line, EndLine       int
+	Column, EndColumn   int
+	// PatternFromPos/PatternToPos port RuleMatch patternPosition (document-relative after adjust).
+	PatternFromPos, PatternToPos int
 }
 
 // SentenceChecker returns matches for one analyzed sentence (offsets relative to sentence text).
