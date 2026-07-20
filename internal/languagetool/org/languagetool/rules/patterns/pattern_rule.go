@@ -31,9 +31,8 @@ type PatternRule struct {
 	// SuggestionMatchesOutMsg ports AbstractPatternRule.suggestionMatchesOutMsg.
 	SuggestionMatchesOutMsg []*Match
 	// SuggestionsOutMsg ports AbstractPatternRule.suggestionsOutMsg.
+	// Keeps <suggestion> tags; FormatMatches expands \N inside them (Java).
 	SuggestionsOutMsg string
-	// SuggestionTemplates are <suggestion> bodies after ProcessRuleMessage (may contain \N).
-	SuggestionTemplates []string
 	// StartPositionCorrection ports AbstractPatternRule.startPositionCorrection.
 	StartPositionCorrection int
 	// EndPositionCorrection ports AbstractPatternRule.endPositionCorrection.

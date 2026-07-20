@@ -59,12 +59,12 @@ func TestPatternRuleMatcher_FormatsBackrefs(t *testing.T) {
 		atr("world", 6),
 	}
 	sent := testSentence(toks...)
+	// Java keeps <suggestion> tags in the message through formatMatches + RuleMatch ctor.
 	raw := `Bad <suggestion><match no="1" case_conversion="allupper"/> \2</suggestion>`
 	msg, matches := ProcessRuleMessage(raw)
-	display, suggs := extractSuggestions(msg)
-	pr := NewPatternRule("T", "en", []*PatternToken{Token("hello"), Token("world")}, "d", display, "")
+	require.Contains(t, msg, "<suggestion>")
+	pr := NewPatternRule("T", "en", []*PatternToken{Token("hello"), Token("world")}, "d", msg, "")
 	pr.SuggestionMatches = matches
-	pr.SuggestionTemplates = suggs
 	ms, err := pr.Match(sent)
 	require.NoError(t, err)
 	require.Len(t, ms, 1)
@@ -187,10 +187,27 @@ func TestToFinalString_SuppressMisspelledUsesTagger(t *testing.T) {
 }
 
 func TestProcessRuleMessage_PleaseSpellMe(t *testing.T) {
+	// bare \1: PLEASE_SPELL_ME on suggestion (Java always plain <suggestion> open)
 	raw := `<suggestion suppress_misspelled="yes">\1</suggestion>`
 	msg, _ := ProcessRuleMessage(raw)
-	// after process, suggestion still there; pleasespellme injected before extract
-	require.Contains(t, msg, PleaseSpellMe)
+	require.Contains(t, msg, suggestionStartTag+PleaseSpellMe)
+	require.NotContains(t, msg, `suppress_misspelled`)
+
+	// real <match> inherits isSuppressMisspelled from enclosing suggestion (setMatchElement)
+	raw2 := `<suggestion suppress_misspelled="yes"><match no="1"/></suggestion>`
+	msg2, matches := ProcessRuleMessage(raw2)
+	require.Contains(t, msg2, suggestionStartTag+PleaseSpellMe)
+	require.NotEmpty(t, matches)
+	require.True(t, matches[0].ChecksSpelling())
+	require.False(t, matches[0].IsInMessageOnly()) // inside suggestion
+}
+
+func TestProcessRuleMessage_NormalizesSuggestionOpen(t *testing.T) {
+	// Any attrs on <suggestion> are dropped; only plain tag remains (Java).
+	raw := `<suggestion case_conversion="startupper">x</suggestion>`
+	msg, _ := ProcessRuleMessage(raw)
+	require.Contains(t, msg, suggestionStartTag)
+	require.NotContains(t, msg, `case_conversion`)
 }
 
 // Twin of XMLRuleHandler.addLegacyMatches: SOH-prefixed backref needs a matching

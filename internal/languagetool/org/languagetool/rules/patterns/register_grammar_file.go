@@ -79,15 +79,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		if len(ar.Tags) > 0 {
 			pr.SetTags(ar.Tags)
 		}
-		// strip XML suggestion tags from message for display; templates expanded in matcher.
-		// Outer suggestionsOutMsg keeps tags for createRuleMatch extract.
-		msg, suggs := extractSuggestions(pr.Message)
-		pr.Message = msg
-		// Append out-msg suggestion bodies to templates when message had none.
-		if outBodies := extractSuggestionBodies(pr.SuggestionsOutMsg); len(outBodies) > 0 {
-			suggs = append(suggs, outBodies...)
-		}
-		pr.SuggestionTemplates = append([]string(nil), suggs...)
+		// Java PatternRule keeps <suggestion>…</suggestion> in message/suggestionsOutMsg.
+		// FormatMatches + removeSuppressMisspelled + RuleMatch ctor extract depend on tags
+		// remaining (do not strip into SuggestionTemplates — that soft-invent path broke
+		// suppress_misspelled and multi-synthesis).
 		if pr.GetID() == "" {
 			continue
 		}
@@ -285,80 +280,4 @@ func enrichLocalMatches(out []languagetool.LocalMatch, text string, meta grammar
 	return out
 }
 
-// extractSuggestions pulls <suggestion>…</suggestion> from rule messages (Java markup).
-// Does not invent suggestions from quoted prose.
-func extractSuggestions(msg string) (clean string, suggs []string) {
-	clean = msg
-	for {
-		start := strings.Index(clean, "<suggestion>")
-		if start < 0 {
-			break
-		}
-		end := strings.Index(clean[start:], "</suggestion>")
-		if end < 0 {
-			break
-		}
-		end += start
-		inner := clean[start+len("<suggestion>") : end]
-		suggs = append(suggs, inner)
-		clean = clean[:start] + inner + clean[end+len("</suggestion>"):]
-	}
-	return strings.TrimSpace(clean), suggs
-}
 
-// matchSpanTokens returns non-whitespace token surfaces whose span overlaps [from,to).
-// Incomplete vs Java formatMatches (pattern-element indices / optional tokens / SENT_START):
-// only real token surfaces in the match range — no invent of empty SENT_START slots.
-func matchSpanTokens(s *languagetool.AnalyzedSentence, from, to int) []string {
-	if s == nil || from < 0 || to <= from {
-		return nil
-	}
-	var out []string
-	for _, tok := range s.GetTokensWithoutWhitespace() {
-		if tok == nil || tok.IsSentenceEnd() || tok.IsSentenceStart() {
-			continue
-		}
-		ts, te := tok.GetStartPos(), tok.GetEndPos()
-		if te <= from || ts >= to {
-			continue
-		}
-		if t := tok.GetToken(); t != "" {
-			out = append(out, t)
-		}
-	}
-	return out
-}
-
-// expandPatternBackrefs replaces \1, \2, … (multi-digit) with span tokens (1-based).
-// Ports the digit-run scan in Java PatternRuleMatcher.formatMatches.
-// Unknown backrefs stay literal (do not invent empty replacements).
-func expandPatternBackrefs(sug string, spanToks []string) string {
-	if sug == "" || !strings.Contains(sug, `\`) {
-		return sug
-	}
-	var b strings.Builder
-	b.Grow(len(sug))
-	for i := 0; i < len(sug); i++ {
-		if sug[i] != '\\' || i+1 >= len(sug) || sug[i+1] < '1' || sug[i+1] > '9' {
-			b.WriteByte(sug[i])
-			continue
-		}
-		// Java: while Character.isDigit — multi-digit backrefs
-		j := i + 1
-		for j < len(sug) && sug[j] >= '0' && sug[j] <= '9' {
-			j++
-		}
-		n := 0
-		for k := i + 1; k < j; k++ {
-			n = n*10 + int(sug[k]-'0')
-		}
-		if n >= 1 && n <= len(spanToks) {
-			b.WriteString(spanToks[n-1])
-		} else {
-			// Unknown backref: leave literal (do not invent empty).
-			b.WriteString(sug[i:j])
-		}
-		i = j - 1
-	}
-	return b.String()
-}

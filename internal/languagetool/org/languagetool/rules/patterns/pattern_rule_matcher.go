@@ -753,6 +753,8 @@ func (m *PatternRuleMatcher) createRuleMatch(
 	}
 
 	// Extract <suggestion> from message + suggestionsOutMsg (Java RuleMatch ctor).
+	// Message must still contain <suggestion> tags (Java PatternRule); do not soft-expand
+	// stripped templates — FormatMatches already resolved \N / <match> inside tags.
 	combined := clearMsg + suggestionsOutMsg
 	var replacements []string
 	for _, rep := range extractSuggestionBodies(combined) {
@@ -770,30 +772,6 @@ func (m *PatternRuleMatcher) createRuleMatch(
 			rep = tools.UppercaseFirstChar(rep)
 		}
 		replacements = append(replacements, rep)
-	}
-
-	// Templates not already covered by message markup (loader path).
-	if pr != nil && len(pr.SuggestionTemplates) > 0 && len(replacements) == 0 {
-		for _, t := range pr.SuggestionTemplates {
-			for _, e := range ExpandSuggestionTemplate(t, tokens, tokenPositions, firstMatchToken, sugMatches, lang, phraseCtx) {
-				if e == "" || e == MistakeMarker || strings.Contains(e, MistakeMarker) {
-					continue
-				}
-				if suppressMisspelledIn(sugMatches) && isParenOnlyForm(e) {
-					continue
-				}
-				if isAllUppercase {
-					up := strings.ToUpper(e)
-					if rm.OriginalErrorStr == up {
-						continue
-					}
-					e = up
-				} else if startsWithUppercase {
-					e = tools.UppercaseFirstChar(e)
-				}
-				replacements = append(replacements, e)
-			}
-		}
 	}
 	if len(replacements) > 0 {
 		rm.SetSuggestedReplacements(replacements)

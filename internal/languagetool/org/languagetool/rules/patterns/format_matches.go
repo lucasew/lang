@@ -40,15 +40,17 @@ func ProcessRuleMessage(raw string) (string, []*Match) {
 // reSuggestionOpen matches <suggestion …> including suppress_misspelled.
 var reSuggestionOpen = regexp.MustCompile(`(?is)<suggestion(\s[^>]*)?>`)
 
-// injectPleaseSpellMe ports PatternRuleHandler suggestion start with suppress_misspelled="yes".
+// injectPleaseSpellMe ports PatternRuleHandler SUGGESTION start:
+// always emit plain <suggestion> (never attributes), and append PLEASE_SPELL_ME when
+// suppress_misspelled="yes" on the suggestion (or inherited — see message-level path).
 func injectPleaseSpellMe(msg string) string {
 	return reSuggestionOpen.ReplaceAllStringFunc(msg, func(open string) string {
 		attrs := parseXMLAttrs(open)
+		// Java: strToAppend = "<suggestion>"; if suppress → + PLEASE_SPELL_ME
 		if strings.EqualFold(attrs["suppress_misspelled"], "yes") {
-			// <suggestion…><pleasespellme/>
-			return open + PleaseSpellMe
+			return suggestionStartTag + PleaseSpellMe
 		}
-		return open
+		return suggestionStartTag
 	})
 }
 
@@ -97,7 +99,9 @@ func rewriteMatchTags(msg string) (string, []*Match) {
 	return b.String(), matches
 }
 
-// suggestionSuppressMisspelled reports whether the enclosing <suggestion> has suppress_misspelled="yes".
+// suggestionSuppressMisspelled ports Java setMatchElement(..., isSuppressMisspelled):
+// after injectPleaseSpellMe, suppress suggestions are <suggestion><pleasespellme/>…
+// (attrs already normalized away — detect PLEASE_SPELL_ME immediately after the open tag).
 func suggestionSuppressMisspelled(msg string, at int) bool {
 	if at < 0 || at > len(msg) {
 		return false
@@ -107,13 +111,21 @@ func suggestionSuppressMisspelled(msg string, at int) bool {
 	if open < 0 {
 		return false
 	}
+	// Must still be inside this suggestion (not after a later </suggestion>).
+	close := strings.LastIndex(lower, "</suggestion>")
+	if close > open {
+		return false
+	}
 	end := strings.Index(msg[open:], ">")
 	if end < 0 {
 		return false
 	}
-	tag := msg[open : open+end+1]
-	attrs := parseXMLAttrs(tag)
-	return strings.EqualFold(attrs["suppress_misspelled"], "yes")
+	after := open + end + 1
+	if after > len(msg) {
+		return false
+	}
+	// Java isSuggestionSuppressMisspelled → PLEASE_SPELL_ME right after <suggestion>
+	return strings.HasPrefix(msg[after:], PleaseSpellMe)
 }
 
 func isInsideSuggestion(msg string, at int) bool {
@@ -519,106 +531,4 @@ func combineLists(input [][]string, output []string, r int, langCode string) []s
 	return out
 }
 
-// ExpandSuggestionTemplate formats one suggestion template.
-// When the template is a single \N (optional whitespace) and synthesis yields
-// multiple forms, returns one string per form (Java multi-suggestion path).
-func ExpandSuggestionTemplate(
-	tmpl string,
-	tokenReadings []*languagetool.AnalyzedTokenReadings,
-	positions []int,
-	firstMatchTok int,
-	suggestionMatches []*Match,
-	langCode string,
-	phraseCtx ...PhraseMatchContext,
-) []string {
-	var pctx PhraseMatchContext
-	if len(phraseCtx) > 0 {
-		pctx = phraseCtx[0]
-	}
-	t := strings.TrimSpace(tmpl)
-	// Pure backref: \N only
-	if len(t) >= 2 && t[0] == '\\' && unicode.IsDigit(rune(t[1])) {
-		only := true
-		for i := 1; i < len(t); i++ {
-			if !unicode.IsDigit(rune(t[i])) {
-				only = false
-				break
-			}
-		}
-		if only && len(suggestionMatches) > 0 {
-			forms := FormatMatches(tokenReadings, positions, firstMatchTok, t, suggestionMatches, langCode, pctx)
-			// FormatMatches returns one string; for pure \N with multi forms via
-			// formatMultipleSynthesis without suggestion tags, multi forms join wrong.
-			// Re-run concat path:
-			j, _ := strconv.Atoi(t[1:])
-			j--
-			repTokenPos := 0
-			for l := 0; l <= j && l < len(positions); l++ {
-				repTokenPos += positions[l]
-			}
-			nextTokenPos := 0
-			if j+1 < len(positions) {
-				nextTokenPos = firstMatchTok + repTokenPos + positions[j+1]
-			}
-			if j >= 0 && (j >= len(positions) || positions[j] != 0) {
-				ms := concatMatches(0, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode, pctx)
-				if len(ms) > 0 {
-					return ms
-				}
-			}
-			return []string{forms}
-		}
-	}
-	return []string{FormatMatches(tokenReadings, positions, firstMatchTok, tmpl, suggestionMatches, langCode, pctx)}
-}
 
-// defaultPositions returns all-1s positions when matchFrom did not track them.
-func defaultPositions(n int) []int {
-	if n <= 0 {
-		return nil
-	}
-	p := make([]int, n)
-	for i := range p {
-		p[i] = 1
-	}
-	return p
-}
-
-// FormatMessageAndSuggestions expands \N / <match> in message and suggestion strings.
-func FormatMessageAndSuggestions(
-	msg string,
-	suggs []string,
-	matches []*Match,
-	tokens []*languagetool.AnalyzedTokenReadings,
-	firstMatchTok int,
-	positions []int,
-	langCode string,
-) (string, []string) {
-	if len(positions) == 0 {
-		// Fallback when caller has no positions: one token per pattern slot unknown —
-		// use 1 for each digit index seen is wrong; leave positions empty and FormatMatches
-		// will still resolve firstMatchTok+repTokenPos with zero sums for missing slots.
-		positions = nil
-	}
-	outMsg := FormatMatches(tokens, positions, firstMatchTok, msg, matches, langCode)
-	outSuggs := make([]string, len(suggs))
-	for i, s := range suggs {
-		outSuggs[i] = FormatMatches(tokens, positions, firstMatchTok, s, matches, langCode)
-	}
-	return outMsg, outSuggs
-}
-
-func suppressMisspelledIn(matches []*Match) bool {
-	for _, m := range matches {
-		if m != nil && m.ChecksSpelling() {
-			return true
-		}
-	}
-	return false
-}
-
-// isParenOnlyForm reports Java empty-synth form "(token)".
-func isParenOnlyForm(s string) bool {
-	s = strings.TrimSpace(s)
-	return len(s) >= 2 && s[0] == '(' && s[len(s)-1] == ')'
-}
