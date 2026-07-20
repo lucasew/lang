@@ -60,3 +60,35 @@ func TestFrenchPartialPosTagFilter_Registered(t *testing.T) {
 	require.True(t, patterns.GlobalRuleFilterCreator.HasFilter(
 		"org.languagetool.rules.fr.FrenchPartialPosTagFilter"))
 }
+
+func TestFrenchPartialPosTagFilter_WithTagAndDisambig(t *testing.T) {
+	ClearDefaultFrenchPartialPosTagger()
+	ClearFrenchFilterDisambiguator()
+	// fail-closed without hooks
+	f0 := NewFrenchPartialPosTagFilter(nil)
+	ok, err := f0.Accept("chatons", "^(chat)ons$", "Nc.*", false, false, "", "")
+	require.NoError(t, err)
+	require.False(t, ok)
+
+	SetDefaultFrenchPartialPosTagger(func(p string) []string {
+		if p == "chat" {
+			return []string{"Ncms"}
+		}
+		return nil
+	})
+	WireFrenchFilterDisambiguator(stubFRDisambig{})
+	t.Cleanup(func() {
+		ClearDefaultFrenchPartialPosTagger()
+		ClearFrenchFilterDisambiguator()
+	})
+	f := NewFrenchPartialPosTagFilter(nil)
+	ok, err = f.Accept("chatons", "^(chat)ons$", "Nc.*", false, false, "", "")
+	require.NoError(t, err)
+	require.True(t, ok)
+}
+
+type stubFRDisambig struct{}
+
+func (stubFRDisambig) Disambiguate(s *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	return s
+}

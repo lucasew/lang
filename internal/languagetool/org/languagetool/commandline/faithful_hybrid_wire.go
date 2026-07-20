@@ -6,6 +6,8 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	rulesfr "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
+	rulesga "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ga"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	rulesru "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
@@ -247,6 +249,8 @@ func registerIrishHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOption
 		return false
 	}
 	lt.Disambiguator = h
+	// Java IrishPartialPosTagFilter uses Irish.getInstance().getDisambiguator().
+	rulesga.WireIrishFilterDisambiguator(h)
 	return true
 }
 
@@ -383,6 +387,8 @@ func registerFrenchHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptio
 		return false
 	}
 	lt.Disambiguator = h
+	// Java FrenchPartialPosTagFilter uses French.getInstance().getDisambiguator().
+	rulesfr.WireFrenchFilterDisambiguator(h)
 	return true
 }
 

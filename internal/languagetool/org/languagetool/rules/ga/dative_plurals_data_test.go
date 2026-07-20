@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -43,6 +44,35 @@ func TestDhaNoBeirtData(t *testing.T) {
 func TestIrishPartialPosTagFilter(t *testing.T) {
 	f := NewIrishPartialPosTagFilter(func(s string) []string { return []string{"Noun"} })
 	require.NotNil(t, f)
+	ClearDefaultIrishPartialPosTagger()
 	f2 := NewNoDisambiguationIrishPartialPosTagFilter(nil)
 	require.NotNil(t, f2)
+	// fail-closed without process-wide tagger
+	ok, err := f2.Accept("x", "^(x)$", "Noun", false, false, "", "")
+	require.NoError(t, err)
+	require.False(t, ok)
+}
+
+func TestIrishPartialPosTagFilter_WithTagAndDisambig(t *testing.T) {
+	SetDefaultIrishPartialPosTagger(func(p string) []string {
+		if p == "cat" {
+			return []string{"Noun"}
+		}
+		return nil
+	})
+	WireIrishFilterDisambiguator(stubGADisambig{})
+	t.Cleanup(func() {
+		ClearDefaultIrishPartialPosTagger()
+		ClearIrishFilterDisambiguator()
+	})
+	f := NewIrishPartialPosTagFilter(nil)
+	ok, err := f.Accept("cats", "^(cat)s$", "Noun", false, false, "", "")
+	require.NoError(t, err)
+	require.True(t, ok)
+}
+
+type stubGADisambig struct{}
+
+func (stubGADisambig) Disambiguate(s *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	return s
 }

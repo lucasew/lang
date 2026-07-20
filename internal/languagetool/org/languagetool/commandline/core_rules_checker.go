@@ -14,6 +14,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	rulesfr "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
+	rulesga "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ga"
 	rulesnl "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	rulesru "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
@@ -236,9 +238,16 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 				} else {
 					_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
 				}
-				// Java NoDisambiguationRussianPartialPosTagFilter uses Languages.get("ru").getTagger().
-				if strings.EqualFold(base, "ru") && lt.TagWord != nil {
-					rulesru.WireRussianFilterTaggerFromTagWord(lt.TagWord)
+				// Java *PartialPosTagFilter uses Languages.get(lang).getTagger().
+				if lt.TagWord != nil {
+					switch strings.ToLower(base) {
+					case "ru":
+						rulesru.WireRussianFilterTaggerFromTagWord(lt.TagWord)
+					case "fr":
+						rulesfr.WireFrenchFilterTaggerFromTagWord(lt.TagWord)
+					case "ga":
+						rulesga.WireIrishFilterTaggerFromTagWord(lt.TagWord)
+					}
 				}
 			}
 			// Java createDefaultSynthesizer when *_synth.dict is present.
