@@ -415,3 +415,26 @@ func TestStringTools_JavaStringLenGates(t *testing.T) {
 	require.False(t, IsWhitespace("😀"), "non-BMP not length-1 whitespace")
 	require.True(t, IsWhitespace("\u00a0"))
 }
+
+// Twin of StringTools case helpers: charAt/length are UTF-16 units.
+// Non-BMP (emoji) is two code units; charAt(0) is a high surrogate (not upper/lower letter).
+func TestStringTools_CaseHelpers_UTF16CharAt(t *testing.T) {
+	// "😀X" — first unit is not uppercase letter
+	require.False(t, StartsWithUppercase("😀X"))
+	require.False(t, StartsWithLowercase("😀X"))
+	require.False(t, IsCapitalizedWord("😀bc"))
+	// no lowercase letters among UTF-16 units → all-upper vacuously
+	require.True(t, IsAllUppercase("😀"))
+	// length == 2 (surrogate pair) → not the length-1 short path of changeFirstCharCase
+	// uppercases first letter-or-digit unit: high surrogate is not letter/digit → skip to end
+	// Java walks until letter/digit or last pos; if last is low surrogate, Character.toUpperCase leaves it
+	got := UppercaseFirstChar("😀")
+	require.Equal(t, "😀", got, "emoji has no letter/digit to case-change via charAt")
+
+	// BMP multi-byte still works
+	require.True(t, StartsWithUppercase("ÄÖ"))
+	require.True(t, IsCapitalizedWord("Öäü"))
+	require.Equal(t, "Öäü", UppercaseFirstChar("öäü"))
+	// Leading quotes then first letter (Java isLetterOrDigit skip)
+	require.Equal(t, "'Test'", UppercaseFirstChar("'test'"))
+}

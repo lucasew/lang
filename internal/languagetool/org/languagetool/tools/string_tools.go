@@ -7,7 +7,6 @@ import (
 	"sort"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"golang.org/x/text/unicode/norm"
 )
@@ -36,8 +35,11 @@ func AssureSet(s, varName string) {
 	}
 }
 
+// IsAllUppercase ports StringTools.isAllUppercase — iterates Java charAt (UTF-16 units).
 func IsAllUppercase(str string) bool {
-	for _, c := range str {
+	for _, cu := range utf16Units(str) {
+		c := rune(cu)
+		// Character.isLetter/isLowerCase on a UTF-16 code unit (surrogates → false)
 		if unicode.IsLetter(c) && unicode.IsLower(c) {
 			return false
 		}
@@ -45,8 +47,10 @@ func IsAllUppercase(str string) bool {
 	return true
 }
 
+// IsNotAllLowercase ports StringTools.isNotAllLowercase (charAt loop).
 func IsNotAllLowercase(str string) bool {
-	for _, c := range str {
+	for _, cu := range utf16Units(str) {
+		c := rune(cu)
 		if unicode.IsLetter(c) && !unicode.IsLower(c) {
 			return true
 		}
@@ -54,15 +58,17 @@ func IsNotAllLowercase(str string) bool {
 	return false
 }
 
+// IsCapitalizedWord ports StringTools.isCapitalizedWord (charAt(0) + rest).
 func IsCapitalizedWord(str string) bool {
 	if IsEmptyStr(str) {
 		return false
 	}
-	r, size := utf8.DecodeRuneInString(str)
-	if !unicode.IsUpper(r) {
+	u := utf16Units(str)
+	if len(u) == 0 || !unicode.IsUpper(rune(u[0])) {
 		return false
 	}
-	for _, c := range str[size:] {
+	for i := 1; i < len(u); i++ {
+		c := rune(u[i])
 		if unicode.IsLetter(c) && !unicode.IsLower(c) {
 			return false
 		}
@@ -74,20 +80,22 @@ func IsMixedCase(str string) bool {
 	return !IsAllUppercase(str) && !IsCapitalizedWord(str) && IsNotAllLowercase(str)
 }
 
+// StartsWithUppercase ports StringTools.startsWithUppercase (charAt(0)).
 func StartsWithUppercase(str string) bool {
 	if IsEmptyStr(str) {
 		return false
 	}
-	r, _ := utf8.DecodeRuneInString(str)
-	return unicode.IsUpper(r)
+	u := utf16Units(str)
+	return len(u) > 0 && unicode.IsUpper(rune(u[0]))
 }
 
+// StartsWithLowercase ports StringTools.startsWithLowercase (charAt(0)).
 func StartsWithLowercase(str string) bool {
 	if IsEmptyStr(str) {
 		return false
 	}
-	r, _ := utf8.DecodeRuneInString(str)
-	return unicode.IsLower(r)
+	u := utf16Units(str)
+	return len(u) > 0 && unicode.IsLower(rune(u[0]))
 }
 
 func AllStartWithLowercase(str string) bool {
@@ -176,29 +184,49 @@ func PreserveCase(inputString, modelString string) string {
 	return inputString
 }
 
+// changeFirstCharCase ports StringTools.changeFirstCharCase (UTF-16 charAt/substring).
+// Operates on UTF-16 code units so unpaired surrogates reassemble like Java String.
 func changeFirstCharCase(str string, toUpperCase bool) string {
 	if IsEmptyStr(str) {
 		return str
 	}
-	runes := []rune(str)
-	if len(runes) == 1 {
+	u := utf16Units(str)
+	// Java: str.length() == 1
+	if len(u) == 1 {
 		if toUpperCase {
 			return strings.ToUpper(str) // Locale.ENGLISH for letters
 		}
 		return strings.ToLower(str)
 	}
 	pos := 0
-	lenR := len(runes) - 1
-	for !unicode.IsLetter(runes[pos]) && !unicode.IsDigit(runes[pos]) && lenR > pos {
+	last := len(u) - 1
+	// Java: while (!Character.isLetterOrDigit(str.charAt(pos)) && len > pos)
+	for !javaIsLetterOrDigit(u[pos]) && last > pos {
 		pos++
 	}
-	first := runes[pos]
-	if toUpperCase {
-		first = unicode.ToUpper(first)
-	} else {
-		first = unicode.ToLower(first)
+	// Java: Character.toUpperCase/toLowerCase(char) — non-letters (incl. surrogates) unchanged
+	first := u[pos]
+	if javaIsLetterOrDigit(first) {
+		r := rune(first)
+		if toUpperCase {
+			first = uint16(unicode.ToUpper(r))
+		} else {
+			first = uint16(unicode.ToLower(r))
+		}
 	}
-	return string(runes[:pos]) + string(first) + string(runes[pos+1:])
+	// Java: substring(0,pos) + cased firstChar + substring(pos+1) on char array
+	out := make([]uint16, 0, len(u))
+	out = append(out, u[:pos]...)
+	out = append(out, first)
+	out = append(out, u[pos+1:]...)
+	return utf16ToString(out)
+}
+
+// javaIsLetterOrDigit ports Character.isLetterOrDigit(char) for a UTF-16 code unit.
+// Surrogate halves are not letters/digits.
+func javaIsLetterOrDigit(cu uint16) bool {
+	c := rune(cu)
+	return unicode.IsLetter(c) || unicode.IsDigit(c)
 }
 
 func EscapeXML(s string) string { return EscapeHTML(s) }
