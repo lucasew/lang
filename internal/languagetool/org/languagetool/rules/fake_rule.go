@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
 // Tag ports org.languagetool.Tag (subset used by filters).
 type Tag string
 
@@ -11,6 +13,8 @@ type FakeRule struct {
 	tags              []Tag
 	includedAllAtOnce bool
 	url               string
+	toneTags          []languagetool.ToneTag
+	goalSpecific      bool
 }
 
 func NewFakeRule(id string) *FakeRule {
@@ -60,6 +64,33 @@ func (r *FakeRule) IsIncludedInErrorsCorrectedAllAtOnce() bool {
 func (r *FakeRule) SetIncludedInErrorsCorrectedAllAtOnce(v bool) {
 	if r != nil {
 		r.includedAllAtOnce = v
+	}
+}
+
+// GetToneTags ports Rule.getToneTags.
+func (r *FakeRule) GetToneTags() []languagetool.ToneTag {
+	if r == nil || len(r.toneTags) == 0 {
+		return nil
+	}
+	return append([]languagetool.ToneTag(nil), r.toneTags...)
+}
+
+// SetToneTags ports Rule.setToneTags.
+func (r *FakeRule) SetToneTags(tags ...languagetool.ToneTag) {
+	if r != nil {
+		r.toneTags = append([]languagetool.ToneTag(nil), tags...)
+	}
+}
+
+// IsGoalSpecific ports Rule.isGoalSpecific.
+func (r *FakeRule) IsGoalSpecific() bool {
+	return r != nil && r.goalSpecific
+}
+
+// SetGoalSpecific ports Rule.setGoalSpecific.
+func (r *FakeRule) SetGoalSpecific(v bool) {
+	if r != nil {
+		r.goalSpecific = v
 	}
 }
 

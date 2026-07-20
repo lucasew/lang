@@ -151,3 +151,18 @@ func TestToLocalMatches_NotPickyByDefault(t *testing.T) {
 	require.False(t, out[0].IsPicky)
 	require.False(t, out[0].IncludedInErrorsCorrectedAllAtOnce)
 }
+
+func TestToLocalMatches_ToneTagsAndGoalSpecific(t *testing.T) {
+	r := NewFakeRule("TONE_RULE")
+	r.SetToneTags(languagetool.ToneFormal, languagetool.ToneClarity)
+	r.SetGoalSpecific(true)
+	m := NewRuleMatch(r, nil, 0, 2, "msg")
+	out := ToLocalMatches([]*RuleMatch{m})
+	require.Len(t, out, 1)
+	require.Equal(t, []languagetool.ToneTag{languagetool.ToneFormal, languagetool.ToneClarity}, out[0].ToneTags)
+	require.True(t, out[0].GoalSpecific)
+	// level/tone filter: goal-specific + formal tone inactive under default empty tone set
+	meta := languagetool.LocalMatchLevelToneMeta(out[0])
+	require.False(t, languagetool.IsRuleActiveForLevelAndToneTags(meta, languagetool.LevelDefault, nil))
+	require.True(t, languagetool.IsRuleActiveForLevelAndToneTags(meta, languagetool.LevelDefault, map[languagetool.ToneTag]struct{}{languagetool.ToneFormal: {}}))
+}

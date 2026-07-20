@@ -258,6 +258,10 @@ type LocalMatch struct {
 	// NewLanguageMatches ports RuleMatch.newLanguageMatches (lang code → confidence).
 	// When non-empty, TextCheckCallable adds ignore Ranges + updates ExtendedSentenceRange rates.
 	NewLanguageMatches map[string]float32
+	// ToneTags ports Rule.getToneTags (empty = no tone restriction).
+	ToneTags []ToneTag
+	// GoalSpecific ports Rule.isGoalSpecific (used with ALL_WITHOUT_GOAL_SPECIFIC).
+	GoalSpecific bool
 }
 
 // SentenceChecker returns matches for one analyzed sentence (offsets relative to sentence text).

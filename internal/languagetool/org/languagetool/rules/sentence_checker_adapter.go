@@ -102,6 +102,17 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 		if g, ok := m.Rule.(interface{ EstimateContextForSureMatch() int }); ok {
 			lm.EstimateContextForSureMatch = g.EstimateContextForSureMatch()
 		}
+		// Tone tags + goalSpecific for isRuleActiveForLevelAndToneTags.
+		if g, ok := m.Rule.(interface {
+			GetToneTags() []languagetool.ToneTag
+		}); ok {
+			if tags := g.GetToneTags(); len(tags) > 0 {
+				lm.ToneTags = append([]languagetool.ToneTag(nil), tags...)
+			}
+		}
+		if g, ok := m.Rule.(interface{ IsGoalSpecific() bool }); ok {
+			lm.GoalSpecific = g.IsGoalSpecific()
+		}
 		// RuleMeta fallback when rule getters left category/ITS empty (CLI/API parity).
 		// Only apply known Java families — skip uncategorized invent for unknown IDs.
 		if lm.RuleID != "" && (lm.CategoryID == "" || lm.IssueType == "" || lm.Description == "" || lm.ShortMessage == "") {

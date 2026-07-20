@@ -61,11 +61,14 @@ func containsTone(list []ToneTag, want ToneTag) bool {
 	return false
 }
 
-// LocalMatchLevelToneMeta builds RuleLevelToneMeta from a LocalMatch.
-// ToneTags on LocalMatch are not yet a field — IsPicky is the only wired flag;
-// tone/goal-specific stay empty (rule considered tone-less → active).
+// LocalMatchLevelToneMeta builds RuleLevelToneMeta from a LocalMatch
+// (IsPicky, ToneTags, GoalSpecific from ToLocalMatches / injects).
 func LocalMatchLevelToneMeta(m LocalMatch) RuleLevelToneMeta {
-	return RuleLevelToneMeta{IsPicky: m.IsPicky}
+	return RuleLevelToneMeta{
+		IsPicky:      m.IsPicky,
+		ToneTags:     append([]ToneTag(nil), m.ToneTags...),
+		GoalSpecific: m.GoalSpecific,
+	}
 }
 
 // FilterMatchesForLevelAndToneTags ports filterMatches tone/level stream filter.

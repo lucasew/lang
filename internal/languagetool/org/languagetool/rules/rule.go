@@ -26,6 +26,10 @@ type BaseRule struct {
 	Description string
 	Category    *Category
 	DefaultOff  bool
+	// ToneTags ports Rule.toneTags (Java List<ToneTag>).
+	ToneTags []languagetool.ToneTag
+	// GoalSpecific ports Rule.isGoalSpecific.
+	GoalSpecific bool
 	// incorrectExamples / correctExamples port Rule lists (Java addExamplePair).
 	incorrectExamples []IncorrectExample
 	correctExamples   []CorrectExample
@@ -100,6 +104,47 @@ func (r *BaseRule) GetCorrectExamples() []CorrectExample {
 	out := make([]CorrectExample, len(r.correctExamples))
 	copy(out, r.correctExamples)
 	return out
+}
+
+// GetToneTags ports Rule.getToneTags.
+func (r *BaseRule) GetToneTags() []languagetool.ToneTag {
+	if r == nil || len(r.ToneTags) == 0 {
+		return nil
+	}
+	return append([]languagetool.ToneTag(nil), r.ToneTags...)
+}
+
+// SetToneTags ports Rule.setToneTags.
+func (r *BaseRule) SetToneTags(tags []languagetool.ToneTag) {
+	if r == nil {
+		return
+	}
+	r.ToneTags = append([]languagetool.ToneTag(nil), tags...)
+}
+
+// HasToneTag ports Rule.hasToneTag.
+func (r *BaseRule) HasToneTag(tag languagetool.ToneTag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.ToneTags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+// IsGoalSpecific ports Rule.isGoalSpecific.
+func (r *BaseRule) IsGoalSpecific() bool {
+	return r != nil && r.GoalSpecific
+}
+
+// SetGoalSpecific ports Rule.setGoalSpecific.
+func (r *BaseRule) SetGoalSpecific(v bool) {
+	if r != nil {
+		r.GoalSpecific = v
+	}
 }
 
 // appendExamplePair is the shared Java Rule.addExamplePair body.
