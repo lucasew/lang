@@ -20,10 +20,10 @@ func TestFilterMatchesByCategories(t *testing.T) {
 	require.Len(t, out, 1)
 	require.Equal(t, "EN_A_VS_AN", out[0].RuleID)
 
-	// --enablecategories without --enabledonly still restricts categories
+	// Java: --enablecategories without --enabledonly does not hide other categories
+	// (only enableRuleCategory; no disable of the rest).
 	out = FilterMatchesByCategories(ms, nil, []string{"TYPOS"}, false)
-	require.Len(t, out, 1)
-	require.Equal(t, "MORFOLOGIK_RULE_EN_US", out[0].RuleID)
+	require.Len(t, out, 2)
 
 	// LocalMatch CategoryID wins over RuleMeta
 	ms2 := []LocalMatch{
@@ -33,7 +33,11 @@ func TestFilterMatchesByCategories(t *testing.T) {
 	out = FilterMatchesByCategories(ms2, []string{"STYLE"}, nil, false)
 	require.Len(t, out, 1)
 	require.Equal(t, "EN_SOFT_Y", out[0].RuleID)
+	// enable STYLE without enabledOnly → both matches kept
 	out = FilterMatchesByCategories(ms2, nil, []string{"STYLE"}, false)
+	require.Len(t, out, 2)
+	// enable STYLE with enabledOnly → only STYLE
+	out = FilterMatchesByCategories(ms2, nil, []string{"STYLE"}, true)
 	require.Len(t, out, 1)
 	require.Equal(t, "EN_SOFT_X", out[0].RuleID)
 }

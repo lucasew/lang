@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-
 // SystemExitHandler ports Main.SystemExitHandler.
 type SystemExitHandler func(code int)
 
@@ -46,7 +45,7 @@ Options:
   -d, --disable RULES      comma-separated disabled rule ids
   -e, --enable RULES       comma-separated enabled rule ids
   --level LEVEL            DEFAULT or PICKY (Java picky rules; not invent packs)
-  --enablecategories CATS  only report matches in these categories
+  --enablecategories CATS  enable these categories (with --enabledonly: only them)
   --disablecategories CATS suppress matches in these categories (e.g. STYLE)
   -t, --taggeronly         only tag the text
   -a, --apply              apply first suggestions to text, print result
