@@ -200,6 +200,26 @@ func TestRemoveInanimVKly(t *testing.T) {
 	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, adj, moon, bang})
 	RemoveInanimVKly(sent2)
 	require.True(t, sent2.GetTokensWithoutWhitespace()[2].HasPartialPosTag("v_kly"))
+
+	// Java gate: only :geo v_kly → do not enter (keep geo vocative)
+	geoOnly := atrMulti("Києве", [][2]string{
+		{"Київ", "noun:inanim:m:v_kly:prop:geo"},
+		{"Київ", "noun:inanim:m:v_naz:prop:geo"},
+	})
+	sent3 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, geoOnly})
+	RemoveInanimVKly(sent3)
+	require.True(t, sent3.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_kly"))
+
+	// non-geo v_kly present → also drop geo v_kly (Java INANIM_VKLY includes geo)
+	mixed := atrMulti("місте", [][2]string{
+		{"місто", "noun:inanim:n:v_kly"},
+		{"місто", "noun:inanim:n:v_kly:prop:geo"},
+		{"місто", "noun:inanim:n:v_naz"},
+	})
+	sent4 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, mixed})
+	RemoveInanimVKly(sent4)
+	require.False(t, sent4.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_kly"))
+	require.True(t, sent4.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_naz"))
 }
 
 func TestRemoveLowerCaseHomonymsForAbbreviations(t *testing.T) {

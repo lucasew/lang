@@ -714,7 +714,12 @@ func hasPOSStart(tok *languagetool.AnalyzedTokenReadings, prefix string) bool {
 	return false
 }
 
-// RemoveInanimVKly drops inanim vocative when other cases remain and context is not vocative.
+// Java UkrainianHybridDisambiguator.INANIM_VKLY = noun:inanim:.:v_kly.*
+// Early gate uses noun:inanim:.:v_kly(?!.*:geo).* — RE2: full INANIM_VKLY match without :geo.
+var inanimVklyRE = regexp.MustCompile(`^noun:inanim:.:v_kly.*$`)
+
+// RemoveInanimVKly ports UkrainianHybridDisambiguator.removeInanimVKly.
+// Drops inanim vocative when other cases remain and context is not vocative.
 func RemoveInanimVKly(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -725,22 +730,27 @@ func RemoveInanimVKly(input *languagetool.AnalyzedSentence) {
 		if tok == nil {
 			continue
 		}
-		if likelyVklyContext(tokens, i) {
+		readings := tok.GetReadings()
+		// Java: !hasPosTag(…, noun:inanim:.:v_kly(?!.*:geo).*) || likelyVklyContext → continue
+		if !hasInanimVklyNotGeo(readings) || likelyVklyContext(tokens, i) {
 			continue
 		}
-		readings := tok.GetReadings()
 		var vkly []*languagetool.AnalyzedToken
 		other := false
 		for _, r := range readings {
-			if r == nil || r.GetPOSTag() == nil {
+			if r == nil {
 				continue
+			}
+			// Java: if posTag == null → break (stop scan)
+			if r.GetPOSTag() == nil {
+				break
 			}
 			pos := *r.GetPOSTag()
-			if strings.HasSuffix(pos, "_END") || pos == "SENT_END" {
+			if pos == languagetool.SentenceEndTagName {
 				continue
 			}
-			// inanim v_kly not geo
-			if strings.Contains(pos, "noun:inanim:") && strings.Contains(pos, "v_kly") && !strings.Contains(pos, ":geo") {
+			// Java INANIM_VKLY.matcher(pos).matches() — includes :geo if present
+			if fullMatch(inanimVklyRE, pos) {
 				vkly = append(vkly, r)
 			} else {
 				other = true
@@ -756,6 +766,20 @@ func RemoveInanimVKly(input *languagetool.AnalyzedSentence) {
 			tok.RemoveReading(r, "inanim_v_kly")
 		}
 	}
+}
+
+// hasInanimVklyNotGeo ports hasPosTag(…, "noun:inanim:.:v_kly(?!.*:geo).*").
+func hasInanimVklyNotGeo(readings []*languagetool.AnalyzedToken) bool {
+	for _, r := range readings {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		pos := *r.GetPOSTag()
+		if fullMatch(inanimVklyRE, pos) && !strings.Contains(pos, ":geo") {
+			return true
+		}
+	}
+	return false
 }
 
 // punctAfterKlyRE ports PUNCT_AFTER_KLY_PATTERN = [!?,»"…]|[.!?]{2,3}
