@@ -163,7 +163,7 @@ func (t *CatalanTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 			atr.SetChunkTags([]string{"_incorrect_verb_"})
 		}
 		out = append(out, atr)
-		pos += len([]rune(word))
+		pos += tagging.UTF16Len(word)
 	}
 	return out
 }

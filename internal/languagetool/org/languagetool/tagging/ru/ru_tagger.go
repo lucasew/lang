@@ -43,7 +43,7 @@ func (t *RussianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 			}
 		}
 		out = append(out, atr)
-		pos += len([]rune(word))
+		pos += tagging.UTF16Len(word)
 	}
 	return out
 }

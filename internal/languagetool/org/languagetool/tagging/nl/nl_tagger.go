@@ -84,7 +84,7 @@ func (t *DutchTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToken
 		atr := t.tagOne(originalWord, pos)
 		out = append(out, atr)
 		// Java: pos += word.length() after restoring originalWord
-		pos += len([]rune(originalWord))
+		pos += tagging.UTF16Len(originalWord)
 	}
 	return out
 }

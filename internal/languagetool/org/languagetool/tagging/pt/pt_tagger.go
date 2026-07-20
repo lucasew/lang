@@ -98,7 +98,7 @@ func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.Analyzed
 			atr.SetChunkTags([]string{"containsTypewriterApostrophe"})
 		}
 		out = append(out, atr)
-		pos += len([]rune(word))
+		pos += tagging.UTF16Len(word)
 	}
 	return out
 }

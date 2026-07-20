@@ -43,7 +43,7 @@ func (t *ArabicTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 	for _, word := range sentenceTokens {
 		readings := t.tagOne(word)
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-		pos += utf8.RuneCountInString(word)
+		pos += tagging.UTF16Len(word)
 	}
 	return out
 }

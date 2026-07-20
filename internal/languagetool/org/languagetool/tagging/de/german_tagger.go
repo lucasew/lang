@@ -74,7 +74,7 @@ func (t *GermanTagger) TagIgnoreCase(sentenceTokens []string, ignoreCase bool) [
 	for i, word := range sentenceTokens {
 		readings := t.tagOneInSentence(word, sentenceTokens, i, firstWord, prevWord, ignoreCase)
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-		pos += len([]rune(word))
+		pos += tagging.UTF16Len(word)
 		if strings.TrimSpace(word) != "" {
 			// Java: firstWord = !isAlphanumeric after first successful first-word handling
 			if firstWord {

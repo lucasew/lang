@@ -35,7 +35,7 @@ func (t *SlovakTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-		pos += len([]rune(word))
+		pos += tagging.UTF16Len(word)
 	}
 	return out
 }

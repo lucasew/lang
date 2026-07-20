@@ -78,7 +78,7 @@ func (t *FrenchTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 			atr.SetChunkTags([]string{"containsTypographicApostrophe"})
 		}
 		out = append(out, atr)
-		pos += len([]rune(w))
+		pos += tagging.UTF16Len(w)
 	}
 	return out
 }

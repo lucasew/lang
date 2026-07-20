@@ -28,7 +28,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if ents := EntityReadings(w); len(ents) > 0 {
 			readings = ents
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		if sp := SpecialPOSTag(w); sp != "" {
@@ -36,7 +36,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			lemma := w
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &lemma)}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java X-подібний / X-вмісний: right adj tags from wordTagger (no invent endings).
@@ -46,7 +46,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java CompoundTagger left "по" + poAdvMatch (по-сибірськи / по-свинячому).
@@ -56,7 +56,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java rightPartsWithLeftTagMap (гей-но, стривай-бо, …) — left POS from dict.
@@ -66,7 +66,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java doGuessMultiHyphens intj redup (а-а, гей-гей-гей) — dict-gated.
@@ -76,14 +76,14 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java doGuessMultiHyphens merge/stretch (ва-ре-ни-ки, Та-а-ак) + 3-part entities.
 		if stretch := DynamicMultiHyphenStretchReadings(w, t.TagWord); len(stretch) > 0 {
 			readings = stretch
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java equalParts redup for весь/усе (Усе-усе, всього-всього).
@@ -93,7 +93,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java numrAdjMatch (дво-триметровий…) — left numr + right adj from dict.
@@ -103,7 +103,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java NAME_SUFFIX (Мустафа-ага) — left name POS + fixed suffix list.
@@ -113,7 +113,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java BAD_SUFFIX (був-би) — left dict + :bad.
@@ -123,7 +123,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java left "аль" → tag Аль-right with :bad.
@@ -133,7 +133,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java Вибори-2014 / WORDS_WITH_YEAR.
@@ -143,7 +143,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java Формула-1 / WORDS_WITH_NUM.
@@ -153,7 +153,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java гірко-прегірко / гіркий-прегіркий (right пре+left).
@@ -163,7 +163,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java напівX-напівY dual compounds.
@@ -173,7 +173,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java matchDigitCompound: short endings from LetterEndingForNumericHelper;
@@ -184,13 +184,13 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		if dyn := FixedPartReadings(w, t.TagWord); len(dyn) > 0 {
 			readings = dyn
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
+			pos += tagging.UTF16Len(word)
 			continue
 		}
 		for _, tw := range t.TagWord(w) {
@@ -429,7 +429,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-		pos += len([]rune(word))
+		pos += tagging.UTF16Len(word)
 	}
 	return out
 }
