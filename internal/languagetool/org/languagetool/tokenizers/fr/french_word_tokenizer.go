@@ -117,6 +117,7 @@ func (w *FrenchWordTokenizer) Tokenize(text string) []string {
 	return tokenizers.JoinEMailsAndUrls(l)
 }
 
+// wordsToAddFR ports FrenchWordTokenizer.wordsToAdd.
 func wordsToAddFR(s string) []string {
 	var l []string
 	if s == "" {
@@ -126,30 +127,28 @@ func wordsToAddFR(s string) []string {
 		l = append(l, s)
 		return l
 	}
-	// Clitic suffixes from pattern groups (e.g. -tu, -t-elle) stay whole.
-	if strings.HasPrefix(s, "-") {
+	// Java: strip soft hyphen + normalize curly apostrophe before tagger lookup.
+	normalized := strings.ReplaceAll(s, "\u00AD", "")
+	normalized = strings.ReplaceAll(normalized, "’", "'")
+	if isTaggedFR(normalized) || doNotSplit[strings.ToLower(s)] {
 		l = append(l, s)
 		return l
 	}
-	// Soft hyphen compounds stay whole (check before stripping U+00AD).
-	if strings.Contains(s, "\u00AD") || doNotSplit[strings.ToLower(s)] || isTaggedFR(s) {
-		l = append(l, s)
-	} else {
-		var cur strings.Builder
-		for _, r := range s {
-			if r == '-' {
-				if cur.Len() > 0 {
-					l = append(l, cur.String())
-					cur.Reset()
-				}
-				l = append(l, "-")
-			} else {
-				cur.WriteRune(r)
+	// if not found, the word is split on hyphens (keep separators)
+	var cur strings.Builder
+	for _, r := range s {
+		if r == '-' {
+			if cur.Len() > 0 {
+				l = append(l, cur.String())
+				cur.Reset()
 			}
+			l = append(l, "-")
+		} else {
+			cur.WriteRune(r)
 		}
-		if cur.Len() > 0 {
-			l = append(l, cur.String())
-		}
+	}
+	if cur.Len() > 0 {
+		l = append(l, cur.String())
 	}
 	return l
 }

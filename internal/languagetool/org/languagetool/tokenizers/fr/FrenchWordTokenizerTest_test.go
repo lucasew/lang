@@ -17,8 +17,13 @@ func TestFrenchWordTokenizer_Tokenize(t *testing.T) {
 	// Inject IsTaggedFR for those surfaces — no soft invent doNotSplit list.
 	prev := IsTaggedFR
 	IsTaggedFR = func(s string) bool {
+		// Dictionary-tagged compounds + clitic fragments FrenchTagger keeps after pattern split.
 		switch strings.ToLower(s) {
-		case "strauss-kahn", "petit-déjeunes":
+		case "strauss-kahn", "petit-déjeunes", "sous-traitants",
+			"-tu", "-t-elle", "-il", "-le", "-moi", "-t-on", "-ce", "-en",
+			"-t-il", "-t-ils", "-je", "-la", "-les", "-leur", "-lui",
+			"-nous", "-on", "-toi", "-vous", "-vs", "-y", "-elles", "-ils",
+			"-t", "-m", "'en", "’en", "'y", "’y":
 			return true
 		default:
 			return false
