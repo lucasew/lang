@@ -386,20 +386,6 @@ func wireDutchMultitokenSpeller(opts *CommandLineOptions) {
 	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
 }
 
-// resolveGrammarDir prefers --data-dir/grammar, then LANG_GRAMMAR_DIR, then LANG_DATA_DIR/grammar.
-func resolveGrammarDir(opts *CommandLineOptions) string {
-	if opts != nil && opts.GetDataDir() != "" {
-		return filepath.Join(opts.GetDataDir(), "grammar")
-	}
-	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
-		return dir
-	}
-	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
-		return filepath.Join(dir, "grammar")
-	}
-	return ""
-}
-
 // resolveFalseFriendsFile prefers LANG_FALSEFRIENDS_FILE, then data-dir official names.
 // Java: /org/languagetool/rules/false-friends.xml — not soft invent files.
 func resolveFalseFriendsFile(opts *CommandLineOptions) string {

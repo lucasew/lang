@@ -36,23 +36,6 @@ func WalkUpFind(start, relPath string) string {
 	return ""
 }
 
-// DiscoverGrammarDir finds a soft grammar dir via env, data-dir, or walk-up testdata/grammar.
-func DiscoverGrammarDir(opts *CommandLineOptions) string {
-	if d := resolveGrammarDir(opts); d != "" {
-		if st, err := os.Stat(d); err == nil && st.IsDir() {
-			return d
-		}
-		// still return configured path even if missing (caller may no-op)
-		if opts != nil && opts.GetDataDir() != "" {
-			return d
-		}
-		if os.Getenv("LANG_GRAMMAR_DIR") != "" || os.Getenv("LANG_DATA_DIR") != "" {
-			return d
-		}
-	}
-	return WalkUpFind("", filepath.Join("testdata", "grammar"))
-}
-
 // DiscoverFalseFriendsFile finds false-friends XML via env/data-dir/walk-up.
 // Official upstream only (no false-friends-soft invent path).
 func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
