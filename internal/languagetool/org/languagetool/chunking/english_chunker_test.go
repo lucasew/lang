@@ -3,20 +3,18 @@ package chunking
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
 func TestEnglishChunker(t *testing.T) {
-	nn := "NN"
-	nns := "NNS"
-	det := "DT"
-	tokens := []*languagetool.AnalyzedTokenReadings{
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("The", &det, nil), 0),
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("dogs", &nns, nil), 4),
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("run", &nn, nil), 9),
-	}
+	// Spaced tokens like Java createReadingsList so OpenNLP position map works.
+	tokens := createReadingsList("The dogs run")
 	NewEnglishChunker().AddChunkTags(tokens)
-	// dogs should get NP-plural chunk tags
-	require.NotEmpty(t, tokens[1].GetChunkTags())
+	// dogs (index 2) should get NP-plural chunk tags
+	require.NotEmpty(t, tokens[2].GetChunkTags())
+	joined := ""
+	for _, c := range tokens[2].GetChunkTags() {
+		joined += c
+	}
+	require.Contains(t, joined, "NP")
 }

@@ -8,13 +8,11 @@ import (
 
 // EnglishChunker ports org.languagetool.chunking.EnglishChunker.
 //
-// When third_party/opennlp-models/en-chunker.bin is present, runs OpenNLP
-// ChunkerME (GIS maxent + beam) on non-whitespace LT tokens using their first
-// POS reading, then EnglishChunkFilter. Java also re-tokenizes and re-POS-tags
-// with OpenNLP models — still incomplete vs full Java when only the chunk
-// model is wired (no invent; POS→BIO fallback if the model is missing).
+// When third_party/opennlp-models/{en-token,en-pos-maxent,en-chunker}.bin are
+// present, runs the full Java OpenNLP path: TokenizerME → POSTaggerME →
+// ChunkerME → exact-span map onto LT tokens → EnglishChunkFilter.
 //
-// Fallback without model:
+// Fallback without models:
 //  1) map first LT POS → phrase type → B-/I- BIO;
 //  2) EnglishChunkFilter (singular/plural NP).
 type EnglishChunker struct {
@@ -34,6 +32,25 @@ func NewEnglishChunker() *EnglishChunker {
 			return len(pos) >= 2 && pos[0] == 'N' && pos[1] == 'N'
 		},
 	}
+}
+
+// Tokenize ports package-private EnglishChunker.tokenize (OpenNLP TokenizerME).
+// Replaces ’ with ' as Java does. Returns nil if en-token.bin is unavailable.
+func (c *EnglishChunker) Tokenize(sentence string) []string {
+	tok, _, _, ok := getOpenNLPEnglishPipeline()
+	if !ok || tok == nil {
+		// Lazy-load tokenizer alone for tests when only token model exists.
+		p := DiscoverOpenNLPTokenModel()
+		if p == "" {
+			return nil
+		}
+		t, err := NewTokenizerME(p)
+		if err != nil || t == nil {
+			return nil
+		}
+		return t.Tokenize(strings.ReplaceAll(sentence, "’", "'"))
+	}
+	return tok.Tokenize(strings.ReplaceAll(sentence, "’", "'"))
 }
 
 // AddChunkTags implements Chunker (Java EnglishChunker.addChunkTags).

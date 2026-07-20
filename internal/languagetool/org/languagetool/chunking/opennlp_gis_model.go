@@ -189,11 +189,48 @@ func (m *GISModel) Outcome(i int) string {
 	return m.outcomes[i]
 }
 
+// BestOutcome returns the outcome name with the highest probability.
+func (m *GISModel) BestOutcome(probs []float64) string {
+	if m == nil || len(probs) == 0 {
+		return ""
+	}
+	best := 0
+	for i := 1; i < len(probs) && i < len(m.outcomes); i++ {
+		if probs[i] > probs[best] {
+			best = i
+		}
+	}
+	return m.outcomes[best]
+}
+
+// OutcomeIndex returns the index of outcome name, or -1.
+func (m *GISModel) OutcomeIndex(name string) int {
+	if m == nil {
+		return -1
+	}
+	for i, o := range m.outcomes {
+		if o == name {
+			return i
+		}
+	}
+	return -1
+}
+
 func (m *GISModel) NumOutcomes() int {
 	if m == nil {
 		return 0
 	}
 	return m.numOutcomes
+}
+
+// Outcomes returns a copy of outcome names (for POS/chunk inventories).
+func (m *GISModel) Outcomes() []string {
+	if m == nil {
+		return nil
+	}
+	out := make([]string, len(m.outcomes))
+	copy(out, m.outcomes)
+	return out
 }
 
 func readJavaUTF(r io.Reader) (string, error) {

@@ -6,7 +6,8 @@ import (
 )
 
 // RegisterEnglishChunker installs English.createDefaultChunker() twin on lt.Chunker.
-// OpenNLP ChunkerME when third_party/opennlp-models/en-chunker.bin is present; else POS→BIO + EnglishChunkFilter (no invent).
+// Full OpenNLP path (en-token + en-pos-maxent + en-chunker) when models present;
+// else POS→BIO + EnglishChunkFilter (no invent).
 func RegisterEnglishChunker(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return

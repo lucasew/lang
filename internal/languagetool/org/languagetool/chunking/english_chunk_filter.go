@@ -1,9 +1,5 @@
 package chunking
 
-import (
-	"strings"
-)
-
 // EnglishChunkFilter ports org.languagetool.chunking.EnglishChunkFilter.
 // Adds singular/plural NP tags to B-NP/I-NP sequences (Java twin).
 type EnglishChunkFilter struct{}
@@ -121,8 +117,8 @@ func hasNounWithPluralReading(t ChunkTaggedToken) bool {
 			continue
 		}
 		tag := *pt
-		// Java: posTag != null && posTag.startsWith("N") && posTag.endsWith("S")
-		if strings.HasPrefix(tag, "N") && strings.HasSuffix(tag, "S") {
+		// Java EnglishChunkFilter: "NNS".equals(analyzedToken.getPOSTag())
+		if tag == "NNS" {
 			return true
 		}
 	}

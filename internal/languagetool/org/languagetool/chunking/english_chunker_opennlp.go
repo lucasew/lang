@@ -3,122 +3,166 @@ package chunking
 import (
 	"strings"
 	"sync"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// OpenNLP-backed path for EnglishChunker (Java uses ChunkerME + POS + tokenizer).
-// When en-chunker.bin loads, we run ChunkerME on non-whitespace LT tokens using
-// their first POS reading (Penn tags). Full OpenNLP re-tokenization + POSME is
-// a follow-up; chunk model is the critical gap vs invent POS→BIO.
+// OpenNLP-backed path for EnglishChunker — faithful to Java:
+//   tokenize(sentence) → cleanZeroWidth → posTag → chunk → map exact spans → filter.
+// Requires en-token.bin, en-pos-maxent.bin, and en-chunker.bin under third_party/opennlp-models.
 
 var (
-	openNLPChunkOnce sync.Once
-	openNLPChunker   *ChunkerME
-	openNLPChunkOK   bool
+	openNLPFullOnce sync.Once
+	openNLPTok      *TokenizerME
+	openNLPPOS      *POSTaggerME
+	openNLPChunk    *ChunkerME
+	openNLPFullOK   bool
 )
 
-func getOpenNLPChunker() *ChunkerME {
-	openNLPChunkOnce.Do(func() {
-		p := DiscoverOpenNLPChunkerModel()
-		if p == "" {
+func getOpenNLPEnglishPipeline() (tok *TokenizerME, pos *POSTaggerME, chunk *ChunkerME, ok bool) {
+	openNLPFullOnce.Do(func() {
+		tp := DiscoverOpenNLPTokenModel()
+		pp := DiscoverOpenNLPPOSModel()
+		cp := DiscoverOpenNLPChunkerModel()
+		if tp == "" || pp == "" || cp == "" {
 			return
 		}
-		c, err := NewChunkerME(p)
+		t, err := NewTokenizerME(tp)
+		if err != nil || t == nil {
+			return
+		}
+		p, err := NewPOSTaggerME(pp)
+		if err != nil || p == nil {
+			return
+		}
+		c, err := NewChunkerME(cp)
 		if err != nil || c == nil {
 			return
 		}
-		openNLPChunker = c
-		openNLPChunkOK = true
+		openNLPTok = t
+		openNLPPOS = p
+		openNLPChunk = c
+		openNLPFullOK = true
 	})
-	if openNLPChunkOK {
-		return openNLPChunker
-	}
-	return nil
+	return openNLPTok, openNLPPOS, openNLPChunk, openNLPFullOK
 }
 
-// tryOpenNLPChunks runs OpenNLP ChunkerME when the model is available.
+// tryOpenNLPChunks runs the full Java EnglishChunker OpenNLP pipeline when models load.
 // Returns false to fall back to POS→BIO interim path.
 func (c *EnglishChunker) tryOpenNLPChunks(tokens []*languagetool.AnalyzedTokenReadings) bool {
-	me := getOpenNLPChunker()
-	if me == nil || len(tokens) == 0 {
+	tokME, posME, chunkME, ok := getOpenNLPEnglishPipeline()
+	if !ok || tokME == nil || posME == nil || chunkME == nil || len(tokens) == 0 {
 		return false
 	}
-	var idxs []int
-	var toks, tags []string
-	for i, t := range tokens {
-		if t == nil {
-			continue
-		}
-		tok := t.GetToken()
-		if tok == "" || strings.TrimSpace(tok) == "" {
-			continue
-		}
-		pos := firstTokenPOS(t)
-		if pos == "" {
-			pos = "NN" // OpenNLP models expect a tag; untagged rare in full pipeline
-		}
-		idxs = append(idxs, i)
-		toks = append(toks, tok)
-		tags = append(tags, pos)
-	}
-	if len(toks) == 0 {
+
+	sentence := getSentenceFromReadings(tokens)
+	// Java: sentence.replace('’', '\'') inside tokenize()
+	openToks := tokME.Tokenize(strings.ReplaceAll(sentence, "’", "'"))
+	openToks = cleanZeroWidthWhitespaces(openToks)
+	if len(openToks) == 0 {
 		return false
 	}
-	// OpenNLP tokenizer expects ASCII apostrophe
-	for i, t := range toks {
-		toks[i] = strings.ReplaceAll(t, "’", "'")
-	}
-	chunks := me.Chunk(toks, tags)
-	if len(chunks) != len(toks) {
+	posTags := posME.Tag(openToks)
+	if len(posTags) != len(openToks) {
 		return false
 	}
-	// Build ChunkTaggedToken list for EnglishChunkFilter
-	tagged := make([]ChunkTaggedToken, len(toks))
-	for i := range toks {
-		ct := chunks[i]
-		if ct == "" {
-			ct = "O"
-		}
-		tagged[i] = NewChunkTaggedToken(toks[i], []ChunkTag{NewChunkTag(ct)}, tokens[idxs[i]])
+	chunkTags := chunkME.Chunk(openToks, posTags)
+	if len(chunkTags) != len(openToks) {
+		return false
 	}
+
+	tagged := getTokensWithTokenReadings(tokens, openToks, chunkTags)
 	if c.Filter != nil {
 		tagged = c.Filter.Filter(tagged)
 	}
-	for j, t := range tagged {
-		if j >= len(idxs) {
-			break
+	assignChunksToReadings(tagged)
+	return true
+}
+
+func getSentenceFromReadings(sentenceTokens []*languagetool.AnalyzedTokenReadings) string {
+	var b strings.Builder
+	for _, t := range sentenceTokens {
+		if t == nil {
+			continue
 		}
-		i := idxs[j]
+		b.WriteString(t.GetToken())
+	}
+	return b.String()
+}
+
+// cleanZeroWidthWhitespaces ports EnglishChunker.cleanZeroWidthWhitespaces (including the
+// quirk of re-adding the full token when a split piece is non-empty).
+func cleanZeroWidthWhitespaces(tokens []string) []string {
+	var clean []string
+	for _, token := range tokens {
+		splits := strings.Split(token, "\uFEFF")
+		for _, split := range splits {
+			if len(split) == 0 {
+				clean = append(clean, "")
+			} else {
+				clean = append(clean, token)
+			}
+		}
+	}
+	return clean
+}
+
+// getTokensWithTokenReadings ports EnglishChunker.getTokensWithTokenReadings —
+// OpenNLP token positions are cumulative lengths without whitespace.
+func getTokensWithTokenReadings(tokenReadings []*languagetool.AnalyzedTokenReadings, tokens, chunkTags []string) []ChunkTaggedToken {
+	result := make([]ChunkTaggedToken, 0, len(chunkTags))
+	pos := 0
+	for i, chunkTag := range chunkTags {
+		startPos := pos
+		endPos := startPos + len(tokens[i])
+		readings := getAnalyzedTokenReadingsFor(startPos, endPos, tokenReadings)
+		ct := chunkTag
+		if ct == "" {
+			ct = "O"
+		}
+		result = append(result, NewChunkTaggedToken(tokens[i], []ChunkTag{NewChunkTag(ct)}, readings))
+		pos = endPos
+	}
+	return result
+}
+
+func assignChunksToReadings(chunkTaggedTokens []ChunkTaggedToken) {
+	for _, tagged := range chunkTaggedTokens {
+		if tagged.Readings == nil {
+			continue
+		}
 		var strs []string
-		for _, ct := range t.ChunkTags {
+		for _, ct := range tagged.ChunkTags {
 			if s := ct.GetChunkTag(); s != "" {
 				strs = append(strs, s)
 			}
 		}
-		tokens[i].SetChunkTags(strs)
+		tagged.Readings.SetChunkTags(strs)
 	}
-	return true
 }
 
-func firstTokenPOS(t *languagetool.AnalyzedTokenReadings) string {
-	if t == nil {
-		return ""
+// getAnalyzedTokenReadingsFor ports EnglishChunker.getAnalyzedTokenReadingsFor —
+// exact position match on non-whitespace LT tokens only.
+func getAnalyzedTokenReadingsFor(startPos, endPos int, tokenReadings []*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedTokenReadings {
+	pos := 0
+	for _, tokenReading := range tokenReadings {
+		if tokenReading == nil {
+			continue
+		}
+		token := tokenReading.GetToken()
+		if strings.TrimSpace(token) == "" ||
+			(len(token) == 1 && unicode.IsSpace(rune(token[0]))) {
+			// OpenNLP result has no whitespace tokens; skip without advancing
+			// (Java: continue without pos += length).
+			continue
+		}
+		tokenStart := pos
+		tokenEnd := pos + len(token)
+		if tokenStart == startPos && tokenEnd == endPos {
+			return tokenReading
+		}
+		pos = tokenEnd
 	}
-	for _, r := range t.GetReadings() {
-		if r == nil {
-			continue
-		}
-		p := r.GetPOSTag()
-		if p == nil || *p == "" {
-			continue
-		}
-		pos := *p
-		if pos == languagetool.SentenceStartTagName || pos == languagetool.SentenceEndTagName ||
-			pos == languagetool.ParagraphEndTagName {
-			continue
-		}
-		return pos
-	}
-	return ""
+	return nil
 }
