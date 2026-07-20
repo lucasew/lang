@@ -299,6 +299,25 @@ func mergeRuleTags(parts ...[]rules.Tag) []rules.Tag {
 	return out
 }
 
+// resolveGoalSpecific ports PatternRuleHandler is_goal_specific inheritance:
+// rule attribute, else rulegroup, else category, else false.
+// TRUE/yes → true; FALSE/no → false; empty → fall through.
+func resolveGoalSpecific(ruleAttr, groupAttr, catAttr string) bool {
+	for _, a := range []string{ruleAttr, groupAttr, catAttr} {
+		a = strings.TrimSpace(a)
+		if a == "" {
+			continue
+		}
+		if strings.EqualFold(a, "true") || strings.EqualFold(a, "yes") {
+			return true
+		}
+		if strings.EqualFold(a, "false") || strings.EqualFold(a, "no") {
+			return false
+		}
+	}
+	return false
+}
+
 func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag) error {
 	if xr.ID == "" && !h.RelaxedMode {
 		return fmt.Errorf("rule without id in %s", h.SourceFile)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -427,4 +428,36 @@ func TestPatternRuleLoader_PreviousNextException(t *testing.T) {
 	require.Equal(t, "not", rules[0].PatternTokens[0].PreviousException)
 	require.Equal(t, "be|do", rules[1].PatternTokens[0].NextException)
 	require.True(t, rules[1].PatternTokens[0].NextExceptionRE)
+}
+
+func TestPatternRuleLoader_ToneTagsAndPicky(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat" tags="picky" tone_tags="clarity">
+    <rule id="R1" name="n" tags="picky" tone_tags="formal" is_goal_specific="true">
+      <pattern><token>foo</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	loader := NewPatternRuleLoader()
+	ars, err := loader.GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.NotEmpty(t, ars)
+	require.Contains(t, ars[0].Tags, rules.TagPicky)
+	require.Contains(t, ars[0].ToneTags, languagetool.ToneFormal)
+	require.Contains(t, ars[0].ToneTags, languagetool.ToneClarity)
+	require.True(t, ars[0].GoalSpecific)
+
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := RegisterGrammarXML(lt, xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Equal(t, 1, n)
+	// picky filtered at DEFAULT
+	require.Empty(t, lt.Check("foo bar"))
+	lt.Level = languagetool.LevelPicky
+	// still goal-specific under empty tone set
+	require.Empty(t, lt.Check("foo bar"))
+	lt.SetToneTags(languagetool.ToneFormal)
+	require.NotEmpty(t, lt.Check("foo bar"))
 }

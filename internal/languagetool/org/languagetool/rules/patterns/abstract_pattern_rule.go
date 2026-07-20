@@ -1,6 +1,9 @@
 package patterns
 
-import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+)
 
 // AbstractPatternRule ports shared fields of org.languagetool.rules.patterns.AbstractPatternRule.
 type AbstractPatternRule struct {
@@ -40,6 +43,8 @@ type AbstractPatternRule struct {
 	ToneTags []languagetool.ToneTag
 	// GoalSpecific ports Rule.isGoalSpecific (XML is_goal_specific).
 	GoalSpecific bool
+	// Tags ports Rule.tags (XML tags e.g. picky) for hasTag / LocalMatch.IsPicky.
+	Tags []rules.Tag
 }
 
 func NewAbstractPatternRule(id, description, languageCode string, patternTokens []*PatternToken, getUnified bool) *AbstractPatternRule {

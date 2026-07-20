@@ -46,6 +46,12 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.UnifierConfig = ar.UnifierConfig
 		pr.SuggestionMatches = append([]*Match(nil), ar.SuggestionMatches...)
 		pr.InterpretPreDisambig = ar.InterpretPreDisambig
+		pr.ToneTags = append([]languagetool.ToneTag(nil), ar.ToneTags...)
+		pr.GoalSpecific = ar.GoalSpecific
+		pr.DefaultOff = ar.DefaultOff
+		if len(ar.Tags) > 0 {
+			pr.SetTags(ar.Tags)
+		}
 		// strip XML suggestion tags from message for display; templates expanded in matcher.
 		msg, suggs := extractSuggestions(pr.Message)
 		pr.Message = msg

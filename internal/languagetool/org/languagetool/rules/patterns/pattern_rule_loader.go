@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
 // PatternRuleLoader ports org.languagetool.rules.patterns.PatternRuleLoader
@@ -98,13 +101,20 @@ type xmlEquivalence struct {
 type xmlCategory struct {
 	ID         string         `xml:"id,attr"`
 	Name       string         `xml:"name,attr"`
-	Rules      []xmlRule      `xml:"rule"`
-	RuleGroups []xmlRuleGroup `xml:"rulegroup"`
+	Tags       string         `xml:"tags,attr"`
+	ToneTags   string         `xml:"tone_tags,attr"`
+	// GoalSpecific ports is_goal_specific on category (inherited when rule omits it).
+	GoalSpecific string        `xml:"is_goal_specific,attr"`
+	Rules        []xmlRule     `xml:"rule"`
+	RuleGroups   []xmlRuleGroup `xml:"rulegroup"`
 }
 
 type xmlRuleGroup struct {
 	ID    string    `xml:"id,attr"`
 	Name  string    `xml:"name,attr"`
+	Tags  string    `xml:"tags,attr"`
+	ToneTags string `xml:"tone_tags,attr"`
+	GoalSpecific string `xml:"is_goal_specific,attr"`
 	// AntiPatterns on the rulegroup apply to every child rule (Java PatternRuleHandler).
 	AntiPatterns []xmlPattern `xml:"antipattern"`
 	Rules        []xmlRule    `xml:"rule"`
@@ -114,6 +124,9 @@ type xmlRule struct {
 	ID      string     `xml:"id,attr"`
 	Name    string     `xml:"name,attr"`
 	Default string     `xml:"default,attr"`
+	Tags    string     `xml:"tags,attr"`
+	ToneTags string    `xml:"tone_tags,attr"`
+	GoalSpecific string `xml:"is_goal_specific,attr"`
 	Pattern xmlPattern `xml:"pattern"`
 	// Message keeps inner XML so <suggestion>…</suggestion> and soft \N backrefs survive.
 	Message xmlMessage `xml:"message"`
@@ -748,7 +761,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
 	idPrefix := strings.TrimSpace(root.IdPrefix)
-	add := func(xr xmlRule, defaultID, catID, catName string) error {
+	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal string) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -794,6 +807,11 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		short := strings.TrimSpace(xr.Short)
 		def := strings.ToLower(strings.TrimSpace(xr.Default))
 		defaultOff := def == "off" || def == "temp_off"
+		// tags / tone_tags: rule + group + category (Java addTags/addToneTags order).
+		tags := mergeRuleTags(parseRuleTagsAttr(xr.Tags), groupTags, catTags)
+		tones := mergeToneTags(parseToneTagsAttr(xr.ToneTags), groupTones, catTones)
+		// is_goal_specific: rule overrides group overrides category (Java PatternRuleHandler).
+		goalSpecific := resolveGoalSpecific(xr.GoalSpecific, groupGoal, catGoal)
 		for _, tokens := range phraseExpanded {
 			// Java PatternRuleHandler.createRules: expand <or> into multiple rules.
 			for _, expToks := range expandOrGroups(tokens) {
@@ -817,14 +835,22 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				if defaultOff {
 					r.DefaultOff = true
 				}
+				r.ToneTags = tones
+				r.GoalSpecific = goalSpecific
+				// Store tags on abstract for RegisterGrammarXML → PatternRule.SetTags
+				if len(tags) > 0 {
+					r.Tags = append([]rules.Tag(nil), tags...)
+				}
 				out = append(out, r)
 			}
 		}
 		return nil
 	}
 	for _, cat := range root.Categories {
+		catTags := parseRuleTagsAttr(cat.Tags)
+		catTones := parseToneTagsAttr(cat.ToneTags)
 		for _, xr := range cat.Rules {
-			if err := add(xr, "", cat.ID, cat.Name); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, ""); err != nil {
 				return nil, err
 			}
 		}
@@ -835,13 +861,15 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				groupID = idPrefix + groupID
 			}
 			groupAntis := antiPatternsFromXML(groupID, languageCode, g.AntiPatterns, cfg, phraseMap)
+			groupTags := parseRuleTagsAttr(g.Tags)
+			groupTones := parseToneTagsAttr(g.ToneTags)
 			for i, xr := range g.Rules {
 				id := xr.ID
 				if id == "" {
 					id = g.ID
 				}
 				start := len(out)
-				if err := add(xr, id, cat.ID, cat.Name); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific); err != nil {
 					return nil, err
 				}
 				// sub id 1-based per XML rule (shared by OR expansions of that rule)
@@ -861,7 +889,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, "", "", ""); err != nil {
+		if err := add(xr, "", "", "", nil, nil, nil, nil, "", ""); err != nil {
 			return nil, err
 		}
 	}
