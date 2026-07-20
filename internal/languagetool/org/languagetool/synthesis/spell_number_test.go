@@ -38,3 +38,23 @@ func TestBaseSynthesizer_GetTargetPosTag_Last(t *testing.T) {
 	require.Equal(t, "X", s.GetTargetPosTag(nil, "X"))
 	require.Equal(t, "B", s.GetTargetPosTag([]string{"A", "B"}, "X"))
 }
+
+func TestBaseSynthesizer_SpellNumberFeminine_Portuguese(t *testing.T) {
+	s := NewBaseSynthesizer("pt", nil)
+	s.SorFileName = "/pt/pt.sor"
+	s.LoadNumberSpellersFromDir("")
+	if s.NumberSpeller == nil {
+		t.Skip("pt.sor not found")
+	}
+	// Java: _spell_number_:feminine → getSpelledNumber("feminine " + token)
+	tok := languagetool.NewAnalyzedToken("2", nil, nil)
+	got, err := s.Synthesize(tok, SpellNumberFeminineTag)
+	require.NoError(t, err)
+	require.Len(t, got, 1)
+	// feminine 2 → duas (via == feminine == macros)
+	require.Equal(t, "duas", got[0], "feminine spell of 2")
+	// masculine default
+	gotM, err := s.Synthesize(tok, SpellNumberTag)
+	require.NoError(t, err)
+	require.Equal(t, []string{"dois"}, gotM)
+}

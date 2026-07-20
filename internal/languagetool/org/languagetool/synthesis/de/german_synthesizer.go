@@ -167,7 +167,12 @@ func lemmaOf(token *languagetool.AnalyzedToken) string {
 	return token.GetToken()
 }
 
-// filterCaseMatch ports GermanSynthesizer.lookup case gate (not REMOVE).
+// filterCaseMatch ports GermanSynthesizer.lookup case gate.
+// Java (operator precedence):
+//
+//	lcLemma == lcLookup || lemma.equals("mein") || (lemma.equals("ich") && !REMOVE.contains(s))
+//
+// For other lemmas, REMOVE is applied later on the outer synthesize path only.
 func filterCaseMatch(lemma string, forms []string) []string {
 	if len(forms) == 0 {
 		return forms
@@ -180,15 +185,16 @@ func filterCaseMatch(lemma string, forms []string) []string {
 			continue
 		}
 		lcForm := tools.StartsWithLowercase(form)
-		// Java: lcLemma == lcLookup || lemma.equals("mein") || (lemma.equals("ich") && !REMOVE)
-		// REMOVE is applied later on the outer synthesize path; here only case / mein / ich.
-		if lcLemma == lcForm || lemma == "mein" || lemma == "ich" {
-			if _, ok := seen[form]; ok {
-				continue
-			}
-			seen[form] = struct{}{}
-			out = append(out, form)
+		_, inRemove := germanSynthRemove[form]
+		allow := lcLemma == lcForm || lemma == "mein" || (lemma == "ich" && !inRemove)
+		if !allow {
+			continue
 		}
+		if _, ok := seen[form]; ok {
+			continue
+		}
+		seen[form] = struct{}{}
+		out = append(out, form)
 	}
 	return out
 }

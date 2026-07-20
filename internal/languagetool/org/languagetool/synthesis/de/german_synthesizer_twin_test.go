@@ -145,3 +145,22 @@ func TestGermanSynthesizer_GetCompoundForms(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, []string{"Haus-Boote"}, forms)
 }
+
+// Twin of Java lookup: lemma "ich" allows cross-case only when form is not in REMOVE.
+func TestGermanSynthesizer_IchRemoveInCaseGate(t *testing.T) {
+	// unsre is in REMOVE; Sie is not (cross-case for ich)
+	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
+		"unsre\tich\tPRO:PER:NOM:PLU:ALG\n" +
+			"Sie\tich\tPRO:PER:NOM:PLU:ALG\n" +
+			"sie\tich\tPRO:PER:NOM:PLU:ALG\n",
+	))
+	require.NoError(t, err)
+	s := NewGermanSynthesizer(manual)
+	lem := "ich"
+	tok := languagetool.NewAnalyzedToken("ich", nil, &lem)
+	forms, err := s.Synthesize(tok, "PRO:PER:NOM:PLU:ALG")
+	require.NoError(t, err)
+	// unsre dropped at case gate (ich && REMOVE); Sie allowed cross-case; sie same-case
+	require.ElementsMatch(t, []string{"Sie", "sie"}, forms)
+	require.NotContains(t, forms, "unsre")
+}
