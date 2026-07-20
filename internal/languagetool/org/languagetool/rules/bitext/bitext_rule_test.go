@@ -55,3 +55,17 @@ func TestDifferentPunctuationRule(t *testing.T) {
 func TestRelevantBitextRules(t *testing.T) {
 	require.Len(t, RelevantBitextRules(), 3)
 }
+
+func TestSelectBitextRules_Builtin(t *testing.T) {
+	all := RelevantBitextRules()
+	require.NotEmpty(t, all)
+	first := all[0].GetID()
+	got := SelectBitextRules(all, []string{first}, nil, false)
+	require.Len(t, got, len(all)-1)
+	for _, r := range got {
+		require.NotEqual(t, first, r.GetID())
+	}
+	got2 := SelectBitextRules(all, nil, []string{first}, true)
+	require.Len(t, got2, 1)
+	require.Equal(t, first, got2[0].GetID())
+}
