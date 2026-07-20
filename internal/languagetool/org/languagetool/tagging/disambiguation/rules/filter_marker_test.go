@@ -92,12 +92,12 @@ func TestFilterAll_UsesEachPatternTokenPOS(t *testing.T) {
 }
 
 func TestFilter_MarkerOnSecondToken_JavaFromPos(t *testing.T) {
-	// Soft modal style, Java-faithful: will + <marker>run</marker> → FILTER run.
+	// Java-faithful: will + <marker>run</marker> → FILTER run.
 	will := patterns.NewPatternToken("will", false, false, false)
 	will.SetInsideMarker(false)
 	run := patterns.NewPatternToken("run", false, false, false)
 	run.SetInsideMarker(true)
-	rule := NewDisambiguationPatternRule("SOFT_WILL_RUN_VB", "t", "en",
+	rule := NewDisambiguationPatternRule("DISAMB_WILL_RUN_VB", "t", "en",
 		[]*patterns.PatternToken{will, run}, "VB", nil, ActionFilter)
 
 	vbTag, nnTag, mdTag := "VB", "NN", "MD"

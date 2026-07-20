@@ -64,8 +64,8 @@ func TestRuleMeta_KnownJavaFamilies(t *testing.T) {
 		RuleDescription("UNPAIRED_BRACKETS"))
 	require.Equal(t, "Unpaarige Anführungszeichen", RuleDescription("DE_UNPAIRED_QUOTES"))
 
-	// Soft invent IDs must not get special grammar/style invent — uncategorized.
-	id, _, issue, _ = RuleMeta("EN_SOFT_YOUR_YOU_RE")
+	// Unknown rule IDs must not get special grammar/style invent — uncategorized.
+	id, _, issue, _ = RuleMeta("UNKNOWN_RULE_WITHOUT_META")
 	require.Equal(t, "MISC", id)
 	require.Equal(t, "uncategorized", issue)
 
@@ -451,8 +451,8 @@ func TestRuleMeta_KnownJavaFamilies(t *testing.T) {
 func TestRuleDescription_Known(t *testing.T) {
 	require.Equal(t, "Use of 'a' versus 'an'", RuleDescription("EN_A_VS_AN"))
 	require.Equal(t, "Leere Zeile", RuleDescription("EMPTY_LINE"))
-	// Soft invent: description is the raw id, not a fancy invent label.
-	require.Equal(t, "EN_SOFT_YOUR_YOU_RE", RuleDescription("EN_SOFT_YOUR_YOU_RE"))
+	// Unknown: description is the raw id, not an invent label.
+	require.Equal(t, "UNKNOWN_RULE_WITHOUT_META", RuleDescription("UNKNOWN_RULE_WITHOUT_META"))
 	require.Equal(t, "Mögliche Wortverwechslungen: $match", RuleDescription("GERMAN_WRONG_WORD_IN_CONTEXT"))
 	require.Equal(t, "Synonyme für wiederholte Wörter.", RuleDescription("DE_REPEATEDWORDS"))
 	require.Equal(t, "Statistische Stilanalyse: Zu häufig genutztes Substantiv",
