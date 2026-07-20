@@ -344,7 +344,21 @@ type JLanguageTool struct {
 	ParaMode ParagraphHandling
 	// MatchListener ports RuleMatchListener passed into TextCheckCallable (matchFound per match).
 	MatchListener RuleMatchListener
-	unknown       map[string]struct{}
+	// ToneTags ports Set<ToneTag> passed into checkInternal / TextCheckCallable.
+	// Nil/empty → ALL_WITHOUT_GOAL_SPECIFIC filter behavior (Java).
+	ToneTags map[ToneTag]struct{}
+	unknown  map[string]struct{}
+}
+
+// SetToneTags replaces the active tone tag set for level/tone match filtering.
+func (lt *JLanguageTool) SetToneTags(tags ...ToneTag) {
+	if lt == nil {
+		return
+	}
+	lt.ToneTags = make(map[ToneTag]struct{}, len(tags))
+	for _, t := range tags {
+		lt.ToneTags[t] = struct{}{}
+	}
 }
 
 // SetRuleMatchListener ports check(..., RuleMatchListener, ...).
@@ -894,6 +908,8 @@ func (lt *JLanguageTool) checkInternal(text string, mapOriginal mapOriginalFn) [
 			}
 		}
 	}
+	// Java filterMatches: isRuleActiveForLevelAndToneTags then SameRuleGroupFilter …
+	out = FilterMatchesForLevelAndToneTags(out, lt.Level, lt.ToneTags)
 	// Java filterMatches order:
 	// SameRuleGroupFilter → LanguageDependentRuleMatchFilter (filterRuleMatches)
 	// → CleanOverlappingFilter → filterRuleMatchesAfterOverlapping

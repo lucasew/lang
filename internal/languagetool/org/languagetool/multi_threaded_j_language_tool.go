@@ -326,6 +326,7 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 			}
 		}
 	}
+	out = FilterMatchesForLevelAndToneTags(out, lt.Level, lt.ToneTags)
 	out = lt.applyRulePriorities(out)
 	out = CleanSameRuleGroupLocalMatches(out)
 	if en := lt.enabledRulesForFilters(); len(en) > 0 {
