@@ -10,18 +10,24 @@ import (
 	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 	essynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/es"
 	frsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/fr"
+	nlsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/nl"
 	plsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/pl"
+	ptsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/pt"
 )
 
 // OpenLanguageSynthesizer ports Language.createDefaultSynthesizer resource open:
 // language-specific synthesizer type when Java uses one (EN/DE/PL getPosTagCorrection /
-// compound forms); otherwise BaseSynthesizer over the official *_synth.dict.
+// compound forms, CA/ES verb lemma space, FR isException); otherwise BaseSynthesizer
+// over the official *_synth.dict.
+// langShort may be a full code (ca-ES-valencia) for Catalan regional verb tags.
 // Returns nil when dictPath is empty or the binary cannot be opened (fail-closed).
 func OpenLanguageSynthesizer(langShort, dictPath string) synthesis.Synthesizer {
 	if dictPath == "" {
 		return nil
 	}
+	full := langShort
 	base := strings.ToLower(langShort)
+	// Keep full code for Catalan variants (ca-ES-valencia); switch on first segment.
 	if i := strings.IndexByte(base, '-'); i > 0 {
 		base = base[:i]
 	}
@@ -61,7 +67,18 @@ func OpenLanguageSynthesizer(langShort, dictPath string) synthesis.Synthesizer {
 		}
 		return nil
 	case "ca":
-		if s := casynth.OpenCatalanSynthesizerFromDictPath(dictPath); s != nil {
+		// CatalanSynthesizer: LemmasToIgnore, regional verb tags, getTargetPosTag.
+		if s := casynth.OpenCatalanSynthesizerFromDictPath(dictPath, full); s != nil {
+			return s
+		}
+		return nil
+	case "pt":
+		if s := ptsynth.OpenPortugueseSynthesizerFromDictPath(dictPath); s != nil {
+			return s
+		}
+		return nil
+	case "nl":
+		if s := nlsynth.OpenDutchSynthesizerFromDictPath(dictPath); s != nil {
 			return s
 		}
 		return nil

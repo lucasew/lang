@@ -2,12 +2,14 @@ package ca
 
 import (
 	"path/filepath"
+	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 )
 
 // OpenCatalanSynthesizerFromDir loads Java CatalanSynthesizer resources (ca-ES_synth.dict).
-func OpenCatalanSynthesizerFromDir(resourceDir string) *CatalanSynthesizer {
+// langCode selects INSTANCE_CAT / VAL / BAL verb regional tags (default ca-ES).
+func OpenCatalanSynthesizerFromDir(resourceDir, langCode string) *CatalanSynthesizer {
 	base := synthesis.OpenBaseSynthesizerFromDir("ca", resourceDir)
 	if base == nil {
 		return nil
@@ -21,13 +23,20 @@ func OpenCatalanSynthesizerFromDir(resourceDir string) *CatalanSynthesizer {
 	if base.SorFileName == "" {
 		base.SorFileName = "/ca/ca.sor"
 	}
-	return &CatalanSynthesizer{BaseSynthesizer: base}
+	if langCode == "" {
+		langCode = "ca-ES"
+	}
+	// Normalize short "ca" → ca-ES (Java default Catalan).
+	if strings.EqualFold(langCode, "ca") {
+		langCode = "ca-ES"
+	}
+	return &CatalanSynthesizer{BaseSynthesizer: base, LanguageCode: langCode}
 }
 
 // OpenCatalanSynthesizerFromDictPath loads from the directory of ca-ES_synth.dict.
-func OpenCatalanSynthesizerFromDictPath(dictPath string) *CatalanSynthesizer {
+func OpenCatalanSynthesizerFromDictPath(dictPath, langCode string) *CatalanSynthesizer {
 	if dictPath == "" {
 		return nil
 	}
-	return OpenCatalanSynthesizerFromDir(filepath.Dir(dictPath))
+	return OpenCatalanSynthesizerFromDir(filepath.Dir(dictPath), langCode)
 }
