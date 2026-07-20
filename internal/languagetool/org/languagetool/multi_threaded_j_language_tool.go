@@ -71,12 +71,13 @@ func (c AnalyzeSentenceCallable) Call() (*AnalyzedSentence, error) {
 	if c.LT == nil || c.LT.JLanguageTool == nil {
 		return nil, nil
 	}
-	// Java: getAnalyzedSentence(sentence)
-	sents := c.LT.Analyze(c.Sentence)
-	if len(sents) == 0 {
+	// Java AnalyzeSentenceCallable: getAnalyzedSentence(sentence) — one sentence unit,
+	// no SRX re-split (Analyze would re-tokenize and could return multiple parts).
+	s := c.LT.GetAnalyzedSentence(c.Sentence)
+	if s == nil {
 		return NewAnalyzedSentence(nil), nil
 	}
-	return sents[0], nil
+	return s, nil
 }
 
 // ParagraphEndAnalyzeSentenceCallable ports ParagraphEndAnalyzeSentenceCallable.

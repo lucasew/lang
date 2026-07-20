@@ -100,6 +100,20 @@ func TestMultiThreadedJLanguageTool_AnalyzeParallel(t *testing.T) {
 	require.True(t, lt.IsShutdown())
 }
 
+// Twin of AnalyzeSentenceCallable → getAnalyzedSentence (no SRX re-split on the part).
+func TestAnalyzeSentenceCallable_GetAnalyzedSentence(t *testing.T) {
+	lt := NewMultiThreadedJLanguageTool("en", 1)
+	// Multi-clause string already chosen as one SRX unit by the caller in Java;
+	// getAnalyzedSentence must keep it as one AnalyzedSentence.
+	text := "A sentence. This is not actual."
+	c := AnalyzeSentenceCallable{LT: lt, Sentence: text}
+	s, err := c.Call()
+	require.NoError(t, err)
+	require.NotNil(t, s)
+	require.Equal(t, text, s.GetText())
+	lt.ShutdownWhenDone()
+}
+
 func TestSentenceData(t *testing.T) {
 	a := AnalyzePlain("hi")
 	sd := NewSentenceData(a, "hi", 0, 1, 1)

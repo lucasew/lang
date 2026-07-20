@@ -7,7 +7,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterFalseFriendsFile loads soft false-friend pattern rules for textLang/motherLang.
+// RegisterFalseFriendsFile loads official false-friend pattern rules for textLang/motherLang
+// (Java FalseFriendRuleLoader path — not soft invent packs).
 // Returns the number of rules registered.
 func RegisterFalseFriendsFile(lt *languagetool.JLanguageTool, path, textLang, motherLang string) (int, error) {
 	if lt == nil || path == "" || motherLang == "" {
