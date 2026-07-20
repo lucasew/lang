@@ -86,6 +86,10 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 				lm.Tags = []string{string(TagPicky)}
 			}
 		}
+		// Java Rule.isDefaultTempOff → JSON rule.tempOff.
+		if g, ok := m.Rule.(interface{ IsDefaultTempOff() bool }); ok {
+			lm.TempOff = g.IsDefaultTempOff()
+		}
 		// Java Rule.isIncludedInErrorsCorrectedAllAtOnce for punctuation-only overlap preference.
 		if g, ok := m.Rule.(interface{ IsIncludedInErrorsCorrectedAllAtOnce() bool }); ok {
 			lm.IncludedInErrorsCorrectedAllAtOnce = g.IsIncludedInErrorsCorrectedAllAtOnce()

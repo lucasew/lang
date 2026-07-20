@@ -37,8 +37,11 @@ type AbstractPatternRule struct {
 	LineNumber           int
 	DistanceTokens       int
 	Premium              bool
-	// DefaultOff is true when XML default="off" or default="temp_off" (soft grammar).
+	// DefaultOff is true when XML default="off" or default="temp_off" (Java Rule.defaultOff).
 	DefaultOff bool
+	// DefaultTempOff is true when XML default="temp_off" (Java Rule.defaultTempOff;
+	// still DefaultOff; re-enabled by enableTempOff / enableTempOffRules).
+	DefaultTempOff bool
 	// ToneTags ports Rule.toneTags (XML tone_tags on rule/rulegroup/category).
 	ToneTags []languagetool.ToneTag
 	// GoalSpecific ports Rule.isGoalSpecific (XML is_goal_specific).

@@ -57,6 +57,26 @@ func TestRuleMatchesAsJsonSerializer_JsonWithTags(t *testing.T) {
 	require.Contains(t, json, `"tags":["picky"]`)
 }
 
+// Java writeRule: isDefaultTempOff → "tempOff": true
+func TestRuleMatchesAsJsonSerializer_JsonTempOff(t *testing.T) {
+	s := NewRuleMatchesAsJsonSerializer()
+	m := MatchForJSON{
+		Message: "msg",
+		FromPos: 0,
+		ToPos:   1,
+		RuleID:  "TEMP_RULE",
+		TempOff: true,
+	}
+	json, err := s.RuleMatchesToJSON([]MatchForJSON{m}, "x", 2)
+	require.NoError(t, err)
+	require.Contains(t, json, `"tempOff":true`)
+	// unset omits field
+	m.TempOff = false
+	json, err = s.RuleMatchesToJSON([]MatchForJSON{m}, "x", 2)
+	require.NoError(t, err)
+	require.NotContains(t, json, "tempOff")
+}
+
 // Port of RuleMatchesAsJsonSerializerTest.testJsonWithUnixLinebreak
 func TestRuleMatchesAsJsonSerializer_JsonWithUnixLinebreak(t *testing.T) {
 	s := NewRuleMatchesAsJsonSerializer()

@@ -37,6 +37,33 @@ func TestPatternRuleLoader(t *testing.T) {
 	require.NotNil(t, pr)
 }
 
+func TestPatternRuleLoader_DefaultTempOff(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="T1" name="temp" default="temp_off">
+      <pattern><token>x</token></pattern>
+      <message>m</message>
+    </rule>
+    <rule id="O1" name="off" default="off">
+      <pattern><token>y</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+	byID := map[string]*AbstractPatternRule{}
+	for _, ar := range ars {
+		byID[ar.ID] = ar
+	}
+	require.True(t, byID["T1"].DefaultOff)
+	require.True(t, byID["T1"].DefaultTempOff)
+	require.True(t, byID["O1"].DefaultOff)
+	require.False(t, byID["O1"].DefaultTempOff)
+}
+
 // Rules with <unify> load with UniFeatures and TestUnification (matcher ports testUnification).
 func TestPatternRuleLoader_UnifyLoads(t *testing.T) {
 	xml := `<?xml version="1.0"?>

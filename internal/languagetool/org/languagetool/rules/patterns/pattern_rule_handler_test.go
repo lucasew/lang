@@ -180,9 +180,35 @@ func TestRegisterPatternRule_DefaultOff(t *testing.T) {
 	h := NewPatternRuleHandler("test.xml", "en")
 	require.NoError(t, h.ParseString(xml))
 	require.True(t, h.LoadedPatternRules[0].DefaultOff)
+	require.False(t, h.LoadedPatternRules[0].DefaultTempOff)
 	lt := languagetool.NewJLanguageTool("en")
 	RegisterLoadedPatternRules(lt, h)
 	require.Empty(t, lt.Check("foo bar"), "default-off rule not active")
 	lt.EnableRule("OFF_FOO")
 	require.NotEmpty(t, lt.Check("foo bar"))
+}
+
+// Java default="temp_off": defaultOff + defaultTempOff; EnableTempOffRules re-activates.
+func TestRegisterPatternRule_DefaultTempOff(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat">
+    <rule id="TEMP_FOO" name="n" default="temp_off">
+      <pattern><token>foo</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("test.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	require.True(t, h.LoadedPatternRules[0].DefaultOff)
+	require.True(t, h.LoadedPatternRules[0].DefaultTempOff)
+	lt := languagetool.NewJLanguageTool("en")
+	RegisterLoadedPatternRules(lt, h)
+	require.Contains(t, lt.GetDefaultTempOffRuleIDs(), "TEMP_FOO")
+	require.Empty(t, lt.Check("foo bar"), "temp_off inactive until enableTempOff")
+	lt.EnableTempOffRules()
+	ms := lt.Check("foo bar")
+	require.NotEmpty(t, ms)
+	require.True(t, ms[0].TempOff, "isDefaultTempOff survives enable for JSON tempOff")
 }

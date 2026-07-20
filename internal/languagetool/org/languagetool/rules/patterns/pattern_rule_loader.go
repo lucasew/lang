@@ -806,7 +806,10 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		msg, sugMatches := ProcessRuleMessage(rawMsg)
 		short := strings.TrimSpace(xr.Short)
 		def := strings.ToLower(strings.TrimSpace(xr.Default))
-		defaultOff := def == "off" || def == "temp_off"
+		// Java PatternRuleHandler: defaultOff = OFF.equals; defaultTempOff = TEMP_OFF.equals
+		// (temp_off also implies setDefaultTempOff → defaultOff=true).
+		defaultTempOff := def == "temp_off"
+		defaultOff := def == "off" || defaultTempOff
 		// tags / tone_tags: rule + group + category (Java addTags/addToneTags order).
 		tags := mergeRuleTags(parseRuleTagsAttr(xr.Tags), groupTags, catTags)
 		tones := mergeToneTags(parseToneTagsAttr(xr.ToneTags), groupTones, catTones)
@@ -834,6 +837,9 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				r.CategoryName = catName
 				if defaultOff {
 					r.DefaultOff = true
+				}
+				if defaultTempOff {
+					r.DefaultTempOff = true
 				}
 				r.ToneTags = tones
 				r.GoalSpecific = goalSpecific

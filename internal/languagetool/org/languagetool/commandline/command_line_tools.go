@@ -415,6 +415,18 @@ func ruleTagsOf(m *rules.RuleMatch) []string {
 	return nil
 }
 
+// ruleTempOffOf ports Rule.isDefaultTempOff for JSON rule.tempOff.
+func ruleTempOffOf(m *rules.RuleMatch) bool {
+	if m == nil || m.Rule == nil {
+		return false
+	}
+	type tempOffer interface{ IsDefaultTempOff() bool }
+	if r, ok := m.Rule.(tempOffer); ok {
+		return r.IsDefaultTempOff()
+	}
+	return false
+}
+
 func ruleXMLLineOf(m *rules.RuleMatch) int {
 	if m == nil || m.Rule == nil {
 		return 0

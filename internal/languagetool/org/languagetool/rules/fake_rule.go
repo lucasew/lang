@@ -15,6 +15,7 @@ type FakeRule struct {
 	url               string
 	toneTags          []languagetool.ToneTag
 	goalSpecific      bool
+	defaultTempOff    bool
 }
 
 func NewFakeRule(id string) *FakeRule {
@@ -108,6 +109,18 @@ func (r *FakeRule) IsGoalSpecific() bool {
 func (r *FakeRule) SetGoalSpecific(v bool) {
 	if r != nil {
 		r.goalSpecific = v
+	}
+}
+
+// IsDefaultTempOff ports Rule.isDefaultTempOff.
+func (r *FakeRule) IsDefaultTempOff() bool {
+	return r != nil && r.defaultTempOff
+}
+
+// SetDefaultTempOff ports Rule.setDefaultTempOff.
+func (r *FakeRule) SetDefaultTempOff() {
+	if r != nil {
+		r.defaultTempOff = true
 	}
 }
 

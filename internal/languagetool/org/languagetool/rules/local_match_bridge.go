@@ -25,6 +25,9 @@ func FromLocalMatches(ms []languagetool.LocalMatch, sentence *languagetool.Analy
 		} else if m.IsPicky {
 			fr.SetTags([]Tag{TagPicky})
 		}
+		if m.TempOff {
+			fr.SetDefaultTempOff()
+		}
 		rm := NewRuleMatch(fr, sentence, m.FromPos, m.ToPos, m.Message)
 		if len(m.Suggestions) > 0 {
 			rm.SetSuggestedReplacements(m.Suggestions)

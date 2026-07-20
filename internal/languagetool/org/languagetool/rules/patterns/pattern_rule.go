@@ -36,6 +36,8 @@ type PatternRule struct {
 	GoalSpecific bool
 	// DefaultOff ports Rule.isDefaultOff (XML default="off" / "temp_off").
 	DefaultOff bool
+	// DefaultTempOff ports Rule.isDefaultTempOff (XML default="temp_off" only).
+	DefaultTempOff bool
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -84,6 +86,25 @@ func (r *PatternRule) GetToneTags() []languagetool.ToneTag {
 // IsGoalSpecific ports Rule.isGoalSpecific.
 func (r *PatternRule) IsGoalSpecific() bool {
 	return r != nil && r.GoalSpecific
+}
+
+// IsDefaultOff ports Rule.isDefaultOff.
+func (r *PatternRule) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
+}
+
+// IsDefaultTempOff ports Rule.isDefaultTempOff.
+func (r *PatternRule) IsDefaultTempOff() bool {
+	return r != nil && r.DefaultTempOff
+}
+
+// SetDefaultTempOff ports Rule.setDefaultTempOff (defaultOff + defaultTempOff).
+func (r *PatternRule) SetDefaultTempOff() {
+	if r == nil {
+		return
+	}
+	r.DefaultOff = true
+	r.DefaultTempOff = true
 }
 
 // HasToneTag ports Rule.hasToneTag.

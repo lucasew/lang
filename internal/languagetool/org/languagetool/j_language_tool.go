@@ -237,6 +237,8 @@ type LocalMatch struct {
 	// Tags ports Rule.getTags() string names (e.g. "picky") for JSON rule.tags / CLI Tags.
 	// Empty when the rule has no tags; IsPicky remains the demotion flag derived from picky.
 	Tags []string
+	// TempOff ports Rule.isDefaultTempOff for JSON rule.tempOff.
+	TempOff bool
 	// IncludedInErrorsCorrectedAllAtOnce ports Rule.isIncludedInErrorsCorrectedAllAtOnce
 	// (Java CleanOverlappingFilter punctuation-only preference).
 	IncludedInErrorsCorrectedAllAtOnce bool
@@ -300,6 +302,9 @@ type JLanguageTool struct {
 	// DefaultOffRuleIDs are rules that registered with XML default="off" (optional packs).
 	// Level/picky flags re-enable these (Java default="off"); no soft invent packs.
 	DefaultOffRuleIDs map[string]struct{}
+	// DefaultTempOffRuleIDs are rules with XML default="temp_off" (Java Rule.defaultTempOff).
+	// Also in DefaultOffRuleIDs; re-enabled by EnableTempOffRules (Tools.selectRules enableTempOff).
+	DefaultTempOffRuleIDs map[string]struct{}
 	// Cancelled optional early exit for Check.
 	Cancelled CheckCancelledCallback
 	// ListUnknownWords enables GetUnknownWords population during Check/AnalyzeUnknown.
@@ -655,6 +660,19 @@ func (lt *JLanguageTool) MarkDefaultOff(ruleID string) {
 	lt.DisableRule(ruleID)
 }
 
+// MarkDefaultTempOff ports Rule.setDefaultTempOff for a registered rule id:
+// defaultOff + defaultTempOff tracking, then disable (Java activateDefaultPatternRules).
+func (lt *JLanguageTool) MarkDefaultTempOff(ruleID string) {
+	if lt == nil || ruleID == "" {
+		return
+	}
+	lt.MarkDefaultOff(ruleID)
+	if lt.DefaultTempOffRuleIDs == nil {
+		lt.DefaultTempOffRuleIDs = map[string]struct{}{}
+	}
+	lt.DefaultTempOffRuleIDs[ruleID] = struct{}{}
+}
+
 // GetDefaultOffRuleIDs returns rule IDs registered with default="off".
 func (lt *JLanguageTool) GetDefaultOffRuleIDs() []string {
 	if lt == nil || len(lt.DefaultOffRuleIDs) == 0 {
@@ -666,6 +684,34 @@ func (lt *JLanguageTool) GetDefaultOffRuleIDs() []string {
 	}
 	sort.Strings(out)
 	return out
+}
+
+// GetDefaultTempOffRuleIDs returns rule IDs registered with default="temp_off".
+func (lt *JLanguageTool) GetDefaultTempOffRuleIDs() []string {
+	if lt == nil || len(lt.DefaultTempOffRuleIDs) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(lt.DefaultTempOffRuleIDs))
+	for id := range lt.DefaultTempOffRuleIDs {
+		out = append(out, id)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// EnableTempOffRules ports Tools.selectRules enableTempOff=true: enable every
+// rule that was registered with default="temp_off" (Java isDefaultTempOff).
+func (lt *JLanguageTool) EnableTempOffRules() {
+	if lt == nil || len(lt.DefaultTempOffRuleIDs) == 0 {
+		return
+	}
+	ids := make([]string, 0, len(lt.DefaultTempOffRuleIDs))
+	for id := range lt.DefaultTempOffRuleIDs {
+		ids = append(ids, id)
+	}
+	for _, id := range ids {
+		lt.EnableRule(id)
+	}
 }
 
 // EnableRule ports enableRule / AbstractPatternRule.setDefaultOn:
@@ -681,6 +727,7 @@ func (lt *JLanguageTool) EnableRule(ruleID string) {
 	if lt.DefaultOffRuleIDs != nil {
 		delete(lt.DefaultOffRuleIDs, ruleID)
 	}
+	// Keep DefaultTempOffRuleIDs so rule.tempOff / isDefaultTempOff stay true after enable.
 	if lt.EnabledRules == nil {
 		lt.EnabledRules = map[string]struct{}{}
 	}

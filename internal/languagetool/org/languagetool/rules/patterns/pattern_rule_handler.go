@@ -327,7 +327,10 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	tones := mergeToneTags(ruleTones, groupTones, categoryTones)
 	tags := mergeRuleTags(parseRuleTagsAttr(xr.Tags), groupTags, categoryTags)
 	goalSpecific := strings.EqualFold(xr.GoalSpecific, "yes") || strings.EqualFold(xr.GoalSpecific, "true")
-	defaultOff := xr.Default == "off" || xr.Default == "temp_off"
+	// Java: defaultOff = OFF.equals; defaultTempOff = TEMP_OFF.equals (temp_off ⇒ setDefaultTempOff).
+	def := strings.ToLower(strings.TrimSpace(xr.Default))
+	defaultTempOff := def == XMLTempOff
+	defaultOff := def == XMLOff || defaultTempOff
 	if xr.Regexp != nil {
 		content := strings.TrimSpace(xr.Regexp.Content)
 		re, err := regexp.Compile(content)
@@ -349,6 +352,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 			rr.AbstractPatternRule.ToneTags = tones
 			rr.AbstractPatternRule.GoalSpecific = goalSpecific
 			rr.AbstractPatternRule.DefaultOff = defaultOff
+			rr.AbstractPatternRule.DefaultTempOff = defaultTempOff
 		}
 		h.LoadedRegexRules = append(h.LoadedRegexRules, rr)
 		// also as abstract for listing
@@ -359,6 +363,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 		abs.ToneTags = tones
 		abs.GoalSpecific = goalSpecific
 		abs.DefaultOff = defaultOff
+		abs.DefaultTempOff = defaultTempOff
 		h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 		return nil
 	}
@@ -377,6 +382,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	pr.ToneTags = tones
 	pr.GoalSpecific = goalSpecific
 	pr.DefaultOff = defaultOff
+	pr.DefaultTempOff = defaultTempOff
 	if len(tags) > 0 {
 		pr.SetTags(tags)
 	}
@@ -388,6 +394,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	abs.ToneTags = tones
 	abs.GoalSpecific = goalSpecific
 	abs.DefaultOff = defaultOff
+	abs.DefaultTempOff = defaultTempOff
 	h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 	_ = categoryID
 	return nil

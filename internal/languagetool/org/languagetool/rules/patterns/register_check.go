@@ -6,7 +6,8 @@ import (
 )
 
 // RegisterPatternRule wires a PatternRule into JLanguageTool.Check.
-// XML default="off"/"temp_off" → MarkDefaultOff (Java setDefaultOff; re-enable with EnableRule / picky packs).
+// XML default="off" → MarkDefaultOff; default="temp_off" → MarkDefaultTempOff
+// (Java setDefaultOff / setDefaultTempOff; re-enable with EnableRule / EnableTempOffRules).
 func RegisterPatternRule(lt *languagetool.JLanguageTool, pr *PatternRule) {
 	if lt == nil || pr == nil {
 		return
@@ -15,7 +16,9 @@ func RegisterPatternRule(lt *languagetool.JLanguageTool, pr *PatternRule) {
 	if id == "" {
 		id = "PATTERN_RULE"
 	}
-	if pr.DefaultOff {
+	if pr.DefaultTempOff {
+		lt.MarkDefaultTempOff(id)
+	} else if pr.DefaultOff {
 		lt.MarkDefaultOff(id)
 	}
 	lt.AddRuleChecker(id, rules.AsSentenceChecker(pr.Match))

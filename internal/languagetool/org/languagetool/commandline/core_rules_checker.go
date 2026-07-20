@@ -77,6 +77,10 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	if lt == nil || opts == nil {
 		return
 	}
+	// Java Tools.selectRules(…, enableTempOff): activate default='temp_off' rules first.
+	if opts.IsEnableTempOff() {
+		lt.EnableTempOffRules()
+	}
 	for _, id := range opts.GetDisabledRules() {
 		lt.DisableRule(id)
 	}
@@ -782,6 +786,7 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 			Severity:              languagetool.SeverityFromIssueType(issue),
 			RuleURL:               languagetool.RuleURL(id, lang),
 			Tags:                  ruleTagsOf(m),
+			TempOff:               ruleTempOffOf(m),
 		}
 		mj = append(mj, item)
 	}

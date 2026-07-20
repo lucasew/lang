@@ -30,6 +30,8 @@ type MatchForJSON struct {
 	RuleURL string
 	// Tags ports Rule.getTags() → JSON rule.tags (e.g. "picky"); empty omits the field.
 	Tags []string
+	// TempOff ports Rule.isDefaultTempOff() → JSON rule.tempOff (only when true).
+	TempOff bool
 }
 
 // RuleMatchesAsJsonSerializer ports org.languagetool.tools.RuleMatchesAsJsonSerializer
@@ -78,6 +80,8 @@ type RuleJSON struct {
 	Urls []URLJSON `json:"urls,omitempty"`
 	// Tags ports Rule.getTags() (Java writeRule: only when non-empty).
 	Tags []string `json:"tags,omitempty"`
+	// TempOff ports Rule.isDefaultTempOff (Java writeRule: only when true).
+	TempOff bool `json:"tempOff,omitempty"`
 }
 
 // URLJSON is a rule documentation link object (LT API shape).
@@ -173,6 +177,10 @@ func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSONWithReason(matches []Matc
 		// Java writeRule: if (rule.getTags().size() > 0) write tags array of tag.name().
 		if len(m.Tags) > 0 {
 			mj.Rule.Tags = append([]string(nil), m.Tags...)
+		}
+		// Java writeRule: if (rule.isDefaultTempOff()) writeBooleanField("tempOff", true).
+		if m.TempOff {
+			mj.Rule.TempOff = true
 		}
 		for _, r := range m.SuggestedReplacements {
 			mj.Replacements = append(mj.Replacements, ReplacementJSON{Value: r})

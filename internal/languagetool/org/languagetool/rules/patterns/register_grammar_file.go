@@ -49,6 +49,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.ToneTags = append([]languagetool.ToneTag(nil), ar.ToneTags...)
 		pr.GoalSpecific = ar.GoalSpecific
 		pr.DefaultOff = ar.DefaultOff
+		pr.DefaultTempOff = ar.DefaultTempOff
 		if len(ar.Tags) > 0 {
 			pr.SetTags(ar.Tags)
 		}
@@ -112,8 +113,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 			return out
 		})
 		// XML default="off" / temp_off → registered but disabled (Java Rule.defaultOff).
-		if ar.DefaultOff {
-			lt.DisableRule(id)
+		// temp_off also tracked for enableTempOff / JSON rule.tempOff (Java isDefaultTempOff).
+		if ar.DefaultTempOff {
+			lt.MarkDefaultTempOff(id)
+		} else if ar.DefaultOff {
 			lt.MarkDefaultOff(id)
 		}
 		n++
