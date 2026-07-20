@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,4 +21,24 @@ func TestRegisterCoreSerbianRules_ReplaceGrammar(t *testing.T) {
 		}
 	}
 	require.True(t, found, "%+v", m)
+}
+
+// Java Serbian.getRelevantRules (Ekavian) exact ID set.
+func TestRegisterCoreSerbianRules_JavaRelevantOnly_Ekavian(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("sr")
+	RegisterCoreSerbianRules(lt)
+	require.ElementsMatch(t, language.SerbianEkavianRelevantRuleIDs(), lt.GetAllRegisteredRuleIDs())
+	for _, bad := range []string{
+		"EMPTY_LINE", "TOO_LONG_PARAGRAPH", "WHITESPACE_PUNCTUATION",
+		"PARAGRAPH_REPEAT_BEGINNING_RULE", "WHITESPACE_PARAGRAPH",
+	} {
+		require.NotContains(t, lt.GetAllRegisteredRuleIDs(), bad)
+	}
+}
+
+// Java JekavianSerbian surface for BA.
+func TestRegisterCoreSerbianRules_JavaRelevantOnly_Jekavian(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("sr-BA")
+	RegisterCoreSerbianRules(lt)
+	require.ElementsMatch(t, language.SerbianJekavianRelevantRuleIDs(), lt.GetAllRegisteredRuleIDs())
 }

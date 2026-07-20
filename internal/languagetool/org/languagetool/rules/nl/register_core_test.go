@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,33 +16,17 @@ func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
 	require.NotContains(t, ids, "NL_ALS_OF")
 }
 
-func TestRegisterCoreDutchRules_RelevantRuleIDs(t *testing.T) {
-	// Java Dutch.getRelevantRules getId surface (order free; presence check).
+// Java Dutch.getRelevantRules exact ID set.
+func TestRegisterCoreDutchRules_JavaRelevantOnly(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("nl")
 	RegisterCoreDutchRules(lt)
-	ids := lt.GetAllRegisteredRuleIDs()
-	want := []string{
-		"COMMA_PARENTHESIS_WHITESPACE",
-		"DOUBLE_PUNCTUATION",
-		"UNPAIRED_BRACKETS",
-		"UPPERCASE_SENTENCE_START",
-		"MORFOLOGIK_RULE_NL_NL",
-		"WHITESPACE_RULE",
-		"NL_COMPOUNDS",
-		"DUTCH_WRONG_WORD_IN_CONTEXT",
-		"NL_WORD_COHERENCY",
-		"NL_SIMPLE_REPLACE",
-		"TOO_LONG_SENTENCE",
-		"TOO_LONG_PARAGRAPH",
-		"NL_PREFERRED_WORD_RULE",
-		"NL_SPACE_IN_COMPOUND",
-		"SENTENCE_WHITESPACE",
-		"NL_CHECKCASE",
+	require.ElementsMatch(t, language.DutchRelevantRuleIDs(), lt.GetAllRegisteredRuleIDs())
+	for _, bad := range []string{
+		"EMPTY_LINE", "WHITESPACE_PUNCTUATION", "WHITESPACE_PARAGRAPH",
+		"WHITESPACE_PARAGRAPH_BEGIN", "PARAGRAPH_REPEAT_BEGINNING_RULE",
+		"PUNCTUATION_PARAGRAPH_END", "WORD_REPEAT_RULE", "TOO_LONG_SENTENCE_NL",
+		"NL_SENTENCE_WHITESPACE",
+	} {
+		require.NotContains(t, lt.GetAllRegisteredRuleIDs(), bad)
 	}
-	for _, id := range want {
-		require.Contains(t, ids, id, "missing Java getRelevantRules id %s", id)
-	}
-	// non-faithful invent IDs must not reappear
-	require.NotContains(t, ids, "TOO_LONG_SENTENCE_NL")
-	require.NotContains(t, ids, "NL_SENTENCE_WHITESPACE")
 }

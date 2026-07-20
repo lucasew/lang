@@ -5,16 +5,18 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// UnpairedBracketsRule wraps GenericUnpairedBracketsRule for this language.
+// UnpairedBracketsRule ports Arabic GenericUnpairedBracketsRule symbol set
+// (id remains UNPAIRED_BRACKETS — Java does not invent AR_UNPAIRED_BRACKETS).
 type UnpairedBracketsRule struct {
 	*rules.GenericUnpairedBracketsRule
 }
 
 func NewUnpairedBracketsRule(messages map[string]string) *UnpairedBracketsRule {
-	start := []string{"[", "(", "{", "“", "«", "\"", "'", "‘"}
-	end := []string{"]", ")", "}", "”", "»", "\"", "'", "’"}
+	// Java Arabic.getRelevantRules: "[", "(", "{", "«", "﴾", "\"", "'" /
+	// "]", ")", "}", "»", "﴿", "\"", "'"
+	start := []string{"[", "(", "{", "«", "﴾", "\"", "'"}
+	end := []string{"]", ")", "}", "»", "﴿", "\"", "'"}
 	base := rules.NewGenericUnpairedBracketsRule(messages, start, end)
-	base.SetRuleID("AR_UNPAIRED_BRACKETS")
 	return &UnpairedBracketsRule{GenericUnpairedBracketsRule: base}
 }
 
