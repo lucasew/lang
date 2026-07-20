@@ -573,7 +573,8 @@ var likelyVklySurfaces = map[string]struct{}{
 	"суде": {}, "роде": {}, "заходе": {}, "місяченьку": {}, "редакціє": {},
 }
 
-// RetagFemNames ports retagFemNames soft: title + name + past verb gender forces name gender.
+// RetagFemNames ports retagFemNames: title + name + past verb gender forces name gender.
+// Java: on title+verb match always i+=1 (even if no name rewrite), then continue gen loop.
 func RetagFemNames(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -581,15 +582,17 @@ func RetagFemNames(input *languagetool.AnalyzedSentence) {
 	const ruleApplied = "proper_name_gender_override"
 	tokens := input.GetTokensWithoutWhitespace()
 	for i := 1; i < len(tokens)-2; i++ {
-		title := tokens[i]
-		name := tokens[i+1]
-		verb := tokens[i+2]
-		if title == nil || name == nil || verb == nil {
-			continue
-		}
-		// Java loops gen f then m
-		applied := false
+		// Java loops gen f then m; i may advance mid-loop
 		for _, gen := range []string{"f", "m"} {
+			if i >= len(tokens)-2 {
+				break
+			}
+			title := tokens[i]
+			name := tokens[i+1]
+			verb := tokens[i+2]
+			if title == nil || name == nil || verb == nil {
+				continue
+			}
 			var titleSet map[string]struct{}
 			if gen == "f" {
 				titleSet = femTitles
@@ -602,7 +605,7 @@ func RetagFemNames(input *languagetool.AnalyzedSentence) {
 			if !titleHas(title, titleSet, gen) && !hasPOSStart(title, fnamePrefix) {
 				continue
 			}
-			// past verb same gender
+			// past verb same gender — Java hasPosTag(…, verb.*:past:GEN) full match
 			if !hasPosTagREMatch(verb, `verb.*:past:`+gen) {
 				continue
 			}
@@ -615,7 +618,6 @@ func RetagFemNames(input *languagetool.AnalyzedSentence) {
 						name.RemoveReading(r, ruleApplied)
 					}
 				}
-				applied = true
 			} else if gen == "f" && hasPOSStart(name, "noun:anim:m:v_naz:prop") {
 				// леді Черчилль
 				for _, r := range append([]*languagetool.AnalyzedToken(nil), name.GetReadings()...) {
@@ -624,7 +626,6 @@ func RetagFemNames(input *languagetool.AnalyzedSentence) {
 				p := "noun:anim:f:v_naz:prop:lname"
 				l := name.GetToken()
 				name.AddReading(languagetool.NewAnalyzedToken(name.GetToken(), &p, &l), ruleApplied)
-				applied = true
 			} else if isCapitalizedToken(name) &&
 				!hasPOSPart(name, ":prop") &&
 				hasPOSStart(title, fnamePrefix) {
@@ -635,12 +636,9 @@ func RetagFemNames(input *languagetool.AnalyzedSentence) {
 				p := animProp + ":lname"
 				l := name.GetToken()
 				name.AddReading(languagetool.NewAnalyzedToken(name.GetToken(), &p, &l), ruleApplied)
-				applied = true
 			}
-			if applied {
-				i++ // Java i+=1 after match
-				break
-			}
+			// Java: i+=1 whenever title+verb matched (even if name branches no-op)
+			i++
 		}
 	}
 }

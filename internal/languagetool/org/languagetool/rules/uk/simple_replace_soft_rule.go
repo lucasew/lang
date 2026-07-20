@@ -66,16 +66,16 @@ func NewSimpleReplaceSoftRule(messages map[string]string) *SimpleReplaceSoftRule
 }
 
 // softTokenException ports SimpleReplaceSoftRule.isTokenException (завидна + super).
+// Java: "завидна".equals(atr.getCleanToken()) || super… (super always false).
 func softTokenException(atr *languagetool.AnalyzedTokenReadings) bool {
 	if atr == nil {
 		return false
 	}
-	// Java: "завидна".equals(atr.getCleanToken())
 	c := atr.GetCleanToken()
 	if c == "" {
 		c = atr.GetToken()
 	}
-	return strings.EqualFold(c, "завидна")
+	return c == "завидна"
 }
 
 // softMessage ports SimpleReplaceSoftRule.getMessage (ctx: + non-ctx suggestions).
@@ -110,13 +110,9 @@ func (r *SimpleReplaceSoftRule) Match(sentence *languagetool.AnalyzedSentence) [
 
 func splitSoftReplacements(reps []string) (contexts, suggestions []string) {
 	for _, rep := range reps {
-		lower := strings.ToLower(rep)
-		if strings.HasPrefix(lower, "ctx:") {
-			// strip any case of "ctx:" prefix
-			rest := rep
-			if i := strings.Index(lower, "ctx:"); i >= 0 {
-				rest = strings.TrimSpace(rep[i+4:])
-			}
+		// Java CONTEXT_PREFIX = "ctx:"; startsWith is case-sensitive
+		if strings.HasPrefix(rep, "ctx:") {
+			rest := strings.TrimSpace(rep[len("ctx:"):])
 			for _, c := range strings.Split(rest, ",") {
 				c = strings.TrimSpace(c)
 				if c != "" {
