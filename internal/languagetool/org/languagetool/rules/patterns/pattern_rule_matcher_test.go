@@ -371,3 +371,26 @@ func TestPatternRuleMatcher_SkipMaxTokens(t *testing.T) {
 	require.Equal(t, 0, ms[0].FromPos)
 	require.Equal(t, atr("y", 4).GetEndPos(), ms[0].ToPos)
 }
+
+func TestMatchPreservesCase_PleaseSpellMeJava(t *testing.T) {
+	// Java: if msg contains PLEASE_SPELL_ME anywhere, sugStart advances by its length
+	// after first <suggestion> open (even when not immediately after the tag).
+	m := NewMatch("", "", false, "", "", CaseStartUpper, false, false, IncludeNone)
+	require.True(t, m.ConvertsCase())
+
+	// <suggestion>\1 → backslash at sugStart after open → does not preserve
+	msg := suggestionStartTag + `\1foo</suggestion>`
+	require.False(t, matchPreservesCase([]*Match{m}, msg))
+
+	// PLEASE_SPELL_ME right after open: Java sugStart lands on '\\' → false
+	msg2 := suggestionStartTag + PleaseSpellMe + `\1`
+	require.False(t, matchPreservesCase([]*Match{m}, msg2))
+
+	// PLEASE_SPELL_ME later still adds its length (Java bug-for-bug) — no panic.
+	msg3 := suggestionStartTag + `XXXX` + PleaseSpellMe
+	_ = matchPreservesCase([]*Match{m}, msg3)
+
+	// No convertsCase match → true
+	mNone := NewMatch("", "", false, "", "", CaseNone, false, false, IncludeNone)
+	require.True(t, matchPreservesCase([]*Match{mNone}, msg))
+}

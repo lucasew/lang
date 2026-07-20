@@ -823,23 +823,21 @@ func (m *PatternRuleMatcher) phraseMatchContext() PhraseMatchContext {
 }
 
 // matchPreservesCase ports PatternRuleMatcher.matchPreservesCase.
+// Java (bug-for-bug): if msg contains PLEASE_SPELL_ME anywhere, sugStart is advanced
+// by its length after the first <suggestion> open (even when PLEASE_SPELL_ME is not
+// immediately after the tag — FIXME upstream considers first match only).
 func matchPreservesCase(suggestionMatches []*Match, msg string) bool {
 	if len(suggestionMatches) == 0 || msg == "" {
 		return true
 	}
-	sugStart := strings.Index(msg, suggestionStartTag)
-	if sugStart < 0 {
-		return true
-	}
-	sugStart += len(suggestionStartTag)
+	// Java: sugStart = msg.indexOf(SUGGESTION_START_TAG) + length
+	// When tag is missing, indexOf returns -1 → sugStart = length-1 (Java still scans).
+	idx := strings.Index(msg, suggestionStartTag)
+	sugStart := idx + len(suggestionStartTag)
 	if strings.Contains(msg, PleaseSpellMe) {
-		// Java adds PLEASE_SPELL_ME length when present in message
-		// only if it appears at suggestion start region — approximate:
-		if idx := strings.Index(msg[sugStart:], PleaseSpellMe); idx == 0 {
-			sugStart += len(PleaseSpellMe)
-		}
+		sugStart += len(PleaseSpellMe)
 	}
-	if sugStart >= len(msg) {
+	if sugStart < 0 || sugStart >= len(msg) {
 		return true
 	}
 	for _, sMatch := range suggestionMatches {
