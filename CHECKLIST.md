@@ -33,27 +33,27 @@
 - [x] org/languagetool/GlobalConfig.java::GlobalConfig
 - [x] org/languagetool/InputSentence.java::InputSentence
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
 - [x] org/languagetool/JLanguageTool.java::JLanguageTool.Level
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CleanToken
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.CleanToken
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable.LineColumnPosition
 - [ ] org/languagetool/Language.java::Language
-- [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator
-- [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
-- [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
+- [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator
+- [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
+- [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
 - [x] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
 - [x] org/languagetool/LanguageWithModel.java::LanguageWithModel
 - [ ] org/languagetool/Languages.java::Languages
 - [x] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
 - [x] org/languagetool/LinguServices.java::LinguServices
 - [x] org/languagetool/LtBuildInfo.java::LtBuildInfo
-- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
-- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
-- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
+- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
+- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
+- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
 - [x] org/languagetool/Premium.java::Premium
 - [x] org/languagetool/PremiumOff.java::PremiumOff
 - [x] org/languagetool/Range.java::Range

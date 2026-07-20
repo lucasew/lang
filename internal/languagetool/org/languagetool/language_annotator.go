@@ -48,32 +48,39 @@ func (a *LanguageAnnotator) DetectLanguages(input, mainLang string, secondLangs 
 	ranges := a.getTokenRanges(tokens)
 	withLang := a.getTokenRangesWithLang(ranges, mainLang, secondLangs)
 
-	var result []FragmentWithLanguage
+	// Java: walk token ranges, splice on language change using input substrings.
+	curPos := 0
 	fromPos := 0
-	var prevLang string
-	for i, tr := range withLang {
-		if i == 0 {
-			prevLang = tr.lang
-		}
-		if tr.lang != prevLang && i > 0 {
-			// splice previous fragment
-			// rebuild from tokens for simplicity: join range tokens
-		}
-		_ = fromPos
-		prevLang = tr.lang
-	}
-	// simpler: emit one fragment per token range
+	prevLang := mainLang
+	var result []FragmentWithLanguage
 	for _, tr := range withLang {
-		frag := strings.Join(tr.tokens, "")
-		if frag == "" {
-			continue
+		curLang := tr.lang
+		if curLang == "" {
+			curLang = mainLang
 		}
-		// FragmentWithLanguage panics on empty — skip
-		code := tr.lang
-		if code == "" {
-			code = mainLang
+		// single quote inherits previous language
+		if len(tr.tokens) == 1 && isAnnotatorQuote(tr.tokens[0]) {
+			curLang = prevLang
+		} else if curLang != prevLang {
+			// FragmentWithLanguage panics on empty fragment — skip empty slices
+			if fromPos < curPos && fromPos >= 0 && curPos <= len(input) {
+				frag := input[fromPos:curPos]
+				if frag != "" {
+					result = append(result, FragmentWithLanguage{LangCode: prevLang, Fragment: frag})
+				}
+			}
+			fromPos = curPos
 		}
-		result = append(result, FragmentWithLanguage{LangCode: code, Fragment: frag})
+		prevLang = curLang
+		for _, tok := range tr.tokens {
+			curPos += len(tok)
+		}
+	}
+	if fromPos < len(input) {
+		frag := input[fromPos:]
+		if frag != "" {
+			result = append(result, FragmentWithLanguage{LangCode: prevLang, Fragment: frag})
+		}
 	}
 	return result
 }

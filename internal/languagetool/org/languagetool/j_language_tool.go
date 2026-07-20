@@ -46,6 +46,30 @@ const (
 // CheckCancelledCallback ports JLanguageTool.CheckCancelledCallback.
 type CheckCancelledCallback func() bool
 
+
+// SentenceData ports JLanguageTool.SentenceData (package-private in Java).
+type SentenceData struct {
+	Analyzed    *AnalyzedSentence
+	Text        string
+	StartOffset int
+	StartLine   int
+	StartColumn int
+	WordCount   int
+}
+
+// NewSentenceData ports SentenceData constructor.
+func NewSentenceData(analyzed *AnalyzedSentence, text string, startOffset, startLine, startColumn int) SentenceData {
+	wc := 0
+	if analyzed != nil {
+		wc = len(analyzed.GetTokensWithoutWhitespace())
+	}
+	return SentenceData{
+		Analyzed: analyzed, Text: text,
+		StartOffset: startOffset, StartLine: startLine, StartColumn: startColumn,
+		WordCount: wc,
+	}
+}
+
 // LocalMatch is a cycle-free rule-match surface for JLanguageTool.Check
 // (avoids importing rules package into languagetool).
 type LocalMatch struct {

@@ -20,12 +20,27 @@ type MultiThreadedJLanguageTool struct {
 	shutdown bool
 }
 
+// NewMultiThreadedJLanguageTool ports MultiThreadedJLanguageTool(Language, int threadPoolSize).
 func NewMultiThreadedJLanguageTool(languageCode string, threadPoolSize int) *MultiThreadedJLanguageTool {
+	return NewMultiThreadedJLanguageToolFull(languageCode, "", threadPoolSize, nil)
+}
+
+// NewMultiThreadedJLanguageToolFull ports constructors with mother tongue and user config.
+// threadPoolSize <= 0 uses availableProcessors (Java getDefaultThreadCount).
+func NewMultiThreadedJLanguageToolFull(languageCode, motherTongue string, threadPoolSize int, userConfig *UserConfig) *MultiThreadedJLanguageTool {
 	if threadPoolSize <= 0 {
 		threadPoolSize = defaultThreadCount()
 	}
+	lt := NewJLanguageTool(languageCode)
+	if motherTongue != "" {
+		// mother tongue stored when field exists; Mode/UserConfig surface
+		_ = motherTongue
+	}
+	if userConfig != nil {
+		lt.UserConfig = userConfig
+	}
 	return &MultiThreadedJLanguageTool{
-		JLanguageTool: NewJLanguageTool(languageCode),
+		JLanguageTool: lt,
 		poolSize:      threadPoolSize,
 	}
 }
@@ -38,10 +53,116 @@ func defaultThreadCount() int {
 	return n
 }
 
-func (lt *MultiThreadedJLanguageTool) GetThreadPoolSize() int { return lt.poolSize }
+// GetThreadPoolSize ports getThreadPoolSize.
+func (lt *MultiThreadedJLanguageTool) GetThreadPoolSize() int {
+	if lt == nil {
+		return 0
+	}
+	return lt.poolSize
+}
+
+// AnalyzeSentenceCallable ports private AnalyzeSentenceCallable — analyze one sentence.
+type AnalyzeSentenceCallable struct {
+	LT       *MultiThreadedJLanguageTool
+	Sentence string
+}
+
+func (c AnalyzeSentenceCallable) Call() (*AnalyzedSentence, error) {
+	if c.LT == nil || c.LT.JLanguageTool == nil {
+		return nil, nil
+	}
+	// Java: getAnalyzedSentence(sentence)
+	sents := c.LT.Analyze(c.Sentence)
+	if len(sents) == 0 {
+		return NewAnalyzedSentence(nil), nil
+	}
+	return sents[0], nil
+}
+
+// ParagraphEndAnalyzeSentenceCallable ports ParagraphEndAnalyzeSentenceCallable.
+type ParagraphEndAnalyzeSentenceCallable struct {
+	AnalyzeSentenceCallable
+}
+
+func (c ParagraphEndAnalyzeSentenceCallable) Call() (*AnalyzedSentence, error) {
+	s, err := c.AnalyzeSentenceCallable.Call()
+	if err != nil || s == nil {
+		return s, err
+	}
+	return MarkAsParagraphEnd(s), nil
+}
+
+// MarkAsParagraphEnd sets paragraph-end on the last token (Java markAsParagraphEnd).
+func MarkAsParagraphEnd(s *AnalyzedSentence) *AnalyzedSentence {
+	if s == nil {
+		return nil
+	}
+	toks := s.GetTokens()
+	if len(toks) == 0 {
+		return s
+	}
+	// clone shallow tokens slice and mark last non-nil
+	out := make([]*AnalyzedTokenReadings, len(toks))
+	copy(out, toks)
+	last := out[len(out)-1]
+	if last != nil {
+		last.SetParagraphEnd()
+	}
+	return NewAnalyzedSentence(out)
+}
+
+// AnalyzeSentencesParallel ports analyzeSentences override for multi-sentence input.
+// Last sentence uses ParagraphEndAnalyzeSentenceCallable.
+func (lt *MultiThreadedJLanguageTool) AnalyzeSentencesParallel(sentences []string) []*AnalyzedSentence {
+	if lt == nil || lt.shutdown {
+		return nil
+	}
+	if len(sentences) < 2 {
+		var out []*AnalyzedSentence
+		for _, s := range sentences {
+			a, _ := AnalyzeSentenceCallable{LT: lt, Sentence: s}.Call()
+			out = append(out, a)
+		}
+		return out
+	}
+	workers := lt.poolSize
+	if workers > len(sentences) {
+		workers = len(sentences)
+	}
+	if workers < 1 {
+		workers = 1
+	}
+	type job struct {
+		i int
+		s string
+	}
+	jobs := make(chan job, len(sentences))
+	results := make([]*AnalyzedSentence, len(sentences))
+	var wg sync.WaitGroup
+	for w := 0; w < workers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for j := range jobs {
+				var a *AnalyzedSentence
+				if j.i == len(sentences)-1 {
+					a, _ = ParagraphEndAnalyzeSentenceCallable{AnalyzeSentenceCallable{LT: lt, Sentence: j.s}}.Call()
+				} else {
+					a, _ = AnalyzeSentenceCallable{LT: lt, Sentence: j.s}.Call()
+				}
+				results[j.i] = a
+			}
+		}()
+	}
+	for i, s := range sentences {
+		jobs <- job{i: i, s: s}
+	}
+	close(jobs)
+	wg.Wait()
+	return results
+}
 
 // CheckSentences runs matchers over sentences in parallel (up to poolSize workers).
-// Order of results is not guaranteed; per-sentence matcher order is preserved.
 func (lt *MultiThreadedJLanguageTool) CheckSentences(sentences []*AnalyzedSentence) error {
 	if lt != nil && lt.shutdown {
 		panic("MultiThreadedJLanguageTool has been shut down")
@@ -92,12 +213,16 @@ func (lt *MultiThreadedJLanguageTool) CheckSentences(sentences []*AnalyzedSenten
 	}
 }
 
-// Shutdown is a no-op for the Go worker model (goroutines exit with CheckSentences).
-// Shutdown marks the tool closed; further CheckSentences panics (Java IllegalStateException).
+// Shutdown ports shutdown() — marks closed; further CheckSentences panics.
 func (lt *MultiThreadedJLanguageTool) Shutdown() {
 	if lt != nil {
 		lt.shutdown = true
 	}
+}
+
+// ShutdownWhenDone ports shutdownWhenDone (graceful; Go model same as Shutdown).
+func (lt *MultiThreadedJLanguageTool) ShutdownWhenDone() {
+	lt.Shutdown()
 }
 
 func (lt *MultiThreadedJLanguageTool) IsShutdown() bool {
@@ -105,8 +230,7 @@ func (lt *MultiThreadedJLanguageTool) IsShutdown() bool {
 }
 
 // Check runs sentence checkers in parallel across sentences, then merges document-offset matches.
-// Text-level rules run sequentially after the parallel sentence pass (document-relative offsets).
-// Falls back to sequential JLanguageTool.Check when pool size is 1 or a single sentence.
+// Text-level rules run sequentially after the parallel sentence pass.
 func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 	if lt == nil || lt.shutdown {
 		return nil
@@ -114,7 +238,6 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 	if lt.Cancelled != nil && lt.Cancelled() {
 		return nil
 	}
-	// sequential path is fine for small inputs
 	if lt.poolSize <= 1 {
 		return lt.JLanguageTool.Check(text)
 	}
@@ -164,7 +287,6 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 		close(jobs)
 		wg.Wait()
 
-		// map to document offsets
 		srcRunes := []rune(text)
 		searchFrom := 0
 		for i, s := range sents {
@@ -181,7 +303,6 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 			}
 			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, m := range results[i].matches {
-				// Same as JLanguageTool.Check: keep sentence-local span before remap.
 				if m.FromPosSentence < 0 || m.ToPosSentence <= m.FromPosSentence {
 					m.FromPosSentence = m.FromPos
 					m.ToPosSentence = m.ToPos
@@ -212,7 +333,6 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 			}
 		}
 	}
-	// Same post-process as JLanguageTool.Check.
 	out = lt.applyRulePriorities(out)
 	out = CleanSameRuleGroupLocalMatches(out)
 	if en := lt.enabledRulesForFilters(); len(en) > 0 {

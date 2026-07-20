@@ -85,3 +85,37 @@ func TestMultiThreadedJLanguageTool_TextLevel(t *testing.T) {
 		require.NotEqual(t, "WORD_REPEAT_BEGINNING_RULE", x.RuleID)
 	}
 }
+
+func TestMultiThreadedJLanguageTool_AnalyzeParallel(t *testing.T) {
+	lt := NewMultiThreadedJLanguageTool("en", 2)
+	out := lt.AnalyzeSentencesParallel([]string{"Hello.", "World."})
+	require.Len(t, out, 2)
+	require.NotNil(t, out[0])
+	require.NotNil(t, out[1])
+	// last sentence paragraph end
+	toks := out[1].GetTokens()
+	require.NotEmpty(t, toks)
+	require.True(t, toks[len(toks)-1].IsParagraphEnd())
+	lt.ShutdownWhenDone()
+	require.True(t, lt.IsShutdown())
+}
+
+func TestSentenceData(t *testing.T) {
+	a := AnalyzePlain("hi")
+	sd := NewSentenceData(a, "hi", 0, 1, 1)
+	require.Equal(t, "hi", sd.Text)
+	require.Greater(t, sd.WordCount, 0)
+}
+
+func TestCleanTokenAlias(t *testing.T) {
+	c := CleanToken{Orig: "a\u00ADb", Clean: "ab"}
+	require.Equal(t, "a\u00ADb", c.GetOrigToken())
+	require.Equal(t, "ab", c.GetCleanToken())
+}
+
+func TestJLanguageToolModeParagraphEnums(t *testing.T) {
+	require.Equal(t, Mode("ALL"), ModeAll)
+	require.Equal(t, ParagraphHandling("NORMAL"), ParagraphNormal)
+	var cancelled CheckCancelledCallback = func() bool { return true }
+	require.True(t, cancelled())
+}

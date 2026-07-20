@@ -269,9 +269,15 @@ func AnalyzePlainStripSoftHyphen(text string) *AnalyzedSentence {
 
 // SoftHyphenToken ports JLanguageTool.CleanToken (orig + cleaned surfaces).
 type SoftHyphenToken struct {
-	Orig  string
-	Clean string
+	Orig  string // Java: origToken
+	Clean string // Java: cleanToken
 }
+
+// CleanToken is the Java name (JLanguageTool.CleanToken).
+type CleanToken = SoftHyphenToken
+
+func (c SoftHyphenToken) GetOrigToken() string  { return c.Orig }
+func (c SoftHyphenToken) GetCleanToken() string { return c.Clean }
 
 // ReplaceSoftHyphens ports JLanguageTool.replaceSoftHyphens:
 // for tokens matching ignoredCharacterRegex, store orig/clean and replace the
