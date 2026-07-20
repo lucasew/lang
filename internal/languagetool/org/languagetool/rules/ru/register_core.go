@@ -7,7 +7,9 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
-// RegisterCoreRussianRules installs shared layout + Russian word-repeat + beginning.
+// RegisterCoreRussianRules ports Russian.getRelevantRules (+ chunker / ignored chars).
+// Java: RussianSimpleWordRepeatRule (extends WordRepeatRule → WORD_REPEAT_RULE id) +
+// RussianWordRepeatRule (RU_WORD_REPEAT) — no WordRepeatBeginning invent.
 func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -18,18 +20,12 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	// Java Russian.getIgnoredCharactersRegex: soft hyphen + combining acute/grave.
 	lt.IgnoredCharacters = languagetool.RussianIgnoredCharactersRegex
 	rules.RegisterSharedLayoutRules(lt, "ru")
-	// Simple adjacent is more reliable without full POS; advanced RU needs lemmas.
+	// Java RussianSimpleWordRepeatRule: default WordRepeatRule id WORD_REPEAT_RULE.
 	wr := NewRussianSimpleWordRepeatRule(map[string]string{"repetition": "Повтор слова"})
-	if wr.WordRepeatRule != nil && wr.IDOverride == "" {
-		wr.IDOverride = "RU_WORD_REPEAT_SIMPLE"
-	}
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Три подряд идущих предложения начинаются с одного слова.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
+	// Java RussianWordRepeatRule (RU_WORD_REPEAT).
+	rwr := NewRussianWordRepeatRule(map[string]string{"repetition": "Повтор слов в предложении"})
+	lt.AddRuleChecker(rwr.GetID(), rules.AsSentenceCheckerSimple(rwr.Match))
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewRussianSimpleReplaceRule(nil)

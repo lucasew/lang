@@ -5,19 +5,19 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreRomanianRules installs shared layout + language word-repeat + beginning.
+// RegisterCoreRomanianRules ports Romanian.getRelevantRules / createDefaultSpellingRule.
+// Java: WordRepeatRule (default WORD_REPEAT_RULE) + RomanianWordRepeatBeginningRule.
 func RegisterCoreRomanianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	rules.RegisterSharedLayoutRules(lt, "ro")
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Repetiție"})
+	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Repetiție"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
 	wrb := NewRomanianWordRepeatBeginningRule(map[string]string{
 		"desc_repetition_beginning_word": "Trei propoziții consecutive încep cu același cuvânt.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)

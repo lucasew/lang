@@ -5,19 +5,19 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreGreekRules installs shared layout + language word-repeat + beginning.
+// RegisterCoreGreekRules ports Greek.getRelevantRules / createDefaultSpellingRule.
+// Java: WordRepeatRule (default WORD_REPEAT_RULE) + GreekWordRepeatBeginningRule.
 func RegisterCoreGreekRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	rules.RegisterSharedLayoutRules(lt, "el")
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Επανάληψη"})
+	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Επανάληψη"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
 	wrb := NewGreekWordRepeatBeginningRule(map[string]string{
 		"desc_repetition_beginning_word": "Τρεις διαδοχικές προτάσεις αρχίζουν με την ίδια λέξη.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official homonyms replace table (embedded from upstream).
 	hr := NewReplaceHomonymsRule(nil)

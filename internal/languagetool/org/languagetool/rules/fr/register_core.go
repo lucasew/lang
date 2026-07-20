@@ -8,7 +8,9 @@ import (
 
 // languagetool.TokenTag used by late-bound TagPOS.
 
-// RegisterCoreFrenchRules installs shared layout + FR word-repeat + beginning.
+// RegisterCoreFrenchRules ports French.getRelevantRules / createDefaultSpellingRule.
+// Java has no WordRepeatRule / WordRepeatBeginning — FrenchRepeatedWordsRule is the
+// FR-specific repetition style rule (not invent generic WR).
 func RegisterCoreFrenchRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -22,15 +24,6 @@ func RegisterCoreFrenchRules(lt *languagetool.JLanguageTool) {
 		lt.FilterRuleMatches = languagetool.FilterFrenchRuleMatchesHook
 	}
 	rules.RegisterSharedLayoutRules(lt, "fr")
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Répétition de mot"})
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Trois phrases successives commencent par le même mot.",
-		"desc_repetition_beginning_adv":  "Trois phrases successives commencent par le même adverbe.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-
-	// Soft invent token sequences removed (faithful-port): use official grammar.xml via LANG_USE_UPSTREAM_GRAMMAR, do not invent surface packs.
 
 	// Official replace.txt / replace_custom.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)

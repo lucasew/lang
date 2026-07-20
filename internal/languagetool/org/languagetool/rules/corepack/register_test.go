@@ -20,8 +20,8 @@ func TestRegister_MultiLang(t *testing.T) {
 		// da: Java WORD_REPEAT only via grammar.xml — no class WordRepeat in getRelevantRules
 		// gl/nl: Java has no WordRepeat — covered in pack tests / not MultiLang
 		{"sk", "test test", "WORD_REPEAT_RULE"},
-		{"el", "γεια γεια", "EL_WORD_REPEAT_RULE"},
-		{"ro", "test test", "RO_WORD_REPEAT_RULE"},
+		{"el", "γεια γεια", "WORD_REPEAT_RULE"},
+		{"ro", "test test", "WORD_REPEAT_RULE"},
 		{"pt-BR", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
 		{"ar", "كلمة كلمة", "ARABIC_WORD_REPEAT_RULE"},
 		{"sl", "test test", "WORD_REPEAT_RULE"},
@@ -48,17 +48,17 @@ func TestRegister_MultiLang(t *testing.T) {
 	}
 }
 
-func TestRegister_WordRepeatBeginning(t *testing.T) {
+// Java French has no WordRepeatBeginning — only FrenchRepeatedWordsRule (style).
+func TestRegister_French_NoInventWordRepeat(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("fr")
 	corepack.Register(lt, "fr")
-	m := lt.Check("Bonjour le monde. Bonjour la terre. Bonjour le ciel.")
-	found := false
-	for _, x := range m {
-		if x.RuleID == "FR_WORD_REPEAT_BEGINNING_RULE" {
-			found = true
-		}
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "FR_WORD_REPEAT_RULE")
+	require.NotContains(t, ids, "FR_WORD_REPEAT_BEGINNING_RULE")
+	require.NotContains(t, ids, "WORD_REPEAT_RULE")
+	for _, m := range lt.Check("test test") {
+		require.NotContains(t, m.RuleID, "WORD_REPEAT")
 	}
-	require.True(t, found, "%+v", m)
 }
 
 func TestRegister_GenericPacks(t *testing.T) {
