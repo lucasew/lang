@@ -78,7 +78,8 @@ func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string)
 		// Java WordRepeatRule: Categories.MISC
 		return "MISC", "Miscellaneous", "duplication", "Word repetition"
 	case id == "EN_A_VS_AN" || strings.Contains(id, "A_VS_AN"):
-		return "GRAMMAR", "Grammar", "grammar", "Wrong article"
+		// Java AvsAnRule: Categories.MISC + ITSIssueType.Misspelling
+		return "MISC", "Miscellaneous", "misspelling", "Wrong article"
 	// German grammar rules (Java AgreementRule / VerbAgreement / SubjectVerbAgreement)
 	case id == "DE_AGREEMENT" || id == "DE_AGREEMENT2" ||
 		id == "DE_SUBJECT_VERB_AGREEMENT" || id == "DE_VERBAGREEMENT" ||

@@ -7,11 +7,12 @@ import (
 )
 
 func TestRuleMeta_KnownJavaFamilies(t *testing.T) {
+	// Java AvsAnRule: Categories.MISC + ITSIssueType.Misspelling
 	id, name, issue, short := RuleMeta("EN_A_VS_AN")
-	require.Equal(t, "GRAMMAR", id)
-	require.Equal(t, "Grammar", name)
-	require.Equal(t, "grammar", issue)
-	require.NotEmpty(t, short)
+	require.Equal(t, "MISC", id)
+	require.Equal(t, "Miscellaneous", name)
+	require.Equal(t, "misspelling", issue)
+	require.Equal(t, "Wrong article", short)
 
 	id, _, issue, _ = RuleMeta("MORFOLOGIK_RULE_EN_US")
 	require.Equal(t, "TYPOS", id)

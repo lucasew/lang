@@ -38,9 +38,10 @@ func TestCoreCheckHook_JSON(t *testing.T) {
 	body := out.String()
 	require.Contains(t, body, "EN_A_VS_AN")
 	require.Contains(t, body, "matches")
-	require.Contains(t, body, `"issueType":"grammar"`)
+	// Java AvsAnRule: setLocQualityIssueType(Misspelling); Categories.MISC
+	require.Contains(t, body, `"issueType":"misspelling"`)
 	require.Contains(t, body, `"severity":"error"`)
-	require.Contains(t, body, `"id":"GRAMMAR"`)
+	require.Contains(t, body, `"id":"MISC"`)
 }
 
 func TestCoreApplySuggestionsHook(t *testing.T) {
