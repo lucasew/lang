@@ -29,11 +29,11 @@ func (p *PatternToken) CompileFromReference(ref *languagetool.AnalyzedTokenReadi
 			if cp.Pos != nil {
 				neg = cp.Pos.Negate
 			}
-			// Java setPosToken(new PosToken(posReference, tokenReference.posRegExp(), getNegation()))
-			// Uses Match.posRegExp (postag_regexp on match), not always true for .* patterns.
+			// Java: setPosToken(new PosToken(posReference, tokenReference.posRegExp(), getNegation()))
+			// posRegExp is only Match.posRegExp — do not invent regex mode from corrected tag shape.
 			cp.SetPosToken(PosToken{
 				PosTag: posReference,
-				Regexp: tm.IsPostagRegexp() || looksLikePosRegexp(posReference),
+				Regexp: tm.IsPostagRegexp(),
 				Negate: neg,
 			})
 		}
@@ -41,11 +41,9 @@ func (p *PatternToken) CompileFromReference(ref *languagetool.AnalyzedTokenReadi
 			cp.Token = strings.ReplaceAll(cp.Token, refMarker, "")
 		}
 	} else {
+		// Java: toTokenString() joins multi forms with "|" (MatchState.toTokenString).
 		forms := ms.ToFinalString("")
-		repl := ""
-		if len(forms) > 0 {
-			repl = forms[0]
-		}
+		repl := strings.Join(forms, "|")
 		if cp.Token != "" {
 			cp.Token = strings.ReplaceAll(cp.Token, refMarker, repl)
 		} else {
@@ -55,8 +53,4 @@ func (p *PatternToken) CompileFromReference(ref *languagetool.AnalyzedTokenReadi
 	// Compiled token is no longer a live reference for further resolveReference.
 	cp.TokenMatch = nil
 	return cp
-}
-
-func looksLikePosRegexp(s string) bool {
-	return strings.ContainsAny(s, ".*+?|[](){}")
 }

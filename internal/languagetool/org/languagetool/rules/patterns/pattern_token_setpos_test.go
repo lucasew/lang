@@ -1,9 +1,11 @@
 package patterns
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	"github.com/stretchr/testify/require"
 )
 
@@ -68,4 +70,56 @@ func TestGetTargetPosTag_Replace(t *testing.T) {
 	ms.SetToken(atr)
 	got := ms.GetTargetPosTag()
 	require.Equal(t, "N:f:sg:acc", got)
+}
+
+// Twin of PatternToken.doCompile setPosToken(..., tokenReference.posRegExp(), ...):
+// Regexp flag is only Match.posRegExp — not invent from corrected tag shape (e.g. "N:f").
+func TestCompileFromReference_SetPosUsesMatchPosRegExpOnly(t *testing.T) {
+	// setpos without postag_regexp → PosToken.Regexp false even if tag has colon/dots.
+	m := NewMatch("N:f:sg:acc", "", false, "", "", CaseNone, true, false, IncludeNone)
+	m.SetTokenRef(0)
+	pt := Token("")
+	pt.TokenMatch = m
+	pos, lem := "N:f:sg:acc", "x"
+	ref := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("la", &pos, &lem), 0)
+	cp := pt.CompileFromReference(ref, nil)
+	require.NotNil(t, cp.Pos)
+	require.Equal(t, "N:f:sg:acc", cp.Pos.PosTag)
+	require.False(t, cp.Pos.Regexp, "Java uses tokenReference.posRegExp() only")
+
+	// setpos with postag_regexp → Regexp true
+	m2 := NewMatch("N:([fm]):sg:acc", "N:$1:sg:acc", true, "", "", CaseNone, true, false, IncludeNone)
+	m2.SetTokenRef(0)
+	pt2 := Token("")
+	pt2.TokenMatch = m2
+	cp2 := pt2.CompileFromReference(ref, nil)
+	require.NotNil(t, cp2.Pos)
+	require.Equal(t, "N:f:sg:acc", cp2.Pos.PosTag)
+	require.True(t, cp2.Pos.Regexp)
+}
+
+// Twin of MatchState.toTokenString: join multi synthesis forms with "|".
+func TestCompileFromReference_SurfaceRefJoinsForms(t *testing.T) {
+	m := NewMatch("NN.*", "", true, "", "", CaseNone, false, false, IncludeNone)
+	m.SetTokenRef(1)
+	pt := Token(`ref \1`)
+	pt.TokenMatch = m
+	// Manual synth yields two forms for one reading
+	man, err := synthesis.NewManualSynthesizer(strings.NewReader(
+		"cats\tcat\tNNS\n" +
+			"kitties\tcat\tNNS\n",
+	))
+	require.NoError(t, err)
+	synth := synthesis.NewBaseSynthesizer("en", man)
+	nn := "NNS"
+	lem := "cat"
+	ref := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("cats", &nn, &lem), 0)
+	cp := pt.CompileFromReference(ref, synth)
+	// toFinalString multi forms → toTokenString joins with "|"
+	require.Contains(t, cp.Token, "|")
+	require.Contains(t, cp.Token, "cats")
+	require.Contains(t, cp.Token, "kitties")
+	require.True(t, strings.HasPrefix(cp.Token, "ref "))
 }
