@@ -43,7 +43,18 @@ func NewEnglishSynthesizer(manual *synthesis.ManualSynthesizer) *EnglishSynthesi
 	base.SorFileName = EnglishSorFile
 	base.ResourceFileName = EnglishSynthResource
 	base.TagFileName = EnglishTagsFile
+	// Java virtual isException → Base removeExceptions on synthesize paths.
+	base.IsExceptionFn = englishIsException
 	return &EnglishSynthesizer{BaseSynthesizer: base}
+}
+
+// englishIsException is the Java EnglishSynthesizer.isException body (for Base.IsExceptionFn).
+func englishIsException(w string) bool {
+	if strings.HasPrefix(w, "'") {
+		return true
+	}
+	_, ok := englishSynthExceptions[w]
+	return ok
 }
 
 // INSTANCE ports EnglishSynthesizer.INSTANCE.
@@ -62,24 +73,14 @@ func (s *EnglishSynthesizer) suggestAorAn(word string) string {
 
 // IsException ports EnglishSynthesizer.isException: leading apostrophe or exceptions list.
 func (s *EnglishSynthesizer) IsException(w string) bool {
-	if strings.HasPrefix(w, "'") {
-		return true
-	}
-	_, ok := englishSynthExceptions[w]
-	return ok
+	return englishIsException(w)
 }
 
 func (s *EnglishSynthesizer) removeExceptions(words []string) []string {
-	if len(words) == 0 {
-		return words
+	if s != nil && s.BaseSynthesizer != nil {
+		return s.BaseSynthesizer.RemoveExceptions(words)
 	}
-	out := make([]string, 0, len(words))
-	for _, w := range words {
-		if !s.IsException(w) {
-			out = append(out, w)
-		}
-	}
-	return out
+	return words
 }
 
 // Synthesize ports EnglishSynthesizer.synthesize(token, posTag).

@@ -44,3 +44,24 @@ func TestBaseSynthesizer_SynthesizeForPosTags(t *testing.T) {
 func TestJLanguageToolConstants(t *testing.T) {
 	// compile-time presence via languagetool package constants tested elsewhere
 }
+
+func TestBaseSynthesizer_RemoveExceptions_IsExceptionFn(t *testing.T) {
+	man, err := NewManualSynthesizer(strings.NewReader(
+		"was\tbe\tVBD\n" +
+			"'ve\tbe\tVBD\n" +
+			"n't\tnot\tRB\n",
+	))
+	require.NoError(t, err)
+	s := NewBaseSynthesizer("en", man)
+	s.IsExceptionFn = func(w string) bool {
+		return strings.HasPrefix(w, "'") || w == "n't"
+	}
+	lemma := "be"
+	tok := languagetool.NewAnalyzedToken("be", nil, &lemma)
+	got, err := s.Synthesize(tok, "VBD")
+	require.NoError(t, err)
+	require.Equal(t, []string{"was"}, got) // 've filtered
+	// SynthesizeForPosTags also filters
+	all := s.SynthesizeForPosTags("be", func(string) bool { return true })
+	require.Equal(t, []string{"was"}, all)
+}

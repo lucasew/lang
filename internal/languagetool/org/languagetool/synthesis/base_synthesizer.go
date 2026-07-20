@@ -35,6 +35,9 @@ type BaseSynthesizer struct {
 	NumberSpeller *Soros
 	// RomanNumberer ports Soros from Roman.sor (Java createRomanNumberer).
 	RomanNumberer *Soros
+	// IsExceptionFn ports protected BaseSynthesizer.isException (Java virtual dispatch).
+	// Nil → always false (Base default). English/French set this for subclass rules.
+	IsExceptionFn func(w string) bool
 }
 
 func NewBaseSynthesizer(langShortCode string, manual *ManualSynthesizer) *BaseSynthesizer {
@@ -159,12 +162,34 @@ func (s *BaseSynthesizer) GetRomanNumber(arabicNumeral string) string {
 	return arabicNumeral
 }
 
+// IsException ports BaseSynthesizer.isException (default false; subclasses via IsExceptionFn).
+func (s *BaseSynthesizer) IsException(w string) bool {
+	if s != nil && s.IsExceptionFn != nil {
+		return s.IsExceptionFn(w)
+	}
+	return false
+}
+
+// RemoveExceptions ports BaseSynthesizer.removeExceptions.
+func (s *BaseSynthesizer) RemoveExceptions(words []string) []string {
+	if len(words) == 0 {
+		return words
+	}
+	out := make([]string, 0, len(words))
+	for _, w := range words {
+		if !s.IsException(w) {
+			out = append(out, w)
+		}
+	}
+	return out
+}
+
 // Synthesize ports BaseSynthesizer.synthesize for exact POS tags including spell-number tags.
 func (s *BaseSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
 	if token == nil {
 		return nil, nil
 	}
-	// Java: spell tags use token.getToken() (surface), not lemma.
+	// Java: spell tags use token.getToken() (surface), not lemma; no removeExceptions.
 	switch posTag {
 	case SpellNumberTag:
 		return []string{s.GetSpelledNumber(token.GetToken())}, nil
@@ -180,17 +205,26 @@ func (s *BaseSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag s
 	if lemma == "" {
 		lemma = token.GetToken()
 	}
-	return collectForms(s, lemma, []string{posTag}), nil
+	return s.RemoveExceptions(collectForms(s, lemma, []string{posTag})), nil
 }
 
 // SynthesizeRE ports synthesize with optional POS regexp.
 // Spell-number tags only apply on the non-regexp path (Java BaseSynthesizer).
+// Java non-regexp path: return removeExceptions(synthesize(...)) — spell tags already
+// returned without a second filter; regular forms filter once in Synthesize.
 func (s *BaseSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, posTag string, posTagRegExp bool) ([]string, error) {
 	if token == nil {
 		return nil, nil
 	}
 	if !posTagRegExp {
-		return s.Synthesize(token, posTag)
+		// Java: return removeExceptions(synthesize(token, posTag));
+		// Synthesize already removes exceptions for non-spell tags; spell tags skip filter.
+		// Applying RemoveExceptions again is a no-op for exceptions already gone and for spell forms.
+		forms, err := s.Synthesize(token, posTag)
+		if err != nil {
+			return nil, err
+		}
+		return s.RemoveExceptions(forms), nil
 	}
 	lemma := ""
 	if token.GetLemma() != nil {
@@ -217,7 +251,7 @@ func (s *BaseSynthesizer) SynthesizeForPosTags(lemma string, acceptTag func(stri
 			tags = append(tags, tag)
 		}
 	}
-	return collectForms(s, lemma, tags)
+	return s.RemoveExceptions(collectForms(s, lemma, tags))
 }
 
 func collectForms(s *BaseSynthesizer, lemma string, tags []string) []string {
