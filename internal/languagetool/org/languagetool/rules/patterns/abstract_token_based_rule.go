@@ -175,13 +175,19 @@ func canMatchSentenceStart(token *PatternToken) bool {
 		return true
 	}
 	// Java: isSentenceStart() || getNegation() || !hasStringThatMustMatch()
-	if token.Negation || !hasStringThatMustMatch(token) {
-		return true
-	}
-	if token.Pos != nil && token.Pos.PosTag == languagetool.SentenceStartTagName && !token.Pos.Negate {
+	if token.IsSentenceStart() || token.Negation || !hasStringThatMustMatch(token) {
 		return true
 	}
 	return false
+}
+
+// IsSentStart ports AbstractPatternRule.isSentStart —
+// first pattern token is SENT_START and POS not negated.
+func (r *AbstractTokenBasedRule) IsSentStart() bool {
+	if r == nil || r.PatternRule == nil || len(r.Tokens) == 0 {
+		return false
+	}
+	return r.Tokens[0].IsSentenceStart()
 }
 
 // CanBeIgnoredFor ports AbstractTokenBasedRule.canBeIgnoredFor.

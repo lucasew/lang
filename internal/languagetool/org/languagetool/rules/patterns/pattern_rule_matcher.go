@@ -89,34 +89,65 @@ func (m *PatternRuleMatcher) Match(sentence *languagetool.AnalyzedSentence) ([]*
 	if patternSize == 0 {
 		return nil, nil
 	}
-	// Java AbstractPatternRulePerformer.doMatch: try starts from anchorHint indices
-	// when available (and not raw_pos pre-disambig).
-	limit := len(tokens)
-	if limit < 0 {
-		limit = 0
-	}
-	var starts []int
-	if m.Rule.AnchorHint != nil && !m.usePreDisambigTokens() {
-		if idxs := m.Rule.AnchorHint.GetPossibleIndices(sentence); len(idxs) > 0 {
-			for _, ai := range idxs {
-				i := ai - m.Rule.AnchorHint.TokenIndex
-				if i >= 0 && i < limit {
-					starts = append(starts, i)
-				}
-			}
-		}
-	}
-	if len(starts) == 0 {
-		for i := 0; i < limit; i++ {
-			starts = append(starts, i)
-		}
-	}
+	// Java AbstractPatternRulePerformer.doMatch start enumeration.
+	limit := m.matchStartLimit(len(tokens))
+	starts := m.matchStartIndices(sentence, limit)
 	for _, i := range starts {
 		if rm, ok := m.matchFrom(sentence, tokens, i); ok {
 			found = append(found, rm)
 		}
 	}
 	return rules.NewRuleWithMaxFilter().Filter(found), nil
+}
+
+// matchStartLimit ports doMatch limit:
+// isSentStart ? 1 : max(0, tokens.length - patternSize + 1) + minOccurCorrection
+func (m *PatternRuleMatcher) matchStartLimit(tokenCount int) int {
+	if m == nil {
+		return 0
+	}
+	if m.Rule != nil && m.Rule.IsSentStart() {
+		return 1
+	}
+	patternSize := len(m.matchers)
+	minOccurCorrection := 0
+	for _, mt := range m.matchers {
+		if mt != nil && mt.Base != nil && mt.Base.MinOccurrence == 0 {
+			minOccurCorrection++
+		}
+	}
+	limit := tokenCount - patternSize + 1
+	if limit < 0 {
+		limit = 0
+	}
+	return limit + minOccurCorrection
+}
+
+// matchStartIndices ports doMatch anchor vs full scan.
+// When anchorHint is set and not raw_pos, only try anchor-derived starts
+// (Java: if anchorIndices != null). Empty after filter means no starts.
+func (m *PatternRuleMatcher) matchStartIndices(sentence *languagetool.AnalyzedSentence, limit int) []int {
+	if limit <= 0 {
+		return nil
+	}
+	if m.Rule != nil && m.Rule.AnchorHint != nil && !m.usePreDisambigTokens() {
+		idxs := m.Rule.AnchorHint.GetPossibleIndices(sentence)
+		if idxs != nil {
+			var starts []int
+			for _, ai := range idxs {
+				i := ai - m.Rule.AnchorHint.TokenIndex
+				if i >= 0 && i < limit {
+					starts = append(starts, i)
+				}
+			}
+			return starts
+		}
+	}
+	starts := make([]int, limit)
+	for i := 0; i < limit; i++ {
+		starts[i] = i
+	}
+	return starts
 }
 
 func minPatternTokens(matchers []*PatternTokenMatcher) int {

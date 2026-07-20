@@ -31,32 +31,24 @@ func NewAbstractPatternRulePerformer(rule *AbstractTokenBasedRule, unifier *Unif
 }
 
 // DoMatch scans the sentence and invokes consumer for each match (no RuleMatch creation).
+// Java AbstractPatternRulePerformer.doMatch: token hints, anchor starts, matchFrom.
 func (p *AbstractPatternRulePerformer) DoMatch(sentence *languagetool.AnalyzedSentence, consumer MatchConsumer) {
 	if sentence == nil || consumer == nil || len(p.matchers) == 0 {
 		return
 	}
-	for _, h := range p.Rule.TokenHints {
-		if h.CanBeIgnoredFor(sentence) {
-			return
+	if p.Rule != nil {
+		for _, h := range p.Rule.TokenHints {
+			if h.CanBeIgnoredFor(sentence) {
+				return
+			}
 		}
 	}
 	tokens := sentence.GetTokensWithoutWhitespace()
-	minToks := 0
-	for _, m := range p.matchers {
-		if m.Base != nil && m.Base.MinOccurrence > 0 {
-			minToks += m.Base.MinOccurrence
-		}
-	}
-	if minToks == 0 {
-		minToks = 1
-	}
-	limit := len(tokens) - minToks + 1
-	if limit < 0 {
-		return
-	}
-	// reuse PatternRuleMatcher matchFrom via a temporary matcher
+	// reuse PatternRuleMatcher for limit/anchor/matchFrom (same as Java inheritance)
 	prm := &PatternRuleMatcher{Rule: p.Rule, matchers: p.matchers}
-	for i := 0; i < limit; i++ {
+	limit := prm.matchStartLimit(len(tokens))
+	starts := prm.matchStartIndices(sentence, limit)
+	for _, i := range starts {
 		rm, ok := prm.matchFrom(sentence, tokens, i)
 		if !ok || rm == nil {
 			continue
@@ -72,7 +64,7 @@ func (p *AbstractPatternRulePerformer) DoMatch(sentence *languagetool.AnalyzedSe
 			}
 		}
 		if first < 0 || last < 0 {
-			// approximate by range
+			// approximate by range when exact end markers missing
 			for ti, t := range tokens {
 				if t.GetStartPos() >= rm.FromPos && first < 0 {
 					first = ti

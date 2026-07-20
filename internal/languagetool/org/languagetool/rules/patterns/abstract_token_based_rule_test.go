@@ -18,10 +18,20 @@ func TestAbstractTokenBasedRule_CanBeIgnored(t *testing.T) {
 }
 
 func TestTokenHint_OffsetsAndFormHints(t *testing.T) {
-	// Regex alternation form hints (Java getPossibleRegexpValues subset).
+	// Regex alternation form hints via StringMatcher.getPossibleValues (Java).
 	pt := NewPatternToken("color|colour", false, true, false)
 	require.Equal(t, []string{"color", "colour"}, pt.CalcFormHints())
 	require.Nil(t, pt.CalcLemmaHints())
+
+	// Optional char / groups (Java StringMatcher.getPossibleRegexpValues).
+	optRE := NewPatternToken("colou?r", false, true, false)
+	require.Equal(t, []string{"color", "colour"}, optRE.CalcFormHints())
+	grp := NewPatternToken("a(b|c)", false, true, false)
+	require.Equal(t, []string{"ab", "ac"}, grp.CalcFormHints())
+	cls := NewPatternToken("[xy]", false, true, false)
+	require.Equal(t, []string{"x", "y"}, cls.CalcFormHints())
+	// Unbounded → nil
+	require.Nil(t, NewPatternToken("x.*", false, true, false).CalcFormHints())
 
 	inf := NewPatternToken("run", false, false, true)
 	require.Nil(t, inf.CalcFormHints())
@@ -53,4 +63,33 @@ func TestTokenHint_OffsetsAndFormHints(t *testing.T) {
 	require.NotNil(t, r.AnchorHint)
 	require.Contains(t, r.AnchorHint.LowerCaseValues, "color")
 	require.Contains(t, r.AnchorHint.LowerCaseValues, "colour")
+}
+
+func TestMatchStartLimit_SentStartAndMinOccur(t *testing.T) {
+	// patternSize=2, one optional → minOccurCorrection=1
+	// tokens=4 → limit = max(0, 4-2+1)+1 = 4
+	r := NewAbstractTokenBasedRule("ID", "d", "en", []*PatternToken{
+		Token("a"),
+		func() *PatternToken {
+			p := Token("b")
+			p.SetMinOccurrence(0)
+			return p
+		}(),
+	})
+	m := NewPatternRuleMatcher(r)
+	require.Equal(t, 4, m.matchStartLimit(4))
+	require.Equal(t, 1, m.matchStartLimit(0)) // 0-2+1= -1 → 0 + 1
+
+	// SENT_START first token → limit 1 (Java isSentStart)
+	ss := languagetool.SentenceStartTagName
+	r2 := NewAbstractTokenBasedRule("S", "d", "en", []*PatternToken{
+		func() *PatternToken {
+			p := NewPatternToken("", false, false, false)
+			p.SetPosToken(PosToken{PosTag: ss})
+			return p
+		}(),
+		Token("word"),
+	})
+	require.True(t, r2.IsSentStart())
+	require.Equal(t, 1, NewPatternRuleMatcher(r2).matchStartLimit(10))
 }

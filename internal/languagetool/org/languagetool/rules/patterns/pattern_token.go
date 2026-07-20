@@ -1,7 +1,7 @@
 package patterns
 
 import (
-	"strings"
+	"sort"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -94,6 +94,12 @@ func NewPatternToken(token string, caseSensitive, regexp, matchInflected bool) *
 
 func (p *PatternToken) SetPosToken(pos PosToken) {
 	p.Pos = &pos
+}
+
+// IsSentenceStart ports PatternToken.isSentenceStart.
+func (p *PatternToken) IsSentenceStart() bool {
+	return p != nil && p.Pos != nil &&
+		p.Pos.PosTag == languagetool.SentenceStartTagName && !p.Pos.Negate
 }
 
 func (p *PatternToken) SetWhitespaceBefore(v bool) {
@@ -356,6 +362,7 @@ func (p *PatternToken) CalcLemmaHints() []string {
 }
 
 // calcStringHints ports PatternToken.calcStringHints(inflected).
+// Java returns null for empty sets after and/or retain/union.
 func (p *PatternToken) calcStringHints(inflected bool) []string {
 	if p == nil {
 		return nil
@@ -378,7 +385,7 @@ func (p *PatternToken) calcStringHints(inflected bool) []string {
 				set = intersectStringSet(set, h)
 			}
 		}
-		return stringSetSlice(set)
+		return stringSetSlice(set) // empty → nil
 	}
 	if len(p.OrGroup) > 0 {
 		set := stringSet(result)
@@ -399,47 +406,25 @@ func (p *PatternToken) calcStringHints(inflected bool) []string {
 	return result
 }
 
-// calcOwnPossibleStringValues ports PatternToken.calcOwnPossibleStringValues /
-// textMatcher.getPossibleValues for non-regex and simple alternation regexps.
+// calcOwnPossibleStringValues ports PatternToken.calcOwnPossibleStringValues —
+// textMatcher.getPossibleValues() (StringMatcher.create + getPossibleRegexpValues).
 func (p *PatternToken) calcOwnPossibleStringValues() []string {
 	if p == nil || p.Negation || !hasStringThatMustMatch(p) {
 		return nil
 	}
-	if !p.Regexp {
-		return []string{p.Token}
-	}
-	// Java StringMatcher.getPossibleRegexpValues — faithful subset: pure | alternation of literals.
-	return simpleRegexpAlternationLiterals(p.Token)
-}
-
-// simpleRegexpAlternationLiterals returns literals for patterns like "foo|bar|baz"
-// with no other regex metacharacters. Unknown/unbounded → nil.
-func simpleRegexpAlternationLiterals(pat string) []string {
-	if pat == "" {
+	// Java: return textMatcher.getPossibleValues();
+	m := NewStringMatcher(p.Token, p.Regexp, p.CaseSensitive)
+	vals := m.GetPossibleValues()
+	if vals == nil || len(vals) == 0 {
 		return nil
 	}
-	parts := strings.Split(pat, "|")
-	if len(parts) == 0 {
-		return nil
+	out := make([]string, 0, len(vals))
+	for v := range vals {
+		out = append(out, v)
 	}
-	out := make([]string, 0, len(parts))
-	for _, part := range parts {
-		if part == "" || !isLiteralHintAtom(part) {
-			return nil
-		}
-		out = append(out, part)
-	}
+	// Deterministic order (Java HashSet is unordered).
+	sort.Strings(out)
 	return out
-}
-
-func isLiteralHintAtom(s string) bool {
-	for _, r := range s {
-		switch r {
-		case '.', '*', '+', '?', '(', ')', '[', ']', '{', '}', '^', '$', '\\', '|':
-			return false
-		}
-	}
-	return true
 }
 
 func stringSet(vals []string) map[string]struct{} {
