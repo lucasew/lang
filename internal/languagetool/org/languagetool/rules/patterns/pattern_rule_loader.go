@@ -112,6 +112,8 @@ type xmlCategory struct {
 type xmlRuleGroup struct {
 	ID    string    `xml:"id,attr"`
 	Name  string    `xml:"name,attr"`
+	// Default ports rulegroup default="off"|"temp_off" (inherited by child rules).
+	Default string `xml:"default,attr"`
 	Tags  string    `xml:"tags,attr"`
 	ToneTags string `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -761,7 +763,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
 	idPrefix := strings.TrimSpace(root.IdPrefix)
-	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal string) error {
+	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -805,11 +807,8 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		rawMsg := strings.TrimSpace(xr.Message.Inner)
 		msg, sugMatches := ProcessRuleMessage(rawMsg)
 		short := strings.TrimSpace(xr.Short)
-		def := strings.ToLower(strings.TrimSpace(xr.Default))
-		// Java PatternRuleHandler: defaultOff = OFF.equals; defaultTempOff = TEMP_OFF.equals
-		// (temp_off also implies setDefaultTempOff → defaultOff=true).
-		defaultTempOff := def == "temp_off"
-		defaultOff := def == "off" || defaultTempOff
+		// Java: rulegroup default off/temp_off overrides per-rule default=…
+		defaultOff, defaultTempOff := resolveRuleDefaultOff(xr.Default, groupDefault)
 		// tags / tone_tags: rule + group + category (Java addTags/addToneTags order).
 		tags := mergeRuleTags(parseRuleTagsAttr(xr.Tags), groupTags, catTags)
 		tones := mergeToneTags(parseToneTagsAttr(xr.ToneTags), groupTones, catTones)
@@ -856,7 +855,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		catTags := parseRuleTagsAttr(cat.Tags)
 		catTones := parseToneTagsAttr(cat.ToneTags)
 		for _, xr := range cat.Rules {
-			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, ""); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", ""); err != nil {
 				return nil, err
 			}
 		}
@@ -875,7 +874,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 					id = g.ID
 				}
 				start := len(out)
-				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default); err != nil {
 					return nil, err
 				}
 				// sub id 1-based per XML rule (shared by OR expansions of that rule)
@@ -895,11 +894,33 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, "", "", "", nil, nil, nil, nil, "", ""); err != nil {
+		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", ""); err != nil {
 			return nil, err
 		}
 	}
 	return out, nil
+}
+
+// resolveRuleDefaultOff ports PatternRuleHandler default inheritance:
+// when rulegroup is default=off or temp_off, all children inherit;
+// otherwise the rule's own default= attribute is used.
+// temp_off implies defaultOff (Java setDefaultTempOff).
+func resolveRuleDefaultOff(ruleDefault, groupDefault string) (defaultOff, defaultTempOff bool) {
+	gdef := strings.ToLower(strings.TrimSpace(groupDefault))
+	switch gdef {
+	case XMLOff:
+		return true, false
+	case XMLTempOff:
+		return true, true
+	}
+	rdef := strings.ToLower(strings.TrimSpace(ruleDefault))
+	switch rdef {
+	case XMLTempOff:
+		return true, true
+	case XMLOff:
+		return true, false
+	}
+	return false, false
 }
 
 // antiPatternsFromXML builds PatternRule antipatterns from XML <antipattern> blocks.

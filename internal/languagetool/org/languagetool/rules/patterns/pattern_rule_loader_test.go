@@ -64,6 +64,55 @@ func TestPatternRuleLoader_DefaultTempOff(t *testing.T) {
 	require.False(t, byID["O1"].DefaultTempOff)
 }
 
+// Java rulegroup default="off" / "temp_off" is inherited by every child rule.
+func TestPatternRuleLoader_RuleGroupDefaultInherited(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category id="C" name="Cat">
+    <rulegroup id="G_OFF" name="off group" default="off">
+      <rule>
+        <pattern><token>a</token></pattern>
+        <message>m</message>
+      </rule>
+      <rule>
+        <pattern><token>b</token></pattern>
+        <message>m</message>
+      </rule>
+    </rulegroup>
+    <rulegroup id="G_TEMP" name="temp group" default="temp_off">
+      <rule>
+        <pattern><token>c</token></pattern>
+        <message>m</message>
+      </rule>
+    </rulegroup>
+    <rulegroup id="G_ON" name="on group">
+      <rule>
+        <pattern><token>d</token></pattern>
+        <message>m</message>
+      </rule>
+    </rulegroup>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 4)
+	// group children share group id when rule id empty
+	offCount, tempCount, onCount := 0, 0, 0
+	for _, ar := range ars {
+		if ar.DefaultTempOff {
+			tempCount++
+			require.True(t, ar.DefaultOff)
+		} else if ar.DefaultOff {
+			offCount++
+		} else {
+			onCount++
+		}
+	}
+	require.Equal(t, 2, offCount, "G_OFF children")
+	require.Equal(t, 1, tempCount, "G_TEMP child")
+	require.Equal(t, 1, onCount, "G_ON child stays default-on")
+}
+
 // Rules with <unify> load with UniFeatures and TestUnification (matcher ports testUnification).
 func TestPatternRuleLoader_UnifyLoads(t *testing.T) {
 	xml := `<?xml version="1.0"?>

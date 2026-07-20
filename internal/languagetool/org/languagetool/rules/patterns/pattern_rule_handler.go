@@ -133,6 +133,8 @@ type grammarCategory struct {
 type grammarGroup struct {
 	ID       string        `xml:"id,attr"`
 	Name     string        `xml:"name,attr"`
+	// Default ports rulegroup default="off"|"temp_off" (Java ruleGroupDefaultOff/TempOff).
+	Default  string        `xml:"default,attr"`
 	Tags     string        `xml:"tags,attr"`
 	ToneTags string        `xml:"tone_tags,attr"`
 	Rules    []grammarRule `xml:"rule"`
@@ -209,7 +211,7 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 		catTones := parseToneTagsAttr(cat.ToneTags)
 		catTags := parseRuleTagsAttr(cat.Tags)
 		for _, xr := range cat.Rules {
-			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil); err != nil {
+			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil, ""); err != nil {
 				return err
 			}
 		}
@@ -220,7 +222,7 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 				if xr.ID == "" {
 					xr.ID = g.ID
 				}
-				if err := h.addRule(xr, cat.ID, catTones, groupTones, catTags, groupTags); err != nil {
+				if err := h.addRule(xr, cat.ID, catTones, groupTones, catTags, groupTags, g.Default); err != nil {
 					return err
 				}
 				if len(h.XMLRuleHandler.Rules) > 0 {
@@ -318,7 +320,7 @@ func resolveGoalSpecific(ruleAttr, groupAttr, catAttr string) bool {
 	return false
 }
 
-func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag) error {
+func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag, groupDefault string) error {
 	if xr.ID == "" && !h.RelaxedMode {
 		return fmt.Errorf("rule without id in %s", h.SourceFile)
 	}
@@ -327,10 +329,8 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	tones := mergeToneTags(ruleTones, groupTones, categoryTones)
 	tags := mergeRuleTags(parseRuleTagsAttr(xr.Tags), groupTags, categoryTags)
 	goalSpecific := strings.EqualFold(xr.GoalSpecific, "yes") || strings.EqualFold(xr.GoalSpecific, "true")
-	// Java: defaultOff = OFF.equals; defaultTempOff = TEMP_OFF.equals (temp_off ⇒ setDefaultTempOff).
-	def := strings.ToLower(strings.TrimSpace(xr.Default))
-	defaultTempOff := def == XMLTempOff
-	defaultOff := def == XMLOff || defaultTempOff
+	// Java PatternRuleHandler: rulegroup default off/temp_off overrides rule-level default.
+	defaultOff, defaultTempOff := resolveRuleDefaultOff(xr.Default, groupDefault)
 	if xr.Regexp != nil {
 		content := strings.TrimSpace(xr.Regexp.Content)
 		re, err := regexp.Compile(content)

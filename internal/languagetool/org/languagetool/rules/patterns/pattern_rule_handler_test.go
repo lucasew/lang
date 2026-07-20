@@ -188,6 +188,30 @@ func TestRegisterPatternRule_DefaultOff(t *testing.T) {
 	require.NotEmpty(t, lt.Check("foo bar"))
 }
 
+// Java rulegroup default="off" is inherited (PatternRuleHandler.ruleGroupDefaultOff).
+func TestRegisterPatternRule_RuleGroupDefaultOff(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat">
+    <rulegroup id="GRP" name="g" default="off">
+      <rule>
+        <pattern><token>foo</token></pattern>
+        <message>m</message>
+      </rule>
+    </rulegroup>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("test.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	require.True(t, h.LoadedPatternRules[0].DefaultOff)
+	require.False(t, h.LoadedPatternRules[0].DefaultTempOff)
+	lt := languagetool.NewJLanguageTool("en")
+	RegisterLoadedPatternRules(lt, h)
+	require.Empty(t, lt.Check("foo bar"))
+	lt.EnableRule("GRP")
+	require.NotEmpty(t, lt.Check("foo bar"))
+}
+
 // Java default="temp_off": defaultOff + defaultTempOff; EnableTempOffRules re-activates.
 func TestRegisterPatternRule_DefaultTempOff(t *testing.T) {
 	xml := `<?xml version="1.0"?>
