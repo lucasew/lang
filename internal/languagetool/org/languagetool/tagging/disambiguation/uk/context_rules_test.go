@@ -302,6 +302,16 @@ func TestRemoveLowerCaseBadForUpperCaseGood(t *testing.T) {
 	RemoveLowerCaseBadForUpperCaseGood(sent)
 	require.True(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("prop"))
 	require.False(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("bad"))
+
+	// Java .*:prop full-match: only :prop:geo (not ending at :prop) does not open the gate
+	geo := atrMulti("Київ", [][2]string{
+		{"Київ", "noun:inanim:m:v_naz:prop:geo"},
+		{"київ", "noun:inanim:m:v_naz:bad"},
+	})
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, geo})
+	RemoveLowerCaseBadForUpperCaseGood(sent2)
+	require.True(t, sent2.GetTokensWithoutWhitespace()[1].HasPartialPosTag("bad"),
+		"gate needs POS ending in :prop, not :prop:geo")
 }
 
 func TestRetagUnknownInitials(t *testing.T) {
@@ -440,7 +450,9 @@ func TestCaseGovForPosRE_VerbOnly(t *testing.T) {
 }
 
 func TestPropPOSRE_PropGeo(t *testing.T) {
-	require.True(t, propPOSRE.MatchString("noun:inanim:m:v_naz:prop:geo"))
-	require.True(t, propPOSRE.MatchString("noun:anim:m:v_naz:prop:lname"))
+	// Java compile(".*?:prop") Matcher.matches() — tag must end at :prop
+	require.True(t, propPOSRE.MatchString("noun:inanim:m:v_naz:prop"))
+	require.False(t, propPOSRE.MatchString("noun:inanim:m:v_naz:prop:geo"))
+	require.False(t, propPOSRE.MatchString("noun:anim:m:v_naz:prop:lname"))
 	require.False(t, propPOSRE.MatchString("noun:inanim:m:v_naz"))
 }

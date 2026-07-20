@@ -976,9 +976,9 @@ func hasLemmaPrepZ(tok *languagetool.AnalyzedTokenReadings) bool {
 // RemoveLowerCaseBadForUpperCaseGood strips :bad readings when surface is capitalized prop.
 // propLemmaRE ports hasLemma(…, [А-ЯІЇЄҐ][а-яіїєґ'-].*, .*:prop)
 var propLemmaRE = regexp.MustCompile(`^[А-ЯІЇЄҐ][а-яіїєґ'’-].*$`)
-// Java compile(".*?:prop") Matcher.matches() — full tag must match (ends at :prop or continues via .*)
-// Use .*:prop.* so :prop:geo still qualifies (same intent as hasLemma prop filter).
-var propPOSRE = regexp.MustCompile(`^.*:prop(?:$|:.*)$`)
+// Java compile(".*?:prop") Matcher.matches() — entire POS must match; tag must end with :prop
+// (not :prop:geo — that fails Java matches on ".*?:prop").
+var propPOSRE = regexp.MustCompile(`^.*?:prop$`)
 
 // RemoveLowerCaseBadForUpperCaseGood ports removeLowerCaseBadForUpperCaseGood.
 // For capitalized prop tokens, drop :bad readings whose lemma equals lowercased first lemma.
@@ -1022,7 +1022,8 @@ func RemoveLowerCaseBadForUpperCaseGood(input *languagetool.AnalyzedSentence) {
 	}
 }
 
-// hasLemmaMatching ports LemmaHelper.hasLemma(readings, lemmaRE, posRE).
+// hasLemmaMatching ports LemmaHelper.hasLemma(readings, lemmaRE, posRE) —
+// both Pattern.matcher(...).matches() (full string).
 func hasLemmaMatching(tok *languagetool.AnalyzedTokenReadings, lemmaRE, posRE *regexp.Regexp) bool {
 	if tok == nil || lemmaRE == nil || posRE == nil {
 		return false
@@ -1031,7 +1032,7 @@ func hasLemmaMatching(tok *languagetool.AnalyzedTokenReadings, lemmaRE, posRE *r
 		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
 			continue
 		}
-		if lemmaRE.MatchString(*r.GetLemma()) && posRE.MatchString(*r.GetPOSTag()) {
+		if fullMatch(lemmaRE, *r.GetLemma()) && fullMatch(posRE, *r.GetPOSTag()) {
 			return true
 		}
 	}
@@ -1086,12 +1087,15 @@ func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
 	}
 }
 
+// pluralPropFilterRE ports PosTagHelper.filter(…, "noun:.*:[fmn]:v_rod.*prop.*") full match.
+var pluralPropFilterRE = regexp.MustCompile(`^noun:.*:[fmn]:v_rod.*prop.*$`)
+
 // RetagPluralProp ports retagPulralProp: дві Франції → invent p:v_naz prop from f/m/n v_rod prop.
 func RetagPluralProp(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
 	}
-	// Java PATTERN_3
+	// Java PATTERN_3 Matcher.matches on clean lower
 	numrRE := regexp.MustCompile(`^(?:два|дві|три|чотири)$`)
 	// PATTERN_5 = :[mfn]:v_rod → :p:v_naz
 	rodGenderRE := regexp.MustCompile(`:[mfn]:v_rod`)
@@ -1102,13 +1106,14 @@ func RetagPluralProp(input *languagetool.AnalyzedSentence) {
 		if prop == nil || prev == nil {
 			continue
 		}
-		if !numrRE.MatchString(strings.ToLower(prev.GetCleanToken())) {
-			// also try GetToken
-			if !numrRE.MatchString(strings.ToLower(prev.GetToken())) {
-				continue
-			}
+		prevClean := prev.GetCleanToken()
+		if prevClean == "" {
+			prevClean = prev.GetToken()
 		}
-		// skip if already has plural or singular naz prop
+		if !numrRE.MatchString(strings.ToLower(prevClean)) {
+			continue
+		}
+		// skip if already has plural or singular naz prop (Java hasPosTag full match)
 		if hasPosTagREMatch(prop, `noun.*:p:v_naz.*:prop.*`) ||
 			hasPosTagREMatch(prop, `noun.*:[mfn]:v_naz.*:prop.*`) {
 			continue
@@ -1120,10 +1125,7 @@ func RetagPluralProp(input *languagetool.AnalyzedSentence) {
 				continue
 			}
 			pos, lem := *r.GetPOSTag(), *r.GetLemma()
-			if !strings.HasPrefix(pos, "noun:") || !strings.Contains(pos, "prop") {
-				continue
-			}
-			if !regexp.MustCompile(`noun:.*:[fmn]:v_rod`).MatchString(pos) {
+			if !fullMatch(pluralPropFilterRE, pos) {
 				continue
 			}
 			if strings.Contains(pos, ":m:") && !strings.HasSuffix(lem, "а") && !strings.HasSuffix(lem, "о") {
