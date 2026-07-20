@@ -5,14 +5,18 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
+// sentenceStep is a Disambiguate-capable stage (MultiWordChunker / XmlRuleDisambiguator).
+type sentenceStep interface {
+	Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+}
+
 // DutchHybridDisambiguator ports org.languagetool.tagging.nl.DutchHybridDisambiguator.
-// Full MultiWordChunker + XML rule chain is deferred; optional stages are pluggable.
+// Java: spelling_global → multiwords (tagForNotAddingTags) → XmlRuleDisambiguator.
 type DutchHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	// Chunker optional multi-word stage.
-	Chunker func(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	// Rules optional XML/rule disambiguation.
-	Rules func(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	GlobalChunker sentenceStep
+	Chunker       sentenceStep
+	Rules         sentenceStep
 }
 
 func NewDutchHybridDisambiguator() *DutchHybridDisambiguator {
@@ -23,12 +27,17 @@ func (d *DutchHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSent
 	if input == nil {
 		return nil
 	}
-	s := input
+	out := input
+	if d.GlobalChunker != nil {
+		out = d.GlobalChunker.Disambiguate(out)
+	}
 	if d.Chunker != nil {
-		s = d.Chunker(s)
+		out = d.Chunker.Disambiguate(out)
 	}
 	if d.Rules != nil {
-		s = d.Rules(s)
+		out = d.Rules.Disambiguate(out)
 	}
-	return s
+	return out
 }
+
+var _ disambiguation.Disambiguator = (*DutchHybridDisambiguator)(nil)

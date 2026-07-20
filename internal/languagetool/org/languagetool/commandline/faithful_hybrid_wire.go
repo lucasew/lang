@@ -16,16 +16,15 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ga"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/gl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/it"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ro"
 	rudis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ru"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/sr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/sv"
 	ukdis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/uk"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
+	taggingnl "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/nl"
 )
 
 // RegisterEnglishHybridDisambiguator installs Java EnglishHybridDisambiguator on lt:
@@ -318,13 +317,6 @@ func registerXmlOnlyDisambiguator(lt *languagetool.JLanguageTool, lang string, o
 	if xml == nil || len(xml.Rules) == 0 {
 		return false
 	}
-	// Romanian had a thin wrapper type for historical package layout; keep using it.
-	if base == "ro" {
-		h := ro.NewRomanianHybridDisambiguator()
-		h.Inner = xml
-		lt.Disambiguator = h
-		return true
-	}
 	lt.Disambiguator = xml
 	return true
 }
@@ -541,10 +533,11 @@ func registerCatalanHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOpti
 	return true
 }
 
-// registerDutchHybrid ports DutchHybridDisambiguator.
+// registerDutchHybrid ports DutchHybridDisambiguator
+// (Java org.languagetool.tagging.nl.DutchHybridDisambiguator).
 // Java: global + multiwords both tagForNotAddingTags, ignoreSpelling; then XML.
 func registerDutchHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
-	h := nl.NewDutchHybridDisambiguator()
+	h := taggingnl.NewDutchHybridDisambiguator()
 	tagNone := disambiguation.MultiWordChunkerSettings{
 		AllowFirstCapitalized: false,
 		AllowAllUppercase:     true,
