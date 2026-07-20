@@ -7,7 +7,7 @@ import (
 )
 
 // TokenPredicate ports org.languagetool.chunking.TokenPredicate without knowitall.
-// Descriptions: "word", "string=word", "regex=...", "regexCS=...", "chunk=...", "pos=...".
+// Descriptions: "word", "string=word", "regex=...", "regexCS=...", "chunk=...", "pos=...", "posre=...", "posregex=...".
 type TokenPredicate struct {
 	Description   string
 	CaseSensitive bool
@@ -24,53 +24,54 @@ func (p *TokenPredicate) Apply(token ChunkTaggedToken) bool {
 	return p.match(token)
 }
 
+// unquote ports TokenPredicate.unquote — single-quoted strings only (Java uses ').
 func unquote(s string) string {
-	s = strings.TrimSpace(s)
-	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
+	if strings.HasPrefix(s, "'") && strings.HasSuffix(s, "'") && len(s) >= 2 {
 		return s[1 : len(s)-1]
 	}
 	return s
 }
 
 func (p *TokenPredicate) compile(description string, caseSensitive bool) func(ChunkTaggedToken) bool {
-	parts := strings.SplitN(description, "=", 2)
+	// Java: description.split("=") — all splits; length 1 or 2 only
+	parts := strings.Split(description, "=")
 	var exprType, exprValue string
 	if len(parts) == 1 {
 		exprType = "string"
 		exprValue = unquote(parts[0])
-	} else {
+	} else if len(parts) == 2 {
 		exprType = parts[0]
 		exprValue = unquote(parts[1])
+	} else {
+		panic(fmt.Sprintf("Could not parse expression: %s", description))
 	}
+
 	switch exprType {
-	case "string":
-		if caseSensitive {
-			return func(t ChunkTaggedToken) bool { return t.Token == exprValue }
-		}
-		return func(t ChunkTaggedToken) bool { return strings.EqualFold(t.Token, exprValue) }
-	case "regex":
-		re, err := regexp.Compile("(?i)" + exprValue)
-		if err != nil {
-			panic(err)
-		}
-		if caseSensitive {
-			re, err = regexp.Compile(exprValue)
-			if err != nil {
-				panic(err)
+	case "string", "regex", "regexCS":
+		// StringMatcher.create(exprValue, isRegex, caseSensitive || regexCS)
+		isRegex := exprType != "string"
+		cs := caseSensitive || exprType == "regexCS"
+		if !isRegex {
+			if cs {
+				return func(t ChunkTaggedToken) bool { return t.Token == exprValue }
 			}
+			return func(t ChunkTaggedToken) bool { return strings.EqualFold(t.Token, exprValue) }
 		}
-		return func(t ChunkTaggedToken) bool { return re.MatchString(t.Token) }
-	case "regexCS":
-		re, err := regexp.Compile(exprValue)
+		pat := exprValue
+		if !cs {
+			pat = "(?i)" + exprValue
+		}
+		re, err := regexp.Compile(pat)
 		if err != nil {
 			panic(err)
 		}
 		return func(t ChunkTaggedToken) bool { return re.MatchString(t.Token) }
+
 	case "chunk":
-		re, err := regexp.Compile(exprValue)
+		// StringMatcher.regexp — full match semantics via anchored pattern when possible
+		re, err := regexp.Compile("^(?:" + exprValue + ")$")
 		if err != nil {
-			// treat as full-string regexp like StringMatcher.regexp
-			re = regexp.MustCompile("^(?:" + exprValue + ")$")
+			re = regexp.MustCompile(exprValue)
 		}
 		return func(t ChunkTaggedToken) bool {
 			for _, ct := range t.ChunkTags {
@@ -80,6 +81,7 @@ func (p *TokenPredicate) compile(description string, caseSensitive bool) func(Ch
 			}
 			return false
 		}
+
 	case "pos":
 		return func(t ChunkTaggedToken) bool {
 			if t.Readings == nil {
@@ -92,7 +94,25 @@ func (p *TokenPredicate) compile(description string, caseSensitive bool) func(Ch
 			}
 			return false
 		}
+
+	case "posre", "posregex":
+		re, err := regexp.Compile("^(?:" + exprValue + ")$")
+		if err != nil {
+			re = regexp.MustCompile(exprValue)
+		}
+		return func(t ChunkTaggedToken) bool {
+			if t.Readings == nil {
+				return false
+			}
+			for _, reading := range t.Readings.GetReadings() {
+				if pt := reading.GetPOSTag(); pt != nil && re.MatchString(*pt) {
+					return true
+				}
+			}
+			return false
+		}
+
 	default:
-		panic(fmt.Sprintf("Could not parse expression type: %s", exprType))
+		panic(fmt.Sprintf("Expression type not supported: '%s'", exprType))
 	}
 }

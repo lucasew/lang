@@ -31,7 +31,7 @@
 - [x] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
 - [x] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
 - [x] org/languagetool/GlobalConfig.java::GlobalConfig
-- [ ] org/languagetool/InputSentence.java::InputSentence
+- [x] org/languagetool/InputSentence.java::InputSentence
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
@@ -57,7 +57,7 @@
 - [x] org/languagetool/Premium.java::Premium
 - [x] org/languagetool/PremiumOff.java::PremiumOff
 - [x] org/languagetool/Range.java::Range
-- [ ] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
+- [x] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
 - [x] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
 - [x] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
 - [x] org/languagetool/ResultCache.java::ResultCache
@@ -73,10 +73,10 @@
 - [x] org/languagetool/ToneTag.java::ToneTag
 - [x] org/languagetool/UserConfig.java::UserConfig
 - [x] org/languagetool/UserConfig.java::UserConfig.TokenType
-- [ ] org/languagetool/XMLValidator.java::XMLValidator
-- [ ] org/languagetool/XMLValidator.java::XMLValidator.LSRuleEntityResolver
-- [ ] org/languagetool/XMLValidator.java::XMLValidator.EntityAsInput
-- [ ] org/languagetool/XMLValidator.java::XMLValidator.ErrorHandler
+- [x] org/languagetool/XMLValidator.java::XMLValidator
+- [x] org/languagetool/XMLValidator.java::XMLValidator.LSRuleEntityResolver
+- [x] org/languagetool/XMLValidator.java::XMLValidator.EntityAsInput
+- [x] org/languagetool/XMLValidator.java::XMLValidator.ErrorHandler
 - [x] org/languagetool/bitext/BitextReader.java::BitextReader
 - [x] org/languagetool/bitext/StringPair.java::StringPair
 - [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader
@@ -89,9 +89,9 @@
 - [x] org/languagetool/broker/ResourceDataBroker.java::ResourceDataBroker
 - [x] org/languagetool/chunking/ChunkTag.java::ChunkTag
 - [x] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
-- [ ] org/languagetool/chunking/Chunker.java::Chunker
-- [ ] org/languagetool/chunking/TokenExpressionFactory.java::TokenExpressionFactory
-- [ ] org/languagetool/chunking/TokenPredicate.java::TokenPredicate
+- [x] org/languagetool/chunking/Chunker.java::Chunker
+- [x] org/languagetool/chunking/TokenExpressionFactory.java::TokenExpressionFactory
+- [x] org/languagetool/chunking/TokenPredicate.java::TokenPredicate
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc.AsyncService
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc.SynthesizeServerImplBase

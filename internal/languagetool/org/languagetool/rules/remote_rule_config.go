@@ -81,6 +81,15 @@ func (c *RemoteRuleConfig) GetFallbackRuleId() string {
 	}
 	return c.Options[RemoteOptionFallbackRule]
 }
+
+// IsUsingThirdPartyAI ports isUsingThirdPartyAI (options thirdPartyAI == "true").
+func (c *RemoteRuleConfig) IsUsingThirdPartyAI() bool {
+	if c == nil || c.Options == nil {
+		return false
+	}
+	return c.Options[RemoteOptionThirdPartyAI] == "true"
+}
+
 func (c *RemoteRuleConfig) GetPort() int {
 	if c.Port != nil {
 		return *c.Port
