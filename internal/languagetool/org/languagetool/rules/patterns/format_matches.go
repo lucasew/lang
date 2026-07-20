@@ -224,6 +224,7 @@ func (c PhraseMatchContext) phraseLen(i int) int {
 // Control flow matches Java bug-for-bug, including:
 //   - StringTools.isPositiveNumber for the first digit after '\'
 //   - numbersToMatches reuse when matchCounter exceeds suggestionMatches size
+//   - sticky newWay outside the loop (once Match path runs, bare path never returns)
 //   - bare-path String.replace of all "\\N" in the unprocessed suffix
 //   - multi-synthesis not advancing errorMessageProcessed (Java TODO)
 func FormatMatches(
@@ -245,6 +246,8 @@ func FormatMatches(
 	errorMessage := errorMsg
 	errorMessageProcessed := 0
 	matchCounter := 0
+	// Java: boolean newWay = false; declared outside the while — sticky once true.
+	newWay := false
 	// Local working list — Java mutates suggestionMatches for reuse (FIXME branch).
 	sm := suggestionMatches
 	// numbersToMatches[j] = matchCounter index used when pattern element j was first resolved.
@@ -299,16 +302,11 @@ func FormatMatches(
 			nextTokenPos = firstMatchTok + repTokenPos + positions[j+1]
 		}
 
-		newWay := false
 		if len(sm) > 0 {
 			if matchCounter < len(sm) {
-				// Ensure numbersToMatches can index j (grow if message grew).
-				if j >= 0 && j >= len(numbersToMatches) {
-					grow := make([]int, j+1)
-					copy(grow, numbersToMatches)
-					numbersToMatches = grow
-				}
-				if j >= 0 {
+				// Java: numbersToMatches[j] = matchCounter on fixed errorMsg.length() array
+				// (no invent grow — OOB is a Java AIOOBE).
+				if j >= 0 && j < len(numbersToMatches) {
 					numbersToMatches[j] = matchCounter
 				}
 				var matches []string
@@ -337,6 +335,7 @@ func FormatMatches(
 				newWay = true
 			} else {
 				// Java FIXME: reuse Match for pattern element j when counters overrun.
+				// Does not clear newWay — bare path stays off once any Match path ran.
 				if j >= 0 && j < len(numbersToMatches) {
 					reuse := numbersToMatches[j]
 					if reuse >= 0 && reuse < len(sm) {

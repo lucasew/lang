@@ -200,16 +200,23 @@ func TestFormatMatches_SkipsBackrefZero(t *testing.T) {
 	require.NotContains(t, msg, `\1`)
 }
 
-// Twin of numbersToMatches + bare replaceAll interaction (Java FIXME branch).
-// With one Match and three \1: first uses Match (case), second overruns → appends
-// reuse Match then bare-path replaceAll eats remaining \1 in the unprocessed suffix.
+// Twin of numbersToMatches reuse (Java FIXME branch) with sticky newWay.
+// newWay is declared outside the while and stays true after the first Match path —
+// bare surface replace never runs for remaining \N; overrun only appends a reused
+// Match so the next iteration applies case conversion again.
 func TestFormatMatches_NumbersToMatchesReuse(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{atr("word", 0)}
-	// Case conversion only on Match path — bare path keeps surface "word".
 	m := NewMatch("", "", false, "", "", CaseAllUpper, false, false, IncludeNone)
 	msg := FormatMatches(toks, []int{1}, 0, `\1 \1 \1`, []*Match{m}, "en")
-	// Java: Match → "WORD \1 \1"; overrun+bare replaceAll → "WORD word word"
-	require.Equal(t, "WORD word word", msg)
+	// Java bug-for-bug: Match → overrun append → Match → overrun append → Match
+	require.Equal(t, "WORD WORD WORD", msg)
+}
+
+// Bare path only while newWay is still false (no suggestionMatches).
+func TestFormatMatches_BarePathWhenNoSuggestionMatches(t *testing.T) {
+	toks := []*languagetool.AnalyzedTokenReadings{atr("word", 0)}
+	msg := FormatMatches(toks, []int{1}, 0, `\1 \1 \1`, nil, "en")
+	require.Equal(t, "word word word", msg)
 }
 
 // Twin of bare-path String.replace: all remaining "\\N" in unprocessed suffix replaced.
