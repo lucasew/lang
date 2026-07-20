@@ -21,9 +21,9 @@ func germanVariant(langCode string) string {
 	}
 }
 
-// RegisterCoreGermanRules installs DE word-repeat + beginning + long-sentence + shared layout.
+// RegisterCoreGermanRules ports German.getRelevantRules (+ variant speller/compounds).
 // Variant (de-AT / de-CH) selects speller, compound rule, and old-spelling like Java GermanyGerman /
-// AustrianGerman / SwissGerman.
+// AustrianGerman / SwissGerman. No invent SharedLayoutRules helper.
 func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -53,23 +53,64 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	// Java RemoteRuleFilters.load(de) — pattern XML when present (fail-closed if missing).
 	WireGermanRemoteRuleFilters()
 
-	// Shared layout aligned with Java German.getRelevantRules:
-	// - GermanCommaWhitespaceRule.isException (. de-Domain) on COMMA_WHITESPACE
-	// - no core DOUBLE_PUNCTUATION / SENTENCE_WHITESPACE (DE_* registered below)
-	// - no WHITESPACE_PUNCTUATION (not in Java German list)
-	// - no core UNPAIRED_BRACKETS / PARAGRAPH_REPEAT (DE rules registered below)
-	// - UppercaseSentenceStartRule with DE setUrl
+	// Java German.getRelevantRules layout only (no invent SharedLayout helper / no
+	// WHITESPACE_PUNCTUATION / no core DOUBLE_PUNCTUATION / SENTENCE_WHITESPACE /
+	// UNPAIRED_BRACKETS / PARAGRAPH_REPEAT_BEGINNING — DE-specific rules below).
 	deComma := NewGermanCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(deComma.GetID(), rules.AsSentenceCheckerSimple(deComma.Match))
+
+	// Unpaired brackets/quotes registered later with DE-specific rules (same Java list).
+
 	deUpper := NewUppercaseSentenceStartRule(nil)
-	rules.RegisterSharedLayoutRulesWithOptions(lt, "de", rules.SharedLayoutOptions{
-		CommaException:               deComma.IsException,
-		SkipDoublePunctuation:        true,
-		SkipSentenceWhitespace:       true,
-		SkipWhitespaceBeforePunct:    true,
-		SkipUnpairedBrackets:         true,
-		SkipParagraphRepeatBeginning: true,
-		UppercaseMatchList:           deUpper.MatchList,
+	lt.AddRuleChecker(deUpper.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return deUpper.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
 	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	wpe := rules.NewWhiteSpaceBeforeParagraphEnd(map[string]string{
+		"whitespace_before_parapgraph_end_msg": "Don't end a paragraph with whitespace",
+	})
+	lt.AddTextLevelRuleChecker(wpe.GetID(), rules.AsTextLevelChecker(wpe.MatchList))
+	if wpe.IsDefaultOff() {
+		lt.MarkDefaultOff(wpe.GetID())
+	}
+
+	wpb := rules.NewWhiteSpaceAtBeginOfParagraph(map[string]string{
+		"whitespace_at_begin_parapgraph_msg": "Don't start a paragraph with whitespace",
+	})
+	lt.AddRuleChecker(wpb.GetID(), rules.AsSentenceCheckerSimple(wpb.Match))
+	if wpb.IsDefaultOff() {
+		lt.MarkDefaultOff(wpb.GetID())
+	}
+
+	el := rules.NewEmptyLineRule(map[string]string{"empty_line_rule_msg": "Empty line"})
+	lt.AddTextLevelRuleChecker(el.GetID(), rules.AsTextLevelChecker(el.MatchList))
+	if el.IsDefaultOff() {
+		lt.MarkDefaultOff(el.GetID())
+	}
+
+	// Java LongParagraphRule(messages, this, userConfig) → maxWords 220, always setDefaultOff.
+	lp := rules.NewLongParagraphRule(map[string]string{
+		"long_paragraph_rule_msg": "This paragraph is too long (%d words)",
+	}, 220)
+	lt.AddTextLevelRuleChecker(lp.GetID(), rules.AsTextLevelChecker(lp.MatchList))
+	if lp.IsDefaultOff() {
+		lt.MarkDefaultOff(lp.GetID())
+	}
+
+	// Java PunctuationMarkAtParagraphEnd(messages, this) → defaultActive true (on).
+	ppe := rules.NewPunctuationMarkAtParagraphEnd(map[string]string{
+		"punctuation_mark_paragraph_end_msg": "Add a punctuation mark at paragraph end",
+	})
+	ppe.DefaultOff = false
+	lt.AddTextLevelRuleChecker(ppe.GetID(), rules.AsTextLevelChecker(ppe.MatchList))
+
 	wr := NewGermanWordRepeatRule(map[string]string{"repetition": "Wortwiederholung"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
 

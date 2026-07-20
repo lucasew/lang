@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/stretchr/testify/require"
 )
 
@@ -143,8 +144,23 @@ func TestRegisterCoreGermanRules_AgreementIDsRegistered(t *testing.T) {
 	require.Contains(t, off, "TOO_LONG_PARAGRAPH")
 	require.Contains(t, off, "WHITESPACE_PARAGRAPH")
 	require.Contains(t, off, "WHITESPACE_PARAGRAPH_BEGIN")
-	require.Contains(t, off, "PUNCTUATION_PARAGRAPH_END")
+	// Java PunctuationMarkAtParagraphEnd(messages, this) → defaultActive true (on).
+	require.NotContains(t, off, "PUNCTUATION_PARAGRAPH_END")
+	require.Contains(t, ids, "PUNCTUATION_PARAGRAPH_END")
 	require.Contains(t, off, "GERMAN_PARAGRAPH_REPEAT_BEGINNING_RULE")
+}
+
+// Java German.getRelevantRules base class IDs (speller/compounds/LM are extras).
+func TestRegisterCoreGermanRules_JavaRelevantBaseIDs(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("de")
+	RegisterCoreGermanRules(lt)
+	ids := lt.GetAllRegisteredRuleIDs()
+	for _, id := range language.GermanRelevantRuleIDs() {
+		require.Contains(t, ids, id, "missing Java German.getRelevantRules id %s", id)
+	}
+	require.NotContains(t, ids, "WHITESPACE_PUNCTUATION")
+	require.NotContains(t, ids, "SENTENCE_WHITESPACE")
+	require.NotContains(t, ids, "DOUBLE_PUNCTUATION")
 }
 
 func TestRegisterCoreGermanRules_VariantAT(t *testing.T) {
