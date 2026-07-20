@@ -299,7 +299,9 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 			}
 			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, m := range results[i].matches {
-				out = append(out, remapLocalMatchToDocument(m, sd, sentTypoApos))
+				adapted := remapLocalMatchToDocument(m, sd, sentTypoApos)
+				lt.notifyMatchFound(adapted)
+				out = append(out, adapted)
 			}
 		}
 	} else if lt.ListUnknownWords {
@@ -317,7 +319,9 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 					continue
 				}
 				for _, m := range tc.fn(sents) {
-					out = append(out, AdaptTextLevelLocalMatch(m, tlData, nil))
+					adapted := AdaptTextLevelLocalMatch(m, tlData, nil)
+					lt.notifyMatchFound(adapted)
+					out = append(out, adapted)
 				}
 			}
 		}

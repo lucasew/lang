@@ -342,7 +342,23 @@ type JLanguageTool struct {
 	// ParaMode ports ParagraphHandling passed into TextCheckCallable / checkAnalyzedSentence.
 	// Zero value "" is treated as ParagraphNormal.
 	ParaMode ParagraphHandling
-	unknown  map[string]struct{}
+	// MatchListener ports RuleMatchListener passed into TextCheckCallable (matchFound per match).
+	MatchListener RuleMatchListener
+	unknown       map[string]struct{}
+}
+
+// SetRuleMatchListener ports check(..., RuleMatchListener, ...).
+func (lt *JLanguageTool) SetRuleMatchListener(l RuleMatchListener) {
+	if lt != nil {
+		lt.MatchListener = l
+	}
+}
+
+// notifyMatchFound ports listener.matchFound when MatchListener is set.
+func (lt *JLanguageTool) notifyMatchFound(m LocalMatch) {
+	if lt != nil && lt.MatchListener != nil {
+		lt.MatchListener.MatchFound(m)
+	}
 }
 
 // paraModeOrNormal returns ParaMode or ParagraphNormal when unset.
@@ -842,7 +858,9 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, c := range lt.checkers {
 				for _, m := range c(s) {
-					out = append(out, remapLocalMatchToDocument(m, sd, sentTypoApos))
+					adapted := remapLocalMatchToDocument(m, sd, sentTypoApos)
+					lt.notifyMatchFound(adapted)
+					out = append(out, adapted)
 				}
 			}
 		}
@@ -860,7 +878,9 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 				}
 				for _, m := range tc.fn(sents) {
 					// getTextLevelRuleMatches: findLineColumn + optional annotated mapping
-					out = append(out, AdaptTextLevelLocalMatch(m, data, nil))
+					adapted := AdaptTextLevelLocalMatch(m, data, nil)
+					lt.notifyMatchFound(adapted)
+					out = append(out, adapted)
 				}
 			}
 		}

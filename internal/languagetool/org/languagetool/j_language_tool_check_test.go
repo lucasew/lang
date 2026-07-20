@@ -327,3 +327,18 @@ func TestCheck_ParagraphHandling(t *testing.T) {
 	require.True(t, ids["WORD_REPEAT_RULE"])
 	require.False(t, ids["TL"])
 }
+
+func TestCheck_RuleMatchListener(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	var heard []string
+	lt.SetRuleMatchListener(func(match any) {
+		if m, ok := match.(LocalMatch); ok {
+			heard = append(heard, m.RuleID)
+		}
+	})
+	ms := lt.Check("this this")
+	require.NotEmpty(t, ms)
+	require.NotEmpty(t, heard)
+	require.Equal(t, len(ms), len(heard)) // listener before filters may differ — Java fires during collect
+}
