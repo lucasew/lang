@@ -5,23 +5,32 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
-// ArabicHybridDisambiguator ports org.languagetool.tagging.ar.ArabicHybridDisambiguator.
-// Chains multiword chunker then optional secondary disambiguator.
+// ArabicHybridDisambiguator ports org.languagetool.tagging.ar.ArabicHybridDisambiguator:
+// MultiWordChunker.getInstance("/ar/multiwords.txt") defaults, then XmlRuleDisambiguator(Arabic) no global.
+// Java order: disambiguator.disambiguate(chunker.disambiguate(input)) — multiwords then XML.
 type ArabicHybridDisambiguator struct {
-	Chunker       disambiguation.Disambiguator
-	Disambiguator disambiguation.Disambiguator
+	disambiguation.AbstractDisambiguator
+	Chunker interface {
+		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	}
+	// Rules is Java XmlRuleDisambiguator (field name "disambiguator" in Java).
+	Rules interface {
+		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	}
 }
 
-func NewArabicHybridDisambiguator(chunker, secondary disambiguation.Disambiguator) *ArabicHybridDisambiguator {
-	return &ArabicHybridDisambiguator{Chunker: chunker, Disambiguator: secondary}
+func NewArabicHybridDisambiguator() *ArabicHybridDisambiguator {
+	return &ArabicHybridDisambiguator{}
 }
 
-// NewDefaultArabicHybridDisambiguator uses empty multiword list (dict path deferred).
+// NewArabicHybridDisambiguatorWithStages matches older call sites that pass stages.
+func NewArabicHybridDisambiguatorWithStages(chunker, secondary disambiguation.Disambiguator) *ArabicHybridDisambiguator {
+	return &ArabicHybridDisambiguator{Chunker: chunker, Rules: secondary}
+}
+
+// NewDefaultArabicHybridDisambiguator uses empty multiword list (resources wired by commandline).
 func NewDefaultArabicHybridDisambiguator() *ArabicHybridDisambiguator {
-	return NewArabicHybridDisambiguator(
-		disambiguation.NewMultiWordChunker(nil, disambiguation.MultiWordChunkerSettings{}),
-		nil,
-	)
+	return NewArabicHybridDisambiguator()
 }
 
 func (d *ArabicHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
@@ -29,11 +38,12 @@ func (d *ArabicHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSen
 		return input
 	}
 	out := input
+	// multiwords first, then XML
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}
-	if d.Disambiguator != nil {
-		out = d.Disambiguator.Disambiguate(out)
+	if d.Rules != nil {
+		out = d.Rules.Disambiguate(out)
 	}
 	return out
 }

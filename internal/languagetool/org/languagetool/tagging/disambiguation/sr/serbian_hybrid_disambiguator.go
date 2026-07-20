@@ -5,11 +5,18 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
-// SerbianHybridDisambiguator ports hybrid disambiguation for Serbian.
+// SerbianHybridDisambiguator ports
+// org.languagetool.tagging.disambiguation.sr.SerbianHybridDisambiguator:
+// MultiWordChunker("/sr/multiwords.txt") defaults, then XmlRuleDisambiguator(Serbian) no global.
+// Java order: disambiguator.disambiguate(chunker.disambiguate(input)) — multiwords then XML.
 type SerbianHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	Chunker func(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	Rules   func(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	Chunker interface {
+		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	}
+	Rules interface {
+		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	}
 }
 
 func NewSerbianHybridDisambiguator() *SerbianHybridDisambiguator {
@@ -20,12 +27,15 @@ func (d *SerbianHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSe
 	if input == nil {
 		return nil
 	}
-	s := input
+	out := input
+	// multiwords first, then XML
 	if d.Chunker != nil {
-		s = d.Chunker(s)
+		out = d.Chunker.Disambiguate(out)
 	}
 	if d.Rules != nil {
-		s = d.Rules(s)
+		out = d.Rules.Disambiguate(out)
 	}
-	return s
+	return out
 }
+
+var _ disambiguation.Disambiguator = (*SerbianHybridDisambiguator)(nil)

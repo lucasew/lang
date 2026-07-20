@@ -7,6 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/de"
@@ -18,8 +19,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ro"
 	rudis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ru"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/sr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/sv"
 	ukdis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/uk"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
@@ -114,6 +117,12 @@ func RegisterHybridDisambiguator(lt *languagetool.JLanguageTool, lang string, op
 		return registerIrishHybrid(lt, opts)
 	case "it":
 		return registerItalianRuleDisambiguator(lt, opts)
+	case "ar":
+		return registerArabicHybrid(lt, opts)
+	case "sr":
+		return registerSerbianHybrid(lt, opts)
+	case "ro":
+		return registerRomanianXmlDisambiguator(lt, opts)
 	default:
 		return false
 	}
@@ -246,6 +255,67 @@ func registerItalianRuleDisambiguator(lt *languagetool.JLanguageTool, opts *Comm
 		return false
 	}
 	lt.Disambiguator = d
+	return true
+}
+
+// registerArabicHybrid ports ArabicHybridDisambiguator.
+// Java: MultiWordChunker.getInstance("/ar/multiwords.txt") defaults; XmlRuleDisambiguator(Arabic) no global.
+// Order: multiwords then XML.
+func registerArabicHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := ar.NewArabicHybridDisambiguator()
+	if p := DiscoverLanguageMultiwords(opts, "ar"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("ar", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerSerbianHybrid ports SerbianHybridDisambiguator.
+// Java: MultiWordChunker("/sr/multiwords.txt") defaults; XmlRuleDisambiguator(Serbian) no global.
+// Order: multiwords then XML.
+func registerSerbianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := sr.NewSerbianHybridDisambiguator()
+	if p := DiscoverLanguageMultiwords(opts, "sr"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("sr", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerRomanianXmlDisambiguator ports Romanian.createDefaultDisambiguator:
+// new XmlRuleDisambiguator(this) — language XML only, no multiwords/global.
+func registerRomanianXmlDisambiguator(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := ro.NewRomanianHybridDisambiguator()
+	if xml := loadXmlRuleDisambiguator("ro", opts, false); xml != nil && len(xml.Rules) > 0 {
+		h.Inner = xml
+	} else {
+		return false
+	}
+	lt.Disambiguator = h
 	return true
 }
 

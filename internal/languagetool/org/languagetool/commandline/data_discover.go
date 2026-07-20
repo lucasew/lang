@@ -209,6 +209,8 @@ var languageSynthDictNames = map[string]string{
 	"ar": "arabic_synth.dict",
 	// Java UkrainianSynthesizer.RESOURCE_FILENAME
 	"uk": "ukrainian_synth.dict",
+	// Java Serbian ekavian: /sr/dictionary/ekavian/serbian_synth.dict
+	"sr": "serbian_synth.dict",
 }
 
 // DiscoverLanguageSynthDict finds *_synth.dict for lang (Java createDefaultSynthesizer resource).
@@ -347,6 +349,12 @@ func languagePOSDictNames(base string) []string {
 		return []string{"russian.dict"}
 	case "sk":
 		return []string{"slovak.dict"}
+	// Java SerbianTagger: /sr/dictionary/ekavian/serbian.dict (default ekavian).
+	case "sr":
+		return []string{
+			filepath.Join("dictionary", "ekavian", "serbian.dict"),
+			"serbian.dict",
+		}
 	case "sv":
 		return []string{"swedish.dict"}
 	case "ta":

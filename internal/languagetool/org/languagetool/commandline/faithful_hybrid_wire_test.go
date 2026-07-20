@@ -139,6 +139,45 @@ func TestRegisterHybridDisambiguator_IT(t *testing.T) {
 	require.NotEmpty(t, sents)
 }
 
+func TestRegisterHybridDisambiguator_AR_SR(t *testing.T) {
+	cases := []struct {
+		lang string
+		text string
+	}{
+		{"ar", "هذا اختبار."},
+		{"sr", "Ovo je test."},
+	}
+	for _, tc := range cases {
+		t.Run(tc.lang, func(t *testing.T) {
+			if DiscoverLanguageMultiwords(nil, tc.lang) == "" && DiscoverLanguageDisambiguationXML(nil, tc.lang) == "" {
+				t.Skipf("no official multiwords/disambiguation for %s", tc.lang)
+			}
+			lt, err := configureCoreLT(tc.lang, &CommandLineOptions{Language: tc.lang})
+			require.NoError(t, err)
+			require.NotNil(t, lt.Disambiguator, "hybrid for %s", tc.lang)
+			// Official POS dicts ship in inspiration for ar/sr (sr: ekavian path).
+			p := DiscoverLanguagePOSDict(nil, tc.lang)
+			require.NotEmpty(t, p, "POS dict for %s", tc.lang)
+			require.NotNil(t, lt.TagWord, "POS tagger for %s from %s", tc.lang, p)
+			sents := lt.Analyze(tc.text)
+			require.NotEmpty(t, sents)
+		})
+	}
+}
+
+func TestRegisterHybridDisambiguator_RO(t *testing.T) {
+	// Java Romanian.createDefaultDisambiguator: XmlRuleDisambiguator only.
+	require.NotEmpty(t, DiscoverLanguageDisambiguationXML(nil, "ro"), "ro disambiguation.xml")
+	lt, err := configureCoreLT("ro", &CommandLineOptions{Language: "ro"})
+	require.NoError(t, err)
+	require.NotNil(t, lt.Disambiguator, "Romanian XmlRuleDisambiguator should be wired")
+	if p := DiscoverLanguagePOSDict(nil, "ro"); p != "" {
+		require.NotNil(t, lt.TagWord, "POS tagger for ro from %s", p)
+	}
+	sents := lt.Analyze("Aceasta este un test.")
+	require.NotEmpty(t, sents)
+}
+
 func TestDiscoverLanguageMultiwords_UK(t *testing.T) {
 	p := DiscoverLanguageMultiwords(nil, "uk")
 	require.NotEmpty(t, p)
