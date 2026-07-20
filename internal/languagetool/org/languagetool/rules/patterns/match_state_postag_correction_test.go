@@ -52,3 +52,24 @@ func TestMatchState_GetTargetPosTag_FullMatchPOS(t *testing.T) {
 	got := st.GetTargetPosTag()
 	require.NotContains(t, got, "VBGX")
 }
+
+// Twin of BaseSynthesizer.getTargetPosTag: last matching POS when synth has no override.
+func TestMatchState_GetTargetPosTag_LastTagFallback(t *testing.T) {
+	// postag regexp matching both NN and NNS; no replace → pick last via Base fallback
+	m := NewMatch("NN.*", "", true, "", "", CaseNone, false, false, IncludeNone)
+	// Two readings: NN then NNS
+	nn, nns := "NN", "NNS"
+	tok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("dogs", &nn, nil),
+		languagetool.NewAnalyzedToken("dogs", &nns, nil),
+	}, 0)
+	// FuncSynthesizer has no GetTargetPosTag → last-tag Base fallback
+	st := NewMatchStateWithSynth(m, synthesis.FuncSynthesizer{})
+	st.SetToken(tok)
+	require.Equal(t, "NNS", st.GetTargetPosTag())
+
+	// BaseSynthesizer path (explicit) same last tag
+	st2 := NewMatchStateWithSynth(m, synthesis.NewBaseSynthesizer("en", nil))
+	st2.SetToken(tok)
+	require.Equal(t, "NNS", st2.GetTargetPosTag())
+}

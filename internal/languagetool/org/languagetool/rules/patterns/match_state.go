@@ -423,13 +423,15 @@ func (s *MatchState) GetTargetPosTag() string {
 			}
 		}
 	}
-	// language-specific pick if synthesizer supports it
+	// Java: synthesizer.getTargetPosTag(posTags, targetPosTag)
+	// BaseSynthesizer returns the last tag when non-empty (keep previous results).
 	if bs, ok := s.Synthesizer.(interface {
 		GetTargetPosTag([]string, string) string
 	}); ok {
 		targetPosTag = bs.GetTargetPosTag(posTags, targetPosTag)
 	} else if len(posTags) > 0 {
-		targetPosTag = posTags[0]
+		// Fallback when synth lacks GetTargetPosTag: same as BaseSynthesizer (last).
+		targetPosTag = posTags[len(posTags)-1]
 	}
 	if pPos != nil && posTagReplace != "" {
 		if s.Match.IsStaticLemma() {

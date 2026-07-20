@@ -26,3 +26,39 @@ func TestAbstractSuppressMisspelledSuggestionsFilter(t *testing.T) {
 	require.NotNil(t, out3)
 	require.Empty(t, out3.GetSuggestedReplacements())
 }
+
+// Twin of AbstractSuppressMisspelledSuggestionsFilter.isMisspelled:
+// WordTokenizer splits suggestion; each token is checked with the speller.
+func TestAbstractSuppressMisspelled_TokenizesSuggestion(t *testing.T) {
+	// Speller only knows whole-phrase invent would fail; per-token "house" is OK.
+	// "house!" → WordTokenizer → ["house", "!"] — neither is "teh".
+	f := &AbstractSuppressMisspelledSuggestionsFilter{
+		IsMisspelled: func(s string) bool { return s == "teh" || s == "xyz" },
+	}
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 3, "msg")
+	m.SetSuggestedReplacements([]string{"house!", "teh house", "xyz"})
+	out := f.AcceptRuleMatch(m, map[string]string{"suppressMatch": "true"})
+	require.NotNil(t, out)
+	// "house!" tokenizes to house + ! → keep
+	// "teh house" has token "teh" → drop
+	// "xyz" → drop
+	require.Equal(t, []string{"house!"}, out.GetSuggestedReplacements())
+}
+
+// Injected Tokenize mirrors language-specific WordTokenizer.
+func TestAbstractSuppressMisspelled_CustomTokenize(t *testing.T) {
+	f := &AbstractSuppressMisspelledSuggestionsFilter{
+		IsMisspelled: func(s string) bool { return s == "bad" },
+		Tokenize: func(s string) []string {
+			if s == "good-bad" {
+				return []string{"good", "bad"}
+			}
+			return []string{s}
+		},
+	}
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 3, "msg")
+	m.SetSuggestedReplacements([]string{"good-bad", "good"})
+	out := f.AcceptRuleMatch(m, map[string]string{"suppressMatch": "true"})
+	require.NotNil(t, out)
+	require.Equal(t, []string{"good"}, out.GetSuggestedReplacements())
+}

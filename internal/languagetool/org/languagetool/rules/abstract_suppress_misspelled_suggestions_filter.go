@@ -4,9 +4,11 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // MisspelledFunc reports whether a suggestion token is misspelled (pluggable speller).
+// Java SpellingCheckRule.isMisspelled receives each WordTokenizer token separately.
 type MisspelledFunc func(s string) bool
 
 // TagReplacementsFunc tags replacement strings (pluggable tagger). Optional.
@@ -16,8 +18,11 @@ type TagReplacementsFunc func(replacements []string) []*languagetool.AnalyzedTok
 // org.languagetool.rules.AbstractSuppressMisspelledSuggestionsFilter with hooks
 // instead of Language/SpellingCheckRule/Tagger.
 type AbstractSuppressMisspelledSuggestionsFilter struct {
-	// IsMisspelled required for filtering; when nil, nothing is treated as misspelled.
+	// IsMisspelled required for filtering; when nil, nothing is treated as misspelled
+	// (Java: null SpellingCheckRule → isMisspelled false).
 	IsMisspelled MisspelledFunc
+	// Tokenize ports language.getWordTokenizer().tokenize; nil → WordTokenizer.
+	Tokenize func(s string) []string
 	// TagReplacements optional; used when SuppressPostag/FilterPostag args present.
 	TagReplacements TagReplacementsFunc
 }
@@ -65,10 +70,33 @@ func (f *AbstractSuppressMisspelledSuggestionsFilter) AcceptRuleMatch(
 	return match
 }
 
+// isMisspelled ports AbstractSuppressMisspelledSuggestionsFilter.isMisspelled:
+//
+//	tokens = language.getWordTokenizer().tokenize(s)
+//	for token : tokens { if spellerRule.isMisspelled(token) return true }
+//	return false
+//
+// (null speller → false is handled by nil IsMisspelled.)
 func (f *AbstractSuppressMisspelledSuggestionsFilter) isMisspelled(s string) bool {
 	if f.IsMisspelled == nil {
 		return false
 	}
-	// Java tokenizes with language tokenizer; surface: check whole string.
-	return f.IsMisspelled(s)
+	tokens := f.tokenizeSuggestion(s)
+	if len(tokens) == 0 {
+		// Empty tokenize: Java would not enter the loop → not misspelled.
+		return false
+	}
+	for _, tok := range tokens {
+		if f.IsMisspelled(tok) {
+			return true
+		}
+	}
+	return false
+}
+
+func (f *AbstractSuppressMisspelledSuggestionsFilter) tokenizeSuggestion(s string) []string {
+	if f != nil && f.Tokenize != nil {
+		return f.Tokenize(s)
+	}
+	return tokenizers.NewWordTokenizer().Tokenize(s)
 }
