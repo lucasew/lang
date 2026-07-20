@@ -4,6 +4,9 @@ import "strings"
 
 // DictionarySpellMatchFilter ports org.languagetool.rules.DictionarySpellMatchFilter.
 // Drops dictionary-based spelling matches fully covered by an accepted phrase.
+//
+// Positions are Java String indices (UTF-16 code units), same as RuleMatch
+// FromPos/ToPos and AhoCorasickDoubleArrayTrie.parseText on Java strings.
 type DictionarySpellMatchFilter struct {
 	AcceptedPhrases []string
 }
@@ -23,21 +26,25 @@ func (f *DictionarySpellMatchFilter) Filter(ruleMatches []*RuleMatch, plainText 
 		return ruleMatches
 	}
 	// find all phrase occurrences (simple multi-pass; Aho-Corasick deferred)
+	// spans use UTF-16 indices (Java String / Hit.begin/end).
 	type span struct{ begin, end int }
 	var hits []span
 	for _, phrase := range f.AcceptedPhrases {
 		if phrase == "" {
 			continue
 		}
-		start := 0
+		startByte := 0
 		for {
-			i := strings.Index(plainText[start:], phrase)
+			i := strings.Index(plainText[startByte:], phrase)
 			if i < 0 {
 				break
 			}
-			b := start + i
-			hits = append(hits, span{b, b + len(phrase)})
-			start = b + 1
+			b := startByte + i
+			// byte offset → UTF-16 (Java char) index
+			begin := utf16Len(plainText[:b])
+			end := begin + utf16Len(phrase)
+			hits = append(hits, span{begin, end})
+			startByte = b + 1
 		}
 	}
 	if len(hits) == 0 {
@@ -86,6 +93,7 @@ func (r *DictFilterRule) UseDictionaryBasedFilterForMatches() bool {
 
 // GetPhrases groups consecutive dictionary-based spelling matches into phrase keys
 // (ports DictionarySpellMatchFilter.getPhrases).
+// match positions and substring are UTF-16 (Java text.getPlainText().substring).
 func (f *DictionarySpellMatchFilter) GetPhrases(ruleMatches []*RuleMatch, plainText string) map[string][]*RuleMatch {
 	phraseToMatches := map[string][]*RuleMatch{}
 	// Java Integer.MIN_VALUE so the first match never counts as adjacent.
@@ -93,14 +101,15 @@ func (f *DictionarySpellMatchFilter) GetPhrases(ruleMatches []*RuleMatch, plainT
 	prevToPos := intMin
 	var collectedMatches []*RuleMatch
 	var collectedTerms []string
+	textU16Len := utf16Len(plainText)
 	for _, match := range ruleMatches {
 		if match == nil || !usesDictFilter(match) {
 			continue
 		}
-		if match.FromPos < 0 || match.ToPos > len(plainText) || match.FromPos > match.ToPos {
+		if match.FromPos < 0 || match.ToPos > textU16Len || match.FromPos > match.ToPos {
 			continue
 		}
-		covered := plainText[match.FromPos:match.ToPos]
+		covered := utf16Substring(plainText, match.FromPos, match.ToPos)
 		if match.FromPos == prevToPos+1 {
 			key := strings.Join(collectedTerms, " ") + " " + covered
 			l := append([]*RuleMatch(nil), collectedMatches...)

@@ -130,8 +130,7 @@ func (r *SentenceWhitespaceRule) MatchList(sentences []*languagetool.AnalyzedSen
 		if len(tokens) > 0 {
 			lastToken := tokens[len(tokens)-1].GetToken()
 			replaced := strings.ReplaceAll(lastToken, "\u00A0", " ")
-			prevSentenceEndsWithWhitespace = strings.TrimSpace(replaced) == "" && len([]rune(lastToken)) == 1
-			// Java: lastToken.length() == 1 (UTF-16)
+			// Java: lastToken.replace('\u00A0',' ').trim().isEmpty() && lastToken.length() == 1
 			prevSentenceEndsWithWhitespace = strings.TrimSpace(replaced) == "" && utf16Len(lastToken) == 1
 		}
 		if len(tokens) > 1 {
