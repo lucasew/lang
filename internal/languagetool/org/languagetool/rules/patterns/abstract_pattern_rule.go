@@ -17,6 +17,11 @@ type AbstractPatternRule struct {
 	// CategoryID / CategoryName from surrounding <category> in soft grammar XML.
 	CategoryID              string
 	CategoryName            string
+	// CategoryDefaultOff ports Category.isDefaultOff (XML category default="off").
+	// Rules stay default-on; Check uses ignoreRule category branch (Java JLanguageTool.ignoreRule).
+	CategoryDefaultOff bool
+	// CategoryType ports category type="…" for ITS when the rule has no type (Java categoryIssueType).
+	CategoryType string
 	SuggestionsOutMsg       string
 	SourceFile              string
 	Filter                  RuleFilter

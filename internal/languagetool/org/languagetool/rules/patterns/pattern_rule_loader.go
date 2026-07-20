@@ -101,6 +101,10 @@ type xmlEquivalence struct {
 type xmlCategory struct {
 	ID         string         `xml:"id,attr"`
 	Name       string         `xml:"name,attr"`
+	// Default ports category default="off"|"on" (Java Category onByDefault).
+	Default string `xml:"default,attr"`
+	// Type ports category type="misspelling|style|…" → rule LocQualityIssueType when rule omits type.
+	Type string `xml:"type,attr"`
 	Tags       string         `xml:"tags,attr"`
 	ToneTags   string         `xml:"tone_tags,attr"`
 	// GoalSpecific ports is_goal_specific on category (inherited when rule omits it).
@@ -763,7 +767,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
 	idPrefix := strings.TrimSpace(root.IdPrefix)
-	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string) error {
+	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType string) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -834,6 +838,8 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				}
 				r.CategoryID = catID
 				r.CategoryName = catName
+				r.CategoryDefaultOff = catDefaultOff
+				r.CategoryType = catType
 				if defaultOff {
 					r.DefaultOff = true
 				}
@@ -854,8 +860,11 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 	for _, cat := range root.Categories {
 		catTags := parseRuleTagsAttr(cat.Tags)
 		catTones := parseToneTagsAttr(cat.ToneTags)
+		// Java: onByDefault = !OFF.equals(attrs.getValue(DEFAULT))
+		catDefaultOff := strings.EqualFold(strings.TrimSpace(cat.Default), XMLOff)
+		catType := strings.TrimSpace(cat.Type)
 		for _, xr := range cat.Rules {
-			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", ""); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType); err != nil {
 				return nil, err
 			}
 		}
@@ -874,7 +883,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 					id = g.ID
 				}
 				start := len(out)
-				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType); err != nil {
 					return nil, err
 				}
 				// sub id 1-based per XML rule (shared by OR expansions of that rule)
@@ -894,7 +903,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", ""); err != nil {
+		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, ""); err != nil {
 			return nil, err
 		}
 	}

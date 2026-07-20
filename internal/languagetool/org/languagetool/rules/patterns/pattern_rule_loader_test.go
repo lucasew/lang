@@ -64,6 +64,51 @@ func TestPatternRuleLoader_DefaultTempOff(t *testing.T) {
 	require.False(t, byID["O1"].DefaultTempOff)
 }
 
+// Java category default="off" → Category.isDefaultOff; rules stay default-on until ignoreRule.
+func TestPatternRuleLoader_CategoryDefaultOff(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category id="PLAIN_ENGLISH" name="Plain English" type="style" default="off">
+    <rule id="PE1" name="plain">
+      <pattern><token>utilize</token></pattern>
+      <message>use</message>
+    </rule>
+  </category>
+  <category id="GRAMMAR" name="Grammar" type="grammar" default="on">
+    <rule id="G1" name="g">
+      <pattern><token>foo</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+	byID := map[string]*AbstractPatternRule{}
+	for _, ar := range ars {
+		byID[ar.ID] = ar
+	}
+	require.True(t, byID["PE1"].CategoryDefaultOff)
+	require.False(t, byID["PE1"].DefaultOff, "category default-off does not set rule.defaultOff")
+	require.Equal(t, "style", byID["PE1"].CategoryType)
+	require.False(t, byID["G1"].CategoryDefaultOff)
+	require.Equal(t, "grammar", byID["G1"].CategoryType)
+
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := RegisterGrammarXML(lt, xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Equal(t, 2, n)
+	// PE1 inactive via category; G1 active
+	require.Empty(t, lt.Check("I utilize tools"))
+	require.NotEmpty(t, lt.Check("foo bar"))
+	// Enable category → PE1 fires
+	lt.EnableCategory("PLAIN_ENGLISH")
+	ms := lt.Check("I utilize tools")
+	require.NotEmpty(t, ms)
+	require.Equal(t, "PE1", ms[0].RuleID)
+	require.Equal(t, "style", ms[0].IssueType)
+}
+
 // Java rulegroup default="off" / "temp_off" is inherited by every child rule.
 func TestPatternRuleLoader_RuleGroupDefaultInherited(t *testing.T) {
 	xml := `<?xml version="1.0"?>

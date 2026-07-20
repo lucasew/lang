@@ -305,6 +305,13 @@ type JLanguageTool struct {
 	// DefaultTempOffRuleIDs are rules with XML default="temp_off" (Java Rule.defaultTempOff).
 	// Also in DefaultOffRuleIDs; re-enabled by EnableTempOffRules (Tools.selectRules enableTempOff).
 	DefaultTempOffRuleIDs map[string]struct{}
+	// DefaultOffCategoryIDs ports Category.isDefaultOff (XML category default="off").
+	// Used by ignoreRule: category disabled unless EnableCategory / enabledRuleCategories.
+	DefaultOffCategoryIDs map[string]struct{}
+	// DisabledCategoryIDs ports disabledRuleCategories (user/CLI -c).
+	DisabledCategoryIDs map[string]struct{}
+	// EnabledCategoryIDs ports enabledRuleCategories (overrides default-off + disabled).
+	EnabledCategoryIDs map[string]struct{}
 	// Cancelled optional early exit for Check.
 	Cancelled CheckCancelledCallback
 	// ListUnknownWords enables GetUnknownWords population during Check/AnalyzeUnknown.
@@ -714,6 +721,74 @@ func (lt *JLanguageTool) EnableTempOffRules() {
 	}
 }
 
+// MarkCategoryDefaultOff records XML category default="off" (Java Category onByDefault=false).
+func (lt *JLanguageTool) MarkCategoryDefaultOff(categoryID string) {
+	if lt == nil || categoryID == "" {
+		return
+	}
+	if lt.DefaultOffCategoryIDs == nil {
+		lt.DefaultOffCategoryIDs = map[string]struct{}{}
+	}
+	lt.DefaultOffCategoryIDs[strings.ToUpper(categoryID)] = struct{}{}
+}
+
+// DisableCategory ports disableCategory (adds to disabledRuleCategories).
+func (lt *JLanguageTool) DisableCategory(categoryID string) {
+	if lt == nil || categoryID == "" {
+		return
+	}
+	if lt.DisabledCategoryIDs == nil {
+		lt.DisabledCategoryIDs = map[string]struct{}{}
+	}
+	lt.DisabledCategoryIDs[strings.ToUpper(categoryID)] = struct{}{}
+}
+
+// EnableCategory ports enableRuleCategory (enabledRuleCategories; overrides default-off).
+func (lt *JLanguageTool) EnableCategory(categoryID string) {
+	if lt == nil || categoryID == "" {
+		return
+	}
+	key := strings.ToUpper(categoryID)
+	if lt.DisabledCategoryIDs != nil {
+		delete(lt.DisabledCategoryIDs, key)
+	}
+	if lt.EnabledCategoryIDs == nil {
+		lt.EnabledCategoryIDs = map[string]struct{}{}
+	}
+	lt.EnabledCategoryIDs[key] = struct{}{}
+}
+
+// ignoreLocalMatch ports JLanguageTool.ignoreRule for LocalMatch surfaces.
+// Category default-off / disabled, unless category or rule is explicitly enabled.
+func (lt *JLanguageTool) ignoreLocalMatch(m LocalMatch) bool {
+	if lt == nil {
+		return false
+	}
+	catKey := strings.ToUpper(strings.TrimSpace(m.CategoryID))
+	if catKey == "" {
+		catKey, _, _, _ = RuleMeta(m.RuleID)
+		catKey = strings.ToUpper(catKey)
+	}
+	_, catDis := lt.DisabledCategoryIDs[catKey]
+	_, catDefOff := lt.DefaultOffCategoryIDs[catKey]
+	_, catEn := lt.EnabledCategoryIDs[catKey]
+	isCategoryDisabled := (catDis || catDefOff) && !catEn
+
+	isRuleDisabled := lt.isRuleDisabled(m.RuleID)
+	// Java: rule.isDefaultOff && !enabledRules — covered by DisabledRuleIDs after MarkDefaultOff
+	// and EnableRule clearing DisabledRuleIDs + tracking EnabledRules.
+	if isCategoryDisabled {
+		// Explicit rule enable overrides category disable (Java ignoreRule).
+		if lt.EnabledRules != nil {
+			if _, en := lt.EnabledRules[m.RuleID]; en {
+				return false
+			}
+		}
+		return true
+	}
+	return isRuleDisabled
+}
+
 // EnableRule ports enableRule / AbstractPatternRule.setDefaultOn:
 // re-enables a disabled rule, clears DefaultOff tracking, and tracks the ID in
 // EnabledRules for language filter hooks (APOS_TYP, EXIGEIX_*, …).
@@ -961,6 +1036,17 @@ func (lt *JLanguageTool) checkInternal(text string, mapOriginal mapOriginalFn) [
 				}
 			}
 		}
+	}
+	// Java performCheck/checkAnalyzedSentence: filter ignoreRule (category + default-off).
+	if len(out) > 0 {
+		kept := out[:0]
+		for _, m := range out {
+			if lt.ignoreLocalMatch(m) {
+				continue
+			}
+			kept = append(kept, m)
+		}
+		out = kept
 	}
 	// Java filterMatches: isRuleActiveForLevelAndToneTags then SameRuleGroupFilter …
 	out = FilterMatchesForLevelAndToneTags(out, lt.Level, lt.ToneTags)

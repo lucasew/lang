@@ -35,6 +35,12 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		return 0, err
 	}
 	n := 0
+	// Track default-off categories once (Java Category.isDefaultOff on each rule's category).
+	for _, ar := range abstracts {
+		if ar != nil && ar.CategoryDefaultOff && ar.CategoryID != "" {
+			lt.MarkCategoryDefaultOff(ar.CategoryID)
+		}
+	}
 	for _, ar := range abstracts {
 		if ar == nil || len(ar.PatternTokens) == 0 {
 			continue
@@ -63,6 +69,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		}
 		rule := pr
 		catID, catName := ar.CategoryID, ar.CategoryName
+		catType := ar.CategoryType
 		desc := ar.Description
 		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
 			ms, err := rule.Match(s)
@@ -84,19 +91,24 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 				if out[i].CategoryName == "" {
 					out[i].CategoryName = catName
 				}
-				if out[i].IssueType == "" && catID != "" {
-					// Java category → ITS type (subset used by XML categories).
-					switch strings.ToUpper(catID) {
-					case "TYPOS":
-						out[i].IssueType = "misspelling"
-					case "STYLE":
-						out[i].IssueType = "style"
-					case "TYPOGRAPHY":
-						out[i].IssueType = "typographical"
-					case "CASING":
-						out[i].IssueType = "typographical"
-					default:
-						out[i].IssueType = "grammar"
+				if out[i].IssueType == "" {
+					// Java: rule type → rulegroup type → category type (ITSIssueType.getIssueType).
+					if catType != "" {
+						out[i].IssueType = strings.ToLower(catType)
+					} else if catID != "" {
+						// Fallback when category omits type= (legacy soft map by id).
+						switch strings.ToUpper(catID) {
+						case "TYPOS":
+							out[i].IssueType = "misspelling"
+						case "STYLE":
+							out[i].IssueType = "style"
+						case "TYPOGRAPHY":
+							out[i].IssueType = "typographical"
+						case "CASING":
+							out[i].IssueType = "typographical"
+						default:
+							out[i].IssueType = "grammar"
+						}
 					}
 				}
 				// Case adjustment when matcher left suggestions (formatMatches already ran).
@@ -114,6 +126,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		})
 		// XML default="off" / temp_off → registered but disabled (Java Rule.defaultOff).
 		// temp_off also tracked for enableTempOff / JSON rule.tempOff (Java isDefaultTempOff).
+		// Category default="off" does NOT set rule.defaultOff (Java Category.isDefaultOff only).
 		if ar.DefaultTempOff {
 			lt.MarkDefaultTempOff(id)
 		} else if ar.DefaultOff {

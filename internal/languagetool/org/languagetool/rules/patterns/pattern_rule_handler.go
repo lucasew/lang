@@ -124,6 +124,8 @@ type grammarCategory struct {
 	ID       string         `xml:"id,attr"`
 	Name     string         `xml:"name,attr"`
 	Type     string         `xml:"type,attr"`
+	// Default ports category default="off"|"on" (Java onByDefault).
+	Default  string         `xml:"default,attr"`
 	Tags     string         `xml:"tags,attr"`      // space-separated Tag names (e.g. picky)
 	ToneTags string         `xml:"tone_tags,attr"` // space-separated ToneTag names
 	Rules    []grammarRule  `xml:"rule"`
@@ -205,8 +207,16 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 		}
 	}
 	for _, cat := range root.Categories {
+		// Java: onByDefault = !OFF.equals(default); Category stores isDefaultOff.
+		onByDefault := !strings.EqualFold(strings.TrimSpace(cat.Default), XMLOff)
 		if cat.ID != "" {
-			h.Categories[cat.ID] = rules.NewCategory(rules.NewCategoryId(cat.ID), orDefault(cat.Name, cat.ID))
+			h.Categories[cat.ID] = rules.NewCategoryFull(
+				rules.NewCategoryId(cat.ID),
+				orDefault(cat.Name, cat.ID),
+				rules.CategoryInternal,
+				onByDefault,
+				"",
+			)
 		}
 		catTones := parseToneTagsAttr(cat.ToneTags)
 		catTags := parseRuleTagsAttr(cat.Tags)

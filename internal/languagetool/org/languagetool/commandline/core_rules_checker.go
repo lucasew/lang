@@ -81,6 +81,13 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	if opts.IsEnableTempOff() {
 		lt.EnableTempOffRules()
 	}
+	// Category enable/disable (Java disableCategory / enableRuleCategory).
+	for _, id := range opts.GetDisabledCategories() {
+		lt.DisableCategory(id)
+	}
+	for _, id := range opts.GetEnabledCategories() {
+		lt.EnableCategory(id)
+	}
 	for _, id := range opts.GetDisabledRules() {
 		lt.DisableRule(id)
 	}

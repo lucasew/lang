@@ -29,6 +29,12 @@ func RegisterLoadedPatternRules(lt *languagetool.JLanguageTool, h *PatternRuleHa
 	if lt == nil || h == nil {
 		return
 	}
+	// Java Category.isDefaultOff from XML category default="off".
+	for id, cat := range h.Categories {
+		if cat != nil && cat.IsDefaultOff() {
+			lt.MarkCategoryDefaultOff(id)
+		}
+	}
 	for _, pr := range h.LoadedPatternRules {
 		RegisterPatternRule(lt, pr)
 	}
