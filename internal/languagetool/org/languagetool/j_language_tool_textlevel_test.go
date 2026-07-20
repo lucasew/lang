@@ -57,7 +57,9 @@ func TestCorepack_AR_SL(t *testing.T) {
 	m2 := lt2.Check("test test")
 	found2 := false
 	for _, x := range m2 {
-		if x.RuleID == "SL_WORD_REPEAT_RULE" {
+		// Java Slovenian.getRelevantRules uses WordRepeatRule → id WORD_REPEAT_RULE
+		// (not invent SL_WORD_REPEAT_RULE).
+		if x.RuleID == "WORD_REPEAT_RULE" {
 			found2 = true
 		}
 	}
