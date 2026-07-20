@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -254,14 +255,33 @@ type disambigException struct {
 type disambigElem struct {
 	Action   string       `xml:"action,attr"`
 	Postag   string       `xml:"postag,attr"`
-	Features string       `xml:"features,attr"` // soft UNIFY: comma-separated feature ids
+	Features string       `xml:"features,attr"` // UNIFY: comma-separated feature ids
 	Wds      []disambigWd `xml:"wd"`
+	// Match ports Java <disambig><match no="…" postag=…/></disambig> (posSelector).
+	// At most one match child is used (Java posSelector).
+	Match *disambigMatch `xml:"match"`
+}
+
+// disambigMatch ports Match attributes under disambiguation <disambig>.
+type disambigMatch struct {
+	No              string `xml:"no,attr"`
+	Postag          string `xml:"postag,attr"`
+	PostagReplace   string `xml:"postag_replace,attr"`
+	PostagRegexp    string `xml:"postag_regexp,attr"`
+	RegexpMatch     string `xml:"regexp_match,attr"`
+	RegexpReplace   string `xml:"regexp_replace,attr"`
+	CaseConversion  string `xml:"case_conversion,attr"`
+	IncludeSkipped  string `xml:"include_skipped,attr"`
+	SetPos          string `xml:"setpos,attr"`
+	SuppressMisspelled string `xml:"suppress_mispelled,attr"` // Java spelling of attr
+	// Content is lemma string body: <match no="1">рада</match>
+	Content string `xml:",chardata"`
 }
 
 // disambigWd ports <wd pos="…" lemma="…"/> under <disambig action="add">.
 type disambigWd struct {
-	Pos    string `xml:"pos,attr"`
-	Lemma  string `xml:"lemma,attr"`
+	Pos     string `xml:"pos,attr"`
+	Lemma   string `xml:"lemma,attr"`
 	Content string `xml:",chardata"`
 }
 
@@ -325,8 +345,10 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	if xr.Disambig.Action != "" {
 		action = DisambiguatorAction(strings.ToUpper(xr.Disambig.Action))
 	}
-	// default Java: REPLACE when only postag set
-	rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, nil, action)
+	// Java DisambiguationRuleHandler: <match> under <disambig> → posSelector
+	posSelect := matchFromDisambigXML(xr.Disambig.Match)
+	// default Java: REPLACE when only postag set (or match element)
+	rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, posSelect, action)
 	rule.UnifierConfig = cfg
 	// Java prepareRule: start/end position corrections from <marker>
 	if rule.PatternRule != nil {
@@ -389,6 +411,51 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 		}
 	}
 	return rule
+}
+
+// matchFromDisambigXML ports DisambiguationRuleHandler MATCH under DISAMBIG → posSelector.
+// Returns nil when no match child or missing no= attribute (Java only sets posSelector with no).
+func matchFromDisambigXML(xm *disambigMatch) *patterns.Match {
+	if xm == nil {
+		return nil
+	}
+	noStr := strings.TrimSpace(xm.No)
+	if noStr == "" {
+		return nil
+	}
+	ref, err := strconv.Atoi(noStr)
+	if err != nil {
+		return nil
+	}
+	caseConv := patterns.CaseNone
+	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
+		caseConv = patterns.CaseConversion(strings.ToUpper(v))
+	}
+	include := patterns.IncludeNone
+	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
+		include = patterns.IncludeRange(strings.ToUpper(v))
+	}
+	postagRE := strings.EqualFold(xm.PostagRegexp, "yes")
+	setPos := strings.EqualFold(xm.SetPos, "yes")
+	// Java attribute is suppress_mispelled (one 's')
+	suppress := strings.EqualFold(xm.SuppressMisspelled, "yes")
+	m := patterns.NewMatch(
+		strings.TrimSpace(xm.Postag),
+		strings.TrimSpace(xm.PostagReplace),
+		postagRE,
+		strings.TrimSpace(xm.RegexpMatch),
+		strings.TrimSpace(xm.RegexpReplace),
+		caseConv,
+		setPos,
+		suppress,
+		include,
+	)
+	m.SetTokenRef(ref)
+	if body := strings.TrimSpace(xm.Content); body != "" {
+		// Java: posSelector.setLemmaString(match.toString()) on endElement MATCH
+		m.SetLemmaString(body)
+	}
+	return m
 }
 
 func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.PatternToken {
