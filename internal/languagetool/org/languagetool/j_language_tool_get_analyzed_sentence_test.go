@@ -1,6 +1,7 @@
 package languagetool
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -69,4 +70,30 @@ func TestGetAnalyzedSentence_ResultCache(t *testing.T) {
 	// Nil cache still works
 	lt2 := NewJLanguageTool("en")
 	require.NotNil(t, lt2.GetAnalyzedSentence("x"))
+}
+
+func TestSentenceTokenize(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	parts := lt.SentenceTokenize("Hello. World.")
+	require.GreaterOrEqual(t, len(parts), 2)
+	// empty
+	require.Empty(t, lt.SentenceTokenize(""))
+}
+
+// Twin of Tools.profileRulesOnLine control flow on JLanguageTool.
+func TestProfileRulesOnLine_JLanguageTool(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	// Checker: one match per sentence that contains "error"
+	check := func(s *AnalyzedSentence) []LocalMatch {
+		if s == nil {
+			return nil
+		}
+		if strings.Contains(s.GetText(), "error") {
+			return []LocalMatch{{FromPos: 0, ToPos: 1, RuleID: "E", Message: "e"}}
+		}
+		return nil
+	}
+	n := lt.ProfileRulesOnLine("no problem. has error here. fine.", check)
+	require.Equal(t, 1, n)
+	require.Equal(t, 0, lt.ProfileRulesOnLine("clean text only.", check))
 }

@@ -891,16 +891,26 @@ func (lt *JLanguageTool) GetUnknownWords() []string {
 	return out
 }
 
+// SentenceTokenize ports JLanguageTool.sentenceTokenize:
+// language.getSentenceTokenizer().tokenize(text) (SRX).
+func (lt *JLanguageTool) SentenceTokenize(text string) []string {
+	lang := "en"
+	if lt != nil && lt.LanguageCode != "" {
+		lang = lt.LanguageCode
+	}
+	parts := tokenizers.NewSRXSentenceTokenizer(lang).Tokenize(text)
+	if len(parts) == 0 && text != "" {
+		return []string{text}
+	}
+	return parts
+}
+
 // Analyze splits text into sentences (SRX) and analyzes each part like Java
 // TextCheckCallable sentence loop (getAnalyzedSentence per sentence string).
 func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
-	st := tokenizers.NewSRXSentenceTokenizer(lt.LanguageCode)
-	parts := st.Tokenize(text)
+	parts := lt.SentenceTokenize(text)
 	if len(parts) == 0 {
-		if text == "" {
-			return nil
-		}
-		parts = []string{text}
+		return nil
 	}
 	out := make([]*AnalyzedSentence, 0, len(parts))
 	for _, p := range parts {
@@ -909,6 +919,22 @@ func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 		}
 	}
 	return out
+}
+
+// ProfileRulesOnLine ports Tools.profileRulesOnLine for a single SentenceChecker:
+// sum of match counts over sentenceTokenize + getAnalyzedSentence + checker.
+// Java uses Rule.match; here ruleID selects a registered sentence checker when
+// ruleCheck is nil, otherwise ruleCheck runs on each analyzed sentence.
+func (lt *JLanguageTool) ProfileRulesOnLine(contents string, ruleCheck SentenceChecker) int {
+	if lt == nil || ruleCheck == nil {
+		return 0
+	}
+	count := 0
+	for _, sentence := range lt.SentenceTokenize(contents) {
+		analyzed := lt.GetAnalyzedSentence(sentence)
+		count += len(ruleCheck(analyzed))
+	}
+	return count
 }
 
 // GetRawAnalyzedSentence ports JLanguageTool.getRawAnalyzedSentence:
