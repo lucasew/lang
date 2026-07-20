@@ -38,3 +38,60 @@ func TestUppercaseFirstHelpers(t *testing.T) {
 	require.False(t, isAllUpper("New York"))
 	require.Equal(t, "Hello", uppercaseFirst("hello"))
 }
+
+// Twin of MultitokenSpellerFilter.isMisspelled: WordTokenizer per token, not whole string.
+func TestMultitokenSpellerFilter_IsMisspelledTokenizes(t *testing.T) {
+	// Whole phrase "New York" is not in the single-token invent list; tokens "New" and "York" are OK.
+	// "Nwe York" has misspelled "Nwe".
+	seen := []string{}
+	f := &MultitokenSpellerFilter{
+		IsMisspelled: func(tok string) bool {
+			seen = append(seen, tok)
+			return tok == "Nwe" || tok == "xyz"
+		},
+	}
+	require.False(t, f.isMisspelled("New York"), "known tokens → not misspelled")
+	require.Contains(t, seen, "New")
+	require.Contains(t, seen, "York")
+
+	seen = nil
+	require.True(t, f.isMisspelled("Nwe York"), "any bad token → misspelled")
+	require.Contains(t, seen, "Nwe")
+
+	// null speller
+	fNil := &MultitokenSpellerFilter{}
+	require.False(t, fNil.isMisspelled("anything"))
+}
+
+// Twin of areTokensAcceptedBySpeller language gate (en/de/pt/nl vs others).
+func TestMultitokenSpellerFilter_AcceptedBySpellerGate(t *testing.T) {
+	sp := NewMultitokenSpeller()
+	require.NoError(t, sp.LoadWords(strings.NewReader("New York\n")))
+	sent := languagetool.AnalyzePlain("New Yrok")
+	m := rules.NewRuleMatch(rules.NewFakeRule("MT"), sent, 0, 8, "multi")
+
+	// No CheckSpelling / IsMisspelled → Java non-en path: acceptedBySpeller=false
+	f := &MultitokenSpellerFilter{Speller: sp}
+	// Still may suggest; just ensure path does not panic
+	_ = f.AcceptRuleMatch(m, "New Yrok")
+
+	// Wired speller with all tokens "accepted" (none misspelled)
+	calls := 0
+	f2 := &MultitokenSpellerFilter{
+		Speller: sp,
+		IsMisspelled: func(tok string) bool {
+			calls++
+			return false // all tokens known
+		},
+	}
+	// acceptedBySpeller = !false = true because IsMisspelled is set
+	_ = f2.AcceptRuleMatch(m, "New Yrok")
+	require.Greater(t, calls, 0, "must tokenize and probe tokens")
+
+	// One bad token → acceptedBySpeller=false
+	f3 := &MultitokenSpellerFilter{
+		Speller:      sp,
+		IsMisspelled: func(tok string) bool { return tok == "Yrok" },
+	}
+	_ = f3.AcceptRuleMatch(m, "New Yrok")
+}

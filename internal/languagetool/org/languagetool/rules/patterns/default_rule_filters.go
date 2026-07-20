@@ -251,9 +251,12 @@ func (multitokenSpellerRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map
 	}
 	// Java MultitokenSpellerFilter: capitalize when patternTokenPos is first content token
 	// (skip SENT_START + leading punctuation / non-word).
+	// CheckSpelling: SetDefaultMultitokenSpeller is only wired for en/de/pt/nl (Java shortCode gate).
+	// Null isMiss → isMisspelled false → areTokensAcceptedBySpeller true (Java null SpellingCheckRule).
 	inner := &multitoken.MultitokenSpellerFilter{
 		Speller:         sp,
 		IsMisspelled:    isMiss,
+		CheckSpelling:   true,
 		AtSentenceStart: multitokenAtSentenceStart(match, patternTokenPos),
 	}
 	original := ""
