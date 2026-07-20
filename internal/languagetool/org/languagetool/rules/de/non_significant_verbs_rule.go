@@ -134,7 +134,8 @@ func isUnknownWordNS(token *languagetool.AnalyzedTokenReadings) bool {
 		return false
 	}
 	s := token.GetToken()
-	if len([]rune(s)) <= 2 {
+	// Java: token.getToken().length() > 2 (UTF-16)
+	if utf16LenDE(s) <= 2 {
 		return false
 	}
 	for _, r := range s {

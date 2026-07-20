@@ -167,7 +167,7 @@ func (r *GermanSpellerRule) IgnoreWordAt(words []string, idx int) bool {
 		return false
 	}
 	word := words[idx]
-	if len([]rune(word)) > GermanSpellerMaxTokenLength {
+	if utf16LenDE(word) > GermanSpellerMaxTokenLength {
 		return true
 	}
 	// multi-token IGNORE_SPELLING phrases (any covered position)

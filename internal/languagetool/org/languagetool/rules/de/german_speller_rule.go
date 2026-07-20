@@ -455,7 +455,7 @@ func (r *GermanSpellerRule) isIgnoredNoCase(word string) bool {
 			return true
 		}
 	}
-	if len([]rune(word)) <= GermanIgnoreWordsWithLength {
+	if utf16LenDE(word) <= GermanIgnoreWordsWithLength {
 		return true
 	}
 	return false
@@ -507,7 +507,7 @@ func (r *GermanSpellerRule) IgnoreWord(word string) bool {
 	if r == nil {
 		return false
 	}
-	if len([]rune(word)) > GermanSpellerMaxTokenLength {
+	if utf16LenDE(word) > GermanSpellerMaxTokenLength {
 		return true
 	}
 	if hasNoLatinLetter(word) {
@@ -676,7 +676,7 @@ func (r *GermanSpellerRule) IgnoreElative(word string) bool {
 	// Java RegExUtils.removePattern(..., "^(bitter|…|grund|…|voll)")
 	reStrip := regexp.MustCompile(`^(?:bitter|dunkel|erz|extra|früh|gemein|grund|hyper|lau|mega|minder|stock|super|tod|ultra|ur|voll)`)
 	lastPart := reStrip.ReplaceAllString(word, "")
-	return len([]rune(lastPart)) >= 3 && !r.IsMisspelled(lastPart)
+	return utf16LenDE(lastPart) >= 3 && !r.IsMisspelled(lastPart)
 }
 
 // ignoreCompoundNonHyphenated ports the non-hyphenated branch of ignoreCompoundWithIgnoredWord
@@ -714,7 +714,7 @@ func (r *GermanSpellerRule) ignoreCompoundNonHyphenated(word string) bool {
 	isCandidate := (isDirectionalAdjective || isN || isUppercaseNoun) &&
 		!isAllUpperCase(ignoredWord) &&
 		(isAllLowerCase(partialWord) || strings.HasSuffix(ignoredWord, "-"))
-	if !isCandidate || len([]rune(partialWord)) <= 2 {
+	if !isCandidate || utf16LenDE(partialWord) <= 2 {
 		return false
 	}
 	needFugenS := isNeedingFugenS(ignoredWord)

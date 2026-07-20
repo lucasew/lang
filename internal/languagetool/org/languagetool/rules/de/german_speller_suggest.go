@@ -417,7 +417,8 @@ func (r *GermanSpellerRule) finalizeSuggestions(word string, sugs []string) []st
 
 // abbreviationSuggestion ports getAbbreviationSuggestion: short ABK-tagged word → word+"."
 func (r *GermanSpellerRule) abbreviationSuggestion(word string) []string {
-	if r == nil || r.TagPOS == nil || len([]rune(word)) >= 5 {
+	// Java: word.length() >= 5 (UTF-16) → no abbreviation suggestion
+	if r == nil || r.TagPOS == nil || utf16LenDE(word) >= 5 {
 		return nil
 	}
 	for _, t := range r.TagPOS(word) {

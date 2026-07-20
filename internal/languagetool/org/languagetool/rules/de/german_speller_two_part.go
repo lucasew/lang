@@ -285,13 +285,13 @@ func (r *GermanSpellerRule) ProcessThreePartCompound(parts []string) bool {
 }
 
 // isValidPartLength ports isValidPartLength for 2/3-part splits.
+// Java: parts.get(i).length() (UTF-16).
 func isValidPartLength(parts []string) bool {
-	runeLen := func(s string) int { return len([]rune(s)) }
 	switch len(parts) {
 	case 2:
-		return runeLen(parts[0]) >= 3 && runeLen(parts[1]) >= 4
+		return utf16LenDE(parts[0]) >= 3 && utf16LenDE(parts[1]) >= 4
 	case 3:
-		return runeLen(parts[0]) >= 3 && runeLen(parts[1]) >= 4 && runeLen(parts[2]) >= 4
+		return utf16LenDE(parts[0]) >= 3 && utf16LenDE(parts[1]) >= 4 && utf16LenDE(parts[2]) >= 4
 	default:
 		return false
 	}

@@ -412,8 +412,9 @@ func (r *AbstractSimpleReplaceRule2) createMatch(
 		}
 		// Allow all-upper case, except for CamelCase suggestions and (by default) short words.
 		if !firstWordInSuggIsCamelCase && originalStr == strings.ToUpper(originalStr) {
-			const maxLengthShortWords = 4
-			if !r.MatchShortAllUpperInCheckCase || len([]rune(originalStr)) > maxLengthShortWords {
+			const maxLengthShortWords = 4 // Java AbstractSimpleReplaceRule2.MAX_LENGTH_SHORT_WORDS
+			// Java: originalStr.length() > MAX_LENGTH_SHORT_WORDS (UTF-16)
+			if !r.MatchShortAllUpperInCheckCase || utf16TokenLen(originalStr) > maxLengthShortWords {
 				*checkCaseCoveredUpto = endIndex
 				return
 			}

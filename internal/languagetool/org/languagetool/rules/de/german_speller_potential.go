@@ -29,7 +29,7 @@ var (
 // isValidWordLengthForPotential ports isValidWordLength: true means OUTSIDE the
 // compound-ignore window (too short or too long) → do not ignore via potential path.
 func isValidWordLengthForPotential(word string) bool {
-	n := len([]rune(word))
+	n := utf16LenDE(word)
 	return n <= germanPotentialMinWordLength || n >= germanPotentialMaxWordLength
 }
 
@@ -191,7 +191,7 @@ func restoreRemovedHyphens(parts []string, word string) []string {
 	currentPos := 0
 	for _, token := range parts {
 		tok := token
-		tlen := len([]rune(token))
+		tlen := utf16LenDE(token)
 		for _, hp := range hyphenPositions {
 			if hp >= currentPos && hp == currentPos+tlen {
 				tok = token + "-"
@@ -200,7 +200,7 @@ func restoreRemovedHyphens(parts []string, word string) []string {
 		}
 		out = append(out, tok)
 		// Java advances by token.length() after optional "-" append
-		currentPos += len([]rune(tok))
+		currentPos += utf16LenDE(tok)
 	}
 	return out
 }

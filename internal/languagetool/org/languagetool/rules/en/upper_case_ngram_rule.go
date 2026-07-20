@@ -6,6 +6,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ngrams"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // UpperCaseNgramRule ports org.languagetool.rules.en.UpperCaseNgramRule (simplified).
@@ -48,7 +49,8 @@ func (r *UpperCaseNgramRule) Match(sentence *languagetool.AnalyzedSentence) ([]*
 			seenContent = true
 			continue
 		}
-		if !isTitleCase(w) || len([]rune(w)) < 2 {
+		// Prefer multi-char titlecase only (length() in UTF-16 units).
+		if !isTitleCase(w) || tokenizers.UTF16Len(w) < 2 {
 			continue
 		}
 		if r.IsException != nil && r.IsException(w) {
