@@ -231,7 +231,9 @@ type disambigToken struct {
 	Exceptions []disambigException `xml:"exception"`
 	// AndTokens ports soft <and_token> = Java <and> group members.
 	AndTokens []disambigToken `xml:"and_token"`
-	Content   string          `xml:",chardata"`
+	// Match ports Java pattern-token <match no="…" setpos=…/> (tokenReference).
+	Match   *disambigMatch `xml:"match"`
+	Content string         `xml:",chardata"`
 }
 
 // disambigException ports Java pattern-token <exception> attributes used by
@@ -546,5 +548,53 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 	for _, at := range xt.AndTokens {
 		pt.AddAndGroupElement(disambigTokenFromXML(at, false))
 	}
+	// Java MATCH inside TOKEN (not under DISAMBIG): tokenReference / setpos.
+	if m := matchFromTokenMatchXML(xt.Match); m != nil {
+		pt.SetMatch(m)
+		// Java: appends \\N into token string for reference elements.
+		if content == "" && m.GetTokenRef() >= 0 {
+			pt.Token = fmt.Sprintf("\\%d", m.GetTokenRef())
+		}
+	}
 	return pt
+}
+
+// matchFromTokenMatchXML ports pattern-token <match> (same attrs as disambig match).
+// Unlike matchFromDisambigXML, no= is optional for setpos-only; TokenRef still set when present.
+// Java XMLRuleHandler: ref uses raw no= as offset from firstMatchToken.
+func matchFromTokenMatchXML(xm *disambigMatch) *patterns.Match {
+	if xm == nil {
+		return nil
+	}
+	caseConv := patterns.CaseNone
+	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
+		caseConv = patterns.CaseConversion(strings.ToUpper(v))
+	}
+	include := patterns.IncludeNone
+	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
+		include = patterns.IncludeRange(strings.ToUpper(v))
+	}
+	postagRE := strings.EqualFold(xm.PostagRegexp, "yes")
+	setPos := strings.EqualFold(xm.SetPos, "yes")
+	suppress := strings.EqualFold(xm.SuppressMisspelled, "yes")
+	m := patterns.NewMatch(
+		strings.TrimSpace(xm.Postag),
+		strings.TrimSpace(xm.PostagReplace),
+		postagRE,
+		strings.TrimSpace(xm.RegexpMatch),
+		strings.TrimSpace(xm.RegexpReplace),
+		caseConv,
+		setPos,
+		suppress,
+		include,
+	)
+	if noStr := strings.TrimSpace(xm.No); noStr != "" {
+		if ref, err := strconv.Atoi(noStr); err == nil {
+			m.SetTokenRef(ref)
+		}
+	}
+	if body := strings.TrimSpace(xm.Content); body != "" {
+		m.SetLemmaString(body)
+	}
+	return m
 }

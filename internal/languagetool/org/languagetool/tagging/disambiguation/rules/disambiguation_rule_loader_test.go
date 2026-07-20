@@ -82,3 +82,47 @@ func TestDisambigLoader_MatchElement(t *testing.T) {
 	require.Equal(t, "рік", ars[1].MatchElement.GetLemma())
 	require.Equal(t, "noun:inanim:m:v_rod", ars[1].MatchElement.GetPosTag())
 }
+
+func TestDisambigLoader_TokenMatchReference(t *testing.T) {
+	// CA-style: <token><match no="0"/></token> under marker
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="REF" name="token match ref">
+    <pattern>
+      <token>a</token>
+      <token>b</token>
+      <marker>
+        <token><match no="0"/></token>
+      </marker>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_ADV"/>
+    </disambig>
+  </rule>
+  <rule id="SETPOS" name="setpos match">
+    <pattern>
+      <token>x</token>
+      <token>
+        <match no="0" postag="N:([fm]):(sg):(acc)" postag_regexp="yes" postag_replace="N:$1:$2:$3" setpos="yes"/>
+      </token>
+    </pattern>
+    <disambig postag="NN"/>
+  </rule>
+</rules>`
+	ars, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "ca", "t.xml")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+
+	// third token is reference to first (no=0)
+	require.Len(t, ars[0].Tokens, 3)
+	require.True(t, ars[0].Tokens[2].IsReferenceElement())
+	require.Equal(t, 0, ars[0].Tokens[2].GetMatch().GetTokenRef())
+	require.True(t, ars[0].Tokens[2].InsideMarker)
+	require.Equal(t, `\0`, ars[0].Tokens[2].Token)
+
+	// setpos on second token
+	require.True(t, ars[1].Tokens[1].IsReferenceElement())
+	require.True(t, ars[1].Tokens[1].GetMatch().SetsPos())
+	require.True(t, ars[1].Tokens[1].GetMatch().IsPostagRegexp())
+	require.Equal(t, "N:([fm]):(sg):(acc)", ars[1].Tokens[1].GetMatch().GetPosTag())
+}
