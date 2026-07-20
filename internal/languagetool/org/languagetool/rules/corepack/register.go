@@ -82,33 +82,50 @@ var Supported = []struct {
 	{"tl", "Tagalog"},
 	{"ast", "Asturian"},
 	{"crh", "Crimean Tatar"},
-	// generic layout + word-repeat (no Java default speller / no pack twins yet)
+	// Java getRelevantRules is layout-only for these (no invent word-repeat packs)
 	{"ja", "Japanese"},
 	{"ta", "Tamil"},
 	{"zh", "Chinese"},
 }
 
-// registerGeneric installs shared layout + base word-repeat + word-repeat-beginning.
-func registerGeneric(lt *languagetool.JLanguageTool, lang, wordRepeatID string) {
-	rules.RegisterSharedLayoutRules(lt, lang)
-	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
-	if wordRepeatID != "" {
-		wr.IDOverride = wordRepeatID
+// registerJapaneseChineseRelevant ports Japanese/Chinese.getRelevantRules:
+// DoublePunctuationRule + MultipleWhitespaceRule only — no invent word-repeat /
+// shared full layout that Java does not register.
+func registerJapaneseChineseRelevant(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
 	}
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	// soft text-level beginning rule for languages without a dedicated pack
-	wrb := rules.NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Three successive sentences begin with the same word.",
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
 	})
-	if wordRepeatID != "" {
-		// e.g. BE_WORD_REPEAT_RULE → BE_WORD_REPEAT_BEGINNING_RULE
-		base := wordRepeatID
-		if len(base) > 5 && base[len(base)-5:] == "_RULE" {
-			base = base[:len(base)-5]
-		}
-		wrb.IDOverride = base + "_BEGINNING_RULE"
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+}
+
+// registerTamilRelevant ports Tamil.getRelevantRules:
+// CommaWhitespace, DoublePunctuation, MultipleWhitespace, LongSentence(50), SentenceWhitespace.
+func registerTamilRelevant(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
 	}
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+	// Java: new LongSentenceRule(messages, userConfig, 50) — text-level
+	ls := rules.NewLongSentenceRule(nil, 50)
+	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
+	sw := rules.NewSentenceWhitespaceRule(nil)
+	lt.AddTextLevelRuleChecker(sw.GetID(), rules.AsTextLevelChecker(sw.MatchList))
 }
 
 // Register installs the best available core rule pack for lang (e.g. "en-US", "de").
@@ -185,12 +202,11 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 		crh.RegisterCoreCrimeanTatarRules(lt)
 	case "sr":
 		sr.RegisterCoreSerbianRules(lt)
-	case "ja":
-		registerGeneric(lt, "ja", "JA_WORD_REPEAT_RULE")
+	case "ja", "zh":
+		// Java Chinese/Japanese.getRelevantRules — no invent word-repeat
+		registerJapaneseChineseRelevant(lt)
 	case "ta":
-		registerGeneric(lt, "ta", "TA_WORD_REPEAT_RULE")
-	case "zh":
-		registerGeneric(lt, "zh", "ZH_WORD_REPEAT_RULE")
+		registerTamilRelevant(lt)
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}

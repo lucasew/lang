@@ -62,7 +62,8 @@ func TestRegister_WordRepeatBeginning(t *testing.T) {
 }
 
 func TestRegister_GenericPacks(t *testing.T) {
-	for _, code := range []string{"be", "zh", "ja", "eo", "sr"} {
+	// be/eo/sr still have word-repeat; zh/ja match Java layout-only getRelevantRules
+	for _, code := range []string{"be", "eo", "sr"} {
 		t.Run(code, func(t *testing.T) {
 			lt := languagetool.NewJLanguageTool(code)
 			corepack.Register(lt, code)
@@ -70,6 +71,37 @@ func TestRegister_GenericPacks(t *testing.T) {
 			m := lt.Check("test test")
 			require.NotEmpty(t, m)
 		})
+	}
+}
+
+// Java Chinese/Japanese.getRelevantRules: DOUBLE_PUNCTUATION + WHITESPACE_RULE only.
+func TestRegister_JapaneseChinese_NoInventWordRepeat(t *testing.T) {
+	for _, code := range []string{"ja", "zh"} {
+		t.Run(code, func(t *testing.T) {
+			lt := languagetool.NewJLanguageTool(code)
+			corepack.Register(lt, code)
+			ids := lt.GetAllRegisteredRuleIDs()
+			require.ElementsMatch(t, []string{"DOUBLE_PUNCTUATION", "WHITESPACE_RULE"}, ids)
+			// Bare word repeat must not invent a match (Java has no word-repeat for ja/zh)
+			for _, m := range lt.Check("test test") {
+				require.NotContains(t, m.RuleID, "WORD_REPEAT")
+			}
+		})
+	}
+}
+
+// Java Tamil.getRelevantRules IDs.
+func TestRegister_Tamil_JavaRelevantOnly(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("ta")
+	corepack.Register(lt, "ta")
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.Contains(t, ids, "COMMA_PARENTHESIS_WHITESPACE")
+	require.Contains(t, ids, "DOUBLE_PUNCTUATION")
+	require.Contains(t, ids, "WHITESPACE_RULE")
+	require.Contains(t, ids, "TOO_LONG_SENTENCE")
+	require.Contains(t, ids, "SENTENCE_WHITESPACE")
+	for _, id := range ids {
+		require.NotContains(t, id, "WORD_REPEAT", "Tamil Java has no word-repeat")
 	}
 }
 
