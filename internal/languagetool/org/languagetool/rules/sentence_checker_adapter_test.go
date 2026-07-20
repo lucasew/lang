@@ -29,10 +29,13 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	m = lt.Check("Wait.. now")
 	require.NotEmpty(t, m)
 
-	// RegisterCoreRules dispatch (shared layout + word-repeat; FR)
+	// RegisterCoreRules default: shared layout only (no invent WordRepeat for non-EN)
 	lt2 := languagetool.NewJLanguageTool("fr")
 	rules.RegisterCoreRules(lt2, "fr")
 	require.NotEmpty(t, lt2.Check("bonjour  monde"))
+	for _, m := range lt2.Check("test test") {
+		require.NotContains(t, m.RuleID, "WORD_REPEAT")
+	}
 
 	// a vs an (faithful AvsAnRule + DT inject)
 	m = lt.Check("This is an test.")

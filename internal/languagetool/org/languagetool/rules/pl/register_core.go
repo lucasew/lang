@@ -8,16 +8,19 @@ import (
 )
 
 // RegisterCorePolishRules ports Polish.getRelevantRules / createDefaultSpellingRule.
-// Java registers WordRepeatRule + PolishWordRepeatRule — no WordRepeatBeginning.
-// (Generic WordRepeatRule still incomplete here; PolishWordRepeatRule is the PL-specific twin.)
+// Java: WordRepeatRule (WORD_REPEAT_RULE) + PolishWordRepeatRule (PL_WORD_REPEAT) —
+// no WordRepeatBeginning.
 func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	lt.PriorityForId = language.PolishPriorityForId
 	rules.RegisterSharedLayoutRules(lt, "pl")
-	wr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
+	// Java order: WordRepeatRule then later PolishWordRepeatRule (Advanced).
+	gwr := rules.NewWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
+	lt.AddRuleChecker(gwr.GetID(), rules.AsSentenceCheckerSimple(gwr.Match))
+	pwr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
+	lt.AddRuleChecker(pwr.GetID(), rules.AsSentenceCheckerSimple(pwr.Match))
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)

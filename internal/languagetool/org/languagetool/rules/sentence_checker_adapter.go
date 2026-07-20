@@ -378,6 +378,9 @@ func RegisterCoreEnglishRules(lt *languagetool.JLanguageTool) {
 
 // RegisterCoreRules picks a language-appropriate core pack (shared layout + base word-repeat).
 // EN also gets a/an and phrase injects.
+// RegisterCoreRules installs EN core pack or shared layout only.
+// Unknown short codes do not invent WordRepeatRule (Java only registers WR
+// when that language's getRelevantRules lists it).
 func RegisterCoreRules(lt *languagetool.JLanguageTool, langCode string) {
 	if lt == nil {
 		return
@@ -390,9 +393,8 @@ func RegisterCoreRules(lt *languagetool.JLanguageTool, langCode string) {
 	case "en":
 		RegisterCoreEnglishRules(lt)
 	default:
+		// Layout only — no invent WordRepeat for unlisted languages.
 		RegisterSharedLayoutRules(lt, base)
-		wr := NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
-		lt.AddRuleChecker(wr.GetID(), AsSentenceCheckerSimple(wr.Match))
 	}
 }
 
