@@ -3,6 +3,7 @@ package es
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // FindSuggestionsFilter ports org.languagetool.rules.es.FindSuggestionsFilter
@@ -11,7 +12,7 @@ import (
 // Default SpellingSuggestions uses process-wide WireSpanishFilterSpeller /
 // FilterDictSuggest (Java: speller.findSimilarWords; resource /es/es-ES.dict).
 // Without a dict, Accept fails closed unless SetSpellingFromSimilarWords overrides.
-// Tag (SpanishTagger) must still be wired for POS filtering of candidates.
+// Tag / Synthesize: SpanishTagger + SpanishSynthesizer via process-wide hooks.
 type FindSuggestionsFilter struct {
 	*rules.AbstractFindSuggestionsFilter
 	// spellingOverride true after SetSpellingFromSimilarWords (tests/host inject).
@@ -23,8 +24,24 @@ func NewFindSuggestionsFilter() *FindSuggestionsFilter {
 		AbstractFindSuggestionsFilter: &rules.AbstractFindSuggestionsFilter{
 			// Java: speller.findSimilarWords(atr.getToken())
 			SpellingSuggestions: defaultESSpellingSuggestions,
+			// Java: getTagger() → SpanishTagger
+			Tag: FilterTagWord,
+			// Java: getSynthesizer().synthesize(at, desiredPostag, true)
+			Synthesize: spanishFindSuggestionsSynthesize,
 		},
 	}
+}
+
+func spanishFindSuggestionsSynthesize(tok *languagetool.AnalyzedToken, postagRE string) []string {
+	s := patterns.LanguageSynthesizer("es")
+	if s == nil || tok == nil {
+		return nil
+	}
+	forms, err := s.SynthesizeRE(tok, postagRE, true)
+	if err != nil || len(forms) == 0 {
+		return nil
+	}
+	return forms
 }
 
 func defaultESSpellingSuggestions(atr *languagetool.AnalyzedTokenReadings) []string {

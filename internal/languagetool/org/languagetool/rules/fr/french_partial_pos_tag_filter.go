@@ -131,8 +131,11 @@ func getFilterDisambiguator() filterDisambiguator {
 	return frFilterDisambig
 }
 
-// WireFrenchFilterTaggerFromTagWord installs POS list hook from lt.TagWord.
+// WireFrenchFilterTaggerFromTagWord installs POS list hook from lt.TagWord
+// and FindSuggestionsFilter Tag path (French.getTagger()).
 func WireFrenchFilterTaggerFromTagWord(tw func(token string) []languagetool.TokenTag) {
+	// Full TagWord for AbstractFindSuggestionsFilter.Tag (lemmas for synth path).
+	WireFrenchFindSuggestionsTagger(tw)
 	if tw == nil {
 		SetDefaultFrenchPartialPosTagger(nil)
 		return

@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -17,7 +18,7 @@ import (
 // SpellingMatch ports morfologikRule.match(one-token sentence).suggestedReplacements.
 // When nil, defaults to FilterDictSuggest if WireFrenchFilterSpeller is active;
 // otherwise Accept fails closed (Java always has French.getDefaultSpellingRule()).
-// Tag / Synthesize remain host-wired (FrenchTagger / FrenchSynthesizer).
+// Tag / Synthesize: FrenchTagger + FrenchSynthesizer (process-wide / LanguageSynthesizer).
 type FindSuggestionsFilter struct {
 	*rules.AbstractFindSuggestionsFilter
 	// SpellingMatch returns suggested replacements for a one-token "sentence".
@@ -31,11 +32,28 @@ var frEndsInVowel = regexp.MustCompile(`[aeioué]$`)
 
 func NewFindSuggestionsFilter() *FindSuggestionsFilter {
 	f := &FindSuggestionsFilter{
-		AbstractFindSuggestionsFilter: &rules.AbstractFindSuggestionsFilter{},
+		AbstractFindSuggestionsFilter: &rules.AbstractFindSuggestionsFilter{
+			// Java: getTagger() → FrenchTagger
+			Tag: FilterTagWord,
+			// Java: getSynthesizer().synthesize(at, desiredPostag, true)
+			Synthesize: frenchFindSuggestionsSynthesize,
+		},
 	}
 	f.CleanSuggestion = frCleanSuggestion
 	// SpellingSuggestions built when SpellingMatch is resolved via EnsureSpellingHook
 	return f
+}
+
+func frenchFindSuggestionsSynthesize(tok *languagetool.AnalyzedToken, postagRE string) []string {
+	s := patterns.LanguageSynthesizer("fr")
+	if s == nil || tok == nil {
+		return nil
+	}
+	forms, err := s.SynthesizeRE(tok, postagRE, true)
+	if err != nil || len(forms) == 0 {
+		return nil
+	}
+	return forms
 }
 
 // defaultFRSpellingMatch ports morfologikRule.match → suggested replacements via FilterDict.

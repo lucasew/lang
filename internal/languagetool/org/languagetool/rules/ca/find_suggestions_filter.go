@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // FindSuggestionsFilter ports org.languagetool.rules.ca.FindSuggestionsFilter
@@ -14,7 +15,7 @@ import (
 // Default SpellingSuggestions uses process-wide WireCatalanFilterSpeller /
 // FilterDictSuggest (Java: speller.findSimilarWords; resource /ca/ca-ES_spelling.dict).
 // Without a dict, Accept fails closed unless SetSpellingSuggestions overrides.
-// Tag (CatalanTagger) must still be wired for POS filtering of candidates.
+// Tag / Synthesize: CatalanTagger + CatalanSynthesizer via process-wide hooks.
 type FindSuggestionsFilter struct {
 	*rules.AbstractFindSuggestionsFilter
 	// spellingOverride true when host/tests set SpellingSuggestions via SetSpellingSuggestions.
@@ -34,11 +35,31 @@ func NewFindSuggestionsFilter() *FindSuggestionsFilter {
 		AbstractFindSuggestionsFilter: &rules.AbstractFindSuggestionsFilter{
 			// Java: speller.findSimilarWords(atr.getToken())
 			SpellingSuggestions: defaultCASpellingSuggestions,
+			// Java: getTagger() → CatalanTagger
+			Tag: FilterTagWord,
+			// Java: getSynthesizer().synthesize(at, desiredPostag, true)
+			Synthesize: catalanFindSuggestionsSynthesize,
 		},
 	}
 	f.IsSuggestionException = caIsSuggestionException
 	f.PreProcessWrongWord = caPreProcessWrongWord
 	return f
+}
+
+func catalanFindSuggestionsSynthesize(tok *languagetool.AnalyzedToken, postagRE string) []string {
+	// Catalan variants use full codes (ca-ES); registry may hold "ca" or "ca-ES".
+	for _, code := range []string{"ca", "ca-ES", "ca-ES-valencia"} {
+		s := patterns.LanguageSynthesizer(code)
+		if s == nil {
+			continue
+		}
+		forms, err := s.SynthesizeRE(tok, postagRE, true)
+		if err != nil || len(forms) == 0 {
+			continue
+		}
+		return forms
+	}
+	return nil
 }
 
 func defaultCASpellingSuggestions(atr *languagetool.AnalyzedTokenReadings) []string {

@@ -246,6 +246,12 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 						rulesru.WireRussianFilterTaggerFromTagWord(lt.TagWord)
 					case "fr":
 						rulesfr.WireFrenchFilterTaggerFromTagWord(lt.TagWord)
+					case "es":
+						// FindSuggestionsFilter.Tag (Java SpanishTagger)
+						ruleses.WireSpanishFilterTaggerFromTagWord(lt.TagWord)
+					case "ca":
+						// FindSuggestionsFilter.Tag (Java CatalanTagger)
+						rulesca.WireCatalanFilterTaggerFromTagWord(lt.TagWord)
 					case "ga":
 						rulesga.WireIrishFilterTaggerFromTagWord(lt.TagWord)
 					case "pt":
