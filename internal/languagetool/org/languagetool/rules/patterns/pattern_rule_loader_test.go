@@ -943,3 +943,14 @@ func TestPatternRuleLoader_ToneTagsAndPicky(t *testing.T) {
 }
 
 
+
+func TestResolveIssueType_KnownOnly(t *testing.T) {
+	require.Equal(t, "grammar", resolveIssueType("grammar", "", ""))
+	require.Equal(t, "misspelling", resolveIssueType("", "misspelling", "style"))
+	require.Equal(t, "style", resolveIssueType("", "", "style"))
+	// Unknown free-form types (e.g. unification type="sg") must not invent issue types
+	require.Empty(t, resolveIssueType("sg", "", ""))
+	require.Empty(t, resolveIssueType("triggers_error", "", ""))
+	// Inheritance skips invalid and takes next known
+	require.Equal(t, "style", resolveIssueType("bogus", "", "style"))
+}

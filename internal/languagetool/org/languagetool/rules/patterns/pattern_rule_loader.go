@@ -1037,13 +1037,24 @@ func resolvePriority(catPrio, groupPrio, rulePrio int) int {
 }
 
 // resolveIssueType ports PatternRuleHandler type inheritance:
-// rule type → rulegroup type → category type (Java setLocQualityIssueType).
+// rule type → rulegroup type → category type (Java setLocQualityIssueType +
+// ITSIssueType.getIssueType). Unknown type names are skipped fail-closed
+// (Java would throw IllegalArgumentException).
 func resolveIssueType(ruleType, groupType, catType string) string {
 	for _, t := range []string{ruleType, groupType, catType} {
 		t = strings.TrimSpace(t)
-		if t != "" {
-			return strings.ToLower(t)
+		if t == "" {
+			continue
 		}
+		// Java getIssueType compares to toString() (lowercase ITS form).
+		if it, err := rules.GetIssueType(strings.ToLower(t)); err == nil {
+			return string(it)
+		}
+		// Also accept PascalCase / camelCase via ParseIssueTypeCamel (defensive).
+		if it, err := rules.ParseIssueTypeCamel(t); err == nil {
+			return string(it)
+		}
+		// Unknown: fail-closed — do not invent a free-form issue type string.
 	}
 	return ""
 }
