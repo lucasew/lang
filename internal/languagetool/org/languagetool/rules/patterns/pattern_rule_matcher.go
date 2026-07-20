@@ -5,10 +5,17 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // MistakeMarker ports PatternRuleMatcher.MISTAKE.
 const MistakeMarker = "<mistake/>"
+
+// suggestionStartTag / suggestionEndTag port RuleMatch.SUGGESTION_*_TAG.
+const (
+	suggestionStartTag = "<suggestion>"
+	suggestionEndTag   = "</suggestion>"
+)
 
 // PatternRuleMatcher ports org.languagetool.rules.patterns.PatternRuleMatcher
 // as a sequential token matcher (skip/unification/exceptions deferred).
@@ -316,65 +323,13 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 			if needUni && !m.testUnification(bag) {
 				return nil, false
 			}
-			fm, lm := sp.firstMark, sp.lastMark
-			if fm < 0 {
-				fm, lm = sp.first, sp.last
-			}
-			fromPos := tokens[fm].GetStartPos()
-			toPos := tokens[lm].GetEndPos()
-			msg := m.Rule.Message
-			if msg == "" {
-				msg = m.Rule.Description
-			}
-			// Java createRuleMatch: formatMatches on message/short before RuleMatch.
-			lang := ""
-			var sugMatches []*Match
-			if m.Rule.PatternRule != nil {
-				lang = m.Rule.PatternRule.LanguageCode
-				sugMatches = m.Rule.PatternRule.SuggestionMatches
-			}
 			positions := sp.positions
 			if len(positions) == 0 {
 				positions = defaultPositions(len(m.matchers))
 			}
-			msg = FormatMatches(tokens, positions, sp.first, msg, sugMatches, lang)
-			shortMsg := m.Rule.ShortMessage
-			if shortMsg != "" {
-				shortMsg = FormatMatches(tokens, positions, sp.first, shortMsg, sugMatches, lang)
-			}
-			rm := rules.NewRuleMatch(m.Rule, sentence, fromPos, toPos, msg)
-			rm.ShortMessage = shortMsg
-			// Expand suggestion templates (Java formatMatches on suggestion markup).
-			if m.Rule.PatternRule != nil && len(m.Rule.PatternRule.SuggestionTemplates) > 0 {
-				var expanded []string
-				for _, t := range m.Rule.PatternRule.SuggestionTemplates {
-					for _, e := range ExpandSuggestionTemplate(t, tokens, positions, sp.first, sugMatches, lang) {
-						// Java removeSuppressMisspelled: drop misspelled / non-synth markers.
-						if e == "" || e == MistakeMarker || strings.Contains(e, MistakeMarker) {
-							continue
-						}
-						// Empty synth form "(word)" under suppress_misspelled is dropped by
-						// removeSuppressMisspelled when wrapped in suggestion tags; templates
-						// are already unwrapped — drop parenthesized-only forms when any
-						// match was suppress_misspelled.
-						if suppressMisspelledIn(sugMatches) && isParenOnlyForm(e) {
-							continue
-						}
-						expanded = append(expanded, e)
-					}
-				}
-				if len(expanded) > 0 {
-					rm.SetSuggestedReplacements(expanded)
-				}
-			}
-			// Java PatternRuleMatcher.createRuleMatch: run RuleFilter when set.
-			if m.Rule.PatternRule != nil && m.Rule.PatternRule.Filter != nil {
-				patternTokens := tokens[sp.first : sp.last+1]
-				eval := NewRuleFilterEvaluator(m.Rule.PatternRule.Filter)
-				rm = eval.RunFilter(m.Rule.PatternRule.FilterArgs, rm, patternTokens, sp.first, positions)
-				if rm == nil {
-					return nil, false
-				}
+			rm := m.createRuleMatch(sentence, tokens, positions, sp.first, sp.last, sp.firstMark, sp.lastMark)
+			if rm == nil {
+				return nil, false
 			}
 			return rm, true
 		}
@@ -521,4 +476,273 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 		startBag = newUnifyBag()
 	}
 	return rec(0, start, 0, span{first: -1, last: -1, firstMark: -1, lastMark: -1}, startBag)
+}
+
+// createRuleMatch ports PatternRuleMatcher.createRuleMatch.
+func (m *PatternRuleMatcher) createRuleMatch(
+	sentence *languagetool.AnalyzedSentence,
+	tokens []*languagetool.AnalyzedTokenReadings,
+	tokenPositions []int,
+	firstMatchToken, lastMatchToken, firstMarkerMatchToken, lastMarkerMatchToken int,
+) *rules.RuleMatch {
+	if m == nil || m.Rule == nil || firstMatchToken < 0 || lastMatchToken < 0 {
+		return nil
+	}
+	pr := m.Rule.PatternRule
+	lang := ""
+	var sugMatches, sugMatchesOut []*Match
+	msg := m.Rule.Message
+	shortMsg := m.Rule.ShortMessage
+	sugOut := ""
+	startCorr := 0
+	adjustCase := true
+	if pr != nil {
+		lang = pr.LanguageCode
+		sugMatches = pr.SuggestionMatches
+		sugMatchesOut = pr.SuggestionMatchesOutMsg
+		sugOut = pr.SuggestionsOutMsg
+		startCorr = pr.StartPositionCorrection
+		if pr.AdjustSuggestionCase != nil {
+			adjustCase = *pr.AdjustSuggestionCase
+		}
+		if msg == "" {
+			msg = pr.Description
+		}
+	}
+	if msg == "" {
+		msg = m.Rule.Description
+	}
+
+	errMessage := FormatMatches(tokens, tokenPositions, firstMatchToken, msg, sugMatches, lang)
+	shortErrMessage := ""
+	if shortMsg != "" {
+		shortErrMessage = FormatMatches(tokens, tokenPositions, firstMatchToken, shortMsg, sugMatches, lang)
+	}
+	suggestionsOutMsg := FormatMatches(tokens, tokenPositions, firstMatchToken, sugOut, sugMatchesOut, lang)
+
+	// startPositionCorrection shifts the case-sample token (Java correctedStPos).
+	correctedStPos := 0
+	if startCorr > 0 {
+		lim := startCorr
+		if lim > len(tokenPositions)-1 {
+			lim = len(tokenPositions) - 1
+		}
+		for l := 0; l <= lim && l < len(tokenPositions); l++ {
+			correctedStPos += tokenPositions[l]
+		}
+		correctedStPos--
+	}
+	idx := firstMatchToken + correctedStPos
+	if idx >= len(tokens) {
+		idx = len(tokens) - 1
+	}
+	if idx < 0 {
+		idx = 0
+	}
+	firstMatchTokenObj := tokens[idx]
+
+	// All-uppercase / starts-with-uppercase for suggestion casing.
+	var inputTokens []string
+	for i := idx; i <= lastMatchToken && i < len(tokens); i++ {
+		if tokens[i] != nil {
+			inputTokens = append(inputTokens, tokens[i].GetToken())
+		}
+	}
+	isInputAllUppercase := isAllUppercaseTokenList(inputTokens)
+	isAllUppercase := isInputAllUppercase &&
+		(len(strings.ReplaceAll(firstMatchTokenObj.GetToken(), "'", "")) > 1 || lastMatchToken > idx) &&
+		matchPreservesCase(sugMatches, msg) &&
+		matchPreservesCase(sugMatchesOut, sugOut)
+	isAllUppercase = isAllUppercase && adjustCase
+
+	startsWithUppercase := tools.StartsWithUppercase(firstMatchTokenObj.GetToken()) &&
+		matchPreservesCase(sugMatches, msg) &&
+		matchPreservesCase(sugMatchesOut, sugOut)
+	if firstMatchTokenObj.IsSentenceStart() && firstMatchToken+correctedStPos+1 < len(tokens) {
+		firstMatchTokenObj = tokens[firstMatchToken+correctedStPos+1]
+		startsWithUppercase = tools.StartsWithUppercase(firstMatchTokenObj.GetToken())
+	}
+	startsWithUppercase = startsWithUppercase && adjustCase
+
+	if firstMarkerMatchToken < 0 {
+		firstMarkerMatchToken = firstMatchToken
+	}
+	if lastMarkerMatchToken < 0 {
+		lastMarkerMatchToken = lastMatchToken
+	}
+	if firstMarkerMatchToken >= len(tokens) {
+		firstMarkerMatchToken = len(tokens) - 1
+	}
+	if lastMarkerMatchToken >= len(tokens) {
+		lastMarkerMatchToken = len(tokens) - 1
+	}
+
+	fromPos := tokens[firstMarkerMatchToken].GetStartPos()
+	// Java: comma suggestion may extend fromPos back over previous token end.
+	if firstMarkerMatchToken >= 1 &&
+		(strings.Contains(errMessage, suggestionStartTag+",") ||
+			strings.Contains(suggestionsOutMsg, suggestionStartTag+",")) {
+		fromPos = tokens[firstMarkerMatchToken-1].GetEndPos()
+	}
+	toPos := tokens[lastMarkerMatchToken].GetEndPos()
+	if fromPos >= toPos {
+		return nil
+	}
+
+	// suppress_misspelled with no suggestions → no RuleMatch
+	if strings.Contains(errMessage, PleaseSpellMe) &&
+		!strings.Contains(errMessage, suggestionStartTag) &&
+		!strings.Contains(suggestionsOutMsg, suggestionStartTag) {
+		return nil
+	}
+	clearMsg := strings.ReplaceAll(errMessage, PleaseSpellMe, "")
+	clearMsg = strings.ReplaceAll(clearMsg, MistakeMarker, "")
+
+	patFrom := tokens[firstMatchToken].GetStartPos()
+	patTo := tokens[lastMatchToken].GetEndPos()
+	rm := rules.NewRuleMatch(m.Rule, sentence, fromPos, toPos, clearMsg)
+	rm.ShortMessage = shortErrMessage
+	rm.SetPatternPosition(patFrom, patTo)
+	if orig := sentenceTextSlice(sentence, fromPos, toPos); orig != "" {
+		rm.OriginalErrorStr = orig
+	}
+
+	// Extract <suggestion> from message + suggestionsOutMsg (Java RuleMatch ctor).
+	combined := clearMsg + suggestionsOutMsg
+	var replacements []string
+	for _, rep := range extractSuggestionBodies(combined) {
+		if rep == "" || strings.Contains(rep, MistakeMarker) {
+			continue
+		}
+		// Strip residual pleasespellme inside body
+		rep = strings.ReplaceAll(rep, PleaseSpellMe, "")
+		// Java RuleMatch ctor case adjustment
+		if isAllUppercase && !(tools.IsMixedCase(rep) && !strings.Contains(rep, " ")) {
+			if rm.OriginalErrorStr != strings.ToUpper(rep) {
+				rep = strings.ToUpper(rep)
+			}
+		} else if startsWithUppercase {
+			rep = tools.UppercaseFirstChar(rep)
+		}
+		replacements = append(replacements, rep)
+	}
+
+	// Templates not already covered by message markup (loader path).
+	if pr != nil && len(pr.SuggestionTemplates) > 0 && len(replacements) == 0 {
+		for _, t := range pr.SuggestionTemplates {
+			for _, e := range ExpandSuggestionTemplate(t, tokens, tokenPositions, firstMatchToken, sugMatches, lang) {
+				if e == "" || e == MistakeMarker || strings.Contains(e, MistakeMarker) {
+					continue
+				}
+				if suppressMisspelledIn(sugMatches) && isParenOnlyForm(e) {
+					continue
+				}
+				if isAllUppercase {
+					up := strings.ToUpper(e)
+					if rm.OriginalErrorStr == up {
+						continue
+					}
+					e = up
+				} else if startsWithUppercase {
+					e = tools.UppercaseFirstChar(e)
+				}
+				replacements = append(replacements, e)
+			}
+		}
+	}
+	if len(replacements) > 0 {
+		rm.SetSuggestedReplacements(replacements)
+	}
+
+	if pr != nil && pr.Filter != nil {
+		patternTokens := tokens[firstMatchToken : lastMatchToken+1]
+		eval := NewRuleFilterEvaluator(pr.Filter)
+		rm = eval.RunFilter(pr.FilterArgs, rm, patternTokens, firstMatchToken, tokenPositions)
+	}
+	return rm
+}
+
+// matchPreservesCase ports PatternRuleMatcher.matchPreservesCase.
+func matchPreservesCase(suggestionMatches []*Match, msg string) bool {
+	if len(suggestionMatches) == 0 || msg == "" {
+		return true
+	}
+	sugStart := strings.Index(msg, suggestionStartTag)
+	if sugStart < 0 {
+		return true
+	}
+	sugStart += len(suggestionStartTag)
+	if strings.Contains(msg, PleaseSpellMe) {
+		// Java adds PLEASE_SPELL_ME length when present in message
+		// only if it appears at suggestion start region — approximate:
+		if idx := strings.Index(msg[sugStart:], PleaseSpellMe); idx == 0 {
+			sugStart += len(PleaseSpellMe)
+		}
+	}
+	if sugStart >= len(msg) {
+		return true
+	}
+	for _, sMatch := range suggestionMatches {
+		if sMatch == nil || sMatch.IsInMessageOnly() {
+			continue
+		}
+		if sMatch.ConvertsCase() && msg[sugStart] == '\\' {
+			return false
+		}
+	}
+	return true
+}
+
+func isAllUppercaseTokenList(tokens []string) bool {
+	if len(tokens) == 0 {
+		return false
+	}
+	isInputAllUppercase := true
+	isAllNotLetters := true
+	for _, s := range tokens {
+		isInputAllUppercase = isInputAllUppercase && tools.IsAllUppercase(s)
+		isAllNotLetters = isAllNotLetters && (tools.IsNotWordString(s) || tools.IsPunctuationMark(s))
+	}
+	return isInputAllUppercase && !isAllNotLetters
+}
+
+func extractSuggestionBodies(s string) []string {
+	var out []string
+	for {
+		start := strings.Index(s, suggestionStartTag)
+		if start < 0 {
+			break
+		}
+		rest := s[start+len(suggestionStartTag):]
+		end := strings.Index(rest, suggestionEndTag)
+		if end < 0 {
+			break
+		}
+		out = append(out, rest[:end])
+		s = rest[end+len(suggestionEndTag):]
+	}
+	return out
+}
+
+func sentenceTextSlice(sentence *languagetool.AnalyzedSentence, from, to int) string {
+	if sentence == nil {
+		return ""
+	}
+	text := sentence.GetText()
+	// Positions are UTF-16-oriented in Java; for BMP text byte==UTF-16 for ASCII.
+	// Use rune-safe slice by mapping via token positions when possible.
+	if from < 0 {
+		from = 0
+	}
+	if to > len(text) {
+		to = len(text)
+	}
+	if from >= to {
+		return ""
+	}
+	// Prefer byte indices when they fall inside the Go string (AnalyzePlain uses UTF-16-friendly for BMP).
+	if to <= len(text) {
+		return text[from:to]
+	}
+	return ""
 }

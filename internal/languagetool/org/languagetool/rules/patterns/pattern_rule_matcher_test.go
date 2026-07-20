@@ -59,6 +59,34 @@ func TestPatternRuleMatcherNoMatch(t *testing.T) {
 	require.Empty(t, matches)
 }
 
+func TestPatternRuleMatcher_CreateRuleMatchCaseAndSuggestions(t *testing.T) {
+	// Message with <suggestion> — startsWithUppercase when match starts capital.
+	rule := NewPatternRule("CASE", "en",
+		[]*PatternToken{Token("Hello")},
+		"d",
+		`Use <suggestion>hi</suggestion> instead`,
+		"")
+	sent := testSentence(atr("Hello", 0))
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+	require.NotEmpty(t, ms[0].GetSuggestedReplacements())
+	// startsWithUppercase → UppercaseFirstChar("hi") = "Hi"
+	require.Equal(t, "Hi", ms[0].GetSuggestedReplacements()[0])
+	require.Equal(t, ms[0].FromPos, ms[0].PatternFromPos)
+
+	// PLEASE_SPELL_ME without suggestion tags → no match (Java createRuleMatch)
+	rule2 := NewPatternRule("SPELL", "en",
+		[]*PatternToken{Token("xyz")},
+		"d",
+		"bad "+PleaseSpellMe+" only",
+		"")
+	sent2 := testSentence(atr("xyz", 0))
+	ms, err = rule2.Match(sent2)
+	require.NoError(t, err)
+	require.Empty(t, ms)
+}
+
 // Java AbstractPatternRulePerformer: scope=next on element blocks when immediate next matches
 // (prevSkipNext == 0 path).
 func TestPatternRuleMatcher_NextExceptionImmediate(t *testing.T) {

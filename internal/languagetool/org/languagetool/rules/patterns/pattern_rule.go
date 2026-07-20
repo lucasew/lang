@@ -27,8 +27,18 @@ type PatternRule struct {
 	UnifierConfig *UnifierConfiguration
 	// SuggestionMatches ports AbstractPatternRule.suggestionMatches for formatMatches.
 	SuggestionMatches []*Match
+	// SuggestionMatchesOutMsg ports AbstractPatternRule.suggestionMatchesOutMsg.
+	SuggestionMatchesOutMsg []*Match
+	// SuggestionsOutMsg ports AbstractPatternRule.suggestionsOutMsg.
+	SuggestionsOutMsg string
 	// SuggestionTemplates are <suggestion> bodies after ProcessRuleMessage (may contain \N).
 	SuggestionTemplates []string
+	// StartPositionCorrection ports AbstractPatternRule.startPositionCorrection.
+	StartPositionCorrection int
+	// EndPositionCorrection ports AbstractPatternRule.endPositionCorrection.
+	EndPositionCorrection int
+	// AdjustSuggestionCase ports AbstractPatternRule.adjustSuggestionCase (default true).
+	AdjustSuggestionCase *bool // nil = true (Java default)
 	// InterpretPreDisambig ports PatternRule.interpretPosTagsPreDisambiguation (raw_pos="yes").
 	InterpretPreDisambig bool
 	// ToneTags ports Rule.toneTags from XML tone_tags attributes.
