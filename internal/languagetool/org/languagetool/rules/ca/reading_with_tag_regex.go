@@ -1,30 +1,16 @@
 package ca
 
 import (
-	"regexp"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// readingWithTagRegex ports AnalyzedTokenReadings.readingWithTagRegex (first matching reading).
+// readingWithTagRegex ports AnalyzedTokenReadings.readingWithTagRegex via the core twin
+// (Pattern.matcher(pos).matches() full region; first matching reading).
+// Empty pattern: Java Pattern.compile("") matches empty tags only — rare; treat as no match
+// when tok is nil. Non-nil tok with "" uses core (anchors ^(?:)$).
 func readingWithTagRegex(tok *languagetool.AnalyzedTokenReadings, posTagRegex string) *languagetool.AnalyzedToken {
-	if tok == nil || posTagRegex == "" {
+	if tok == nil {
 		return nil
 	}
-	re, err := regexp.Compile(posTagRegex)
-	if err != nil {
-		return nil
-	}
-	for _, r := range tok.GetReadings() {
-		if r == nil || r.GetPOSTag() == nil {
-			continue
-		}
-		// Java String.matches → full match
-		tag := *r.GetPOSTag()
-		loc := re.FindStringIndex(tag)
-		if loc != nil && loc[0] == 0 && loc[1] == len(tag) {
-			return r
-		}
-	}
-	return nil
+	return tok.ReadingWithTagRegex(posTagRegex)
 }
