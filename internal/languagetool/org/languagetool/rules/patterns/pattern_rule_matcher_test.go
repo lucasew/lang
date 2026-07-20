@@ -190,10 +190,14 @@ func TestPatternRuleMatcher_NextExceptionFirstReadingOnly(t *testing.T) {
 
 // Java: when prev element has skip>0, its scope=next exception rejects skip-window
 // candidates that match the exception (prevMatched path with prevSkipNext > 0).
+// AbstractPatternRulePerformer.prevMatched is sticky within one pattern element k:
+// once any m in the window hits the next-exception, later m positions also fail
+// (cannot match past a next-exception token in the skip window).
 func TestPatternRuleMatcher_NextExceptionSkipWindow(t *testing.T) {
 	// Pattern: see (skip=3, next-exception "bad") + good
 	// Immediate next of "see" must NOT be "bad" (path 2 when matching see with prevSkip==0).
-	// Within the skip window, "bad" cannot be the match position for "good" (path 1).
+	// Within the skip window, "bad" cannot be the match position for "good" (path 1),
+	// and sticky prevMatched also blocks later candidates after "bad" is visited.
 	see := Token("see")
 	see.SetSkipNext(3)
 	see.AddNextException(NewPatternToken("bad", false, false, false))
@@ -201,14 +205,26 @@ func TestPatternRuleMatcher_NextExceptionSkipWindow(t *testing.T) {
 		[]*PatternToken{see, Token("good")},
 		"d", "m", "")
 
-	// see foo bad good → match; "bad" skipped over as non-candidate for "good"
+	// see foo bad good → sticky prevMatched: after m lands on "bad", "good" is blocked
+	// (Java AbstractPatternRulePerformer.prevMatched field, reset only per k).
 	sent := testSentence(atr("see", 0), atr("foo", 4), atr("bad", 8), atr("good", 12),)
 	ms, err := rule.Match(sent)
 	require.NoError(t, err)
+	require.Empty(t, ms, "cannot match past next-exception token in skip window (sticky prevMatched)")
+
+	// see foo bar good → no exception in window → match
+	sentOK := testSentence(atr("see", 0), atr("foo", 4), atr("bar", 8), atr("good", 12),)
+	ms, err = rule.Match(sentOK)
+	require.NoError(t, err)
 	require.Len(t, ms, 1)
 	require.Equal(t, 0, ms[0].FromPos)
-	// [SENT_START, see, foo, bad, good] → good is index 4
-	require.Equal(t, sent.GetTokensWithoutWhitespace()[4].GetEndPos(), ms[0].ToPos)
+	require.Equal(t, sentOK.GetTokensWithoutWhitespace()[4].GetEndPos(), ms[0].ToPos)
+
+	// see foo good bad → "good" matched before "bad" is visited → match
+	sentBefore := testSentence(atr("see", 0), atr("foo", 4), atr("good", 8), atr("bad", 13),)
+	ms, err = rule.Match(sentBefore)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
 
 	// see bad good → path 2 blocks matching "see" (immediate next is exception)
 	sent2 := testSentence(atr("see", 0), atr("bad", 4), atr("good", 8),)

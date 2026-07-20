@@ -30,6 +30,11 @@ type PatternRuleMatcher struct {
 	SkipImmunized bool
 	// UseList ports PatternRuleMatcher.useList — phrase elementNo translation.
 	UseList bool
+	// prevMatched ports AbstractPatternRulePerformer.prevMatched: sticky OR across
+	// readings and across m candidates within one pattern element k (reset per k).
+	// Once a scope=next exception fires in the skip window, later m positions fail
+	// (Java bug-for-bug — cannot match past a next-exception token in the window).
+	prevMatched bool
 }
 
 func NewPatternRuleMatcher(rule *AbstractTokenBasedRule) *PatternRuleMatcher {
@@ -407,6 +412,8 @@ func (m *PatternRuleMatcher) matchFromResult(sentence *languagetool.AnalyzedSent
 		}
 		pTokenMatcher.ResolveReference(firstMatchToken, tokens, lang)
 		nextPos := start + k + skipShiftTotal - minOccurSkip
+		// Java AbstractPatternRulePerformer.matchFrom: prevMatched = false per k
+		m.prevMatched = false
 		// Java: if prevSkipNext + nextPos >= tokens.length || prevSkipNext < 0
 		if prevSkipNext+nextPos >= len(tokens) || prevSkipNext < 0 {
 			prevSkipNext = len(tokens) - (nextPos + 1)
@@ -539,6 +546,9 @@ func (m *PatternRuleMatcher) minOccurCorrection() int {
 
 // testAllReadings ports AbstractPatternRulePerformer.testAllReadings (+ PatternRuleMatcher immunized).
 // bag may be nil (look-ahead checks must not pollute unification).
+//
+// prevMatched is sticky on m (Java field): once true for this pattern element k,
+// every subsequent call returns false until matchFrom resets it for the next k.
 func (m *PatternRuleMatcher) testAllReadings(
 	tokens []*languagetool.AnalyzedTokenReadings,
 	matcher, prevElement *PatternTokenMatcher,
@@ -552,16 +562,22 @@ func (m *PatternRuleMatcher) testAllReadings(
 	if m.SkipImmunized && tokens[tokenNo].IsImmunized() {
 		return false
 	}
-	// prevMatched: prev skip window + scope=next on current readings
+
+	// Java loop over readings ORs into prevMatched, then aborts if set.
+	// Equivalent: sticky field OR any-reading next-exception conditions.
 	if prevSkipNext > 0 && prevElement != nil && prevElement.Base != nil &&
 		prevElement.Base.HasNextException() &&
 		prevElement.IsMatchedByNextException(tokens[tokenNo]) {
-		return false
+		m.prevMatched = true
 	}
-	// prevSkipNext == 0: current matcher's scope=next vs next token first reading
+	// prevSkipNext == 0: current matcher's scope=next vs next token first reading only
+	// (Java: matcher.isMatchedByScopeNextException(tokens[tokenNo+1].getAnalyzedToken(0))).
 	pt := matcher.GetPatternToken()
 	if prevSkipNext == 0 && pt != nil && pt.HasNextException() && tokenNo+1 < len(tokens) &&
 		matcher.IsMatchedByNextExceptionFirstReading(tokens[tokenNo+1]) {
+		m.prevMatched = true
+	}
+	if m.prevMatched {
 		return false
 	}
 

@@ -103,7 +103,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | # | Check | Status |
 |---|--------|--------|
 | 3.B.1 | Pattern token matching = Java (no soft POS accept) | [ ] blocked on 1.8 |
-| 3.B.2 | Exceptions, skip, regex, inflected, negation, `<or>`/`phraseref`/setpos/and/raw_pos | [ ] + exception negate/negate_pos XOR; prev/next surface; multi-exception remaining |
+| 3.B.2 | Exceptions, skip, regex, inflected, negation, `<or>`/`phraseref`/setpos/and/raw_pos | [ ] + exception negate/negate_pos XOR; multi-exception lists; sticky `prevMatched` for scope=next+skip (Java field) |
 | 3.B.3 | Unification | [ ] Loader parses `<unification>`+`<unify>`; matcher ports testUnification; UniFeatures/Last/Neg/Neutral wired |
 | 3.B.4 | Filters / rule filters as Java | [ ] AdvancedSynthesizer+postagReplace (fail-closed); CA/NL dates; DE NumberInWord; CA Adjust* remaining |
 | 3.B.5 | Full grammar/style load (entities, includes) | [ ] SYSTEM `.ent`; phrases/phraseref/includephrases expand; style/variant/L2 |
