@@ -103,3 +103,21 @@ func TestRegisterBinaryEnglishTagger_WiresTokenizerIsTaggedEN(t *testing.T) {
 	toks := entok.NewEnglishWordTokenizer().Tokenize("doin' that")
 	require.Equal(t, []string{"doin'", " ", "that"}, toks)
 }
+
+// Java BaseTagger loads resource/en/added.txt (often only under inspiration while
+// english.dict is in third_party). "Aba" is NNP in official added.txt.
+func TestRegisterBinaryEnglishTagger_ManualAdded(t *testing.T) {
+	p := findEnglishPOSDict(t)
+	lt := languagetool.NewJLanguageTool("en")
+	require.True(t, RegisterBinaryEnglishTagger(lt, p))
+	tags := lt.TagWord("Aba")
+	require.NotEmpty(t, tags, "manual added.txt reading for Aba")
+	found := false
+	for _, tg := range tags {
+		if tg.POS == "NNP" && tg.Lemma == "Aba" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "tags=%+v", tags)
+}

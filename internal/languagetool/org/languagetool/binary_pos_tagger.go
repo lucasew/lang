@@ -163,9 +163,35 @@ func (w morfologikPOSWordTagger) Tag(word string) []tagging.TaggedWord {
 	return out
 }
 
-// loadManualTaggerBesideDict loads Java BaseTagger manual files next to the POS
+// LoadManualTaggerBesideDict loads Java BaseTagger manual files next to the POS
 // dict (or one/two parents up for nested layouts like sr/dictionary/ekavian/).
 // Concatenates all present names from the first resource root that has any file.
+// Exported for language-specific tagger wiring (e.g. EnglishTagger).
+func LoadManualTaggerBesideDict(dictPath string, names []string) tagging.WordTagger {
+	return loadManualTaggerBesideDict(dictPath, names)
+}
+
+// LoadManualTaggerFromDirs tries each resource directory in order; returns the
+// first non-nil ManualTagger built from names present in that directory.
+func LoadManualTaggerFromDirs(dirs []string, names []string) tagging.WordTagger {
+	for _, dir := range dirs {
+		if dir == "" {
+			continue
+		}
+		var paths []string
+		for _, name := range names {
+			p := filepath.Join(dir, name)
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				paths = append(paths, p)
+			}
+		}
+		if len(paths) > 0 {
+			return openManualTaggerConcat(paths)
+		}
+	}
+	return nil
+}
+
 func loadManualTaggerBesideDict(dictPath string, names []string) tagging.WordTagger {
 	if dictPath == "" || len(names) == 0 {
 		return nil

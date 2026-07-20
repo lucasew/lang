@@ -1,6 +1,8 @@
 package en
 
 import (
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode"
@@ -8,13 +10,15 @@ import (
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	entok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/en"
 )
 
 // enPunctPCTRE ports EN disambiguation UNKNOWN_PCT: [\.,;:…!\?] → add POS PCT.
 var enPunctPCTRE = regexp.MustCompile(`^[\.,;:…!\?]+$`)
 
-// RegisterBinaryEnglishTagger installs lt.TagWord backed by CFSA2 english.dict POS lookup.
+// RegisterBinaryEnglishTagger installs lt.TagWord backed by CFSA2 english.dict POS
+// lookup plus Java BaseTagger manual added/removed files (EnglishTagger extends BaseTagger).
 // Returns false if the dictionary cannot be opened.
 func RegisterBinaryEnglishTagger(lt *languagetool.JLanguageTool, dictPath string) bool {
 	if lt == nil || dictPath == "" {
@@ -24,7 +28,8 @@ func RegisterBinaryEnglishTagger(lt *languagetool.JLanguageTool, dictPath string
 	if err != nil || d == nil {
 		return false
 	}
-	tw := BinaryEnglishTagWord(d)
+	wt := englishWordTaggerFromDict(d, dictPath)
+	tw := BinaryEnglishTagWordFrom(wt)
 	lt.TagWord = tw
 	// MatchState suppress_misspelled (Java lang.getTagger().tag on synthesized forms).
 	patterns.RegisterLanguageTagger("en", tw)
@@ -34,6 +39,77 @@ func RegisterBinaryEnglishTagger(lt *languagetool.JLanguageTool, dictPath string
 	// Java EnglishWordTokenizer uses EnglishTagger.INSTANCE.tag(...).isTagged().
 	wireEnglishTokenizerIsTagged(tw)
 	return true
+}
+
+// englishWordTaggerFromDict builds Java EnglishTagger.getWordTagger():
+// CombiningTagger(Morfologik, Manual(added*), Manual(removed*), overwrite=false)
+// when added.txt is present (BaseTagger.initWordTagger).
+func englishWordTaggerFromDict(d *atticmorfo.Dictionary, dictPath string) tagging.WordTagger {
+	var wt tagging.WordTagger = morfologikEnglishWordTagger{d: d}
+	manual := loadEnglishManualTagger(dictPath, []string{"added.txt", "added_custom.txt"})
+	if manual == nil {
+		return wt
+	}
+	removal := loadEnglishManualTagger(dictPath, []string{"removed.txt", "removed_custom.txt"})
+	return tagging.NewCombiningTaggerWithRemoval(wt, manual, removal, false)
+}
+
+// loadEnglishManualTagger finds official EN manual files: beside english.dict first,
+// then inspiration resource/en (dict often lives in third_party without manuals).
+func loadEnglishManualTagger(dictPath string, names []string) tagging.WordTagger {
+	if wt := languagetool.LoadManualTaggerBesideDict(dictPath, names); wt != nil {
+		return wt
+	}
+	var dirs []string
+	if dictPath != "" {
+		dirs = append(dirs, filepath.Dir(dictPath))
+	}
+	// Walk-up official inspiration EN resource (Java classpath resource/en/).
+	if p := walkUpEnglishResourceDir(); p != "" {
+		dirs = append(dirs, p)
+	}
+	return languagetool.LoadManualTaggerFromDirs(dirs, names)
+}
+
+func walkUpEnglishResourceDir() string {
+	rel := filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en",
+		"src", "main", "resources", "org", "languagetool", "resource", "en")
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for i := 0; i < 12; i++ {
+		p := filepath.Join(dir, rel)
+		if st, err := os.Stat(p); err == nil && st.IsDir() {
+			return p
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
+
+type morfologikEnglishWordTagger struct {
+	d *atticmorfo.Dictionary
+}
+
+func (w morfologikEnglishWordTagger) Tag(word string) []tagging.TaggedWord {
+	if w.d == nil || word == "" {
+		return nil
+	}
+	forms, err := w.d.Lookup(word)
+	if err != nil || len(forms) == 0 {
+		return nil
+	}
+	out := make([]tagging.TaggedWord, 0, len(forms))
+	for _, f := range forms {
+		out = append(out, tagging.NewTaggedWord(f.Stem, f.Tag))
+	}
+	return out
 }
 
 // wireEnglishTokenizerIsTagged installs EnglishWordTokenizer.IsTaggedEN from a
@@ -53,21 +129,29 @@ func wireEnglishTokenizerIsTagged(tw func(token string) []languagetool.TokenTag)
 	}
 }
 
-// BinaryEnglishTagWord returns a TagWord inject from an opened POS dictionary.
-// Case logic follows Java EnglishTagger.tag: always merge lowercase tags for
-// non-lowercase, non-mixed-case tokens (so sentence-start "How" keeps WRB).
+// BinaryEnglishTagWord returns a TagWord inject from an opened POS dictionary only
+// (no manuals). Prefer RegisterBinaryEnglishTagger / BinaryEnglishTagWordFrom for engine.
 func BinaryEnglishTagWord(d *atticmorfo.Dictionary) func(token string) []languagetool.TokenTag {
 	if d == nil {
 		return nil
 	}
+	return BinaryEnglishTagWordFrom(morfologikEnglishWordTagger{d: d})
+}
+
+// BinaryEnglishTagWordFrom ports EnglishTagger.tag case/apostrophe logic over a WordTagger
+// (Morfologik ± CombiningTagger manuals, same as Java getWordTagger()).
+func BinaryEnglishTagWordFrom(wt tagging.WordTagger) func(token string) []languagetool.TokenTag {
+	if wt == nil {
+		return nil
+	}
 	lookup := func(w string) []languagetool.TokenTag {
-		forms, err := d.Lookup(w)
-		if err != nil || len(forms) == 0 {
+		tws := wt.Tag(w)
+		if len(tws) == 0 {
 			return nil
 		}
-		out := make([]languagetool.TokenTag, 0, len(forms))
-		for _, f := range forms {
-			out = append(out, languagetool.TokenTag{POS: f.Tag, Lemma: f.Stem})
+		out := make([]languagetool.TokenTag, 0, len(tws))
+		for _, tw := range tws {
+			out = append(out, languagetool.TokenTag{POS: tw.PosTag, Lemma: tw.Lemma})
 		}
 		return out
 	}

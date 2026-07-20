@@ -18,7 +18,8 @@ var (
 	filterTagWord func(token string) []languagetool.TokenTag
 )
 
-// WireEnglishFilterTagger opens CFSA2 english.dict for filter POS probes.
+// WireEnglishFilterTagger opens CFSA2 english.dict for filter POS probes
+// (Java EnglishTagger.INSTANCE: dict + manual added/removed).
 func WireEnglishFilterTagger(dictPath string) bool {
 	if strings.TrimSpace(dictPath) == "" {
 		return false
@@ -27,8 +28,8 @@ func WireEnglishFilterTagger(dictPath string) bool {
 	if err != nil || d == nil {
 		return false
 	}
-	// Reuse BinaryEnglishTagWord case/apostrophe logic (Java EnglishTagger.tag).
-	tw := BinaryEnglishTagWord(d)
+	// Reuse EnglishTagger case/apostrophe + BaseTagger manuals.
+	tw := BinaryEnglishTagWordFrom(englishWordTaggerFromDict(d, dictPath))
 	if tw == nil {
 		return false
 	}
