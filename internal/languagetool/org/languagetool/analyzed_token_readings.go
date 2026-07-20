@@ -70,20 +70,15 @@ func NewAnalyzedTokenReadingsList(tokens []*AnalyzedToken, startPos int) *Analyz
 }
 
 // NewAnalyzedTokenReadingsFromOld ports constructor (old, newReadings, ruleApplied).
+// isSentStart is taken only from newReadings[0] POS (Java); not copied from old.
 func NewAnalyzedTokenReadingsFromOld(old *AnalyzedTokenReadings, newReadings []*AnalyzedToken, ruleApplied string) *AnalyzedTokenReadings {
 	if len(newReadings) == 0 {
 		// Java never builds ATR from empty list; keep old (fail-closed no-op).
 		return old
 	}
 	r := NewAnalyzedTokenReadingsList(newReadings, old.startPos)
-	// Java isSentStart is final from the first POS at construction. Disambiguation
-	// REPLACE often rebuilds readings without keeping SENT_START as reading[0]
-	// (e.g. ADD/REPLACE that only carries the new tag). The sentence-start *slot*
-	// must stay isSentenceStart so getTokensWithoutWhitespace keeps token 0
-	// (WordRepeatRule and others assume nonBlank[0] is SENT_START).
-	if old != nil && old.IsSentenceStart() {
-		r.isSentStart = true
-	}
+	// Java does not re-apply isSentStart from oldAtr — only from constructor
+	// SENTENCE_START_TAGNAME.equals(anTokReadings[0].getPOSTag()).
 	if old.IsSentenceEnd() {
 		r.SetSentEnd()
 	}
