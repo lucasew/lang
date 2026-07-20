@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	bertgrpc "github.com/lucasew/lang/internal/languagetool/org/languagetool/languagemodel/bert/grpc"
 )
 
 // Request ports RemoteLanguageModel.Request — mask a span with candidate fill-ins.
@@ -20,6 +22,18 @@ func NewRequest(text string, start, end int, candidates []string) Request {
 		Start:      start,
 		End:        end,
 		Candidates: append([]string(nil), candidates...),
+	}
+}
+
+// Convert ports Request.convert() → ScoreRequest with a single Mask.
+func (r Request) Convert() *bertgrpc.ScoreRequest {
+	return &bertgrpc.ScoreRequest{
+		Text: r.Text,
+		Mask: []bertgrpc.Mask{{
+			Start:      uint32(r.Start),
+			End:        uint32(r.End),
+			Candidates: append([]string(nil), r.Candidates...),
+		}},
 	}
 }
 
@@ -72,17 +86,19 @@ func stringHashBERT(s string) int {
 }
 
 // Scorer scores candidates for a masked span (higher is better).
-// Java uses BertLm gRPC; Go injects the transport here (fail closed when nil).
+// Used when Model (BertLmClient) is nil — tests / local inject.
 type Scorer func(req Request) ([]float64, error)
 
-// BatchScorer scores a batch of uncached requests (Java stub.batchScore).
-// When nil, BatchScore falls back to per-request Scorer.
+// BatchScorer scores a batch of uncached requests (Java stub.batchScore path without Client).
+// When nil, BatchScore falls back to per-request Scorer or Model.
 type BatchScorer func(reqs []Request) ([][]float64, error)
 
 // RemoteLanguageModel ports org.languagetool.languagemodel.bert.RemoteLanguageModel.
 // Cache max size 1000 matches Guava CacheBuilder.maximumSize(1000).
-// gRPC channel wiring is supplied via Scorer/BatchScorer (no invented ranks).
+// Transport: Model (BertLmBlockingStub twin) preferred; Scorer/BatchScorer for inject.
 type RemoteLanguageModel struct {
+	// Model ports BertLmGrpc.BertLmBlockingStub (score / batchScore RPCs).
+	Model bertgrpc.BertLmClient
 	Scorer      Scorer
 	BatchScorer BatchScorer
 	mu          sync.Mutex
@@ -104,9 +120,17 @@ func NewRemoteLanguageModel(scorer Scorer) *RemoteLanguageModel {
 	}
 }
 
+// NewRemoteLanguageModelWithClient ports RemoteLanguageModel with a BertLm stub.
+func NewRemoteLanguageModelWithClient(client bertgrpc.BertLmClient) *RemoteLanguageModel {
+	return &RemoteLanguageModel{
+		Model:    client,
+		cache:    map[string][]float64{},
+		MaxCache: 1000,
+	}
+}
+
 // NewRemoteLanguageModelEndpoint ports RemoteLanguageModel(host, port, useSSL, …).
-// Certificate paths are accepted for API parity; TLS/gRPC is the Scorer's job.
-// Without a Scorer, Score fails closed.
+// Certificate paths are accepted for API parity; without Model/Scorer, Score fails closed.
 func NewRemoteLanguageModelEndpoint(host string, port int, useSSL bool, _clientKey, _clientCert, _rootCert string) *RemoteLanguageModel {
 	return &RemoteLanguageModel{
 		Host:     host,
@@ -118,14 +142,25 @@ func NewRemoteLanguageModelEndpoint(host string, port int, useSSL bool, _clientK
 }
 
 // Score ports RemoteLanguageModel.score(Request).
-// Java does not cache single-score calls (only batchScore writes the Guava cache).
+// Java: model.score(req.convert()).getScoresList().get(0).getScoreList() — no cache.
 func (m *RemoteLanguageModel) Score(req Request) ([]float64, error) {
 	if m == nil {
 		return nil, fmt.Errorf("nil RemoteLanguageModel")
 	}
+	if m.Model != nil {
+		resp, err := m.Model.Score(req.Convert())
+		if err != nil {
+			return nil, err
+		}
+		scores := resp.FirstMaskScores()
+		if scores == nil {
+			return nil, fmt.Errorf("RemoteLanguageModel: empty BertLmResponse scores")
+		}
+		return scores, nil
+	}
 	if m.Scorer == nil {
 		// Fail closed: Java needs a remote BERT service — do not invent edit-distance ranks.
-		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer configured")
+		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer or BertLmClient configured")
 	}
 	scores, err := m.Scorer(req)
 	if err != nil {
@@ -219,11 +254,36 @@ func (m *RemoteLanguageModel) BatchScoreTimeout(reqs []Request, timeoutMilliseco
 }
 
 func (m *RemoteLanguageModel) scoreUncached(uncached []Request) ([][]float64, error) {
+	// Java: BatchScoreRequest from Request.convert list → stub.batchScore.
+	if m.Model != nil {
+		batch := &bertgrpc.BatchScoreRequest{Requests: make([]bertgrpc.ScoreRequest, 0, len(uncached))}
+		for _, r := range uncached {
+			if conv := r.Convert(); conv != nil {
+				batch.Requests = append(batch.Requests, *conv)
+			}
+		}
+		resp, err := m.Model.BatchScore(batch)
+		if err != nil {
+			return nil, err
+		}
+		if resp == nil || len(resp.Responses) != len(uncached) {
+			return nil, fmt.Errorf("RemoteLanguageModel: batch response size mismatch")
+		}
+		out := make([][]float64, len(uncached))
+		for i := range uncached {
+			s := resp.Responses[i].FirstMaskScores()
+			if s == nil {
+				return nil, fmt.Errorf("RemoteLanguageModel: empty scores at batch index %d", i)
+			}
+			out[i] = s
+		}
+		return out, nil
+	}
 	if m.BatchScorer != nil {
 		return m.BatchScorer(uncached)
 	}
 	if m.Scorer == nil {
-		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer configured")
+		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer or BertLmClient configured")
 	}
 	out := make([][]float64, len(uncached))
 	for i, r := range uncached {
