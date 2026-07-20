@@ -87,6 +87,38 @@ func TestPatternRuleMatcher_CreateRuleMatchCaseAndSuggestions(t *testing.T) {
 	require.Empty(t, ms)
 }
 
+// Twin of RuleMatch ctor LinkedHashSet<SuggestedReplacement>: ordered unique by string.
+func TestCreateRuleMatch_SuggestionDedupLinkedHashSet(t *testing.T) {
+	// Duplicate "foo" in message + outMsg; case lower (no startsWithUpper on "hi")
+	rule := NewPatternRule("DEDUP", "en",
+		[]*PatternToken{Token("hi")},
+		"d",
+		`Use <suggestion>foo</suggestion> or <suggestion>bar</suggestion> or <suggestion>foo</suggestion>`,
+		"")
+	// suggestionsOutMsg also has foo again
+	rule.SuggestionsOutMsg = `<suggestion>foo</suggestion><suggestion>baz</suggestion>`
+	sent := testSentence(atr("hi", 0))
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+	// Order preserved; foo only once
+	require.Equal(t, []string{"foo", "bar", "baz"}, ms[0].GetSuggestedReplacements())
+}
+
+// Twin of RuleMatch ctor: empty suggestion body is kept (no invent skip of "").
+func TestCreateRuleMatch_EmptySuggestionBodyKept(t *testing.T) {
+	rule := NewPatternRule("EMPTY", "en",
+		[]*PatternToken{Token("hi")},
+		"d",
+		`Empty <suggestion></suggestion> ok`,
+		"")
+	sent := testSentence(atr("hi", 0))
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+	require.Equal(t, []string{""}, ms[0].GetSuggestedReplacements())
+}
+
 // Java AbstractPatternRulePerformer: scope=next on element blocks when immediate next matches
 // (prevSkipNext == 0 path).
 func TestPatternRuleMatcher_NextExceptionImmediate(t *testing.T) {

@@ -753,15 +753,21 @@ func (m *PatternRuleMatcher) createRuleMatch(
 	}
 
 	// Extract <suggestion> from message + suggestionsOutMsg (Java RuleMatch ctor).
-	// Message must still contain <suggestion> tags (Java PatternRule); do not soft-expand
-	// stripped templates — FormatMatches already resolved \N / <match> inside tags.
+	// Message must still contain <suggestion> tags (Java PatternRule); FormatMatches
+	// already resolved \N / <match> inside tags.
+	// Java: LinkedHashSet<SuggestedReplacement> — ordered unique by replacement string
+	// (SuggestedReplacement.equals on replacement + shortDescription; shortDesc null here).
 	combined := clearMsg + suggestionsOutMsg
 	var replacements []string
+	seen := map[string]struct{}{}
 	for _, rep := range extractSuggestionBodies(combined) {
-		if rep == "" || strings.Contains(rep, MistakeMarker) {
+		// Java only skips MISTAKE-containing bodies (empty strings are kept).
+		if strings.Contains(rep, MistakeMarker) {
 			continue
 		}
-		// Strip residual pleasespellme inside body
+		// Residual pleasespellme: clearMsg already had global replace; outMsg may not.
+		// FormatMatches TAG_AND_PLEASE_SPELL_ME strips open-tag cases; defensive strip
+		// matches clearMsg.replace(PLEASE_SPELL_ME,"") for bodies still carrying the tag.
 		rep = strings.ReplaceAll(rep, PleaseSpellMe, "")
 		// Java RuleMatch ctor case adjustment
 		if isAllUppercase && !(tools.IsMixedCase(rep) && !strings.Contains(rep, " ")) {
@@ -771,6 +777,10 @@ func (m *PatternRuleMatcher) createRuleMatch(
 		} else if startsWithUppercase {
 			rep = tools.UppercaseFirstChar(rep)
 		}
+		if _, ok := seen[rep]; ok {
+			continue
+		}
+		seen[rep] = struct{}{}
 		replacements = append(replacements, rep)
 	}
 	if len(replacements) > 0 {
