@@ -34,3 +34,22 @@ func RealToneTags() []ToneTag {
 	}
 	return out
 }
+
+// allToneTags is the full Java ToneTag enum (valueOf names — case-sensitive).
+var allToneTags = []ToneTag{
+	ToneClarity, ToneFormal, ToneProfessional, ToneConfident, ToneAcademic,
+	TonePovRem, ToneScientific, ToneObjective, TonePersuasive, ToneInformal,
+	TonePovAdd, TonePositive, ToneGeneral,
+	ToneNoToneRule, ToneAllToneRules, ToneAllWithoutGoalSpecific,
+}
+
+// ParseToneTag ports ToneTag.valueOf — exact enum name match only.
+// Unknown names return false (Java throws; callers skip/fail-closed, no invent).
+func ParseToneTag(name string) (ToneTag, bool) {
+	for _, t := range allToneTags {
+		if string(t) == name {
+			return t, true
+		}
+	}
+	return "", false
+}

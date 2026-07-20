@@ -96,6 +96,29 @@ func TestPatternRuleHandler_ToneTagsAndGoalSpecific(t *testing.T) {
 	require.Contains(t, r2.ToneTags, languagetool.ToneClarity)
 }
 
+func TestParseToneTagsAttr_CaseSensitiveValueOf(t *testing.T) {
+	// Java ToneTag.valueOf is case-sensitive: meta tags are UPPER, real tones lower.
+	got := parseToneTagsAttr("clarity NO_TONE_RULE formal BOGUS ALL_TONE_RULES")
+	require.Contains(t, got, languagetool.ToneClarity)
+	require.Contains(t, got, languagetool.ToneNoToneRule)
+	require.Contains(t, got, languagetool.ToneFormal)
+	require.Contains(t, got, languagetool.ToneAllToneRules)
+	// lowercasing meta would invent no_tone_rule — must not appear
+	for _, ttag := range got {
+		require.NotEqual(t, languagetool.ToneTag("no_tone_rule"), ttag)
+		require.NotEqual(t, languagetool.ToneTag("bogus"), ttag)
+	}
+	// unknown skipped
+	require.Len(t, got, 4)
+}
+
+func TestParseRuleTagsAttr_KnownOnly(t *testing.T) {
+	got := parseRuleTagsAttr("picky invent_me academic")
+	require.Contains(t, got, rules.TagPicky)
+	require.Contains(t, got, rules.TagAcademic)
+	require.Len(t, got, 2)
+}
+
 func TestPatternRuleHandler_TagsPicky(t *testing.T) {
 	xml := `<?xml version="1.0"?>
 <rules lang="en">

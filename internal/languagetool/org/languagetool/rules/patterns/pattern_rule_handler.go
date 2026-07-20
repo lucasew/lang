@@ -280,7 +280,8 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 }
 
 // parseToneTagsAttr ports PatternRuleHandler tone_tags="a b c" split + ToneTag.valueOf.
-// Unknown names are skipped (Java valueOf would throw — we fail soft for incomplete enums).
+// Java valueOf is case-sensitive (clarity vs NO_TONE_RULE). Unknown names are
+// skipped fail-closed (do not invent tone ids); Java would throw on load.
 func parseToneTagsAttr(s string) []languagetool.ToneTag {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -291,14 +292,15 @@ func parseToneTagsAttr(s string) []languagetool.ToneTag {
 		if p == "" {
 			continue
 		}
-		// Java ToneTag enum names are upper-ish; Go constants are lowercase values.
-		tag := languagetool.ToneTag(strings.ToLower(p))
-		out = append(out, tag)
+		if tag, ok := languagetool.ParseToneTag(p); ok {
+			out = append(out, tag)
+		}
 	}
 	return out
 }
 
 // parseRuleTagsAttr ports tags="picky …" → []rules.Tag (Java Tag.valueOf).
+// XML uses lowercase enum names; unknown names skipped (no invent).
 func parseRuleTagsAttr(s string) []rules.Tag {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -309,7 +311,14 @@ func parseRuleTagsAttr(s string) []rules.Tag {
 		if p == "" {
 			continue
 		}
-		out = append(out, rules.Tag(strings.ToLower(p)))
+		// Java Tag enum is all-lowercase; accept exact or lowercase form.
+		if tag, ok := rules.ParseTag(p); ok {
+			out = append(out, tag)
+			continue
+		}
+		if tag, ok := rules.ParseTag(strings.ToLower(p)); ok {
+			out = append(out, tag)
+		}
 	}
 	return out
 }

@@ -17,6 +17,23 @@ const (
 	TagElegant      Tag = "elegant"
 )
 
+// allTags is the full Java Tag enum (all-lowercase as in XML).
+var allTags = []Tag{
+	TagPicky, TagAcademic, TagClarity, TagProfessional, TagCreative,
+	TagCustomer, TagJobApp, TagObjective, TagElegant,
+}
+
+// ParseTag ports Tag.valueOf — known enum name only (XML uses lowercase).
+// Unknown names return false (no invent).
+func ParseTag(name string) (Tag, bool) {
+	for _, t := range allTags {
+		if string(t) == name {
+			return t, true
+		}
+	}
+	return "", false
+}
+
 // FakeRule ports org.languagetool.rules.FakeRule for unit tests.
 type FakeRule struct {
 	id                string
