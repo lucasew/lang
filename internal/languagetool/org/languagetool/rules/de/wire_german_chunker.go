@@ -9,9 +9,7 @@ import (
 // (GermanChunker) on lt.PostDisambiguationChunker — not on pre-disambig Chunker
 // (Java getChunker() is null for German).
 //
-// The Go GermanChunker implements Java REGEXES1 fully (as sequential matchers)
-// plus a growing REGEXES2 subset (NPS/NPP/PP, genitive, late PP). Remaining
-// OpenRegex-only paths stay incomplete (not invent). Always available.
+// GermanChunker runs full Java REGEXES1 + REGEXES2 via OpenRegex.
 func WireGermanChunker(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return

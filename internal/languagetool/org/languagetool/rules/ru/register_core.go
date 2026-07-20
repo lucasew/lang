@@ -12,6 +12,8 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	// createDefaultPostDisambiguationChunker → RussianChunker
+	WireRussianChunker(lt)
 	lt.PriorityForId = language.RussianPriorityForId
 	// Java Russian.getIgnoredCharactersRegex: soft hyphen + combining acute/grave.
 	lt.IgnoredCharacters = languagetool.RussianIgnoredCharactersRegex

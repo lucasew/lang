@@ -395,3 +395,12 @@ func ExpandGermanChunkSyntax(expr string) string {
 	expr = strings.ReplaceAll(expr, "&prozent;", "Prozent|Kilo|Kilogramm|Gramm|Euro|Pfund")
 	return expr
 }
+
+// ExpandRussianChunkSyntax ports RussianChunker SYNTAX_EXPANSION before compile.
+func ExpandRussianChunkSyntax(expr string) string {
+	expr = strings.ReplaceAll(expr, "<NP>", "<chunk=B-NP> <chunk=I-NP>*")
+	expr = strings.ReplaceAll(expr, "<VP>", "<chunk=B-VP> <chunk=I-VP>*")
+	expr = strings.ReplaceAll(expr, "<ADJP>", "<chunk=B-ADJP> <chunk=I-ADJP>*")
+	expr = strings.ReplaceAll(expr, "<DPT>", "<chunk=B-DPT> <chunk=I-DPT>*")
+	return expr
+}
