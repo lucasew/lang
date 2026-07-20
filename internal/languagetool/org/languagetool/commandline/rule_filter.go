@@ -3,11 +3,15 @@ package commandline
 import "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 
 // FilterMatchesByRules applies enable/disable lists to matches.
-// disabled: drop if ID in set
-// enabledOnly: if non-empty, keep only IDs in set
+//
+// Java Tools.selectRules: non-empty enabledRules calls enableRule; only when
+// useEnabledOnly does it disable all rules except those listed. Enabling rules
+// alone must not hide matches from other active rules.
 func FilterMatchesByRules(matches []*rules.RuleMatch, disabled, enabled []string, enabledOnly bool) []*rules.RuleMatch {
 	dis := toSet(disabled)
 	en := toSet(enabled)
+	// Java: restrict to enabled rule IDs only with useEnabledOnly.
+	restrictToEnabled := enabledOnly && len(en) > 0
 	var out []*rules.RuleMatch
 	for _, m := range matches {
 		if m == nil {
@@ -17,13 +21,9 @@ func FilterMatchesByRules(matches []*rules.RuleMatch, disabled, enabled []string
 		if _, ok := dis[id]; ok {
 			continue
 		}
-		if enabledOnly || len(en) > 0 {
-			// if enabled list non-empty without enabledOnly, Java still only enables listed when -e used with all others on...
-			// Green: when enabled set non-empty, keep only those
-			if len(en) > 0 {
-				if _, ok := en[id]; !ok {
-					continue
-				}
+		if restrictToEnabled {
+			if _, ok := en[id]; !ok {
+				continue
 			}
 		}
 		out = append(out, m)
