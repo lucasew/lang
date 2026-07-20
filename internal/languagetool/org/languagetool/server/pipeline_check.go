@@ -159,10 +159,10 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 
 // Check runs configured core (+ optional official grammar) rules on text.
 // Honors pipeline disabled-rule IDs and optional overlap cleaning.
-// Uses multi-threaded Check for multi-sentence texts (pool size = GOMAXPROCS soft).
 //
-// Overlap cleaning is Java JLanguageTool CleanOverlappingFilter via lt.Check
-// (Language.getRulePriority / PriorityForId). No invent rule-ID priority bumps.
+// Java server TextChecker uses new JLanguageTool(lang) (not MultiThreaded) —
+// no invent multi-sentence period-count heuristic for threading.
+// Overlap cleaning is Java CleanOverlappingFilter via lt.Check (PriorityForId).
 func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 	if p == nil {
 		return nil
@@ -176,34 +176,7 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 	if p != nil && !p.cleanOverlaps {
 		lt.DisableCleanOverlapping()
 	}
-	// Heuristic multi-sentence detection avoids a double full Analyze before Check.
-	var matches []languagetool.LocalMatch
-	if multiSentenceHeuristic(text) {
-		mtl := languagetool.NewMultiThreadedJLanguageTool(lt.GetLanguageCode(), 0)
-		mtl.JLanguageTool = lt
-		matches = mtl.Check(text)
-	} else {
-		matches = lt.Check(text)
-	}
-	return matches
-}
-
-// multiSentenceHeuristic reports likely multi-sentence input (terminators + space/capital).
-func multiSentenceHeuristic(text string) bool {
-	n := 0
-	for i := 0; i < len(text); i++ {
-		c := text[i]
-		if c == '.' || c == '!' || c == '?' {
-			// count only if not last char and something follows
-			if i+1 < len(text) {
-				n++
-				if n >= 2 {
-					return true
-				}
-			}
-		}
-	}
-	return false
+	return lt.Check(text)
 }
 
 // CheckAnnotated runs Check on annotated plain text and projects offsets onto the original markup.
