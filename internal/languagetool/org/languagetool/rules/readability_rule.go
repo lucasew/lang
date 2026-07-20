@@ -3,6 +3,8 @@ package rules
 import (
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 // FleschReadingEase computes English Flesch Reading Ease:
@@ -152,4 +154,48 @@ func (r *ReadabilityRule) EvaluateParagraph(sentences int, words []string) (fles
 		tooExtreme = false
 	}
 	return flesch, level, tooExtreme
+}
+
+// MatchList ports ReadabilityRule.match (paragraph FRE; typically default-off).
+func (r *ReadabilityRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
+	if r == nil || len(sentences) == 0 {
+		return nil
+	}
+	var words []string
+	nSent := 0
+	var startSent *languagetool.AnalyzedSentence
+	startPos, endPos := -1, -1
+	pos := 0
+	for _, s := range sentences {
+		if s == nil {
+			continue
+		}
+		nSent++
+		toks := s.GetTokensWithoutWhitespace()
+		if startSent == nil && len(toks) > 1 {
+			startSent = s
+			startPos = pos + toks[1].GetStartPos()
+			if len(toks) > 3 {
+				endPos = pos + toks[3].GetEndPos()
+			} else {
+				endPos = pos + toks[len(toks)-1].GetEndPos()
+			}
+		}
+		for _, t := range toks {
+			if t == nil || t.IsSentenceStart() || t.IsSentenceEnd() || t.IsNonWord() {
+				continue
+			}
+			words = append(words, t.GetToken())
+		}
+		pos += s.GetCorrectedTextLength()
+	}
+	_, _, too := r.EvaluateParagraph(nSent, words)
+	if !too || startSent == nil || startPos < 0 || endPos < 0 {
+		return nil
+	}
+	msg := "This text is too difficult to read"
+	if r.TooEasyTest {
+		msg = "This text is too easy to read"
+	}
+	return []*RuleMatch{NewRuleMatch(r, startSent, startPos, endPos, msg)}
 }

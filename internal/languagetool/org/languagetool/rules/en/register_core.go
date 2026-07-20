@@ -7,7 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreEnglishLanguageRules installs shared layout + EN-specific word-repeat + a/an + phrases.
+// RegisterCoreEnglishLanguageRules ports English.getRelevantRules (+ variant extras / speller).
 func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -26,63 +26,152 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	if languagetool.FilterEnglishRuleMatchesHook != nil {
 		lt.FilterRuleMatches = languagetool.FilterEnglishRuleMatchesHook
 	}
-	rules.RegisterSharedLayoutRules(lt, "en")
-	wr := NewEnglishWordRepeatRule(map[string]string{"repetition": "Word repetition"})
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	// Faithful AvsAnRule (official determiner lists); DT inject for untagged AnalyzePlain.
-	lt.AddRuleChecker("EN_A_VS_AN", AvsAnSentenceChecker())
-	// Soft invent PHRASE_REPLACE / token-sequence packs removed (faithful-port policy).
-	// Load official grammar.xml when the full pattern loader is ready — do not invent lists.
-	// Multi-sentence: three successive sentences starting with the same word/adverb.
-	wrb := NewEnglishWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_adv":       "Three successive sentences begin with the same adverb.",
-		"desc_repetition_beginning_word":      "Three successive sentences begin with the same word.",
-		"desc_repetition_beginning_thesaurus": "Consider using a thesaurus to find synonyms.",
+	// Java English.getRelevantRules layout (no invent SharedLayout WHITESPACE_PUNCTUATION).
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
+
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+
+	up := rules.NewUppercaseSentenceStartRule(nil, "en")
+	lt.AddRuleChecker(up.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
 	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	sw := rules.NewSentenceWhitespaceRule(nil)
+	lt.AddTextLevelRuleChecker(sw.GetID(), rules.AsTextLevelChecker(sw.MatchList))
+
+	wpe := rules.NewWhiteSpaceBeforeParagraphEnd(map[string]string{
+		"whitespace_before_parapgraph_end_msg": "Don't end a paragraph with whitespace",
+	})
+	lt.AddTextLevelRuleChecker(wpe.GetID(), rules.AsTextLevelChecker(wpe.MatchList))
+	if wpe.IsDefaultOff() {
+		lt.MarkDefaultOff(wpe.GetID())
+	}
+
+	wpb := rules.NewWhiteSpaceAtBeginOfParagraph(map[string]string{
+		"whitespace_at_begin_parapgraph_msg": "Don't start a paragraph with whitespace",
+	})
+	lt.AddRuleChecker(wpb.GetID(), rules.AsSentenceCheckerSimple(wpb.Match))
+	if wpb.IsDefaultOff() {
+		lt.MarkDefaultOff(wpb.GetID())
+	}
+
+	el := rules.NewEmptyLineRule(map[string]string{"empty_line_rule_msg": "Empty line"})
+	lt.AddTextLevelRuleChecker(el.GetID(), rules.AsTextLevelChecker(el.MatchList))
+	if el.IsDefaultOff() {
+		lt.MarkDefaultOff(el.GetID())
+	}
 
 	ls := rules.NewLongSentenceRule(map[string]string{
 		"long_sentence_rule_msg2": "This sentence is too long (%d words)",
 	}, 40)
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 
-	// Official simple-replace / diacritics data (embedded from LT replace.txt / diacritics.txt).
-	sr := NewSimpleReplaceRule(nil)
-	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
-	di := NewEnglishDiacriticsRule(nil)
-	lt.AddRuleChecker(di.GetID(), rules.AsSentenceCheckerSimple(di.Match))
-	// Compounds + proper-noun casing from official compounds.txt / specific_case.txt.
-	cr := NewCompoundRule(nil)
-	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
-	sc := NewEnglishSpecificCaseRule(nil)
-	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
-	// Contractions spelling + wrong word in context (official data files).
-	cs := NewContractionSpellingRule(nil)
-	lt.AddRuleChecker(cs.GetID(), rules.AsSentenceCheckerSimple(cs.Match))
-	ww := NewEnglishWrongWordInContextRule(nil)
-	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
-	// Dash compounds (en-dash/em-dash vs hyphen) from compounds.txt patterns.
-	dr := NewEnglishDashRule(nil)
-	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
-	// Style tables: redundancies + plain-English/wordiness (official data).
-	rd := NewEnglishRedundancyRule(nil)
-	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
-	pe := NewEnglishPlainEnglishRule(nil)
-	lt.AddRuleChecker(pe.GetID(), rules.AsSentenceCheckerSimple(pe.Match))
-	// Mixed apostrophe styles across the document (text-level).
+	lp := rules.NewLongParagraphRule(map[string]string{
+		"long_paragraph_rule_msg": "This paragraph is too long (%d words)",
+	}, 220)
+	lt.AddTextLevelRuleChecker(lp.GetID(), rules.AsTextLevelChecker(lp.MatchList))
+	if lp.IsDefaultOff() {
+		lt.MarkDefaultOff(lp.GetID())
+	}
+
+	prb := rules.NewParagraphRepeatBeginningRule(map[string]string{
+		"repetition_paragraph_beginning_last_msg": "Paragraphs should not begin with the same words",
+	})
+	lt.AddTextLevelRuleChecker(prb.GetID(), rules.AsTextLevelChecker(prb.MatchList))
+	if prb.IsDefaultOff() {
+		lt.MarkDefaultOff(prb.GetID())
+	}
+
+	// Java PunctuationMarkAtParagraphEnd(messages, this) → defaultActive true.
+	ppe := rules.NewPunctuationMarkAtParagraphEnd(map[string]string{
+		"punctuation_mark_paragraph_end_msg": "Add a punctuation mark at paragraph end",
+	})
+	ppe.DefaultOff = false
+	lt.AddTextLevelRuleChecker(ppe.GetID(), rules.AsTextLevelChecker(ppe.MatchList))
+
+	ppe2 := rules.NewPunctuationMarkAtParagraphEnd2(map[string]string{
+		"punctuation_mark_paragraph_end2": "Add a punctuation mark at paragraph end",
+	})
+	lt.AddTextLevelRuleChecker(ppe2.GetID(), rules.AsTextLevelChecker(ppe2.MatchList))
+	lt.MarkDefaultOff(ppe2.GetID())
+
+	// specific to English (Java order)
 	ap := NewConsistentApostrophesRule(nil)
 	lt.AddTextLevelRuleChecker(ap.GetID(), rules.AsTextLevelChecker(ap.MatchList))
-	// Coherent spelling of dual-admitted variants (official coherency.txt; text-level).
-	wc := NewWordCoherencyRule(nil)
-	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
-	// Repeated words with synonym suggestions (official synonyms.txt; text-level).
-	rw := NewEnglishRepeatedWordsRule(nil)
-	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
-	// EN-specific unpaired brackets/quotes (Java English.getRelevantRules; text-level).
+	sc := NewEnglishSpecificCaseRule(nil)
+	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
 	ub := NewEnglishUnpairedBracketsRule(nil)
 	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
 	uq := NewEnglishUnpairedQuotesRule(nil)
 	lt.AddTextLevelRuleChecker(uq.GetID(), rules.AsTextLevelChecker(uq.MatchList))
+	wr := NewEnglishWordRepeatRule(map[string]string{"repetition": "Word repetition"})
+	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
+	// Faithful AvsAnRule (official determiner lists); DT inject for untagged AnalyzePlain.
+	lt.AddRuleChecker("EN_A_VS_AN", AvsAnSentenceChecker())
+	wrb := NewEnglishWordRepeatBeginningRule(map[string]string{
+		"desc_repetition_beginning_adv":       "Three successive sentences begin with the same adverb.",
+		"desc_repetition_beginning_word":      "Three successive sentences begin with the same word.",
+		"desc_repetition_beginning_thesaurus": "Consider using a thesaurus to find synonyms.",
+	})
+	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+	cs := NewContractionSpellingRule(nil)
+	lt.AddRuleChecker(cs.GetID(), rules.AsSentenceCheckerSimple(cs.Match))
+	ww := NewEnglishWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+	dr := NewEnglishDashRule(nil)
+	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+	di := NewEnglishDiacriticsRule(nil)
+	lt.AddRuleChecker(di.GetID(), rules.AsSentenceCheckerSimple(di.Match))
+	pe := NewEnglishPlainEnglishRule(nil)
+	lt.AddRuleChecker(pe.GetID(), rules.AsSentenceCheckerSimple(pe.Match))
+	rd := NewEnglishRedundancyRule(nil)
+	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	// Java SimpleReplaceProfanityRule is in getRelevantRules (not invent-only picky path).
+	pf := NewSimpleReplaceProfanityRule(nil)
+	lt.AddRuleChecker(pf.GetID(), rules.AsSentenceCheckerSimple(pf.Match))
+	// Java ReadabilityRule(false) then (true) — difficult then simple.
+	readDiff := rules.NewReadabilityRule(false, -1)
+	lt.AddTextLevelRuleChecker(readDiff.GetID(), rules.AsTextLevelChecker(readDiff.MatchList))
+	if readDiff.IsDefaultOff() {
+		lt.MarkDefaultOff(readDiff.GetID())
+	}
+	readEasy := rules.NewReadabilityRule(true, -1)
+	lt.AddTextLevelRuleChecker(readEasy.GetID(), rules.AsTextLevelChecker(readEasy.MatchList))
+	if readEasy.IsDefaultOff() {
+		lt.MarkDefaultOff(readEasy.GetID())
+	}
+	rw := NewEnglishRepeatedWordsRule(nil)
+	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
+	stv := NewStyleTooOftenUsedVerbRule()
+	lt.AddTextLevelRuleChecker(stv.GetID(), rules.AsTextLevelChecker(stv.MatchList))
+	if stv.IsDefaultOff() {
+		lt.MarkDefaultOff(stv.GetID())
+	}
+	stn := NewStyleTooOftenUsedNounRule()
+	lt.AddTextLevelRuleChecker(stn.GetID(), rules.AsTextLevelChecker(stn.MatchList))
+	if stn.IsDefaultOff() {
+		lt.MarkDefaultOff(stn.GetID())
+	}
+	sta := NewStyleTooOftenUsedAdjectiveRule()
+	lt.AddTextLevelRuleChecker(sta.GetID(), rules.AsTextLevelChecker(sta.MatchList))
+	if sta.IsDefaultOff() {
+		lt.MarkDefaultOff(sta.GetID())
+	}
 
 	// Locale unit conversion (Java AmericanEnglish / BritishEnglish / … getRelevantRules).
 	RegisterEnglishVariantExtraRules(lt)

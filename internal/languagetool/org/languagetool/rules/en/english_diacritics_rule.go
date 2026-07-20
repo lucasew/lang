@@ -25,7 +25,8 @@ func loadDiacritics() *rules.AbstractSimpleReplaceRule2 {
 		defer f.Close()
 		// Java EnglishDiacriticsRule: TYPOS, Misspelling, blase → blasé
 		base := &rules.AbstractSimpleReplaceRule2{
-			ID:                   "EN_DIACRITICS_REPLACE",
+			// Java EnglishDiacriticsRule.EN_DIACRITICS_REPLACE = "EN_DIACRITICS_REPLACE_ORTHOGRAPHY"
+			ID:                   "EN_DIACRITICS_REPLACE_ORTHOGRAPHY",
 			Description:          "Suggest diacritics for '$match'",
 			ShortMsg:             "The original word has a diacritic",
 			MessageTemplate:      "'$match' is an imported foreign name or expression, which originally has a diacritic.",

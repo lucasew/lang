@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/stretchr/testify/require"
 )
 
@@ -160,4 +161,17 @@ func TestRegisterDemoEnglishTagger(t *testing.T) {
 		}
 	}
 	require.True(t, foundDT)
+}
+
+// Java English.getRelevantRules base IDs must all be registered (speller/variants are extras).
+func TestRegisterCoreEnglishLanguageRules_JavaRelevantBaseIDs(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("en-US")
+	RegisterCoreEnglishLanguageRules(lt)
+	// skip picky path — profanity already in main registration
+	ids := lt.GetAllRegisteredRuleIDs()
+	for _, id := range language.EnglishRelevantRuleIDs() {
+		require.Contains(t, ids, id, "missing Java English.getRelevantRules id %s", id)
+	}
+	// invent SharedLayout-only extras must not reappear
+	require.NotContains(t, ids, "WHITESPACE_PUNCTUATION")
 }
