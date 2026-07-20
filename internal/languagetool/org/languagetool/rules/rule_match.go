@@ -47,7 +47,8 @@ type RuleMatch struct {
 	// SpecificRuleId ports RuleMatch.specificRuleId (setSpecificRuleId / getSpecificRuleId).
 	// Empty means getSpecificRuleId falls back to getRule().getId().
 	SpecificRuleId string
-	// Soft metadata carried from LocalMatch (false friends / soft grammar).
+	// Category / ITS metadata from the Java Rule (or LocalMatch bridge).
+	// Prefer getters on Rule; RuleMeta fills known Java families when empty.
 	IssueType    string
 	CategoryID   string
 	CategoryName string

@@ -14,7 +14,7 @@ type AbstractPatternRule struct {
 	PatternTokens           []*PatternToken
 	Message                 string
 	ShortMessage            string
-	// CategoryID / CategoryName from surrounding <category> in soft grammar XML.
+	// CategoryID / CategoryName from surrounding <category> in official grammar XML (Java).
 	CategoryID              string
 	CategoryName            string
 	// CategoryDefaultOff ports Category.isDefaultOff (XML category default="off").

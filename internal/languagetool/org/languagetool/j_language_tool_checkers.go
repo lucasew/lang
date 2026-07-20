@@ -2,12 +2,12 @@ package languagetool
 
 import (
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 )
 
 // SimpleMultipleWhitespaceChecker flags two or more consecutive regular spaces.
+// Match spans use Java UTF-16 indices (same as AnalyzePlain / CorrectTextFromLocalMatches).
 func SimpleMultipleWhitespaceChecker() SentenceChecker {
 	return func(sentence *AnalyzedSentence) []LocalMatch {
 		if sentence == nil {
@@ -15,24 +15,25 @@ func SimpleMultipleWhitespaceChecker() SentenceChecker {
 		}
 		text := sentence.GetText()
 		var out []LocalMatch
+		// Walk runes while tracking UTF-16 offsets (Java String indices).
+		u16 := 0
 		runes := []rune(text)
 		i := 0
 		for i < len(runes) {
 			if runes[i] != ' ' {
+				u16 += utf16Units(runes[i])
 				i++
 				continue
 			}
+			from := u16
 			j := i
 			for j < len(runes) && runes[j] == ' ' {
+				u16 += utf16Units(runes[j])
 				j++
 			}
 			if j-i >= 2 {
-				// byte offsets: for ASCII spaces, rune index == byte index if pure ASCII;
-				// compute carefully via rune→byte
-				from := runeOffsetToByte(text, i)
-				to := runeOffsetToByte(text, j)
 				out = append(out, LocalMatch{
-					FromPos: from, ToPos: to,
+					FromPos: from, ToPos: u16,
 					Message:     "Multiple whitespace",
 					RuleID:      "WHITESPACE_RULE",
 					Suggestions: []string{" "},
@@ -45,6 +46,7 @@ func SimpleMultipleWhitespaceChecker() SentenceChecker {
 }
 
 // SimpleUnpairedBracketsChecker flags unmatched () [] {} in sentence text.
+// Positions are UTF-16 code units (Java RuleMatch / CorrectTextFromLocalMatches).
 func SimpleUnpairedBracketsChecker() SentenceChecker {
 	pairs := map[rune]rune{')': '(', ']': '[', '}': '{'}
 	openers := map[rune]bool{'(': true, '[': true, '{': true}
@@ -55,30 +57,30 @@ func SimpleUnpairedBracketsChecker() SentenceChecker {
 		text := sentence.GetText()
 		type frame struct {
 			ch  rune
-			pos int // byte offset
+			pos int // UTF-16 offset
 		}
 		var stack []frame
 		var out []LocalMatch
-		bytePos := 0
+		u16 := 0
 		for _, r := range text {
-			w := utf8.RuneLen(r)
+			w := utf16Units(r)
 			if openers[r] {
-				stack = append(stack, frame{r, bytePos})
+				stack = append(stack, frame{r, u16})
 			} else if want, ok := pairs[r]; ok {
 				if len(stack) == 0 || stack[len(stack)-1].ch != want {
 					out = append(out, LocalMatch{
-						FromPos: bytePos, ToPos: bytePos + w,
+						FromPos: u16, ToPos: u16 + w,
 						Message: "Unpaired bracket", RuleID: "UNPAIRED_BRACKETS",
 					})
 				} else {
 					stack = stack[:len(stack)-1]
 				}
 			}
-			bytePos += w
+			u16 += w
 		}
 		for _, f := range stack {
 			out = append(out, LocalMatch{
-				FromPos: f.pos, ToPos: f.pos + utf8.RuneLen(f.ch),
+				FromPos: f.pos, ToPos: f.pos + utf16Units(f.ch),
 				Message: "Unpaired bracket", RuleID: "UNPAIRED_BRACKETS",
 			})
 		}
@@ -87,7 +89,7 @@ func SimpleUnpairedBracketsChecker() SentenceChecker {
 }
 
 // SimplePhraseReplaceChecker flags phrase occurrences from an explicit map
-// (test helper / injected data only — not an invent soft phrase pack).
+// (test helper / injected data only — not registered as a Java Rule).
 // Matching is case-insensitive; suggestions inherit ALL-CAPS or leading capital
 // from the matched span (Java StringTools-style case preservation).
 // phrases maps wrong phrase → suggested replacement.
@@ -115,7 +117,7 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 			return nil
 		}
 		text := sentence.GetText()
-		// ASCII-oriented case fold (soft EN/phrase pack is Latin-1 friendly).
+		// Case fold for matching (test helper; production grammar uses PatternRule).
 		lowText := strings.ToLower(text)
 		var out []LocalMatch
 		// find non-overlapping left-to-right
@@ -146,8 +148,11 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 					}
 					matched := text[idx : idx+len(wrong)]
 					sug := PreserveCase(matched, repl)
+					// Java RuleMatch positions = UTF-16 code units (not UTF-8 bytes).
+					fromU16 := localMatchUTF16Len(text[:idx])
+					toU16 := localMatchUTF16Len(text[:idx+len(wrong)])
 					out = append(out, LocalMatch{
-						FromPos: idx, ToPos: idx + len(wrong),
+						FromPos: fromU16, ToPos: toU16,
 						Message: "Phrase", RuleID: ruleID,
 						Suggestions: []string{sug},
 					})
@@ -349,8 +354,8 @@ func LocalMatchesFromCheckResults(cr *CheckResults) []LocalMatch {
 }
 
 // RegisterDemoEnglishCheckers installs faithful a/an, word-repeat, multi-space,
-// unpaired brackets, and optional map speller for homepage-style demos.
-// Soft invent PHRASE_REPLACE packs ("tot he" etc.) are not registered — use grammar.xml.
+// unpaired brackets, and optional map speller for homepage-style demos (LANG_DEMO_SPELLER).
+// PHRASE_REPLACE invent packs are not registered — use official grammar.xml.
 // Tiny demo lexicons do not use nearestKnownWords (that fights a/an and loops forever).
 func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, spellSuggestions map[string][]string) {
 	if lt == nil {
@@ -373,6 +378,15 @@ func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, 
 	}
 }
 
+// utf16Units is 1 for BMP, 2 for supplementary (Java String.length() code units).
+func utf16Units(r rune) int {
+	if r >= 0x10000 {
+		return 2
+	}
+	return 1
+}
+
+// runeOffsetToByte maps a rune index to a UTF-8 byte index in s (sentence_ranges_plain).
 func runeOffsetToByte(s string, runeIndex int) int {
 	if runeIndex <= 0 {
 		return 0

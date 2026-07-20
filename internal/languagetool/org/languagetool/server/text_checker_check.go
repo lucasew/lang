@@ -313,7 +313,7 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		rm := NewRemoteRuleMatch(ruleID, msg, ctx, from-start, from, to-from)
 		rm.ShortMessage = m.ShortMessage
 		catID, catName, issue, short := RuleMeta(ruleID)
-		// Prefer metadata carried on LocalMatch (soft grammar XML categories).
+		// Prefer metadata carried on LocalMatch (Java Rule category / grammar XML).
 		if m.CategoryID != "" {
 			catID = m.CategoryID
 		}

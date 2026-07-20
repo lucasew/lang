@@ -285,7 +285,7 @@ func TestRuleMeta_KnownJavaFamilies(t *testing.T) {
 	require.Equal(t, "grammar", issue)
 	require.Equal(t, "Potenzieller Fehler", short)
 	require.Equal(t, "Hier scheint es einen Fehler zu geben.", RuleDescription("AI_DE_MERGED_MATCH"))
-	// Java French.mergeMatches SoftRule fallback (AI_FR_MERGED_MATCH[_STYLE][_PICKY])
+	// Java French.mergeMatches RuleMeta fallback (AI_FR_MERGED_MATCH[_STYLE][_PICKY])
 	id, name, issue, short = RuleMeta("AI_FR_MERGED_MATCH")
 	require.Equal(t, "GRAMMAR", id)
 	require.Equal(t, "Grammaire", name)
@@ -294,7 +294,7 @@ func TestRuleMeta_KnownJavaFamilies(t *testing.T) {
 	require.Equal(t, "Il pourrait y avoir un problème ici.", RuleDescription("AI_FR_MERGED_MATCH_STYLE_PICKY"))
 	require.Equal(t, "fr", RuleLangHint("AI_FR_GGEC_X"))
 	require.Equal(t, "fr", RuleLangHint("AI_FR_MERGED_MATCH"))
-	// Java Spanish AI_ES SoftRule / LangHint
+	// Java Spanish AI_ES RuleMeta / LangHint
 	id, name, issue, short = RuleMeta("AI_ES_GGEC_REPLACEMENT_CASING_X")
 	require.Equal(t, "CASING", id)
 	require.Equal(t, "Mayúsculas y minúsculas", name)

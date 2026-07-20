@@ -312,3 +312,26 @@ func TestCheckAnnotated_MapsDuringAdjust(t *testing.T) {
 	require.Equal(t, proj[0].FromPos, ms[0].FromPos)
 	require.Equal(t, proj[0].ToPos, ms[0].ToPos)
 }
+
+// Twin of Java UTF-16 RuleMatch positions: multi-byte BMP text must still correct.
+func TestDemoCheckers_UTF16Positions(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("WHITESPACE_RULE", SimpleMultipleWhitespaceChecker())
+	// "café" is 4 runes / 5 UTF-8 bytes; spaces after must use UTF-16 indices
+	src := "café  ok"
+	m := lt.Check(src)
+	require.NotEmpty(t, m)
+	// from/to are UTF-16: c a f é = 4 units, then two spaces at 4..6
+	require.Equal(t, 4, m[0].FromPos)
+	require.Equal(t, 6, m[0].ToPos)
+	require.Equal(t, "café ok", CorrectTextFromLocalMatches(src, m))
+
+	lt2 := NewJLanguageTool("en")
+	lt2.AddRuleChecker("PHRASE_REPLACE", SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
+		"tot he": "to the",
+	}))
+	src2 := "über tot he"
+	m2 := lt2.Check(src2)
+	require.NotEmpty(t, m2)
+	require.Equal(t, "über to the", CorrectTextFromLocalMatches(src2, m2))
+}

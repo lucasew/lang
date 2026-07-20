@@ -260,7 +260,7 @@ func TestFilterGermanRuleMatches_MergeKeepsPicky(t *testing.T) {
 }
 
 // RuleMeta for AI_DE_MERGED_MATCH fills empty category (not invent for unknown ids).
-func TestFilterGermanRuleMatches_MergeSoftRuleCategoryWhenEmpty(t *testing.T) {
+func TestFilterGermanRuleMatches_MergeRuleMetaCategoryWhenEmpty(t *testing.T) {
 	in := []languagetool.LocalMatch{
 		{FromPos: 0, ToPos: 3, RuleID: "AI_DE_GGEC_A", IssueType: "grammar", Suggestions: []string{"a"}},
 		{FromPos: 3, ToPos: 6, RuleID: "AI_DE_GGEC_B", IssueType: "grammar", Suggestions: []string{"b"}},
