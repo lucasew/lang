@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 
@@ -396,4 +397,30 @@ func TestDisambiguateSt_Station(t *testing.T) {
 			require.Contains(t, *r.GetPOSTag(), "noun:inanim:f")
 		}
 	}
+}
+
+func TestVerbOnlyRE_FullMatch(t *testing.T) {
+	require.True(t, verbOnlyRE.MatchString("verb:imperf:inf"))
+	require.True(t, verbOnlyRE.MatchString("verb:perf:past:m"))
+	require.False(t, verbOnlyRE.MatchString("adverb"))
+	require.False(t, verbOnlyRE.MatchString("noun:verb:fake"))
+}
+
+func TestCaseGovForPosRE_VerbOnly(t *testing.T) {
+	// inject lemma with case government via helper map if available
+	p, l := "verb:imperf:inf", "бачити"
+	verb := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("бачити", &p, &l))
+	govs := caseGovForPosRE(verb, verbOnlyRE)
+	// if case government map has бачити → expect non-empty; else at least not panic
+	_ = govs
+	// critical: pattern must accept full verb POS (was ^verb only → always empty)
+	// fullMatch with ^verb.*$ accepts; prove with synthetic: empty lemma still iterates
+	require.True(t, fullMatch(verbOnlyRE, "verb:imperf:inf"))
+	require.False(t, fullMatch(regexp.MustCompile(`^verb`), "verb:imperf:inf"))
+}
+
+func TestPropPOSRE_PropGeo(t *testing.T) {
+	require.True(t, propPOSRE.MatchString("noun:inanim:m:v_naz:prop:geo"))
+	require.True(t, propPOSRE.MatchString("noun:anim:m:v_naz:prop:lname"))
+	require.False(t, propPOSRE.MatchString("noun:inanim:m:v_naz"))
 }

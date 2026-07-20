@@ -389,7 +389,8 @@ func setHasAny(set map[string]struct{}, keys ...string) bool {
 }
 
 // lemmas after їх that force personal (object) reading — Java hasLemma list (lower surface/lemma).
-var verbOnlyRE = regexp.MustCompile(`^verb`)
+// Java Pattern.compile("verb.*") Matcher.matches() — full POS string must be verb*.
+var verbOnlyRE = regexp.MustCompile(`^verb.*$`)
 
 var yihObjectLemmas = map[string]bool{
 	"кількість": true, "розгляд": true, "обговорення": true, "використання": true,
@@ -951,7 +952,9 @@ func hasLemmaPrepZ(tok *languagetool.AnalyzedTokenReadings) bool {
 // RemoveLowerCaseBadForUpperCaseGood strips :bad readings when surface is capitalized prop.
 // propLemmaRE ports hasLemma(…, [А-ЯІЇЄҐ][а-яіїєґ'-].*, .*:prop)
 var propLemmaRE = regexp.MustCompile(`^[А-ЯІЇЄҐ][а-яіїєґ'’-].*$`)
-var propPOSRE = regexp.MustCompile(`.*:prop`)
+// Java compile(".*?:prop") Matcher.matches() — full tag must match (ends at :prop or continues via .*)
+// Use .*:prop.* so :prop:geo still qualifies (same intent as hasLemma prop filter).
+var propPOSRE = regexp.MustCompile(`^.*:prop(?:$|:.*)$`)
 
 // RemoveLowerCaseBadForUpperCaseGood ports removeLowerCaseBadForUpperCaseGood.
 // For capitalized prop tokens, drop :bad readings whose lemma equals lowercased first lemma.
