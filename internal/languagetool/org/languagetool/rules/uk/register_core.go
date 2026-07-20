@@ -33,14 +33,9 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 		},
 	})
 
-	// word-repeat (+ beginning as text-level; Java only has WordRepeatRule in list,
-	// but WordRepeatBeginning is common in Go language packs and already here).
+	// Java Ukrainian.getRelevantRules: UkrainianWordRepeatRule only (no WordRepeatBeginning).
 	wr := NewUkrainianWordRepeatRule(map[string]string{"repetition": "Повтор слова"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Три речення поспіль починаються одним словом.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
 	// medium/high priority Java rules
 	typo := NewTypographyRule(nil)

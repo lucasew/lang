@@ -7,7 +7,9 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
-// RegisterCoreIrishRules installs shared layout + word-repeat + beginning.
+// RegisterCoreIrishRules ports Irish.getRelevantRules / createDefaultSpellingRule.
+// Java WordRepeatRule uses default WORD_REPEAT_RULE id; no WordRepeatBeginning
+// (ParagraphRepeatBeginning is separate, via layout).
 func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -15,13 +17,7 @@ func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 	lt.PriorityForId = language.IrishPriorityForId
 	rules.RegisterSharedLayoutRules(lt, "ga")
 	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Athrá"})
-	wr.IDOverride = "GA_WORD_REPEAT_RULE"
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Tosaíonn trí abairt as a chéile leis an bhfocal céanna.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace tables (embedded from upstream).
 	ir := NewIrishReplaceRule(nil)

@@ -24,10 +24,10 @@ func TestRegister_MultiLang(t *testing.T) {
 		{"ro", "test test", "RO_WORD_REPEAT_RULE"},
 		{"pt-BR", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
 		{"ar", "كلمة كلمة", "ARABIC_WORD_REPEAT_RULE"},
-		{"sl", "test test", "SL_WORD_REPEAT_RULE"},
+		{"sl", "test test", "WORD_REPEAT_RULE"},
 		// br: Java Breton.getRelevantRules has no WordRepeat — covered in br pack tests
-		{"fa", "test test", "FA_WORD_REPEAT_RULE"},
-		{"ga", "test test", "GA_WORD_REPEAT_RULE"},
+		{"fa", "test test", "PERSIAN_WORD_REPEAT_RULE"},
+		{"ga", "test test", "WORD_REPEAT_RULE"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.lang, func(t *testing.T) {

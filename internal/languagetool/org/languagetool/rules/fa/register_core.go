@@ -5,20 +5,20 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCorePersianRules installs shared layout + word-repeat + beginning.
+// RegisterCorePersianRules ports Persian.getRelevantRules.
+// Java: PersianWordRepeatRule (PERSIAN_WORD_REPEAT_RULE) +
+// PersianWordRepeatBeginningRule (PERSIAN_WORD_REPEAT_BEGINNING_RULE) — not invent FA_ ids.
 func RegisterCorePersianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	rules.RegisterSharedLayoutRules(lt, "fa")
-	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "تکرار"})
-	wr.IDOverride = "FA_WORD_REPEAT_RULE"
+	wr := NewPersianWordRepeatRule(map[string]string{"repetition": "تکرار"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
 	wrb := NewPersianWordRepeatBeginningRule(map[string]string{
 		"desc_repetition_beginning_word": "سه جمله پیاپی با یک کلمه آغاز می‌شوند.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
