@@ -8,9 +8,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
-// PolishWordTokenizer ports org.languagetool.tokenizers.pl.PolishWordTokenizer
-// without a tagger (hyphen compounds kept whole unless prefixes/digits apply).
-// Call SetTagger later for hybrid compound splitting.
+// PolishWordTokenizer ports org.languagetool.tokenizers.pl.PolishWordTokenizer.
+// Without SetTagger, hyphen compounds (including number ranges) stay whole —
+// same as Java when tagger is null. Call SetTagger for hybrid hyphen splitting
+// and digit-range split (1-23).
 type PolishWordTokenizer struct {
 	plTokenizing string
 	// tagger optional; nil matches Java before setTagger()
@@ -64,19 +65,21 @@ func (w *PolishWordTokenizer) Tokenize(text string) []string {
 				l = append(l, w.Tokenize(token[1:])...)
 			} else if strings.Contains(token, "-") {
 				tokenParts := strings.Split(token, "-")
-				// Number ranges (1-23) always split, even without a tagger.
-				if len(tokenParts) > 0 && len(tokenParts[len(tokenParts)-1]) > 0 &&
+				// Java order: prefixes || tagger==null → keep whole;
+				// else digit last part → split range; else tagger compound logic.
+				// Do not invent digit-range split without a tagger (Java never does).
+				if polishPrefixes[tokenParts[0]] || w.tagger == nil {
+					l = append(l, token)
+				} else if len(tokenParts) > 0 && len(tokenParts[len(tokenParts)-1]) > 0 &&
 					unicode.IsDigit(rune(tokenParts[len(tokenParts)-1][0])) {
+					// split numbers at dash or minus sign, 1-10
 					for i, p := range tokenParts {
 						l = append(l, p)
 						if i != len(tokenParts)-1 {
 							l = append(l, "-")
 						}
 					}
-				} else if polishPrefixes[tokenParts[0]] || w.tagger == nil {
-					l = append(l, token)
 				} else {
-					// tagger-based compound split
 					l = append(l, w.splitCompoundWithTagger(token, tokenParts)...)
 				}
 			} else {

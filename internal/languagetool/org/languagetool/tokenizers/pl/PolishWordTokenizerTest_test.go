@@ -37,15 +37,15 @@ func TestPolishWordTokenizer_Tokenize(t *testing.T) {
 	require.Equal(t, 14, len(tokens6))
 	require.Equal(t, "[A,  , to,  , jest,  , zdanie, —, rzeczywiście, —, z,  , wtrąceniem, .]", tokStr(tokens6))
 
-	// without tagger: compounds stay whole
+	// without tagger: compounds stay whole (Java tagger==null branch)
 	compoundSentence := "To jest kobieta-wojownik w polsko-czeskim ubraniu, która wysłała dwa SMS-y."
 	compoundTokens := w.Tokenize(compoundSentence)
 	require.Equal(t, 21, len(compoundTokens))
 	require.Equal(t, "[To,  , jest,  , kobieta-wojownik,  , w,  , polsko-czeskim,  , ubraniu, ,,  , która,  , wysłała,  , dwa,  , SMS-y, .]", tokStr(compoundTokens))
 
-	// number ranges split without tagger
+	// number ranges also stay whole without tagger (Java only splits after setTagger)
 	n := w.Tokenize("Impreza odbędzie się w dniach 1-23 maja.")
-	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, 23,  , maja, .]", tokStr(n))
+	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1-23,  , maja, .]", tokStr(n))
 }
 
 // mockHyphenTagger marks parts as adjective compounds (adja + adj:).
@@ -113,4 +113,17 @@ func TestPolishWordTokenizer_TokenizeWithTagger(t *testing.T) {
 
 	got = w.Tokenize("polsko-niemiecko-indonezyjski")
 	require.Equal(t, "[polsko, -, niemiecko, -, indonezyjski]", tokStr(got))
+
+	// Java: number ranges split only when tagger is set
+	got = w.Tokenize("Impreza odbędzie się w dniach 1-23 maja.")
+	require.Equal(t, 16, len(got))
+	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, 23,  , maja, .]", tokStr(got))
+
+	got = w.Tokenize("Impreza odbędzie się w dniach 1--23 maja.")
+	require.Equal(t, 18, len(got))
+	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, , -, 23,  , maja, .]", tokStr(got))
+
+	// prefix + digit last part: Java keeps whole (prefix branch before digit)
+	got = w.Tokenize("pre-1")
+	require.Equal(t, "[pre-1]", tokStr(got))
 }
