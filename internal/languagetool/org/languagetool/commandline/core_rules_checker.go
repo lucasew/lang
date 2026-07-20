@@ -18,6 +18,7 @@ import (
 	rulesga "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ga"
 	rulesnl "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	rulespt "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
 	rulesru "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
@@ -247,6 +248,8 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 						rulesfr.WireFrenchFilterTaggerFromTagWord(lt.TagWord)
 					case "ga":
 						rulesga.WireIrishFilterTaggerFromTagWord(lt.TagWord)
+					case "pt":
+						rulespt.WirePortugueseFilterTaggerFromTagWord(lt.TagWord)
 					}
 				}
 			}

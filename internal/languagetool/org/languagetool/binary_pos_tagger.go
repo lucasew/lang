@@ -8,6 +8,7 @@ import (
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	catok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ca"
 	estok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/es"
 	frtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/fr"
@@ -36,12 +37,71 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 		removal := loadManualTaggerBesideDict(dictPath, []string{"removed.txt", "removed_custom.txt"})
 		wordTagger = tagging.NewCombiningTaggerWithRemoval(wordTagger, manual, removal, false)
 	}
-	// Java BaseTagger: tagLowercaseWithUppercase=true by default (most language taggers).
-	base := tagging.NewBaseTagger(wordTagger, dictPath, languageBaseFromPath(dictPath, lt.GetLanguageCode()), true)
-	tw := baseTaggerToTagWord(base)
+	langBase := languageBaseFromPath(dictPath, lt.GetLanguageCode())
+	var tw func(token string) []TokenTag
+	if langBase == "pl" {
+		// Java PolishTagger.tag (exact WordTagger lookups + case merge).
+		// Inline to avoid import cycle: languagetool → tagging/pl → languagetool.
+		tw = polishTaggerCaseTagWord(wordTagger)
+	} else {
+		// Java BaseTagger: tagLowercaseWithUppercase=true by default (most language taggers).
+		base := tagging.NewBaseTagger(wordTagger, dictPath, langBase, true)
+		tw = baseTaggerToTagWord(base)
+	}
 	lt.TagWord = tw
 	wireTokenizerIsTaggedFromPOS(lt.GetLanguageCode(), tw)
 	return true
+}
+
+// polishTaggerCaseTagWord ports Java PolishTagger.tag case logic for TagWord inject:
+// surface exact, then if non-lower also lower exact, then if both empty and surface
+// is lower try UppercaseFirstChar. Always merges lower for non-lower (incl. mixed case).
+func polishTaggerCaseTagWord(wt tagging.WordTagger) func(token string) []TokenTag {
+	if wt == nil {
+		return nil
+	}
+	lookup := func(w string) []TokenTag {
+		tws := wt.Tag(w)
+		if len(tws) == 0 {
+			return nil
+		}
+		out := make([]TokenTag, 0, len(tws))
+		for _, tw := range tws {
+			out = append(out, TokenTag{POS: tw.PosTag, Lemma: tw.Lemma})
+		}
+		return out
+	}
+	return func(token string) []TokenTag {
+		if token == "" {
+			return nil
+		}
+		// Java: typewriter apostrophe normalisation in Polish ports often use ’ → '
+		word := strings.ReplaceAll(token, "’", "'")
+		low := strings.ToLower(word)
+		var out []TokenTag
+		seen := map[string]struct{}{}
+		add := func(tags []TokenTag) {
+			for _, t := range tags {
+				key := t.POS + "\x00" + t.Lemma
+				if _, ok := seen[key]; ok {
+					continue
+				}
+				seen[key] = struct{}{}
+				out = append(out, t)
+			}
+		}
+		add(lookup(word))
+		if word != low {
+			add(lookup(low))
+		}
+		if len(out) == 0 && word == low {
+			title := tools.UppercaseFirstChar(word)
+			if title != word {
+				add(lookup(title))
+			}
+		}
+		return out
+	}
 }
 
 func languageBaseFromPath(dictPath, langCode string) string {

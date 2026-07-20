@@ -3,6 +3,7 @@ package pt
 import (
 	"sync"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
@@ -50,4 +51,26 @@ func portugueseNoDisambigTagPOS(partial string) []string {
 		return nil
 	}
 	return tag(partial)
+}
+
+// WirePortugueseFilterTaggerFromTagWord installs POS list hook from lt.TagWord
+// (Java NoDisambiguationPortuguesePartialPosTagFilter uses Portuguese.getTagger()).
+func WirePortugueseFilterTaggerFromTagWord(tw func(token string) []languagetool.TokenTag) {
+	if tw == nil {
+		SetDefaultPortuguesePartialPosTagger(nil)
+		return
+	}
+	SetDefaultPortuguesePartialPosTagger(func(token string) []string {
+		tags := tw(token)
+		if len(tags) == 0 {
+			return nil
+		}
+		out := make([]string, 0, len(tags))
+		for _, t := range tags {
+			if t.POS != "" {
+				out = append(out, t.POS)
+			}
+		}
+		return out
+	})
 }
