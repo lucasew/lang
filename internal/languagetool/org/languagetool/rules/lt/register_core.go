@@ -5,16 +5,33 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreLithuanianRules installs shared layout + Morfologik speller.
-// Java Lithuanian.getRelevantRules: layout + MorfologikLithuanianSpellerRule (no WordRepeatRule).
+// RegisterCoreLithuanianRules ports Lithuanian.getRelevantRules / createDefaultSpellingRule.
+// Java: CommaWhitespace, DoublePunctuation, UnpairedBrackets, Morfologik, Uppercase,
+// MultipleWhitespace only — no invent SharedLayout extras.
 func RegisterCoreLithuanianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
-	rules.RegisterSharedLayoutRules(lt, "lt")
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
 
-	// Java createDefaultSpellingRule / Morfologik getId; CFSA2 when dict present.
-	// Always full Match (fail-closed map Words when binary dict missing; no invent).
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+
+	lt.AddRuleChecker("UNPAIRED_BRACKETS", languagetool.SimpleUnpairedBracketsChecker())
+
 	sp := NewMorfologikLithuanianSpellerRule()
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
+
+	up := rules.NewUppercaseSentenceStartRule(nil, "lt")
+	lt.AddRuleChecker(up.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
 }

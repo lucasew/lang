@@ -5,17 +5,33 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreTagalogRules installs shared layout + Morfologik speller.
-// Java Tagalog.getRelevantRules: layout + MorfologikTagalogSpellerRule (no WordRepeatRule).
+// RegisterCoreTagalogRules ports Tagalog.getRelevantRules / createDefaultSpellingRule.
+// Java: CommaWhitespace, DoublePunctuation, UnpairedBrackets, Uppercase, MultipleWhitespace,
+// Morfologik only — no invent SharedLayout extras.
 func RegisterCoreTagalogRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
-	rules.RegisterSharedLayoutRules(lt, "tl")
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
 
-	// Java createDefaultSpellingRule / Morfologik getId; CFSA2 when dict present.
-	// Empty map shell fails closed when binary resource is missing (no invent).
-	// Always full Match (fail-closed map Words when binary dict missing; no invent).
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+
+	lt.AddRuleChecker("UNPAIRED_BRACKETS", languagetool.SimpleUnpairedBracketsChecker())
+
+	up := rules.NewUppercaseSentenceStartRule(nil, "tl")
+	lt.AddRuleChecker(up.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+
 	sp := NewMorfologikTagalogSpellerRule()
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }
