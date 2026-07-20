@@ -6,16 +6,34 @@ import (
 )
 
 // RegisterCoreDanishRules ports Danish.getRelevantRules / createDefaultSpellingRule.
-// Java: layout + HunspellRule only. Comment in Danish.java: WORD_REPEAT_RULE is in
-// grammar.xml — do not invent a class-based WordRepeat / WordRepeatBeginning.
+// Java: CommaWhitespace, DoublePunctuation, UnpairedBrackets, Hunspell, Uppercase,
+// MultipleWhitespace only. WORD_REPEAT_RULE is in grammar.xml — do not invent class-based WR.
 func RegisterCoreDanishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
-	rules.RegisterSharedLayoutRules(lt, "da")
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
+
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+
+	ub := NewUnpairedBracketsRule(nil)
+	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
 
 	// Java Danish.getRelevantRules / createDefaultSpellingRule → HunspellRule (HUNSPELL_RULE).
-	// Dict loading deferred; nil dict fails closed (no invent misspell flags).
 	sp := NewDanishHunspellRule()
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
+
+	up := rules.NewUppercaseSentenceStartRule(nil, "da")
+	lt.AddRuleChecker(up.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
 }
