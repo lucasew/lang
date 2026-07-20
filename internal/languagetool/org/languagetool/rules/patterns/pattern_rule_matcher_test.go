@@ -329,5 +329,45 @@ func TestRepeatedAndConsistencyTransformers(t *testing.T) {
 	require.Empty(t, tr3)
 }
 
-// Soft path: optional min=0 must backtrack when a later element needs the token
-// (NL FULL_SENTENCE_001 style: adj? noun after "de").
+// Java AbstractPatternRulePerformer: min=0 with foundNext prefers skipping optional
+// when the next required element also matches the same token.
+func TestPatternRuleMatcher_OptionalFoundNextPrefersSkip(t *testing.T) {
+	// Pattern: optional "the" then "the" required — sentence "the".
+	// foundNext: next "the" matches at same position → optional positions=0, required takes token.
+	opt := Token("the")
+	opt.SetMinOccurrence(0)
+	rule := NewPatternRule("OPT_SKIP", "en",
+		[]*PatternToken{opt, Token("the")},
+		"d", "m", "")
+	sent := testSentence(atr("the", 0))
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+
+	// Pattern: optional "a" then "the" — sentence "the" still matches (optional absent via foundNext).
+	opt2 := Token("a")
+	opt2.SetMinOccurrence(0)
+	rule2 := NewPatternRule("OPT_ABSENT", "en",
+		[]*PatternToken{opt2, Token("the")},
+		"d", "m", "")
+	ms2, err := rule2.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms2, 1)
+}
+
+func TestPatternRuleMatcher_SkipMaxTokens(t *testing.T) {
+	// max=2: match "x" "x" as one pattern element when consecutive.
+	pt := Token("x")
+	pt.SetMaxOccurrence(2)
+	rule := NewPatternRule("MAX2", "en",
+		[]*PatternToken{pt, Token("y")},
+		"d", "m", "")
+	// x x y — start=0 consumes two x via skipMaxTokens; start=1 may also match one x.
+	sent := testSentence(atr("x", 0), atr("x", 2), atr("y", 4))
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
+	// Longest/first span from start 0 covers both x tokens.
+	require.Equal(t, 0, ms[0].FromPos)
+	require.Equal(t, atr("y", 4).GetEndPos(), ms[0].ToPos)
+}

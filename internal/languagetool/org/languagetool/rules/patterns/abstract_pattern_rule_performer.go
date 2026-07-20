@@ -9,7 +9,8 @@ import (
 type MatchConsumer func(tokenPositions []int, firstMatchToken, lastMatchToken, firstMarker, lastMarker int)
 
 // AbstractPatternRulePerformer ports
-// org.languagetool.rules.patterns.AbstractPatternRulePerformer (simplified).
+// org.languagetool.rules.patterns.AbstractPatternRulePerformer.
+// DoMatch delegates to PatternRuleMatcher.matchFromResult (Java inheritance).
 type AbstractPatternRulePerformer struct {
 	Rule     *AbstractTokenBasedRule
 	Unifier  *Unifier

@@ -18,7 +18,7 @@ const (
 )
 
 // PatternRuleMatcher ports org.languagetool.rules.patterns.PatternRuleMatcher
-// as a sequential token matcher (skip/unification/exceptions deferred).
+// (extends AbstractPatternRulePerformer.matchFrom sequential algorithm).
 type PatternRuleMatcher struct {
 	Rule     *AbstractTokenBasedRule
 	matchers []*PatternTokenMatcher
@@ -352,8 +352,6 @@ type matchResult struct {
 }
 
 // matchFrom tries to match the pattern starting at token index start.
-// Optional elements (min=0) backtrack so soft POS over-acceptance does not
-// greedily steal tokens needed by later pattern elements (e.g. NL FULL_SENTENCE_001).
 func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, tokens []*languagetool.AnalyzedTokenReadings, start int) (*rules.RuleMatch, bool) {
 	res, ok := m.matchFromResult(sentence, tokens, start)
 	if !ok || res == nil {
@@ -362,189 +360,244 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 	return res.RM, true
 }
 
+// matchFromResult ports AbstractPatternRulePerformer.matchFrom (sequential greedy).
+// Optional min=0 uses Java foundNext look-ahead (not free backtracking).
 func (m *PatternRuleMatcher) matchFromResult(sentence *languagetool.AnalyzedSentence, tokens []*languagetool.AnalyzedTokenReadings, start int) (*matchResult, bool) {
-	type span struct {
-		first, last, firstMark, lastMark int
-		// positions[i] = tokens consumed by pattern element i (Java tokenPositions).
-		positions []int
-	}
-	needUni := m.needsUnification()
-	var rec func(ki, pos, prevSkip int, sp span, bag *unifyBag) (*matchResult, bool)
-	rec = func(ki, pos, prevSkip int, sp span, bag *unifyBag) (*matchResult, bool) {
-		if ki >= len(m.matchers) {
-			if sp.first < 0 || sp.last < 0 {
-				return nil, false
-			}
-			if needUni && !m.testUnification(bag) {
-				return nil, false
-			}
-			positions := sp.positions
-			if len(positions) == 0 {
-				positions = defaultPositions(len(m.matchers))
-			}
-			rm := m.createRuleMatch(sentence, tokens, positions, sp.first, sp.last, sp.firstMark, sp.lastMark)
-			if rm == nil {
-				return nil, false
-			}
-			fm, lm := sp.firstMark, sp.lastMark
-			if fm < 0 {
-				fm, lm = sp.first, sp.last
-			}
-			return &matchResult{
-				RM: rm, Positions: positions,
-				First: sp.first, Last: sp.last, FirstMark: fm, LastMark: lm,
-			}, true
-		}
-		matcher := m.matchers[ki]
-		pt := matcher.Base
-		if pt == nil {
-			return nil, false
-		}
-		// Java AbstractPatternRulePerformer: resolveReference + prepareAndGroup before testing.
-		lang := ""
-		if m.Rule != nil && m.Rule.PatternRule != nil {
-			lang = m.Rule.PatternRule.LanguageCode
-		}
-		matcher.ResolveReference(sp.first, tokens, lang)
-		matcher.PrepareAndGroup(sp.first, tokens, lang)
-		pt = matcher.GetPatternToken()
-		if pt == nil {
-			return nil, false
-		}
-		minOcc := pt.MinOccurrence
-		maxOcc := pt.MaxOccurrence
-		// Java PatternToken max="-1" means unlimited occurrences (LOOK_DOOR
-		// min=0 max=-1 chunk_re="[BI]-NP.*"). Soft previously clamped max<1 to 1.
-		if maxOcc < 0 {
-			// cap by remaining tokens so the occ loop stays finite
-			maxOcc = len(tokens) - pos
-			if maxOcc < minOcc {
-				maxOcc = minOcc
-			}
-		} else if maxOcc < 1 {
-			maxOcc = 1
-		}
-		if minOcc < 0 {
-			minOcc = 0
-		}
-		windowEnd := pos
-		if prevSkip < 0 {
-			windowEnd = len(tokens) - 1
-		} else {
-			windowEnd = pos + prevSkip
-			if windowEnd >= len(tokens) {
-				windowEnd = len(tokens) - 1
-			}
-		}
-		// Try occurrence counts from max down to min (include 0 = skip optional).
-		for occ := maxOcc; occ >= minOcc; occ-- {
-			if occ == 0 {
-				// Optional element absent: preserve the previous token's skip window
-				// so later required elements still see skip="N" (Java PatternRuleMatcher).
-				// Using pt.SkipNext here would drop e.g. couper skip=4 before dépenses.
-				nsp := sp
-				nsp.positions = append(append([]int(nil), sp.positions...), 0)
-				if res, ok := rec(ki+1, pos, prevSkip, nsp, bag); ok {
-					return res, true
-				}
-				continue
-			}
-			// Find a start in [pos, windowEnd] that yields occ consecutive matches.
-			for try := pos; try <= windowEnd && try < len(tokens); try++ {
-				// Java PatternRuleMatcher skips immunized; AbstractPatternRulePerformer (disambig) does not.
-				if m.SkipImmunized && tokens[try].IsImmunized() {
-					continue
-				}
-				// Java AbstractPatternRulePerformer.testAllReadings prevMatched:
-				// prevSkipNext > 0: prevElement.isMatchedByScopeNextException(each reading of current)
-				// → reject token position if any reading hits prev's scope=next exception.
-				if prevSkip > 0 && ki > 0 {
-					if prevM := m.matchers[ki-1]; prevM != nil && prevM.Base != nil &&
-						prevM.Base.HasNextException() &&
-						prevM.IsMatchedByNextException(tokens[try]) {
-						continue
-					}
-				}
-				// prevSkipNext == 0: current matcher's scope=next vs next token's first reading only
-				// (Java: tokens[tokenNo+1].getAnalyzedToken(0)), before accepting the match.
-				if prevSkip == 0 && pt.HasNextException() && try+1 < len(tokens) &&
-					matcher.IsMatchedByNextExceptionFirstReading(tokens[try+1]) {
-					continue
-				}
-				// When first element, Java still has firstMatchToken=-1 until match;
-				// re-resolve with try as provisional first if needed for refs on later elems only.
-				if matcher.IsMatchedReadings(tokens[try]) {
-					// Java: scope="previous" exception blocks when previous token matches
-					// (after anyMatched, still reject).
-					if pt.HasPreviousException() && try > 0 &&
-						matcher.IsMatchedByPreviousException(tokens[try-1]) {
-						continue
-					}
-					// consume occ consecutive
-					ok := true
-					end := try
-					for c := 1; c < occ; c++ {
-						j := try + c
-						if j >= len(tokens) || (m.SkipImmunized && tokens[j].IsImmunized()) || !matcher.IsMatchedReadings(tokens[j]) {
-							ok = false
-							break
-						}
-						end = j
-					}
-					if !ok {
-						continue
-					}
-					nsp := sp
-					if nsp.first < 0 {
-						nsp.first = try
-					}
-					nsp.last = end
-					if pt.InsideMarker {
-						if nsp.firstMark < 0 {
-							nsp.firstMark = try
-						}
-						nsp.lastMark = end
-					}
-					// Java: tokenPositions[i] = skipShift + 1 where
-					// skipShift = lastMatchToken - nextPos (nextPos is search start `pos`).
-					// Includes tokens skipped in the skip window before this match.
-					consumed := end - pos + 1
-					if consumed < 1 {
-						consumed = 1
-					}
-					nsp.positions = append(append([]int(nil), sp.positions...), consumed)
-					nbag := bag
-					if needUni {
-						nbag = bag.clone()
-						if nbag == nil {
-							nbag = newUnifyBag()
-						}
-						var spanAtrs []*languagetool.AnalyzedTokenReadings
-						for j := try; j <= end; j++ {
-							spanAtrs = append(spanAtrs, tokens[j])
-						}
-						nbag.record(matcher, pt, spanAtrs)
-					}
-					// Java: prevSkipNext = translateElementNo(getSkipNext())
-					if res, ok := rec(ki+1, end+1, m.translateElementNo(pt.SkipNext), nsp, nbag); ok {
-						return res, true
-					}
-					continue
-				}
-				if occ != 1 {
-					continue
-				}
-				// Faithful: one pattern token ↔ one analysis token (Java).
-				// No soft multi-token cover invents (CJK align, fused prep, etc.).
-			}
-		}
+	patternSize := len(m.matchers)
+	if patternSize == 0 || start < 0 || start >= len(tokens) {
 		return nil, false
 	}
-	var startBag *unifyBag
-	if needUni {
-		startBag = newUnifyBag()
+	lang := ""
+	if m.Rule != nil && m.Rule.PatternRule != nil {
+		lang = m.Rule.PatternRule.LanguageCode
 	}
-	return rec(0, start, 0, span{first: -1, last: -1, firstMark: -1, lastMark: -1}, startBag)
+	tokenPositions := make([]int, patternSize)
+	var bag *unifyBag
+	if m.needsUnification() {
+		bag = newUnifyBag()
+	}
+	minOccurCorr := m.minOccurCorrection()
+
+	var pTokenMatcher, prevTokenMatcher *PatternTokenMatcher
+	skipShiftTotal := 0
+	allElementsMatch := false
+	matchingTokens := 0
+	firstMatchToken := -1
+	lastMatchToken := -1
+	firstMarkerMatchToken := -1
+	lastMarkerMatchToken := -1
+	prevSkipNext := 0
+	minOccurSkip := 0
+
+	for k := 0; k < patternSize; k++ {
+		prevTokenMatcher = pTokenMatcher
+		pTokenMatcher = m.matchers[k]
+		if pTokenMatcher == nil {
+			return nil, false
+		}
+		pTokenMatcher.ResolveReference(firstMatchToken, tokens, lang)
+		nextPos := start + k + skipShiftTotal - minOccurSkip
+		// Java: if prevSkipNext + nextPos >= tokens.length || prevSkipNext < 0
+		if prevSkipNext+nextPos >= len(tokens) || prevSkipNext < 0 {
+			prevSkipNext = len(tokens) - (nextPos + 1)
+		}
+		maxTok := nextPos + prevSkipNext
+		// tokens.length - (patternSize - k) + minOccurCorrection
+		capTok := len(tokens) - (patternSize - k) + minOccurCorr
+		if maxTok > capTok {
+			maxTok = capTok
+		}
+		if maxTok >= len(tokens) {
+			maxTok = len(tokens) - 1
+		}
+		allElementsMatch = false
+		foundOptionalSkip := false
+		for mm := nextPos; mm <= maxTok && mm < len(tokens); mm++ {
+			allElementsMatch = m.testAllReadings(tokens, pTokenMatcher, prevTokenMatcher, mm, firstMatchToken, prevSkipNext, bag)
+
+			pt := pTokenMatcher.GetPatternToken()
+			if pt != nil && pt.MinOccurrence == 0 {
+				foundNext := false
+				for k2 := k + 1; k2 < patternSize; k2++ {
+					nextElement := m.matchers[k2]
+					if nextElement == nil {
+						continue
+					}
+					// Java does not resolveReference on look-ahead elements.
+					nextMatch := m.testAllReadings(tokens, nextElement, pTokenMatcher, mm, firstMatchToken, prevSkipNext, nil)
+					if nextMatch {
+						// optional absent: next element wants this token
+						allElementsMatch = true
+						minOccurSkip++
+						if matchingTokens < patternSize {
+							tokenPositions[matchingTokens] = 0
+							matchingTokens++
+						}
+						foundNext = true
+						foundOptionalSkip = true
+						break
+					}
+					npt := nextElement.GetPatternToken()
+					if npt != nil && npt.MinOccurrence > 0 {
+						break
+					}
+				}
+				if foundNext {
+					break
+				}
+			}
+
+			if allElementsMatch {
+				remainingElems := patternSize - k - 1
+				skipForMax := m.skipMaxTokens(tokens, pTokenMatcher, firstMatchToken, prevSkipNext, prevTokenMatcher, mm, remainingElems, bag)
+				lastMatchToken = mm + skipForMax
+				skipShift := lastMatchToken - nextPos
+				if matchingTokens < patternSize {
+					tokenPositions[matchingTokens] = skipShift + 1
+					matchingTokens++
+				}
+				if pt == nil {
+					pt = pTokenMatcher.GetPatternToken()
+				}
+				skipNext := 0
+				if pt != nil {
+					skipNext = pt.SkipNext
+				}
+				prevSkipNext = m.translateElementNo(skipNext)
+				skipShiftTotal += skipShift
+				if firstMatchToken == -1 {
+					firstMatchToken = lastMatchToken - skipForMax
+				}
+				if pt != nil && pt.InsideMarker {
+					if firstMarkerMatchToken == -1 {
+						firstMarkerMatchToken = lastMatchToken - skipForMax
+					}
+					lastMarkerMatchToken = lastMatchToken
+				}
+				// Unify already recorded in testAllReadings / skipMaxTokens via bag.
+				break
+			}
+		}
+		if foundOptionalSkip {
+			// optional skipped with positions=0; continue to next pattern element
+			continue
+		}
+		if !allElementsMatch {
+			return nil, false
+		}
+	}
+
+	if !allElementsMatch || matchingTokens != patternSize {
+		return nil, false
+	}
+	if m.needsUnification() && !m.testUnification(bag) {
+		return nil, false
+	}
+	if firstMatchToken < 0 || lastMatchToken < 0 {
+		return nil, false
+	}
+	positions := append([]int(nil), tokenPositions...)
+	rm := m.createRuleMatch(sentence, tokens, positions, firstMatchToken, lastMatchToken, firstMarkerMatchToken, lastMarkerMatchToken)
+	if rm == nil {
+		return nil, false
+	}
+	fm, lm := firstMarkerMatchToken, lastMarkerMatchToken
+	if fm < 0 {
+		fm, lm = firstMatchToken, lastMatchToken
+	}
+	return &matchResult{
+		RM: rm, Positions: positions,
+		First: firstMatchToken, Last: lastMatchToken, FirstMark: fm, LastMark: lm,
+	}, true
+}
+
+// minOccurCorrection ports AbstractPatternRulePerformer.getMinOccurrenceCorrection.
+func (m *PatternRuleMatcher) minOccurCorrection() int {
+	n := 0
+	for _, mt := range m.matchers {
+		if mt != nil && mt.Base != nil && mt.Base.MinOccurrence == 0 {
+			n++
+		}
+	}
+	return n
+}
+
+// testAllReadings ports AbstractPatternRulePerformer.testAllReadings (+ PatternRuleMatcher immunized).
+// bag may be nil (look-ahead checks must not pollute unification).
+func (m *PatternRuleMatcher) testAllReadings(
+	tokens []*languagetool.AnalyzedTokenReadings,
+	matcher, prevElement *PatternTokenMatcher,
+	tokenNo, firstMatchToken, prevSkipNext int,
+	bag *unifyBag,
+) bool {
+	if matcher == nil || tokenNo < 0 || tokenNo >= len(tokens) || tokens[tokenNo] == nil {
+		return false
+	}
+	// Java PatternRuleMatcher.testAllReadings: immunized → false
+	if m.SkipImmunized && tokens[tokenNo].IsImmunized() {
+		return false
+	}
+	// prevMatched: prev skip window + scope=next on current readings
+	if prevSkipNext > 0 && prevElement != nil && prevElement.Base != nil &&
+		prevElement.Base.HasNextException() &&
+		prevElement.IsMatchedByNextException(tokens[tokenNo]) {
+		return false
+	}
+	// prevSkipNext == 0: current matcher's scope=next vs next token first reading
+	pt := matcher.GetPatternToken()
+	if prevSkipNext == 0 && pt != nil && pt.HasNextException() && tokenNo+1 < len(tokens) &&
+		matcher.IsMatchedByNextExceptionFirstReading(tokens[tokenNo+1]) {
+		return false
+	}
+
+	lang := ""
+	if m.Rule != nil && m.Rule.PatternRule != nil {
+		lang = m.Rule.PatternRule.LanguageCode
+	}
+	matcher.PrepareAndGroup(firstMatchToken, tokens, lang)
+
+	if !matcher.IsMatchedReadings(tokens[tokenNo]) {
+		return false
+	}
+	// scope=previous after anyMatched (Java)
+	if pt != nil && pt.HasPreviousException() && tokenNo > 0 &&
+		matcher.IsMatchedByPreviousException(tokens[tokenNo-1]) {
+		return false
+	}
+	if bag != nil && pt != nil {
+		bag.record(matcher, pt, []*languagetool.AnalyzedTokenReadings{tokens[tokenNo]})
+	}
+	return true
+}
+
+// skipMaxTokens ports AbstractPatternRulePerformer.skipMaxTokens.
+func (m *PatternRuleMatcher) skipMaxTokens(
+	tokens []*languagetool.AnalyzedTokenReadings,
+	elem *PatternTokenMatcher,
+	firstMatchToken, prevSkipNext int,
+	prevElement *PatternTokenMatcher,
+	mm, remainingElems int,
+	bag *unifyBag,
+) int {
+	if elem == nil || elem.GetPatternToken() == nil {
+		return 0
+	}
+	maxOccurrences := elem.GetPatternToken().MaxOccurrence
+	if maxOccurrences == -1 {
+		maxOccurrences = len(tokens) // finite bound
+	}
+	if maxOccurrences < 1 {
+		maxOccurrences = 1
+	}
+	maxSkip := 0
+	for j := 1; j < maxOccurrences && mm+j < len(tokens)-remainingElems; j++ {
+		if m.testAllReadings(tokens, elem, prevElement, mm+j, firstMatchToken, prevSkipNext, bag) {
+			maxSkip++
+		} else {
+			break
+		}
+	}
+	return maxSkip
 }
 
 // createRuleMatch ports PatternRuleMatcher.createRuleMatch.
