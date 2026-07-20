@@ -102,8 +102,9 @@ func (f *ConvertToSentenceCaseFilter) Suggest(tokens []SentenceCaseToken) string
 	for i, tok := range tokens {
 		normalized := f.normalizedCase(tok)
 		// single-letter before "." → upper; "corp." → "Corp"
+		// Java: normalizedCase.length() == 1 (UTF-16 code units)
 		if i+1 < len(tokens) && tokens[i+1].Token == "." {
-			if len([]rune(normalized)) == 1 {
+			if utf16Len(normalized) == 1 {
 				normalized = strings.ToUpper(normalized)
 			} else if normalized == "corp" {
 				normalized = "Corp"

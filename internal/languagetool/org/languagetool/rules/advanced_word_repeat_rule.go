@@ -113,7 +113,8 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 		isWord := true
 		hasLemma := true
 
-		if len([]rune(token)) < 2 {
+		// Java: token.length() < 2 (UTF-16 code units, not Unicode code points)
+		if utf16LenAdv(token) < 2 {
 			isWord = false
 		}
 

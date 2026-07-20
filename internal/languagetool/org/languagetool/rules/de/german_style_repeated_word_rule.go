@@ -96,8 +96,8 @@ func isUnknownWordStyle(token *languagetool.AnalyzedTokenReadings) bool {
 		return false
 	}
 	s := token.GetToken()
-	// Java token.getToken().length() > 2 (UTF-16 units; same for DE letters).
-	return len([]rune(s)) > 2 && styleLettersRE.MatchString(s)
+	// Java token.getToken().length() > 2 (UTF-16 code units).
+	return utf16LenDE(s) > 2 && styleLettersRE.MatchString(s)
 }
 
 func (r *GermanStyleRepeatedWordRule) isTokenToCheck(tokens []*languagetool.AnalyzedTokenReadings, n int) bool {

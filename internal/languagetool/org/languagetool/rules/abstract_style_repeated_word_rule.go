@@ -186,7 +186,9 @@ func (r *AbstractStyleRepeatedWordRule) isTokenToCheckDefault(tokens []*language
 		return false
 	}
 	t := tokens[n].GetToken()
-	return len([]rune(t)) >= 2
+	// Java abstract isTokenToCheck is language-owned; default gate mirrors
+	// AdvancedWordRepeatRule's token.length() >= 2 (UTF-16).
+	return utf16Len(t) >= 2
 }
 
 func (r *AbstractStyleRepeatedWordRule) isPartOfWord(a, b string) bool {
