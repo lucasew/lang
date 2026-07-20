@@ -128,11 +128,15 @@ func TestStringTools_IsWhitespace(t *testing.T) {
 }
 
 func TestStringTools_IsPositiveNumber(t *testing.T) {
+	// Twin of StringToolsTest.testIsPositiveNumber + Java body ch >= '1' && ch <= '9'
 	require.Equal(t, true, IsPositiveNumber('3'))
+	require.Equal(t, true, IsPositiveNumber('1'))
+	require.Equal(t, true, IsPositiveNumber('9'))
 	require.Equal(t, false, IsPositiveNumber('a'))
-	// Java: Character.isDigit && ch != '0'
 	require.Equal(t, false, IsPositiveNumber('0'))
-	require.Equal(t, true, IsPositiveNumber('\u0967')) // DEVANAGARI DIGIT ONE
+	// Unicode digits are not positive numbers in Java (ASCII range only)
+	require.Equal(t, false, IsPositiveNumber('\u0967')) // DEVANAGARI DIGIT ONE
+	require.Equal(t, false, IsPositiveNumber('٠'))     // Arabic-Indic zero-ish digit
 }
 
 func TestStringTools_LoadLinesFromReader(t *testing.T) {

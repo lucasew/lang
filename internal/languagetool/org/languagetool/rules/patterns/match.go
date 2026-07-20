@@ -173,3 +173,10 @@ func (m *Match) CreateStateWithSynth(synth synthesis.Synthesizer, token *languag
 	}
 	return st
 }
+
+// CreateStateRange ports Match.createState(Synthesizer, AnalyzedTokenReadings[], index, next).
+func (m *Match) CreateStateRange(synth synthesis.Synthesizer, tokens []*languagetool.AnalyzedTokenReadings, index, next int) *MatchState {
+	st := NewMatchStateWithSynth(m, synth)
+	st.SetTokenRange(tokens, index, next)
+	return st
+}

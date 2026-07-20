@@ -284,10 +284,13 @@ func trimJava(s string) string {
 	return s[start:end]
 }
 
-// IsPositiveNumber ports StringTools.isPositiveNumber —
-// Character.isDigit(ch) && ch != '0'.
+// IsPositiveNumber ports StringTools.isPositiveNumber:
+//
+//	return ch >= '1' && ch <= '9';
+//
+// ASCII only — not invent Unicode digit classes (e.g. Devanagari).
 func IsPositiveNumber(ch rune) bool {
-	return unicode.IsDigit(ch) && ch != '0'
+	return ch >= '1' && ch <= '9'
 }
 
 func FilterXML(str string) string {

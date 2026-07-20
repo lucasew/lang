@@ -4,6 +4,7 @@ package patterns
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -100,28 +101,66 @@ func TestMatch_PreserveNoneMixed(t *testing.T) {
 	require.Equal(t, "HeLLo", ConvertCase(CaseNone, "HeLLo", "World"))
 }
 
-// Port of MatchTest.testSimpleIncludeFollowing
+// Twin of MatchTest.testSimpleIncludeFollowing (IncludeRange.FOLLOWING + skipped tokens).
+// Java uses SENT_START at index 0; index 1 is first word.
 func TestMatch_SimpleIncludeFollowing(t *testing.T) {
 	m := NewMatch("", "", false, "", "", CaseNone, false, false, IncludeFollowing)
 	require.Equal(t, IncludeFollowing, m.GetIncludeSkipped())
+	// tokens: SENT_START, w1, w2, w3, w4 — createState(..., 1, 3) → following w2 + w3
+	toks := matchTestTokens(
+		"SENT_START", "inflectedform11", "inflectedform2", "inflectedform122", "inflectedform122",
+	)
+	st := m.CreateStateRange(nil, toks, 1, 3)
+	require.Equal(t, []string{"inflectedform2 inflectedform122"}, st.ToFinalString(""))
 }
 
-// Port of MatchTest.testPOSIncludeFollowing
+// Twin of MatchTest.testPOSIncludeFollowing — POS is ignored when FOLLOWING.
 func TestMatch_POSIncludeFollowing(t *testing.T) {
-	m := NewMatch("NN", "", false, "", "", CaseNone, true, false, IncludeFollowing)
-	require.True(t, m.SetsPos())
-	require.Equal(t, "NN", m.GetPosTag())
+	m := NewMatch("POS2", "POS33", true, "", "", CaseNone, false, false, IncludeFollowing)
+	require.Equal(t, IncludeFollowing, m.GetIncludeSkipped())
+	toks := matchTestTokens(
+		"SENT_START", "inflectedform11", "inflectedform2", "inflectedform122", "inflectedform122",
+	)
+	st := m.CreateStateRange(nil, toks, 1, 3)
+	require.Equal(t, []string{"inflectedform2 inflectedform122"}, st.ToFinalString(""))
 }
 
-// Port of MatchTest.testIncludeAll
+// Twin of MatchTest.testIncludeAll
 func TestMatch_IncludeAll(t *testing.T) {
 	m := NewMatch("", "", false, "", "", CaseNone, false, false, IncludeAll)
 	require.Equal(t, IncludeAll, m.GetIncludeSkipped())
+	toks := matchTestTokens(
+		"SENT_START", "inflectedform11", "inflectedform2", "inflectedform122", "inflectedform122",
+	)
+	st := m.CreateStateRange(nil, toks, 1, 3)
+	require.Equal(t, []string{"inflectedform11 inflectedform2 inflectedform122"}, st.ToFinalString(""))
 }
 
-// Port of MatchTest.testPOSIncludeAll
+// Port of MatchTest.testPOSIncludeAll metadata (full synth form deferred without ManualSynthesizer).
 func TestMatch_POSIncludeAll(t *testing.T) {
 	m := NewMatch("VB.*", "", true, "", "", CaseNone, true, false, IncludeAll)
 	require.True(t, m.IsPostagRegexp())
 	require.NotNil(t, m.GetPosRegexMatch())
+}
+
+func matchTestTokens(surfaces ...string) []*languagetool.AnalyzedTokenReadings {
+	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(surfaces))
+	pos := 0
+	for _, s := range surfaces {
+		if s == "SENT_START" {
+			ss := languagetool.SentenceStartTagName
+			out = append(out, languagetool.NewAnalyzedTokenReadingsAt(
+				languagetool.NewAnalyzedToken("", &ss, nil), pos))
+			continue
+		}
+		// Mark non-first content tokens as whitespaceBefore for space joining.
+		atr := languagetool.NewAnalyzedTokenReadingsAt(
+			languagetool.NewAnalyzedToken(s, nil, nil), pos)
+		if len(out) > 1 {
+			atr.SetWhitespaceBefore(true)
+		}
+		out = append(out, atr)
+		pos += len(s) + 1
+	}
+	return out
 }
