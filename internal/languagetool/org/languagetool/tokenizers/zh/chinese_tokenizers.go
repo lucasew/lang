@@ -27,18 +27,51 @@ func (t *ChineseWordTokenizer) Tokenize(text string) []string {
 	return encodeChineseTerms(segmentRunes(text))
 }
 
+// segmentRunes is the incomplete no-HanLP path: CJK (and other non-Latin) chars
+// stay per-rune; consecutive Latin/digit runs stay whole (HanLP does the same
+// for "world"). Does not invent multi-character Chinese words.
 func segmentRunes(text string) []string {
 	if text == "" {
 		return nil
 	}
 	var out []string
+	var latin strings.Builder
+	flushLatin := func() {
+		if latin.Len() > 0 {
+			out = append(out, latin.String())
+			latin.Reset()
+		}
+	}
 	for _, r := range text {
 		if unicode.IsSpace(r) {
+			flushLatin()
 			continue
 		}
+		// Keep Latin letters and digits as multi-char runs (ASCII/Latin-1 style).
+		if isLatinOrDigit(r) {
+			latin.WriteRune(r)
+			continue
+		}
+		flushLatin()
 		out = append(out, string(r))
 	}
+	flushLatin()
 	return out
+}
+
+func isLatinOrDigit(r rune) bool {
+	if unicode.IsDigit(r) {
+		return true
+	}
+	// Basic Latin + Latin-1 supplement letters (HanLP keeps "world" as one term).
+	if r <= 0x024F && unicode.IsLetter(r) {
+		return true
+	}
+	// Common Latin extensions used in mixed ZH text
+	if r >= 0x1E00 && r <= 0x1EFF && unicode.IsLetter(r) {
+		return true
+	}
+	return false
 }
 
 // encodeChineseTerms maps surfaces to Java HanLP Term.toString form "surface/pos".

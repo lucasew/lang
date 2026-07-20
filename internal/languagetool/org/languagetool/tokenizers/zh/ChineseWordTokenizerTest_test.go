@@ -1,6 +1,6 @@
 package zh
 
-// Twin of ChineseWordTokenizerTest — HanLP deferred; soft lexicon + surface/pos encode.
+// Twin of ChineseWordTokenizerTest — HanLP deferred; incomplete per-rune CJK + Latin runs.
 import (
 	"strings"
 	"testing"
