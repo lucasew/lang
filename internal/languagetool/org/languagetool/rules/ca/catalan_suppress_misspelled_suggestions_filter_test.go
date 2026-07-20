@@ -54,6 +54,31 @@ func TestCatalanSuppressMisspelled_AcceptRuleMatch(t *testing.T) {
 	require.Equal(t, []string{"casa"}, out.GetSuggestedReplacements())
 }
 
+// Java isMisspelled receives the full suggestion (analyzeText), not invent per-token first.
+func TestCatalanSuppressMisspelled_FullSuggestionToChunkHook(t *testing.T) {
+	ClearCatalanFilterSpeller()
+	f := NewCatalanSuppressMisspelledSuggestionsFilter()
+	var seen []string
+	// Bypass null-dict early return via override that still uses HasIncorrectVerb then OK.
+	f.HasIncorrectVerb = func(s string) bool {
+		seen = append(seen, s)
+		return s == "va anar"
+	}
+	f.SetIsMisspelled(func(s string) bool {
+		if f.HasIncorrectVerb != nil && f.HasIncorrectVerb(s) {
+			return true
+		}
+		return false
+	})
+	m := rules.NewRuleMatch(rules.NewFakeRule("S"), nil, 0, 4, "msg")
+	m.SetSuggestedReplacements([]string{"va anar", "casa bona"})
+	out := f.AcceptRuleMatch(m, map[string]string{"suppressMatch": "true"}, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Equal(t, []string{"casa bona"}, out.GetSuggestedReplacements())
+	require.Contains(t, seen, "va anar", "chunk hook must see full multi-word suggestion")
+	require.Contains(t, seen, "casa bona")
+}
+
 func TestCatalanSuppressMisspelled_WithCADict(t *testing.T) {
 	ClearCatalanFilterSpeller()
 	t.Cleanup(ClearCatalanFilterSpeller)
