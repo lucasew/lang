@@ -1,8 +1,6 @@
 package patterns
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
@@ -241,77 +239,4 @@ func isDistanceValid(distancesBetweenMatches []int, maxDistanceTokens, minPrevMa
 		i++
 	}
 	return distance < maxDistanceTokens
-}
-
-// ConsistencyPatternRuleTransformer ports id feature grouping helpers.
-type ConsistencyPatternRuleTransformer struct {
-	LanguageCode string
-}
-
-func NewConsistencyPatternRuleTransformer(languageCode string) *ConsistencyPatternRuleTransformer {
-	return &ConsistencyPatternRuleTransformer{LanguageCode: languageCode}
-}
-
-// GetMainRuleId strips trailing _FEATURE style suffixes used by consistency rules.
-// Java: id up to last underscore-separated feature marker; we take prefix before last '_'.
-func GetMainRuleId(id string) string {
-	if i := strings.LastIndex(id, "_"); i > 0 {
-		return id[:i]
-	}
-	return id
-}
-
-// GetFeature returns the feature suffix after the main rule id.
-func GetFeature(id string) string {
-	if i := strings.LastIndex(id, "_"); i > 0 && i+1 < len(id) {
-		return id[i+1:]
-	}
-	return ""
-}
-
-// Transform groups by main rule id.
-func (t *ConsistencyPatternRuleTransformer) Transform(rules []*AbstractPatternRule) TransformedRules {
-	byMain := map[string][]*AbstractPatternRule{}
-	var order []string
-	for _, r := range rules {
-		if r == nil {
-			continue
-		}
-		main := GetMainRuleId(r.ID)
-		if _, ok := byMain[main]; !ok {
-			order = append(order, main)
-		}
-		byMain[main] = append(byMain[main], r)
-	}
-	var remaining []*AbstractPatternRule
-	var transformed []any
-	for _, main := range order {
-		group := byMain[main]
-		if len(group) > 1 {
-			transformed = append(transformed, &ConsistencyPatternRuleGroup{
-				MainID:       main,
-				LanguageCode: t.LanguageCode,
-				Rules:        group,
-			})
-		} else {
-			remaining = append(remaining, group...)
-		}
-	}
-	return NewTransformedRules(remaining, transformed)
-}
-
-// ConsistencyPatternRuleGroup wraps related consistency pattern rules.
-type ConsistencyPatternRuleGroup struct {
-	MainID       string
-	LanguageCode string
-	Rules        []*AbstractPatternRule
-}
-
-func (g *ConsistencyPatternRuleGroup) GetID() string                           { return g.MainID }
-func (g *ConsistencyPatternRuleGroup) GetWrappedRules() []*AbstractPatternRule { return g.Rules }
-func (g *ConsistencyPatternRuleGroup) GetDescription() string {
-	if len(g.Rules) == 0 {
-		return ""
-	}
-	return g.Rules[0].Description
 }

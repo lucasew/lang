@@ -158,15 +158,24 @@ func TestPatternRuleMatcher_UnificationAgreement(t *testing.T) {
 }
 
 func TestRepeatedAndConsistencyTransformers(t *testing.T) {
-	a1 := NewAbstractPatternRule("STYLE_A_feat1", "d", "en", nil, false)
-	a2 := NewAbstractPatternRule("STYLE_A_feat2", "d", "en", nil, false)
+	// Java: only ids starting with getConsistencyRulePrefix() are transformed.
+	// Convention PREFIX_GROUPOFRULES_FEATURE → main = parts[0]+"_"+parts[1].
+	a1 := NewAbstractPatternRule("PREFIXFORCONSISTENCYRULES_STYLE_feat1", "d", "en", nil, false)
+	a2 := NewAbstractPatternRule("PREFIXFORCONSISTENCYRULES_STYLE_feat2", "d", "en", nil, false)
 	b := NewAbstractPatternRule("OTHER", "d", "en", nil, false)
+	noPrefix := NewAbstractPatternRule("STYLE_A_feat1", "d", "en", nil, false)
 	ct := NewConsistencyPatternRuleTransformer("en")
-	rem, tr := TransformPatternRules([]*AbstractPatternRule{a1, a2, b}, ct)
-	require.Len(t, rem, 1)
+	rem, tr := TransformPatternRules([]*AbstractPatternRule{a1, a2, b, noPrefix}, ct)
+	require.Len(t, rem, 2)
 	require.Equal(t, "OTHER", rem[0].ID)
+	require.Equal(t, "STYLE_A_feat1", rem[1].ID)
 	require.Len(t, tr, 1)
+	cr, ok := tr[0].(*ConsistencyPatternRule)
+	require.True(t, ok)
+	require.Equal(t, "PREFIXFORCONSISTENCYRULES_STYLE", cr.GetID())
 
+	require.Equal(t, "PREFIXFORCONSISTENCYRULES_STYLE", GetMainRuleId("PREFIXFORCONSISTENCYRULES_STYLE_feat1"))
+	require.Equal(t, "feat1", GetFeature("PREFIXFORCONSISTENCYRULES_STYLE_feat1"))
 	require.Equal(t, "STYLE_A", GetMainRuleId("STYLE_A_feat1"))
 	require.Equal(t, "feat1", GetFeature("STYLE_A_feat1"))
 

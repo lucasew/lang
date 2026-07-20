@@ -124,6 +124,77 @@ func TestRepeatedPatternRule_MatchSentences(t *testing.T) {
 	require.Equal(t, 8, ms[0].FromPos)
 }
 
+// Java ConsistencyPatternRule: report minority features when counts differ.
+func TestConsistencyPatternRule_MatchSentences(t *testing.T) {
+	// PREFIX_GROUP_us matches "color"; PREFIX_GROUP_uk matches "colour"
+	// Document: color color colour → us=2, uk=1 → report minority "colour"
+	us := NewPatternRule("PREFIXFORCONSISTENCYRULES_SPELL_us", "en",
+		[]*PatternToken{Token("color")}, "spell", "US spelling", "")
+	uk := NewPatternRule("PREFIXFORCONSISTENCYRULES_SPELL_uk", "en",
+		[]*PatternToken{Token("colour")}, "spell", "UK spelling", "")
+	consist := &ConsistencyPatternRule{
+		MainID:       "PREFIXFORCONSISTENCYRULES_SPELL",
+		LanguageCode: "en",
+		PatternRules: []*PatternRule{us, uk},
+	}
+	s1 := languagetool.AnalyzePlain("color here.")
+	s2 := languagetool.AnalyzePlain("color again.")
+	s3 := languagetool.AnalyzePlain("colour odd.")
+	ms := consist.MatchSentences([]*languagetool.AnalyzedSentence{s1, s2, s3})
+	require.Len(t, ms, 1, "minority UK feature should be reported once")
+	require.Equal(t, "PREFIXFORCONSISTENCYRULES_SPELL_uk", ms[0].RuleID)
+	// "color here." (11) + "color again." (12) = 23 → colour at 23
+	require.Equal(t, 23, ms[0].FromPos)
+
+	// single feature only → no inconsistency
+	ms2 := consist.MatchSentences([]*languagetool.AnalyzedSentence{s1, s2})
+	require.Empty(t, ms2)
+
+	// tie (1 us, 1 uk) → report all
+	ms3 := consist.MatchSentences([]*languagetool.AnalyzedSentence{s1, s3})
+	require.Len(t, ms3, 2)
+}
+
+// RegisterGrammarXML wires consistency-prefix rules as text-level checkers.
+func TestRegisterGrammarXML_ConsistencyPatternRules(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="STYLE" name="Style">
+    <rule id="PREFIXFORCONSISTENCYRULES_SPELL_us">
+      <pattern><token>color</token></pattern>
+      <message>US spelling</message>
+    </rule>
+    <rule id="PREFIXFORCONSISTENCYRULES_SPELL_uk">
+      <pattern><token>colour</token></pattern>
+      <message>UK spelling</message>
+    </rule>
+    <rule id="PLAIN">
+      <pattern><token>zzz</token></pattern>
+      <message>plain</message>
+    </rule>
+  </category>
+</rules>`
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := RegisterGrammarXML(lt, xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Equal(t, 2, n) // one consistency group + PLAIN
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.Contains(t, ids, "PREFIXFORCONSISTENCYRULES_SPELL")
+	require.Contains(t, ids, "PLAIN")
+	// disable PLAIN noise
+	lt.DisableRule("PLAIN")
+	ms := lt.Check("color color colour")
+	require.NotEmpty(t, ms, "inconsistency should fire via text-level checker")
+	// minority feature rule id preserved on match
+	found := false
+	for _, m := range ms {
+		if m.RuleID == "PREFIXFORCONSISTENCYRULES_SPELL_uk" {
+			found = true
+		}
+	}
+	require.True(t, found, "expected UK minority match, got %#v", ms)
+}
+
 // Java premium= inheritance: rule > rulegroup > category > file (yes/no).
 func TestPatternRuleLoader_PremiumInheritance(t *testing.T) {
 	xml := `<?xml version="1.0"?>

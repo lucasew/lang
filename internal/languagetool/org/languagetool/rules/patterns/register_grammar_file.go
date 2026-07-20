@@ -5,6 +5,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // RegisterGrammarFile loads a grammar/rules XML file onto lt.
@@ -94,10 +95,11 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		})
 	}
 
-	// Java RepeatedPatternRuleTransformer: min_prev_matches>0 → text-level rule.
+	// Java transformPatternRules: RepeatedPatternRuleTransformer then
+	// ConsistencyPatternRuleTransformer (remaining stay sentence-level).
 	repeatedByID := map[string][]builtRule{}
 	var repeatedOrder []string
-	var sentenceLevel []builtRule
+	var afterRepeated []builtRule
 	for _, b := range built {
 		if b.pr.MinPrevMatches > 0 {
 			id := b.pr.GetID()
@@ -105,6 +107,23 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 				repeatedOrder = append(repeatedOrder, id)
 			}
 			repeatedByID[id] = append(repeatedByID[id], b)
+			continue
+		}
+		afterRepeated = append(afterRepeated, b)
+	}
+
+	consistPrefix := tools.ConsistencyRulePrefix
+	consistByMain := map[string][]builtRule{}
+	var consistOrder []string
+	var sentenceLevel []builtRule
+	for _, b := range afterRepeated {
+		id := b.pr.GetID()
+		if strings.HasPrefix(id, consistPrefix) {
+			main := GetMainRuleId(id)
+			if _, ok := consistByMain[main]; !ok {
+				consistOrder = append(consistOrder, main)
+			}
+			consistByMain[main] = append(consistByMain[main], b)
 			continue
 		}
 		sentenceLevel = append(sentenceLevel, b)
@@ -134,6 +153,36 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 				lt.MarkDefaultTempOff(id)
 			} else if ar0.DefaultOff {
 				lt.MarkDefaultOff(id)
+			}
+		}
+		n++
+	}
+
+	for _, main := range consistOrder {
+		group := consistByMain[main]
+		prs := make([]*PatternRule, 0, len(group))
+		ars := make([]*AbstractPatternRule, 0, len(group))
+		for _, b := range group {
+			prs = append(prs, b.pr)
+			ars = append(ars, b.ar)
+		}
+		consist := &ConsistencyPatternRule{
+			MainID:        main,
+			LanguageCode:  languageCode,
+			PatternRules:  prs,
+			AbstractRules: ars,
+		}
+		meta := group[0].meta
+		ar0 := group[0].ar
+		lt.AddTextLevelRuleChecker(main, func(sents []*languagetool.AnalyzedSentence) []languagetool.LocalMatch {
+			out := consist.MatchSentences(sents)
+			return enrichLocalMatches(out, "", meta)
+		})
+		if ar0 != nil {
+			if ar0.DefaultTempOff {
+				lt.MarkDefaultTempOff(main)
+			} else if ar0.DefaultOff {
+				lt.MarkDefaultOff(main)
 			}
 		}
 		n++
