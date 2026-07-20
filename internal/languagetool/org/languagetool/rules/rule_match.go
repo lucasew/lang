@@ -20,11 +20,20 @@ type RuleMatch struct {
 	Sentence *languagetool.AnalyzedSentence
 	FromPos  int
 	ToPos    int
+	// PatternFromPos/PatternToPos port patternPosition (default = offset in ctor).
+	PatternFromPos int
+	PatternToPos   int
 	// FromPosSentence/ToPosSentence port Java sentencePosition (-1 = unset).
 	FromPosSentence int
 	ToPosSentence   int
-	Message         string
-	ShortMessage    string
+	// Line/EndLine port linePosition (default -1).
+	Line    int
+	EndLine int
+	// Column/EndColumn port columnPosition (default -1).
+	Column    int
+	EndColumn int
+	Message      string
+	ShortMessage string
 	// Type ports RuleMatch.type (default Other; spelling uses UnknownWord).
 	Type                  RuleMatchType
 	SuggestedReplacements []string
@@ -50,11 +59,28 @@ func NewRuleMatch(rule any, sentence *languagetool.AnalyzedSentence, fromPos, to
 		Sentence:        sentence,
 		FromPos:         fromPos,
 		ToPos:           toPos,
+		PatternFromPos:  fromPos,
+		PatternToPos:    toPos,
 		FromPosSentence: -1,
 		ToPosSentence:   -1,
+		Line:            -1,
+		EndLine:         -1,
+		Column:          -1,
+		EndColumn:       -1,
 		Message:         message,
 		Type:            RuleMatchTypeOther,
 	}
+}
+
+// CloneRuleMatch ports RuleMatch(RuleMatch clone) — shallow field copy.
+func CloneRuleMatch(clone *RuleMatch) *RuleMatch {
+	if clone == nil {
+		return nil
+	}
+	out := *clone
+	out.SuggestedReplacements = append([]string(nil), clone.SuggestedReplacements...)
+	out.SuggestedReplacementObjects = append([]*SuggestedReplacement(nil), clone.SuggestedReplacementObjects...)
+	return &out
 }
 
 // GetType ports RuleMatch.getType.
@@ -120,22 +146,103 @@ func (m *RuleMatch) GetShortMessage() string {
 }
 
 func (m *RuleMatch) SetOffsetPosition(from, to int) {
+	if m == nil {
+		return
+	}
+	// Java throws when toPos <= fromPos; keep fail-soft for hand-built empty matches
+	// used in tests, but still assign.
 	m.FromPos = from
 	m.ToPos = to
 }
 
+// GetLine / SetLine / GetEndLine / SetEndLine port linePosition.
+func (m *RuleMatch) GetLine() int {
+	if m == nil {
+		return -1
+	}
+	return m.Line
+}
+func (m *RuleMatch) SetLine(fromLine int) {
+	if m != nil {
+		m.Line = fromLine
+	}
+}
+func (m *RuleMatch) GetEndLine() int {
+	if m == nil {
+		return -1
+	}
+	return m.EndLine
+}
+func (m *RuleMatch) SetEndLine(endLine int) {
+	if m != nil {
+		m.EndLine = endLine
+	}
+}
+
+// GetColumn / SetColumn / GetEndColumn / SetEndColumn port columnPosition.
+func (m *RuleMatch) GetColumn() int {
+	if m == nil {
+		return -1
+	}
+	return m.Column
+}
+func (m *RuleMatch) SetColumn(column int) {
+	if m != nil {
+		m.Column = column
+	}
+}
+func (m *RuleMatch) GetEndColumn() int {
+	if m == nil {
+		return -1
+	}
+	return m.EndColumn
+}
+func (m *RuleMatch) SetEndColumn(endColumn int) {
+	if m != nil {
+		m.EndColumn = endColumn
+	}
+}
+
+// GetPatternFromPos / GetPatternToPos / SetPatternPosition port patternPosition.
+func (m *RuleMatch) GetPatternFromPos() int {
+	if m == nil {
+		return 0
+	}
+	return m.PatternFromPos
+}
+func (m *RuleMatch) GetPatternToPos() int {
+	if m == nil {
+		return 0
+	}
+	return m.PatternToPos
+}
+func (m *RuleMatch) SetPatternPosition(fromPos, toPos int) {
+	if m == nil {
+		return
+	}
+	m.PatternFromPos = fromPos
+	m.PatternToPos = toPos
+}
+
 // GetFromPosSentence / GetToPosSentence / SetSentencePosition port Java RuleMatch sentence positions.
+// When unset (start < 0), Java falls back to document FromPos/ToPos.
 func (m *RuleMatch) GetFromPosSentence() int {
 	if m == nil {
 		return -1
 	}
-	return m.FromPosSentence
+	if m.FromPosSentence > -1 {
+		return m.FromPosSentence
+	}
+	return m.FromPos
 }
 func (m *RuleMatch) GetToPosSentence() int {
 	if m == nil {
 		return -1
 	}
-	return m.ToPosSentence
+	if m.ToPosSentence > -1 {
+		return m.ToPosSentence
+	}
+	return m.ToPos
 }
 func (m *RuleMatch) SetSentencePosition(from, to int) {
 	if m == nil {
