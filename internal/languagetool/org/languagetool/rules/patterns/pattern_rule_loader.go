@@ -1359,6 +1359,12 @@ func buildSuggestionsOutMsg(sugs []xmlMessage) string {
 	return b.String()
 }
 
+// PositionCorrectionsFromTokens ports PatternRuleHandler.prepareRule marker math.
+// Exported for disambiguation loaders that share the same prepareRule formula.
+func PositionCorrectionsFromTokens(tokens []*PatternToken) (startCorr, endCorr int) {
+	return positionCorrectionsFromTokens(tokens)
+}
+
 // positionCorrectionsFromTokens ports PatternRuleHandler.prepareRule marker math:
 //
 //	startPos = index of first InsideMarker token (tokens before marker)

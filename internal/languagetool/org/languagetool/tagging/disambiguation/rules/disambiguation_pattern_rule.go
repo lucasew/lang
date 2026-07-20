@@ -92,7 +92,8 @@ func (r *DisambiguationPatternRule) SetAntiPatterns(aps []*patterns.AbstractToke
 	r.AntiPatterns = append([]*patterns.AbstractTokenBasedRule(nil), aps...)
 }
 
-// Replace applies the disambiguation pattern to the sentence (simplified actions).
+// Replace applies the disambiguation pattern to the sentence.
+// Ports DisambiguationPatternRuleReplacer.replace + executeAction span math.
 func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
 	if sentence == nil || r == nil {
 		return sentence
@@ -100,51 +101,117 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 	if r.CanBeIgnoredFor(sentence) {
 		return sentence
 	}
-	// Strict POS: untagged tokens are UNKNOWN only (Java with a real tagger).
-	// Soft grammar keeps the non-strict matcher so open-class postags soft-match.
-	matcher := patterns.NewPatternRuleMatcherStrict(r.AbstractTokenBasedRule)
-	matches, err := matcher.Match(sentence)
-	if err != nil || len(matches) == 0 {
+	base := r.AbstractTokenBasedRule
+	if base == nil {
 		return sentence
 	}
-	// work on a copy of token slice
-	tokens := append([]*languagetool.AnalyzedTokenReadings(nil), sentence.GetTokens()...)
+	// Java DisambiguationPatternRuleReplacer: doMatch consumer + executeAction.
+	// DoMatch provides tokenPositions (includes skip gaps for startPositionCorrection).
 	nws := sentence.GetTokensWithoutWhitespace()
-	for _, m := range matches {
-		// Java keepByDisambig: suppress when an anti-pattern overlaps this match.
-		if !r.keepByDisambig(sentence, m.FromPos, m.ToPos) {
-			continue
+	changed := false
+	perf := patterns.NewAbstractPatternRulePerformer(base, nil)
+	perf.DoMatch(sentence, func(positions []int, firstMatch, lastMatch, firstMark, lastMark int) {
+		if firstMatch < 0 || firstMatch >= len(nws) || lastMatch < 0 || lastMatch >= len(nws) {
+			return
 		}
-		// map match positions back to non-whitespace tokens by start pos
-		first, last := -1, -1
-		for i, t := range nws {
-			if t.GetStartPos() == m.FromPos {
-				first = i
-			}
-			if t.GetEndPos() == m.ToPos || t.GetStartPos()+len(t.GetToken()) == m.ToPos {
-				last = i
-			}
+		// Java keepByDisambig on full pattern char offsets (firstMatch…lastMatch)
+		fromPos := nws[firstMatch].GetStartPos()
+		toPos := nws[lastMatch].GetEndPos()
+		if !r.keepByDisambig(sentence, fromPos, toPos) {
+			return
 		}
-		if first < 0 {
-			// fallback: find by start pos range
-			for i, t := range nws {
-				if t.GetStartPos() >= m.FromPos && (first < 0 || t.GetStartPos() < nws[first].GetStartPos()) {
-					first = i
-				}
-				if t.GetStartPos() < m.ToPos {
-					last = i
-				}
-			}
+		if lastMark < 0 {
+			lastMark = lastMatch
 		}
-		if first < 0 || last < 0 {
-			continue
+		// Java executeAction(firstMatchToken, lastMarkerMatchToken, tokenPositions)
+		first, last := r.actionSpan(firstMatch, lastMark, nws, positions)
+		if first < 0 || last < first {
+			return
 		}
 		r.applyAction(nws, first, last)
+		changed = true
+	})
+	if !changed {
+		return sentence
 	}
-	// rebuild sentence from original token order if nws is a view of tokens
-	// GetTokensWithoutWhitespace returns subset; mutations on readings objects are shared.
-	_ = tokens
 	return languagetool.NewAnalyzedSentence(sentence.GetTokens())
+}
+
+// indexByCharSpan finds first/last non-whitespace token indices for [fromPos,toPos].
+func indexByCharSpan(nws []*languagetool.AnalyzedTokenReadings, fromPos, toPos int) (first, last int) {
+	first, last = -1, -1
+	for i, t := range nws {
+		if t == nil {
+			continue
+		}
+		if t.GetStartPos() == fromPos {
+			first = i
+		}
+		if t.GetEndPos() == toPos {
+			last = i
+		}
+	}
+	if first >= 0 && last >= 0 {
+		return first, last
+	}
+	// range fallback
+	for i, t := range nws {
+		if t == nil {
+			continue
+		}
+		if t.GetStartPos() >= fromPos && (first < 0 || t.GetStartPos() < nws[first].GetStartPos()) {
+			first = i
+		}
+		if t.GetStartPos() < toPos {
+			last = i
+		}
+	}
+	return first, last
+}
+
+// actionSpan ports executeAction startPositionCorrection using tokenPositions
+// when available; falls back to unit-position sum when positions are nil.
+// lastMarker is Java lastMarkerMatchToken passed as lastMatchToken.
+func (r *DisambiguationPatternRule) actionSpan(firstMatchToken, lastMarker int, nws []*languagetool.AnalyzedTokenReadings, tokenPositions []int) (first, last int) {
+	startCorr := 0
+	if r.PatternRule != nil {
+		startCorr = r.StartPositionCorrection
+		if startCorr == 0 && r.EndPositionCorrection == 0 && len(r.Tokens) > 0 {
+			startCorr, _ = patterns.PositionCorrectionsFromTokens(r.Tokens)
+		}
+	}
+	// Java: if startPositionCorrection > 0 { correctedStPos--; for l<=corr: += positions[l] }
+	from := firstMatchToken
+	if startCorr > 0 {
+		corrected := -1
+		if len(tokenPositions) > 0 {
+			lim := startCorr
+			if lim > len(tokenPositions)-1 {
+				lim = len(tokenPositions) - 1
+			}
+			for l := 0; l <= lim; l++ {
+				corrected += tokenPositions[l]
+			}
+		} else {
+			// unit positions: sum(1 for 0..startCorr) - 1 = startCorr
+			corrected = startCorr
+		}
+		from = firstMatchToken + corrected
+	}
+	if from < 0 {
+		from = 0
+	}
+	if from >= len(nws) {
+		return -1, -1
+	}
+	to := lastMarker
+	if to < from {
+		to = from
+	}
+	if to >= len(nws) {
+		to = len(nws) - 1
+	}
+	return from, to
 }
 
 // keepByDisambig ports DisambiguationPatternRuleReplacer.keepByDisambig:

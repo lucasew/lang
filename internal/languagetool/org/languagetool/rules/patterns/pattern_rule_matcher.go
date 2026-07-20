@@ -304,18 +304,33 @@ func (m *PatternRuleMatcher) testUnification(bag *unifyBag) bool {
 	return true
 }
 
+// matchResult ports one successful doMatch consumer invocation.
+type matchResult struct {
+	RM                               *rules.RuleMatch
+	Positions                        []int
+	First, Last, FirstMark, LastMark int
+}
+
 // matchFrom tries to match the pattern starting at token index start.
 // Optional elements (min=0) backtrack so soft POS over-acceptance does not
 // greedily steal tokens needed by later pattern elements (e.g. NL FULL_SENTENCE_001).
 func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, tokens []*languagetool.AnalyzedTokenReadings, start int) (*rules.RuleMatch, bool) {
+	res, ok := m.matchFromResult(sentence, tokens, start)
+	if !ok || res == nil {
+		return nil, false
+	}
+	return res.RM, true
+}
+
+func (m *PatternRuleMatcher) matchFromResult(sentence *languagetool.AnalyzedSentence, tokens []*languagetool.AnalyzedTokenReadings, start int) (*matchResult, bool) {
 	type span struct {
 		first, last, firstMark, lastMark int
 		// positions[i] = tokens consumed by pattern element i (Java tokenPositions).
 		positions []int
 	}
 	needUni := m.needsUnification()
-	var rec func(ki, pos, prevSkip int, sp span, bag *unifyBag) (*rules.RuleMatch, bool)
-	rec = func(ki, pos, prevSkip int, sp span, bag *unifyBag) (*rules.RuleMatch, bool) {
+	var rec func(ki, pos, prevSkip int, sp span, bag *unifyBag) (*matchResult, bool)
+	rec = func(ki, pos, prevSkip int, sp span, bag *unifyBag) (*matchResult, bool) {
 		if ki >= len(m.matchers) {
 			if sp.first < 0 || sp.last < 0 {
 				return nil, false
@@ -331,7 +346,14 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 			if rm == nil {
 				return nil, false
 			}
-			return rm, true
+			fm, lm := sp.firstMark, sp.lastMark
+			if fm < 0 {
+				fm, lm = sp.first, sp.last
+			}
+			return &matchResult{
+				RM: rm, Positions: positions,
+				First: sp.first, Last: sp.last, FirstMark: fm, LastMark: lm,
+			}, true
 		}
 		matcher := m.matchers[ki]
 		pt := matcher.Base
@@ -382,8 +404,8 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 				// Using pt.SkipNext here would drop e.g. couper skip=4 before dépenses.
 				nsp := sp
 				nsp.positions = append(append([]int(nil), sp.positions...), 0)
-				if rm, ok := rec(ki+1, pos, prevSkip, nsp, bag); ok {
-					return rm, true
+				if res, ok := rec(ki+1, pos, prevSkip, nsp, bag); ok {
+					return res, true
 				}
 				continue
 			}
@@ -443,7 +465,13 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 						}
 						nsp.lastMark = end
 					}
-					consumed := end - try + 1
+					// Java: tokenPositions[i] = skipShift + 1 where
+					// skipShift = lastMatchToken - nextPos (nextPos is search start `pos`).
+					// Includes tokens skipped in the skip window before this match.
+					consumed := end - pos + 1
+					if consumed < 1 {
+						consumed = 1
+					}
 					nsp.positions = append(append([]int(nil), sp.positions...), consumed)
 					nbag := bag
 					if needUni {
@@ -457,8 +485,8 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 						}
 						nbag.record(matcher, pt, spanAtrs)
 					}
-					if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp, nbag); ok {
-						return rm, true
+					if res, ok := rec(ki+1, end+1, pt.SkipNext, nsp, nbag); ok {
+						return res, true
 					}
 					continue
 				}

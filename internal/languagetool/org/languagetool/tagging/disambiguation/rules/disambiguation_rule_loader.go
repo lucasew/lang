@@ -328,6 +328,12 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	// default Java: REPLACE when only postag set
 	rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, nil, action)
 	rule.UnifierConfig = cfg
+	// Java prepareRule: start/end position corrections from <marker>
+	if rule.PatternRule != nil {
+		startCorr, endCorr := patterns.PositionCorrectionsFromTokens(tokens)
+		rule.StartPositionCorrection = startCorr
+		rule.EndPositionCorrection = endCorr
+	}
 	if action == ActionUnify {
 		for _, f := range strings.Split(xr.Disambig.Features, ",") {
 			f = strings.TrimSpace(f)

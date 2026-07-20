@@ -32,6 +32,7 @@ func NewAbstractPatternRulePerformer(rule *AbstractTokenBasedRule, unifier *Unif
 
 // DoMatch scans the sentence and invokes consumer for each match (no RuleMatch creation).
 // Java AbstractPatternRulePerformer.doMatch: token hints, anchor starts, matchFrom.
+// SkipImmunized is false (disambig performer path; PatternRuleMatcher sets true).
 func (p *AbstractPatternRulePerformer) DoMatch(sentence *languagetool.AnalyzedSentence, consumer MatchConsumer) {
 	if sentence == nil || consumer == nil || len(p.matchers) == 0 {
 		return
@@ -44,43 +45,15 @@ func (p *AbstractPatternRulePerformer) DoMatch(sentence *languagetool.AnalyzedSe
 		}
 	}
 	tokens := sentence.GetTokensWithoutWhitespace()
-	// reuse PatternRuleMatcher for limit/anchor/matchFrom (same as Java inheritance)
-	prm := &PatternRuleMatcher{Rule: p.Rule, matchers: p.matchers}
+	// reuse PatternRuleMatcher for limit/anchor/matchFromResult (Java inheritance)
+	prm := &PatternRuleMatcher{Rule: p.Rule, matchers: p.matchers, SkipImmunized: false}
 	limit := prm.matchStartLimit(len(tokens))
 	starts := prm.matchStartIndices(sentence, limit)
 	for _, i := range starts {
-		rm, ok := prm.matchFrom(sentence, tokens, i)
-		if !ok || rm == nil {
+		res, ok := prm.matchFromResult(sentence, tokens, i)
+		if !ok || res == nil {
 			continue
 		}
-		// recover indices from positions
-		first, last := -1, -1
-		for ti, t := range tokens {
-			if t.GetStartPos() == rm.FromPos {
-				first = ti
-			}
-			if t.GetEndPos() == rm.ToPos {
-				last = ti
-			}
-		}
-		if first < 0 || last < 0 {
-			// approximate by range when exact end markers missing
-			for ti, t := range tokens {
-				if t.GetStartPos() >= rm.FromPos && first < 0 {
-					first = ti
-				}
-				if t.GetStartPos() < rm.ToPos {
-					last = ti
-				}
-			}
-		}
-		if first < 0 || last < 0 {
-			continue
-		}
-		positions := make([]int, last-first+1)
-		for j := range positions {
-			positions[j] = 1
-		}
-		consumer(positions, first, last, first, last)
+		consumer(res.Positions, res.First, res.Last, res.FirstMark, res.LastMark)
 	}
 }
