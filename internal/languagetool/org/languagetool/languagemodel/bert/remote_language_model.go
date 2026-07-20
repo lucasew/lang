@@ -3,6 +3,7 @@ package bert
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 // Request ports RemoteLanguageModel.Request — mask a span with candidate fill-ins.
@@ -38,24 +39,63 @@ func (r Request) Equal(o Request) bool {
 	return true
 }
 
+// HashCode ports Request.hashCode (Objects.hash(text, start, end, candidates)).
+func (r Request) HashCode() int {
+	h := 1
+	h = 31*h + stringHashBERT(r.Text)
+	h = 31*h + r.Start
+	h = 31*h + r.End
+	ch := 1
+	for _, c := range r.Candidates {
+		ch = 31*ch + stringHashBERT(c)
+	}
+	h = 31*h + ch
+	return h
+}
+
 func (r Request) cacheKey() string {
 	return fmt.Sprintf("%s\x00%d\x00%d\x00%v", r.Text, r.Start, r.End, r.Candidates)
 }
 
-// Scorer scores candidates for a masked span (higher is better).
-// Remote gRPC is deferred; inject HTTP/local models here.
-type Scorer func(req Request) ([]float64, error)
-
-// RemoteLanguageModel ports org.languagetool.languagemodel.bert.RemoteLanguageModel
-// with a pluggable Scorer and in-memory cache (no gRPC dependency).
-type RemoteLanguageModel struct {
-	Scorer Scorer
-	mu     sync.Mutex
-	cache  map[string][]float64
-	// MaxCache bounds entries (default 1000).
-	MaxCache int
+func stringHashBERT(s string) int {
+	h := 0
+	for _, r := range s {
+		if r >= 0x10000 {
+			v := r - 0x10000
+			h = 31*h + int(0xD800+(v>>10))
+			h = 31*h + int(0xDC00+(v&0x3FF))
+		} else {
+			h = 31*h + int(r)
+		}
+	}
+	return h
 }
 
+// Scorer scores candidates for a masked span (higher is better).
+// Java uses BertLm gRPC; Go injects the transport here (fail closed when nil).
+type Scorer func(req Request) ([]float64, error)
+
+// BatchScorer scores a batch of uncached requests (Java stub.batchScore).
+// When nil, BatchScore falls back to per-request Scorer.
+type BatchScorer func(reqs []Request) ([][]float64, error)
+
+// RemoteLanguageModel ports org.languagetool.languagemodel.bert.RemoteLanguageModel.
+// Cache max size 1000 matches Guava CacheBuilder.maximumSize(1000).
+// gRPC channel wiring is supplied via Scorer/BatchScorer (no invented ranks).
+type RemoteLanguageModel struct {
+	Scorer      Scorer
+	BatchScorer BatchScorer
+	mu          sync.Mutex
+	cache       map[string][]float64
+	// MaxCache bounds entries (default 1000).
+	MaxCache int
+	// Host/Port/UseSSL record Java constructor channel config (for diagnostics).
+	Host   string
+	Port   int
+	UseSSL bool
+}
+
+// NewRemoteLanguageModel builds a model with a pluggable Scorer (tests / local inject).
 func NewRemoteLanguageModel(scorer Scorer) *RemoteLanguageModel {
 	return &RemoteLanguageModel{
 		Scorer:   scorer,
@@ -64,7 +104,21 @@ func NewRemoteLanguageModel(scorer Scorer) *RemoteLanguageModel {
 	}
 }
 
-// Score returns one score per candidate.
+// NewRemoteLanguageModelEndpoint ports RemoteLanguageModel(host, port, useSSL, …).
+// Certificate paths are accepted for API parity; TLS/gRPC is the Scorer's job.
+// Without a Scorer, Score fails closed.
+func NewRemoteLanguageModelEndpoint(host string, port int, useSSL bool, _clientKey, _clientCert, _rootCert string) *RemoteLanguageModel {
+	return &RemoteLanguageModel{
+		Host:     host,
+		Port:     port,
+		UseSSL:   useSSL,
+		cache:    map[string][]float64{},
+		MaxCache: 1000,
+	}
+}
+
+// Score ports score(Request) with cache-aside (batch path is the primary Java cache writer;
+// single-score caching is a safe superset for callers that only use Score).
 func (m *RemoteLanguageModel) Score(req Request) ([]float64, error) {
 	if m == nil {
 		return nil, fmt.Errorf("nil RemoteLanguageModel")
@@ -79,31 +133,110 @@ func (m *RemoteLanguageModel) Score(req Request) ([]float64, error) {
 
 	if m.Scorer == nil {
 		// Fail closed: Java needs a remote BERT service — do not invent edit-distance ranks.
-		// Tests/callers may pass EditDistanceScorer explicitly when that stand-in is intended.
 		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer configured")
 	}
 	scores, err := m.Scorer(req)
 	if err != nil {
 		return nil, err
 	}
+	m.putCache(req, scores)
+	return append([]float64(nil), scores...), nil
+}
+
+func (m *RemoteLanguageModel) putCache(req Request, scores []float64) {
+	if m == nil {
+		return
+	}
+	key := req.cacheKey()
 	m.mu.Lock()
+	defer m.mu.Unlock()
 	if m.MaxCache > 0 && len(m.cache) >= m.MaxCache {
-		// drop one
 		for k := range m.cache {
 			delete(m.cache, k)
 			break
 		}
 	}
 	m.cache[key] = append([]float64(nil), scores...)
-	m.mu.Unlock()
-	return scores, nil
 }
 
-// BatchScore scores many requests, using the cache when possible.
+// BatchScore ports batchScore(requests, 0) — no deadline.
 func (m *RemoteLanguageModel) BatchScore(reqs []Request) ([][]float64, error) {
-	out := make([][]float64, len(reqs))
-	for i, r := range reqs {
-		s, err := m.Score(r)
+	return m.BatchScoreTimeout(reqs, 0)
+}
+
+// BatchScoreTimeout ports batchScore(List<Request>, long timeoutMilliseconds).
+// Separates cached vs uncached, scores uncached as a batch, merges in order, fills cache.
+func (m *RemoteLanguageModel) BatchScoreTimeout(reqs []Request, timeoutMilliseconds int64) ([][]float64, error) {
+	if m == nil {
+		return nil, fmt.Errorf("nil RemoteLanguageModel")
+	}
+	cached := make(map[int][]float64)
+	var uncached []Request
+	for i, req := range reqs {
+		key := req.cacheKey()
+		m.mu.Lock()
+		v, ok := m.cache[key]
+		m.mu.Unlock()
+		if ok {
+			cached[i] = append([]float64(nil), v...)
+		} else {
+			uncached = append(uncached, req)
+		}
+	}
+
+	var nonCache [][]float64
+	if len(uncached) > 0 {
+		var err error
+		if timeoutMilliseconds > 0 {
+			type result struct {
+				scores [][]float64
+				err    error
+			}
+			ch := make(chan result, 1)
+			go func() {
+				s, e := m.scoreUncached(uncached)
+				ch <- result{s, e}
+			}()
+			select {
+			case r := <-ch:
+				nonCache, err = r.scores, r.err
+			case <-time.After(time.Duration(timeoutMilliseconds) * time.Millisecond):
+				return nil, fmt.Errorf("deadline exceeded")
+			}
+		} else {
+			nonCache, err = m.scoreUncached(uncached)
+		}
+		if err != nil {
+			return nil, err
+		}
+		for j, re := range nonCache {
+			m.putCache(uncached[j], re)
+		}
+	}
+
+	all := make([][]float64, len(reqs))
+	j := 0
+	for i := range reqs {
+		if v, ok := cached[i]; ok {
+			all[i] = v
+		} else {
+			all[i] = nonCache[j]
+			j++
+		}
+	}
+	return all, nil
+}
+
+func (m *RemoteLanguageModel) scoreUncached(uncached []Request) ([][]float64, error) {
+	if m.BatchScorer != nil {
+		return m.BatchScorer(uncached)
+	}
+	if m.Scorer == nil {
+		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer configured")
+	}
+	out := make([][]float64, len(uncached))
+	for i, r := range uncached {
+		s, err := m.Scorer(r)
 		if err != nil {
 			return out, err
 		}
@@ -112,7 +245,7 @@ func (m *RemoteLanguageModel) BatchScore(reqs []Request) ([][]float64, error) {
 	return out, nil
 }
 
-// Shutdown clears resources (cache).
+// Shutdown ports shutdown() — clears cache (Java shuts down the gRPC channel).
 func (m *RemoteLanguageModel) Shutdown() {
 	if m == nil {
 		return
@@ -123,6 +256,7 @@ func (m *RemoteLanguageModel) Shutdown() {
 }
 
 // EditDistanceScorer ranks candidates closer to the masked original higher.
+// Not used by Java RemoteLanguageModel — test/local inject only; never the default.
 func EditDistanceScorer(req Request) ([]float64, error) {
 	return editDistanceScores(req), nil
 }
