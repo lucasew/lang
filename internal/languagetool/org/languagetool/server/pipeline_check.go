@@ -95,8 +95,8 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		_ = commandline.RegisterHybridDisambiguator(lt, base, nil)
 	}
 
-	// Official grammar/style/variant files (Java getRuleFileNames) when enabled.
-	if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
+	// Official grammar/style/variant files (Java getRuleFileNames); default on.
+	if languagetool.UseUpstreamGrammar() {
 		for _, rpath := range commandline.DiscoverLanguagePatternRuleFiles(nil, lang) {
 			_, _ = patterns.RegisterGrammarFile(lt, rpath, lang)
 		}

@@ -1,7 +1,6 @@
 package de
 
 import (
-	"os"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -68,16 +67,11 @@ func TestWireGermanRuntimeResources_NoPanic(t *testing.T) {
 
 func TestWireGermanUpstreamGrammar_Gated(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("de")
-	// Without env: no invent load of multi-MB grammar in unit tests.
-	prev := os.Getenv("LANG_USE_UPSTREAM_GRAMMAR")
-	_ = os.Unsetenv("LANG_USE_UPSTREAM_GRAMMAR")
-	t.Cleanup(func() {
-		if prev != "" {
-			_ = os.Setenv("LANG_USE_UPSTREAM_GRAMMAR", prev)
-		}
-	})
+	// Explicit opt-out: unit tests may skip multi-MB grammar (LANG_USE_UPSTREAM_GRAMMAR=0).
+	// Default is on (Java getRuleFileNames); this asserts the off path only.
+	t.Setenv("LANG_USE_UPSTREAM_GRAMMAR", "0")
 	before := len(lt.GetAllRegisteredRuleIDs())
 	WireGermanUpstreamGrammar(lt)
 	after := len(lt.GetAllRegisteredRuleIDs())
-	require.Equal(t, before, after, "must not load grammar without LANG_USE_UPSTREAM_GRAMMAR=1")
+	require.Equal(t, before, after, "must not load grammar when LANG_USE_UPSTREAM_GRAMMAR=0")
 }

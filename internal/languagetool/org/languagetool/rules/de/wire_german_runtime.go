@@ -1,7 +1,6 @@
 package de
 
 import (
-	"os"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -74,12 +73,12 @@ func WireGermanRemoteRuleFilters() {
 }
 
 // WireGermanUpstreamGrammar loads official grammar.xml / style.xml when
-// LANG_USE_UPSTREAM_GRAMMAR=1 (same gate as CLI core_rules_checker). Incomplete
-// without the env flag is OK — do not invent soft token packs instead.
+// UseUpstreamGrammar (default on; LANG_USE_UPSTREAM_GRAMMAR=0 to skip).
+// Same gate as CLI core_rules_checker. Do not invent soft token packs instead.
 // Variant from lt language code: DE/AT also load de-DE-AT/grammar.xml (Java
 // GermanyGerman / AustrianGerman / NonSwissGerman); CH does not.
 func WireGermanUpstreamGrammar(lt *languagetool.JLanguageTool) {
-	if lt == nil || os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") != "1" {
+	if lt == nil || !languagetool.UseUpstreamGrammar() {
 		return
 	}
 	lang := lt.GetLanguageCode()

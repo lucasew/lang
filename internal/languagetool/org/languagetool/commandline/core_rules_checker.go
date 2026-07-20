@@ -169,9 +169,10 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			en.RegisterPickyEnglishRules(lt)
 		}
 		// Soft grammar packs (testdata/*-soft.xml) are not loaded — faithful port only.
-		// Official grammar.xml when LANG_USE_UPSTREAM_GRAMMAR=1. PatternRuleLoader
-		// attaches registered RuleFilters; unknown filter classes skip the rule
-		// (fail-closed). <antipattern> is loaded and applied in PatternRule.Match.
+		// Official grammar.xml by default (Java getRuleFileNames); opt out with
+		// LANG_USE_UPSTREAM_GRAMMAR=0. PatternRuleLoader attaches registered
+		// RuleFilters; unknown filter classes skip the rule (fail-closed).
+		// <antipattern> is loaded and applied in PatternRule.Match.
 		base := lang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
 			base = lang[:i]
@@ -258,7 +259,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		}
 		// Pattern rule files after multitoken speller so MultitokenSpellerFilter can use the dict.
 		// Java Language.getRuleFileNames(): grammar, style, custom, then variant files.
-		if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
+		if languagetool.UseUpstreamGrammar() {
 			for _, rpath := range DiscoverLanguagePatternRuleFiles(opts, lang) {
 				_, _ = patterns.RegisterGrammarFile(lt, rpath, lang)
 			}

@@ -48,7 +48,7 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	// Spelling dict + multitoken + synthesizer + disambiguator for grammar filters /
 	// pattern match (Java Language defaults). Fail-closed without resources.
 	WireGermanRuntimeResourcesFor(lt, variant)
-	// Official grammar.xml / style.xml only when LANG_USE_UPSTREAM_GRAMMAR=1.
+	// Official grammar.xml / style.xml when UseUpstreamGrammar (default on).
 	WireGermanUpstreamGrammar(lt)
 	// Java RemoteRuleFilters.load(de) — pattern XML when present (fail-closed if missing).
 	WireGermanRemoteRuleFilters()

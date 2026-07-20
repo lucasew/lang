@@ -12,7 +12,7 @@ import (
 
 // RegisterCoreUkrainianRules installs Java Ukrainian.getRelevantRules ports
 // (layout, token agreement, replace, speller). Pattern grammar.xml still
-// loaded separately via GetRuleFileNames when LANG_USE_UPSTREAM_GRAMMAR=1.
+// loaded separately via GetRuleFileNames when UseUpstreamGrammar (default on).
 func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
