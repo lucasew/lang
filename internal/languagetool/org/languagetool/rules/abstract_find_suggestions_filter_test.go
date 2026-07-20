@@ -69,6 +69,30 @@ func TestAbstractFindSuggestionsFilter_SuppressEmpty(t *testing.T) {
 }
 
 func TestEqualWithoutDiacritics(t *testing.T) {
+	// Java StringTools.removeDiacritics + equalsIgnoreCase (NFD Mn strip).
 	require.True(t, equalWithoutDiacritics("café", "cafe"))
+	require.True(t, equalWithoutDiacritics("CAFÉ", "cafe"))
+	require.True(t, equalWithoutDiacritics("niño", "nino")) // ñ → n via NFD
 	require.False(t, equalWithoutDiacritics("casa", "cosa"))
+}
+
+func TestAbstractFindSuggestionsFilter_RemoveSuggestionsRegexpCaseSensitive(t *testing.T) {
+	// Java UNICODE_CASE without CASE_INSENSITIVE → case-sensitive matches().
+	f := &AbstractFindSuggestionsFilter{
+		SpellingSuggestions: func(atr *languagetool.AnalyzedTokenReadings) []string {
+			return []string{"Bad", "good"}
+		},
+		Tag: func(word string) *languagetool.AnalyzedTokenReadings {
+			return languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(word, ptrFS("NCMS000"), nil))
+		},
+	}
+	tok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("gxd", ptrFS("UNKNOWN"), nil))
+	tok.SetStartPos(0)
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 3, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"wordFrom": "1", "desiredPostag": "N.*", "removeSuggestionsRegexp": "bad",
+	}, []*languagetool.AnalyzedTokenReadings{tok}, nil)
+	require.NotNil(t, out)
+	// "Bad" must NOT be removed by case-insensitive invent of "bad"
+	require.Equal(t, []string{"Bad", "good"}, out.GetSuggestedReplacements())
 }

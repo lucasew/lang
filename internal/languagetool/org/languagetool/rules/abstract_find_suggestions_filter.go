@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -99,8 +98,10 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 
 		if generateSuggestions {
 			if removeSuggestionsRegexp != "" {
-				regexpPattern, _ = regexp.Compile("(?i)" + removeSuggestionsRegexp)
-				// Java UNICODE_CASE; Go (?i) approximates case fold
+				// Java: Pattern.compile(removeSuggestionsRegexp, Pattern.UNICODE_CASE)
+				// UNICODE_CASE alone is still case-sensitive (no CASE_INSENSITIVE) — do not invent (?i).
+				// Matcher.matches() → full region via \A(?:…)\z.
+				regexpPattern, _ = regexp.Compile(`\A(?:` + removeSuggestionsRegexp + `)\z`)
 			}
 			suggestions := f.SpellingSuggestions(atrWord)
 			usedPriorityPostagPos := 0
@@ -118,7 +119,7 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 						analyzedList = []*languagetool.AnalyzedTokenReadings{atr}
 					}
 				} else if f.MatchesDesiredPostag != nil {
-					// fallback without tagger: synthetic empty readings path via MatchesDesiredPostag
+					// Optional inject when Tag unset (tests); Java always has getTagger().
 					if f.MatchesDesiredPostag(suggestion, desiredPostag) && suggestion != atrWord.GetToken() {
 						if !containsStrFS(replacements, suggestion) && !containsStrFS(replacements, strings.ToLower(suggestion)) {
 							if !diacriticsMode || equalWithoutDiacritics(suggestion, atrWord.GetToken()) {
@@ -126,7 +127,8 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 									repl := suggestion
 									if isWordAllupper {
 										repl = strings.ToUpper(repl)
-									} else if isWordCapitalized {
+									}
+									if isWordCapitalized {
 										repl = tools.UppercaseFirstChar(repl)
 									}
 									replacements = append(replacements, repl)
@@ -169,14 +171,18 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 							}
 						}
 					}
-					// synthesizer path
+					// synthesizer path — Java accumulates synthesizedSuggestions across readings
+					// and re-adds the whole list to replacements2 each reading (bug-for-bug).
 					if !used && f.Synthesize != nil {
 						var synthesizedSuggestions []string
 						for _, at := range analyzedSuggestion.GetReadings() {
-							if at == nil || at.GetLemma() == nil {
+							if at == nil {
 								continue
 							}
-							lemma := *at.GetLemma()
+							lemma := ""
+							if at.GetLemma() != nil {
+								lemma = *at.GetLemma()
+							}
 							if _, ok := usedLemmas[lemma]; ok {
 								continue
 							}
@@ -195,8 +201,6 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 								}
 								replacements2 = append(replacements2, replacement)
 							}
-							// reset for next reading's accumulate — Java rebuilds list per reading
-							synthesizedSuggestions = nil
 						}
 					}
 				}
@@ -334,36 +338,11 @@ func resolveWordFromFS(wordFrom string, match *RuleMatch, patternTokens []*langu
 	return patternTokens[idx]
 }
 
+// equalWithoutDiacritics ports AbstractFindSuggestionsFilter.equalWithoutDiacritics:
+// StringTools.removeDiacritics(s).equalsIgnoreCase(StringTools.removeDiacritics(t)).
+// Do not invent a hand-written accent map.
 func equalWithoutDiacritics(s, t string) bool {
-	return strings.EqualFold(stripDiacriticsLight(s), stripDiacriticsLight(t))
-}
-
-func stripDiacriticsLight(s string) string {
-	var b strings.Builder
-	for _, r := range strings.ToLower(s) {
-		switch r {
-		case 'á', 'à', 'â', 'ä', 'ã':
-			b.WriteByte('a')
-		case 'é', 'è', 'ê', 'ë':
-			b.WriteByte('e')
-		case 'í', 'ì', 'î', 'ï':
-			b.WriteByte('i')
-		case 'ó', 'ò', 'ô', 'ö', 'õ':
-			b.WriteByte('o')
-		case 'ú', 'ù', 'û', 'ü':
-			b.WriteByte('u')
-		case 'ç':
-			b.WriteByte('c')
-		case 'ñ':
-			b.WriteByte('n')
-		case '·':
-			// keep mid-dot for ela geminada comparisons lightly
-			b.WriteRune(r)
-		default:
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
+	return tools.EqualsIgnoreCaseAndDiacritics(s, t)
 }
 
 func containsStrFS(list []string, s string) bool {
@@ -473,6 +452,3 @@ func abs(x int) int {
 	}
 	return x
 }
-
-// keep unicode import used for potential future isLetter checks
-var _ = unicode.IsLetter
