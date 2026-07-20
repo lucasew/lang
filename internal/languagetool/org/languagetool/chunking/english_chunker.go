@@ -8,16 +8,15 @@ import (
 
 // EnglishChunker ports org.languagetool.chunking.EnglishChunker.
 //
-// Java runs OpenNLP ChunkerME + POS + tokenizer models (en-chunker.bin etc.).
-// Those maxent models are not executed here yet (assets may exist under
-// third_party/opennlp-models). Until a real OpenNLP runtime is wired, we only:
-//  1) map the *existing* LT POS tag on each non-whitespace token to a coarse
-//     phrase type (NP/VP/PP/ADVP/PRT/O) — first non-boundary reading only
-//     (Java feeds OpenNLP a single POS, not soft multi-tag invent);
-//  2) convert phrase types to B-/I- BIO tags;
-//  3) run EnglishChunkFilter (faithful Java twin for singular/plural NP).
+// When third_party/opennlp-models/en-chunker.bin is present, runs OpenNLP
+// ChunkerME (GIS maxent + beam) on non-whitespace LT tokens using their first
+// POS reading, then EnglishChunkFilter. Java also re-tokenizes and re-POS-tags
+// with OpenNLP models — still incomplete vs full Java when only the chunk
+// model is wired (no invent; POS→BIO fallback if the model is missing).
 //
-// This is incomplete vs OpenNLP, not soft invent of OpenNLP boundaries.
+// Fallback without model:
+//  1) map first LT POS → phrase type → B-/I- BIO;
+//  2) EnglishChunkFilter (singular/plural NP).
 type EnglishChunker struct {
 	Filter *EnglishChunkFilter
 	// AssignBasicNP enables POS→phrase BIO when AssignBasicNP is true (default).
@@ -41,6 +40,10 @@ func NewEnglishChunker() *EnglishChunker {
 // Java OpenNLP chunker runs on non-whitespace tokens only.
 func (c *EnglishChunker) AddChunkTags(tokens []*languagetool.AnalyzedTokenReadings) {
 	if c == nil || len(tokens) == 0 {
+		return
+	}
+	// Prefer OpenNLP ChunkerME when en-chunker.bin is available (Java path).
+	if c.tryOpenNLPChunks(tokens) {
 		return
 	}
 	var idxs []int
