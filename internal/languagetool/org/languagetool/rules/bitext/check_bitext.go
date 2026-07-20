@@ -26,11 +26,28 @@ func CheckBitext(sourceText, targetText string, rulesList []BitextRule) []Bitext
 	return CheckBitextAnalyzed(src, trg, targetText, rulesList)
 }
 
+// CheckBitextFull ports Tools.checkBitext including target monolingual matches.
+// mono are trgLt.checkAnalyzedSentence results (document/sentence offsets on target);
+// bitext rules are appended after Java column/line adjustment.
+// Order matches Java: monolingual list first, then each bitext match.
+func CheckBitextFull(src, trg *languagetool.AnalyzedSentence, targetText string, mono []languagetool.LocalMatch, rulesList []BitextRule) []languagetool.LocalMatch {
+	out := append([]languagetool.LocalMatch(nil), mono...)
+	for _, m := range CheckBitextAnalyzed(src, trg, targetText, rulesList) {
+		out = append(out, languagetool.LocalMatch{
+			FromPos: m.FromPos,
+			ToPos:   m.ToPos,
+			Message: m.Message,
+			RuleID:  m.RuleID,
+			// Column/line surface not on LocalMatch; FromPos/ToPos carry span.
+		})
+	}
+	return out
+}
+
 // CheckBitextAnalyzed ports the bitext-rule half of Tools.checkBitext after
 // srcLt.getAnalyzedSentence / trgLt.getAnalyzedSentence.
 // targetText is used for Java endColumn default (trg.length()+1 when endColumn < 0).
-// Note: Java also runs target monolingual checkAnalyzedSentence first; callers
-// that need that path must merge monolingual matches themselves.
+// Prefer CheckBitextFull when target monolingual checkAnalyzedSentence is available.
 func CheckBitextAnalyzed(src, trg *languagetool.AnalyzedSentence, targetText string, rulesList []BitextRule) []BitextMatch {
 	if rulesList == nil {
 		rulesList = RelevantBitextRules()

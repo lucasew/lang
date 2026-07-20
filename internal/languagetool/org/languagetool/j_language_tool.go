@@ -976,6 +976,51 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 	return lt.checkInternal(text, nil)
 }
 
+// CheckAnalyzedSentence ports JLanguageTool.checkAnalyzedSentence for one pre-analyzed
+// sentence (ParagraphHandling.NORMAL, checkRemoteRules ignored — remote rules not in wall).
+// Java: skip TextLevelRule; filter ignoreRule on matches; SameRuleGroupFilter.
+// Used by Tools.checkBitext for target monolingual rules before bitext matches.
+func (lt *JLanguageTool) CheckAnalyzedSentence(sentence *AnalyzedSentence) []LocalMatch {
+	if lt == nil || sentence == nil {
+		return nil
+	}
+	// Java ONLYPARA → empty (sentence rules skipped).
+	if lt.paraModeOrNormal() == ParagraphOnlyPara {
+		return nil
+	}
+	if lt.Mode == ModeTextLevelOnly {
+		return nil
+	}
+	var out []LocalMatch
+	sentTypoApos := sentenceHasTypographicApostrophe(sentence)
+	for _, c := range lt.checkers {
+		if c == nil {
+			continue
+		}
+		for _, m := range c(sentence) {
+			m.HasTypographicApostropheInSentence = sentTypoApos
+			// Single-sentence document: FromPos already sentence-local (Java getText offsets).
+			out = append(out, m)
+		}
+	}
+	if len(out) == 0 {
+		return out
+	}
+	// Java second pass: filter ignoreRule on match rule IDs.
+	kept := out[:0]
+	for _, m := range out {
+		if lt.ignoreLocalMatch(m) {
+			continue
+		}
+		kept = append(kept, m)
+	}
+	out = kept
+	out = FilterMatchesForLevelAndToneTags(out, lt.Level, lt.ToneTags)
+	out = lt.applyRulePriorities(out)
+	out = CleanSameRuleGroupLocalMatches(out)
+	return out
+}
+
 // checkInternal is shared by Check (plain) and CheckAnnotated (with original mapping).
 func (lt *JLanguageTool) checkInternal(text string, mapOriginal mapOriginalFn) []LocalMatch {
 	if lt == nil {
