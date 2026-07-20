@@ -4,12 +4,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
 )
 
 // FrenchMultitokenSpeller ports org.languagetool.rules.fr.FrenchMultitokenSpeller.
 // Java loads: /fr/multiwords.txt, /spelling_global.txt, /fr/hyphenated_words.txt
+// via MultitokenSpeller → language.prepareLineForSpeller on each line.
 type FrenchMultitokenSpeller struct {
 	*multitoken.MultitokenSpeller
 }
@@ -22,7 +24,10 @@ var FrenchMultitokenResourcePaths = []string{
 }
 
 func NewFrenchMultitokenSpeller() *FrenchMultitokenSpeller {
-	return &FrenchMultitokenSpeller{MultitokenSpeller: multitoken.NewMultitokenSpeller()}
+	sp := multitoken.NewMultitokenSpeller()
+	// Java MultitokenSpeller.initMultitokenSpeller → language.prepareLineForSpeller
+	sp.PrepareLine = language.FrenchPrepareLineForSpeller
+	return &FrenchMultitokenSpeller{MultitokenSpeller: sp}
 }
 
 // FrenchMultitokenSpellerInstance mirrors Java INSTANCE.

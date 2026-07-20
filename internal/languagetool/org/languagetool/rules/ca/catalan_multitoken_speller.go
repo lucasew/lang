@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
 )
@@ -26,6 +27,8 @@ var CatalanMultitokenResourcePaths = []string{
 func NewCatalanMultitokenSpeller() *CatalanMultitokenSpeller {
 	sp := multitoken.NewMultitokenSpeller()
 	c := &CatalanMultitokenSpeller{MultitokenSpeller: sp}
+	// Java MultitokenSpeller.initMultitokenSpeller → language.prepareLineForSpeller
+	sp.PrepareLine = language.CatalanPrepareLineForSpeller
 	// Java: this.speller = CatalanMorfologikMultitokenSpeller.getSpeller();
 	// getAdditionalSuggestions → speller.getSuggestions
 	sp.GetAdditionalSuggestions = func(originalWord string) []multitoken.WeightedSuggestion {
