@@ -22,11 +22,9 @@ type MultitokenSpellerFilter struct {
 	// AtSentenceStart when true capitalizes lower-case suggestions.
 	AtSentenceStart bool
 	// CheckSpelling enables Java en/de/pt/nl areTokensAcceptedBySpeller path.
-	// When false (default), areTokensAcceptedBySpeller stays false like non-en/de/pt/nl.
+	// When false (default), areTokensAcceptedBySpeller stays false (fr/es/ca/…).
 	// When true and IsMisspelled is nil, acceptedBySpeller is true (null speller → !false).
 	// When true and IsMisspelled is set, acceptedBySpeller = !isMisspelled(error).
-	// If IsMisspelled is set without CheckSpelling, CheckSpelling is treated as true
-	// (host wired a speller for the en/de/pt/nl path).
 	CheckSpelling bool
 }
 
@@ -48,8 +46,7 @@ func (f *MultitokenSpellerFilter) AcceptRuleMatch(match *rules.RuleMatch, origin
 	// Java: areTokensAcceptedBySpeller = false unless shortCode in {en,de,pt,nl}
 	// then = !isMisspelled(underlinedError, lang).
 	acceptedBySpeller := false
-	checkSpell := f.CheckSpelling || f.IsMisspelled != nil
-	if checkSpell {
+	if f.CheckSpelling {
 		// null SpellingCheckRule → isMisspelled false → accepted true
 		acceptedBySpeller = !f.isMisspelled(originalError)
 	}

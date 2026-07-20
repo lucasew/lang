@@ -12,8 +12,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
+	rulesca "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	ruleses "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
 	rulesfr "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
 	rulesga "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ga"
 	rulesnl "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
@@ -274,6 +276,16 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if strings.EqualFold(base, "pt") {
 				wirePortugueseMultitokenSpeller(opts)
 			}
+			// French/Spanish/Catalan MultitokenSpeller.INSTANCE (areTokensAcceptedBySpeller=false).
+			if strings.EqualFold(base, "fr") {
+				wireFrenchMultitokenSpeller(opts)
+			}
+			if strings.EqualFold(base, "es") {
+				wireSpanishMultitokenSpeller(opts)
+			}
+			if strings.EqualFold(base, "ca") {
+				wireCatalanMultitokenSpeller(opts)
+			}
 		}
 		// Pattern rule files after multitoken speller so MultitokenSpellerFilter can use the dict.
 		// Java Language.getRuleFileNames(): grammar, style, custom, then variant files.
@@ -417,7 +429,43 @@ func wirePortugueseMultitokenSpeller(opts *CommandLineOptions) {
 	if rulespt.FilterDictAvailable() {
 		isMiss = rulespt.FilterDictIsMisspelled
 	}
-	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
+	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, isMiss, true)
+}
+
+// wireFrenchMultitokenSpeller ports French.getMultitokenSpeller
+// (/fr/multiwords.txt + /spelling_global.txt + /fr/hyphenated_words.txt).
+// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "fr".
+func wireFrenchMultitokenSpeller(opts *CommandLineOptions) {
+	_ = opts
+	sp := rulesfr.DiscoverAndLoadFrenchMultitokenSpeller()
+	if sp == nil || sp.MultitokenSpeller == nil {
+		return
+	}
+	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, nil, false)
+}
+
+// wireSpanishMultitokenSpeller ports Spanish.getMultitokenSpeller
+// (/es/multiwords.txt + /spelling_global.txt + /es/hyphenated_words.txt).
+// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "es".
+func wireSpanishMultitokenSpeller(opts *CommandLineOptions) {
+	_ = opts
+	sp := ruleses.DiscoverAndLoadSpanishMultitokenSpeller()
+	if sp == nil || sp.MultitokenSpeller == nil {
+		return
+	}
+	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, nil, false)
+}
+
+// wireCatalanMultitokenSpeller ports Catalan.getMultitokenSpeller
+// (/ca/multiwords.txt + /spelling_global.txt + /ca/hyphenated_words.txt + Morfologik extra).
+// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "ca".
+func wireCatalanMultitokenSpeller(opts *CommandLineOptions) {
+	_ = opts
+	sp := rulesca.DiscoverAndLoadCatalanMultitokenSpeller()
+	if sp == nil || sp.MultitokenSpeller == nil {
+		return
+	}
+	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, nil, false)
 }
 
 // resolveFalseFriendsFile prefers LANG_FALSEFRIENDS_FILE, then data-dir official names.

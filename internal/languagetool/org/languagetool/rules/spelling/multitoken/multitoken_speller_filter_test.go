@@ -75,23 +75,37 @@ func TestMultitokenSpellerFilter_AcceptedBySpellerGate(t *testing.T) {
 	// Still may suggest; just ensure path does not panic
 	_ = f.AcceptRuleMatch(m, "New Yrok")
 
-	// Wired speller with all tokens "accepted" (none misspelled)
+	// Wired speller with all tokens "accepted" (none misspelled) — en/de/pt/nl path
 	calls := 0
 	f2 := &MultitokenSpellerFilter{
-		Speller: sp,
+		Speller:       sp,
+		CheckSpelling: true,
 		IsMisspelled: func(tok string) bool {
 			calls++
 			return false // all tokens known
 		},
 	}
-	// acceptedBySpeller = !false = true because IsMisspelled is set
+	// acceptedBySpeller = !false = true when CheckSpelling
 	_ = f2.AcceptRuleMatch(m, "New Yrok")
 	require.Greater(t, calls, 0, "must tokenize and probe tokens")
 
 	// One bad token → acceptedBySpeller=false
 	f3 := &MultitokenSpellerFilter{
-		Speller:      sp,
-		IsMisspelled: func(tok string) bool { return tok == "Yrok" },
+		Speller:       sp,
+		CheckSpelling: true,
+		IsMisspelled:  func(tok string) bool { return tok == "Yrok" },
 	}
 	_ = f3.AcceptRuleMatch(m, "New Yrok")
+
+	// IsMisspelled without CheckSpelling (fr/es/ca) must not probe tokens
+	calls = 0
+	f4 := &MultitokenSpellerFilter{
+		Speller: sp,
+		IsMisspelled: func(tok string) bool {
+			calls++
+			return true
+		},
+	}
+	_ = f4.AcceptRuleMatch(m, "New Yrok")
+	require.Equal(t, 0, calls, "non-en/de/pt/nl must leave acceptedBySpeller=false without probing")
 }

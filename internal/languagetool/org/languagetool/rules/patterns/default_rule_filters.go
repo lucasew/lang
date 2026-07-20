@@ -206,18 +206,29 @@ func (underlineSpacesRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, argumen
 }
 
 var (
-	multitokenSpellerMu      sync.RWMutex
-	defaultMultitokenSpeller *multitoken.MultitokenSpeller
-	defaultIsMisspelled      func(string) bool
+	multitokenSpellerMu        sync.RWMutex
+	defaultMultitokenSpeller   *multitoken.MultitokenSpeller
+	defaultIsMisspelled        func(string) bool
+	defaultMultitokenCheckSpell bool
 )
 
 // SetDefaultMultitokenSpeller wires MultitokenSpellerFilter's dictionary backend
 // (Java: Language.getMultitokenSpeller). isMisspelled may be nil.
+// checkSpelling is true only for Java shortCodes en/de/pt/nl (areTokensAcceptedBySpeller path).
+// Use SetDefaultMultitokenSpellerWithOptions for the full gate; this helper defaults checkSpelling=true
+// for backward-compatible en/de/pt/nl call sites that omit the flag.
 func SetDefaultMultitokenSpeller(sp *multitoken.MultitokenSpeller, isMisspelled func(string) bool) {
+	SetDefaultMultitokenSpellerWithOptions(sp, isMisspelled, true)
+}
+
+// SetDefaultMultitokenSpellerWithOptions wires getMultitokenSpeller + optional isMisspelled
+// and the MultitokenSpellerFilter shortCode spelling gate (en/de/pt/nl only).
+func SetDefaultMultitokenSpellerWithOptions(sp *multitoken.MultitokenSpeller, isMisspelled func(string) bool, checkSpelling bool) {
 	multitokenSpellerMu.Lock()
 	defer multitokenSpellerMu.Unlock()
 	defaultMultitokenSpeller = sp
 	defaultIsMisspelled = isMisspelled
+	defaultMultitokenCheckSpell = checkSpelling
 }
 
 // multitokenSpellerRuleFilter ports MultitokenSpellerFilter onto the optional default speller.
@@ -244,6 +255,7 @@ func (multitokenSpellerRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map
 	multitokenSpellerMu.RLock()
 	sp := defaultMultitokenSpeller
 	isMiss := defaultIsMisspelled
+	checkSpell := defaultMultitokenCheckSpell
 	multitokenSpellerMu.RUnlock()
 	if sp == nil {
 		// Empty suggestions → Java returns null (do not invent replacements).
@@ -251,12 +263,11 @@ func (multitokenSpellerRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map
 	}
 	// Java MultitokenSpellerFilter: capitalize when patternTokenPos is first content token
 	// (skip SENT_START + leading punctuation / non-word).
-	// CheckSpelling: SetDefaultMultitokenSpeller is only wired for en/de/pt/nl (Java shortCode gate).
-	// Null isMiss → isMisspelled false → areTokensAcceptedBySpeller true (Java null SpellingCheckRule).
+	// CheckSpelling: en/de/pt/nl only; fr/es/ca keep areTokensAcceptedBySpeller=false.
 	inner := &multitoken.MultitokenSpellerFilter{
 		Speller:         sp,
 		IsMisspelled:    isMiss,
-		CheckSpelling:   true,
+		CheckSpelling:   checkSpell,
 		AtSentenceStart: multitokenAtSentenceStart(match, patternTokenPos),
 	}
 	original := ""
