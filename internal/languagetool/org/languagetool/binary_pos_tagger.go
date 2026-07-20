@@ -4,11 +4,18 @@ import (
 	"strings"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	catok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ca"
+	estok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/es"
+	frtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/fr"
+	pttok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pt"
 )
 
 // RegisterBinaryPOSTagger installs lt.TagWord from a Morfologik POS dictionary
 // (CFSA2 or FSA5), matching Java BaseTagger/MorfologikTagger lookup behavior.
 // Returns false if the dictionary cannot be opened.
+//
+// Also wires language word-tokenizer IsTagged* hooks (Java *Tagger.INSTANCE used
+// by *WordTokenizer.wordsToAdd) for FR/ES/PT/CA when those modules are present.
 func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	if lt == nil || dictPath == "" {
 		return false
@@ -17,8 +24,39 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	if err != nil || d == nil {
 		return false
 	}
-	lt.TagWord = BinaryPOSTagWord(d)
+	tw := BinaryPOSTagWord(d)
+	lt.TagWord = tw
+	wireTokenizerIsTaggedFromPOS(lt.GetLanguageCode(), tw)
 	return true
+}
+
+// wireTokenizerIsTaggedFromPOS ports Java *WordTokenizer → *Tagger.INSTANCE.isTagged.
+func wireTokenizerIsTaggedFromPOS(langCode string, tw func(token string) []TokenTag) {
+	if tw == nil {
+		return
+	}
+	isTagged := func(s string) bool {
+		for _, t := range tw(s) {
+			if t.POS != "" {
+				return true
+			}
+		}
+		return false
+	}
+	base := langCode
+	if i := strings.IndexByte(langCode, '-'); i > 0 {
+		base = langCode[:i]
+	}
+	switch strings.ToLower(base) {
+	case "fr":
+		frtok.IsTaggedFR = isTagged
+	case "es":
+		estok.IsTaggedES = isTagged
+	case "pt":
+		pttok.IsTaggedPT = isTagged
+	case "ca":
+		catok.IsTaggedCA = isTagged
+	}
 }
 
 // BinaryPOSTagWord returns a TagWord inject from an opened POS dictionary.
