@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,4 +21,17 @@ func TestRegisterCoreBelarusianRules_Replace(t *testing.T) {
 		}
 	}
 	require.True(t, found, "%+v", m)
+}
+
+// Java Belarusian.getRelevantRules exact ID set.
+func TestRegisterCoreBelarusianRules_JavaRelevantOnly(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("be")
+	RegisterCoreBelarusianRules(lt)
+	require.ElementsMatch(t, language.BelarusianRelevantRuleIDs(), lt.GetAllRegisteredRuleIDs())
+	for _, bad := range []string{
+		"UNPAIRED_BRACKETS", "EMPTY_LINE", "WHITESPACE_PUNCTUATION",
+		"PUNCTUATION_PARAGRAPH_END", "WORD_REPEAT_RULE",
+	} {
+		require.NotContains(t, lt.GetAllRegisteredRuleIDs(), bad)
+	}
 }

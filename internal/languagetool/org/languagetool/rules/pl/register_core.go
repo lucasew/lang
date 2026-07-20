@@ -8,35 +8,40 @@ import (
 )
 
 // RegisterCorePolishRules ports Polish.getRelevantRules / createDefaultSpellingRule.
-// Java: WordRepeatRule (WORD_REPEAT_RULE) + PolishWordRepeatRule (PL_WORD_REPEAT) —
-// no WordRepeatBeginning.
+// Java list only — no invent SharedLayout extras (no double-punct / empty-line /
+// long-paragraph / whitespace-before-punct / invent PL_SENTENCE_WHITESPACE).
 func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	lt.PriorityForId = language.PolishPriorityForId
-	rules.RegisterSharedLayoutRules(lt, "pl")
-	// Java order: WordRepeatRule then later PolishWordRepeatRule (Advanced).
+
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
+
+	up := rules.NewUppercaseSentenceStartRule(nil, "pl")
+	lt.AddRuleChecker(up.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	// Java WordRepeatRule then later PolishWordRepeatRule (Advanced).
 	gwr := rules.NewWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
 	lt.AddRuleChecker(gwr.GetID(), rules.AsSentenceCheckerSimple(gwr.Match))
-	pwr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
-	lt.AddRuleChecker(pwr.GetID(), rules.AsSentenceCheckerSimple(pwr.Match))
 
-	// Official replace + coherency tables (embedded from upstream).
-	sr := NewSimpleReplaceRule(nil)
-	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
-	wc := NewWordCoherencyRule(nil)
-	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
 
-	// Official compounds + dash compounds.
-	cr := NewCompoundRule(nil)
-	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
-	dr := NewDashRule(nil)
-	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
+	// Java SentenceWhitespaceRule → SENTENCE_WHITESPACE (not invent PL_).
+	sw := rules.NewSentenceWhitespaceRule(nil)
+	lt.AddTextLevelRuleChecker(sw.GetID(), rules.AsTextLevelChecker(sw.MatchList))
 
-	// Java createDefaultSpellingRule → MorfologikPolishSpellerRule.
-	// Always register full Match (isNotCompound, pruneSuggestions, niby-/quasi-);
-	// wire filter dict when binary present (fail-closed IsMisspelled without it).
+	ub := NewPolishUnpairedBracketsRule(nil)
+	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
+
 	sp := NewMorfologikPolishSpellerRule()
 	if p := morfologik.DiscoverLanguageDict(PolishSpellerDict); p != "" {
 		if WirePolishFilterSpeller(p) {
@@ -51,4 +56,19 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 		return ltRef.TagWord(token)
 	})
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
+
+	pwr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
+	lt.AddRuleChecker(pwr.GetID(), rules.AsSentenceCheckerSimple(pwr.Match))
+
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+
+	dr := NewDashRule(nil)
+	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
 }
