@@ -128,6 +128,28 @@ func (t *AnalyzedToken) Equals(o *AnalyzedToken) bool {
 	return true
 }
 
+// HashCode ports AnalyzedToken.hashCode:
+// Objects.hash(isWhitespaceBefore, lemma, posTag, token).
+func (t *AnalyzedToken) HashCode() int {
+	if t == nil {
+		return 0
+	}
+	// Arrays.hashCode on the Objects.hash varargs order.
+	h := 1
+	h = 31*h + boolHash(t.whitespaceBefore)
+	h = 31*h + nullableStringHash(t.lemma)
+	h = 31*h + nullableStringHash(t.posTag)
+	h = 31*h + stringHash(t.token)
+	return h
+}
+
+func nullableStringHash(p *string) int {
+	if p == nil {
+		return 0
+	}
+	return stringHash(*p)
+}
+
 func strPtrEq(a, b *string) bool {
 	if a == nil && b == nil {
 		return true

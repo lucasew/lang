@@ -121,3 +121,41 @@ func TestAnalyzedTokenReadings_Iteration(t *testing.T) {
 		i++
 	}
 }
+
+// Java toString appends chunk tags joined by '|' before the closing bracket.
+func TestAnalyzedTokenReadings_ToString_ChunkTags(t *testing.T) {
+	pos := "POS"
+	lemma := "lemma"
+	r := NewAnalyzedTokenReadings(NewAnalyzedToken("word", &pos, &lemma))
+	r.SetChunkTags([]string{"B-NP", "NPP"})
+	require.Equal(t, "word[lemma/POS*,B-NP|NPP]", r.String())
+	r.Immunize(42)
+	require.Equal(t, "word[lemma/POS*,B-NP|NPP]{!},", r.String())
+}
+
+// Java hasPosTagAndLemma: lemma.equals(reading.getLemma()) — null lemma never matches.
+func TestAnalyzedTokenReadings_HasPosTagAndLemma_NullLemma(t *testing.T) {
+	pos := "POS"
+	r := NewAnalyzedTokenReadings(NewAnalyzedToken("word", &pos, nil))
+	require.False(t, r.HasPosTagAndLemma("POS", ""))
+	require.False(t, r.HasPosTagAndLemma("POS", "lemma"))
+	lem := "lemma"
+	r2 := NewAnalyzedTokenReadings(NewAnalyzedToken("word", &pos, &lem))
+	require.True(t, r2.HasPosTagAndLemma("POS", "lemma"))
+	require.False(t, r2.HasPosTagAndLemma("POS", "other"))
+}
+
+func TestAnalyzedTokenReadings_Equals(t *testing.T) {
+	pos := "POS"
+	lemma := "lemma"
+	a := NewAnalyzedTokenReadings(NewAnalyzedToken("word", &pos, &lemma))
+	b := NewAnalyzedTokenReadings(NewAnalyzedToken("word", &pos, &lemma))
+	require.True(t, a.Equals(b))
+	require.Equal(t, a.HashCode(), b.HashCode())
+	a.SetChunkTags([]string{"B-NP"})
+	require.False(t, a.Equals(b))
+	b.SetChunkTags([]string{"B-NP"})
+	require.True(t, a.Equals(b))
+	a.IgnoreSpelling()
+	require.False(t, a.Equals(b))
+}

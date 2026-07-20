@@ -80,10 +80,8 @@ func NewAnalyzedTokenReadingsFromOld(old *AnalyzedTokenReadings, newReadings []*
 	}
 	// Java: setWhitespaceBefore(oldAtr.getWhitespaceBefore())
 	r.SetWhitespaceBeforeToken(old.GetWhitespaceBefore())
-	// Java: setChunkTags(oldAtr.getChunkTags()) — required for SubjectVerbAgreement etc.
-	if len(old.chunkTags) > 0 {
-		r.SetChunkTags(old.chunkTags)
-	}
+	// Java: setChunkTags(oldAtr.getChunkTags()) — always, including empty list.
+	r.SetChunkTags(old.chunkTags)
 	if old.isImmunized {
 		r.Immunize(old.immunizationSrcLine)
 	}
@@ -145,19 +143,19 @@ func (r *AnalyzedTokenReadings) HasPosTag(posTag string) bool {
 }
 
 // HasPosTagAndLemma ports AnalyzedTokenReadings.hasPosTagAndLemma.
+// Java: posTag.equals(reading.getPOSTag()) && lemma.equals(reading.getLemma())
+// — both equals are null-safe false when the reading field is null.
 func (r *AnalyzedTokenReadings) HasPosTagAndLemma(posTag, lemma string) bool {
 	if r == nil {
 		return false
 	}
 	for _, reading := range r.anTokReadings {
+		// posTag.equals(null) → false; nil POS never matches.
 		if reading.GetPOSTag() == nil || *reading.GetPOSTag() != posTag {
 			continue
 		}
-		lem := ""
-		if reading.GetLemma() != nil {
-			lem = *reading.GetLemma()
-		}
-		if lem == lemma {
+		// lemma.equals(null) → false; nil lemma never matches a non-null arg.
+		if reading.GetLemma() != nil && *reading.GetLemma() == lemma {
 			return true
 		}
 	}
@@ -347,17 +345,19 @@ func (r *AnalyzedTokenReadings) SetTypographicApostrophe(v bool) {
 	r.hasTypographicApostrophe = v
 }
 
+// MatchesPosTagRegex ports matchesPosTagRegex(String):
+// Pattern.compile(posTagRegex).matcher(tag).matches() — full-string match.
+// Invalid regex: Java throws PatternSyntaxException; Go returns false (call sites avoid bad patterns).
 func (r *AnalyzedTokenReadings) MatchesPosTagRegex(posTagRegex string) bool {
-	re := regexp.MustCompile("^(?:" + posTagRegex + ")$")
-	// Java Pattern.matches is full match; Go Compile + MatchString is full match for whole string
-	// Actually Java matches() = entire region. regexp MatchString matches whole string in Go if anchors...
-	// Pattern.compile(posTagRegex).matcher(tag).matches() — full string match
-	re2, err := regexp.Compile("^(?:" + posTagRegex + ")$")
+	if r == nil {
+		return false
+	}
+	re, err := regexp.Compile("^(?:" + posTagRegex + ")$")
 	if err != nil {
-		re2 = re
+		return false
 	}
 	for _, reading := range r.anTokReadings {
-		if reading.GetPOSTag() != nil && re2.MatchString(*reading.GetPOSTag()) {
+		if reading.GetPOSTag() != nil && re.MatchString(*reading.GetPOSTag()) {
 			return true
 		}
 	}
@@ -442,13 +442,15 @@ func (r *AnalyzedTokenReadings) LeaveReading(token *AnalyzedToken) {
 	r.hasSameLemmas = r.areLemmasSame()
 }
 
-// ReplaceReadings ports the Java disambiguator REPLACE path that builds
-// new AnalyzedTokenReadings(old, newReadings, ruleId): keep metadata, set readings.
+// ReplaceReadings ports the in-place equivalent of Java disambiguator REPLACE:
+// new AnalyzedTokenReadings(old, newReadings, ruleId) then swap into the sentence.
+// Keeps sentence/paragraph end flags, whitespace-before on readings, and
+// records historical annotations when verbose (same as FromOld + addReading).
 func (r *AnalyzedTokenReadings) ReplaceReadings(newReadings []*AnalyzedToken, ruleApplied string) {
 	if r == nil || len(newReadings) == 0 {
 		return
 	}
-	_ = ruleApplied
+	oldValue := r.String()
 	sentEnd, paraEnd := r.isSentEnd, r.isParaEnd
 	for _, t := range newReadings {
 		if t != nil {
@@ -457,6 +459,8 @@ func (r *AnalyzedTokenReadings) ReplaceReadings(newReadings []*AnalyzedToken, ru
 	}
 	r.anTokReadings = append([]*AnalyzedToken(nil), newReadings...)
 	r.token = newReadings[0].GetToken()
+	r.isWhitespace = tools.IsWhitespace(r.token)
+	r.isLinebreak = r.token == "\n" || r.token == "\r\n" || r.token == "\r" || r.token == "\n\r"
 	r.setNoRealPOStag()
 	r.hasSameLemmas = r.areLemmasSame()
 	r.isSentEnd, r.isParaEnd = false, false
@@ -466,6 +470,7 @@ func (r *AnalyzedTokenReadings) ReplaceReadings(newReadings []*AnalyzedToken, ru
 	if paraEnd {
 		r.SetParagraphEnd()
 	}
+	r.addHistoricalAnnotations(oldValue, ruleApplied)
 }
 
 func (r *AnalyzedTokenReadings) GetReadingsLength() int { return len(r.anTokReadings) }
@@ -524,29 +529,136 @@ func (r *AnalyzedTokenReadings) IsIgnoredBySpeller() bool {
 	return r != nil && r.isIgnoredBySpeller
 }
 
+// String ports AnalyzedTokenReadings.toString (readings, optional chunk tags, immunize).
 func (r *AnalyzedTokenReadings) String() string {
+	if r == nil {
+		return ""
+	}
 	var sb strings.Builder
 	sb.WriteString(r.token)
 	sb.WriteByte('[')
-	for i, element := range r.anTokReadings {
-		if i > 0 {
-			// Java joins with comma after each including trailing then deletes last comma
-		}
+	for _, element := range r.anTokReadings {
 		sb.WriteString(element.String())
 		if !element.IsWhitespaceBefore() {
 			sb.WriteByte('*')
 		}
 		sb.WriteByte(',')
 	}
+	// Java always appends a trailing comma per reading, then deletes the last char.
+	// If there were no readings this would delete the '['; we never construct empty.
 	s := sb.String()
 	if len(s) > 0 && s[len(s)-1] == ',' {
 		s = s[:len(s)-1]
+	}
+	// Java: if (!chunkTags.isEmpty()) { sb.append(','); sb.append(join(chunkTags, "|")); }
+	if len(r.chunkTags) > 0 {
+		s += "," + strings.Join(r.chunkTags, "|")
 	}
 	s += "]"
 	if r.IsImmunized() {
 		s += "{!},"
 	}
 	return s
+}
+
+// Equals ports AnalyzedTokenReadings.equals (EqualsBuilder field set).
+func (r *AnalyzedTokenReadings) Equals(o *AnalyzedTokenReadings) bool {
+	if r == o {
+		return true
+	}
+	if r == nil || o == nil {
+		return false
+	}
+	if r.isLinebreak != o.isLinebreak ||
+		r.isParaEnd != o.isParaEnd ||
+		r.isSentEnd != o.isSentEnd ||
+		r.isSentStart != o.isSentStart ||
+		r.isWhitespace != o.isWhitespace ||
+		r.isWhitespaceBefore != o.isWhitespaceBefore ||
+		r.isImmunized != o.isImmunized ||
+		r.startPos != o.startPos ||
+		r.hasSameLemmas != o.hasSameLemmas ||
+		r.isIgnoredBySpeller != o.isIgnoredBySpeller ||
+		r.hasTypographicApostrophe != o.hasTypographicApostrophe ||
+		r.token != o.token {
+		return false
+	}
+	if len(r.chunkTags) != len(o.chunkTags) {
+		return false
+	}
+	for i := range r.chunkTags {
+		if r.chunkTags[i] != o.chunkTags[i] {
+			return false
+		}
+	}
+	if len(r.anTokReadings) != len(o.anTokReadings) {
+		return false
+	}
+	for i := range r.anTokReadings {
+		if !r.anTokReadings[i].Equals(o.anTokReadings[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+// HashCode ports AnalyzedTokenReadings.hashCode (same field set as Java).
+func (r *AnalyzedTokenReadings) HashCode() int {
+	if r == nil {
+		return 0
+	}
+	h := 1
+	for _, t := range r.anTokReadings {
+		// Arrays.hashCode elements: 31 * result + (e == null ? 0 : e.hashCode())
+		th := 0
+		if t != nil {
+			th = t.HashCode()
+		}
+		h = 31*h + th
+	}
+	// Objects.hash(isLinebreak, isParaEnd, isSentEnd, isSentStart, isWhitespace,
+	//   isWhitespaceBefore, chunkTags, startPos, token)
+	h2 := 1
+	h2 = 31*h2 + boolHash(r.isLinebreak)
+	h2 = 31*h2 + boolHash(r.isParaEnd)
+	h2 = 31*h2 + boolHash(r.isSentEnd)
+	h2 = 31*h2 + boolHash(r.isSentStart)
+	h2 = 31*h2 + boolHash(r.isWhitespace)
+	h2 = 31*h2 + boolHash(r.isWhitespaceBefore)
+	// List hashCode
+	ch := 1
+	for _, c := range r.chunkTags {
+		ch = 31*ch + stringHash(c)
+	}
+	h2 = 31*h2 + ch
+	h2 = 31*h2 + r.startPos
+	h2 = 31*h2 + stringHash(r.token)
+	return h + h2
+}
+
+func boolHash(b bool) int {
+	if b {
+		return 1231
+	}
+	return 1237
+}
+
+func stringHash(s string) int {
+	// Java String.hashCode: s[0]*31^(n-1) + s[1]*31^(n-2) + ... (UTF-16 code units)
+	h := 0
+	for _, r := range s {
+		if r >= 0x10000 {
+			// surrogate pair
+			v := r - 0x10000
+			hi := int(0xD800 + (v >> 10))
+			lo := int(0xDC00 + (v & 0x3FF))
+			h = 31*h + hi
+			h = 31*h + lo
+		} else {
+			h = 31*h + int(r)
+		}
+	}
+	return h
 }
 
 func (r *AnalyzedTokenReadings) setNoRealPOStag() {
