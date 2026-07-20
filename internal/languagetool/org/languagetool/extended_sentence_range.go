@@ -42,6 +42,11 @@ func (r ExtendedSentenceRange) Equal(o ExtendedSentenceRange) bool {
 	return r.FromPos == o.FromPos && r.ToPos == o.ToPos
 }
 
+// HashCode ports ExtendedSentenceRange.hashCode (fromPos, toPos only).
+func (r ExtendedSentenceRange) HashCode() int {
+	return 31*r.FromPos + r.ToPos
+}
+
 func (r ExtendedSentenceRange) Less(o ExtendedSentenceRange) bool {
 	return r.FromPos < o.FromPos
 }

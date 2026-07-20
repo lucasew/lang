@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
@@ -68,6 +69,132 @@ func NewSentenceData(analyzed *AnalyzedSentence, text string, startOffset, start
 		StartOffset: startOffset, StartLine: startLine, StartColumn: startColumn,
 		WordCount: wc,
 	}
+}
+
+// ComputeSentenceData ports JLanguageTool.computeSentenceData.
+// Java starts columnCount at 1; charCount/line/column use UTF-16 code units
+// (String.length / countLineBreaks / processColumnChange).
+// singleLineBreaksMarksPara is language.getSentenceTokenizer().singleLineBreaksMarksPara().
+func ComputeSentenceData(analyzed []*AnalyzedSentence, texts []string, singleLineBreaksMarksPara bool) []SentenceData {
+	if len(texts) == 0 {
+		return nil
+	}
+	charCount := 0
+	lineCount := 0
+	columnCount := 1
+	result := make([]SentenceData, 0, len(texts))
+	for i, sentence := range texts {
+		var a *AnalyzedSentence
+		if i < len(analyzed) {
+			a = analyzed[i]
+		}
+		result = append(result, NewSentenceData(a, sentence, charCount, lineCount, columnCount))
+		charCount += utf16Len(sentence)
+		lineCount += CountLineBreaks(sentence)
+		columnCount = ProcessColumnChangePara(columnCount, sentence, singleLineBreaksMarksPara)
+	}
+	return result
+}
+
+// BuildExtendedSentenceRange ports TextCheckCallable's per-sentence range:
+//
+//	if (sentence.text.startsWith(" ", 1)) {
+//	  whitespaceFix = text.length() - text.stripLeading().length();
+//	}
+//	new ExtendedSentenceRange(start + fix, start + fix + text.trim().length(), lang)
+//
+// Offsets are UTF-16 code units (Java String indices).
+func BuildExtendedSentenceRange(sd SentenceData, languageCode string) ExtendedSentenceRange {
+	text := sd.Text
+	whitespaceFix := 0
+	// Java String.startsWith(" ", 1) — char at UTF-16 index 1 is ' '.
+	if utf16CharAt(text, 1) == ' ' {
+		stripped := stripLeadingJava(text)
+		whitespaceFix = utf16Len(text) - utf16Len(stripped)
+	}
+	from := sd.StartOffset + whitespaceFix
+	// Java String.trim() removes code units ≤ U+0020 only.
+	to := from + utf16Len(javaTrim(text))
+	return NewExtendedSentenceRange(from, to, languageCode)
+}
+
+// utf16CharAt returns the UTF-16 code unit at index i, or -1 if out of range.
+func utf16CharAt(s string, i int) rune {
+	if i < 0 {
+		return -1
+	}
+	u := 0
+	for _, ch := range s {
+		if ch >= 0x10000 {
+			if u == i {
+				v := ch - 0x10000
+				return rune(0xD800 + (v >> 10))
+			}
+			if u+1 == i {
+				v := ch - 0x10000
+				return rune(0xDC00 + (v & 0x3FF))
+			}
+			u += 2
+			continue
+		}
+		if u == i {
+			return ch
+		}
+		u++
+	}
+	return -1
+}
+
+// stripLeadingJava ports String.stripLeading (Character.isWhitespace).
+func stripLeadingJava(s string) string {
+	i := 0
+	for i < len(s) {
+		r, size := utf8.DecodeRuneInString(s[i:])
+		if size <= 0 {
+			break
+		}
+		if !javaIsWhitespace(r) {
+			break
+		}
+		i += size
+	}
+	return s[i:]
+}
+
+// javaTrim ports String.trim(): strip code points ≤ U+0020 from both ends.
+func javaTrim(s string) string {
+	start, end := 0, len(s)
+	for start < end {
+		r, size := utf8.DecodeRuneInString(s[start:])
+		if r > 0x20 {
+			break
+		}
+		start += size
+	}
+	for end > start {
+		i := end - 1
+		for i > start && (s[i]&0xC0) == 0x80 {
+			i--
+		}
+		r, _ := utf8.DecodeRuneInString(s[i:end])
+		if r > 0x20 {
+			break
+		}
+		end = i
+	}
+	return s[start:end]
+}
+
+// javaIsWhitespace approximates Character.isWhitespace for stripLeading.
+func javaIsWhitespace(r rune) bool {
+	switch r {
+	case ' ', '\t', '\n', '\r', '\f', 0x0B:
+		return true
+	}
+	if r == 0x1C || r == 0x1D || r == 0x1E || r == 0x1F {
+		return true
+	}
+	return unicode.Is(unicode.Zs, r) || r == '\u2028' || r == '\u2029'
 }
 
 // LocalMatch is a cycle-free rule-match surface for JLanguageTool.Check
