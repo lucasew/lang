@@ -815,7 +815,7 @@ type xmlTokenMatch struct {
 	No             string  `xml:"no,attr"`
 	Postag         string  `xml:"postag,attr"`
 	PostagRegexp   string  `xml:"postag_regexp,attr"`
-	PostagReplace  string  `xml:"postag_replace,attr"`
+	PostagReplace  *string `xml:"postag_replace,attr"` // nil when attr absent (Java null)
 	RegexpMatch    string  `xml:"regexp_match,attr"`
 	RegexpReplace  *string `xml:"regexp_replace,attr"` // nil when attr absent (Java null)
 	CaseConversion string  `xml:"case_conversion,attr"`
@@ -1411,9 +1411,13 @@ func matchFromTokenMatchXML(xm *xmlTokenMatch) *Match {
 	if xm.RegexpReplace != nil {
 		regexReplace = *xm.RegexpReplace
 	}
+	postagReplace := ""
+	if xm.PostagReplace != nil {
+		postagReplace = *xm.PostagReplace
+	}
 	m := NewMatch(
 		xm.Postag,
-		xm.PostagReplace,
+		postagReplace,
 		strings.EqualFold(xm.PostagRegexp, "yes"),
 		xm.RegexpMatch,
 		regexReplace,
@@ -1422,8 +1426,9 @@ func matchFromTokenMatchXML(xm *xmlTokenMatch) *Match {
 		false,
 		include,
 	)
-	// Java attrs.getValue("regexp_replace") null when attribute absent.
+	// Java attrs.getValue(...) null when attribute absent.
 	m.RegexReplacePresent = xm.RegexpReplace != nil
+	m.PosTagReplacePresent = xm.PostagReplace != nil
 	// Java: TokenRef is the raw no= value (offset from firstMatchToken, not 1-based message index).
 	if no := strings.TrimSpace(xm.No); no != "" {
 		var n int

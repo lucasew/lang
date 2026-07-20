@@ -53,6 +53,28 @@ func TestMatchState_GetTargetPosTag_FullMatchPOS(t *testing.T) {
 	require.NotContains(t, got, "VBGX")
 }
 
+// Twin of getTargetPosTag: postag_replace only when attr present (Java != null).
+func TestMatchState_GetTargetPosTag_PostagReplacePresent(t *testing.T) {
+	pos := "N:f:sg:acc"
+	tok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("x", &pos, nil),
+	}, 0)
+
+	// postag regexp without replace attr → keep matched tag as target (no invent replace)
+	mNo := NewMatch("N:.*", "", true, "", "", CaseNone, false, false, IncludeNone)
+	require.False(t, mNo.PosTagReplacePresent)
+	stNo := NewMatchState(mNo)
+	stNo.SetToken(tok)
+	require.Equal(t, "N:f:sg:acc", stNo.GetTargetPosTag()) // last matched / Base last
+
+	// with replace
+	mYes := NewMatch("N:([fm]):(sg|pl):(acc|nom)", "N:$1:$2:$3", true, "", "", CaseNone, true, false, IncludeNone)
+	require.True(t, mYes.PosTagReplacePresent)
+	stYes := NewMatchState(mYes)
+	stYes.SetToken(tok)
+	require.Equal(t, "N:f:sg:acc", stYes.GetTargetPosTag())
+}
+
 // Twin of BaseSynthesizer.getTargetPosTag: last matching POS when synth has no override.
 func TestMatchState_GetTargetPosTag_LastTagFallback(t *testing.T) {
 	// postag regexp matching both NN and NNS; no replace → pick last via Base fallback

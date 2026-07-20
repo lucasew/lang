@@ -147,8 +147,8 @@ func (s *MatchState) FilterReadings() *languagetool.AnalyzedTokenReadings {
 			}
 			if testTag != "" && s.Match.PosFullMatch(testTag) {
 				targetPosTag := testTag
-				if posTagReplace != "" && pPos != nil {
-					// RE2 replace path; lookaround engines have no replace
+				// Java: if (posTagReplace != null) replaceAll — not invent when attr absent.
+				if s.Match.PosTagReplacePresent && pPos != nil {
 					targetPosTag = pPos.ReplaceAllString(targetPosTag, posTagReplace)
 				}
 				lemma := at.GetLemma()
@@ -441,7 +441,8 @@ func (s *MatchState) GetTargetPosTag() string {
 		// Fallback when synth lacks GetTargetPosTag: same as BaseSynthesizer (last).
 		targetPosTag = posTags[len(posTags)-1]
 	}
-	if pPos != nil && posTagReplace != "" {
+	// Java: pPosRegexMatch != null && posTagReplace != null
+	if pPos != nil && s.Match.PosTagReplacePresent {
 		if s.Match.IsStaticLemma() {
 			if len(posTags) > 0 {
 				targetPosTag = pPos.ReplaceAllString(targetPosTag, posTagReplace)

@@ -16,7 +16,9 @@ type Match struct {
 	// RegexReplacePresent is true when Java regexReplace != null (attr present).
 	// filterReadings only replaces when both regexp_match and regexp_replace are non-null.
 	RegexReplacePresent bool
-	PosTagReplace      string
+	PosTagReplace string
+	// PosTagReplacePresent is true when Java posTagReplace != null (postag_replace attr).
+	PosTagReplacePresent bool
 	CaseConversionType CaseConversion
 	IncludeSkipped     IncludeRange
 	RegexMatch         string // raw pattern; compiled lazily
@@ -81,12 +83,13 @@ func NewMatch(
 		RegexMatch:         regexMatch,
 		RegexReplace:       regexReplace,
 		// Non-empty replace implies attr present; empty replace with match-only → Present false
-		// (callers that need empty-string replace set RegexReplacePresent after NewMatch).
-		RegexReplacePresent: regexReplace != "",
-		CaseConversionType:  caseConversionType,
-		SetPos:              setPOS,
-		SuppressMisspelled:  suppressMisspelled,
-		IncludeSkipped:      includeSkipped,
+		// (callers that need empty-string replace set *Present after NewMatch).
+		RegexReplacePresent:  regexReplace != "",
+		PosTagReplacePresent: posTagReplace != "",
+		CaseConversionType:   caseConversionType,
+		SetPos:               setPOS,
+		SuppressMisspelled:   suppressMisspelled,
+		IncludeSkipped:       includeSkipped,
 	}
 	if regexMatch != "" {
 		m.regexCompiled, m.regexJavaRE = compileMatchPattern(regexMatch)

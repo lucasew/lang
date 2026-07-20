@@ -147,9 +147,12 @@ func matchFromAttrs(attrs map[string]string) *Match {
 	setPos := strings.EqualFold(attrs["setpos"], "yes")
 	suppress := strings.EqualFold(attrs["suppress_misspelled"], "yes")
 	m := NewMatch(postag, postagReplace, postagRE, regexMatch, regexReplace, caseConv, setPos, suppress, include)
-	// Java attrs.getValue("regexp_replace") null when attribute absent.
+	// Java attrs.getValue(...) null when attribute absent.
 	if _, ok := attrs["regexp_replace"]; ok {
 		m.RegexReplacePresent = true
+	}
+	if _, ok := attrs["postag_replace"]; ok {
+		m.PosTagReplacePresent = true
 	}
 	return m
 }
