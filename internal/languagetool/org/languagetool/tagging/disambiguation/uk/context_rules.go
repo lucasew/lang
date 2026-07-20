@@ -1038,8 +1038,15 @@ func hasLemmaMatching(tok *languagetool.AnalyzedTokenReadings, lemmaRE, posRE *r
 }
 
 // RemoveVerbImpr drops verb:impr when token is also noun and previous adj agrees in case/gender soft.
-// nounVZnaVarIgnore ports Pattern.compile("v_zna:var") for getNounInflections in removeVerbImpr.
+// nounVZnaVarIgnore ports Pattern.compile("v_zna:var") for getNounInflections in removeVerbImpr
+// (Java ignoreTag.matcher(pos).find()).
 var nounVZnaVarIgnore = regexp.MustCompile(`v_zna:var`)
+
+var (
+	verbImprRE = regexp.MustCompile(`^verb.*impr.*$`)
+	nounAnyRE  = regexp.MustCompile(`^noun.*$`)
+	adjAnyRE   = regexp.MustCompile(`^adj.*$`)
+)
 
 // RemoveVerbImpr ports UkrainianHybridDisambiguator.removeVerbImpr.
 // adj + dual noun|verb.impr → drop impr when adj/noun case-gender inflections overlap.
@@ -1053,8 +1060,10 @@ func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
 		if tok == nil || prev == nil {
 			continue
 		}
-		// Java: verb.*impr.* && noun.* && adj.*
-		if !hasPosTagREMatch(tok, `verb.*impr.*`) || !hasPOSPrefix(tok, "noun") || !hasPOSPrefix(prev, "adj") {
+		// Java: hasPosTag Pattern.matches verb.*impr.* / noun.* / adj.*
+		if !posTagFullMatchAny(tok, verbImprRE) ||
+			!posTagFullMatchAny(tok, nounAnyRE) ||
+			!posTagFullMatchAny(prev, adjAnyRE) {
 			continue
 		}
 		var adjTags, nounTags []string
@@ -1068,17 +1077,18 @@ func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
 				nounTags = append(nounTags, *r.GetPOSTag())
 			}
 		}
+		// Java InflectionHelper.getAdjInflections / getNounInflections
 		master := rulesuk.GetAdjCaseInflections(adjTags)
 		slave := rulesuk.GetNounInflectionsFromTags(nounTags, nounVZnaVarIgnore)
 		if !rulesuk.InflectionsIntersect(master, slave) {
 			continue
 		}
+		// Java PosTagHelper.filter(…, verb.*impr.*) then remove
 		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
 			if r == nil || r.GetPOSTag() == nil {
 				continue
 			}
-			pos := *r.GetPOSTag()
-			if strings.HasPrefix(pos, "verb") && strings.Contains(pos, "impr") {
+			if fullMatch(verbImprRE, *r.GetPOSTag()) {
 				tok.RemoveReading(r, "not_an_imperative_2")
 			}
 		}
@@ -1154,16 +1164,20 @@ func RetagUnknownInitials(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
 	}
-	// Java INITIAL_REGEX = [А-ЯІЇЄҐ]\.
-	initRE := regexp.MustCompile(`^[А-ЯІЇЄҐ]\.$`)
-	tokens := input.GetTokensWithoutWhitespace()
-	// Java uses getTokens() including whitespace tokens — we use without whitespace.
+	// Java INITIAL_REGEX = [А-ЯІЇЄҐ]\. + endsWith(".")
+	// Java: input.getTokens() (includes whitespace — skip via empty/null)
+	tokens := input.GetTokens()
+	if len(tokens) == 0 {
+		tokens = input.GetTokensWithoutWhitespace()
+	}
 	for i := 1; i < len(tokens); i++ {
 		tok := tokens[i]
-		if tok == nil {
+		if tok == nil || tok.IsWhitespace() {
 			continue
 		}
-		if !initRE.MatchString(tok.GetToken()) {
+		s := tok.GetToken()
+		// Java: endsWith(".") && INITIAL_REGEX.matches()
+		if !strings.HasSuffix(s, ".") || !initialRE.MatchString(s) {
 			continue
 		}
 		if tok.HasPartialPosTag("name") {
@@ -1174,8 +1188,9 @@ func RetagUnknownInitials(input *languagetool.AnalyzedSentence) {
 				tok.RemoveReading(r, "dis_unknown_initials")
 			}
 		}
+		// Java: new AnalyzedToken(token, "noninfl:abbr", null)
 		p := "noninfl:abbr"
-		tok.AddReading(languagetool.NewAnalyzedToken(tok.GetToken(), &p, nil), "dis_unknown_initials")
+		tok.AddReading(languagetool.NewAnalyzedToken(s, &p, nil), "dis_unknown_initials")
 	}
 }
 
