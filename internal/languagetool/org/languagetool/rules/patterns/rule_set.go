@@ -43,6 +43,21 @@ type HintableRule interface {
 	CanBeIgnoredFor(sentence *languagetool.AnalyzedSentence) bool
 }
 
+// TokenHintsProvider exposes AbstractTokenBasedRule.tokenHints for RuleSet
+// classification (implemented by AbstractTokenBasedRule and embedders such as
+// DisambiguationPatternRule).
+type TokenHintsProvider interface {
+	GetTokenHints() []TokenHint
+}
+
+// GetTokenHints ports access to AbstractTokenBasedRule.tokenHints.
+func (r *AbstractTokenBasedRule) GetTokenHints() []TokenHint {
+	if r == nil {
+		return nil
+	}
+	return r.TokenHints
+}
+
 // TextHintedRuleSet excludes rules whose non-inflected token hints miss the sentence.
 // Ports RuleSet.textHinted.
 func TextHintedRuleSet(rules []RuleIDGetter) RuleSet {
@@ -83,10 +98,10 @@ func (h *hintedRuleSet) RulesForSentence(s *languagetool.AnalyzedSentence) []Rul
 	var out []RuleIDGetter
 	for _, r := range h.rules {
 		if hr, ok := r.(HintableRule); ok {
-			// withLemmaHints: use full CanBeIgnoredFor (token+lemma hints)
-			// text-only: if rule only has lemma hints, treat as unclassified (always include)
+			// Java textHinted: only non-inflected TokenHint classifies a rule.
+			// Rules with only lemma (inflected) hints are unclassified → always included.
 			if !h.withLemmaHints {
-				if atr, ok := r.(*AbstractTokenBasedRule); ok && onlyInflectedHints(atr) {
+				if onlyInflectedOrNoFormHints(r) {
 					out = append(out, r)
 					continue
 				}
@@ -100,14 +115,28 @@ func (h *hintedRuleSet) RulesForSentence(s *languagetool.AnalyzedSentence) []Rul
 	return out
 }
 
-func onlyInflectedHints(r *AbstractTokenBasedRule) bool {
-	if r == nil || len(r.TokenHints) == 0 {
+// onlyInflectedOrNoFormHints reports Java "unclassified" for textHinted:
+// no non-inflected token form hints (only lemma hints, or no hints).
+// empty hints → not only-inflected (false) so CanBeIgnoredFor runs (minTokenCount).
+func onlyInflectedOrNoFormHints(r RuleIDGetter) bool {
+	hints := tokenHintsOf(r)
+	if len(hints) == 0 {
 		return false
 	}
-	for _, th := range r.TokenHints {
+	for _, th := range hints {
 		if !th.Inflected {
 			return false
 		}
 	}
 	return true
+}
+
+func tokenHintsOf(r RuleIDGetter) []TokenHint {
+	if p, ok := r.(TokenHintsProvider); ok {
+		return p.GetTokenHints()
+	}
+	if atr, ok := r.(*AbstractTokenBasedRule); ok {
+		return atr.TokenHints
+	}
+	return nil
 }

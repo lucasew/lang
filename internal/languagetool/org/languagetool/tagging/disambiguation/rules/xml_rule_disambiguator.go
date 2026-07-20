@@ -13,10 +13,24 @@ type XmlRuleDisambiguator struct {
 	disambiguation.AbstractDisambiguator
 	Rules         []*DisambiguationPatternRule
 	UnifierConfig *patterns.UnifierConfiguration
+	// ruleSet ports Java RuleSet.textHinted(disambiguationRulesList) for
+	// rulesForSentence filtering (token-hint skip without changing semantics).
+	ruleSet patterns.RuleSet
 }
 
 func NewXmlRuleDisambiguator(rules []*DisambiguationPatternRule) *XmlRuleDisambiguator {
-	return &XmlRuleDisambiguator{Rules: append([]*DisambiguationPatternRule(nil), rules...)}
+	list := append([]*DisambiguationPatternRule(nil), rules...)
+	// Java: disambiguationRules = RuleSet.textHinted(disambiguationRulesList)
+	asID := make([]patterns.RuleIDGetter, 0, len(list))
+	for _, r := range list {
+		if r != nil {
+			asID = append(asID, r)
+		}
+	}
+	return &XmlRuleDisambiguator{
+		Rules:   list,
+		ruleSet: patterns.TextHintedRuleSet(asID),
+	}
 }
 
 // Disambiguate applies each disambiguation pattern rule in order.
@@ -25,15 +39,27 @@ func (d *XmlRuleDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence
 }
 
 // DisambiguateWithCancel ports disambiguate with cancellation callback.
+// Java: for (Rule rule : disambiguationRules.rulesForSentence(sentence)) replace.
 func (d *XmlRuleDisambiguator) DisambiguateWithCancel(sentence *languagetool.AnalyzedSentence, checkCanceled languagetool.CheckCancelledCallback) *languagetool.AnalyzedSentence {
 	if sentence == nil {
 		return nil
 	}
-	for _, rule := range d.Rules {
+	var candidates []patterns.RuleIDGetter
+	if d.ruleSet != nil {
+		candidates = d.ruleSet.RulesForSentence(sentence)
+	} else {
+		for _, rule := range d.Rules {
+			if rule != nil {
+				candidates = append(candidates, rule)
+			}
+		}
+	}
+	for _, rg := range candidates {
 		if checkCanceled != nil && checkCanceled() {
 			break
 		}
-		if rule == nil {
+		rule, ok := rg.(*DisambiguationPatternRule)
+		if !ok || rule == nil {
 			continue
 		}
 		if rule.UnifierConfig == nil && d.UnifierConfig != nil {
