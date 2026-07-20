@@ -64,6 +64,9 @@ func NewDisambiguationPatternRule(
 	}
 	base := patterns.NewAbstractTokenBasedRule(id, description, languageCode, patternTokens)
 	base.Message = ""
+	// Java DisambiguationPatternRule: super(..., true) — getUnified always true
+	// so testUnification stores getFinalUnified for UNIFY actions.
+	base.GetUnified = true
 	return &DisambiguationPatternRule{
 		AbstractTokenBasedRule: base,
 		DisambiguatedPOS:       disambiguatedPOS,
@@ -111,7 +114,7 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 	nws := sentence.GetTokensWithoutWhitespace()
 	changed := false
 	perf := patterns.NewAbstractPatternRulePerformer(base, nil)
-	perf.DoMatch(sentence, func(positions []int, firstMatch, lastMatch, firstMark, lastMark int) {
+	perf.DoMatch(sentence, func(positions []int, firstMatch, lastMatch, firstMark, lastMark int, unifiedTokens []*languagetool.AnalyzedTokenReadings) {
 		if firstMatch < 0 || firstMatch >= len(nws) || lastMatch < 0 || lastMatch >= len(nws) {
 			return
 		}
@@ -133,7 +136,7 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 		if first < 0 || last < first {
 			return
 		}
-		r.applyAction(nws, first, last, firstMatch, positions)
+		r.applyAction(nws, first, last, firstMatch, positions, unifiedTokens)
 		changed = true
 	})
 	if !changed {
@@ -391,6 +394,7 @@ func (r *DisambiguationPatternRule) applyAction(
 	nws []*languagetool.AnalyzedTokenReadings,
 	first, last, firstMatchToken int,
 	tokenPositions []int,
+	unifiedTokens []*languagetool.AnalyzedTokenReadings,
 ) {
 	switch r.Action {
 	case ActionImmunize:
@@ -648,22 +652,48 @@ func (r *DisambiguationPatternRule) applyAction(
 			nws[i].SetChunkTags(tags)
 		}
 	case ActionUnify:
-		// Java UNIFY: filter matched tokens to readings that share feature
-		// combinations (Unifier.getFinalUnified). Soft runs unification after
-		// the pattern match (match-time uni is not required for soft extract).
-		r.applyUnify(nws, first, last)
+		// Java UNIFY: apply match-time unifiedTokens (getUnified=true) to the
+		// corrected marker span. Length must equal span token count.
+		r.applyUnify(nws, first, last, firstMatchToken, tokenPositions, unifiedTokens)
 	default:
 		_ = fmt.Sprintf
 	}
 }
 
-// applyUnify ports DisambiguationPatternRuleReplacer case UNIFY using the
-// language UnifierConfiguration and this rule's UnifyFeatures.
-func (r *DisambiguationPatternRule) applyUnify(nws []*languagetool.AnalyzedTokenReadings, first, last int) {
-	if r == nil || r.UnifierConfig == nil || len(r.UnifyFeatures) == 0 {
+// applyUnify ports DisambiguationPatternRuleReplacer case UNIFY.
+// Prefer match-time unifiedTokens from AbstractPatternRulePerformer; fall back
+// to re-running the unifier over the span when tokens were not captured.
+func (r *DisambiguationPatternRule) applyUnify(
+	nws []*languagetool.AnalyzedTokenReadings,
+	first, last, firstMatchToken int,
+	tokenPositions []int,
+	unifiedTokens []*languagetool.AnalyzedTokenReadings,
+) {
+	if r == nil || first < 0 || last < first || last >= len(nws) {
 		return
 	}
-	if first < 0 || last < first || last >= len(nws) {
+	// Java: if (unifiedTokens != null && length == matchingTokensWithCorrection - start + end)
+	if len(unifiedTokens) > 0 {
+		span := last - first + 1
+		if len(unifiedTokens) != span {
+			// Still try when lengths match after correction math fails open-closed.
+			// Java only applies when lengths equal.
+			return
+		}
+		if nws[last] != nil && nws[last].IsSentenceEnd() && unifiedTokens[len(unifiedTokens)-1] != nil {
+			unifiedTokens[len(unifiedTokens)-1].SetSentEnd()
+		}
+		for i := 0; i < len(unifiedTokens); i++ {
+			pos := first + i
+			if pos >= len(nws) || nws[pos] == nil || unifiedTokens[i] == nil {
+				continue
+			}
+			nws[pos].ReplaceReadings(append([]*languagetool.AnalyzedToken(nil), unifiedTokens[i].GetReadings()...), r.ID)
+		}
+		return
+	}
+	// Fallback when getUnified did not capture tokens (missing UniFeatures on pattern).
+	if r.UnifierConfig == nil || len(r.UnifyFeatures) == 0 {
 		return
 	}
 	uFeatures := make(map[string][]string, len(r.UnifyFeatures))
@@ -672,7 +702,6 @@ func (r *DisambiguationPatternRule) applyUnify(nws []*languagetool.AnalyzedToken
 		if f == "" {
 			continue
 		}
-		// empty type list → Unifier uses all equivalence types for the feature
 		uFeatures[f] = nil
 	}
 	if len(uFeatures) == 0 {
@@ -685,7 +714,6 @@ func (r *DisambiguationPatternRule) applyUnify(nws []*languagetool.AnalyzedToken
 		}
 		readings := nws[i].GetReadings()
 		if len(readings) == 0 {
-			// still advance unifier with a dummy empty? leave as fail
 			return
 		}
 		for j, rd := range readings {
@@ -693,8 +721,6 @@ func (r *DisambiguationPatternRule) applyUnify(nws []*languagetool.AnalyzedToken
 				continue
 			}
 			lastReading := j == len(readings)-1
-			// Soft: treat every reading as matched (isMatched=true); Java gates
-			// on pattern-token match before isUnified.
 			uni.IsUnifiedMatched(rd, uFeatures, lastReading, true)
 		}
 	}

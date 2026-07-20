@@ -6,7 +6,8 @@ import (
 
 // MatchConsumer is called for each successful pattern match span.
 // Indices are into the non-whitespace token array.
-type MatchConsumer func(tokenPositions []int, firstMatchToken, lastMatchToken, firstMarker, lastMarker int)
+// unifiedTokens is non-nil when the rule has getUnified and unification ran.
+type MatchConsumer func(tokenPositions []int, firstMatchToken, lastMatchToken, firstMarker, lastMarker int, unifiedTokens []*languagetool.AnalyzedTokenReadings)
 
 // AbstractPatternRulePerformer ports
 // org.languagetool.rules.patterns.AbstractPatternRulePerformer.
@@ -15,6 +16,8 @@ type AbstractPatternRulePerformer struct {
 	Rule     *AbstractTokenBasedRule
 	Unifier  *Unifier
 	matchers []*PatternTokenMatcher
+	// UnifiedTokens ports AbstractPatternRulePerformer.unifiedTokens (last match).
+	UnifiedTokens []*languagetool.AnalyzedTokenReadings
 }
 
 func NewAbstractPatternRulePerformer(rule *AbstractTokenBasedRule, unifier *Unifier) *AbstractPatternRulePerformer {
@@ -51,10 +54,13 @@ func (p *AbstractPatternRulePerformer) DoMatch(sentence *languagetool.AnalyzedSe
 	limit := prm.matchStartLimit(len(tokens))
 	starts := prm.matchStartIndices(sentence, limit)
 	for _, i := range starts {
+		// Java matchFrom: unifiedTokens = null at start of each attempt
+		p.UnifiedTokens = nil
 		res, ok := prm.matchFromResult(sentence, tokens, i)
 		if !ok || res == nil {
 			continue
 		}
-		consumer(res.Positions, res.First, res.Last, res.FirstMark, res.LastMark)
+		p.UnifiedTokens = res.UnifiedTokens
+		consumer(res.Positions, res.First, res.Last, res.FirstMark, res.LastMark, res.UnifiedTokens)
 	}
 }

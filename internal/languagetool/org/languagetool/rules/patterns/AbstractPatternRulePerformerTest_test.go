@@ -18,7 +18,7 @@ func TestAbstractPatternRulePerformer_TestAllReadings(t *testing.T) {
 	rule := NewAbstractTokenBasedRule("R", "d", "en", []*PatternToken{Token("hello"), Token("world")})
 	p := NewAbstractPatternRulePerformer(rule, nil)
 	var hits int
-	p.DoMatch(sent, func(tokenPositions []int, first, last, fm, lm int) {
+	p.DoMatch(sent, func(tokenPositions []int, first, last, fm, lm int, _ []*languagetool.AnalyzedTokenReadings) {
 		hits++
 		// index 0 is SENT_START; content starts at 1
 		require.Equal(t, 1, first)
@@ -38,6 +38,6 @@ func TestAbstractPatternRulePerformer_TestAllReadingsWithChunks(t *testing.T) {
 	rule := NewAbstractTokenBasedRule("R", "d", "en", []*PatternToken{Token("New"), Token("York")})
 	p := NewAbstractPatternRulePerformer(rule, NewUnifier(nil, nil))
 	var hits int
-	p.DoMatch(sent, func(tokenPositions []int, first, last, fm, lm int) { hits++ })
+	p.DoMatch(sent, func(tokenPositions []int, first, last, fm, lm int, _ []*languagetool.AnalyzedTokenReadings) { hits++ })
 	require.Equal(t, 1, hits)
 }

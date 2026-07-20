@@ -78,6 +78,10 @@ type PatternRule struct {
 	MinPrevMatches int
 	// DistanceTokens ports AbstractPatternRule.distanceTokens (XML distance_tokens).
 	DistanceTokens int
+	// GetUnified ports AbstractPatternRule.getUnified — when true, testUnification
+	// stores Unifier.getFinalUnified() for disambiguation UNIFY actions.
+	// Java DisambiguationPatternRule always constructs with getUnified=true.
+	GetUnified bool
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {

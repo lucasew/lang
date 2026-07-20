@@ -16,7 +16,7 @@ func TestAbstractPatternRulePerformer(t *testing.T) {
 	rule := NewAbstractTokenBasedRule("R", "d", "en", []*PatternToken{Token("hello"), Token("world")})
 	p := NewAbstractPatternRulePerformer(rule, nil)
 	var hits int
-	p.DoMatch(sent, func(tokenPositions []int, first, last, fm, lm int) {
+	p.DoMatch(sent, func(tokenPositions []int, first, last, fm, lm int, _ []*languagetool.AnalyzedTokenReadings) {
 		hits++
 		// index 0 is SENT_START; content starts at 1
 		require.Equal(t, 1, first)

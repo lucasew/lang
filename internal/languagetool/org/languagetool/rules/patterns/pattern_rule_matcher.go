@@ -294,19 +294,23 @@ func (m *PatternRuleMatcher) needsUnification() bool {
 
 // testUnification ports AbstractPatternRulePerformer.testUnification.
 // Fail-closed: rules with <unify> and no UnifierConfig never match.
-func (m *PatternRuleMatcher) testUnification(bag *unifyBag) bool {
+// When GetUnified, outUnified receives Unifier.getFinalUnified() before reset.
+func (m *PatternRuleMatcher) testUnification(bag *unifyBag) (ok bool, unified []*languagetool.AnalyzedTokenReadings) {
 	if !m.needsUnification() {
-		return true
+		return true, nil
 	}
 	var cfg *UnifierConfiguration
+	wantUnified := false
 	if m.Rule != nil && m.Rule.PatternRule != nil {
 		cfg = m.Rule.PatternRule.UnifierConfig
+		wantUnified = m.Rule.PatternRule.GetUnified
 	}
 	if cfg == nil || bag == nil {
 		// Without equivalence tables, uniNegated would false-fire — refuse.
-		return false
+		return false, nil
 	}
 	uni := cfg.CreateUnifier()
+	var lastUnified []*languagetool.AnalyzedTokenReadings
 	for _, matcher := range m.matchers {
 		if matcher == nil || matcher.Base == nil {
 			continue
@@ -331,17 +335,21 @@ func (m *PatternRuleMatcher) testUnification(bag *unifyBag) bool {
 			// Empty reading set: still need lastReading semantics for empty?
 			// Java only iterates non-empty lists collected from matches.
 			if pt.IsUniNegated() && anyMatched {
-				return false
+				return false, nil
 			}
 			if pt.IsLastInUnification() && si == len(readingSets)-1 {
 				if !anyMatched && !pt.IsUniNegated() {
-					return false
+					return false, nil
+				}
+				// Java: if (rule.isGetUnified()) unifiedTokens = unifier.getFinalUnified()
+				if wantUnified {
+					lastUnified = uni.GetFinalUnified()
 				}
 				uni.Reset()
 			}
 		}
 	}
-	return true
+	return true, lastUnified
 }
 
 // matchResult ports one successful doMatch consumer invocation.
@@ -349,12 +357,14 @@ type matchResult struct {
 	RM                               *rules.RuleMatch
 	Positions                        []int
 	First, Last, FirstMark, LastMark int
+	// UnifiedTokens ports AbstractPatternRulePerformer.unifiedTokens when getUnified.
+	UnifiedTokens []*languagetool.AnalyzedTokenReadings
 }
 
 // matchFrom tries to match the pattern starting at token index start.
 func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, tokens []*languagetool.AnalyzedTokenReadings, start int) (*rules.RuleMatch, bool) {
 	res, ok := m.matchFromResult(sentence, tokens, start)
-	if !ok || res == nil {
+	if !ok || res == nil || res.RM == nil {
 		return nil, false
 	}
 	return res.RM, true
@@ -490,17 +500,21 @@ func (m *PatternRuleMatcher) matchFromResult(sentence *languagetool.AnalyzedSent
 	if !allElementsMatch || matchingTokens != patternSize {
 		return nil, false
 	}
-	if m.needsUnification() && !m.testUnification(bag) {
-		return nil, false
+	var unified []*languagetool.AnalyzedTokenReadings
+	if m.needsUnification() {
+		ok, u := m.testUnification(bag)
+		if !ok {
+			return nil, false
+		}
+		unified = u
 	}
 	if firstMatchToken < 0 || lastMatchToken < 0 {
 		return nil, false
 	}
 	positions := append([]int(nil), tokenPositions...)
+	// createRuleMatch may return nil (e.g. suppress_misspelled); still a structural match
+	// for AbstractPatternRulePerformer.DoMatch (disambig). Match() requires RM != nil.
 	rm := m.createRuleMatch(sentence, tokens, positions, firstMatchToken, lastMatchToken, firstMarkerMatchToken, lastMarkerMatchToken)
-	if rm == nil {
-		return nil, false
-	}
 	fm, lm := firstMarkerMatchToken, lastMarkerMatchToken
 	if fm < 0 {
 		fm, lm = firstMatchToken, lastMatchToken
@@ -508,6 +522,7 @@ func (m *PatternRuleMatcher) matchFromResult(sentence *languagetool.AnalyzedSent
 	return &matchResult{
 		RM: rm, Positions: positions,
 		First: firstMatchToken, Last: lastMatchToken, FirstMark: fm, LastMark: lm,
+		UnifiedTokens: unified,
 	}, true
 }
 
