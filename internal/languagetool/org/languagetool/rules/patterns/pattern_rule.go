@@ -520,6 +520,7 @@ func sentenceHasImmunizedToken(sentence *languagetool.AnalyzedSentence) bool {
 
 // matchSpanTokenIndices maps a RuleMatch char span to non-whitespace token indices
 // (same approach as DisambiguationPatternRule.Replace).
+// fromPos/toPos and GetStartPos/GetEndPos are Java UTF-16 indices.
 func matchSpanTokenIndices(nws []*languagetool.AnalyzedTokenReadings, fromPos, toPos int) (first, last int) {
 	first, last = -1, -1
 	for i, t := range nws {
@@ -529,7 +530,9 @@ func matchSpanTokenIndices(nws []*languagetool.AnalyzedTokenReadings, fromPos, t
 		if t.GetStartPos() == fromPos {
 			first = i
 		}
-		if t.GetEndPos() == toPos || t.GetStartPos()+len(t.GetToken()) == toPos {
+		// Java: startPos + token.length() (UTF-16) — GetEndPos is that twin.
+		// Do not use Go len(token) (UTF-8 bytes) as a fallback.
+		if t.GetEndPos() == toPos {
 			last = i
 		}
 	}

@@ -67,3 +67,27 @@ func TestPatternRuleMatcher_SetsMatchType(t *testing.T) {
 	require.Len(t, ms, 1)
 	require.Equal(t, rules.RuleMatchTypeHint, ms[0].GetType())
 }
+
+// matchSpanTokenIndices: RuleMatch spans and token ends are UTF-16 (Java String).
+// "café" is 4 UTF-16 units; UTF-8 byte len is 5 — must not use len(token).
+func TestMatchSpanTokenIndices_UTF16(t *testing.T) {
+	// positions as Java: "café" at 0..4, " " skipped, "ok" at 5..7
+	cafe := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("café", nil, nil), 0)
+	ok := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("ok", nil, nil), 5)
+	nws := []*languagetool.AnalyzedTokenReadings{cafe, ok}
+
+	first, last := matchSpanTokenIndices(nws, 0, 4)
+	require.Equal(t, 0, first)
+	require.Equal(t, 0, last, "café ends at UTF-16 4 via GetEndPos, not byte 5")
+
+	first, last = matchSpanTokenIndices(nws, 5, 7)
+	require.Equal(t, 1, first)
+	require.Equal(t, 1, last)
+
+	// span covering both words
+	first, last = matchSpanTokenIndices(nws, 0, 7)
+	require.Equal(t, 0, first)
+	require.Equal(t, 1, last)
+}
