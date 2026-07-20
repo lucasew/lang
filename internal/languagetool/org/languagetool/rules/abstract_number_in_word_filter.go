@@ -20,9 +20,16 @@ func NewNumberInWordFilter() *NumberInWordFilter {
 
 var numberInWordDigitRE = regexp.MustCompile(`[0-9]`)
 
-// Suggestions returns candidates that pass the speller gate (Java acceptRuleMatch logic).
+// Suggestions ports AbstractNumberInWordFilter.acceptRuleMatch candidate list.
+//
+// Java (no invent gates):
+//  1. wordReplacingZeroO = word.replace("0","o") if changed and !isMisspelled
+//  2. wordWithoutNumberCharacter = strip [0-9] if !isMisspelled (even empty / same as word)
+//  3. if both empty → getSuggestions(wordWithoutNumberCharacter)
+//
+// Without IsMisspelled the speller is unavailable (fail-closed; Java always has one).
 func (f *NumberInWordFilter) Suggestions(word string) []string {
-	if f == nil || !numberInWordDigitRE.MatchString(word) {
+	if f == nil {
 		return nil
 	}
 	miss := f.IsMisspelled
@@ -31,22 +38,15 @@ func (f *NumberInWordFilter) Suggestions(word string) []string {
 		return nil
 	}
 	var out []string
+	// Java: word.replace("0","o") then !word.equals(wordReplacingZeroO) && !isMisspelled
 	repl0 := strings.ReplaceAll(word, "0", "o")
 	if repl0 != word && !miss(repl0) {
 		out = append(out, repl0)
 	}
+	// Java: strip [0-9]; add if !isMisspelled — even when empty or equal to word (no invent gates).
 	without := numberInWordDigitRE.ReplaceAllString(word, "")
-	if without != "" && without != word && !miss(without) {
-		dup := false
-		for _, s := range out {
-			if s == without {
-				dup = true
-				break
-			}
-		}
-		if !dup {
-			out = append(out, without)
-		}
+	if !miss(without) {
+		out = append(out, without)
 	}
 	if len(out) == 0 && f.GetSuggestions != nil {
 		out = append(out, f.GetSuggestions(without)...)
