@@ -12,6 +12,10 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("en-US")
 	RegisterCoreEnglishLanguageRules(lt)
 
+	// Java English.createDefaultChunker → pre-disambig Chunker (not post-disambig).
+	require.NotNil(t, lt.Chunker)
+	require.Nil(t, lt.PostDisambiguationChunker)
+
 	require.NotEmpty(t, lt.Check("This is an test."))
 	require.NotEmpty(t, lt.Check("hello  world"))
 	// English word-repeat id

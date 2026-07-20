@@ -12,6 +12,8 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	// Java English.createDefaultChunker() → EnglishChunker on getChunker() (pre-disambig).
+	RegisterEnglishChunker(lt)
 	// Java English / BritishEnglish.getPriorityForId + filterRuleMatches (hooks from language init).
 	// en-GB uses BritishEnglish id2prio (Oxford spelling) then English super.
 	if languagetool.EnglishPriorityForIdForCodeHook != nil {
