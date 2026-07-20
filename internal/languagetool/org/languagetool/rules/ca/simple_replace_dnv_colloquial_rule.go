@@ -41,6 +41,8 @@ type SimpleReplaceDNVColloquialRule struct {
 func NewSimpleReplaceDNVColloquialRule(messages map[string]string) *SimpleReplaceDNVColloquialRule {
 	base := &AbstractSimpleReplaceLemmasRule{
 		ID:          "CA_SIMPLE_REPLACE_DNV_COLLOQUIAL",
+		LanguageCode:         "ca",
+		SubRuleSpecificIDs:   true,
 		Description: "Detecta paraules marcades com a col·loquials en el DNV.",
 		ShortMsg:    "Paraula o expressió col·loquial.",
 		WrongLemmas: loadDNVColloquial(),

@@ -45,6 +45,8 @@ func NewSimpleReplaceBalearicRule(messages map[string]string) *SimpleReplaceBale
 		CaseSensitive: false,
 		CheckLemmas:   false,
 		ID:            "CA_SIMPLE_REPLACE_BALEARIC",
+		LanguageCode:         "ca",
+		SubRuleSpecificIDs:   true,
 		Description:   "Suggeriments per a formes balears: $match",
 		ShortMsg:      "Possible error ortogràfic.",
 		MessageFn: func(tokenStr string, replacements []string) string {

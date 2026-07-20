@@ -36,3 +36,40 @@ func TestAbstractSimpleReplaceRule_SkipTagged(t *testing.T) {
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{tok})
 	require.Empty(t, r.Match(sent), "tagged word should be skipped")
 }
+
+// Java useSubRuleSpecificIds → SpecificIdRule(toId(getId()+"_"+token), desc.replace("$match", …)).
+func TestAbstractSimpleReplaceRule_SubRuleSpecificIDs(t *testing.T) {
+	r := &AbstractSimpleReplaceRule{
+		WrongWords:         map[string][]string{"teh": {"the"}},
+		ID:                 "TEST_REPLACE",
+		Description:        "Bad word: $match",
+		LanguageCode:       "en",
+		SubRuleSpecificIDs: true,
+		MessageFn: func(tokenStr string, replacements []string) string {
+			return "fix " + tokenStr
+		},
+	}
+	sent := languagetool.AnalyzePlain("teh.")
+	ms := r.Match(sent)
+	require.NotEmpty(t, ms)
+	idRule, ok := ms[0].GetRule().(*SpecificIdRule)
+	require.True(t, ok, "must be SpecificIdRule when SubRuleSpecificIDs")
+	require.NotEqual(t, "TEST_REPLACE", idRule.GetID())
+	require.Contains(t, idRule.GetID(), "TEST_REPLACE")
+	require.Equal(t, "Bad word: teh", idRule.GetDescription())
+	// Title-case token "Teh" → suggestion still uppercased after message
+	r2 := &AbstractSimpleReplaceRule{
+		WrongWords:         map[string][]string{"teh": {"the"}},
+		ID:                 "TEST_REPLACE",
+		LanguageCode:       "en",
+		SubRuleSpecificIDs: true,
+		MessageFn: func(tokenStr string, replacements []string) string {
+			// Java getMessage sees replacements before title-case
+			require.Equal(t, []string{"the"}, replacements)
+			return "msg"
+		},
+	}
+	ms2 := r2.Match(languagetool.AnalyzePlain("Teh."))
+	require.NotEmpty(t, ms2)
+	require.Equal(t, []string{"The"}, ms2[0].GetSuggestedReplacements())
+}

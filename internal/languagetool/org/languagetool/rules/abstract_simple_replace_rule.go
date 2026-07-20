@@ -22,6 +22,14 @@ type AbstractSimpleReplaceRule struct {
 	ID                string
 	Description       string
 	ShortMsg          string
+	// LanguageCode ports Language for StringTools.toId (useSubRuleSpecificIds).
+	LanguageCode string
+	// SubRuleSpecificIDs ports useSubRuleSpecificIds() → SpecificIdRule per match.
+	SubRuleSpecificIDs bool
+	// Premium ports Rule.isPremium for SpecificIdRule.
+	Premium bool
+	// Tags ports Rule.getTags for SpecificIdRule.
+	Tags []Tag
 	// Category ports Rule.category (Java MISC).
 	Category *Category
 	// URL ports Rule.url (Java setUrl).
@@ -32,12 +40,28 @@ type AbstractSimpleReplaceRule struct {
 	incorrectExamples []IncorrectExample
 	correctExamples   []CorrectExample
 	// MessageFn custom message; if nil uses default.
+	// Called with replacements before title-case adjust (Java getMessage then casing).
 	MessageFn func(tokenStr string, replacements []string) string
 	// TokenException optional skip (ports isTokenException).
 	TokenException func(token *languagetool.AnalyzedTokenReadings) bool
 	// IsTagged optional override for ignoreTaggedWords (Java protected isTagged).
 	// nil → tokenReadings.IsTagged().
 	IsTagged func(token *languagetool.AnalyzedTokenReadings) bool
+}
+
+// UseSubRuleSpecificIDs ports AbstractSimpleReplaceRule.useSubRuleSpecificIds.
+func (r *AbstractSimpleReplaceRule) UseSubRuleSpecificIDs() {
+	if r != nil {
+		r.SubRuleSpecificIDs = true
+	}
+}
+
+// GetTags ports Rule.getTags.
+func (r *AbstractSimpleReplaceRule) GetTags() []Tag {
+	if r == nil {
+		return nil
+	}
+	return r.Tags
 }
 
 // InitSimpleReplaceMeta applies Java AbstractSimpleReplaceRule constructor metadata.
@@ -221,25 +245,53 @@ func (r *AbstractSimpleReplaceRule) findMatches(tokenReadings *languagetool.Anal
 		return nil
 	}
 
-	if !r.CaseSensitive && tools.StartsWithUppercase(originalTokenStr) {
+	// createRuleMatch: message first (replacements not yet title-cased), then casing, then setSuggestedReplacements.
+	return []*RuleMatch{r.createRuleMatch(tokenReadings, replacements, sentence, originalTokenStr)}
+}
+
+// createRuleMatch ports AbstractSimpleReplaceRule.createRuleMatch.
+func (r *AbstractSimpleReplaceRule) createRuleMatch(
+	tokenReadings *languagetool.AnalyzedTokenReadings,
+	replacements []string,
+	sentence *languagetool.AnalyzedSentence,
+	originalTokenStr string,
+) *RuleMatch {
+	tokenString := tokenReadings.GetToken()
+	pos := tokenReadings.GetStartPos()
+	end := pos + utf16TokenLen(tokenString)
+
+	msg := "Possible spelling mistake found."
+	if r.MessageFn != nil {
+		// Java getMessage(tokenString, replacements) before uppercaseFirstChar on suggestions.
+		msg = r.MessageFn(tokenString, replacements)
+	}
+
+	short := r.ShortMsg
+	if short == "" {
+		short = "Spelling mistake"
+	}
+
+	var rm *RuleMatch
+	if r.SubRuleSpecificIDs {
+		// Java: StringTools.toId(getId() + "_" + originalTokenStr, language)
+		// getDescription().replace("$match", originalTokenStr) — all occurrences
+		id := tools.ToId(r.GetID()+"_"+originalTokenStr, r.LanguageCode)
+		desc := strings.ReplaceAll(r.GetDescription(), "$match", originalTokenStr)
+		idRule := NewSpecificIdRule(id, desc, r.Premium, r.GetCategory(), r.GetLocQualityIssueType(), r.GetTags())
+		rm = NewRuleMatch(idRule, sentence, pos, end, msg)
+	} else {
+		rm = NewRuleMatch(r, sentence, pos, end, msg)
+	}
+	rm.ShortMessage = short
+
+	// Java: after RuleMatch construction, title-case suggestions when !caseSensitive && capitalized token.
+	if !r.CaseSensitive && tools.StartsWithUppercase(tokenString) {
 		for i, rep := range replacements {
 			replacements[i] = tools.UppercaseFirstChar(rep)
 		}
 	}
-
-	msg := "Possible spelling mistake found."
-	if r.MessageFn != nil {
-		msg = r.MessageFn(originalTokenStr, replacements)
-	}
-	pos := tokenReadings.GetStartPos()
-	end := pos + utf16TokenLen(originalTokenStr)
-	rm := NewRuleMatch(r, sentence, pos, end, msg)
-	rm.ShortMessage = r.ShortMsg
-	if rm.ShortMessage == "" {
-		rm.ShortMessage = "Spelling mistake"
-	}
 	rm.SetSuggestedReplacements(replacements)
-	return []*RuleMatch{rm}
+	return rm
 }
 
 func utf16TokenLen(s string) int {

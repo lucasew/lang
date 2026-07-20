@@ -46,6 +46,8 @@ func NewPortugueseOrthographyReplaceRule(messages map[string]string) *Portuguese
 		CaseSensitive: false,
 		CheckLemmas:   true, // Java default checkLemmas true
 		ID:            "PT_SIMPLE_REPLACE_ORTHOGRAPHY",
+		LanguageCode:         "pt",
+		SubRuleSpecificIDs:   true,
 		Description:   "Possible spelling mistake found.",
 		ShortMsg:      "Spelling mistake",
 		Category:      rules.CatTypos.GetCategory(messages),

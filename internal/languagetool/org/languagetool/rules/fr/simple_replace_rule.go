@@ -50,6 +50,8 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 		CaseSensitive: false,
 		CheckLemmas:   false,
 		ID:            "FR_SIMPLE_REPLACE_SIMPLE",
+		LanguageCode:         "fr",
+		SubRuleSpecificIDs:   true,
 		Description:   "Mot incorrect : $match",
 		ShortMsg:      "Mot incorrect",
 		MessageFn: func(tokenStr string, replacements []string) string {

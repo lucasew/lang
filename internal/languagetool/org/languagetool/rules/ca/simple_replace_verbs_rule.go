@@ -55,6 +55,8 @@ func NewSimpleReplaceVerbsRule(messages map[string]string) *SimpleReplaceVerbsRu
 		CheckLemmas:       false,
 		IgnoreTaggedWords: true, // Java setIgnoreTaggedWords()
 		ID:                "CA_SIMPLE_REPLACE_VERBS",
+		LanguageCode:         "ca",
+		SubRuleSpecificIDs:   true,
 		Description:       "Verb incorrecte: $match",
 		ShortMsg:          "Verb incorrecte",
 		MessageFn: func(tokenStr string, replacements []string) string {

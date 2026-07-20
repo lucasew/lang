@@ -66,6 +66,8 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 		CheckLemmas:       false,
 		IgnoreTaggedWords: true, // Java setIgnoreTaggedWords()
 		ID:                "CA_SIMPLE_REPLACE_SIMPLE",
+		LanguageCode:         "ca",
+		SubRuleSpecificIDs:   true,
 		Description:       "Paraula incorrecta: $match",
 		ShortMsg:          "Paraula incorrecta",
 		MessageFn: func(tokenStr string, replacements []string) string {

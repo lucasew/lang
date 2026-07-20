@@ -44,6 +44,8 @@ func NewSimpleReplaceAdverbsMent(messages map[string]string) *SimpleReplaceAdver
 		CaseSensitive: false,
 		CheckLemmas:   false,
 		ID:            "ADVERBIS_MENT",
+		LanguageCode:         "ca",
+		SubRuleSpecificIDs:   true,
 		Description:   "Alternatives a adverbis acabats en -ment: $match",
 		ShortMsg:      "Alternatives a adverbis acabats en -ment",
 		MessageFn: func(tokenStr string, replacements []string) string {

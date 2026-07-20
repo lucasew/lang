@@ -41,6 +41,8 @@ type SimpleReplaceDNVRule struct {
 func NewSimpleReplaceDNVRule(messages map[string]string) *SimpleReplaceDNVRule {
 	base := &AbstractSimpleReplaceLemmasRule{
 		ID:          "CA_SIMPLE_REPLACE_DNV",
+		LanguageCode:         "ca",
+		SubRuleSpecificIDs:   true,
 		Description: "Detecta paraules admeses només per l'AVL i proposa suggeriments de canvi",
 		ShortMsg:    "Paraula del DNV",
 		WrongLemmas: loadDNV(),
