@@ -22,6 +22,22 @@ func NewRequest(text string, start, end int, candidates []string) Request {
 	}
 }
 
+// Equal ports Request.equals.
+func (r Request) Equal(o Request) bool {
+	if r.Start != o.Start || r.End != o.End || r.Text != o.Text {
+		return false
+	}
+	if len(r.Candidates) != len(o.Candidates) {
+		return false
+	}
+	for i := range r.Candidates {
+		if r.Candidates[i] != o.Candidates[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func (r Request) cacheKey() string {
 	return fmt.Sprintf("%s\x00%d\x00%d\x00%v", r.Text, r.Start, r.End, r.Candidates)
 }

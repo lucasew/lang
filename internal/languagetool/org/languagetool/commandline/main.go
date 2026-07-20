@@ -91,9 +91,18 @@ type RunHooks struct {
 	ReadStdin func() (string, error)
 }
 
-// Run is the CLI entry used by main packages.
+// Run is the CLI entry used by main packages (returns exit code without calling System.exit).
 func Run(args []string, hooks RunHooks) int {
 	return RunWithIO(args, hooks, os.Stdout, os.Stderr)
+}
+
+// Main ports commandline.Main.main body: run then ExitHandler(code).
+// Java uses SystemExitHandler.DEFAULT (System.exit).
+func Main(args []string, hooks RunHooks) {
+	code := Run(args, hooks)
+	if ExitHandler != nil {
+		ExitHandler(code)
+	}
 }
 
 // NormalizeProductArgs maps soft product subcommands onto LT-style flags (SPEC §2).

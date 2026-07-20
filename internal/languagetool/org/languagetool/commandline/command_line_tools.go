@@ -80,8 +80,14 @@ func CheckTextOpts(w io.Writer, contents string, checker TextChecker, opts Check
 	return len(matches), nil
 }
 
-// PrintMatches ports CommandLineTools.printMatches.
+// PrintMatches ports CommandLineTools.printMatches (Java text format).
+// RulePriorityFn optional: lang.getRulePriority(rule); 0 omits prio= suffix.
 func PrintMatches(w io.Writer, ruleMatches []*rules.RuleMatch, prevMatches int, contents string, contextSize, lineOffset int, verbose bool) {
+	PrintMatchesEx(w, ruleMatches, prevMatches, contents, contextSize, lineOffset, verbose, nil)
+}
+
+// PrintMatchesEx is PrintMatches with optional rule-priority lookup.
+func PrintMatchesEx(w io.Writer, ruleMatches []*rules.RuleMatch, prevMatches int, contents string, contextSize, lineOffset int, verbose bool, rulePriority func(ruleID string) int) {
 	if w == nil {
 		return
 	}
@@ -95,24 +101,35 @@ func PrintMatches(w io.Writer, ruleMatches []*rules.RuleMatch, prevMatches int, 
 		if match == nil {
 			continue
 		}
+		// Java uses match.getLine()+1 / getColumn() after check sets them; derive from offset + lineOffset.
 		line, col := lineColumnAt(contents, match.FromPos)
 		line += lineOffset
 		ruleID := ruleIDOf(match)
+		// Java: match.getSpecificRuleId()
+		if sid := specificRuleIDOf(match); sid != "" {
+			ruleID = sid
+		}
 		output := fmt.Sprintf("%d.) Line %d, column %d, Rule ID: %s", i+1+prevMatches, line, col, ruleID)
+		if sub := ruleSubIDOf(match); sub != "" {
+			output += "[" + sub + "]"
+		}
+		// Java: premium: Premium.get().isPremiumRule
+		prem := false
+		if languagetool.DefaultPremium != nil {
+			prem = languagetool.DefaultPremium.IsPremiumRule(ruleID)
+		}
+		output += " premium: " + fmt.Sprint(prem)
+		if rulePriority != nil {
+			if p := rulePriority(ruleID); p != 0 {
+				output += fmt.Sprintf(" prio=%d", p)
+			}
+		}
 		if verbose {
-			if sub := ruleSubIDOf(match); sub != "" {
-				output += "[" + sub + "]"
+			if xn := ruleXMLLineOf(match); xn > 0 {
+				output += fmt.Sprintf(" (line %d)", xn)
 			}
 		}
 		_, _ = fmt.Fprintln(w, output)
-		// Soft SPEC-aligned type/severity lines (ITS issue type + SARIF level).
-		_, _, issue, _ := languagetool.RuleMeta(ruleID)
-		if issue == "" {
-			issue = "other"
-		}
-		sev := languagetool.SeverityFromIssueType(issue)
-		_, _ = fmt.Fprintf(w, "Type: %s\n", issue)
-		_, _ = fmt.Fprintf(w, "Severity: %s\n", sev)
 		_, _ = fmt.Fprintf(w, "Message: %s\n", match.GetMessage())
 		reps := match.GetSuggestedReplacements()
 		if len(reps) > 0 {
@@ -122,6 +139,12 @@ func PrintMatches(w io.Writer, ruleMatches []*rules.RuleMatch, prevMatches int, 
 			_, _ = fmt.Fprintf(w, "Suggestion: %s\n", strings.Join(reps, "; "))
 		}
 		_, _ = fmt.Fprintln(w, ct.GetPlainTextContext(match.FromPos, match.ToPos, contents))
+		if u := matchURL(match); u != "" {
+			_, _ = fmt.Fprintf(w, "More info: %s\n", u)
+		}
+		if tags := ruleTagsOf(match); len(tags) > 0 {
+			_, _ = fmt.Fprintf(w, "Tags: %v\n", tags)
+		}
 		if i < len(ruleMatches)-1 {
 			_, _ = fmt.Fprintln(w)
 		}
@@ -187,6 +210,22 @@ func FormatTaggedToken(t *languagetool.AnalyzedTokenReadings) string {
 		return surface
 	}
 	return surface + "/" + strings.Join(lemmas, "|") + "/" + strings.Join(poses, "|")
+}
+
+// TagTextWithAnalyzed ports tagText(contents, lt): print AnalyzedSentence.String() per sentence.
+func TagTextWithAnalyzed(w io.Writer, contents string, sentenceTokenize func(string) []string, analyzeSentence func(string) string) {
+	if w == nil {
+		return
+	}
+	if sentenceTokenize == nil {
+		sentenceTokenize = func(s string) []string { return []string{s} }
+	}
+	if analyzeSentence == nil {
+		analyzeSentence = func(s string) string { return s }
+	}
+	for _, sentence := range sentenceTokenize(contents) {
+		_, _ = fmt.Fprintln(w, analyzeSentence(sentence))
+	}
 }
 
 // TagText writes simple token lines for each sentence (pluggable sentence split + token strings).
@@ -324,4 +363,50 @@ func matchesToMinimalJSON(matches []*rules.RuleMatch) string {
 	}
 	b.WriteByte(']')
 	return b.String()
+}
+
+func specificRuleIDOf(m *rules.RuleMatch) string {
+	if m == nil {
+		return ""
+	}
+	if id := m.GetSpecificRuleId(); id != "" {
+		return id
+	}
+	return ""
+}
+
+func matchURL(m *rules.RuleMatch) string {
+	if m == nil {
+		return ""
+	}
+	if u := m.GetURL(); u != "" {
+		return u
+	}
+	type urler interface{ GetURL() string }
+	if r, ok := m.Rule.(urler); ok {
+		return r.GetURL()
+	}
+	return ""
+}
+
+func ruleTagsOf(m *rules.RuleMatch) []string {
+	if m == nil || m.Rule == nil {
+		return nil
+	}
+	type tagger interface{ GetTags() []string }
+	if r, ok := m.Rule.(tagger); ok {
+		return r.GetTags()
+	}
+	return nil
+}
+
+func ruleXMLLineOf(m *rules.RuleMatch) int {
+	if m == nil || m.Rule == nil {
+		return 0
+	}
+	type xl interface{ GetXmlLineNumber() int }
+	if r, ok := m.Rule.(xl); ok {
+		return r.GetXmlLineNumber()
+	}
+	return 0
 }

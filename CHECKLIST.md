@@ -9,8 +9,8 @@
 - [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions
 - [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions.OutputFormat
 - [x] org/languagetool/commandline/CommandLineParser.java::CommandLineParser
-- [ ] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
-- [ ] org/languagetool/commandline/Main.java::Main
+- [x] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
+- [x] org/languagetool/commandline/Main.java::Main
 - [x] org/languagetool/commandline/Main.java::Main.SystemExitHandler
 - [x] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
 - [x] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
@@ -133,8 +133,8 @@
 - [x] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel
 - [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel.LuceneSearcher
 - [x] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
-- [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel
-- [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel.Request
+- [x] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel
+- [x] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel.Request
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc.AsyncService
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc.BertLmImplBase

@@ -22,6 +22,8 @@ func TestCommandLineTools_Check(t *testing.T) {
 	require.Equal(t, 1, n)
 	out := buf.String()
 	require.Contains(t, out, "Rule ID: EN_A_VS_AN")
+	require.Contains(t, out, "premium: false")
+	require.NotContains(t, out, "Type:") // Java printMatches has no Type/Severity soft lines
 	require.Contains(t, out, "Message:")
 	require.Contains(t, out, "Suggestion: a")
 	require.Contains(t, out, "Time:")
