@@ -106,6 +106,8 @@ func (h *PatternRuleHandler) ParseString(xmlStr string) error {
 type grammarRoot struct {
 	XMLName      xml.Name           `xml:"rules"`
 	Lang         string             `xml:"lang,attr"`
+	// Premium ports rules premium="yes|no" file-level default.
+	Premium      string             `xml:"premium,attr"`
 	Unifications []grammarUnifyFeat `xml:"unification"`
 	Categories   []grammarCategory  `xml:"category"`
 }
@@ -128,6 +130,8 @@ type grammarCategory struct {
 	Default  string         `xml:"default,attr"`
 	// Prio ports category prio="N".
 	Prio     string         `xml:"prio,attr"`
+	// Premium ports category premium="yes|no".
+	Premium  string         `xml:"premium,attr"`
 	Tags     string         `xml:"tags,attr"`      // space-separated Tag names (e.g. picky)
 	ToneTags string         `xml:"tone_tags,attr"` // space-separated ToneTag names
 	Rules    []grammarRule  `xml:"rule"`
@@ -143,6 +147,8 @@ type grammarGroup struct {
 	Prio     string        `xml:"prio,attr"`
 	// Type ports rulegroup type= (Java ruleGroupIssueType).
 	Type     string        `xml:"type,attr"`
+	// Premium ports rulegroup premium="yes|no".
+	Premium  string        `xml:"premium,attr"`
 	Tags     string        `xml:"tags,attr"`
 	ToneTags string        `xml:"tone_tags,attr"`
 	URL      string        `xml:"url"`
@@ -157,6 +163,8 @@ type grammarRule struct {
 	Type         string          `xml:"type,attr"`
 	// Prio ports rule prio="N".
 	Prio         string          `xml:"prio,attr"`
+	// Premium ports rule premium="yes|no".
+	Premium      string          `xml:"premium,attr"`
 	Tags         string          `xml:"tags,attr"`
 	ToneTags     string          `xml:"tone_tags,attr"`
 	GoalSpecific string          `xml:"is_goal_specific,attr"` // "yes" / "true"
@@ -205,6 +213,7 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 	if root.Lang != "" && h.LanguageCode == "" {
 		h.LanguageCode = root.Lang
 	}
+	filePremium := strings.TrimSpace(root.Premium)
 	// unification
 	for _, u := range root.Unifications {
 		for _, eq := range u.Equivalences {
@@ -233,8 +242,9 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 		catTags := parseRuleTagsAttr(cat.Tags)
 		catPrio := parsePrioAttr(cat.Prio)
 		catType := strings.TrimSpace(cat.Type)
+		catPremium := strings.TrimSpace(cat.Premium)
 		for _, xr := range cat.Rules {
-			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil, "", catPrio, 0, catType, ""); err != nil {
+			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil, "", catPrio, 0, catType, "", filePremium, catPremium, ""); err != nil {
 				return err
 			}
 		}
@@ -244,11 +254,12 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 			groupPrio := parsePrioAttr(g.Prio)
 			groupType := strings.TrimSpace(g.Type)
 			groupURL := strings.TrimSpace(g.URL)
+			groupPremium := strings.TrimSpace(g.Premium)
 			for i, xr := range g.Rules {
 				if xr.ID == "" {
 					xr.ID = g.ID
 				}
-				if err := h.addRule(xr, cat.ID, catTones, groupTones, catTags, groupTags, g.Default, catPrio, groupPrio, catType, groupType); err != nil {
+				if err := h.addRule(xr, cat.ID, catTones, groupTones, catTags, groupTags, g.Default, catPrio, groupPrio, catType, groupType, filePremium, catPremium, groupPremium); err != nil {
 					return err
 				}
 				if len(h.LoadedPatternRules) > 0 {
@@ -354,7 +365,7 @@ func resolveGoalSpecific(ruleAttr, groupAttr, catAttr string) bool {
 	return false
 }
 
-func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag, groupDefault string, catPrio, groupPrio int, catType, groupType string) error {
+func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag, categoryTags, groupTags []rules.Tag, groupDefault string, catPrio, groupPrio int, catType, groupType, filePremium, catPremium, groupPremium string) error {
 	if xr.ID == "" && !h.RelaxedMode {
 		return fmt.Errorf("rule without id in %s", h.SourceFile)
 	}
@@ -367,6 +378,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	defaultOff, defaultTempOff := resolveRuleDefaultOff(xr.Default, groupDefault)
 	issueType := resolveIssueType(xr.Type, groupType, catType)
 	prio := resolvePriority(catPrio, groupPrio, parsePrioAttr(xr.Prio))
+	premium := resolvePremium(xr.Premium, groupPremium, catPremium, filePremium)
 	ruleURL := strings.TrimSpace(xr.URL)
 	if xr.Regexp != nil {
 		content := strings.TrimSpace(xr.Regexp.Content)
@@ -394,6 +406,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 			rr.AbstractPatternRule.Priority = prio
 			rr.AbstractPatternRule.URL = ruleURL
 			rr.AbstractPatternRule.SourceFile = h.SourceFile
+			rr.AbstractPatternRule.Premium = premium
 		}
 		h.LoadedRegexRules = append(h.LoadedRegexRules, rr)
 		// also as abstract for listing
@@ -408,6 +421,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 		abs.IssueType = issueType
 		abs.Priority = prio
 		abs.URL = ruleURL
+		abs.Premium = premium
 		h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 		return nil
 	}
@@ -431,6 +445,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	pr.Priority = prio
 	pr.URL = ruleURL
 	pr.SourceFile = h.SourceFile
+	pr.Premium = premium
 	if len(tags) > 0 {
 		pr.SetTags(tags)
 	}
@@ -446,6 +461,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	abs.IssueType = issueType
 	abs.Priority = prio
 	abs.URL = ruleURL
+	abs.Premium = premium
 	h.XMLRuleHandler.Rules = append(h.XMLRuleHandler.Rules, abs)
 	_ = categoryID
 	return nil

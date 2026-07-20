@@ -212,6 +212,31 @@ func TestRegisterPatternRule_RuleGroupDefaultOff(t *testing.T) {
 	require.NotEmpty(t, lt.Check("foo bar"))
 }
 
+// Java premium inheritance via PatternRuleHandler (same resolvePremium as loader).
+func TestPatternRuleHandler_PremiumInheritance(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en" premium="yes">
+  <category id="C" name="C" premium="no">
+    <rule id="CAT_NO">
+      <pattern><token>a</token></pattern>
+      <message>m</message>
+    </rule>
+    <rule id="RULE_YES" premium="yes">
+      <pattern><token>b</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("t.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	byID := map[string]*PatternRule{}
+	for _, pr := range h.LoadedPatternRules {
+		byID[pr.ID] = pr
+	}
+	require.False(t, byID["CAT_NO"].Premium)
+	require.True(t, byID["RULE_YES"].Premium)
+}
+
 // Java default="temp_off": defaultOff + defaultTempOff; EnableTempOffRules re-activates.
 func TestRegisterPatternRule_DefaultTempOff(t *testing.T) {
 	xml := `<?xml version="1.0"?>

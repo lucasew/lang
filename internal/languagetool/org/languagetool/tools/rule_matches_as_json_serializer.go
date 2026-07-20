@@ -32,6 +32,8 @@ type MatchForJSON struct {
 	Tags []string
 	// TempOff ports Rule.isDefaultTempOff() → JSON rule.tempOff (only when true).
 	TempOff bool
+	// IsPremium ports Rule.isPremium → JSON rule.isPremium (only when serializer Premium and true).
+	IsPremium bool
 	// SubID ports Rule.getSubId() → JSON rule.subId (omit when empty).
 	SubID string
 	// SourceFile ports Rule.getSourceFile() basename → JSON rule.sourceFile (omit when empty / compact).
@@ -90,6 +92,8 @@ type RuleJSON struct {
 	Tags []string `json:"tags,omitempty"`
 	// TempOff ports Rule.isDefaultTempOff (Java writeRule: only when true).
 	TempOff bool `json:"tempOff,omitempty"`
+	// IsPremium ports Rule.isPremium (Java writeRule only when Premium.isPremiumVersion()).
+	IsPremium bool `json:"isPremium,omitempty"`
 }
 
 // URLJSON is a rule documentation link object (LT API shape).
@@ -196,6 +200,10 @@ func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSONWithReason(matches []Matc
 		// Java writeRule: if (rule.isDefaultTempOff()) writeBooleanField("tempOff", true).
 		if m.TempOff {
 			mj.Rule.TempOff = true
+		}
+		// Java: if (Premium.isPremiumVersion()) writeBooleanField("isPremium", …).
+		if s.Premium && m.IsPremium {
+			mj.Rule.IsPremium = true
 		}
 		for _, r := range m.SuggestedReplacements {
 			mj.Replacements = append(mj.Replacements, ReplacementJSON{Value: r})

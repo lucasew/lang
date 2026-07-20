@@ -439,6 +439,22 @@ func ruleSourceFileOf(m *rules.RuleMatch) string {
 	return ""
 }
 
+// ruleIsPremiumOf ports Rule.isPremium for JSON rule.isPremium.
+func ruleIsPremiumOf(m *rules.RuleMatch) bool {
+	if m == nil || m.Rule == nil {
+		return false
+	}
+	type prem interface{ IsPremium() bool }
+	if r, ok := m.Rule.(prem); ok {
+		return r.IsPremium()
+	}
+	type getPrem interface{ GetPremium() bool }
+	if r, ok := m.Rule.(getPrem); ok {
+		return r.GetPremium()
+	}
+	return false
+}
+
 func ruleXMLLineOf(m *rules.RuleMatch) int {
 	if m == nil || m.Rule == nil {
 		return 0

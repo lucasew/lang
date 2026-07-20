@@ -80,6 +80,20 @@ func TestRuleMatchesAsJsonSerializer_JsonSubIdSourceFile(t *testing.T) {
 	require.NotContains(t, json, "sourceFile")
 }
 
+// Java writeRule: isPremium only when Premium.isPremiumVersion().
+func TestRuleMatchesAsJsonSerializer_JsonIsPremium(t *testing.T) {
+	s := NewRuleMatchesAsJsonSerializer()
+	m := MatchForJSON{Message: "m", FromPos: 0, ToPos: 1, RuleID: "P", IsPremium: true}
+	// non-premium build: omit field even if rule is premium
+	json, err := s.RuleMatchesToJSON([]MatchForJSON{m}, "x", 2)
+	require.NoError(t, err)
+	require.NotContains(t, json, "isPremium")
+	s.Premium = true
+	json, err = s.RuleMatchesToJSON([]MatchForJSON{m}, "x", 2)
+	require.NoError(t, err)
+	require.Contains(t, json, `"isPremium":true`)
+}
+
 // Java writeRule: isDefaultTempOff → "tempOff": true
 func TestRuleMatchesAsJsonSerializer_JsonTempOff(t *testing.T) {
 	s := NewRuleMatchesAsJsonSerializer()

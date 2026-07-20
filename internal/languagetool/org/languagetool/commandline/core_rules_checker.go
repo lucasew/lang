@@ -798,6 +798,7 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 			RuleURL:               ruleURL,
 			Tags:                  ruleTagsOf(m),
 			TempOff:               ruleTempOffOf(m),
+			IsPremium:             ruleIsPremiumOf(m),
 			SubID:                 ruleSubIDOf(m),
 			SourceFile:            ruleSourceFileOf(m),
 		}

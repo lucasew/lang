@@ -88,6 +88,7 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 			RuleURL:               ruleURL,
 			Tags:                  ruleTagsOf(m),
 			TempOff:               ruleTempOffOf(m),
+			IsPremium:             ruleIsPremiumOf(m),
 			SubID:                 ruleSubIDOf(m),
 			SourceFile:            ruleSourceFileOf(m),
 		})
