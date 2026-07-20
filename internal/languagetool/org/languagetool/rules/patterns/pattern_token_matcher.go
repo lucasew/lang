@@ -2,7 +2,6 @@ package patterns
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -177,23 +176,8 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		surfaceMatch = m.matchSurface(getTestToken(pt, token))
 	}
 	posNegation := pt.Pos != nil && pt.Pos.Negate
-	posMatch := true
-	if pt.Pos != nil && pt.Pos.PosTag != "" {
-		pos := token.GetPOSTag()
-		posMatch = false
-		if pos != nil && *pos != "" {
-			if pt.Pos.Regexp {
-				// Java PosToken: StringMatcher.regexp(posTag)
-				posMatch = NewStringMatcherRegexp(normalizeJavaRegexp(pt.Pos.PosTag)).Matches(*pos)
-			} else {
-				posMatch = *pos == pt.Pos.PosTag
-			}
-		} else {
-			// Untagged: Java UNKNOWN only (faithful StrictPOS) / posUnknown.
-			tag := strings.ToUpper(pt.Pos.PosTag)
-			posMatch = tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN")
-		}
-	}
+	// Java: isPosTokenMatched(token) ^ posNegation
+	posMatch := IsPosTokenMatched(pt.Pos, token)
 	if hasSurface {
 		return (surfaceMatch != pt.Negation) && (posMatch != posNegation)
 	}
@@ -453,35 +437,21 @@ func (m *PatternTokenMatcher) isExceptionMatched(token *languagetool.AnalyzedTok
 		}
 		return false
 	}
-	// Legacy single TokenException* fields
+	// Legacy single TokenException* fields — build a PatternToken and use isMatched
+	// (Java exceptions are full PatternToken instances).
 	if !pt.HasCurrentException() {
 		return false
 	}
-	hasSurface := pt.TokenException != ""
-	surfaceMatch := false
-	if hasSurface {
-		surfaceMatch = matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive)
-	}
-	posMatch := true
+	ex := NewPatternToken(pt.TokenException, pt.TokenExceptionCaseSensitive, pt.TokenExceptionRE, false)
+	ex.SetNegation(pt.TokenExceptionNegation)
 	if pt.TokenExceptionPosTag != "" {
-		pos := token.GetPOSTag()
-		if pos == nil || *pos == "" {
-			if strings.Contains(pt.TokenExceptionPosTag, "UNKNOWN") {
-				posMatch = true
-			} else {
-				posMatch = false
-			}
-		} else if pt.TokenExceptionPosRE {
-			re, err := regexp.Compile("^(?:" + normalizeJavaRegexp(pt.TokenExceptionPosTag) + ")$")
-			posMatch = err == nil && re.MatchString(*pos)
-		} else {
-			posMatch = *pos == pt.TokenExceptionPosTag
-		}
+		ex.SetPosToken(PosToken{
+			PosTag: pt.TokenExceptionPosTag,
+			Regexp: pt.TokenExceptionPosRE,
+			Negate: pt.TokenExceptionPosNegation,
+		})
 	}
-	if hasSurface {
-		return (surfaceMatch != pt.TokenExceptionNegation) && (posMatch != pt.TokenExceptionPosNegation)
-	}
-	return !pt.TokenExceptionNegation && (posMatch != pt.TokenExceptionPosNegation)
+	return NewPatternTokenMatcher(ex).IsMatched(token)
 }
 
 // isAndExceptionGroupMatched ports PatternToken.isAndExceptionGroupMatched:

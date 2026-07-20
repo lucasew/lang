@@ -55,6 +55,7 @@ func TestPatternTokenMatcher_TextMatcherAndGetTestToken(t *testing.T) {
 }
 
 // Faithful: untagged tokens do not soft-accept open-class POS patterns.
+// Ports PatternToken.isPosTokenMatched + PosToken.posUnknown.
 func TestPatternTokenMatcher_UntaggedPOSStrict(t *testing.T) {
 	nn := Pos("NN.*")
 	nn.Pos.Regexp = true
@@ -64,6 +65,25 @@ func TestPatternTokenMatcher_UntaggedPOSStrict(t *testing.T) {
 	unk := Pos("UNKNOWN")
 	um := NewPatternTokenMatcher(unk)
 	require.True(t, um.IsMatched(languagetool.NewAnalyzedToken("man", nil, nil)))
+
+	// Regexp that accepts UNKNOWN also matches untagged (Java posUnknown).
+	unkRE := NewPatternToken("", false, false, false)
+	unkRE.SetPosToken(PosToken{PosTag: "UNKNOWN|NN", Regexp: true})
+	require.True(t, NewPatternTokenMatcher(unkRE).IsMatched(
+		languagetool.NewAnalyzedToken("man", nil, nil)))
+	// Tagged NN still matches the alternation
+	nnTag := "NN"
+	require.True(t, NewPatternTokenMatcher(unkRE).IsMatched(
+		languagetool.NewAnalyzedToken("man", &nnTag, nil)))
+	// Tagged VB does not match UNKNOWN|NN and is not hasNoTag
+	vb := "VB"
+	require.False(t, NewPatternTokenMatcher(unkRE).IsMatched(
+		languagetool.NewAnalyzedToken("run", &vb, nil)))
+
+	// Exact non-UNKNOWN with null POS → false (not posUnknown)
+	exact := Pos("NN")
+	require.False(t, NewPatternTokenMatcher(exact).IsMatched(
+		languagetool.NewAnalyzedToken("man", nil, nil)))
 }
 
 // Upstream EN NON_ENGLISH_CHARACTER_IN_A_WORD uses Java \uXXXX escapes.

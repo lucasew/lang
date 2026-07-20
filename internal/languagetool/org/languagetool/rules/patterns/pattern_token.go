@@ -13,11 +13,59 @@ func NormalizeTextPattern(token string) string {
 	return tools.TrimWhitespace(token)
 }
 
+// UnknownPOSTag ports PatternToken.UNKNOWN_TAG ("UNKNOWN").
+const UnknownPOSTag = "UNKNOWN"
+
 // PosToken ports PatternToken.PosToken.
 type PosToken struct {
 	PosTag string
 	Regexp bool
 	Negate bool
+	// posPattern ports PosToken.posPattern (StringMatcher for regexp POS).
+	posPattern *StringMatcher
+	// posUnknown ports PosToken.posUnknown — pattern accepts untagged tokens.
+	posUnknown bool
+	// prepared is true after ensurePosMatcher has run for current fields.
+	prepared bool
+}
+
+// ensurePosMatcher ports PosToken ctor: StringMatcher.regexp + posUnknown flag.
+func (p *PosToken) ensurePosMatcher() {
+	if p == nil || p.prepared {
+		return
+	}
+	p.prepared = true
+	if p.Regexp {
+		pat := normalizeJavaRegexp(p.PosTag)
+		p.posPattern = NewStringMatcherRegexp(pat)
+		p.posUnknown = p.posPattern.Matches(UnknownPOSTag)
+		return
+	}
+	p.posPattern = nil
+	p.posUnknown = p.PosTag == UnknownPOSTag
+}
+
+// IsPosTokenMatched ports PatternToken.isPosTokenMatched.
+func IsPosTokenMatched(pos *PosToken, token *languagetool.AnalyzedToken) bool {
+	if pos == nil || pos.PosTag == "" {
+		// Java: pos == null || pos.posTag == null → true
+		return true
+	}
+	pos.ensurePosMatcher()
+	if pos.posUnknown && token != nil && token.HasNoTag() {
+		return true
+	}
+	if token == nil {
+		return false
+	}
+	tokenPos := token.GetPOSTag()
+	if tokenPos == nil {
+		return false
+	}
+	if pos.posPattern != nil {
+		return pos.posPattern.Matches(*tokenPos)
+	}
+	return *tokenPos == pos.PosTag
 }
 
 // PatternToken ports a subset of org.languagetool.rules.patterns.PatternToken
@@ -100,6 +148,8 @@ func NewPatternToken(token string, caseSensitive, regexp, matchInflected bool) *
 }
 
 func (p *PatternToken) SetPosToken(pos PosToken) {
+	pos.prepared = false
+	pos.posPattern = nil
 	p.Pos = &pos
 }
 
