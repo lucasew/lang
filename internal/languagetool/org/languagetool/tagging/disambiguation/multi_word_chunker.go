@@ -391,7 +391,7 @@ func (c *MultiWordChunker) Disambiguate(input *languagetool.AnalyzedSentence) *l
 }
 
 // removePreviousTags ports MultiWordChunker.removePreviousTags:
-// <NNP></NNP> → NNP NNP (original tags removed).
+// <NNP></NNP> → NNP NNP (original tags removed). Annotation source "HybridDisamb" is Java.
 func removePreviousTags(aTokens []*languagetool.AnalyzedTokenReadings) []*languagetool.AnalyzedTokenReadings {
 	posTag, lemma, nextPOSTag := "", "", ""
 	for i := 0; i < len(aTokens); i++ {
@@ -406,7 +406,8 @@ func removePreviousTags(aTokens []*languagetool.AnalyzedTokenReadings) []*langua
 			if aTokens[i].HasPosTagAndLemma("</"+posTag+">", lemma) {
 				nextPOSTag, lemma = "", ""
 			}
-			aTokens[i].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, "HybridDisamb")
+			// Java: aTokens[i] = new AnalyzedTokenReadings(aTokens[i], singletonList, "HybridDisamb")
+			aTokens[i] = languagetool.NewAnalyzedTokenReadingsFromOld(aTokens[i], []*languagetool.AnalyzedToken{newTok}, "HybridDisamb")
 			continue
 		}
 		analyzedToken := getMultiWordAnalyzedToken(aTokens, i)
@@ -417,17 +418,18 @@ func removePreviousTags(aTokens []*languagetool.AnalyzedTokenReadings) []*langua
 		if len(raw) < 2 || raw[0] != '<' || raw[len(raw)-1] != '>' {
 			continue
 		}
+		// Interior of <TAG> (full strip of angle brackets).
 		posTag = raw[1 : len(raw)-1]
 		lemma = ""
 		if analyzedToken.GetLemma() != nil {
 			lemma = *analyzedToken.GetLemma()
 		}
 		if aTokens[i].HasPosTagAndLemma("</"+posTag+">", lemma) {
-			// single-token multiword
-			if rd := aTokens[i].ReadingWithExactTag("</" + posTag + ">"); rd != nil {
+			// single-token multiword — Java removeReading(readingWithTagRegex(...))
+			if rd := aTokens[i].ReadingWithTagRegex("</" + posTag + ">"); rd != nil {
 				aTokens[i].RemoveReading(rd, "HybridDisamb")
 			}
-			if rd := aTokens[i].ReadingWithExactTag("<" + posTag + ">"); rd != nil {
+			if rd := aTokens[i].ReadingWithTagRegex("<" + posTag + ">"); rd != nil {
 				aTokens[i].RemoveReading(rd, "HybridDisamb")
 			}
 			surf := analyzedToken.GetToken()
@@ -438,7 +440,8 @@ func removePreviousTags(aTokens []*languagetool.AnalyzedTokenReadings) []*langua
 			surf := analyzedToken.GetToken()
 			tagCopy := posTag
 			newTok := languagetool.NewAnalyzedToken(surf, &tagCopy, strPtrOrNil(lemma))
-			aTokens[i].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, "HybridDisamb")
+			// Java: aTokens[i] = new AnalyzedTokenReadings(aTokens[i], singletonList, "HybridDisamb")
+			aTokens[i] = languagetool.NewAnalyzedTokenReadingsFromOld(aTokens[i], []*languagetool.AnalyzedToken{newTok}, "HybridDisamb")
 			nextPOSTag = multiwordNextPosTag(posTag)
 		}
 	}
@@ -488,12 +491,17 @@ func getMultiWordAnalyzedToken(aTokens []*languagetool.AnalyzedTokenReadings, i 
 	maxDistance := 0
 	for _, at := range candidates {
 		pos := *at.GetPOSTag()
-		// pos is <TAG>
+		// Java: tag = "</" + getPOSTag().substring(1)  → "</TAG>" from "<TAG>"
 		endTag := "</" + pos[1:]
+		// Java bug-for-bug: substring(1, length-2) — not length-1 — so "<NPCN000>" → "NPCN00"
+		// and isLowPriorityTag("NPCN000") never hits via cleanTag.
 		cleanTag := ""
-		if len(pos) > 2 {
-			// Java: substring(1, length-2) on <TAG> — keep interior without angle brackets
-			cleanTag = pos[1 : len(pos)-1]
+		if len(pos) >= 2 {
+			end := len(pos) - 2
+			if end < 1 {
+				end = 1
+			}
+			cleanTag = pos[1:end]
 		}
 		lemma := ""
 		if at.GetLemma() != nil {
@@ -502,6 +510,7 @@ func getMultiWordAnalyzedToken(aTokens []*languagetool.AnalyzedTokenReadings, i 
 		distance := 1
 		for i+distance < len(aTokens) {
 			if aTokens[i+distance] != nil && aTokens[i+distance].HasPosTagAndLemma(endTag, lemma) {
+				// Java: if distance > max || (distance == max && !isLowPriorityTag(cleanTag))
 				if distance > maxDistance || (distance == maxDistance && !multiwordIsLowPriorityTag(cleanTag)) {
 					maxDistance = distance
 					selected = at

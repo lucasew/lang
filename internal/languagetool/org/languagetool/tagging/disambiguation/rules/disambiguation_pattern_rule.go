@@ -303,8 +303,8 @@ func (r *DisambiguationPatternRule) keepByDisambig(sentence *languagetool.Analyz
 		if ap.CanBeIgnoredFor(sentence) {
 			continue
 		}
-		// Java: new PatternRuleMatcher(antiPattern, false) — non-pre-disambig.
-		// Soft: non-strict POS so open-class anti patterns still fire without a tagger.
+		// Java: new PatternRuleMatcher(antiPattern, false) — useList=false, skips immunized.
+		// PatternTokenMatcher.StrictPOS defaults true (faithful POS matching).
 		am := patterns.NewPatternRuleMatcher(ap)
 		antiMatches, err := am.Match(sentence)
 		if err != nil || len(antiMatches) == 0 {

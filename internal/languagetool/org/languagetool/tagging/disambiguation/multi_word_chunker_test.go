@@ -122,3 +122,61 @@ func TestMultiWordChunker_GermanLineExpander(t *testing.T) {
 	require.Contains(t, c.Lines, "Aston Martins")
 	_ = out
 }
+
+func TestRemovePreviousTags_MultiTokenSpan(t *testing.T) {
+	// After MultiWordChunker: New has <NNP>, York has </NNP> → removePreviousTags → NNP NNP
+	nnpOpen := "<NNP>"
+	nnpClose := "</NNP>"
+	lemma := "New York"
+	newTok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("New", nil, nil))
+	newTok.AddReading(languagetool.NewAnalyzedToken("New", &nnpOpen, &lemma), "MULTIWORD_CHUNKER")
+	yorkTok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("York", nil, nil))
+	yorkTok.AddReading(languagetool.NewAnalyzedToken("York", &nnpClose, &lemma), "MULTIWORD_CHUNKER")
+	toks := []*languagetool.AnalyzedTokenReadings{
+		sentenceStart(),
+		newTok,
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
+		yorkTok,
+	}
+	out := removePreviousTags(toks)
+	// New → NNP only (original tags removed)
+	var newTags []string
+	for _, r := range out[1].GetReadings() {
+		if r.GetPOSTag() != nil {
+			newTags = append(newTags, *r.GetPOSTag())
+		}
+	}
+	require.Equal(t, []string{"NNP"}, newTags)
+	// York → NNP (nextPOSTag same as posTag for non-NC tags)
+	var yorkTags []string
+	for _, r := range out[3].GetReadings() {
+		if r.GetPOSTag() != nil {
+			yorkTags = append(yorkTags, *r.GetPOSTag())
+		}
+	}
+	require.Equal(t, []string{"NNP"}, yorkTags)
+}
+
+func TestGetMultiWordAnalyzedToken_CleanTagJavaSubstring(t *testing.T) {
+	// Java cleanTag = substring(1, length-2): "<NPCN000>" → "NPCN00" (not "NPCN000").
+	// Low-priority check never matches → equal-distance selection still prefers this tag.
+	np := "<NPCN000>"
+	nnp := "<NNP>"
+	lemma := "x y"
+	// Two candidates at same distance: prefer non-low-priority after Java cleanTag mangle.
+	// Build tokens: start | "a" with both open tags | " " | "b" with both close tags
+	a := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("a", nil, nil))
+	a.AddReading(languagetool.NewAnalyzedToken("a", &np, &lemma), "t")
+	a.AddReading(languagetool.NewAnalyzedToken("a", &nnp, &lemma), "t")
+	b := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("b", nil, nil))
+	npC, nnpC := "</NPCN000>", "</NNP>"
+	b.AddReading(languagetool.NewAnalyzedToken("b", &npC, &lemma), "t")
+	b.AddReading(languagetool.NewAnalyzedToken("b", &nnpC, &lemma), "t")
+	toks := []*languagetool.AnalyzedTokenReadings{sentenceStart(), a, b}
+	// i=1 is "a"
+	sel := getMultiWordAnalyzedToken(toks, 1)
+	require.NotNil(t, sel)
+	// With equal distance, last non-low-priority (after Java cleanTag) wins: both treated as non-low
+	// due to cleanTag mangle for NPCN000, so NNP (second candidate) selected when distance equal.
+	require.Equal(t, "<NNP>", *sel.GetPOSTag())
+}
