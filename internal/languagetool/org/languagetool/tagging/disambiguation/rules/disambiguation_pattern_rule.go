@@ -112,40 +112,76 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 	if base == nil {
 		return sentence
 	}
-	// Java DisambiguationPatternRuleReplacer: doMatch consumer + executeAction.
-	// DoMatch provides tokenPositions (includes skip gaps for startPositionCorrection).
-	nws := sentence.GetTokensWithoutWhitespace()
+	// Java DisambiguationPatternRuleReplacer:
+	//   tokens = sentence.getTokensWithoutWhitespace()  // match against
+	//   preDisambigTokens = sentence.getTokens()
+	//   whTokens[0] = sentence.getTokens()  // shallow clone then executeAction
+	//   return new AnalyzedSentence(whTokens[0], preDisambigTokens)
+	preDisambig := sentence.GetTokens()
+	whTokens := append([]*languagetool.AnalyzedTokenReadings(nil), preDisambig...)
+	nws, nwsFullIdx := nonBlankTokensWithIndex(whTokens)
+	// Matching uses the sentence's non-blank view (Java `tokens`); keep a parallel
+	// matchNWS so keepDespiteFilter sees the same objects DoMatch tested against.
+	matchNWS := sentence.GetTokensWithoutWhitespace()
 	changed := false
 	perf := patterns.NewAbstractPatternRulePerformer(base, nil)
 	perf.DoMatch(sentence, func(positions []int, firstMatch, lastMatch, firstMark, lastMark int, unifiedTokens []*languagetool.AnalyzedTokenReadings) {
-		if firstMatch < 0 || firstMatch >= len(nws) || lastMatch < 0 || lastMatch >= len(nws) {
+		if firstMatch < 0 || firstMatch >= len(matchNWS) || lastMatch < 0 || lastMatch >= len(matchNWS) {
 			return
 		}
-		// Java keepDespiteFilter before keepByDisambig
-		if !r.keepDespiteFilter(nws, positions, firstMatch, lastMatch) {
+		// Java keepDespiteFilter before keepByDisambig (on match tokens)
+		if !r.keepDespiteFilter(matchNWS, positions, firstMatch, lastMatch) {
 			return
 		}
-		// Java keepByDisambig on full pattern char offsets (firstMatch…lastMatch)
-		fromPos := nws[firstMatch].GetStartPos()
-		toPos := nws[lastMatch].GetEndPos()
+		fromPos := matchNWS[firstMatch].GetStartPos()
+		toPos := matchNWS[lastMatch].GetEndPos()
 		if !r.keepByDisambig(sentence, fromPos, toPos) {
 			return
 		}
 		if lastMark < 0 {
 			lastMark = lastMatch
 		}
-		// Java executeAction(firstMatchToken, lastMarkerMatchToken, tokenPositions)
+		// Action spans apply to the working whTokens/nws clone (Java executeAction).
 		first, last := r.actionSpan(firstMatch, lastMark, nws, positions)
 		if first < 0 || last < first {
 			return
 		}
-		r.applyAction(nws, first, last, firstMatch, positions, unifiedTokens)
+		r.applyAction(nws, nwsFullIdx, whTokens, first, last, firstMatch, positions, unifiedTokens)
 		changed = true
 	})
 	if !changed {
 		return sentence
 	}
-	return languagetool.NewAnalyzedSentence(sentence.GetTokens())
+	return languagetool.NewAnalyzedSentenceFull(whTokens, preDisambig)
+}
+
+// nonBlankTokensWithIndex ports AnalyzedSentence non-blank extraction with full-array indices.
+// Mirrors getNonBlankReadings membership (whitespace skip except sentence/para ends).
+func nonBlankTokensWithIndex(tokens []*languagetool.AnalyzedTokenReadings) (nws []*languagetool.AnalyzedTokenReadings, fullIdx []int) {
+	for i, t := range tokens {
+		if t == nil {
+			continue
+		}
+		if !t.IsWhitespace() || t.IsSentenceStart() || t.IsSentenceEnd() || t.IsParagraphEnd() {
+			nws = append(nws, t)
+			fullIdx = append(fullIdx, i)
+		}
+	}
+	return nws, fullIdx
+}
+
+// setNWS assigns a new ATR into the non-blank view and the full token array (Java whTokens[position]=).
+func setNWS(nws []*languagetool.AnalyzedTokenReadings, fullIdx []int, whTokens []*languagetool.AnalyzedTokenReadings, i int, atr *languagetool.AnalyzedTokenReadings) {
+	if i < 0 || i >= len(nws) {
+		return
+	}
+	nws[i] = atr
+	if i < len(fullIdx) {
+		fi := fullIdx[i]
+		if fi >= 0 && fi < len(whTokens) {
+			whTokens[fi] = atr
+		}
+	}
 }
 
 // indexByCharSpan finds first/last non-whitespace token indices for [fromPos,toPos].
@@ -284,6 +320,8 @@ func (r *DisambiguationPatternRule) keepByDisambig(sentence *languagetool.Analyz
 // applyFilterAll ports DisambiguationPatternRuleReplacer case FILTERALL.
 func (r *DisambiguationPatternRule) applyFilterAll(
 	nws []*languagetool.AnalyzedTokenReadings,
+	fullIdx []int,
+	whTokens []*languagetool.AnalyzedTokenReadings,
 	firstMatchToken int,
 	tokenPositions []int,
 ) {
@@ -356,7 +394,8 @@ func (r *DisambiguationPatternRule) applyFilterAll(
 			tmpMatch := patterns.NewMatch(pt.Pos.PosTag, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
 			ms := tmpMatch.CreateStateWithSynth(nil, nws[pos])
 			if filtered := ms.FilterReadings(); filtered != nil {
-				nws[pos].ReplaceReadings(filtered.GetReadings(), r.ID)
+				// Java: whTokens[position] = new AnalyzedTokenReadings(old, filtered, id)
+				setNWS(nws, fullIdx, whTokens, pos, languagetool.NewAnalyzedTokenReadingsFromOld(nws[pos], filtered.GetReadings(), r.ID))
 			}
 		}
 		return
@@ -388,13 +427,15 @@ func (r *DisambiguationPatternRule) applyFilterAll(
 		tmpMatch := patterns.NewMatch(pToken.Pos.PosTag, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
 		ms := tmpMatch.CreateStateWithSynth(nil, nws[position])
 		if filtered := ms.FilterReadings(); filtered != nil {
-			nws[position].ReplaceReadings(filtered.GetReadings(), r.ID)
+			setNWS(nws, fullIdx, whTokens, position, languagetool.NewAnalyzedTokenReadingsFromOld(nws[position], filtered.GetReadings(), r.ID))
 		}
 	}
 }
 
 func (r *DisambiguationPatternRule) applyAction(
 	nws []*languagetool.AnalyzedTokenReadings,
+	fullIdx []int,
+	whTokens []*languagetool.AnalyzedTokenReadings,
 	first, last, firstMatchToken int,
 	tokenPositions []int,
 	unifiedTokens []*languagetool.AnalyzedTokenReadings,
@@ -517,7 +558,8 @@ func (r *DisambiguationPatternRule) applyAction(
 					lemma = &surface
 				}
 				newTok := languagetool.NewAnalyzedToken(surface, pos, lemma)
-				nws[i].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, r.ID)
+				// Java: whTokens[position] = new AnalyzedTokenReadings(old, toReplace.getReadings(), id)
+				setNWS(nws, fullIdx, whTokens, i, languagetool.NewAnalyzedTokenReadingsFromOld(nws[i], []*languagetool.AnalyzedToken{newTok}, r.ID))
 			}
 			return
 		}
@@ -526,11 +568,11 @@ func (r *DisambiguationPatternRule) applyAction(
 		}
 		if r.MatchElement != nil {
 			// Java: matchElement.createState(synth, whTokens[fromPos]).filterReadings()
-			// Mutate in place — nws aliases sentence token pointers.
+			// then whTokens[fromPos] = new AnalyzedTokenReadings(old, filtered, id)
 			ms := r.MatchElement.CreateStateWithSynth(nil, nws[first])
 			filtered := ms.FilterReadings()
 			if filtered != nil {
-				nws[first].ReplaceReadings(filtered.GetReadings(), r.ID)
+				setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], filtered.GetReadings(), r.ID))
 			}
 			return
 		}
@@ -552,7 +594,7 @@ func (r *DisambiguationPatternRule) applyAction(
 		}
 		pos := r.DisambiguatedPOS
 		newTok := languagetool.NewAnalyzedToken(surface, &pos, &lemma)
-		nws[first].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, r.ID)
+		setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], []*languagetool.AnalyzedToken{newTok}, r.ID))
 	case ActionFilter:
 		// Java FILTER: when matchElement==null, build Match(disambiguatedPOS, postagRegexp)
 		// and apply filterReadings only if some reading already matches the POS regex.
@@ -564,7 +606,7 @@ func (r *DisambiguationPatternRule) applyAction(
 			ms := r.MatchElement.CreateStateWithSynth(nil, nws[first])
 			filtered := ms.FilterReadings()
 			if filtered != nil {
-				nws[first].ReplaceReadings(filtered.GetReadings(), r.ID)
+				setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], filtered.GetReadings(), r.ID))
 			}
 			return
 		}
@@ -594,13 +636,13 @@ func (r *DisambiguationPatternRule) applyAction(
 		ms := tmpMatch.CreateStateWithSynth(nil, nws[first])
 		filtered := ms.FilterReadings()
 		if filtered != nil {
-			nws[first].ReplaceReadings(filtered.GetReadings(), r.ID)
+			setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], filtered.GetReadings(), r.ID))
 		}
 	case ActionFilterAll:
 		// Java FILTERALL (DisambiguationPatternRuleReplacer): map each matched
 		// token in the corrected span to a pattern token via tokenPositions
 		// (skip zero-width optional elements), then MatchState.filterReadings.
-		r.applyFilterAll(nws, firstMatchToken, tokenPositions)
+		r.applyFilterAll(nws, fullIdx, whTokens, firstMatchToken, tokenPositions)
 	case ActionIgnoreSpelling:
 		for i := first; i <= last && i < len(nws); i++ {
 			if nws[i] != nil {
@@ -666,7 +708,7 @@ func (r *DisambiguationPatternRule) applyAction(
 	case ActionUnify:
 		// Java UNIFY: apply match-time unifiedTokens (getUnified=true) to the
 		// corrected marker span. Length must equal span token count.
-		r.applyUnify(nws, first, last, firstMatchToken, tokenPositions, unifiedTokens)
+		r.applyUnify(nws, fullIdx, whTokens, first, last, firstMatchToken, tokenPositions, unifiedTokens)
 	default:
 		_ = fmt.Sprintf
 	}
@@ -677,6 +719,8 @@ func (r *DisambiguationPatternRule) applyAction(
 // to re-running the unifier over the span when tokens were not captured.
 func (r *DisambiguationPatternRule) applyUnify(
 	nws []*languagetool.AnalyzedTokenReadings,
+	fullIdx []int,
+	whTokens []*languagetool.AnalyzedTokenReadings,
 	first, last, firstMatchToken int,
 	tokenPositions []int,
 	unifiedTokens []*languagetool.AnalyzedTokenReadings,
@@ -700,7 +744,9 @@ func (r *DisambiguationPatternRule) applyUnify(
 			if pos >= len(nws) || nws[pos] == nil || unifiedTokens[i] == nil {
 				continue
 			}
-			nws[pos].ReplaceReadings(append([]*languagetool.AnalyzedToken(nil), unifiedTokens[i].GetReadings()...), r.ID)
+			// Java: whTokens[position] = new AnalyzedTokenReadings(old, unified.getReadings(), id)
+			rds := append([]*languagetool.AnalyzedToken(nil), unifiedTokens[i].GetReadings()...)
+			setNWS(nws, fullIdx, whTokens, pos, languagetool.NewAnalyzedTokenReadingsFromOld(nws[pos], rds, r.ID))
 		}
 		return
 	}
@@ -745,7 +791,8 @@ func (r *DisambiguationPatternRule) applyUnify(
 		if unified[j] == nil || nws[i] == nil {
 			continue
 		}
-		nws[i].ReplaceReadings(append([]*languagetool.AnalyzedToken(nil), unified[j].GetReadings()...), r.ID)
+		rds := append([]*languagetool.AnalyzedToken(nil), unified[j].GetReadings()...)
+		setNWS(nws, fullIdx, whTokens, i, languagetool.NewAnalyzedTokenReadingsFromOld(nws[i], rds, r.ID))
 	}
 }
 

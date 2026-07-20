@@ -66,6 +66,51 @@ func TestDisambiguatedExample(t *testing.T) {
 	require.Contains(t, e.String(), "can/NN")
 }
 
+func TestDisambiguationPatternRule_ReplacePreservesPreDisambig(t *testing.T) {
+	// Java: return new AnalyzedSentence(whTokens, preDisambigTokens) where
+	// preDisambigTokens is sentence.getTokens() before executeAction reassignments.
+	// REPLACE reassigns a new ATR so pre-disambig keeps the original readings.
+	posNN, posVB := "NN", "VB"
+	lemma := "run"
+	orig := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("run", &posNN, &lemma), 0)
+	// also has VB reading
+	orig.AddReading(languagetool.NewAnalyzedToken("run", &posVB, &lemma), "tagger")
+	toks := []*languagetool.AnalyzedTokenReadings{sentStart(), orig}
+	sent := languagetool.NewAnalyzedSentence(toks)
+	require.Len(t, orig.GetReadings(), 2)
+
+	rule := NewDisambiguationPatternRule(
+		"REP", "replace to VB", "en",
+		[]*patterns.PatternToken{patterns.Token("run")},
+		"VB", nil, ActionReplace,
+	)
+	out := rule.Replace(sent)
+	require.NotNil(t, out)
+
+	// Working tokens: single VB reading after REPLACE
+	var runOut *languagetool.AnalyzedTokenReadings
+	for _, t := range out.GetTokensWithoutWhitespace() {
+		if t != nil && t.GetToken() == "run" {
+			runOut = t
+		}
+	}
+	require.NotNil(t, runOut)
+	require.Len(t, runOut.GetReadings(), 1)
+	require.Equal(t, "VB", *runOut.GetReadings()[0].GetPOSTag())
+
+	// Pre-disambig still has both original readings (Java preDisambigTokens array).
+	var runPre *languagetool.AnalyzedTokenReadings
+	for _, t := range out.GetPreDisambigTokensWithoutWhitespace() {
+		if t != nil && t.GetToken() == "run" {
+			runPre = t
+		}
+	}
+	require.NotNil(t, runPre)
+	require.NotSame(t, runOut, runPre)
+	require.Len(t, runPre.GetReadings(), 2)
+}
+
 func TestDisambiguationPatternRule_IgnoreSpelling(t *testing.T) {
 	posNN := "NN"
 	toks := []*languagetool.AnalyzedTokenReadings{
