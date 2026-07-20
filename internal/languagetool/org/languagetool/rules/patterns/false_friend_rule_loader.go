@@ -158,43 +158,34 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 			}
 			tokens = append(tokens, pt)
 		}
-		// Java FalseFriendRuleHandler: MessageFormat(falseFriendHint).format(
-		//   tokensAsString, englishName(textLang), formatTranslations, englishName(mother))
+		// Java FalseFriendRuleHandler builds base message; FalseFriendRuleLoader.getRules
+		// second pass appends suggestions and only keeps rules with ≥1 formatted suggestion.
 		tokensStr := strings.ReplaceAll(tokensAsString(tokens), "|", "/")
 		transStr := FormatTranslations(motherTranslations)
-		// NewFalseFriendRuleLoader always sets non-empty hint/sugg (EN MessagesBundle defaults).
 		h := NewFalseFriendRuleHandler(textLang, motherLang, l.FalseFriendHint)
 		msg := h.FormatHint(tokensStr, englishLangName(textLang), transStr, englishLangName(motherLang))
-		// Java appends MessageFormat(falseFriendSugg) with joined <suggestion> list
-		suggMsg := l.FalseFriendSugg
-		rule := NewFalseFriendPatternRule(id, textLang, tokens, "False friend: "+id, msg, "")
-		var sb strings.Builder
-		sb.WriteString(msg)
-		// Prefer Java-style suggestion suffix when template present
-		if strings.Contains(suggMsg, "{0}") {
-			var formatted []string
-			for _, s := range motherTranslations {
-				if s == "" || strings.EqualFold(s, tokensStr) {
-					continue
-				}
-				formatted = append(formatted, "<suggestion>"+s+"</suggestion>")
+		// Java: skip suggestion when patternStr.equalsIgnoreCase(suggestion)
+		var formatted []string
+		for _, s := range motherTranslations {
+			if s == "" || strings.EqualFold(s, tokensStr) {
+				continue
 			}
-			if len(formatted) > 0 {
-				joined := strings.Join(formatted, ", ")
-				sb.WriteString(" ")
-				sb.WriteString(strings.ReplaceAll(suggMsg, "{0}", joined))
-			}
-		} else {
-			for _, s := range motherTranslations {
-				if s == "" {
-					continue
-				}
-				sb.WriteString(" <suggestion>")
-				sb.WriteString(s)
-				sb.WriteString("</suggestion>")
-			}
+			// ShortDescriptionProvider optional desc not wired yet — bare <suggestion>
+			formatted = append(formatted, "<suggestion>"+s+"</suggestion>")
 		}
-		rule.Message = sb.String()
+		// Java: if (formattedSuggestions.size() > 0) { setMessage; filteredRules.add }
+		// else drop the rule entirely (e.g. en "gift" / de "Gift").
+		if len(formatted) == 0 {
+			return
+		}
+		suggMsg := l.FalseFriendSugg
+		if suggMsg == "" {
+			suggMsg = messagesFalseFriendSugg
+		}
+		joined := strings.Join(formatted, ", ")
+		fullMsg := msg + " " + strings.ReplaceAll(suggMsg, "{0}", joined)
+		rule := NewFalseFriendPatternRule(id, textLang, tokens, "False friend: "+id, fullMsg, "")
+		rule.Message = fullMsg
 		out = append(out, rule)
 	}
 	for _, g := range root.RuleGroups {

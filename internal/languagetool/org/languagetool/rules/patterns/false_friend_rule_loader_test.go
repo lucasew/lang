@@ -37,6 +37,7 @@ func TestFalseFriendRuleLoader(t *testing.T) {
 }
 
 func TestFalseFriendRuleLoader_PostagNegate(t *testing.T) {
+	// FR translation must differ from pattern surface (Java drops equalIgnoreCase-only).
 	xml := `<?xml version="1.0"?>
 <rules>
   <rulegroup id="ACCORD">
@@ -44,7 +45,7 @@ func TestFalseFriendRuleLoader_PostagNegate(t *testing.T) {
       <pattern lang="en">
         <token inflected="yes" postag="NN.*" postag_regexp="yes">accord</token>
       </pattern>
-      <translation lang="fr">accord</translation>
+      <translation lang="fr">entente</translation>
     </rule>
     <rule>
       <pattern lang="fr">
@@ -97,6 +98,24 @@ func TestFalseFriendRuleLoader_MessagesBundleDefaults(t *testing.T) {
 	// Distinct surface → Did you mean {0}?
 	require.Contains(t, rules[0].Message, "Did you mean")
 	require.NotContains(t, rules[0].Message, "Possible false friend")
+}
+
+// Twin of FalseFriendRuleLoader.getRules: drop rules when every suggestion
+// equalsIgnoreCase the pattern (Java filteredRules only when size > 0).
+func TestFalseFriendRuleLoader_DropsEqualIgnoreCaseOnlySuggestions(t *testing.T) {
+	loader := NewFalseFriendRuleLoader("", "")
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="GIFT">
+    <rule>
+      <pattern lang="en"><token>gift</token></pattern>
+      <translation lang="de">Gift</translation>
+    </rule>
+  </rulegroup>
+</rules>`
+	rules, err := loader.GetRulesFromString(xml, "en", "de")
+	require.NoError(t, err)
+	require.Empty(t, rules, "Java omits rule when only equalIgnoreCase suggestion remains")
 }
 
 // false-friends.xml has skip="-1" on PL pracować; load into PatternToken.SkipNext.
