@@ -456,6 +456,10 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 		if posTag != "" {
 			exTok.SetPosToken(patterns.PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
 		}
+		// Java setExceptionSpaceBefore → exception.setWhitespaceBefore
+		if sb := strings.TrimSpace(ex.SpaceBefore); sb != "" && !strings.EqualFold(sb, "ignore") {
+			exTok.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
+		}
 		switch scope {
 		case "previous":
 			pt.AddPreviousException(exTok)

@@ -766,7 +766,10 @@ type xmlException struct {
 	PostagRegexp  string `xml:"postag_regexp,attr"`
 	// Inflected ports exception inflected="yes" (Java PatternToken matchInflected).
 	Inflected string `xml:"inflected,attr"`
-	Content   string `xml:",chardata"`
+	// SpaceBefore ports exception spacebefore="yes|no" (Java setExceptionSpaceBefore
+	// → last exception.setWhitespaceBefore). "ignore" / empty = unset.
+	SpaceBefore string `xml:"spacebefore,attr"`
+	Content     string `xml:",chardata"`
 }
 
 func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename string) ([]*AbstractPatternRule, error) {
@@ -1409,6 +1412,10 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 		exTok.SetNegation(neg)
 		if posTag != "" {
 			exTok.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
+		}
+		// Java setExceptionSpaceBefore on last exception after addException.
+		if sb := strings.TrimSpace(ex.SpaceBefore); sb != "" && !strings.EqualFold(sb, "ignore") {
+			exTok.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 		}
 		switch scope {
 		case "previous":

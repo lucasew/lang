@@ -161,6 +161,9 @@ func (r *ConsistencyPatternRule) IsPremium() bool {
 	return false
 }
 
+// MinToCheckParagraph ports ConsistencyPatternRule.minToCheckParagraph (Java returns 0).
+func (r *ConsistencyPatternRule) MinToCheckParagraph() int { return 0 }
+
 // MatchSentences ports ConsistencyPatternRule.match(List<AnalyzedSentence>).
 // Collects sentence pattern hits across the document, counts feature suffixes,
 // and reports matches for minority (or all-on-tie) features via adjustMatch.

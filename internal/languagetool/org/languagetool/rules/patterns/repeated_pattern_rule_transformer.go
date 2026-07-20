@@ -115,6 +115,9 @@ func (r *RepeatedPatternRule) IsPremium() bool {
 	return false
 }
 
+// MinToCheckParagraph ports RepeatedPatternRule.minToCheckParagraph (Java returns 0).
+func (r *RepeatedPatternRule) MinToCheckParagraph() int { return 0 }
+
 func (r *RepeatedPatternRule) defaultMaxDist() int {
 	if r != nil && r.DefaultMaxDistanceTokens > 0 {
 		return r.DefaultMaxDistanceTokens

@@ -97,6 +97,42 @@ func TestException_MultiCurrent(t *testing.T) {
 	require.False(t, m3.IsMatchedReadings(other))
 }
 
+// Java setExceptionSpaceBefore → exception PatternToken.setWhitespaceBefore.
+func TestException_SpaceBefore(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="C">
+    <rule id="R" name="R">
+      <pattern>
+        <token>word
+          <exception spacebefore="yes">foo</exception>
+          <exception scope="previous" spacebefore="no">bar</exception>
+        </token>
+      </pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	rules, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	pt := rules[0].PatternTokens[0]
+	require.Len(t, pt.CurrentExceptions, 1)
+	require.NotNil(t, pt.CurrentExceptions[0].WhitespaceBefore)
+	require.True(t, *pt.CurrentExceptions[0].WhitespaceBefore)
+	require.Len(t, pt.PreviousExceptions, 1)
+	require.NotNil(t, pt.PreviousExceptions[0].WhitespaceBefore)
+	require.False(t, *pt.PreviousExceptions[0].WhitespaceBefore)
+
+	// Exception with spacebefore=yes only matches when token has whitespace before.
+	ex := pt.CurrentExceptions[0]
+	m := NewPatternTokenMatcher(ex)
+	tok := languagetool.NewAnalyzedToken("foo", nil, nil)
+	tok.SetWhitespaceBefore(true)
+	require.True(t, m.IsMatched(tok))
+	tok.SetWhitespaceBefore(false)
+	require.False(t, m.IsMatched(tok))
+}
+
 // Java isMatched: (text ^ neg) && (pos ^ posNeg) — both negations independent.
 func TestIsMatched_NegationAndPosNegationXOR(t *testing.T) {
 	pt := NewPatternToken("one", false, false, false)
