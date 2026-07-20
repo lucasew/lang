@@ -3,7 +3,6 @@ package zh
 import (
 	"strings"
 	"unicode"
-	"unicode/utf8"
 )
 
 // ChineseWordTokenizer ports tokenizers.zh.ChineseWordTokenizer.
@@ -91,6 +90,10 @@ func encodeChineseTerms(surfaces []string) []string {
 }
 
 // ChineseSentenceTokenizer ports tokenizers.zh.ChineseSentenceTokenizer.
+// Java walks chars, emits whitespace runs as their own tokens, and runs
+// HanLP SentencesUtil.toSentenceList on non-whitespace chunks (so match
+// positions stay aligned). Without HanLP we use a local sentence split that
+// matches the official ChineseSentenceTokenizerTest cases (，！？；。 and Latin .!?).
 type ChineseSentenceTokenizer struct{}
 
 func NewChineseSentenceTokenizer() *ChineseSentenceTokenizer { return &ChineseSentenceTokenizer{} }
@@ -99,25 +102,73 @@ func (t *ChineseSentenceTokenizer) Tokenize(text string) []string {
 	if text == "" {
 		return nil
 	}
-	// split on Chinese and Latin sentence punctuation
-	seps := map[rune]bool{'。': true, '！': true, '？': true, '；': true, '.': true, '!': true, '?': true, '\n': true}
+	// Java ChineseSentenceTokenizer.tokenize: whitespace runs are tokens;
+	// non-whitespace is passed through SentencesUtil.toSentenceList.
+	var result []string
+	var whitespace strings.Builder
+	var nonWhitespace strings.Builder
+	for _, r := range text {
+		if unicode.IsSpace(r) {
+			if nonWhitespace.Len() > 0 {
+				result = append(result, sentencesUtilToSentenceList(nonWhitespace.String())...)
+				nonWhitespace.Reset()
+			}
+			whitespace.WriteRune(r)
+			continue
+		}
+		if whitespace.Len() > 0 {
+			result = append(result, whitespace.String())
+			whitespace.Reset()
+		}
+		nonWhitespace.WriteRune(r)
+	}
+	if whitespace.Len() > 0 {
+		result = append(result, whitespace.String())
+	}
+	if nonWhitespace.Len() > 0 {
+		result = append(result, sentencesUtilToSentenceList(nonWhitespace.String())...)
+	}
+	return result
+}
+
+// sentencesUtilToSentenceList is an incomplete stand-in for HanLP
+// SentencesUtil.toSentenceList — splits after Chinese sentence punctuation
+// (，！？；。) and Latin .!? when they end a clause. Does not invent lexicon
+// segmentation; structure matches ChineseSentenceTokenizerTest.
+func sentencesUtilToSentenceList(text string) []string {
+	if text == "" {
+		return nil
+	}
+	// ChineseSentenceTokenizerTest: split on ，！？；。 (fullwidth/CJK)
+	// Latin .!? also end sentences in mixed text (TestTokenize2 Linux…).
+	seps := map[rune]bool{
+		'，': true, '！': true, '？': true, '；': true, '。': true,
+		'.': true, '!': true, '?': true,
+	}
 	var out []string
 	var buf strings.Builder
 	for _, r := range text {
 		buf.WriteRune(r)
 		if seps[r] {
-			s := strings.TrimSpace(buf.String())
-			if s != "" {
-				out = append(out, s)
-			}
+			out = append(out, buf.String())
 			buf.Reset()
 		}
 	}
-	if s := strings.TrimSpace(buf.String()); s != "" {
-		out = append(out, s)
+	if buf.Len() > 0 {
+		out = append(out, buf.String())
 	}
-	if len(out) == 0 && utf8.RuneCountInString(text) > 0 {
+	if len(out) == 0 {
 		return []string{text}
 	}
 	return out
+}
+
+// SetSingleLineBreaksMarksParagraph ports ChineseSentenceTokenizer note:
+// no effect for Chinese (Java empty override).
+func (t *ChineseSentenceTokenizer) SetSingleLineBreaksMarksParagraph(lineBreakParagraphs bool) {
+}
+
+// SingleLineBreaksMarksPara ports ChineseSentenceTokenizer.singleLineBreaksMarksPara → false.
+func (t *ChineseSentenceTokenizer) SingleLineBreaksMarksPara() bool {
+	return false
 }
