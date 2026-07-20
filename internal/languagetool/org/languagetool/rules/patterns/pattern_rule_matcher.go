@@ -89,14 +89,29 @@ func (m *PatternRuleMatcher) Match(sentence *languagetool.AnalyzedSentence) ([]*
 	if patternSize == 0 {
 		return nil, nil
 	}
-	// Java: tokens.length - patternSize + 1. Soft CJK cover maps several pattern
-	// tokens onto fewer analysis morphs (and often only SENT_START + one word),
-	// so always try every start index; matchFrom fails quickly on mismatches.
+	// Java AbstractPatternRulePerformer.doMatch: try starts from anchorHint indices
+	// when available (and not raw_pos pre-disambig).
 	limit := len(tokens)
 	if limit < 0 {
 		limit = 0
 	}
-	for i := 0; i < limit; i++ {
+	var starts []int
+	if m.Rule.AnchorHint != nil && !m.usePreDisambigTokens() {
+		if idxs := m.Rule.AnchorHint.GetPossibleIndices(sentence); len(idxs) > 0 {
+			for _, ai := range idxs {
+				i := ai - m.Rule.AnchorHint.TokenIndex
+				if i >= 0 && i < limit {
+					starts = append(starts, i)
+				}
+			}
+		}
+	}
+	if len(starts) == 0 {
+		for i := 0; i < limit; i++ {
+			starts = append(starts, i)
+		}
+	}
+	for _, i := range starts {
 		if rm, ok := m.matchFrom(sentence, tokens, i); ok {
 			found = append(found, rm)
 		}

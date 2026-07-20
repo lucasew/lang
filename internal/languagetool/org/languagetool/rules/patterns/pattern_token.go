@@ -1,6 +1,10 @@
 package patterns
 
-import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+import (
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+)
 
 // PosToken ports PatternToken.PosToken.
 type PosToken struct {
@@ -339,4 +343,130 @@ func (p *PatternToken) GetMatch() *Match {
 		return nil
 	}
 	return p.TokenMatch
+}
+
+// CalcFormHints ports PatternToken.calcFormHints (performance; nil if unbounded).
+func (p *PatternToken) CalcFormHints() []string {
+	return p.calcStringHints(false)
+}
+
+// CalcLemmaHints ports PatternToken.calcLemmaHints.
+func (p *PatternToken) CalcLemmaHints() []string {
+	return p.calcStringHints(true)
+}
+
+// calcStringHints ports PatternToken.calcStringHints(inflected).
+func (p *PatternToken) calcStringHints(inflected bool) []string {
+	if p == nil {
+		return nil
+	}
+	if inflected != p.MatchInflected {
+		return nil
+	}
+	result := p.calcOwnPossibleStringValues()
+	if result == nil {
+		return nil
+	}
+	if len(p.AndGroup) > 0 {
+		set := stringSet(result)
+		for _, t := range p.AndGroup {
+			if t == nil {
+				continue
+			}
+			h := t.calcStringHints(inflected)
+			if h != nil {
+				set = intersectStringSet(set, h)
+			}
+		}
+		return stringSetSlice(set)
+	}
+	if len(p.OrGroup) > 0 {
+		set := stringSet(result)
+		for _, t := range p.OrGroup {
+			if t == nil {
+				continue
+			}
+			h := t.calcStringHints(inflected)
+			if h == nil {
+				return nil
+			}
+			for _, x := range h {
+				set[x] = struct{}{}
+			}
+		}
+		return stringSetSlice(set)
+	}
+	return result
+}
+
+// calcOwnPossibleStringValues ports PatternToken.calcOwnPossibleStringValues /
+// textMatcher.getPossibleValues for non-regex and simple alternation regexps.
+func (p *PatternToken) calcOwnPossibleStringValues() []string {
+	if p == nil || p.Negation || !hasStringThatMustMatch(p) {
+		return nil
+	}
+	if !p.Regexp {
+		return []string{p.Token}
+	}
+	// Java StringMatcher.getPossibleRegexpValues — faithful subset: pure | alternation of literals.
+	return simpleRegexpAlternationLiterals(p.Token)
+}
+
+// simpleRegexpAlternationLiterals returns literals for patterns like "foo|bar|baz"
+// with no other regex metacharacters. Unknown/unbounded → nil.
+func simpleRegexpAlternationLiterals(pat string) []string {
+	if pat == "" {
+		return nil
+	}
+	parts := strings.Split(pat, "|")
+	if len(parts) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(parts))
+	for _, part := range parts {
+		if part == "" || !isLiteralHintAtom(part) {
+			return nil
+		}
+		out = append(out, part)
+	}
+	return out
+}
+
+func isLiteralHintAtom(s string) bool {
+	for _, r := range s {
+		switch r {
+		case '.', '*', '+', '?', '(', ')', '[', ']', '{', '}', '^', '$', '\\', '|':
+			return false
+		}
+	}
+	return true
+}
+
+func stringSet(vals []string) map[string]struct{} {
+	m := map[string]struct{}{}
+	for _, v := range vals {
+		m[v] = struct{}{}
+	}
+	return m
+}
+
+func intersectStringSet(a map[string]struct{}, b []string) map[string]struct{} {
+	out := map[string]struct{}{}
+	for _, v := range b {
+		if _, ok := a[v]; ok {
+			out[v] = struct{}{}
+		}
+	}
+	return out
+}
+
+func stringSetSlice(m map[string]struct{}) []string {
+	if len(m) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(m))
+	for v := range m {
+		out = append(out, v)
+	}
+	return out
 }

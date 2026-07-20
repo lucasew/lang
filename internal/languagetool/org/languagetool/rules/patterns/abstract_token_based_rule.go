@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -28,36 +29,53 @@ func NewTokenHint(inflected bool, possibleValues []string, tokenIndex int) Token
 	return TokenHint{Inflected: inflected, LowerCaseValues: vals, TokenIndex: tokenIndex}
 }
 
-// CanBeIgnoredFor returns true if none of the hint values appear in the sentence tokens/lemmas.
-// Java uses AnalyzedSentence.getLemmaOffsets for inflected hints (tagger lemmas only).
+// CanBeIgnoredFor ports TokenHint.canBeIgnoredFor via getTokenOffsets / getLemmaOffsets.
 func (th TokenHint) CanBeIgnoredFor(sentence *languagetool.AnalyzedSentence) bool {
 	if sentence == nil || len(th.LowerCaseValues) == 0 {
 		return false
 	}
-	want := map[string]struct{}{}
 	for _, v := range th.LowerCaseValues {
-		want[v] = struct{}{}
-	}
-	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		if th.Inflected {
-			for _, r := range tok.GetReadings() {
-				if lem := r.GetLemma(); lem != nil {
-					if _, ok := want[strings.ToLower(*lem)]; ok {
-						return false
-					}
-				}
-			}
-			// Surface equals a listed lemma form (no soft morphological invent).
-			if _, ok := want[strings.ToLower(tok.GetToken())]; ok {
-				return false
-			}
-		} else {
-			if _, ok := want[strings.ToLower(tok.GetToken())]; ok {
-				return false
-			}
+		if th.getHintIndices(sentence, v) != nil {
+			return false
 		}
 	}
 	return true
+}
+
+// GetPossibleIndices ports TokenHint.getPossibleIndices — sorted non-blank indices
+// where any hint value may appear (for anchor-based match starts).
+func (th TokenHint) GetPossibleIndices(sentence *languagetool.AnalyzedSentence) []int {
+	if sentence == nil || len(th.LowerCaseValues) == 0 {
+		return nil
+	}
+	var result []int
+	seen := map[int]struct{}{}
+	for _, v := range th.LowerCaseValues {
+		idxs := th.getHintIndices(sentence, v)
+		for _, i := range idxs {
+			if _, ok := seen[i]; ok {
+				continue
+			}
+			seen[i] = struct{}{}
+			result = append(result, i)
+		}
+	}
+	if len(result) == 0 {
+		return nil
+	}
+	sort.Ints(result)
+	return result
+}
+
+// getHintIndices ports TokenHint.getHintIndices.
+func (th TokenHint) getHintIndices(sentence *languagetool.AnalyzedSentence, hint string) []int {
+	if sentence == nil {
+		return nil
+	}
+	if th.Inflected {
+		return sentence.GetLemmaOffsets(hint)
+	}
+	return sentence.GetTokenOffsets(hint)
 }
 
 // AbstractTokenBasedRule ports performance-hint fields of AbstractTokenBasedRule.
@@ -76,7 +94,7 @@ func NewAbstractTokenBasedRule(id, description, languageCode string, patternToke
 }
 
 func (r *AbstractTokenBasedRule) computeHints(patternTokens []*PatternToken) {
-	// Java AbstractTokenBasedRule constructor: minTokenCount + tokenHints from calcFormHints/calcLemmaHints.
+	// Java AbstractTokenBasedRule constructor.
 	minCount := 0
 	if len(patternTokens) > 0 && !canMatchSentenceStart(patternTokens[0]) {
 		minCount = 1
@@ -91,10 +109,15 @@ func (r *AbstractTokenBasedRule) computeHints(patternTokens []*PatternToken) {
 		if token.MinOccurrence > 0 {
 			minCount++
 		}
-		// Java PatternToken.calcFormHints: null when negation || !hasStringThatMustMatch
-		// hasStringThatMustMatch: !ref && !mayBeOmitted (min=0) && non-empty string.
-		if hasStringThatMustMatch(token) && !token.Regexp && !token.Negation {
-			h := NewTokenHint(token.MatchInflected, []string{token.Token}, i)
+		// Java: form hints first; if null, lemma hints with inflected=true.
+		inflected := false
+		vals := token.CalcFormHints()
+		if vals == nil {
+			inflected = true
+			vals = token.CalcLemmaHints()
+		}
+		if vals != nil {
+			h := NewTokenHint(inflected, vals, i)
 			hints = append(hints, h)
 			if fixedOffset && anchor == nil {
 				hh := h
@@ -105,6 +128,13 @@ func (r *AbstractTokenBasedRule) computeHints(patternTokens []*PatternToken) {
 			fixedOffset = false
 		}
 	}
+	// Java: sort by fewer values first, then longer min value length desc.
+	sort.SliceStable(hints, func(i, j int) bool {
+		if len(hints[i].LowerCaseValues) != len(hints[j].LowerCaseValues) {
+			return len(hints[i].LowerCaseValues) < len(hints[j].LowerCaseValues)
+		}
+		return minLen(hints[i].LowerCaseValues) > minLen(hints[j].LowerCaseValues)
+	})
 	r.TokenHints = hints
 	r.AnchorHint = anchor
 	if minCount > 127 {
@@ -113,12 +143,24 @@ func (r *AbstractTokenBasedRule) computeHints(patternTokens []*PatternToken) {
 	r.MinTokenCount = minCount
 }
 
+func minLen(vals []string) int {
+	if len(vals) == 0 {
+		return 0
+	}
+	m := len(vals[0])
+	for _, v := range vals[1:] {
+		if len(v) < m {
+			m = len(v)
+		}
+	}
+	return m
+}
+
 // hasStringThatMustMatch ports PatternToken.hasStringThatMustMatch.
 func hasStringThatMustMatch(token *PatternToken) bool {
 	if token == nil {
 		return false
 	}
-	// !isReferenceElement && !MAY_BE_OMITTED && !getString().isEmpty()
 	if token.IsReferenceElement() {
 		return false
 	}
@@ -147,7 +189,7 @@ func (r *AbstractTokenBasedRule) CanBeIgnoredFor(sentence *languagetool.Analyzed
 	if sentence == nil {
 		return true
 	}
-	// Java compares getTokensWithoutWhitespace().length (includes SENT_START).
+	// Java: getNonWhitespaceTokenCount() < minTokenCount
 	if len(sentence.GetTokensWithoutWhitespace()) < r.MinTokenCount {
 		return true
 	}
