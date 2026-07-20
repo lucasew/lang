@@ -25,23 +25,40 @@ type Match struct {
 	InMessageOnly      bool
 	regexCompiled      *regexp.Regexp
 	posRegexCompiled   *regexp.Regexp
+	// javaRE engines when RE2 cannot compile lookaround (Java Pattern).
+	regexJavaRE *javaRegexp
+	posJavaRE   *javaRegexp
 }
 
-// compileMatchRE compiles a Java-oriented regex for Match attributes.
-// Invalid patterns yield nil (no invent rewrite); Java (?iu)/(?ui) → Go (?i).
-func compileMatchRE(s string) *regexp.Regexp {
+// compileMatchPattern compiles a Java-oriented regex for Match attributes.
+// Prefer RE2; on lookaround syntax fall back to javaRegexp (full-string match).
+// Returns (re, javaRE) — at most one non-nil on success; both nil if uncompilable.
+func compileMatchPattern(s string) (*regexp.Regexp, *javaRegexp) {
 	s = strings.TrimSpace(s)
 	if s == "" {
-		return nil
+		return nil, nil
 	}
 	// Go RE2 has no inline u flag; case-insensitive is (?i).
 	s = strings.ReplaceAll(s, "(?iu)", "(?i)")
 	s = strings.ReplaceAll(s, "(?ui)", "(?i)")
 	s = strings.ReplaceAll(s, "(?u)", "")
+	s = normalizeJavaRegexp(s)
 	re, err := regexp.Compile(s)
-	if err != nil {
-		return nil
+	if err == nil {
+		return re, nil
 	}
+	if needsJavaRegexp(s) {
+		if jr, jerr := compileJavaRegexp(s, true); jerr == nil {
+			return nil, jr
+		}
+	}
+	return nil, nil
+}
+
+// compileMatchRE compiles RE2 only (legacy helpers / tests that need *regexp.Regexp).
+// Lookaround patterns return nil — use compileMatchPattern / PosFullMatch instead.
+func compileMatchRE(s string) *regexp.Regexp {
+	re, _ := compileMatchPattern(s)
 	return re
 }
 
@@ -66,10 +83,10 @@ func NewMatch(
 		IncludeSkipped:     includeSkipped,
 	}
 	if regexMatch != "" {
-		m.regexCompiled = compileMatchRE(regexMatch)
+		m.regexCompiled, m.regexJavaRE = compileMatchPattern(regexMatch)
 	}
 	if postagRegexp && posTag != "" {
-		m.posRegexCompiled = compileMatchRE(posTag)
+		m.posRegexCompiled, m.posJavaRE = compileMatchPattern(posTag)
 	}
 	return m
 }
@@ -93,6 +110,43 @@ func (m *Match) IsPostagRegexp() bool                  { return m.PostagRegexp }
 func (m *Match) GetRegexMatch() *regexp.Regexp         { return m.regexCompiled }
 func (m *Match) GetPosRegexMatch() *regexp.Regexp      { return m.posRegexCompiled }
 
+// HasPosRegexp reports whether a POS regex (RE2 or lookaround) is available.
+func (m *Match) HasPosRegexp() bool {
+	return m != nil && (m.posRegexCompiled != nil || m.posJavaRE != nil)
+}
+
+// HasSurfaceRegexp reports whether a surface regex (RE2 or lookaround) is available.
+func (m *Match) HasSurfaceRegexp() bool {
+	return m != nil && (m.regexCompiled != nil || m.regexJavaRE != nil)
+}
+
+// PosFullMatch ports Java Matcher.matches() against the POS pattern.
+func (m *Match) PosFullMatch(s string) bool {
+	if m == nil {
+		return false
+	}
+	if m.posRegexCompiled != nil {
+		return reFullMatch(m.posRegexCompiled, s)
+	}
+	if m.posJavaRE != nil {
+		return m.posJavaRE.fullMatch(s)
+	}
+	return false
+}
+
+// SurfaceReplace applies regexp_match/replace when RE2-backed; lookaround surface
+// patterns without replace still full-match for presence checks only.
+func (m *Match) SurfaceReplace(s string) string {
+	if m == nil {
+		return s
+	}
+	if m.regexCompiled != nil {
+		return m.regexCompiled.ReplaceAllString(s, m.RegexReplace)
+	}
+	// javaRE has no replace — return original (Java would still replace; rare in LT).
+	return s
+}
+
 // SetLemmaString ports Match.setLemmaString.
 func (m *Match) SetLemmaString(lemmaString string) {
 	if lemmaString == "" {
@@ -102,7 +156,7 @@ func (m *Match) SetLemmaString(lemmaString string) {
 	m.StaticLemma = true
 	m.PostagRegexp = true
 	if m.PosTag != "" {
-		m.posRegexCompiled = compileMatchRE(m.PosTag)
+		m.posRegexCompiled, m.posJavaRE = compileMatchPattern(m.PosTag)
 	}
 }
 

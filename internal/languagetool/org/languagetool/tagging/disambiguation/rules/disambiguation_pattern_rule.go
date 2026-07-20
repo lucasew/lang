@@ -560,9 +560,8 @@ func (r *DisambiguationPatternRule) applyAction(
 		}
 		// Java: Match(disambiguatedPOS, null, true, disambiguatedPOS, null, …)
 		tmpMatch := patterns.NewMatch(r.DisambiguatedPOS, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
-		// newPOSmatches gate
-		pPos := tmpMatch.GetPosRegexMatch()
-		if pPos == nil {
+		// newPOSmatches gate (RE2 or lookaround POS engines)
+		if !tmpMatch.HasPosRegexp() {
 			return
 		}
 		newPOSmatches := false
@@ -571,7 +570,7 @@ func (r *DisambiguationPatternRule) applyAction(
 				continue
 			}
 			// Java String.matches / Matcher.matches — full POS string
-			if pt := reading.GetPOSTag(); pt != nil && patterns.ReFullMatch(pPos, *pt) {
+			if pt := reading.GetPOSTag(); pt != nil && tmpMatch.PosFullMatch(*pt) {
 				newPOSmatches = true
 				break
 			}

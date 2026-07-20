@@ -61,3 +61,35 @@ func TestMatchState_FilterReadings_NoPosTag(t *testing.T) {
 	out := ms.FilterReadings()
 	require.Equal(t, atr, out) // unchanged
 }
+
+func TestMatch_PosFullMatch_Lookaround(t *testing.T) {
+	// UK-style: noun without :alt (RE2 cannot compile (?!...))
+	m := NewMatch(`noun(?!.*alt).*`, "", true, "", "", CaseNone, false, false, IncludeNone)
+	require.True(t, m.HasPosRegexp())
+	require.Nil(t, m.GetPosRegexMatch()) // lookaround → javaRE only
+	require.True(t, m.PosFullMatch("noun:inanim:m:v_naz"))
+	require.False(t, m.PosFullMatch("noun:inanim:m:v_naz:alt"))
+	require.False(t, m.PosFullMatch("adj:m:v_naz"))
+
+	// FilterReadings keeps only non-alt noun readings
+	noun := "noun:m:v_naz"
+	alt := "noun:m:v_naz:alt"
+	adj := "adj:m:v_naz"
+	lem := "x"
+	atr := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("x", &noun, &lem),
+		languagetool.NewAnalyzedToken("x", &alt, &lem),
+		languagetool.NewAnalyzedToken("x", &adj, &lem),
+	}, 0)
+	ms := m.CreateStateWithSynth(nil, atr)
+	out := ms.FilterReadings()
+	var tags []string
+	for _, r := range out.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil {
+			tags = append(tags, *r.GetPOSTag())
+		}
+	}
+	require.Contains(t, tags, "noun:m:v_naz")
+	require.NotContains(t, tags, "noun:m:v_naz:alt")
+	require.NotContains(t, tags, "adj:m:v_naz")
+}

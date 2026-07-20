@@ -120,12 +120,9 @@ func (s *MatchState) FilterReadings() *languagetool.AnalyzedTokenReadings {
 	} else {
 		token = s.FormattedToken.GetToken()
 	}
-	if re := s.Match.GetRegexMatch(); re != nil {
-		if rep := s.Match.GetRegexReplace(); rep != "" || s.Match.RegexReplace != "" {
-			// Java: only replace when regexReplace is set (non-null)
-			replace := s.Match.GetRegexReplace()
-			token = re.ReplaceAllString(token, replace)
-		}
+	if s.Match.HasSurfaceRegexp() {
+		// Java: only replace when regexMatch != null (regexReplace may be empty)
+		token = s.Match.SurfaceReplace(token)
 	}
 	// Java filterReadings: convertCase(token, token, null)
 	token = s.ConvertCase(token, token, "")
@@ -137,8 +134,8 @@ func (s *MatchState) FilterReadings() *languagetool.AnalyzedTokenReadings {
 	var list []*languagetool.AnalyzedToken
 	numRead := len(s.FormattedToken.GetReadings())
 	if s.Match.IsPostagRegexp() {
-		pPos := s.Match.GetPosRegexMatch()
 		posTagReplace := s.Match.GetPosTagReplace()
+		pPos := s.Match.GetPosRegexMatch() // may be nil when lookaround-only
 		for i := 0; i < numRead; i++ {
 			at := s.FormattedToken.GetAnalyzedToken(i)
 			if at == nil {
@@ -148,9 +145,10 @@ func (s *MatchState) FilterReadings() *languagetool.AnalyzedTokenReadings {
 			if p := at.GetPOSTag(); p != nil {
 				testTag = *p
 			}
-			if testTag != "" && pPos != nil && reFullMatch(pPos, testTag) {
+			if testTag != "" && s.Match.PosFullMatch(testTag) {
 				targetPosTag := testTag
-				if posTagReplace != "" {
+				if posTagReplace != "" && pPos != nil {
+					// RE2 replace path; lookaround engines have no replace
 					targetPosTag = pPos.ReplaceAllString(targetPosTag, posTagReplace)
 				}
 				lemma := at.GetLemma()
@@ -238,11 +236,11 @@ func (s *MatchState) ToFinalString(langCode string) []string {
 	if s.FormattedToken != nil {
 		surface := s.FormattedToken.GetToken()
 		if s.Match != nil {
-			if re := s.Match.GetRegexMatch(); re != nil {
+			if s.Match.HasSurfaceRegexp() {
 				if langCode == "ar" {
 					surface = tools.RemoveTashkeel(surface)
 				}
-				surface = re.ReplaceAllString(surface, s.Match.GetRegexReplace())
+				surface = s.Match.SurfaceReplace(surface)
 			}
 			posTag := s.Match.GetPosTag()
 			if posTag != "" {
@@ -402,7 +400,7 @@ func (s *MatchState) GetTargetPosTag() string {
 		return ""
 	}
 	targetPosTag := s.Match.GetPosTag()
-	pPos := s.Match.GetPosRegexMatch()
+	pPos := s.Match.GetPosRegexMatch() // RE2 only; lookaround uses PosFullMatch
 	posTagReplace := s.Match.GetPosTagReplace()
 	var posTags []string
 
@@ -410,7 +408,7 @@ func (s *MatchState) GetTargetPosTag() string {
 	if s.Match.IsStaticLemma() {
 		source = s.MatchedToken
 	}
-	if source != nil && pPos != nil {
+	if source != nil && s.Match.HasPosRegexp() {
 		for _, r := range source.GetReadings() {
 			if r == nil {
 				continue
@@ -420,7 +418,7 @@ func (s *MatchState) GetTargetPosTag() string {
 				tst = *p
 			}
 			// Java: pPosRegexMatch.matcher(tst).matches()
-			if tst != "" && reFullMatch(pPos, tst) {
+			if tst != "" && s.Match.PosFullMatch(tst) {
 				posTags = append(posTags, tst)
 			}
 		}
