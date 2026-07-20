@@ -7,6 +7,25 @@ import (
 	"strings"
 )
 
+
+// SystemExitHandler ports Main.SystemExitHandler.
+type SystemExitHandler func(code int)
+
+// DefaultSystemExitHandler ports SystemExitHandler.DEFAULT (System.exit).
+var DefaultSystemExitHandler SystemExitHandler = func(code int) { os.Exit(code) }
+
+// ExitHandler is the process-wide handler (Java Main.exitHandler).
+var ExitHandler SystemExitHandler = DefaultSystemExitHandler
+
+// SetSystemExitHandler installs a custom exit handler (tests).
+func SetSystemExitHandler(h SystemExitHandler) {
+	if h == nil {
+		ExitHandler = DefaultSystemExitHandler
+		return
+	}
+	ExitHandler = h
+}
+
 // UsageText is the CLI help banner (ports Main usage surface).
 const UsageText = `Usage: lang [lint|languages|version|help] [OPTION]... [FILE]
        languagetool [OPTION]... [FILE]

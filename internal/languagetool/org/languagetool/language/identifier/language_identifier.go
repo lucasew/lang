@@ -207,3 +207,86 @@ func containsStr(ss []string, s string) bool {
 	}
 	return false
 }
+
+// PrepareDetectLanguage ports LanguageIdentifier.prepareDetectLanguage.
+// unicodeDominant optional hook for dominant lang codes (Java UNICODE_BASED_LANG_IDENTIFIER).
+func PrepareDetectLanguage(text string, noopLangs, preferredLangs []string, unicodeDominant func(string) []string) *ParsedLanguageLists {
+	if noopLangs == nil || preferredLangs == nil {
+		panic("noopLangs and preferredLangs required")
+	}
+	mapNb := func(ss []string) []string {
+		out := make([]string, len(ss))
+		for i, k := range ss {
+			if k == "nb" {
+				out[i] = "no"
+			} else {
+				out[i] = k
+			}
+		}
+		return out
+	}
+	additional := mapNb(noopLangs)
+	preferred := mapNb(preferredLangs)
+	for _, k := range preferred {
+		if strings.Contains(k, "-") {
+			panic("preferredLanguages may only contain language codes without variants (e.g. 'en', but not 'en-US'): " + strings.Join(preferred, ",") + ". Use 'preferredVariants' to specify variants.")
+		}
+	}
+	var dom []string
+	if unicodeDominant != nil {
+		dom = unicodeDominant(text)
+	}
+	domStr := strings.Join(dom, ",")
+	if domStr == "th" || domStr == "he" || domStr == "ko" || domStr == "hi,mr" {
+		return nil
+	}
+	hasCyrZh := false
+	for _, p := range preferred {
+		if p == "ru" || p == "uk" || p == "be" || p == "zh" || p == "hi" || p == "mr" {
+			hasCyrZh = true
+			break
+		}
+	}
+	if !hasCyrZh {
+		preferred = append(preferred, dom...)
+		additional = append(additional, dom...)
+	}
+	return &ParsedLanguageLists{AdditionalLangs: additional, PreferredLangs: preferred}
+}
+
+// GetHighestScoringResult ports getHighestScoringResult.
+func GetHighestScoringResult(probs map[string]float64) (code string, score float64) {
+	max := -1.0
+	var result string
+	for k, v := range probs {
+		if v > max {
+			max = v
+			result = k
+		}
+	}
+	return result, max
+}
+
+// GetOrderedScores ports getOrderedScores — top count by descending score.
+func GetOrderedScores(scores map[string]float64, count int) map[string]float64 {
+	type pair struct {
+		k string
+		v float64
+	}
+	var entries []pair
+	for k, v := range scores {
+		entries = append(entries, pair{k, v})
+	}
+	for i := 0; i < len(entries); i++ {
+		for j := i + 1; j < len(entries); j++ {
+			if entries[j].v > entries[i].v {
+				entries[i], entries[j] = entries[j], entries[i]
+			}
+		}
+	}
+	out := map[string]float64{}
+	for i := 0; i < len(entries) && i < count; i++ {
+		out[entries[i].k] = entries[i].v
+	}
+	return out
+}

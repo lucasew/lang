@@ -6,12 +6,12 @@
 
 ## languagetool-commandline
 
-- [ ] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions
-- [ ] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions.OutputFormat
+- [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions
+- [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions.OutputFormat
 - [ ] org/languagetool/commandline/CommandLineParser.java::CommandLineParser
 - [ ] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
 - [ ] org/languagetool/commandline/Main.java::Main
-- [ ] org/languagetool/commandline/Main.java::Main.SystemExitHandler
+- [x] org/languagetool/commandline/Main.java::Main.SystemExitHandler
 - [x] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
 - [x] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
 
@@ -114,13 +114,13 @@
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponseItem
 - [x] org/languagetool/language/Contributor.java::Contributor
 - [x] org/languagetool/language/Contributors.java::Contributors
-- [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder
-- [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder.ExtendedLanguage
+- [x] org/languagetool/language/LanguageBuilder.java::LanguageBuilder
+- [x] org/languagetool/language/LanguageBuilder.java::LanguageBuilder.ExtendedLanguage
 - [x] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
 - [ ] org/languagetool/language/identifier/DefaultLanguageIdentifier.java::DefaultLanguageIdentifier
-- [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier
-- [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
-- [ ] org/languagetool/language/identifier/LanguageIdentifierService.java::LanguageIdentifierService
+- [x] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier
+- [x] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
+- [x] org/languagetool/language/identifier/LanguageIdentifierService.java::LanguageIdentifierService
 - [ ] org/languagetool/language/identifier/SimpleLanguageIdentifier.java::SimpleLanguageIdentifier
 - [ ] org/languagetool/language/identifier/detector/CommonWordsDetector.java::CommonWordsDetector
 - [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector

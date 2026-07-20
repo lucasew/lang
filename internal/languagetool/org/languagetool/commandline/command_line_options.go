@@ -54,6 +54,10 @@ type CommandLineOptions struct {
 	RuleValues                    []string
 	RuleFile                      string
 	FalseFriendsFile              string
+	// RemoteRulesFile ports remoteRulesFile (since 4.9).
+	RemoteRulesFile string
+	// BitextRuleFile ports bitextRuleFile (since 2.9).
+	BitextRuleFile string
 	// IgnoreWords user-dictionary surfaces (suppress spelling matches).
 	IgnoreWords []string
 	// IgnoreSpellingFile path to ignore-spelling word list (one form per line).
@@ -237,4 +241,139 @@ func (o *CommandLineOptions) GetRuleValues() []string {
 		return nil
 	}
 	return append([]string(nil), o.RuleValues...)
+}
+
+// IsJsonFormat ports isJsonFormat.
+func (o *CommandLineOptions) IsJsonFormat() bool {
+	return o != nil && o.OutputFormat == OutputJSON
+}
+
+// SetJsonFormat ports setJsonFormat.
+func (o *CommandLineOptions) SetJsonFormat() {
+	if o != nil {
+		o.OutputFormat = OutputJSON
+	}
+}
+
+func (o *CommandLineOptions) IsPrintUsage() bool     { return o != nil && o.PrintUsage }
+func (o *CommandLineOptions) IsPrintVersion() bool   { return o != nil && o.PrintVersion }
+func (o *CommandLineOptions) IsPrintLanguages() bool { return o != nil && o.PrintLanguages }
+func (o *CommandLineOptions) IsVerbose() bool        { return o != nil && o.Verbose }
+func (o *CommandLineOptions) IsRecursive() bool      { return o != nil && o.Recursive }
+func (o *CommandLineOptions) IsTaggerOnly() bool     { return o != nil && o.TaggerOnly }
+func (o *CommandLineOptions) IsSingleLineBreakMarksParagraph() bool {
+	return o != nil && o.SingleLineBreakMarksParagraph
+}
+func (o *CommandLineOptions) IsProfile() bool        { return o != nil && o.Profile }
+func (o *CommandLineOptions) IsBitext() bool         { return o != nil && o.Bitext }
+func (o *CommandLineOptions) IsXmlFiltering() bool   { return o != nil && o.XMLFiltering }
+func (o *CommandLineOptions) IsLineByLine() bool     { return o != nil && o.LineByLine }
+func (o *CommandLineOptions) IsEnableTempOff() bool  { return o != nil && o.EnableTempOff }
+func (o *CommandLineOptions) IsCleanOverlapping() bool {
+	return o != nil && o.CleanOverlapping
+}
+
+func (o *CommandLineOptions) GetOutputFormat() OutputFormat {
+	if o == nil {
+		return OutputPlaintext
+	}
+	return o.OutputFormat
+}
+func (o *CommandLineOptions) GetLanguage() string {
+	if o == nil {
+		return ""
+	}
+	return o.Language
+}
+func (o *CommandLineOptions) GetMotherTongue() string {
+	if o == nil {
+		return ""
+	}
+	return o.MotherTongue
+}
+func (o *CommandLineOptions) GetLanguageModelPath() string {
+	if o == nil {
+		return ""
+	}
+	return o.LanguageModelPath
+}
+func (o *CommandLineOptions) GetFasttextModelPath() string {
+	if o == nil {
+		return ""
+	}
+	return o.FasttextModelPath
+}
+func (o *CommandLineOptions) GetFasttextBinaryPath() string {
+	if o == nil {
+		return ""
+	}
+	return o.FasttextBinaryPath
+}
+func (o *CommandLineOptions) SetFasttextModelPath(p string) {
+	if o != nil {
+		o.FasttextModelPath = p
+	}
+}
+func (o *CommandLineOptions) SetFasttextBinaryPath(p string) {
+	if o != nil {
+		o.FasttextBinaryPath = p
+	}
+}
+func (o *CommandLineOptions) GetEncoding() string {
+	if o == nil {
+		return ""
+	}
+	return o.Encoding
+}
+func (o *CommandLineOptions) GetFilename() string {
+	if o == nil {
+		return ""
+	}
+	return o.Filename
+}
+func (o *CommandLineOptions) GetLevel() string {
+	if o == nil || o.Level == "" {
+		return "DEFAULT"
+	}
+	return o.Level
+}
+func (o *CommandLineOptions) GetFalseFriendFile() string {
+	if o == nil {
+		return ""
+	}
+	return o.FalseFriendsFile
+}
+func (o *CommandLineOptions) GetRemoteRulesFile() string {
+	if o == nil {
+		return ""
+	}
+	return o.RemoteRulesFile
+}
+func (o *CommandLineOptions) SetRemoteRulesFile(f string) {
+	if o != nil {
+		o.RemoteRulesFile = f
+	}
+}
+func (o *CommandLineOptions) GetBitextRuleFile() string {
+	if o == nil {
+		return ""
+	}
+	return o.BitextRuleFile
+}
+func (o *CommandLineOptions) SetBitextRuleFile(f string) {
+	if o != nil {
+		o.BitextRuleFile = f
+	}
+}
+func (o *CommandLineOptions) GetEnabledCategories() []string {
+	if o == nil {
+		return nil
+	}
+	return append([]string(nil), o.EnabledCategories...)
+}
+func (o *CommandLineOptions) GetDisabledCategories() []string {
+	if o == nil {
+		return nil
+	}
+	return append([]string(nil), o.DisabledCategories...)
 }
