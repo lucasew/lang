@@ -165,6 +165,8 @@ type xmlRule struct {
 	// Message keeps inner XML so <suggestion>…</suggestion> and soft \N backrefs survive.
 	Message xmlMessage `xml:"message"`
 	Short   string     `xml:"short"`
+	// Suggestions ports Java <suggestion> siblings of <message> (suggestionsOutMsg).
+	Suggestions []xmlMessage `xml:"suggestion"`
 	// URL ports rule <url> element (Java setUrl).
 	URL string `xml:"url"`
 	// Filter is Java <filter class="…"/> — not implemented for most classes.
@@ -846,6 +848,9 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		rawMsg := strings.TrimSpace(xr.Message.Inner)
 		msg, sugMatches := ProcessRuleMessage(rawMsg)
 		short := strings.TrimSpace(xr.Short)
+		// Java suggestionsOutMsg: <suggestion> outside <message>
+		sugOutRaw := buildSuggestionsOutMsg(xr.Suggestions)
+		sugOut, sugMatchesOut := ProcessRuleMessage(sugOutRaw)
 		// Java: rulegroup default off/temp_off overrides per-rule default=…
 		defaultOff, defaultTempOff := resolveRuleDefaultOff(xr.Default, groupDefault)
 		// tags / tone_tags: rule + group + category (Java addTags/addToneTags order).
@@ -862,10 +867,16 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 				r := NewAbstractPatternRule(id, name, languageCode, expToks, false)
 				r.Message = msg
 				r.ShortMessage = short
+				r.SuggestionsOutMsg = sugOut
 				r.UnifierConfig = cfg
 				r.TestUnification = anyTokenUnified(expToks)
 				r.InterpretPreDisambig = strings.EqualFold(xr.Pattern.RawPos, "yes")
 				r.SuggestionMatches = append([]*Match(nil), sugMatches...)
+				r.SuggestionMatchesOutMsg = append([]*Match(nil), sugMatchesOut...)
+				// Java prepareRule: start/end position corrections from <marker>
+				startCorr, endCorr := positionCorrectionsFromTokens(expToks)
+				r.StartPositionCorrection = startCorr
+				r.EndPositionCorrection = endCorr
 				r.AntiPatterns = append([]*PatternRule(nil), antis...)
 				if resolvedFilter != nil {
 					r.Filter = resolvedFilter
@@ -1323,6 +1334,73 @@ func anyTokenUnified(tokens []*PatternToken) bool {
 		}
 	}
 	return false
+}
+
+// buildSuggestionsOutMsg ports Java suggestionsOutMsg append of outer <suggestion> elements.
+func buildSuggestionsOutMsg(sugs []xmlMessage) string {
+	if len(sugs) == 0 {
+		return ""
+	}
+	var b strings.Builder
+	for _, s := range sugs {
+		inner := strings.TrimSpace(s.Inner)
+		if inner == "" {
+			continue
+		}
+		// Java always wraps with suggestion tags in suggestionsOutMsg.
+		if !strings.Contains(strings.ToLower(inner), "<suggestion") {
+			b.WriteString(suggestionStartTag)
+			b.WriteString(inner)
+			b.WriteString(suggestionEndTag)
+		} else {
+			b.WriteString(inner)
+		}
+	}
+	return b.String()
+}
+
+// positionCorrectionsFromTokens ports PatternRuleHandler.prepareRule marker math:
+//
+//	startPos = index of first InsideMarker token (tokens before marker)
+//	endPos = index after last InsideMarker token (tokenCountForMarker at </marker>)
+//	endCorrection = endPos - totalTokens  (negative when tokens follow marker)
+//
+// No partial marker → 0, 0.
+func positionCorrectionsFromTokens(tokens []*PatternToken) (startCorr, endCorr int) {
+	firstInside := -1
+	lastInside := -1
+	for i, t := range tokens {
+		if t == nil {
+			continue
+		}
+		if t.InsideMarker {
+			if firstInside < 0 {
+				firstInside = i
+			}
+			lastInside = i
+		}
+	}
+	if firstInside < 0 {
+		return 0, 0
+	}
+	// Full span (every token inside marker) → Java startPos=0, endCorr=0
+	allInside := true
+	for _, t := range tokens {
+		if t != nil && !t.InsideMarker {
+			allInside = false
+			break
+		}
+	}
+	if allInside {
+		return 0, 0
+	}
+	// startPos = tokenCounter when <marker> opens = firstInside
+	startCorr = firstInside
+	// endPos at </marker> = lastInside+1 (count of tokens up through marker end)
+	// tokenCountForMarker after full pattern = len(tokens)
+	// endCorrection = endPos - total
+	endCorr = (lastInside + 1) - len(tokens)
+	return startCorr, endCorr
 }
 
 // tokenFromXMLWithMarker ports Java setInsideMarker(inMarker):

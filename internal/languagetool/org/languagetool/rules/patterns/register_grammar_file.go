@@ -58,6 +58,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.FilterArgs = ar.FilterArgs
 		pr.UnifierConfig = ar.UnifierConfig
 		pr.SuggestionMatches = append([]*Match(nil), ar.SuggestionMatches...)
+		pr.SuggestionMatchesOutMsg = append([]*Match(nil), ar.SuggestionMatchesOutMsg...)
+		pr.SuggestionsOutMsg = ar.SuggestionsOutMsg
+		pr.StartPositionCorrection = ar.StartPositionCorrection
+		pr.EndPositionCorrection = ar.EndPositionCorrection
 		pr.InterpretPreDisambig = ar.InterpretPreDisambig
 		pr.ToneTags = append([]languagetool.ToneTag(nil), ar.ToneTags...)
 		pr.GoalSpecific = ar.GoalSpecific
@@ -75,8 +79,13 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 			pr.SetTags(ar.Tags)
 		}
 		// strip XML suggestion tags from message for display; templates expanded in matcher.
+		// Outer suggestionsOutMsg keeps tags for createRuleMatch extract.
 		msg, suggs := extractSuggestions(pr.Message)
 		pr.Message = msg
+		// Append out-msg suggestion bodies to templates when message had none.
+		if outBodies := extractSuggestionBodies(pr.SuggestionsOutMsg); len(outBodies) > 0 {
+			suggs = append(suggs, outBodies...)
+		}
 		pr.SuggestionTemplates = append([]string(nil), suggs...)
 		if pr.GetID() == "" {
 			continue
