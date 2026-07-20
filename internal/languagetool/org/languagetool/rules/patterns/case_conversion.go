@@ -30,6 +30,38 @@ const (
 	IncludeAll       IncludeRange = "ALL"
 )
 
+// allCaseConversions is the full Java Match.CaseConversion enum.
+var allCaseConversions = []CaseConversion{
+	CaseNone, CaseStartLower, CaseStartUpper, CaseAllLower, CaseAllUpper,
+	CasePreserve, CaseFirstUpper, CaseNoTashkeel,
+}
+
+// ParseCaseConversion ports Match.CaseConversion.valueOf (upper-case names).
+// Unknown names return false (no invent); Java would throw.
+func ParseCaseConversion(name string) (CaseConversion, bool) {
+	u := strings.ToUpper(strings.TrimSpace(name))
+	for _, c := range allCaseConversions {
+		if string(c) == u {
+			return c, true
+		}
+	}
+	return CaseNone, false
+}
+
+// allIncludeRanges is the full Java Match.IncludeRange enum.
+var allIncludeRanges = []IncludeRange{IncludeNone, IncludeFollowing, IncludeAll}
+
+// ParseIncludeRange ports Match.IncludeRange.valueOf (upper-case names).
+func ParseIncludeRange(name string) (IncludeRange, bool) {
+	u := strings.ToUpper(strings.TrimSpace(name))
+	for _, r := range allIncludeRanges {
+		if string(r) == u {
+			return r, true
+		}
+	}
+	return IncludeNone, false
+}
+
 // ConvertCase ports CaseConversionHelper.convertCase without language-specific rules.
 func ConvertCase(conversion CaseConversion, s, sample string) string {
 	return ConvertCaseLang(conversion, s, sample, "")

@@ -133,11 +133,15 @@ func matchFromAttrs(attrs map[string]string) *Match {
 	regexReplace := attrs["regexp_replace"]
 	caseConv := CaseNone
 	if v := attrs["case_conversion"]; v != "" {
-		caseConv = CaseConversion(strings.ToUpper(v))
+		if c, ok := ParseCaseConversion(v); ok {
+			caseConv = c
+		}
 	}
 	include := IncludeNone
 	if v := attrs["include_skipped"]; v != "" {
-		include = IncludeRange(strings.ToUpper(v))
+		if ir, ok := ParseIncludeRange(v); ok {
+			include = ir
+		}
 	}
 	setPos := strings.EqualFold(attrs["setpos"], "yes")
 	suppress := strings.EqualFold(attrs["suppress_misspelled"], "yes")

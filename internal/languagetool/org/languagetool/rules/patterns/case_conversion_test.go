@@ -21,3 +21,19 @@ func TestConvertCase(t *testing.T) {
 	// preserve: sample lower — leave token
 	require.Equal(t, "hello", ConvertCase(CasePreserve, "hello", "world"))
 }
+
+func TestParseCaseConversion_KnownOnly(t *testing.T) {
+	c, ok := ParseCaseConversion("startupper")
+	require.True(t, ok)
+	require.Equal(t, CaseStartUpper, c)
+	c, ok = ParseCaseConversion("STARTUPPER")
+	require.True(t, ok)
+	require.Equal(t, CaseStartUpper, c)
+	_, ok = ParseCaseConversion("invent")
+	require.False(t, ok)
+	ir, ok := ParseIncludeRange("following")
+	require.True(t, ok)
+	require.Equal(t, IncludeFollowing, ir)
+	_, ok = ParseIncludeRange("bogus")
+	require.False(t, ok)
+}

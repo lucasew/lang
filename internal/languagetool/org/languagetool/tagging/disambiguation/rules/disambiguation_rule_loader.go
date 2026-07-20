@@ -812,11 +812,15 @@ func matchFromDisambigXML(xm *disambigMatch) *patterns.Match {
 	}
 	caseConv := patterns.CaseNone
 	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
-		caseConv = patterns.CaseConversion(strings.ToUpper(v))
+		if c, ok := patterns.ParseCaseConversion(v); ok {
+			caseConv = c
+		}
 	}
 	include := patterns.IncludeNone
 	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
-		include = patterns.IncludeRange(strings.ToUpper(v))
+		if ir, ok := patterns.ParseIncludeRange(v); ok {
+			include = ir
+		}
 	}
 	postagRE := strings.EqualFold(xm.PostagRegexp, "yes")
 	setPos := strings.EqualFold(xm.SetPos, "yes")
@@ -966,11 +970,15 @@ func matchFromTokenMatchXML(xm *disambigMatch) *patterns.Match {
 	}
 	caseConv := patterns.CaseNone
 	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
-		caseConv = patterns.CaseConversion(strings.ToUpper(v))
+		if c, ok := patterns.ParseCaseConversion(v); ok {
+			caseConv = c
+		}
 	}
 	include := patterns.IncludeNone
 	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
-		include = patterns.IncludeRange(strings.ToUpper(v))
+		if ir, ok := patterns.ParseIncludeRange(v); ok {
+			include = ir
+		}
 	}
 	postagRE := strings.EqualFold(xm.PostagRegexp, "yes")
 	setPos := strings.EqualFold(xm.SetPos, "yes")

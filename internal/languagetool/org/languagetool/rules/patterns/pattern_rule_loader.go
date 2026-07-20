@@ -1309,11 +1309,15 @@ func matchFromTokenMatchXML(xm *xmlTokenMatch) *Match {
 	}
 	caseConv := CaseNone
 	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
-		caseConv = CaseConversion(strings.ToUpper(v))
+		if c, ok := ParseCaseConversion(v); ok {
+			caseConv = c
+		}
 	}
 	include := IncludeNone
 	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
-		include = IncludeRange(strings.ToUpper(v))
+		if ir, ok := ParseIncludeRange(v); ok {
+			include = ir
+		}
 	}
 	m := NewMatch(
 		xm.Postag,
