@@ -1,6 +1,7 @@
 package rules_test
 
 // Integration smokes for language RegisterCore* packs (import from lang packages).
+// Expectations follow Java getRelevantRules (no invent word-repeat for FR/NL).
 import (
 	"testing"
 
@@ -22,25 +23,35 @@ func TestLangCoreRegisters(t *testing.T) {
 		name string
 		reg  func(*languagetool.JLanguageTool)
 		lang string
-		bad  string
-		id   string
+		// bad text that should produce at least one match (often multi-space or word-repeat)
+		bad string
+		// optional rule id that must appear among matches (empty = any match ok)
+		id string
 	}{
-		{"fr", fr.RegisterCoreFrenchRules, "fr", "bonjour bonjour", "FR_WORD_REPEAT_RULE"},
+		// Java French: no WordRepeatRule — multi-space via WHITESPACE_RULE
+		{"fr", fr.RegisterCoreFrenchRules, "fr", "bonjour  monde", "WHITESPACE_RULE"},
 		{"es", es.RegisterCoreSpanishRules, "es", "hola hola", "SPANISH_WORD_REPEAT_RULE"},
-		{"nl", nl.RegisterCoreDutchRules, "nl", "hallo hallo", "NL_WORD_REPEAT_RULE"},
-		{"pl", pl.RegisterCorePolishRules, "pl", "test test", "PL_WORD_REPEAT"},
+		// Java Dutch: no WordRepeatRule — multi-space via WHITESPACE_RULE
+		{"nl", nl.RegisterCoreDutchRules, "nl", "hallo  wereld", "WHITESPACE_RULE"},
+		// Java Polish: WordRepeatRule (WORD_REPEAT_RULE) + PolishWordRepeatRule (PL_WORD_REPEAT)
+		{"pl", pl.RegisterCorePolishRules, "pl", "test test", "WORD_REPEAT_RULE"},
 		// UK word-repeat is POS-gated (Java): untagged doubles are ignored — smoke registration only
 		{"uk", uk.RegisterCoreUkrainianRules, "uk", "a  b", ""},
 		{"it", it.RegisterCoreItalianRules, "it", "ciao ciao", "ITALIAN_WORD_REPEAT_RULE"},
 		{"pt", pt.RegisterCorePortugueseRules, "pt", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
-		{"ru", ru.RegisterCoreRussianRules, "ru", "тест тест", "RU_WORD_REPEAT_SIMPLE"},
+		// Java RussianSimpleWordRepeatRule extends WordRepeatRule → WORD_REPEAT_RULE id
+		{"ru", ru.RegisterCoreRussianRules, "ru", "тест тест", "WORD_REPEAT_RULE"},
 		{"ca", ca.RegisterCoreCatalanRules, "ca", "hola hola", "CATALAN_WORD_REPEAT_RULE"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			lt := languagetool.NewJLanguageTool(tc.lang)
 			tc.reg(lt)
-			require.NotEmpty(t, lt.Check("a  b")) // multi-space
+			// multi-space when language registers WHITESPACE_RULE
+			if tc.name != "uk" {
+				// uk still has multi-space via MultipleWhitespace
+			}
+			require.NotEmpty(t, lt.Check("a  b"), tc.name)
 			m := lt.Check(tc.bad)
 			require.NotEmpty(t, m, tc.name)
 			if tc.id != "" {

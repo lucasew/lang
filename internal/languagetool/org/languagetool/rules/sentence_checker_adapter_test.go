@@ -6,6 +6,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
 	"github.com/stretchr/testify/require"
 )
 
@@ -29,13 +30,17 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	m = lt.Check("Wait.. now")
 	require.NotEmpty(t, m)
 
-	// RegisterCoreRules default: shared layout only (no invent WordRepeat for non-EN)
+	// French pack: Java getRelevantRules (no invent WordRepeat)
 	lt2 := languagetool.NewJLanguageTool("fr")
-	rules.RegisterCoreRules(lt2, "fr")
+	fr.RegisterCoreFrenchRules(lt2)
 	require.NotEmpty(t, lt2.Check("bonjour  monde"))
 	for _, m := range lt2.Check("test test") {
 		require.NotContains(t, m.RuleID, "WORD_REPEAT")
 	}
+	// Unknown codes: no invent SharedLayout
+	lt3 := languagetool.NewJLanguageTool("xx")
+	rules.RegisterCoreRules(lt3, "xx")
+	require.Empty(t, lt3.GetAllRegisteredRuleIDs())
 
 	// a vs an (faithful AvsAnRule + DT inject)
 	m = lt.Check("This is an test.")

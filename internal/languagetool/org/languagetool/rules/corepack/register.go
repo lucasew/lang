@@ -208,6 +208,8 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 	case "ta":
 		registerTamilRelevant(lt)
 	default:
-		rules.RegisterCoreRules(lt, lang)
+		// No invent SharedLayout / WordRepeat for unknown languages.
+		// Java only registers rules listed in that language's getRelevantRules.
+		_ = lang
 	}
 }

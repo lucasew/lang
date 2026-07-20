@@ -204,183 +204,46 @@ func AsTextLevelChecker(matchList func([]*languagetool.AnalyzedSentence) []*Rule
 	}
 }
 
-// SharedLayoutOptions customizes RegisterSharedLayoutRules for language modules
-// that replace some core layout rules (e.g. German DE_DOUBLE_PUNCTUATION).
-// Zero value = full shared set (backward compatible).
-type SharedLayoutOptions struct {
-	// CommaException is CommaWhitespaceRule.IsException (e.g. German ". de-Domain").
-	CommaException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
-	// SkipDoublePunctuation skips core DOUBLE_PUNCTUATION (language registers DE_*).
-	SkipDoublePunctuation bool
-	// SkipSentenceWhitespace skips core SENTENCE_WHITESPACE (language registers DE_*).
-	SkipSentenceWhitespace bool
-	// SkipWhitespaceBeforePunct skips WHITESPACE_PUNCTUATION when Java language
-	// getRelevantRules does not include WhitespaceBeforePunctuationRule (e.g. German).
-	SkipWhitespaceBeforePunct bool
-	// SkipUnpairedBrackets skips core UNPAIRED_BRACKETS (language registers its own).
-	SkipUnpairedBrackets bool
-	// SkipParagraphRepeatBeginning skips core PARAGRAPH_REPEAT_BEGINNING when the
-	// language registers a language-specific rule (e.g. GermanParagraphRepeatBeginningRule).
-	SkipParagraphRepeatBeginning bool
-	// UppercaseMatchList, when non-nil, replaces core UppercaseSentenceStartRule.MatchList
-	// (same rule ID UPPERCASE_SENTENCE_START; e.g. DE URL via de.UppercaseSentenceStartRule).
-	UppercaseMatchList func(sentences []*languagetool.AnalyzedSentence) []*RuleMatch
-}
-
-// RegisterSharedLayoutRules installs cross-language layout/punctuation rules.
-func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang string) {
-	RegisterSharedLayoutRulesWithOptions(lt, uppercaseLang, SharedLayoutOptions{})
-}
-
-// RegisterSharedLayoutRulesWithCommaException is RegisterSharedLayoutRules with an optional
-// CommaWhitespaceRule.IsException hook (e.g. German ". de-Domain" exemption).
-func RegisterSharedLayoutRulesWithCommaException(lt *languagetool.JLanguageTool, uppercaseLang string, commaException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool) {
-	RegisterSharedLayoutRulesWithOptions(lt, uppercaseLang, SharedLayoutOptions{CommaException: commaException})
-}
-
-// RegisterSharedLayoutRulesWithOptions installs shared layout rules with language-specific skips/hooks.
-func RegisterSharedLayoutRulesWithOptions(lt *languagetool.JLanguageTool, uppercaseLang string, opt SharedLayoutOptions) {
+// RegisterCoreEnglishRules is a legacy thin entry for rules-package tests.
+// Prefer rules/en.RegisterCoreEnglishLanguageRules (Java English.getRelevantRules).
+// Does not invent SharedLayout extras (WHITESPACE_PUNCTUATION etc.).
+func RegisterCoreEnglishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
-	if uppercaseLang == "" {
-		uppercaseLang = "en"
-	}
+	// Minimal EN layout subset used by rules-package adapter tests only.
+	// Full Java list is rules/en.RegisterCoreEnglishLanguageRules.
+	cw := NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), AsSentenceCheckerSimple(cw.Match))
+	dp := NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), AsSentenceCheckerSimple(dp.Match))
+	up := NewUppercaseSentenceStartRule(nil, "en")
+	lt.AddRuleChecker(up.GetID(), AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
 	ws := NewMultipleWhitespaceRule(map[string]string{
 		"whitespace_repetition": "Possible typo: you repeated a whitespace",
 	})
 	lt.AddRuleChecker(ws.GetID(), AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*RuleMatch {
 		return ws.Match([]*languagetool.AnalyzedSentence{s})
 	}))
-
-	cw := NewCommaWhitespaceRule(nil)
-	if opt.CommaException != nil {
-		cw.IsException = opt.CommaException
-	}
-	lt.AddRuleChecker(cw.GetID(), AsSentenceCheckerSimple(cw.Match))
-
-	if !opt.SkipDoublePunctuation {
-		dp := NewDoublePunctuationRule(nil)
-		lt.AddRuleChecker(dp.GetID(), AsSentenceCheckerSimple(dp.Match))
-	}
-
-	if !opt.SkipWhitespaceBeforePunct {
-		wbp := NewWhitespaceBeforePunctuationRule(map[string]string{
-			"no_space_before_colon":     "Don't put a space before the colon",
-			"no_space_before_semicolon": "Don't put a space before the semicolon",
-		})
-		lt.AddRuleChecker(wbp.GetID(), AsSentenceCheckerSimple(wbp.Match))
-	}
-
-	wpb := NewWhiteSpaceAtBeginOfParagraph(map[string]string{
-		"whitespace_at_begin_parapgraph_msg": "Don't start a paragraph with whitespace",
-	})
-	lt.AddRuleChecker(wpb.GetID(), AsSentenceCheckerSimple(wpb.Match))
-	// Java WhiteSpaceAtBeginOfParagraph default ctor: setDefaultOff().
-	if wpb.IsDefaultOff() {
-		lt.MarkDefaultOff(wpb.GetID())
-	}
-
-	if opt.UppercaseMatchList != nil {
-		upID := "UPPERCASE_SENTENCE_START"
-		lt.AddRuleChecker(upID, AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*RuleMatch {
-			return opt.UppercaseMatchList([]*languagetool.AnalyzedSentence{s})
-		}))
-	} else {
-		up := NewUppercaseSentenceStartRule(nil, uppercaseLang)
-		lt.AddRuleChecker(up.GetID(), AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*RuleMatch {
-			return up.MatchList([]*languagetool.AnalyzedSentence{s})
-		}))
-	}
-
-	if !opt.SkipUnpairedBrackets {
-		// inject unpaired brackets (GenericUnpairedBracketsRule is multi-sentence)
-		lt.AddRuleChecker("UNPAIRED_BRACKETS", languagetool.SimpleUnpairedBracketsChecker())
-	}
-
-	if !opt.SkipSentenceWhitespace {
-		// text-level: missing space between sentences ("end.Start")
-		sw := NewSentenceWhitespaceRule(map[string]string{
-			"addSpaceBetweenSentences": "Add a space between sentences",
-		})
-		lt.AddTextLevelRuleChecker(sw.GetID(), AsTextLevelChecker(sw.MatchList))
-	}
-
-	// text-level: long paragraph (default 150 words, Java-ish)
-	// Java LongParagraphRule: setDefaultOff() + Tag.picky.
-	lp := NewLongParagraphRule(map[string]string{
-		"long_paragraph_rule_msg": "This paragraph is too long (%d words)",
-	}, 150)
-	lt.AddTextLevelRuleChecker(lp.GetID(), AsTextLevelChecker(lp.MatchList))
-	if lp.IsDefaultOff() {
-		lt.MarkDefaultOff(lp.GetID())
-	}
-
-	if !opt.SkipParagraphRepeatBeginning {
-		// text-level: successive paragraphs starting with the same word
-		prb := NewParagraphRepeatBeginningRule(map[string]string{
-			"repetition_paragraph_beginning_last_msg": "Paragraphs should not begin with the same words",
-		})
-		lt.AddTextLevelRuleChecker(prb.GetID(), AsTextLevelChecker(prb.MatchList))
-		if prb.IsDefaultOff() {
-			lt.MarkDefaultOff(prb.GetID())
-		}
-	}
-
-	// text-level: trailing whitespace before paragraph end
-	// Java WhiteSpaceBeforeParagraphEnd default ctor: setDefaultOff().
-	wpe := NewWhiteSpaceBeforeParagraphEnd(map[string]string{
-		"whitespace_before_parapgraph_end_msg": "Don't end a paragraph with whitespace",
-	})
-	lt.AddTextLevelRuleChecker(wpe.GetID(), AsTextLevelChecker(wpe.MatchList))
-	if wpe.IsDefaultOff() {
-		lt.MarkDefaultOff(wpe.GetID())
-	}
-
-	// text-level: empty line (extra blank line between paragraphs)
-	// Java EmptyLineRule default ctor: setDefaultOff().
-	el := NewEmptyLineRule(map[string]string{
-		"empty_line_rule_msg": "Empty line",
-	})
+	sw := NewSentenceWhitespaceRule(nil)
+	lt.AddTextLevelRuleChecker(sw.GetID(), AsTextLevelChecker(sw.MatchList))
+	el := NewEmptyLineRule(map[string]string{"empty_line_rule_msg": "Empty line"})
 	lt.AddTextLevelRuleChecker(el.GetID(), AsTextLevelChecker(el.MatchList))
 	if el.IsDefaultOff() {
 		lt.MarkDefaultOff(el.GetID())
 	}
-
-	// text-level: missing punctuation at paragraph end
-	// Java PunctuationMarkAtParagraphEnd default ctor: setDefaultOff() + Tag.picky.
-	ppe := NewPunctuationMarkAtParagraphEnd(map[string]string{
-		"punctuation_mark_paragraph_end_msg": "Add a punctuation mark at paragraph end",
-	})
-	lt.AddTextLevelRuleChecker(ppe.GetID(), AsTextLevelChecker(ppe.MatchList))
-	if ppe.IsDefaultOff() {
-		lt.MarkDefaultOff(ppe.GetID())
-	}
-}
-
-// RegisterCoreEnglishRules installs shared layout + EN a/an + word-repeat (real rule).
-func RegisterCoreEnglishRules(lt *languagetool.JLanguageTool) {
-	if lt == nil {
-		return
-	}
-	RegisterSharedLayoutRules(lt, "en")
-
-	wr := NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
-	lt.AddRuleChecker(wr.GetID(), AsSentenceCheckerSimple(wr.Match))
-
-	// Full EN AvsAn uses package en (PreferredAvsAnChecker). When en is not imported,
-	// skip rather than soft invent (RegisterCoreEnglishLanguageRules wires it).
+	// Java EnglishWordRepeatRule is in package en (ENGLISH_WORD_REPEAT_RULE).
+	// Do not invent default WORD_REPEAT_RULE here.
 	if languagetool.PreferredAvsAnChecker != nil {
 		lt.AddRuleChecker("EN_A_VS_AN", languagetool.PreferredAvsAnChecker)
 	}
-	// Soft invent PHRASE_REPLACE packs removed (faithful-port: use grammar.xml when loaded).
 }
 
-// RegisterCoreRules picks a language-appropriate core pack (shared layout + base word-repeat).
-// EN also gets a/an and phrase injects.
-// RegisterCoreRules installs EN core pack or shared layout only.
-// Unknown short codes do not invent WordRepeatRule (Java only registers WR
-// when that language's getRelevantRules lists it).
+// RegisterCoreRules is a legacy dispatcher for unknown short codes.
+// No invent SharedLayout for unlisted languages — Java only registers rules
+// listed in that language's getRelevantRules. Known languages use corepack.
 func RegisterCoreRules(lt *languagetool.JLanguageTool, langCode string) {
 	if lt == nil {
 		return
@@ -393,8 +256,8 @@ func RegisterCoreRules(lt *languagetool.JLanguageTool, langCode string) {
 	case "en":
 		RegisterCoreEnglishRules(lt)
 	default:
-		// Layout only — no invent WordRepeat for unlisted languages.
-		RegisterSharedLayoutRules(lt, base)
+		// No invent layout for unknown codes (faithful-port: leaves → dedicated packs).
+		_ = base
 	}
 }
 
