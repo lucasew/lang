@@ -3,6 +3,7 @@ package uk
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
 )
@@ -113,6 +114,28 @@ func TestAnalyzeAllCapitalizedAdj(t *testing.T) {
 	require.Empty(t, AnalyzeAllCapitalizedAdj("Київ-Прага", func(string) []tagging.TaggedWord {
 		return []tagging.TaggedWord{{Lemma: "x", PosTag: "noun:inanim:m:v_naz:prop"}}
 	}))
+}
+
+func TestMergeUniqueAnalyzedTokens_capitalizedAdj(t *testing.T) {
+	// Java: when surface already has tags, analyzeAllCapitamizedAdj still adds adj readings.
+	pNoun, lNoun := "noun:inanim:f:v_naz:prop", "івано-франківська"
+	existing := []*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Івано-Франківська", &pNoun, &lNoun),
+	}
+	tag := func(w string) []tagging.TaggedWord {
+		if w == "івано-франківська" {
+			return []tagging.TaggedWord{
+				{Lemma: "івано-франківський", PosTag: "adj:f:v_naz"},
+			}
+		}
+		return nil
+	}
+	adj := AnalyzeAllCapitalizedAdj("Івано-Франківська", tag)
+	require.NotEmpty(t, adj)
+	merged := mergeUniqueAnalyzedTokens(existing, adj)
+	require.Len(t, merged, 2)
+	// re-merge is idempotent
+	require.Len(t, mergeUniqueAnalyzedTokens(merged, adj), 2)
 }
 
 func TestFilterMissingApoTags(t *testing.T) {

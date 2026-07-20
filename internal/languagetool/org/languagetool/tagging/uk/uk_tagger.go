@@ -226,10 +226,13 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = br
 			}
 		}
-		// Java analyzeAllCapitamizedAdj (Івано-Франківська as adj).
-		if len(readings) == 0 {
-			if adj := AnalyzeAllCapitalizedAdj(w, t.TagWord); len(adj) > 0 {
+		// Java analyzeAllCapitamizedAdj (Івано-Франківська as adj):
+		// always attempted; merges into existing readings when already tagged.
+		if adj := AnalyzeAllCapitalizedAdj(w, t.TagWord); len(adj) > 0 {
+			if len(readings) == 0 {
 				readings = adj
+			} else {
+				readings = mergeUniqueAnalyzedTokens(readings, adj)
 			}
 		}
 		// Java CompoundTagger.oAdjMatch: only after dict miss; right adj from wordTagger (no invent endings).
@@ -275,9 +278,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			}
 		}
 		// Java ALLCAPS → capitalizeProperName + noun.*:prop|noninfl re-tag (needs dict).
-		if len(readings) == 0 {
-			if prop := AllCapsPropReadings(w, t.TagWord); len(prop) > 0 {
+		// Merges when surface already has tags (Java tokens.addAll(newTokens)).
+		if prop := AllCapsPropReadings(w, t.TagWord); len(prop) > 0 {
+			if len(readings) == 0 {
 				readings = prop
+			} else {
+				readings = mergeUniqueAnalyzedTokens(readings, prop)
 			}
 		}
 		if len(readings) == 0 {
@@ -426,4 +432,39 @@ func toTok(surface string, tw tagging.TaggedWord) *languagetool.AnalyzedToken {
 		lemma = &l
 	}
 	return languagetool.NewAnalyzedToken(surface, pos, lemma)
+}
+
+// mergeUniqueAnalyzedTokens appends extras whose (POS, lemma) are not already in base
+// (Java analyzeAllCapitamizedAdj / ALLCAPS: !tokens.contains(token)).
+func mergeUniqueAnalyzedTokens(base, extras []*languagetool.AnalyzedToken) []*languagetool.AnalyzedToken {
+	if len(extras) == 0 {
+		return base
+	}
+	seen := make(map[string]struct{}, len(base)+len(extras))
+	key := func(t *languagetool.AnalyzedToken) string {
+		if t == nil {
+			return ""
+		}
+		pos, lem := "", ""
+		if t.GetPOSTag() != nil {
+			pos = *t.GetPOSTag()
+		}
+		if t.GetLemma() != nil {
+			lem = *t.GetLemma()
+		}
+		return pos + "\x00" + lem
+	}
+	for _, t := range base {
+		seen[key(t)] = struct{}{}
+	}
+	out := base
+	for _, t := range extras {
+		k := key(t)
+		if _, ok := seen[k]; ok {
+			continue
+		}
+		seen[k] = struct{}{}
+		out = append(out, t)
+	}
+	return out
 }
