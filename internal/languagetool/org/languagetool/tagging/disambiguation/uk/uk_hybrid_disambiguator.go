@@ -16,9 +16,10 @@ type UkrainianHybridDisambiguator struct {
 }
 
 func NewUkrainianHybridDisambiguator() *UkrainianHybridDisambiguator {
-	// Java: new UkrainianMultiwordChunker("/uk/multiwords.txt", true)
+	// Java: multiwords + XmlRuleDisambiguator(Ukrainian) + SimpleDisambiguator pre
 	return &UkrainianHybridDisambiguator{
 		Chunker: NewDefaultUkrainianMultiwordChunker(),
+		Inner:   LoadDefaultUkrainianXmlDisambiguator(),
 		Simple:  NewSimpleDisambiguator(),
 	}
 }
