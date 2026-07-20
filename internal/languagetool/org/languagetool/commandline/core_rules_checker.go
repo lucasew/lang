@@ -434,38 +434,54 @@ func wirePortugueseMultitokenSpeller(opts *CommandLineOptions) {
 
 // wireFrenchMultitokenSpeller ports French.getMultitokenSpeller
 // (/fr/multiwords.txt + /spelling_global.txt + /fr/hyphenated_words.txt).
-// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "fr".
+// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "fr",
+// but MultitokenSpeller still uses getDefaultSpellingRule for discardRunOnWords.
 func wireFrenchMultitokenSpeller(opts *CommandLineOptions) {
 	_ = opts
 	sp := rulesfr.DiscoverAndLoadFrenchMultitokenSpeller()
 	if sp == nil || sp.MultitokenSpeller == nil {
 		return
 	}
-	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, nil, false)
+	// checkSpelling=false: filter gate off; isMiss still feeds discardRunOnWords.
+	var isMiss func(string) bool
+	if rulesfr.FilterDictAvailable() {
+		isMiss = rulesfr.FilterDictIsMisspelled
+	}
+	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, isMiss, false)
 }
 
 // wireSpanishMultitokenSpeller ports Spanish.getMultitokenSpeller
 // (/es/multiwords.txt + /spelling_global.txt + /es/hyphenated_words.txt).
-// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "es".
+// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "es",
+// but MultitokenSpeller still uses getDefaultSpellingRule for discardRunOnWords.
 func wireSpanishMultitokenSpeller(opts *CommandLineOptions) {
 	_ = opts
 	sp := ruleses.DiscoverAndLoadSpanishMultitokenSpeller()
 	if sp == nil || sp.MultitokenSpeller == nil {
 		return
 	}
-	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, nil, false)
+	var isMiss func(string) bool
+	if ruleses.FilterDictAvailable() {
+		isMiss = ruleses.FilterDictIsMisspelled
+	}
+	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, isMiss, false)
 }
 
 // wireCatalanMultitokenSpeller ports Catalan.getMultitokenSpeller
 // (/ca/multiwords.txt + /spelling_global.txt + /ca/hyphenated_words.txt + Morfologik extra).
-// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "ca".
+// Java MultitokenSpellerFilter leaves areTokensAcceptedBySpeller=false for "ca",
+// but MultitokenSpeller still uses getDefaultSpellingRule for discardRunOnWords.
 func wireCatalanMultitokenSpeller(opts *CommandLineOptions) {
 	_ = opts
 	sp := rulesca.DiscoverAndLoadCatalanMultitokenSpeller()
 	if sp == nil || sp.MultitokenSpeller == nil {
 		return
 	}
-	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, nil, false)
+	var isMiss func(string) bool
+	if rulesca.FilterDictAvailable() {
+		isMiss = rulesca.FilterDictIsMisspelled
+	}
+	patterns.SetDefaultMultitokenSpellerWithOptions(sp.MultitokenSpeller, isMiss, false)
 }
 
 // resolveFalseFriendsFile prefers LANG_FALSEFRIENDS_FILE, then data-dir official names.

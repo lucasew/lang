@@ -35,6 +35,18 @@ func TestMultitokenAtSentenceStart(t *testing.T) {
 		rules.NewRuleMatch(rules.NewFakeRule("MT"), sent, 0, 5, "m"), 2))
 }
 
+func TestSetDefaultMultitokenSpeller_WiresIsMisspelledToken(t *testing.T) {
+	sp := multitoken.NewMultitokenSpeller()
+	miss := func(s string) bool { return s == "x" }
+	SetDefaultMultitokenSpellerWithOptions(sp, miss, false)
+	t.Cleanup(func() { SetDefaultMultitokenSpellerWithOptions(nil, nil, false) })
+	// Java discardRunOnWords uses spelling rule on every language
+	require.NotNil(t, sp.IsMisspelledToken)
+	require.True(t, sp.IsMisspelledToken("x"))
+	require.False(t, sp.IsMisspelledToken("ok"))
+	// checkSpelling=false: IsMisspelledToken still set; filter gate stays off
+}
+
 func TestMultitokenSpellerFilter_CapitalizesAtSentenceStart(t *testing.T) {
 	sp := multitoken.NewMultitokenSpeller()
 	require.NoError(t, sp.LoadWords(strings.NewReader("new york\n")))

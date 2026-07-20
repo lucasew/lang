@@ -223,7 +223,13 @@ func SetDefaultMultitokenSpeller(sp *multitoken.MultitokenSpeller, isMisspelled 
 
 // SetDefaultMultitokenSpellerWithOptions wires getMultitokenSpeller + optional isMisspelled
 // and the MultitokenSpellerFilter shortCode spelling gate (en/de/pt/nl only).
+// When isMisspelled is non-nil it is also set on sp.IsMisspelledToken for
+// MultitokenSpeller.discardRunOnWords (Java SpellingCheckRule on all languages).
 func SetDefaultMultitokenSpellerWithOptions(sp *multitoken.MultitokenSpeller, isMisspelled func(string) bool, checkSpelling bool) {
+	if sp != nil && isMisspelled != nil {
+		// Java MultitokenSpeller(language) always holds getDefaultSpellingRule().
+		sp.IsMisspelledToken = isMisspelled
+	}
 	multitokenSpellerMu.Lock()
 	defer multitokenSpellerMu.Unlock()
 	defaultMultitokenSpeller = sp
