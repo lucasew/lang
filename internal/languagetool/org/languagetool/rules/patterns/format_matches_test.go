@@ -144,10 +144,15 @@ func TestRemoveSuppressMisspelled(t *testing.T) {
 	in2 := `<suggestion>` + PleaseSpellMe + `(cats)</suggestion>`
 	require.Empty(t, strings.TrimSpace(removeSuppressMisspelled(in2)))
 
-	// strip pleasespellme but keep good suggestion
+	// strip pleasespellme only after <suggestion> (TAG_AND_PLEASE_SPELL_ME)
 	in3 := `<suggestion>` + PleaseSpellMe + `dogs</suggestion>`
 	out3 := removeSuppressMisspelled(in3)
 	require.Equal(t, `<suggestion>dogs</suggestion>`, out3)
+
+	// bare <pleasespellme/> in message body is NOT stripped here (Java removeSuppressMisspelled);
+	// createRuleMatch clears it later when building clearMsg.
+	in4 := `msg ` + PleaseSpellMe + ` only`
+	require.Equal(t, in4, removeSuppressMisspelled(in4))
 }
 
 func TestToFinalString_SuppressMisspelledUsesTagger(t *testing.T) {

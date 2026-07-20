@@ -5,8 +5,11 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	arsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ar"
+	casynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ca"
 	desynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/de"
 	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
+	essynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/es"
+	frsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/fr"
 	plsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/pl"
 )
 
@@ -42,6 +45,23 @@ func OpenLanguageSynthesizer(langShort, dictPath string) synthesis.Synthesizer {
 	case "ar":
 		// ArabicSynthesizer.getPosTagCorrection → correctTag (conj/def/pronoun flags).
 		if s := arsynth.OpenArabicSynthesizerFromDictPath(dictPath); s != nil {
+			return s
+		}
+		return nil
+	case "fr":
+		// FrenchSynthesizer.isException filter (qq*, trailing è).
+		if s := frsynth.OpenFrenchSynthesizerFromDictPath(dictPath); s != nil {
+			return s
+		}
+		return nil
+	case "es":
+		// SpanishSynthesizer: verb lemma "verb rest" + getTargetPosTag comparator.
+		if s := essynth.OpenSpanishSynthesizerFromDictPath(dictPath); s != nil {
+			return s
+		}
+		return nil
+	case "ca":
+		if s := casynth.OpenCatalanSynthesizerFromDictPath(dictPath); s != nil {
 			return s
 		}
 		return nil

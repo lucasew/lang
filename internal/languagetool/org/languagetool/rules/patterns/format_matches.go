@@ -369,8 +369,10 @@ func FormatMatches(
 }
 
 // removeSuppressMisspelled ports PatternRuleMatcher.removeSuppressMisspelled:
-// drop suggestions that contain <pleasespellme/> plus (…form…) or <mistake/>,
-// then strip remaining <pleasespellme/> inside suggestions.
+//  1. SUGGESTION_PATTERN_SUPPRESS — drop whole <suggestion><pleasespellme/>…(…)…</suggestion>
+//     or …<mistake/>… suggestions
+//  2. TAG_AND_PLEASE_SPELL_ME — strip <pleasespellme/> only when immediately after
+//     <suggestion> (not bare markers in the message body; createRuleMatch clears those)
 func removeSuppressMisspelled(s string) string {
 	if s == "" {
 		return s
@@ -378,16 +380,14 @@ func removeSuppressMisspelled(s string) string {
 	if !strings.Contains(s, PleaseSpellMe) && !strings.Contains(s, MistakeMarker) {
 		return s
 	}
-	// <suggestion><pleasespellme/>…(…)…</suggestion> or …<mistake/>…
 	// allowedChars = [^<>()]*?
+	// Java: SUGGESTION_START + PLEASE_SPELL_ME + allowed + (\(...\)|MISTAKE) + allowed + SUGGESTION_END
 	reDrop := regexp.MustCompile(`(?is)<suggestion>` + regexp.QuoteMeta(PleaseSpellMe) +
 		`[^<>()]*?(\([^<>()]*\)|` + regexp.QuoteMeta(MistakeMarker) + `)[^<>()]*?</suggestion>`)
 	result := reDrop.ReplaceAllString(s, "")
-	// remaining <suggestion><pleasespellme/> → <suggestion>
+	// Java TAG_AND_PLEASE_SPELL_ME → SUGGESTION_START_TAG only (not bare ReplaceAll)
 	reStrip := regexp.MustCompile(`(?is)<suggestion>` + regexp.QuoteMeta(PleaseSpellMe))
 	result = reStrip.ReplaceAllString(result, "<suggestion>")
-	// bare <pleasespellme/> outside suggestion tags (message body)
-	result = strings.ReplaceAll(result, PleaseSpellMe, "")
 	return result
 }
 
