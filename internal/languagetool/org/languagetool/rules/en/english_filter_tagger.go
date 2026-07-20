@@ -7,6 +7,7 @@ import (
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	entok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/en"
 )
 
 // english_filter_tagger wires official english.dict into FindSuggestionsFilter
@@ -48,6 +49,8 @@ func WireEnglishFilterTagger(dictPath string) bool {
 		}
 		return out
 	})
+	// Java EnglishWordTokenizer → EnglishTagger.INSTANCE for hyphen/apostrophe keep.
+	wireEnglishTokenizerIsTagged(tw)
 	return true
 }
 
@@ -86,6 +89,9 @@ func ClearEnglishFilterTagger() {
 	ClearEnglishFilterDisambiguator()
 	rules.SetDefaultEnglishWordTagger(nil)
 	rules.SetDefaultCheckPostagsTagger(nil)
+	// Drop tokenizer IsTaggedEN only if we own the process-wide tagger wire.
+	// (RegisterBinaryEnglishTagger may have set the same hook; tests re-wire as needed.)
+	entok.IsTaggedEN = nil
 }
 
 func getFilterTagWord() func(string) []languagetool.TokenTag {

@@ -8,6 +8,7 @@ import (
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	entok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/en"
 )
 
 // enPunctPCTRE ports EN disambiguation UNKNOWN_PCT: [\.,;:…!\?] → add POS PCT.
@@ -30,7 +31,26 @@ func RegisterBinaryEnglishTagger(lt *languagetool.JLanguageTool, dictPath string
 	if lt.LanguageCode != "" {
 		patterns.RegisterLanguageTagger(lt.LanguageCode, tw)
 	}
+	// Java EnglishWordTokenizer uses EnglishTagger.INSTANCE.tag(...).isTagged().
+	wireEnglishTokenizerIsTagged(tw)
 	return true
+}
+
+// wireEnglishTokenizerIsTagged installs EnglishWordTokenizer.IsTaggedEN from a
+// BinaryEnglishTagWord (Java EnglishTagger.INSTANCE for wordsToAdd).
+func wireEnglishTokenizerIsTagged(tw func(token string) []languagetool.TokenTag) {
+	if tw == nil {
+		entok.IsTaggedEN = nil
+		return
+	}
+	entok.IsTaggedEN = func(s string) bool {
+		for _, t := range tw(s) {
+			if t.POS != "" {
+				return true
+			}
+		}
+		return false
+	}
 }
 
 // BinaryEnglishTagWord returns a TagWord inject from an opened POS dictionary.

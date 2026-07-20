@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	entok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/en"
 	"github.com/stretchr/testify/require"
 )
 
@@ -81,4 +82,24 @@ func TestBinaryEnglishTagWord_PCT(t *testing.T) {
 		}
 	}
 	require.True(t, hasPCT, "comma should have PCT: %+v", tags)
+}
+
+func TestRegisterBinaryEnglishTagger_WiresTokenizerIsTaggedEN(t *testing.T) {
+	p := findEnglishPOSDict(t)
+	prev := entok.IsTaggedEN
+	t.Cleanup(func() { entok.IsTaggedEN = prev })
+
+	lt := languagetool.NewJLanguageTool("en")
+	require.True(t, RegisterBinaryEnglishTagger(lt, p))
+	require.NotNil(t, entok.IsTaggedEN)
+
+	// Known dictionary surfaces used by EnglishWordTokenizerTest
+	require.True(t, entok.IsTaggedEN("doin'"), "doin' should be tagged in english.dict")
+	require.True(t, entok.IsTaggedEN("'m") || entok.IsTaggedEN("I'm"), "clitic or full form")
+	// Nonsense should not invent
+	require.False(t, entok.IsTaggedEN("xyzzy-not-a-word-qq"))
+
+	// Tokenizer should keep doin' whole when IsTaggedEN is wired
+	toks := entok.NewEnglishWordTokenizer().Tokenize("doin' that")
+	require.Equal(t, []string{"doin'", " ", "that"}, toks)
 }
