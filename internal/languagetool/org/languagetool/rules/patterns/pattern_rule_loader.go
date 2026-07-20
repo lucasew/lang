@@ -5,10 +5,57 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
+
+// xmlUnmarshalSource holds the raw XML bytes for the active Unmarshal so
+// UnmarshalXML can recover 1-based line numbers (Java SAX Locator.getLineNumber).
+var (
+	xmlUnmarshalSourceMu sync.Mutex
+	xmlUnmarshalSource   []byte
+)
+
+// withXMLUnmarshalSource sets the source bytes for the duration of fn (serialized).
+func withXMLUnmarshalSource(data []byte, fn func() error) error {
+	xmlUnmarshalSourceMu.Lock()
+	prev := xmlUnmarshalSource
+	xmlUnmarshalSource = data
+	defer func() {
+		xmlUnmarshalSource = prev
+		xmlUnmarshalSourceMu.Unlock()
+	}()
+	return fn()
+}
+
+// lineNumberAtOffset ports SAX Locator.getLineNumber for the end of a start-tag
+// production: 1-based count of '\n' before offset, plus one.
+func lineNumberAtOffset(data []byte, offset int64) int {
+	if len(data) == 0 || offset <= 0 {
+		return 1
+	}
+	if offset > int64(len(data)) {
+		offset = int64(len(data))
+	}
+	line := 1
+	for i := int64(0); i < offset; i++ {
+		if data[i] == '\n' {
+			line++
+		}
+	}
+	return line
+}
+
+// currentXMLStartLine returns the 1-based line of the just-finished start tag,
+// or -1 when no source is bound (line unknown, Java default).
+func currentXMLStartLine(d *xml.Decoder) int {
+	if d == nil || len(xmlUnmarshalSource) == 0 {
+		return -1
+	}
+	return lineNumberAtOffset(xmlUnmarshalSource, d.InputOffset())
+}
 
 // PatternRuleLoader ports org.languagetool.rules.patterns.PatternRuleLoader
 // for a simplified rules XML subset (full PatternRuleHandler deferred).
@@ -175,6 +222,21 @@ type xmlRule struct {
 	// AntiPatterns ports Java <antipattern>; loaded and applied in PatternRule.Match
 	// via keepByGrammarAntiPatterns (overlap suppress, same test as keepByDisambig).
 	AntiPatterns []xmlPattern `xml:"antipattern"`
+	// XMLLine is the 1-based source line of the <rule> start tag (Java xmlLineNumber /
+	// AbstractPatternRule.setXmlLineNumber). Not an XML attribute; set in UnmarshalXML.
+	XMLLine int `xml:"-"`
+}
+
+// UnmarshalXML captures the SAX-equivalent line of the <rule> start element, then
+// decodes children via a method-free alias (Java PatternRuleHandler RULE case).
+func (r *xmlRule) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	line := currentXMLStartLine(d)
+	type plain xmlRule
+	if err := d.DecodeElement((*plain)(r), &start); err != nil {
+		return err
+	}
+	r.XMLLine = line
+	return nil
 }
 
 // xmlFilter ports <filter class="org.languagetool.…Filter" args="…"/>.
@@ -201,10 +263,14 @@ type xmlPattern struct {
 	// HasMarker is true when the pattern contains <marker> (Java startPos tracking).
 	// When true, only tokens with InMarker get PatternToken.InsideMarker.
 	HasMarker bool
+	// XMLLine is the 1-based source line of this start tag (used for <antipattern>
+	// → Java xmlLineNumberAntiPattern / setXmlLineNumber on antipattern rules).
+	XMLLine int
 }
 
 // UnmarshalXML ports Java pattern children so <marker> / <and> / <phraseref> are not dropped.
 func (p *xmlPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	p.XMLLine = currentXMLStartLine(d)
 	p.Tokens = nil
 	p.Steps = nil
 	p.HasUnify = false
@@ -776,7 +842,9 @@ type xmlException struct {
 
 func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename string) ([]*AbstractPatternRule, error) {
 	var root xmlRulesRoot
-	if err := xml.Unmarshal(data, &root); err != nil {
+	if err := withXMLUnmarshalSource(data, func() error {
+		return xml.Unmarshal(data, &root)
+	}); err != nil {
 		return nil, err
 	}
 	cfg := NewUnifierConfiguration()
@@ -893,6 +961,11 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 				// Java: rule url else rulegroup url
 				r.URL = resolveRuleURL(xr.URL, groupURL)
 				r.SourceFile = sourceFile
+				// Java PatternRuleHandler: rule.setXmlLineNumber(xmlLineNumber) for token rules.
+				// OR expansions share the same line (same <rule> start).
+				if xr.XMLLine > 0 {
+					r.LineNumber = xr.XMLLine
+				}
 				// Java finalize: cat prio then group prio then rule prio (non-zero overwrites).
 				r.Priority = resolvePriority(catPrio, groupPrio, parsePrioAttr(xr.Prio))
 				// Java prepareRule setPremium(isPremiumRule): rule > group > category > file.
@@ -1122,6 +1195,10 @@ func antiPatternsFromXML(ruleID, languageCode string, aps []xmlPattern, cfg *Uni
 				n++
 				pr := NewPatternRule(id, languageCode, exp, "antipattern", "", "")
 				pr.UnifierConfig = cfg
+				// Java: rule.setXmlLineNumber(xmlLineNumberAntiPattern) on antipattern.
+				if ap.XMLLine > 0 {
+					pr.LineNumber = ap.XMLLine
+				}
 				out = append(out, pr)
 			}
 		}

@@ -141,6 +141,8 @@ func RegisterRuleFilePatterns(lt *languagetool.JLanguageTool, ruleFile, lang str
 		pr.AntiPatterns = append([]*patterns.PatternRule(nil), ar.AntiPatterns...)
 		pr.Filter = ar.Filter
 		pr.FilterArgs = ar.FilterArgs
+		pr.LineNumber = ar.LineNumber
+		pr.SourceFile = ar.SourceFile
 		patterns.RegisterPatternRule(lt, pr)
 	}
 	return nil

@@ -69,6 +69,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.DefaultTempOff = ar.DefaultTempOff
 		pr.SubID = ar.SubID
 		pr.SourceFile = ar.SourceFile
+		pr.LineNumber = ar.LineNumber
 		pr.IssueType = ar.IssueType
 		pr.URL = ar.URL
 		pr.Priority = ar.Priority

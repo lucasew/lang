@@ -130,3 +130,19 @@ func (r *AbstractPatternRule) GetToneTags() []languagetool.ToneTag {
 func (r *AbstractPatternRule) IsGoalSpecific() bool {
 	return r != nil && r.GoalSpecific
 }
+
+// SetXmlLineNumber ports AbstractPatternRule.setXmlLineNumber.
+func (r *AbstractPatternRule) SetXmlLineNumber(lineNumber int) {
+	if r != nil {
+		r.LineNumber = lineNumber
+	}
+}
+
+// GetXmlLineNumber ports AbstractPatternRule.getXmlLineNumber.
+// Returns -1 when the XML source line is unknown.
+func (r *AbstractPatternRule) GetXmlLineNumber() int {
+	if r == nil {
+		return -1
+	}
+	return r.LineNumber
+}

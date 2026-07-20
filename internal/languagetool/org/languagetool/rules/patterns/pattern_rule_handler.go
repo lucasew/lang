@@ -207,7 +207,12 @@ type grammarToken struct {
 
 func (h *PatternRuleHandler) parseXML(data []byte) error {
 	var root grammarRoot
-	if err := xml.Unmarshal(data, &root); err != nil {
+	// PatternRuleHandler uses a lighter grammarRule model without UnmarshalXML
+	// line capture; line numbers for the production loader live in PatternRuleLoader.
+	// Still bind source so any shared UnmarshalXML helpers see the buffer.
+	if err := withXMLUnmarshalSource(data, func() error {
+		return xml.Unmarshal(data, &root)
+	}); err != nil {
 		return fmt.Errorf("pattern rules %s: %w", h.SourceFile, err)
 	}
 	if root.Lang != "" && h.LanguageCode == "" {

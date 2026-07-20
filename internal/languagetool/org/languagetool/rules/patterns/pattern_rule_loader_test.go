@@ -954,3 +954,71 @@ func TestResolveIssueType_KnownOnly(t *testing.T) {
 	// Inheritance skips invalid and takes next known
 	require.Equal(t, "style", resolveIssueType("bogus", "", "style"))
 }
+
+// Java PatternRuleHandler: xmlLineNumber = pLocator.getLineNumber() on <rule>;
+// rule.setXmlLineNumber(xmlLineNumber) for token PatternRules (not RegexPatternRule).
+func TestPatternRuleLoader_XmlLineNumber(t *testing.T) {
+	// Line map (1-based, like SAX Locator):
+	// 1: <?xml…  2: <rules>  3: <category>  4: <rule id="R1"…  8: <rule id="R2"…
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="R1" name="one">
+      <pattern><token>a</token></pattern>
+      <message>m1</message>
+    </rule>
+    <rule id="R2" name="two">
+      <pattern><token>b</token></pattern>
+      <message>m2</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+	require.Equal(t, 4, ars[0].GetXmlLineNumber(), "R1 <rule> start line")
+	require.Equal(t, 8, ars[1].GetXmlLineNumber(), "R2 <rule> start line")
+
+	// RegisterGrammarXML copies line onto PatternRule for CLI / IMMUNIZE consumers.
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := RegisterGrammarXML(lt, xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Equal(t, 2, n)
+	// Find registered pattern rules via Check is indirect; re-load and copy path unit-tested above.
+	// New PatternRule defaults to -1 until set.
+	pr := NewPatternRule("x", "en", nil, "", "", "")
+	require.Equal(t, -1, pr.GetXmlLineNumber())
+	pr.SetXmlLineNumber(42)
+	require.Equal(t, 42, pr.GetXmlLineNumber())
+}
+
+// Antipatterns get xmlLineNumberAntiPattern (Java setXmlLineNumber on antipattern rule).
+func TestPatternRuleLoader_AntiPatternXmlLineNumber(t *testing.T) {
+	// 4: <rule  5: <antipattern
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="R" name="r">
+      <antipattern>
+        <token>skip</token>
+      </antipattern>
+      <pattern><token>hit</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.Equal(t, 4, ars[0].GetXmlLineNumber())
+	require.NotEmpty(t, ars[0].AntiPatterns)
+	require.Equal(t, 5, ars[0].AntiPatterns[0].GetXmlLineNumber())
+}
+
+func TestLineNumberAtOffset(t *testing.T) {
+	data := []byte("a\nb\nc")
+	require.Equal(t, 1, lineNumberAtOffset(data, 0))
+	require.Equal(t, 1, lineNumberAtOffset(data, 1)) // at 'a' end / before \n
+	require.Equal(t, 2, lineNumberAtOffset(data, 2)) // after \n
+	require.Equal(t, 3, lineNumberAtOffset(data, int64(len(data))))
+}

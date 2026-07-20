@@ -224,6 +224,22 @@ func (r *PatternRule) GetSourceFile() string {
 	return r.SourceFile
 }
 
+// SetXmlLineNumber ports AbstractPatternRule.setXmlLineNumber.
+func (r *PatternRule) SetXmlLineNumber(lineNumber int) {
+	if r != nil {
+		r.LineNumber = lineNumber
+	}
+}
+
+// GetXmlLineNumber ports AbstractPatternRule.getXmlLineNumber.
+// Returns -1 when the XML source line is unknown.
+func (r *PatternRule) GetXmlLineNumber() int {
+	if r == nil {
+		return -1
+	}
+	return r.LineNumber
+}
+
 // GetURL ports Rule.getUrl.
 func (r *PatternRule) GetURL() string {
 	if r == nil {

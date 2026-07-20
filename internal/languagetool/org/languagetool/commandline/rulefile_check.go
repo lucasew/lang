@@ -45,6 +45,8 @@ func CheckWithPatternRuleFile(w io.Writer, text string, opts *CommandLineOptions
 		pr.AntiPatterns = append([]*patterns.PatternRule(nil), ar.AntiPatterns...)
 		pr.Filter = ar.Filter
 		pr.FilterArgs = ar.FilterArgs
+		pr.LineNumber = ar.LineNumber
+		pr.SourceFile = ar.SourceFile
 		patterns.RegisterPatternRule(lt, pr)
 	}
 	// apply CLI enable/disable
