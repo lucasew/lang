@@ -178,3 +178,44 @@ func TestRegister_NoInventLangPrefixedWordRepeatIDs(t *testing.T) {
 		}
 	}
 }
+
+// Invent layout IDs (lang-prefixed SentenceWhitespace / LongSentence / unpaired)
+// must not reappear — Java uses SENTENCE_WHITESPACE / TOO_LONG_SENTENCE /
+// UNPAIRED_BRACKETS (or DE_* / EN_UNPAIRED_* / real class getId only).
+func TestRegister_NoInventLayoutRuleIDs(t *testing.T) {
+	bad := []string{
+		"EN_SENTENCE_WHITESPACE", "FR_SENTENCE_WHITESPACE", "DA_SENTENCE_WHITESPACE",
+		"GL_SENTENCE_WHITESPACE", "ES_SENTENCE_WHITESPACE", "PT_SENTENCE_WHITESPACE",
+		"PL_SENTENCE_WHITESPACE", "RU_SENTENCE_WHITESPACE", "CA_SENTENCE_WHITESPACE",
+		"GA_SENTENCE_WHITESPACE", "IT_SENTENCE_WHITESPACE", "SV_SENTENCE_WHITESPACE",
+		"SK_SENTENCE_WHITESPACE", "SL_SENTENCE_WHITESPACE", "RO_SENTENCE_WHITESPACE",
+		"EL_SENTENCE_WHITESPACE", "FA_SENTENCE_WHITESPACE", "BR_SENTENCE_WHITESPACE",
+		"AR_SENTENCE_WHITESPACE", "KM_SENTENCE_WHITESPACE", "UK_SENTENCE_WHITESPACE",
+		"TOO_LONG_SENTENCE_FR", "TOO_LONG_SENTENCE_ES", "TOO_LONG_SENTENCE_PT",
+		"TOO_LONG_SENTENCE_PL", "TOO_LONG_SENTENCE_RU", "TOO_LONG_SENTENCE_CA",
+		"TOO_LONG_SENTENCE_GA", "TOO_LONG_SENTENCE_IT", "TOO_LONG_SENTENCE_SV",
+		"TOO_LONG_SENTENCE_SK", "TOO_LONG_SENTENCE_SL", "TOO_LONG_SENTENCE_RO",
+		"TOO_LONG_SENTENCE_EL", "TOO_LONG_SENTENCE_FA", "TOO_LONG_SENTENCE_BR",
+		"TOO_LONG_SENTENCE_DA", "TOO_LONG_SENTENCE_GL", "TOO_LONG_SENTENCE_AR",
+		"TOO_LONG_SENTENCE_KM", "TOO_LONG_SENTENCE_UK",
+		"BE_UNPAIRED_BRACKETS", "UK_UNPAIRED_BRACKETS", "FA_UNPAIRED_BRACKETS",
+		"AR_UNPAIRED_BRACKETS", "FR_UNPAIRED_BRACKETS",
+	}
+	codes := []string{
+		"en", "fr", "es", "pt", "pl", "ru", "ca", "ga", "it", "sv", "sk", "sl",
+		"ro", "el", "fa", "br", "da", "gl", "ar", "km", "uk", "be", "nl", "de",
+	}
+	for _, code := range codes {
+		lt := languagetool.NewJLanguageTool(code)
+		corepack.Register(lt, code)
+		ids := lt.GetAllRegisteredRuleIDs()
+		for _, b := range bad {
+			require.NotContains(t, ids, b, "lang %s invent id %s", code, b)
+		}
+	}
+	// Positive: DE keeps Java DE_SENTENCE_WHITESPACE / TOO_LONG_SENTENCE_DE.
+	de := languagetool.NewJLanguageTool("de")
+	corepack.Register(de, "de")
+	require.Contains(t, de.GetAllRegisteredRuleIDs(), "DE_SENTENCE_WHITESPACE")
+	require.Contains(t, de.GetAllRegisteredRuleIDs(), "TOO_LONG_SENTENCE_DE")
+}
