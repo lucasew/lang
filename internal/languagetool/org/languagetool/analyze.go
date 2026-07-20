@@ -146,21 +146,21 @@ func analyzeChineseEncoded(encoded []string) *AnalyzedSentence {
 }
 
 // chineseAsAnalyzedToken ports ChineseTagger.asAnalyzedToken.
+// Java keeps parts[1] as POS including "x" (HanLP unknown) — do not invent nil POS
+// for open-class soft matching (checklist 1.18).
 func chineseAsAnalyzedToken(word string) *AnalyzedToken {
 	if !strings.Contains(word, "/") {
 		return NewAnalyzedToken(" ", nil, nil)
 	}
 	parts := strings.Split(word, "/")
+	// Java: parts[0].equals("") && parts[last].equals("w") → token without "/w", POS "w"
 	if parts[0] == "" && parts[len(parts)-1] == "w" {
 		p := "w"
 		return NewAnalyzedToken(word[:len(word)-2], &p, nil)
 	}
 	surface := parts[0]
 	posTag := parts[1]
-	// Soft unknown POS "x" → nil (open-class soft matching until HanLP).
-	if posTag == "" || posTag == "x" {
-		return NewAnalyzedToken(surface, nil, nil)
-	}
+	// Java: new AnalyzedToken(parts[0], parts[1], null) — keep POS as-is (including "x").
 	p := posTag
 	return NewAnalyzedToken(surface, &p, nil)
 }

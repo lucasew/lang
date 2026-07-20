@@ -20,3 +20,24 @@ func TestChineseTagger_Tagger(t *testing.T) {
 	require.Equal(t, " ", got[2].GetToken())
 	require.Equal(t, ChineseDictPath, NewChineseTagger().GetDictionaryPath())
 }
+
+// Twin of ChineseTagger.asAnalyzedToken: HanLP unknown tag "x" is kept (not invent nil POS).
+func TestChineseTagger_KeepsXPOS(t *testing.T) {
+	got := NewChineseTagger().Tag([]string{"未知/x", "词/n"})
+	require.Len(t, got, 2)
+	require.Equal(t, "未知", got[0].GetToken())
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.Equal(t, "x", *got[0].GetReadings()[0].GetPOSTag(), "Java keeps POS x")
+	require.Equal(t, "n", *got[1].GetReadings()[0].GetPOSTag())
+}
+
+// Twin of /w punctuation path: empty surface + trailing w → POS w, surface without /w.
+func TestChineseTagger_PunctuationW(t *testing.T) {
+	// e.g. "。/w" normal path; special path is surface empty before last /w
+	// Java: parts[0]=="" && parts[last]=="w" uses word.substring(0, len-2) and POS "w"
+	got := NewChineseTagger().Tag([]string{"/w"})
+	require.Len(t, got, 1)
+	require.Equal(t, "", got[0].GetToken()) // len("/w")-2 = 0
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.Equal(t, "w", *got[0].GetReadings()[0].GetPOSTag())
+}

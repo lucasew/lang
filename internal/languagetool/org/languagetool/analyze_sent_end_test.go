@@ -31,3 +31,14 @@ func TestAttachSentenceEnd_ColonURLNonBlank(t *testing.T) {
 	require.Equal(t, "https://languagetool.org/foo", toks[len(toks)-1].GetToken())
 	require.True(t, toks[len(toks)-1].IsSentenceEnd())
 }
+
+// Twin of ChineseTagger.asAnalyzedToken via analyze.go chineseAsAnalyzedToken:
+// POS "x" is kept (not invent nil for soft open-class matching).
+func TestChineseAsAnalyzedToken_KeepsXPOS(t *testing.T) {
+	at := chineseAsAnalyzedToken("未知/x")
+	require.Equal(t, "未知", at.GetToken())
+	require.NotNil(t, at.GetPOSTag())
+	require.Equal(t, "x", *at.GetPOSTag())
+	at2 := chineseAsAnalyzedToken("词/n")
+	require.Equal(t, "n", *at2.GetPOSTag())
+}

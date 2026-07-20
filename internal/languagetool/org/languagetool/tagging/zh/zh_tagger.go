@@ -37,6 +37,7 @@ func (t *ChineseTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 }
 
 // asAnalyzedToken ports ChineseTagger.asAnalyzedToken.
+// Java always uses parts[1] as POS (including HanLP unknown "x") — do not invent nil POS.
 func asAnalyzedToken(word string) *languagetool.AnalyzedToken {
 	if !strings.Contains(word, "/") {
 		return languagetool.NewAnalyzedToken(" ", nil, nil)
@@ -52,11 +53,7 @@ func asAnalyzedToken(word string) *languagetool.AnalyzedToken {
 	}
 	surface := parts[0]
 	posTag := parts[1]
-	// Soft: "x" means unknown — leave POS nil so soft open-class matching still works
-	// until HanLP POS is available.
-	if posTag == "" || posTag == "x" {
-		return languagetool.NewAnalyzedToken(surface, nil, nil)
-	}
+	// Java: new AnalyzedToken(parts[0], parts[1], null)
 	p := posTag
 	return languagetool.NewAnalyzedToken(surface, &p, nil)
 }
