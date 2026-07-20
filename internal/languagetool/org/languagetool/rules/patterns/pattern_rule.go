@@ -65,6 +65,9 @@ type PatternRule struct {
 	SourceFile string
 	// IssueType ports Rule.locQualityIssueType string form (e.g. "grammar", "misspelling").
 	IssueType string
+	// MatchType ports AbstractPatternRule.type — override for RuleMatch.Type;
+	// empty means derive from IssueType (Java getType).
+	MatchType rules.RuleMatchType
 	// URL ports Rule.url.
 	URL string
 	// Priority ports Rule.priority (XML prio= inheritance).
@@ -227,6 +230,84 @@ func (r *PatternRule) GetLocQualityIssueType() rules.ITSIssueType {
 		return ""
 	}
 	return rules.ITSIssueType(r.IssueType)
+}
+
+// GetMatchType ports AbstractPatternRule.getType (RuleMatch.Type for created matches).
+// Style / locale-violation / register → Hint; else Other; MatchType override wins.
+func (r *PatternRule) GetMatchType() rules.RuleMatchType {
+	if r != nil && r.MatchType != "" {
+		return r.MatchType
+	}
+	switch r.GetLocQualityIssueType() {
+	case rules.ITSStyle, rules.ITSLocaleViolation, rules.ITSRegister:
+		return rules.RuleMatchTypeHint
+	default:
+		return rules.RuleMatchTypeOther
+	}
+}
+
+// SetMatchType ports AbstractPatternRule.setType.
+func (r *PatternRule) SetMatchType(t rules.RuleMatchType) {
+	if r != nil {
+		r.MatchType = t
+	}
+}
+
+// EstimateContextForSureMatch ports PatternRule.estimateContextForSureMatch.
+func (r *PatternRule) EstimateContextForSureMatch() int {
+	if r == nil {
+		return 0
+	}
+	extendAfterMarker := 0
+	markerSeen := false
+	for _, pToken := range r.Tokens {
+		if pToken == nil {
+			continue
+		}
+		if markerSeen && !pToken.InsideMarker {
+			extendAfterMarker++
+		}
+		if pToken.GetPOStag() == languagetool.SentenceEndTagName {
+			// e.g. DT_JJ_NO_NOUN and rules that match sentence end
+			extendAfterMarker++
+		}
+		if pToken.InsideMarker {
+			markerSeen = true
+		}
+		if pToken.SkipNext == -1 {
+			return -1
+		}
+		extendAfterMarker += pToken.SkipNext
+	}
+	longestAntiPattern := 0
+	longestSkip := 0
+	for _, ap := range r.AntiPatterns {
+		if ap == nil {
+			continue
+		}
+		n := len(ap.Tokens)
+		if n > longestAntiPattern {
+			longestAntiPattern = n
+		}
+		for _, token := range ap.Tokens {
+			if token == nil {
+				continue
+			}
+			if token.SkipNext == -1 {
+				return -1
+			}
+			if token.SkipNext > longestSkip {
+				longestSkip = token.SkipNext
+			}
+		}
+	}
+	// Java: extendAfterMarker + Math.max(longestAntiPattern, longestAntiPattern + longestSkip)
+	// which simplifies to extendAfterMarker + longestAntiPattern + longestSkip when longestSkip>=0.
+	maxAnti := longestAntiPattern
+	if longestAntiPattern+longestSkip > maxAnti {
+		maxAnti = longestAntiPattern + longestSkip
+	}
+	return extendAfterMarker + maxAnti
 }
 
 // GetPriority ports Rule.getPriority.

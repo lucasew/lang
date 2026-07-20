@@ -726,6 +726,13 @@ func (m *PatternRuleMatcher) createRuleMatch(
 	rm := rules.NewRuleMatch(m.Rule, sentence, fromPos, toPos, clearMsg)
 	rm.ShortMessage = shortErrMessage
 	rm.SetPatternPosition(patFrom, patTo)
+	// Java: ruleMatch.setType(rule.getType())
+	if pr != nil {
+		rm.SetType(pr.GetMatchType())
+		if pr.IssueType != "" {
+			rm.IssueType = pr.IssueType
+		}
+	}
 	if orig := sentenceTextSlice(sentence, fromPos, toPos); orig != "" {
 		rm.OriginalErrorStr = orig
 	}
