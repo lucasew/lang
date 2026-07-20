@@ -7,19 +7,20 @@ import (
 )
 
 func TestFilterMatchesByCategories(t *testing.T) {
+	// Java AvsAnRule → Categories.MISC; Morfologik speller → TYPOS.
 	ms := []LocalMatch{
 		{RuleID: "EN_A_VS_AN", Message: "a/an"},
 		{RuleID: "MORFOLOGIK_RULE_EN_US", Message: "spell"},
 	}
-	out := FilterMatchesByCategories(ms, []string{"GRAMMAR"}, nil, false)
+	out := FilterMatchesByCategories(ms, []string{"MISC"}, nil, false)
 	require.Len(t, out, 1)
 	require.Equal(t, "MORFOLOGIK_RULE_EN_US", out[0].RuleID)
 
-	out = FilterMatchesByCategories(ms, nil, []string{"GRAMMAR"}, true)
+	out = FilterMatchesByCategories(ms, nil, []string{"MISC"}, true)
 	require.Len(t, out, 1)
 	require.Equal(t, "EN_A_VS_AN", out[0].RuleID)
 
-	// soft: --enablecategories without --enabledonly still restricts categories
+	// --enablecategories without --enabledonly still restricts categories
 	out = FilterMatchesByCategories(ms, nil, []string{"TYPOS"}, false)
 	require.Len(t, out, 1)
 	require.Equal(t, "MORFOLOGIK_RULE_EN_US", out[0].RuleID)
