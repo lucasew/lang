@@ -1,6 +1,7 @@
 package languagetool
 
 import (
+	"fmt"
 	"math"
 	"regexp"
 	"sort"
@@ -324,7 +325,45 @@ type JLanguageTool struct {
 	// IgnoredCharacters ports Language.getIgnoredCharactersRegex (applied per word token
 	// after tokenize, Java replaceSoftHyphens). Nil = no strip. German uses [\u00AD].
 	IgnoredCharacters *regexp.Regexp
-	unknown           map[string]struct{}
+	// MaxErrorsPerWordRate ports JLanguageTool.maxErrorsPerWordRate (0 = disabled).
+	// TextCheckCallable throws ErrorRateTooHighException when exceeded after >25 words.
+	MaxErrorsPerWordRate float64
+	// LanguageName used in ErrorRateTooHighException message (Java language.getName()).
+	LanguageName string
+	unknown      map[string]struct{}
+}
+
+// SetMaxErrorsPerWordRate ports JLanguageTool.setMaxErrorsPerWordRate.
+func (lt *JLanguageTool) SetMaxErrorsPerWordRate(v float64) {
+	if lt != nil {
+		lt.MaxErrorsPerWordRate = v
+	}
+}
+
+// CheckErrorRate ports TextCheckCallable's maxErrorsPerWordRate gate:
+// if rate > 0 && errors/words > rate && wordCounter > 25 → ErrorRateTooHighException.
+// plainTextLen is annotatedText.getPlainText().length() (UTF-16) for the message.
+func CheckErrorRate(matchCount, wordCounter int, maxErrorsPerWordRate float64, languageName string, plainTextLen int) error {
+	if maxErrorsPerWordRate <= 0 || wordCounter <= 25 {
+		return nil
+	}
+	if wordCounter == 0 {
+		return nil
+	}
+	errorsPerWord := float64(matchCount) / float64(wordCounter)
+	if errorsPerWord <= maxErrorsPerWordRate {
+		return nil
+	}
+	// Java: String.format("%.0f", maxErrorsPerWordRate * 100)
+	pct := int(maxErrorsPerWordRate*100 + 0.5)
+	if languageName == "" {
+		languageName = "?"
+	}
+	msg := fmt.Sprintf(
+		"Text checking was stopped due to too many errors (more than %d%% of words seem to have an error). Are you sure you have set the correct text language? Language set: %s, text length: %d",
+		pct, languageName, plainTextLen,
+	)
+	return NewErrorRateTooHighException(msg)
 }
 
 // DisableCleanOverlapping ports JLanguageTool.setCleanOverlappingMatches(false).
