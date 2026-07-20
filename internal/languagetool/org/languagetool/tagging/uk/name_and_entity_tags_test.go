@@ -45,6 +45,31 @@ func TestUkrainianTagger_ProperNameAllCaps(t *testing.T) {
 	require.False(t, tg2.Tag([]string{"НАТО"})[0].IsTagged())
 }
 
+func TestAllCapsPropReadings_fullPOSMatch(t *testing.T) {
+	// Java noun.*?:prop.*|noninfl.* full-match only — bare noun without :prop is rejected.
+	tag := func(w string) []tagging.TaggedWord {
+		if w == "Київ" {
+			return []tagging.TaggedWord{
+				{Lemma: "Київ", PosTag: "noun:inanim:m:v_naz"}, // no :prop
+				{Lemma: "Київ", PosTag: "noun:inanim:m:v_naz:prop:geo"},
+				{Lemma: "Київ", PosTag: "adj:m:v_naz"}, // must not pass
+			}
+		}
+		return nil
+	}
+	rs := AllCapsPropReadings("КИЇВ", tag)
+	require.Len(t, rs, 1)
+	require.Contains(t, *rs[0].GetPOSTag(), "prop")
+	// noninfl.* is allowed (token length > 2 for ALLCAPS path)
+	tagNI := func(w string) []tagging.TaggedWord {
+		if w == "Ага" {
+			return []tagging.TaggedWord{{Lemma: "ага", PosTag: "noninfl:predic"}}
+		}
+		return nil
+	}
+	require.Len(t, AllCapsPropReadings("АГА", tagNI), 1)
+}
+
 func TestCapitalizeProperName(t *testing.T) {
 	require.Equal(t, "Нато", capitalizeProperName("НАТО"))
 	require.Equal(t, "Київ", capitalizeProperName("КИЇВ"))

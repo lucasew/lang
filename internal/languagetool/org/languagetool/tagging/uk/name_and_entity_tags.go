@@ -14,6 +14,9 @@ var (
 	reNameSuffix = regexp.MustCompile(`(?i).+(енко|єнко|ишин|ішин|ський|цький|івна|ович|евич|ів|їв)$`)
 	// x-shaped: Т-подібний handled elsewhere
 	reXShaped = regexp.MustCompile(`(?i)^[\p{L}]-подібн`)
+	// Java getAdjustedAnalyzedTokens ALLCAPS filter: Pattern.compile("noun.*?:prop.*|noninfl.*")
+	// Matcher.matches() — full POS string only (not substring Contains).
+	allCapsPropPOSRE = regexp.MustCompile(`^(?:noun.*?:prop.*|noninfl.*)$`)
 )
 
 // NameSuffixPOS is intentionally empty: Java tags surnames via the dictionary
@@ -105,10 +108,9 @@ func AllCapsPropReadings(token string, tagWord func(string) []tagging.TaggedWord
 		if pos == "" {
 			continue
 		}
-		// Java Pattern: noun.*?:prop.*|noninfl.*
-		ok := (strings.Contains(pos, "noun") && strings.Contains(pos, "prop")) ||
-			strings.HasPrefix(pos, "noninfl")
-		if !ok {
+		// Java Pattern.compile("noun.*?:prop.*|noninfl.*") Matcher.matches()
+		loc := allCapsPropPOSRE.FindStringIndex(pos)
+		if loc == nil || loc[0] != 0 || loc[1] != len(pos) {
 			continue
 		}
 		lemma := tw.Lemma

@@ -159,6 +159,14 @@ func TestCompoundWithQuotesReadings_unit(t *testing.T) {
 	require.Empty(t, CompoundWithQuotesReadings("екс-депутат", retag))
 	// too short
 	require.Empty(t, CompoundWithQuotesReadings("а-«б»", retag))
+	// COMPOUND_WITH_QUOTES2: closing quote then dash ("заступницю"-колаборантку)
+	p2, l2 := "noun:anim:f:v_zna", "заступницю-колаборантку"
+	out2 := CompoundWithQuotesReadings(`"заступницю"-колаборантку`, func(adj string) []*languagetool.AnalyzedToken {
+		require.Equal(t, "заступницю-колаборантку", adj)
+		return []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(adj, &p2, &l2)}
+	})
+	require.Len(t, out2, 1)
+	require.Equal(t, `"заступницю"-колаборантку`, out2[0].GetToken())
 }
 func TestUkrainianTagger_HypenPrefixes(t *testing.T) {
 	wt := tagging.MapWordTagger{"тест": {tagging.NewTaggedWord("тест", "noun")}}
