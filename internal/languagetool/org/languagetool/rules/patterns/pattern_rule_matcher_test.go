@@ -81,6 +81,53 @@ func TestPatternRuleMatcher_NextExceptionImmediate(t *testing.T) {
 	require.Len(t, ms, 1)
 }
 
+// Java prevSkip==0 uses only getAnalyzedToken(0) for scope=next — other readings ignored.
+func TestPatternRuleMatcher_NextExceptionFirstReadingOnly(t *testing.T) {
+	can := Token("can")
+	can.AddNextException(NewPatternToken("be", false, false, false))
+	rule := NewPatternRule("NEXT0", "en",
+		[]*PatternToken{can, Token("run")},
+		"d", "m", "")
+	// Next token "x" with readings [run, be]: first reading is run → no block; pattern needs "run"
+	// After "can", next must be "run" for pattern. Readings of "run" token: first=run ok.
+	// Build next token with first reading not "be", second "be" — exception must not fire.
+	nn := "NN"
+	runTok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("run", &nn, nil),
+		languagetool.NewAnalyzedToken("be", &nn, nil), // second reading would match exception
+	}, 4)
+	// Force surface token to "run" for GetToken()
+	sent := testSentence(atr("can", 0), runTok)
+	// Replace second token if testSentence rebuilds — build manually:
+	ss := languagetool.SentenceStartTagName
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
+		atr("can", 0),
+		runTok,
+	}
+	sent = languagetool.NewAnalyzedSentence(tokens)
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms, 1, "first reading is run; second-reading 'be' must not block (Java getAnalyzedToken(0))")
+
+	// First reading is "be" → block
+	beFirst := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("be", &nn, nil),
+		languagetool.NewAnalyzedToken("run", &nn, nil),
+	}, 4)
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
+		atr("can", 0),
+		beFirst,
+	})
+	// Pattern second token is Token("run") — surface of beFirst is still "be" from first token...
+	// AnalyzedTokenReadings.GetToken is first reading's token typically.
+	ms, err = rule.Match(sent2)
+	require.NoError(t, err)
+	// Either blocked by next-exception on first reading "be", or surface "be" != "run"
+	require.Empty(t, ms)
+}
+
 // Java: when prev element has skip>0, its scope=next exception rejects skip-window
 // candidates that match the exception (prevMatched path with prevSkipNext > 0).
 func TestPatternRuleMatcher_NextExceptionSkipWindow(t *testing.T) {

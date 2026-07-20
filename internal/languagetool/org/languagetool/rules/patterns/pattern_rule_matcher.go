@@ -439,8 +439,8 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 					continue
 				}
 				// Java AbstractPatternRulePerformer.testAllReadings prevMatched:
-				// when previous element had skip>0, its scope=next exception rejects
-				// candidate tokens in the skip window that match the exception.
+				// prevSkipNext > 0: prevElement.isMatchedByScopeNextException(each reading of current)
+				// → reject token position if any reading hits prev's scope=next exception.
 				if prevSkip > 0 && ki > 0 {
 					if prevM := m.matchers[ki-1]; prevM != nil && prevM.Base != nil &&
 						prevM.Base.HasNextException() &&
@@ -448,18 +448,19 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 						continue
 					}
 				}
+				// prevSkipNext == 0: current matcher's scope=next vs next token's first reading only
+				// (Java: tokens[tokenNo+1].getAnalyzedToken(0)), before accepting the match.
+				if prevSkip == 0 && pt.HasNextException() && try+1 < len(tokens) &&
+					matcher.IsMatchedByNextExceptionFirstReading(tokens[try+1]) {
+					continue
+				}
 				// When first element, Java still has firstMatchToken=-1 until match;
 				// re-resolve with try as provisional first if needed for refs on later elems only.
 				if matcher.IsMatchedReadings(tokens[try]) {
-					// Java: scope="previous" exception blocks when previous token matches.
+					// Java: scope="previous" exception blocks when previous token matches
+					// (after anyMatched, still reject).
 					if pt.HasPreviousException() && try > 0 &&
 						matcher.IsMatchedByPreviousException(tokens[try-1]) {
-						continue
-					}
-					// Java: scope="next" on *this* element vs immediate next token only when
-					// prevSkipNext == 0 (skip>0 uses the prevMatched path above for following elems).
-					if prevSkip == 0 && pt.HasNextException() && try+1 < len(tokens) &&
-						matcher.IsMatchedByNextException(tokens[try+1]) {
 						continue
 					}
 					// consume occ consecutive

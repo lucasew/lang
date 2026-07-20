@@ -282,30 +282,64 @@ func (m *PatternTokenMatcher) IsMatchedByPreviousException(prev *languagetool.An
 	return matchExceptionOnReadings(prev, m.Base.PreviousException, m.Base.PreviousExceptionRE, m.Base.PreviousExceptionCaseSensitive)
 }
 
-// IsMatchedByNextException ports isMatchedByScopeNextException over readings:
-// any reading matching any next-scope exception (Java often probes first reading only
-// at call sites; scanning all readings is a safe superset for AnalyzedTokenReadings API).
-func (m *PatternTokenMatcher) IsMatchedByNextException(next *languagetool.AnalyzedTokenReadings) bool {
-	if m == nil || m.Base == nil || next == nil || !m.Base.HasNextException() {
+// IsMatchedByScopeNextException ports PatternToken.isMatchedByScopeNextException
+// for a single AnalyzedToken (Java testAllReadings uses this on readings).
+func (m *PatternTokenMatcher) IsMatchedByScopeNextException(token *languagetool.AnalyzedToken) bool {
+	if m == nil || m.Base == nil || token == nil || !m.Base.HasNextException() {
 		return false
 	}
 	if len(m.Base.NextExceptions) > 0 {
-		for _, r := range next.GetReadings() {
-			if r == nil {
+		for _, ex := range m.Base.NextExceptions {
+			if ex == nil {
 				continue
 			}
-			for _, ex := range m.Base.NextExceptions {
-				if ex == nil {
-					continue
-				}
-				if NewPatternTokenMatcher(ex).IsMatched(r) {
-					return true
-				}
+			// Java: testException.hasNextException() && testException.isMatched(token)
+			// NextExceptions list is already scope=next only.
+			if NewPatternTokenMatcher(ex).IsMatched(token) {
+				return true
 			}
 		}
 		return false
 	}
-	return matchExceptionOnReadings(next, m.Base.NextException, m.Base.NextExceptionRE, m.Base.NextExceptionCaseSensitive)
+	// Legacy single NextException surface
+	if m.Base.NextException == "" {
+		return false
+	}
+	return matchExceptionSurface(token.GetToken(), m.Base.NextException, m.Base.NextExceptionRE, m.Base.NextExceptionCaseSensitive)
+}
+
+// IsMatchedByNextException ports scope=next over AnalyzedTokenReadings.
+// Java prevSkip>0 path checks each reading; prevSkip==0 uses getAnalyzedToken(0) only
+// (see PatternRuleMatcher.matchFrom).
+func (m *PatternTokenMatcher) IsMatchedByNextException(next *languagetool.AnalyzedTokenReadings) bool {
+	if m == nil || m.Base == nil || next == nil || !m.Base.HasNextException() {
+		return false
+	}
+	for _, r := range next.GetReadings() {
+		if r != nil && m.IsMatchedByScopeNextException(r) {
+			return true
+		}
+	}
+	// Empty readings: probe surface token
+	if len(next.GetReadings()) == 0 {
+		probe := languagetool.NewAnalyzedToken(next.GetToken(), nil, nil)
+		return m.IsMatchedByScopeNextException(probe)
+	}
+	return false
+}
+
+// IsMatchedByNextExceptionFirstReading ports the Java prevSkipNext==0 branch:
+// matcher.isMatchedByScopeNextException(tokens[tokenNo+1].getAnalyzedToken(0)).
+func (m *PatternTokenMatcher) IsMatchedByNextExceptionFirstReading(next *languagetool.AnalyzedTokenReadings) bool {
+	if m == nil || next == nil {
+		return false
+	}
+	readings := next.GetReadings()
+	if len(readings) > 0 && readings[0] != nil {
+		return m.IsMatchedByScopeNextException(readings[0])
+	}
+	probe := languagetool.NewAnalyzedToken(next.GetToken(), nil, nil)
+	return m.IsMatchedByScopeNextException(probe)
 }
 
 func matchExceptionOnReadings(tok *languagetool.AnalyzedTokenReadings, exc string, isRE, caseSensitive bool) bool {
