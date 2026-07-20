@@ -859,6 +859,8 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		// is_goal_specific: rule overrides group overrides category (Java PatternRuleHandler).
 		goalSpecific := resolveGoalSpecific(xr.GoalSpecific, groupGoal, catGoal)
 		for _, tokens := range phraseExpanded {
+			// Java PatternRuleHandler: processElement before createRules (phrase match refs).
+			processElement(tokens)
 			// Java PatternRuleHandler.createRules: expand <or> into multiple rules.
 			for _, expToks := range expandOrGroups(tokens) {
 				if len(expToks) == 0 {
@@ -1211,7 +1213,14 @@ func expandSteps(steps []xmlPatternStep, phraseMap map[string][][]*PatternToken,
 				// Unknown phrase: fail-closed (no invent).
 				return nil
 			}
+			// Java preparePhrase: setPhraseName(phraseIdRef) on phrase map tokens then clone.
+			phraseID := st.PhraseRef
 			for _, alt := range alts {
+				for _, t := range alt {
+					if t != nil {
+						t.SetPhraseName(phraseID)
+					}
+				}
 				copyAlt := make([]*PatternToken, 0, len(buffer)+len(alt))
 				if len(buffer) == 0 {
 					for _, t := range alt {
@@ -1220,6 +1229,8 @@ func expandSteps(steps []xmlPatternStep, phraseMap map[string][][]*PatternToken,
 						if hasMarker {
 							ct.SetInsideMarker(st.InMarker)
 						}
+						// Ensure clone keeps phrase name even if map entry was shared.
+						ct.SetPhraseName(phraseID)
 						copyAlt = append(copyAlt, ct)
 					}
 					alternatives = append(alternatives, copyAlt)
@@ -1233,6 +1244,7 @@ func expandSteps(steps []xmlPatternStep, phraseMap map[string][][]*PatternToken,
 						if hasMarker {
 							ct.SetInsideMarker(st.InMarker)
 						}
+						ct.SetPhraseName(phraseID)
 						copyAlt = append(copyAlt, ct)
 					}
 					alternatives = append(alternatives, copyAlt)
@@ -1578,4 +1590,30 @@ func clonePatternTokenNoOr(p *PatternToken) *PatternToken {
 		cp.OrGroup = nil
 	}
 	return cp
+}
+
+// processElement ports XMLRuleHandler.processElement — adjust match token refs
+// for tokens inside phrases (counter > 0 && isReferenceElement).
+func processElement(patternTokens []*PatternToken) {
+	counter := 0
+	for _, pToken := range patternTokens {
+		if pToken != nil && pToken.GetPhraseName() != "" && counter > 0 && pToken.IsReferenceElement() {
+			tm := pToken.GetMatch()
+			if tm != nil {
+				tokRef := tm.GetTokenRef()
+				newRef := tokRef + counter - 1
+				// Clone Match — load-time clones share TokenMatch pointers.
+				cp := *tm
+				cp.SetTokenRef(newRef)
+				pToken.TokenMatch = &cp
+				// Java also rewrites "\\N" in the token string.
+				oldMark := fmt.Sprintf("\\%d", tokRef)
+				newMark := fmt.Sprintf("\\%d", newRef)
+				if strings.Contains(pToken.Token, oldMark) {
+					pToken.Token = strings.ReplaceAll(pToken.Token, oldMark, newMark)
+				}
+			}
+		}
+		counter++
+	}
 }

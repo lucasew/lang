@@ -28,6 +28,8 @@ type PatternRuleMatcher struct {
 	// (Java PatternRuleMatcher.testAllReadings). Disambiguation uses AbstractPatternRulePerformer
 	// which does not skip immunized tokens — set false via NewPatternRuleMatcherStrict.
 	SkipImmunized bool
+	// UseList ports PatternRuleMatcher.useList — phrase elementNo translation.
+	UseList bool
 }
 
 func NewPatternRuleMatcher(rule *AbstractTokenBasedRule) *PatternRuleMatcher {
@@ -63,11 +65,49 @@ func NewPatternRuleMatcherFromPattern(rule *PatternRule) *PatternRuleMatcher {
 		panic("rule required")
 	}
 	// Java PatternRule extends AbstractTokenBasedRule: constructor computes tokenHints / minTokenCount.
+	// Java: new PatternRuleMatcher(this, useList)
+	if !rule.UseList && len(rule.Tokens) > 0 {
+		// Ensure elementNo is computed if rule was mutated after NewPatternRule.
+		rule.computeElementNo()
+	}
 	atr := &AbstractTokenBasedRule{PatternRule: rule}
 	atr.computeHints(rule.Tokens)
 	m := NewPatternRuleMatcher(atr)
 	m.InterpretPreDisambig = rule.InterpretPreDisambig
+	m.UseList = rule.UseList
 	return m
+}
+
+// translateElementNo ports PatternRuleMatcher.translateElementNo.
+// When useList, skip values refer to XML-level elements; sum ElementNo for token span.
+func (m *PatternRuleMatcher) translateElementNo(i int) int {
+	if m == nil || !m.UseList || i < 0 {
+		return i
+	}
+	var elementNo []int
+	if m.Rule != nil && m.Rule.PatternRule != nil {
+		elementNo = m.Rule.PatternRule.ElementNo
+	}
+	j := 0
+	for k := 0; k < i && k < len(elementNo); k++ {
+		j += elementNo[k]
+	}
+	return j
+}
+
+// phraseLen ports PatternRuleMatcher.phraseLen.
+func (m *PatternRuleMatcher) phraseLen(i int) int {
+	if m == nil || !m.UseList {
+		return 1
+	}
+	var elementNo []int
+	if m.Rule != nil && m.Rule.PatternRule != nil {
+		elementNo = m.Rule.PatternRule.ElementNo
+	}
+	if i < 0 || i >= len(elementNo) {
+		return 1
+	}
+	return elementNo[i]
 }
 
 // Match ports PatternRuleMatcher.match.
@@ -485,7 +525,8 @@ func (m *PatternRuleMatcher) matchFromResult(sentence *languagetool.AnalyzedSent
 						}
 						nbag.record(matcher, pt, spanAtrs)
 					}
-					if res, ok := rec(ki+1, end+1, pt.SkipNext, nsp, nbag); ok {
+					// Java: prevSkipNext = translateElementNo(getSkipNext())
+					if res, ok := rec(ki+1, end+1, m.translateElementNo(pt.SkipNext), nsp, nbag); ok {
 						return res, true
 					}
 					continue
@@ -541,12 +582,13 @@ func (m *PatternRuleMatcher) createRuleMatch(
 		msg = m.Rule.Description
 	}
 
-	errMessage := FormatMatches(tokens, tokenPositions, firstMatchToken, msg, sugMatches, lang)
+	phraseCtx := m.phraseMatchContext()
+	errMessage := FormatMatches(tokens, tokenPositions, firstMatchToken, msg, sugMatches, lang, phraseCtx)
 	shortErrMessage := ""
 	if shortMsg != "" {
-		shortErrMessage = FormatMatches(tokens, tokenPositions, firstMatchToken, shortMsg, sugMatches, lang)
+		shortErrMessage = FormatMatches(tokens, tokenPositions, firstMatchToken, shortMsg, sugMatches, lang, phraseCtx)
 	}
-	suggestionsOutMsg := FormatMatches(tokens, tokenPositions, firstMatchToken, sugOut, sugMatchesOut, lang)
+	suggestionsOutMsg := FormatMatches(tokens, tokenPositions, firstMatchToken, sugOut, sugMatchesOut, lang, phraseCtx)
 
 	// startPositionCorrection shifts the case-sample token (Java correctedStPos).
 	correctedStPos := 0
@@ -658,7 +700,7 @@ func (m *PatternRuleMatcher) createRuleMatch(
 	// Templates not already covered by message markup (loader path).
 	if pr != nil && len(pr.SuggestionTemplates) > 0 && len(replacements) == 0 {
 		for _, t := range pr.SuggestionTemplates {
-			for _, e := range ExpandSuggestionTemplate(t, tokens, tokenPositions, firstMatchToken, sugMatches, lang) {
+			for _, e := range ExpandSuggestionTemplate(t, tokens, tokenPositions, firstMatchToken, sugMatches, lang, phraseCtx) {
 				if e == "" || e == MistakeMarker || strings.Contains(e, MistakeMarker) {
 					continue
 				}
@@ -688,6 +730,21 @@ func (m *PatternRuleMatcher) createRuleMatch(
 		rm = eval.RunFilter(pr.FilterArgs, rm, patternTokens, firstMatchToken, tokenPositions)
 	}
 	return rm
+}
+
+// phraseMatchContext builds FormatMatches phrase length context from the matcher.
+func (m *PatternRuleMatcher) phraseMatchContext() PhraseMatchContext {
+	if m == nil {
+		return PhraseMatchContext{}
+	}
+	ctx := PhraseMatchContext{UseList: m.UseList}
+	if m.Rule != nil && m.Rule.PatternRule != nil {
+		ctx.ElementNo = m.Rule.PatternRule.ElementNo
+		if !ctx.UseList {
+			ctx.UseList = m.Rule.PatternRule.UseList
+		}
+	}
+	return ctx
 }
 
 // matchPreservesCase ports PatternRuleMatcher.matchPreservesCase.

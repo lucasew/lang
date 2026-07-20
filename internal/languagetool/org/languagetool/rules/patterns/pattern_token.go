@@ -133,6 +133,9 @@ type PatternToken struct {
 	// TokenMatch ports PatternToken tokenReference (<match no="…" setpos="yes"/> inside token).
 	// TokenRef is the raw XML no= value used as offset from firstMatchToken (Java resolveReference).
 	TokenMatch *Match
+	// PhraseName ports PatternToken.phraseName (set by preparePhrase / phraseref idref).
+	// Non-empty means isPartOfPhrase — used for PatternRule.elementNo / useList.
+	PhraseName string
 }
 
 func NewPatternToken(token string, caseSensitive, regexp, matchInflected bool) *PatternToken {
@@ -168,6 +171,26 @@ func (p *PatternToken) SetMaxOccurrence(n int) { p.MaxOccurrence = n }
 func (p *PatternToken) SetNegation(v bool)     { p.Negation = v }
 func (p *PatternToken) SetSkipNext(n int)      { p.SkipNext = n }
 func (p *PatternToken) SetInsideMarker(v bool) { p.InsideMarker = v }
+
+// SetPhraseName ports PatternToken.setPhraseName (phraseref idref).
+func (p *PatternToken) SetPhraseName(id string) {
+	if p != nil {
+		p.PhraseName = id
+	}
+}
+
+// GetPhraseName ports PatternToken.getPhraseName.
+func (p *PatternToken) GetPhraseName() string {
+	if p == nil {
+		return ""
+	}
+	return p.PhraseName
+}
+
+// IsPartOfPhrase ports PatternToken.isPartOfPhrase (phraseName != null).
+func (p *PatternToken) IsPartOfPhrase() bool {
+	return p != nil && p.PhraseName != ""
+}
 
 // SetChunkTag ports PatternToken.setChunkTag (exact or regexp chunk name).
 func (p *PatternToken) SetChunkTag(tag string, regexp bool) {

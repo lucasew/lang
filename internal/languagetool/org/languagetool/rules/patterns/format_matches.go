@@ -7,6 +7,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // matchMarker is Java XMLRuleHandler's SOH prefix for real <match> elements (\u0001\N).
@@ -194,10 +195,26 @@ func addLegacyMatches(existing []*Match, messageStr string) []*Match {
 	return sugMatch
 }
 
+// PhraseMatchContext ports PatternRuleMatcher useList + elementNo for phraseLen.
+// Zero value means no phrase grouping (phraseLen always 1).
+type PhraseMatchContext struct {
+	UseList   bool
+	ElementNo []int
+}
+
+// phraseLen ports PatternRuleMatcher.phraseLen.
+func (c PhraseMatchContext) phraseLen(i int) int {
+	if !c.UseList || i < 0 || i >= len(c.ElementNo) {
+		return 1
+	}
+	return c.ElementNo[i]
+}
+
 // FormatMatches ports PatternRuleMatcher.formatMatches.
 // positions[i] = tokens consumed by pattern element i (0 = optional absent).
 // suggestionMatches ordered per backref occurrence (addLegacyMatches).
 // Uses LanguageSynthesizer(langCode) when registered; otherwise surface path.
+// phraseCtx is optional (omit or zero = no phrase list).
 func FormatMatches(
 	tokenReadings []*languagetool.AnalyzedTokenReadings,
 	positions []int,
@@ -205,9 +222,14 @@ func FormatMatches(
 	errorMsg string,
 	suggestionMatches []*Match,
 	langCode string,
+	phraseCtx ...PhraseMatchContext,
 ) string {
 	if errorMsg == "" || !strings.Contains(errorMsg, `\`) {
 		return errorMsg
+	}
+	var pctx PhraseMatchContext
+	if len(phraseCtx) > 0 {
+		pctx = phraseCtx[0]
 	}
 	errorMessage := errorMsg
 	errorMessageProcessed := 0
@@ -248,9 +270,9 @@ func FormatMatches(
 		if len(suggestionMatches) > 0 && matchCounter < len(suggestionMatches) {
 			var matches []string
 			if j >= len(positions) {
-				matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode)
+				matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode, pctx)
 			} else if j >= 0 && j < len(positions) && positions[j] != 0 {
-				matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode)
+				matches = concatMatches(matchCounter, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode, pctx)
 			} else {
 				matches = []string{""}
 			}
@@ -366,28 +388,71 @@ func isWSOrPunct(b byte) bool {
 	return false
 }
 
-// concatMatches ports PatternRuleMatcher.concatMatches (len=1 phrase path).
+// concatMatches ports PatternRuleMatcher.concatMatches (phrase-aware synthesis).
 func concatMatches(
 	start, index, tokenIndex int,
 	tokens []*languagetool.AnalyzedTokenReadings,
 	nextTokenPos int,
 	suggestionMatches []*Match,
 	langCode string,
+	phraseCtx PhraseMatchContext,
 ) []string {
 	if start < 0 || start >= len(suggestionMatches) || suggestionMatches[start] == nil {
 		return []string{""}
 	}
-	skippedTokens := nextTokenPos - tokenIndex
-	if skippedTokens < 0 {
-		skippedTokens = 1
+	lenPhrase := phraseCtx.phraseLen(index)
+	if lenPhrase <= 1 {
+		skippedTokens := nextTokenPos - tokenIndex
+		if skippedTokens < 0 {
+			skippedTokens = 1
+		}
+		// Java: tokenIndex - 1 is the matched token index into tokens array
+		idx := tokenIndex - 1
+		ms := NewMatchStateWithSynth(suggestionMatches[start], LanguageSynthesizer(langCode))
+		if idx >= 0 && idx < len(tokens) {
+			ms.SetTokenRange(tokens, idx, skippedTokens)
+		}
+		return ms.ToFinalString(langCode)
 	}
-	// Java: tokenIndex - 1 is the matched token index into tokens array
-	idx := tokenIndex - 1
-	ms := NewMatchStateWithSynth(suggestionMatches[start], LanguageSynthesizer(langCode))
-	if idx >= 0 && idx < len(tokens) {
-		ms.SetTokenRange(tokens, idx, skippedTokens)
+	// Multi-token phrase: synthesize each token then Cartesian product with language spaces.
+	matchList := make([][]string, 0, lenPhrase)
+	for i := 0; i < lenPhrase; i++ {
+		skippedTokens := nextTokenPos - (tokenIndex + i)
+		if skippedTokens < 0 {
+			skippedTokens = 1
+		}
+		idx := tokenIndex - 1 + i
+		ms := NewMatchStateWithSynth(suggestionMatches[start], LanguageSynthesizer(langCode))
+		if idx >= 0 && idx < len(tokens) {
+			ms.SetTokenRange(tokens, idx, skippedTokens)
+		}
+		matchList = append(matchList, ms.ToFinalString(langCode))
 	}
-	return ms.ToFinalString(langCode)
+	return combineLists(matchList, make([]string, len(matchList)), 0, langCode)
+}
+
+// combineLists ports PatternRuleMatcher.combineLists (Cartesian product of phrase parts).
+func combineLists(input [][]string, output []string, r int, langCode string) []string {
+	if r == len(input) {
+		var sb strings.Builder
+		for k := 0; k < len(output); k++ {
+			sb.WriteString(output[k])
+			if k < len(output)-1 {
+				next := ""
+				if k+1 < len(output) {
+					next = output[k+1]
+				}
+				sb.WriteString(tools.AddSpace(next, langCode))
+			}
+		}
+		return []string{sb.String()}
+	}
+	var out []string
+	for c := 0; c < len(input[r]); c++ {
+		output[r] = input[r][c]
+		out = append(out, combineLists(input, output, r+1, langCode)...)
+	}
+	return out
 }
 
 // ExpandSuggestionTemplate formats one suggestion template.
@@ -400,7 +465,12 @@ func ExpandSuggestionTemplate(
 	firstMatchTok int,
 	suggestionMatches []*Match,
 	langCode string,
+	phraseCtx ...PhraseMatchContext,
 ) []string {
+	var pctx PhraseMatchContext
+	if len(phraseCtx) > 0 {
+		pctx = phraseCtx[0]
+	}
 	t := strings.TrimSpace(tmpl)
 	// Pure backref: \N only
 	if len(t) >= 2 && t[0] == '\\' && unicode.IsDigit(rune(t[1])) {
@@ -412,7 +482,7 @@ func ExpandSuggestionTemplate(
 			}
 		}
 		if only && len(suggestionMatches) > 0 {
-			forms := FormatMatches(tokenReadings, positions, firstMatchTok, t, suggestionMatches, langCode)
+			forms := FormatMatches(tokenReadings, positions, firstMatchTok, t, suggestionMatches, langCode, pctx)
 			// FormatMatches returns one string; for pure \N with multi forms via
 			// formatMultipleSynthesis without suggestion tags, multi forms join wrong.
 			// Re-run concat path:
@@ -427,7 +497,7 @@ func ExpandSuggestionTemplate(
 				nextTokenPos = firstMatchTok + repTokenPos + positions[j+1]
 			}
 			if j >= 0 && (j >= len(positions) || positions[j] != 0) {
-				ms := concatMatches(0, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode)
+				ms := concatMatches(0, j, firstMatchTok+repTokenPos, tokenReadings, nextTokenPos, suggestionMatches, langCode, pctx)
 				if len(ms) > 0 {
 					return ms
 				}
@@ -435,7 +505,7 @@ func ExpandSuggestionTemplate(
 			return []string{forms}
 		}
 	}
-	return []string{FormatMatches(tokenReadings, positions, firstMatchTok, tmpl, suggestionMatches, langCode)}
+	return []string{FormatMatches(tokenReadings, positions, firstMatchTok, tmpl, suggestionMatches, langCode, pctx)}
 }
 
 // defaultPositions returns all-1s positions when matchFrom did not track them.

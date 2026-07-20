@@ -5,6 +5,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // PatternRule ports a metadata surface of org.languagetool.rules.patterns.PatternRule
@@ -41,6 +42,15 @@ type PatternRule struct {
 	AdjustSuggestionCase *bool // nil = true (Java default)
 	// InterpretPreDisambig ports PatternRule.interpretPosTagsPreDisambiguation (raw_pos="yes").
 	InterpretPreDisambig bool
+	// ElementNo ports PatternRule.elementNo — token counts per XML-level element
+	// when phrases are present (phrases count as one element spanning N tokens).
+	ElementNo []int
+	// UseList ports PatternRule.useList — true when any token is part of a phrase.
+	// Enables translateElementNo / phraseLen for skip and suggestion synthesis.
+	UseList bool
+	// IsMemberOfDisjunctiveSet ports PatternRule.isMemberOfDisjunctiveSet
+	// (OR on phraserefs in includephrases).
+	IsMemberOfDisjunctiveSet bool
 	// ToneTags ports Rule.toneTags from XML tone_tags attributes.
 	ToneTags []languagetool.ToneTag
 	// GoalSpecific ports Rule.isGoalSpecific from XML is_goal_specific.
@@ -68,13 +78,75 @@ type PatternRule struct {
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
-	return &PatternRule{
+	pr := &PatternRule{
 		ID:           id,
 		LanguageCode: languageCode,
 		Tokens:       append([]*PatternToken(nil), tokens...),
 		Description:  description,
 		Message:      message,
 		ShortMessage: shortMessage,
+	}
+	pr.computeElementNo()
+	return pr
+}
+
+// computeElementNo ports PatternRule constructor elementNo / useList calculation.
+// Phrases count as single XML elements spanning multiple pattern tokens.
+// Control flow matches Java bug-for-bug (including cnt not cleared after non-phrase).
+func (r *PatternRule) computeElementNo() {
+	if r == nil {
+		return
+	}
+	r.ElementNo = nil
+	r.UseList = false
+	prevName := ""
+	cnt := 0
+	loopCnt := 0
+	tempUseList := false
+	for _, pToken := range r.Tokens {
+		if pToken != nil && pToken.IsPartOfPhrase() {
+			curName := pToken.GetPhraseName()
+			if tools.IsEmptyStr(prevName) || prevName == curName {
+				cnt++
+				tempUseList = true
+			} else {
+				r.ElementNo = append(r.ElementNo, cnt)
+				curName = ""
+				cnt = 0
+			}
+			prevName = curName
+			loopCnt++
+			if loopCnt == len(r.Tokens) && !tools.IsEmptyStr(prevName) {
+				r.ElementNo = append(r.ElementNo, cnt)
+			}
+		} else {
+			if cnt > 0 {
+				r.ElementNo = append(r.ElementNo, cnt)
+			}
+			r.ElementNo = append(r.ElementNo, 1)
+			loopCnt++
+		}
+	}
+	r.UseList = tempUseList
+}
+
+// GetElementNo ports PatternRule.getElementNo.
+func (r *PatternRule) GetElementNo() []int {
+	if r == nil {
+		return nil
+	}
+	return r.ElementNo
+}
+
+// IsWithComplexPhrase ports PatternRule.isWithComplexPhrase.
+func (r *PatternRule) IsWithComplexPhrase() bool {
+	return r != nil && r.IsMemberOfDisjunctiveSet
+}
+
+// NotComplexPhrase ports PatternRule.notComplexPhrase.
+func (r *PatternRule) NotComplexPhrase() {
+	if r != nil {
+		r.IsMemberOfDisjunctiveSet = false
 	}
 }
 
