@@ -52,29 +52,17 @@ var (
 		regexp.MustCompile(`(?i)^(ca)(n)$`),
 	}
 
-	// Dictionary-like hyphen compounds needed by twin tests (no CatalanTagger).
-	// Note: do NOT put "sud-est" here — ToLower would also keep "Sud-Est" which must split.
-	doNotSplit = map[string]bool{
+	// Java CatalanWordTokenizer.wordsToAdd camel-case hyphen exceptions only.
+	javaHyphenExceptions = map[string]bool{
 		"mers-cov": true, "mcgraw-hill": true, "sars-cov-2": true, "sars-cov": true,
 		"ph-metre": true, "ph-metres": true,
-		"vint-i-quatre": true, "mont-ras": true, "emília-romanya": true,
-		"abans-d'ahir": true, "abans-d’ahir": true, "tel-aviv": true,
-		// Twin tests / Java dict compounds (no catalan.dict in tree).
-		"sud-est": true, "nord-est": true, "sud-oest": true, "nord-oest": true,
-		"qui-sap-lo": true, "qui-sap-la": true, "qui-sap-los": true, "qui-sap-les": true,
-		// Hyphenated Catalan numerals (FreeLing DN; COMPLIRSE soft goldens).
-		"set-cents": true, "set-centes": true, "dos-cents": true, "dos-centes": true,
-		"tres-cents": true, "tres-centes": true, "quatre-cents": true, "quatre-centes": true,
-		"cinc-cents": true, "cinc-centes": true, "sis-cents": true, "sis-centes": true,
-		"vuit-cents": true, "vuit-centes": true, "nou-cents": true, "nou-centes": true,
 	}
-
-	// Full-string match for a single pronom feble (e.g. -se, 'n, -te).
-	// Java keeps these because CatalanTagger marks them as tagged.
-	pronomFebleExact = regexp.MustCompile(`(?i)^` + pf + `$`)
-	// Proclitics l'/d'/m'/… (tagged as units in CatalanTagger).
-	procliticApos = regexp.MustCompile(`(?i)^[lnmtsd]['’]$`)
 )
+
+// IsTaggedCA optional CatalanTagger.INSTANCE_CAT.tag(...).isTagged() hook.
+// Java keeps hyphen compounds only when CatalanTagger tags them.
+// Without a tagger, miss (split hyphens) — do not invent a soft compound lexicon.
+var IsTaggedCA func(s string) bool
 
 func (w *CatalanWordTokenizer) Tokenize(text string) []string {
 	auxText := strings.ReplaceAll(text, "\u2010", "\u002d")
@@ -149,6 +137,7 @@ func (w *CatalanWordTokenizer) Tokenize(text string) []string {
 	return tokenizers.JoinEMailsAndUrls(l)
 }
 
+// wordsToAddCA ports CatalanWordTokenizer.wordsToAdd.
 func wordsToAddCA(s string) []string {
 	var l []string
 	if s == "" {
@@ -158,15 +147,15 @@ func wordsToAddCA(s string) []string {
 		l = append(l, s)
 		return l
 	}
-	if pronomFebleExact.MatchString(s) || procliticApos.MatchString(s) {
+	// Java: CatalanTagger.INSTANCE_CAT.tag(...).isTagged()
+	normalized := strings.ReplaceAll(s, "\u00AD", "")
+	normalized = strings.ReplaceAll(normalized, "’", "'")
+	if isTaggedCA(normalized) {
 		l = append(l, s)
 		return l
 	}
-	normalized := strings.ReplaceAll(s, "\u00AD", "")
-	normalized = strings.ReplaceAll(normalized, "’", "'")
-	// Keep compound only via isTaggedCA (doNotSplit + Title-Title policy).
-	// Do not OR doNotSplit alone — that kept "Sud-Est" via ToLower("sud-est").
-	if isTaggedCA(normalized) || isTaggedCA(s) {
+	// Java camel-case hyphen exceptions
+	if javaHyphenExceptions[strings.ToLower(s)] {
 		l = append(l, s)
 		return l
 	}
@@ -189,7 +178,7 @@ func wordsToAddCA(s string) []string {
 		}
 		return l
 	}
-	// split on hyphen, keep delims
+	// if not found, the word is split on hyphens (keep separators)
 	var cur strings.Builder
 	for _, r := range s {
 		if r == '-' {
@@ -209,83 +198,10 @@ func wordsToAddCA(s string) []string {
 }
 
 func isTaggedCA(s string) bool {
-	// Java keeps hyphen compounds only when CatalanTagger/dict tags them.
-	// Soft path: allowlist (doNotSplit). Explicit list wins for Title-Title names
-	// (Emília-Romanya, Tel-Aviv) but Sud-Est must still split (not listed).
-	low := strings.ToLower(s)
-	if doNotSplit[low] {
-		// Reject Title-Title forms that are NOT themselves intended keepers:
-		// "sud-est" is allowlisted for Sud-est only — Sud-Est is Title-Title and
-		// must split (Java twin). Detect: allowlist entry matches lower form, but
-		// if both sides are Title-case AND the allowlist is a compass-style pair
-		// (sud-est etc.), only keep Title-lower (second part lower).
-		if strings.Contains(s, "-") {
-			parts := strings.Split(s, "-")
-			if len(parts) >= 2 && hasTitleStart(parts[0]) && hasTitleStart(parts[1]) {
-				// Emília-Romanya / Tel-Aviv: keep. Sud-Est: split.
-				switch low {
-				case "sud-est", "nord-est", "sud-oest", "nord-oest":
-					return false
-				}
-			}
-		}
-		return true
-	}
-	if !strings.Contains(s, "-") {
-		return false
-	}
-	parts := strings.Split(s, "-")
-	if len(parts) < 2 {
-		return false
-	}
-	for _, p := range parts {
-		if p == "" {
-			return false
-		}
-	}
-	if len(parts) == 2 && isCompass(parts[0]) && isCompass(parts[1]) {
-		return false
+	// Java: CatalanTagger.INSTANCE_CAT.tag(...).isTagged(). Without a tagger, miss
+	// (split hyphens) — do not invent a soft compound lexicon.
+	if IsTaggedCA != nil {
+		return IsTaggedCA(s)
 	}
 	return false
-}
-
-func isCompass(s string) bool {
-	switch strings.ToUpper(s) {
-	case "N", "S", "E", "W", "NE", "NW", "SE", "SW", "NNE", "NNW", "SSE", "SSW", "ESE", "ENE", "WSW", "WNW":
-		return true
-	}
-	return false
-}
-
-func hasTitleStart(s string) bool {
-	if s == "" {
-		return false
-	}
-	r, _ := utf8.DecodeRuneInString(s)
-	// uppercase letter (ASCII or Unicode titlecase/upper)
-	return (r >= 'A' && r <= 'Z') || (r > 127 && strings.ToUpper(string(r)) == string(r) && strings.ToLower(string(r)) != string(r))
-}
-
-func isAllLower(s string) bool {
-	if s == "" {
-		return false
-	}
-	for _, r := range s {
-		if r >= 'A' && r <= 'Z' {
-			return false
-		}
-		if r > 127 && strings.ToUpper(string(r)) == string(r) && strings.ToLower(string(r)) != string(r) {
-			return false
-		}
-	}
-	return true
-}
-
-func allLowerParts(parts []string) bool {
-	for _, p := range parts {
-		if !isAllLower(p) {
-			return false
-		}
-	}
-	return true
 }

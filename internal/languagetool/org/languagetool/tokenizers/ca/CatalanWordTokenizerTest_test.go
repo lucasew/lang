@@ -2,6 +2,7 @@ package ca
 
 // Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/tokenizers/ca/CatalanWordTokenizerTest.java
 import (
+	"regexp"
 	"strings"
 	"testing"
 
@@ -12,7 +13,47 @@ func tokStr(tokens []string) string {
 	return "[" + strings.Join(tokens, ", ") + "]"
 }
 
+// pronomFeble / proclitic forms CatalanTagger keeps whole after pattern split.
+var (
+	testPronomFeble = regexp.MustCompile(`(?i)^(['’]en|['’]hi|['’]ho|['’]l|['’]ls|['’]m|['’]n|['’]ns|['’]s|['’]t|-el|-els|-em|-en|-ens|-hi|-ho|-l|-la|-les|-li|-lo|-los|-m|-me|-n|-ne|-nos|-s|-se|-t|-te|-us|-vos)$`)
+	testProclitic   = regexp.MustCompile(`(?i)^[lnmtsd]['’]$`)
+)
+
 func TestCatalanWordTokenizer_Tokenize(t *testing.T) {
+	// Java keeps dictionary-tagged hyphen compounds via CatalanTagger.
+	// Inject IsTaggedCA for those surfaces — no soft invent doNotSplit lexicon.
+	prev := IsTaggedCA
+	IsTaggedCA = func(s string) bool {
+		if testPronomFeble.MatchString(s) || testProclitic.MatchString(s) {
+			return true
+		}
+		switch strings.ToLower(s) {
+		case "vint-i-quatre", "mont-ras", "emília-romanya", "tel-aviv",
+			"abans-d'ahir", "sud-est", "nord-est", "sud-oest", "nord-oest",
+			"qui-sap-lo", "qui-sap-la", "qui-sap-los", "qui-sap-les":
+			// Sud-Est must split (Title-Title not in dict the same way as Sud-est).
+			// Only exact case-insensitive match for lower-style compounds; reject
+			// when both sides are Title-case for compass forms.
+			if strings.Contains(s, "-") {
+				parts := strings.Split(s, "-")
+				if len(parts) == 2 {
+					low := strings.ToLower(s)
+					switch low {
+					case "sud-est", "nord-est", "sud-oest", "nord-oest":
+						// Keep Sud-est (second lower); split Sud-Est.
+						if hasTitleStartCA(parts[0]) && hasTitleStartCA(parts[1]) {
+							return false
+						}
+					}
+				}
+			}
+			return true
+		default:
+			return false
+		}
+	}
+	t.Cleanup(func() { IsTaggedCA = prev })
+
 	w := INSTANCE
 
 	tokens := w.Tokenize("-contar-se'n-")
@@ -172,4 +213,12 @@ func TestCatalanWordTokenizer_Tokenize(t *testing.T) {
 
 	tokens = w.Tokenize("És ell ㅡva dir.")
 	require.Equal(t, "[És,  , ell,  , ㅡva,  , dir, .]", tokStr(tokens))
+}
+
+func hasTitleStartCA(s string) bool {
+	if s == "" {
+		return false
+	}
+	r := []rune(s)[0]
+	return (r >= 'A' && r <= 'Z') || (r > 127 && strings.ToUpper(string(r)) == string(r) && strings.ToLower(string(r)) != string(r))
 }
