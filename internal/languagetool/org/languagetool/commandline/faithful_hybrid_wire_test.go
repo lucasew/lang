@@ -178,6 +178,35 @@ func TestRegisterHybridDisambiguator_RO(t *testing.T) {
 	require.NotEmpty(t, sents)
 }
 
+func TestRegisterXmlOnlyDisambiguator_DA_EL_BR_EO_KM(t *testing.T) {
+	// Java createDefaultDisambiguator → XmlRuleDisambiguator(this) only.
+	cases := []struct {
+		lang string
+		text string
+	}{
+		{"da", "Dette er en test."},
+		{"el", "Αυτή είναι μια δοκιμή."},
+		{"br", "Un taol-arnod eo."},
+		{"eo", "Ĉi tio estas testo."},
+		{"km", "នេះគឺជាការធ្វើតេស្ត។"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.lang, func(t *testing.T) {
+			if DiscoverLanguageDisambiguationXML(nil, tc.lang) == "" {
+				t.Skipf("no official disambiguation.xml for %s", tc.lang)
+			}
+			lt, err := configureCoreLT(tc.lang, &CommandLineOptions{Language: tc.lang})
+			require.NoError(t, err)
+			require.NotNil(t, lt.Disambiguator, "XmlRuleDisambiguator for %s", tc.lang)
+			if p := DiscoverLanguagePOSDict(nil, tc.lang); p != "" {
+				require.NotNil(t, lt.TagWord, "POS tagger for %s from %s", tc.lang, p)
+			}
+			sents := lt.Analyze(tc.text)
+			require.NotEmpty(t, sents)
+		})
+	}
+}
+
 func TestDiscoverLanguageMultiwords_UK(t *testing.T) {
 	p := DiscoverLanguageMultiwords(nil, "uk")
 	require.NotEmpty(t, p)

@@ -122,7 +122,10 @@ func RegisterHybridDisambiguator(lt *languagetool.JLanguageTool, lang string, op
 	case "sr":
 		return registerSerbianHybrid(lt, opts)
 	case "ro":
-		return registerRomanianXmlDisambiguator(lt, opts)
+		return registerXmlOnlyDisambiguator(lt, "ro", opts)
+	// Java createDefaultDisambiguator → new XmlRuleDisambiguator(this) (no multiwords/global).
+	case "da", "el", "br", "eo", "km":
+		return registerXmlOnlyDisambiguator(lt, base, opts)
 	default:
 		return false
 	}
@@ -306,16 +309,23 @@ func registerSerbianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOpti
 	return true
 }
 
-// registerRomanianXmlDisambiguator ports Romanian.createDefaultDisambiguator:
-// new XmlRuleDisambiguator(this) — language XML only, no multiwords/global.
-func registerRomanianXmlDisambiguator(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
-	h := ro.NewRomanianHybridDisambiguator()
-	if xml := loadXmlRuleDisambiguator("ro", opts, false); xml != nil && len(xml.Rules) > 0 {
-		h.Inner = xml
-	} else {
+// registerXmlOnlyDisambiguator ports languages whose Java createDefaultDisambiguator
+// is `new XmlRuleDisambiguator(this)` (or equivalent) without multiwords/global:
+// Romanian, Danish, Greek, Breton, Esperanto, Khmer.
+func registerXmlOnlyDisambiguator(lt *languagetool.JLanguageTool, lang string, opts *CommandLineOptions) bool {
+	base := languageBaseCode(lang)
+	xml := loadXmlRuleDisambiguator(base, opts, false)
+	if xml == nil || len(xml.Rules) == 0 {
 		return false
 	}
-	lt.Disambiguator = h
+	// Romanian had a thin wrapper type for historical package layout; keep using it.
+	if base == "ro" {
+		h := ro.NewRomanianHybridDisambiguator()
+		h.Inner = xml
+		lt.Disambiguator = h
+		return true
+	}
+	lt.Disambiguator = xml
 	return true
 }
 
