@@ -2,6 +2,7 @@ package pt
 
 // Twin of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -9,6 +10,24 @@ import (
 
 func testTokenise(t *testing.T, sentence string, tokens ...string) {
 	t.Helper()
+	// Java keeps dictionary-tagged hyphen compounds via PortugueseTagger.
+	// Inject IsTaggedPT for those surfaces — no soft invent doNotSplit lexicon.
+	prev := IsTaggedPT
+	IsTaggedPT = func(s string) bool {
+		switch strings.ToLower(s) {
+		// Java PortugueseWordTokenizerTest hyphen compounds kept whole by tagger
+		case "sex-appeal", "aix-en-provence", "montemor-o-novo", "andorra-a-velha", "tsé-tung",
+			"jiu-jitsu", "franco-prussiano",
+			"diz-se", "amamo-lo", "fi-lo", "pusé-lo", "canta-lo", "dar-no-lo",
+			"fá-lo-á", "dir-lhe-ia", "banhar-nos-emos",
+			"soto-pôr", "soto-trepar":
+			return true
+		default:
+			return false
+		}
+	}
+	t.Cleanup(func() { IsTaggedPT = prev })
+
 	w := NewPortugueseWordTokenizer()
 	got := w.Tokenize(sentence)
 	require.Equal(t, tokens, got, "tokenize(%q)", sentence)

@@ -31,22 +31,24 @@ var (
 	dottedOrdinals       = regexp.MustCompile(`(?i)([\d])\.([aoªºᵃᵒ][sˢ]?)`)
 	hyphenPattern        = regexp.MustCompile(`(?i)([\p{L}])-([\p{L}\d])`)
 	nearbyHyphens        = regexp.MustCompile(`(?i)([\p{L}])-([\p{L}])-([\p{L}])`)
-	// spaced numbers without lookbehind: (^|[\s(])(\d{1,3}(?: \d{3})+)(?:[.,…])?
-	spacedNumberPat = regexp.MustCompile(`(^|[\s(])(\d{1,3}(?: \d{3})+(?:[` + string(decimalCommaSubst) + string(nonBreakingDotSubst) + `]\d+)?)`)
 
 	wordChars          = "°\\^\\-\\p{L}\\d\\x{0300}-\\x{036F}\\x{00A8}\\x{2070}-\\x{209F}" + string(decimalCommaSubst) + string(nonBreakingDotSubst) + string(nonBreakingColonSubst) + string(nonBreakingSpaceSubst)
-	// note: hyphen subst is multi-char so not in class; hyphens protected before match
 	wordCharsLeftEdge  = `−@€£\$¢¥¤`
 	wordCharsRightEdge = `€£\$%‰‱ºªᵃᵒˢ`
 	wordPattern        = regexp.MustCompile(`(?i)[` + wordCharsLeftEdge + `]?[` + wordChars + hyphenSubstText + `]+[` + wordCharsRightEdge + `]?|[^` + wordChars + `]`)
 
-	// exceptions from Java wordsToAdd + common clitics/hyphen forms needed by tests
-	doNotSplit = map[string]bool{
+	// Java wordsToAdd camel-case hyphen exceptions only (not invent soft compounds).
+	javaHyphenExceptions = map[string]bool{
 		"mers-cov": true, "mcgraw-hill": true, "sars-cov-2": true, "sars-cov": true,
 		"ph-metre": true, "ph-metres": true, "anti-ivg": true, "anti-uv": true,
 		"anti-vih": true, "al-qaïda": true,
 	}
 )
+
+// IsTaggedPT optional PortugueseTagger.tag(...).isTagged() hook.
+// Java PortugueseWordTokenizer uses PortugueseTagger for hyphen compounds.
+// Without a tagger, miss (split hyphens) — do not invent a soft compound lexicon.
+var IsTaggedPT func(s string) bool
 
 func (w *PortugueseWordTokenizer) Tokenize(text string) []string {
 	tokenisedText := text
@@ -61,7 +63,6 @@ func (w *PortugueseWordTokenizer) Tokenize(text string) []string {
 		tokenisedText = dottedNumbersPattern.ReplaceAllString(tokenisedText, "$1"+string(nonBreakingDotSubst)+"$2")
 		tokenisedText = dottedOrdinals.ReplaceAllString(tokenisedText, "$1"+string(nonBreakingDotSubst)+"$2")
 	}
-	// spaced decimals
 	tokenisedText = protectPTSpacedNumbers(tokenisedText)
 	if strings.Contains(tokenisedText, ":") {
 		tokenisedText = colonNumbersPattern.ReplaceAllString(tokenisedText, "$1"+string(nonBreakingColonSubst)+"$2")
@@ -92,11 +93,9 @@ func (w *PortugueseWordTokenizer) Tokenize(text string) []string {
 }
 
 func protectPTSpacedNumbers(text string) string {
-	// Match (start|space|paren) + number with spaces + optional decimal, without consuming trailing non-digit improperly
 	// Java: (?<=^|[\s(])\d{1,3}( \d{3})+(?:[.,…]\d+)?(?=\D|$)
 	re := regexp.MustCompile(`(?:^|[\s(])(\d{1,3}(?: \d{3})+(?:[` + string(decimalCommaSubst) + string(nonBreakingDotSubst) + `.,]\d+)?)`)
 	return re.ReplaceAllStringFunc(text, func(m string) string {
-		// find digit start
 		i := 0
 		for i < len(m) && (m[i] < '0' || m[i] > '9') {
 			i++
@@ -109,6 +108,7 @@ func protectPTSpacedNumbers(text string) string {
 	})
 }
 
+// wordsToAddPT ports PortugueseWordTokenizer.wordsToAdd.
 func wordsToAddPT(s string) []string {
 	var l []string
 	if s == "" {
@@ -122,63 +122,39 @@ func wordsToAddPT(s string) []string {
 		return l
 	}
 	normalized := strings.ReplaceAll(s, "’", "'")
-	if isTaggedPT(normalized) || doNotSplit[strings.ToLower(s)] {
+	// Java: tagger.tag(...).isTagged() OR equalsIgnoreCase exception list.
+	if isTaggedPT(normalized) || javaHyphenException(s) {
 		l = append(l, s)
-	} else {
-		var cur strings.Builder
-		for _, r := range s {
-			if r == '-' {
-				if cur.Len() > 0 {
-					l = append(l, cur.String())
-					cur.Reset()
-				}
-				l = append(l, "-")
-			} else {
-				cur.WriteRune(r)
+		return l
+	}
+	// if not found, the word is split on hyphens (keep separators)
+	var cur strings.Builder
+	for _, r := range s {
+		if r == '-' {
+			if cur.Len() > 0 {
+				l = append(l, cur.String())
+				cur.Reset()
 			}
+			l = append(l, "-")
+		} else {
+			cur.WriteRune(r)
 		}
-		if cur.Len() > 0 {
-			l = append(l, cur.String())
-		}
+	}
+	if cur.Len() > 0 {
+		l = append(l, cur.String())
 	}
 	return l
 }
 
-// Without PortugueseTagger: keep only forms the Java tagger would keep in unit tests.
-// Unknown hyphen compounds (húngaro-americano, Paris-São, dê-mo, é-mesmo) are split.
-var (
-	// simple enclitics; deliberately exclude rare -mo (dê-mo splits in tests).
-	// Include -los/-las (3pl) used by ênclise accent rules (distrai-los, puxa-las).
-	ptSimpleClitic = regexp.MustCompile(`(?i)^[\p{L}]+-(se|lo|la|los|las|lhe|lhes|nos|vos|me|te|o|a|os|as)$`)
-	ptNoLo         = regexp.MustCompile(`(?i)^[\p{L}]+-no-lo$`)
-	// mesoclisis e.g. fá-lo-á, dir-lhe-ia, banhar-nos-emos
-	ptMesoclisis = regexp.MustCompile(`(?i)^[\p{L}]+-(lo|la|los|las|lhe|lhes|nos|vos|me|te|se|o|a|os|as)-[\p{L}]+$`)
-	ptPrefixes   = map[string]bool{"soto": true, "anti": true, "pré": true, "pós": true, "ex": true}
-)
-
-func isTaggedPT(s string) bool {
-	if doNotSplit[strings.ToLower(s)] {
-		return true
-	}
-	if ptSimpleClitic.MatchString(s) || ptNoLo.MatchString(s) || ptMesoclisis.MatchString(s) {
-		return true
-	}
-	parts := strings.Split(s, "-")
-	if len(parts) >= 2 && ptPrefixes[strings.ToLower(parts[0])] {
-		return true
-	}
-	return false
+func javaHyphenException(s string) bool {
+	return javaHyphenExceptions[strings.ToLower(s)]
 }
 
-func init() {
-	// Compounds present in tests / Java wordsToAdd exceptions (case-insensitive via ToLower).
-	for _, s := range []string{
-		"tsé-tung", "sex-appeal", "aix-en-provence", "montemor-o-novo", "andorra-a-velha",
-		"jiu-jitsu", "franco-prussiano",
-		// Soft grammar compounds (WEEKDAY_TO_WEEKDAY, clichés)
-		"segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira",
-		"troca-tintas", "maria-vai-com-as-outras", "joão-sem-braço",
-	} {
-		doNotSplit[s] = true
+func isTaggedPT(s string) bool {
+	// Java: PortugueseTagger.tag(...).isTagged(). Without a tagger, miss
+	// (split hyphens) — do not invent a soft compound lexicon.
+	if IsTaggedPT != nil {
+		return IsTaggedPT(s)
 	}
+	return false
 }
