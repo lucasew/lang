@@ -43,13 +43,15 @@ func (r *MixedAlphabetsRule) GetCategory() *rules.Category {
 }
 
 var (
-	likelyLatinNumber   = regexp.MustCompile(`[XVIХІ]{2,8}(-[а-яіїє]{1,3})?`)
-	latinNumberWithCyr  = regexp.MustCompile(`(Х{1,3}І{1,3}|І{1,3}Х{1,3}|Х{2,3}|І{2,3})(-[а-яіїє]{1,4})?`)
-	mixedAlphabets      = regexp.MustCompile(`.*([a-zA-ZïáÁéÉíÍḯḮóÓúýÝ]'?[а-яіїєґА-ЯІЇЄҐ]|[а-яіїєґА-ЯІЇЄҐ]'?[a-zA-ZïáÁéÉíÍḯḮóÓúýÝ]).*`)
-	cyrillicOnly        = regexp.MustCompile(`.*[бвгґдєжзийїлнпфцчшщьюяБГҐДЄЖЗИЙЇЛПФЦЧШЩЬЮЯ].*`)
-	latinOnly           = regexp.MustCompile(`.*[bdfghjlqrstvzDFGJLNQRSUVZ].*`)
-	commonCyrLetters    = regexp.MustCompile(`^[АВЕІКОРСТУХ]+$`)
-	cyrillicFirstLetter = regexp.MustCompile(`^[а-яіїєґА-ЯІЇЄҐ]`)
+	// Java Pattern.matcher(...).matches() = full string
+	likelyLatinNumber  = regexp.MustCompile(`^[XVIХІ]{2,8}(?:-[а-яіїє]{1,3})?$`)
+	latinNumberWithCyr = regexp.MustCompile(`^(?:Х{1,3}І{1,3}|І{1,3}Х{1,3}|Х{2,3}|І{2,3})(?:-[а-яіїє]{1,4})?$`)
+	mixedAlphabets     = regexp.MustCompile(`^.*(?:[a-zA-ZïáÁéÉíÍḯḮóÓúýÝ]'?[а-яіїєґА-ЯІЇЄҐ]|[а-яіїєґА-ЯІЇЄҐ]'?[a-zA-ZïáÁéÉíÍḯḮóÓúýÝ]).*$`)
+	cyrillicOnly       = regexp.MustCompile(`^.*[бвгґдєжзийїлнпфцчшщьюяБГҐДЄЖЗИЙЇЛПФЦЧШЩЬЮЯ].*$`)
+	latinOnly          = regexp.MustCompile(`^.*[bdfghjlqrstvzDFGJLNQRSUVZ].*$`)
+	commonCyrLetters   = regexp.MustCompile(`^[АВЕІКОРСТУХ]+$`)
+	// Java CYRILLIC_FIRST_LETTER = [а-яіїєґА-ЯІЇЄҐ].*
+	cyrillicFirstLetter = regexp.MustCompile(`^[а-яіїєґА-ЯІЇЄҐ].*$`)
 	singleLatinIYA      = regexp.MustCompile(`^[iya]$`)
 )
 
@@ -196,7 +198,8 @@ func prevLemmaMatchesGroup(prev *languagetool.AnalyzedTokenReadings) bool {
 	return mixedGroupLemmaRE.MatchString(*rds[0].GetLemma())
 }
 
-// hasFnameNotAbbrPOS ports Java Pattern "(?!.*:abbr).*fname.*" (RE2 has no lookaround).
+// hasFnameNotAbbrPOS ports Java hasPosTag(…, "(?!.*:abbr).*fname.*") Matcher.matches():
+// full POS contains fname and does not contain :abbr (RE2 has no lookaround).
 func hasFnameNotAbbrPOS(atr *languagetool.AnalyzedTokenReadings) bool {
 	if atr == nil {
 		return false
@@ -209,6 +212,7 @@ func hasFnameNotAbbrPOS(atr *languagetool.AnalyzedTokenReadings) bool {
 		if strings.Contains(pos, ":abbr") {
 			continue
 		}
+		// full-string .*fname.* 
 		if strings.Contains(pos, "fname") {
 			return true
 		}

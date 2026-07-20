@@ -110,3 +110,13 @@ func analyzeMixed(text string) *languagetool.AnalyzedSentence {
 		}
 	})
 }
+
+func TestMixedAlphabets_REFullMatch(t *testing.T) {
+	// Java Matcher.matches() — must not fire on embedded roman digits
+	require.True(t, likelyLatinNumber.MatchString("XXI"))
+	require.False(t, likelyLatinNumber.MatchString("preXXIpost"))
+	require.True(t, cyrillicFirstLetter.MatchString("Київ"))
+	require.False(t, cyrillicFirstLetter.MatchString("xКиїв"))
+	require.True(t, latinNumberWithCyr.MatchString("ХІ"))
+	require.False(t, latinNumberWithCyr.MatchString("аХІ"))
+}
