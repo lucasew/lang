@@ -765,7 +765,28 @@ func sentenceHasTypographicApostrophe(s *AnalyzedSentence) bool {
 	return false
 }
 
+// sentenceDataFromAnalyzed builds SentenceData like Java performCheck → computeSentenceData.
+// singleLineBreaksMarksPara defaults false (SRX default).
+func sentenceDataFromAnalyzed(sents []*AnalyzedSentence) []SentenceData {
+	texts := make([]string, len(sents))
+	for i, s := range sents {
+		if s != nil {
+			texts[i] = s.GetText()
+		}
+	}
+	return ComputeSentenceData(sents, texts, false)
+}
+
+// remapLocalMatchToDocument ports TextCheckCallable adjustRuleMatchPos for one match.
+func remapLocalMatchToDocument(m LocalMatch, sd SentenceData, typoApos bool) LocalMatch {
+	m = AdjustLocalMatchPos(m, sd.StartOffset, sd.StartColumn, sd.StartLine, sd.Text, nil)
+	m.HasTypographicApostropheInSentence = typoApos
+	return m
+}
+
 // Check runs registered checkers over analyzed sentences and returns document-offset matches.
+// Sentence-local → document remap follows Java TextCheckCallable (computeSentenceData +
+// adjustRuleMatchPos): UTF-16 StartOffset/line/column on each match.
 func (lt *JLanguageTool) Check(text string) []LocalMatch {
 	if lt == nil {
 		return nil
@@ -779,23 +800,15 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 	runSentence := lt.Mode != ModeTextLevelOnly
 	runTextLevel := lt.Mode != ModeAllButTextLevel
 
-	// Map sentence-local offsets to document by searching each sentence text in remaining source.
-	// AnalyzePlain token positions are relative to the sentence string.
 	if runSentence {
-		srcRunes := []rune(text)
-		searchFrom := 0
-		for _, s := range sents {
+		data := sentenceDataFromAnalyzed(sents)
+		for _, sd := range data {
 			if lt.Cancelled != nil && lt.Cancelled() {
 				break
 			}
+			s := sd.Analyzed
 			if s == nil {
 				continue
-			}
-			stext := s.GetText()
-			// find sentence start in document
-			docBase := indexRunesFrom(srcRunes, []rune(stext), searchFrom)
-			if docBase < 0 {
-				docBase = searchFrom
 			}
 			if lt.ListUnknownWords {
 				lt.collectUnknown(s)
@@ -804,23 +817,9 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, c := range lt.checkers {
 				for _, m := range c(s) {
-					// Java RuleMatch keeps sentencePosition + AnalyzedSentence.
-					// Capture sentence-local span before document remap for
-					// CleanOverlappingFilter.isPunctuationOnlyChange fallback.
-					if m.FromPosSentence < 0 || m.ToPosSentence <= m.FromPosSentence {
-						m.FromPosSentence = m.FromPos
-						m.ToPosSentence = m.ToPos
-					}
-					m.FromPos += docBase
-					m.ToPos += docBase
-					if m.SentenceText == "" {
-						m.SentenceText = stext
-					}
-					m.HasTypographicApostropheInSentence = sentTypoApos
-					out = append(out, m)
+					out = append(out, remapLocalMatchToDocument(m, sd, sentTypoApos))
 				}
 			}
-			searchFrom = docBase + len([]rune(stext))
 		}
 	} else if lt.ListUnknownWords {
 		for _, s := range sents {

@@ -263,3 +263,28 @@ func TestOriginalSurface_UTF16MultiByte(t *testing.T) {
 	}
 	require.Equal(t, "Größe", m4.OriginalSurface())
 }
+
+func TestCheck_AdjustLocalMatchPosLineColumn(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	// Two sentences so second match has non-zero document offset + line/column from SentenceData.
+	ms := lt.Check("Hello. this this")
+	require.NotEmpty(t, ms)
+	// find word-repeat match
+	var found *LocalMatch
+	for i := range ms {
+		if ms[i].RuleID == "WORD_REPEAT_RULE" {
+			found = &ms[i]
+			break
+		}
+	}
+	require.NotNil(t, found)
+	// sentence-relative positions preserved
+	require.GreaterOrEqual(t, found.FromPosSentence, 0)
+	require.Greater(t, found.ToPosSentence, found.FromPosSentence)
+	// document offset should include first sentence
+	require.Greater(t, found.FromPos, found.FromPosSentence)
+	// line/column set by AdjustLocalMatchPos (not left at zero accidentally without running adjust)
+	require.GreaterOrEqual(t, found.Column, 0)
+	require.GreaterOrEqual(t, found.EndColumn, found.Column)
+}

@@ -287,35 +287,20 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 		close(jobs)
 		wg.Wait()
 
-		srcRunes := []rune(text)
-		searchFrom := 0
-		for i, s := range sents {
+		// Java TextCheckCallable: computeSentenceData + adjustRuleMatchPos per sentence.
+		data := sentenceDataFromAnalyzed(sents)
+		for i, sd := range data {
+			s := sd.Analyzed
 			if s == nil {
 				continue
 			}
 			if lt.ListUnknownWords {
 				lt.collectUnknown(s)
 			}
-			stext := s.GetText()
-			docBase := indexRunesFrom(srcRunes, []rune(stext), searchFrom)
-			if docBase < 0 {
-				docBase = searchFrom
-			}
 			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, m := range results[i].matches {
-				if m.FromPosSentence < 0 || m.ToPosSentence <= m.FromPosSentence {
-					m.FromPosSentence = m.FromPos
-					m.ToPosSentence = m.ToPos
-				}
-				m.FromPos += docBase
-				m.ToPos += docBase
-				if m.SentenceText == "" {
-					m.SentenceText = stext
-				}
-				m.HasTypographicApostropheInSentence = sentTypoApos
-				out = append(out, m)
+				out = append(out, remapLocalMatchToDocument(m, sd, sentTypoApos))
 			}
-			searchFrom = docBase + len([]rune(stext))
 		}
 	} else if lt.ListUnknownWords {
 		for _, s := range sents {
