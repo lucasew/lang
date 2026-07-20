@@ -166,3 +166,23 @@ func TestRegisterPatternRule_ToneFilter(t *testing.T) {
 	require.Contains(t, ms[0].ToneTags, languagetool.ToneFormal)
 	require.True(t, ms[0].GoalSpecific)
 }
+
+func TestRegisterPatternRule_DefaultOff(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat">
+    <rule id="OFF_FOO" name="n" default="off">
+      <pattern><token>foo</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("test.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	require.True(t, h.LoadedPatternRules[0].DefaultOff)
+	lt := languagetool.NewJLanguageTool("en")
+	RegisterLoadedPatternRules(lt, h)
+	require.Empty(t, lt.Check("foo bar"), "default-off rule not active")
+	lt.EnableRule("OFF_FOO")
+	require.NotEmpty(t, lt.Check("foo bar"))
+}

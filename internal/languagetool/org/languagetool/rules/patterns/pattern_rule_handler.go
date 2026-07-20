@@ -357,6 +357,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	pr := NewPatternRule(xr.ID, lang, tokens, xr.Name, strings.TrimSpace(xr.Message), strings.TrimSpace(xr.Short))
 	pr.ToneTags = tones
 	pr.GoalSpecific = goalSpecific
+	pr.DefaultOff = defaultOff
 	if len(tags) > 0 {
 		pr.SetTags(tags)
 	}

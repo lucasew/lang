@@ -6,6 +6,7 @@ import (
 )
 
 // RegisterPatternRule wires a PatternRule into JLanguageTool.Check.
+// XML default="off"/"temp_off" → MarkDefaultOff (Java setDefaultOff; re-enable with EnableRule / picky packs).
 func RegisterPatternRule(lt *languagetool.JLanguageTool, pr *PatternRule) {
 	if lt == nil || pr == nil {
 		return
@@ -14,7 +15,20 @@ func RegisterPatternRule(lt *languagetool.JLanguageTool, pr *PatternRule) {
 	if id == "" {
 		id = "PATTERN_RULE"
 	}
+	if pr.DefaultOff {
+		lt.MarkDefaultOff(id)
+	}
 	lt.AddRuleChecker(id, rules.AsSentenceChecker(pr.Match))
+}
+
+// RegisterLoadedPatternRules registers all PatternRules from a PatternRuleHandler.
+func RegisterLoadedPatternRules(lt *languagetool.JLanguageTool, h *PatternRuleHandler) {
+	if lt == nil || h == nil {
+		return
+	}
+	for _, pr := range h.LoadedPatternRules {
+		RegisterPatternRule(lt, pr)
+	}
 }
 
 // RegisterTokenSequence registers a simple surface-token sequence pattern rule.

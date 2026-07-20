@@ -34,6 +34,8 @@ type PatternRule struct {
 	ToneTags []languagetool.ToneTag
 	// GoalSpecific ports Rule.isGoalSpecific from XML is_goal_specific.
 	GoalSpecific bool
+	// DefaultOff ports Rule.isDefaultOff (XML default="off" / "temp_off").
+	DefaultOff bool
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
