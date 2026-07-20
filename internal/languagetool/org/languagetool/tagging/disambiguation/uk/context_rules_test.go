@@ -368,3 +368,32 @@ func TestDisambiguateYih_ObjectLemma(t *testing.T) {
 	tok := sent.GetTokensWithoutWhitespace()[1]
 	require.False(t, tok.HasPartialPosTag("pron:pos"))
 }
+
+func TestStationNameRE_FullMatch(t *testing.T) {
+	require.True(t, stStationNameRE.MatchString("метро"))
+	require.True(t, stStationNameRE.MatchString("Київська"))
+	// must not match mere prefix "метро" + extra (Java matches())
+	require.False(t, stStationNameRE.MatchString("метрополітен"))
+	require.False(t, stStationNameRE.MatchString("київська")) // not capitalized
+}
+
+func TestDisambiguateSt_Station(t *testing.T) {
+	// ст. + Capitalized → keep only noun:inanim:f
+	start := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil))
+	stPos1, stPos2, stPos3 := "noun:inanim:f:v_naz", "noun:inanim:m:v_naz", "adj:m:v_naz"
+	stTok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("ст.", &stPos1, strPtr("ст.")),
+		languagetool.NewAnalyzedToken("ст.", &stPos2, strPtr("ст.")),
+		languagetool.NewAnalyzedToken("ст.", &stPos3, strPtr("ст.")),
+	}, 0)
+	namePos := "noun:inanim:f:v_naz:prop:geo"
+	name := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("Київська", &namePos, strPtr("Київська")))
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, stTok, name})
+	DisambiguateSt(sent)
+	// only f readings remain on ст.
+	for _, r := range stTok.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil {
+			require.Contains(t, *r.GetPOSTag(), "noun:inanim:f")
+		}
+	}
+}

@@ -14,7 +14,8 @@ var (
 	stAbbr             = "ст."
 	stLatinDigitsRE    = regexp.MustCompile(`^[XIVХІ]+(?:[–—-][XIVХІ]+)?$`)
 	stArabicDigitsRE   = regexp.MustCompile(`^[0-9]+(?:[–—-][0-9]+)?$`)
-	stStationNameRE    = regexp.MustCompile(`^метро|[А-Я][а-яіїєґ'-]+$`)
+	// Java STATION_NAME_PATTERN.matches() — full string: метро OR Capitalized name
+	stStationNameRE = regexp.MustCompile(`^(?:метро|[А-Я][а-яіїєґ'-]+)$`)
 	stArticlePageNumRE = regexp.MustCompile(`^[0-9]+(?:[.,–—-][0-9]+)?$`)
 	stXp3KeepRE        = regexp.MustCompile(`noun.*:xp3.*`)
 	stNounInanimFRE    = regexp.MustCompile(`^noun:inanim:f:.*`)
