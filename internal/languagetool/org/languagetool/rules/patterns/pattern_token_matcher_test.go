@@ -122,6 +122,48 @@ func TestNormalizeJavaRegexpUnicode(t *testing.T) {
 	require.False(t, m.IsMatched(languagetool.NewAnalyzedToken("see", nil, nil)))
 }
 
+// Java quotes non-alphabetic chars (\! \… \,); Go RE2 rejects those escapes.
+// Upstream EN grammar: [\.\!\?\,\;\:\…]
+func TestNormalizeJavaRegexpQuotedNonMeta(t *testing.T) {
+	pat := `[\.\!\?\,\;\:\…]`
+	got := normalizeJavaRegexp(pat)
+	// Meta escapes kept; Java-quoted non-meta (! , ; : …) drop the backslash.
+	require.Equal(t, `[\.!\?,;:…]`, got)
+	// Still compiles and matches punctuation / ellipsis.
+	m := NewStringMatcher(pat, true, true)
+	require.True(t, m.Matches("…"))
+	require.True(t, m.Matches("!"))
+	require.True(t, m.Matches("."))
+	require.False(t, m.Matches("a"))
+	// Meta stays escaped; Java-quoted non-meta drops the backslash.
+	require.Equal(t, `\.|!`, normalizeJavaRegexp(`\.|\!`))
+}
+
+func TestNormalizeJavaRegexp_PossessiveQuantifiers(t *testing.T) {
+	require.Equal(t, `a{1,3}b`, normalizeJavaRegexp(`a{1,3}+b`))
+	require.Equal(t, `a*b+c?`, normalizeJavaRegexp(`a*+b++c?+`))
+	// Inside class, + is literal / not a possessive quantifier marker after {n}.
+	require.Equal(t, `[a+]`, normalizeJavaRegexp(`[a+]`))
+	// Unicode property braces are not quantifiers — keep trailing +.
+	require.Equal(t, `\p{Ll}+`, normalizeJavaRegexp(`\p{Ll}+`))
+	m := NewStringMatcher(`x{1,3}+`, true, true)
+	require.True(t, m.Matches("xxx"))
+	require.False(t, m.Matches("xxxx"))
+}
+
+// Java CaseRule emoji antipattern uses UTF-16 surrogate pair ranges.
+func TestNormalizeJavaRegexp_UTF16SurrogatePairRange(t *testing.T) {
+	pat := `[\ud83c\udc00-\ud83c\udfff]+|[\ud83d\udc00-\ud83d\udfff]+|[\u2600-\u27ff]+`
+	got := normalizeJavaRegexp(pat)
+	require.Contains(t, got, `\x{1f000}-\x{1f3ff}`)
+	require.Contains(t, got, `\x{1f400}-\x{1f7ff}`)
+	require.Contains(t, got, `\x{2600}-\x{27ff}`)
+	// Compiles and matches a BMP symbol from the third alternative.
+	m := NewStringMatcher(pat, true, true)
+	require.True(t, m.Matches("☀")) // U+2600
+	require.False(t, m.Matches("a"))
+}
+
 func TestIsMatchedReadings_ChunkTag(t *testing.T) {
 	pt := NewPatternToken("house", false, false, false)
 	pt.SetChunkTag("B-NP", false)

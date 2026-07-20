@@ -2,8 +2,11 @@ package patterns
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -157,7 +160,57 @@ func (m *PatternTokenMatcher) HasAndGroup() bool {
 	return m != nil && m.Base != nil && m.Base.HasAndGroup()
 }
 
+// javaSurrogatePairRange rewrites Java UTF-16 pair ranges in character classes:
+// [\ud83c\udc00-\ud83c\udfff] → [\x{1f000}-\x{1f3ff}] (CaseRule emoji antipatterns).
+var javaSurrogatePairRange = regexp.MustCompile(
+	`(?i)\\u(d[89ab][0-9a-f]{2})\\u(dc[0-9a-f]{2}|d[def][0-9a-f]{2})-\\u(d[89ab][0-9a-f]{2})\\u(dc[0-9a-f]{2}|d[def][0-9a-f]{2})`,
+)
+
+// javaSurrogatePair rewrites a single UTF-16 surrogate pair escape to a code point.
+var javaSurrogatePair = regexp.MustCompile(
+	`(?i)\\u(d[89ab][0-9a-f]{2})\\u(dc[0-9a-f]{2}|d[def][0-9a-f]{2})`,
+)
+
+func utf16SurrogatePairCP(hi, lo uint64) rune {
+	return rune(0x10000 + (hi-0xD800)*0x400 + (lo - 0xDC00))
+}
+
+// rewriteJavaUTF16Surrogates maps Java Pattern UTF-16 surrogate pairs/ranges to
+// Go rune escapes. Java matches supplementary planes as paired code units;
+// RE2 is rune-based and rejects lone surrogate class ranges.
+func rewriteJavaUTF16Surrogates(pat string) string {
+	pat = javaSurrogatePairRange.ReplaceAllStringFunc(pat, func(m string) string {
+		sub := javaSurrogatePairRange.FindStringSubmatch(m)
+		if len(sub) != 5 {
+			return m
+		}
+		h1, _ := strconv.ParseUint(sub[1], 16, 32)
+		l1, _ := strconv.ParseUint(sub[2], 16, 32)
+		h2, _ := strconv.ParseUint(sub[3], 16, 32)
+		l2, _ := strconv.ParseUint(sub[4], 16, 32)
+		return fmt.Sprintf(`\x{%x}-\x{%x}`, utf16SurrogatePairCP(h1, l1), utf16SurrogatePairCP(h2, l2))
+	})
+	pat = javaSurrogatePair.ReplaceAllStringFunc(pat, func(m string) string {
+		sub := javaSurrogatePair.FindStringSubmatch(m)
+		if len(sub) != 3 {
+			return m
+		}
+		hi, _ := strconv.ParseUint(sub[1], 16, 32)
+		lo, _ := strconv.ParseUint(sub[2], 16, 32)
+		return fmt.Sprintf(`\x{%x}`, utf16SurrogatePairCP(hi, lo))
+	})
+	return pat
+}
+
 // normalizeJavaRegexp maps Java/PCRE constructs used in LT XML to Go RE2.
+//
+// Java Pattern allows "\X" for any non-alphabetic X as a quoted literal (e.g.
+// "\!", "\…", "\,"). Go RE2 rejects those as invalid escapes. Drop the
+// backslash when X is not a metacharacter / known escape so the same XML
+// patterns compile (unavoidable engine mapping; behavior matches Java match).
+//
+// Also rewrites UTF-16 surrogate pair ranges (Java CaseRule emoji antipatterns)
+// to Unicode code-point ranges.
 func normalizeJavaRegexp(pat string) string {
 	if pat == "" {
 		return pat
@@ -165,39 +218,141 @@ func normalizeJavaRegexp(pat string) string {
 	for _, flag := range []string{"(?iu)", "(?ui)", "(?i)", "(?u)", "(?m)", "(?s)"} {
 		pat = strings.ReplaceAll(pat, flag, "")
 	}
-	if !strings.Contains(pat, `\u`) && !strings.Contains(pat, `\U`) {
-		return pat
-	}
+	pat = rewriteJavaUTF16Surrogates(pat)
+	// Java/PCRE possessive quantifiers (*+ ++ ?+ {n,m}+) are not in RE2.
+	// Map to greedy (same success/failure on pure match without backtrack-sensitive cases).
+	pat = stripPossessiveQuantifiers(pat)
 	var b strings.Builder
 	b.Grow(len(pat) + 8)
 	for i := 0; i < len(pat); {
 		if pat[i] == '\\' && i+1 < len(pat) {
-			switch pat[i+1] {
-			case 'u':
-				if i+6 <= len(pat) {
-					hex := pat[i+2 : i+6]
-					if _, err := strconv.ParseUint(hex, 16, 32); err == nil {
-						fmt.Fprintf(&b, `\x{%s}`, strings.ToLower(hex))
-						i += 6
-						continue
-					}
+			// Multi-byte rune after backslash (e.g. \…)
+			r, size := utf8.DecodeRuneInString(pat[i+1:])
+			if r == utf8.RuneError && size == 1 {
+				b.WriteByte(pat[i])
+				i++
+				continue
+			}
+			switch {
+			case r == 'u' && i+6 <= len(pat):
+				hex := pat[i+2 : i+6]
+				if _, err := strconv.ParseUint(hex, 16, 32); err == nil {
+					fmt.Fprintf(&b, `\x{%s}`, strings.ToLower(hex))
+					i += 6
+					continue
 				}
-			case 'U':
-				if i+10 <= len(pat) {
-					hex := pat[i+2 : i+10]
-					if _, err := strconv.ParseUint(hex, 16, 32); err == nil {
-						n, _ := strconv.ParseUint(hex, 16, 32)
-						fmt.Fprintf(&b, `\x{%x}`, n)
-						i += 10
-						continue
-					}
+			case r == 'U' && i+10 <= len(pat):
+				hex := pat[i+2 : i+10]
+				if _, err := strconv.ParseUint(hex, 16, 32); err == nil {
+					n, _ := strconv.ParseUint(hex, 16, 32)
+					fmt.Fprintf(&b, `\x{%x}`, n)
+					i += 10
+					continue
 				}
+			case keepJavaRegexpBackslash(r):
+				b.WriteByte('\\')
+				b.WriteString(pat[i+1 : i+1+size])
+				i += 1 + size
+				continue
+			default:
+				// Java quotes non-alphabetic non-meta: emit the char only.
+				// Alphabetic unknown escapes are left with '\' so compile still fails closed.
+				if unicode.IsLetter(r) {
+					b.WriteByte('\\')
+					b.WriteString(pat[i+1 : i+1+size])
+					i += 1 + size
+					continue
+				}
+				b.WriteString(pat[i+1 : i+1+size])
+				i += 1 + size
+				continue
 			}
 		}
 		b.WriteByte(pat[i])
 		i++
 	}
 	return b.String()
+}
+
+// stripPossessiveQuantifiers maps Java possessive quantifiers to greedy RE2 form.
+// *+ → * ; ++ → + ; ?+ → ? ; {n,m}+ → {n,m}. Not applied inside character classes.
+// Does not strip + after \p{…} / \x{…} property braces — only after digit quantifiers.
+func stripPossessiveQuantifiers(pat string) string {
+	if pat == "" || !strings.Contains(pat, "+") {
+		return pat
+	}
+	var b strings.Builder
+	b.Grow(len(pat))
+	inClass := false
+	for i := 0; i < len(pat); i++ {
+		c := pat[i]
+		if c == '\\' && i+1 < len(pat) {
+			b.WriteByte(c)
+			// keep multi-byte? escapes are one byte after \ for ASCII metacharacters
+			b.WriteByte(pat[i+1])
+			i++
+			continue
+		}
+		if c == '[' {
+			inClass = true
+			b.WriteByte(c)
+			continue
+		}
+		if c == ']' && inClass {
+			inClass = false
+			b.WriteByte(c)
+			continue
+		}
+		if !inClass && c == '+' && b.Len() > 0 {
+			prev := b.String()[b.Len()-1]
+			if prev == '*' || prev == '+' || prev == '?' {
+				continue // drop possessive
+			}
+			if prev == '}' && endsWithQuantifierBrace(b.String()) {
+				continue // {1,3}+ → {1,3}
+			}
+		}
+		b.WriteByte(c)
+	}
+	return b.String()
+}
+
+// endsWithQuantifierBrace reports whether s ends with a {digits[,digits]} quantifier.
+func endsWithQuantifierBrace(s string) bool {
+	if len(s) == 0 || s[len(s)-1] != '}' {
+		return false
+	}
+	j := len(s) - 2
+	for j >= 0 {
+		c := s[j]
+		if c == '{' {
+			return j+1 < len(s)-1 // non-empty body
+		}
+		if (c >= '0' && c <= '9') || c == ',' || c == ' ' {
+			j--
+			continue
+		}
+		return false
+	}
+	return false
+}
+
+// keepJavaRegexpBackslash reports whether \r must stay escaped for Go RE2
+// (metacharacters and known escape letters/digits).
+func keepJavaRegexpBackslash(r rune) bool {
+	switch r {
+	case '.', '*', '+', '?', '(', ')', '[', ']', '{', '}', '|', '^', '$', '\\',
+		// Keep \- so Java-escaped hyphens do not become class ranges (—\-– → —-–).
+		'-',
+		'n', 'r', 't', 'f', 'a', 'v',
+		'd', 'D', 's', 'S', 'w', 'W', 'b', 'B',
+		'A', 'z', 'Z', 'Q', 'E', 'p', 'P', 'x', 'u', 'U', 'k', 'R', 'X',
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+		'<', '>': // lookbehind / named groups scaffolding when passed through
+		return true
+	default:
+		return false
+	}
 }
 
 func (m *PatternTokenMatcher) GetPatternToken() *PatternToken {

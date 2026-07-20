@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
@@ -395,12 +396,12 @@ func (p *subParser) charClass() (Substrings, bool) {
 	negated := false
 	okOptions := true
 	for p.pos < len(p.s) {
-		c := rune(p.s[p.pos])
-		p.pos++
+		c, size := utf8.DecodeRuneInString(p.s[p.pos:])
+		p.pos += size
 		if c == ']' {
 			break
 		}
-		if c == '^' && p.pos == start+1 {
+		if c == '^' && p.pos == start+size {
 			negated = true
 			okOptions = false
 			options = nil
@@ -408,8 +409,8 @@ func (p *subParser) charClass() (Substrings, bool) {
 		}
 		if c == '-' && len(options) > 0 && p.pos < len(p.s) && p.s[p.pos] != ']' {
 			last := options[len(options)-1]
-			next := rune(p.s[p.pos])
-			p.pos++
+			next, nsize := utf8.DecodeRuneInString(p.s[p.pos:])
+			p.pos += nsize
 			if next == '\\' || int(next)-int(last) > 10 {
 				okOptions = false
 				options = nil
@@ -457,8 +458,8 @@ func (p *subParser) escape() (*rune, bool) {
 	if p.pos >= len(p.s) {
 		return nil, false
 	}
-	next := rune(p.s[p.pos])
-	p.pos++
+	next, size := utf8.DecodeRuneInString(p.s[p.pos:])
+	p.pos += size
 	if strings.ContainsRune("0xucpP", next) {
 		return nil, false
 	}
@@ -606,12 +607,12 @@ func (p *reParser) charClass() ([]string, bool) {
 	var options []rune
 	negated := false
 	for p.pos < len(p.s) {
-		c := rune(p.s[p.pos])
-		p.pos++
+		c, size := utf8.DecodeRuneInString(p.s[p.pos:])
+		p.pos += size
 		if c == ']' {
 			break
 		}
-		if c == '^' && p.pos == start+1 {
+		if c == '^' && p.pos == start+size {
 			// just after [
 			negated = true
 			options = nil
@@ -619,8 +620,8 @@ func (p *reParser) charClass() ([]string, bool) {
 		}
 		if c == '-' && len(options) > 0 && p.pos < len(p.s) && p.s[p.pos] != ']' {
 			last := options[len(options)-1]
-			next := rune(p.s[p.pos])
-			p.pos++
+			next, nsize := utf8.DecodeRuneInString(p.s[p.pos:])
+			p.pos += nsize
 			if next == '\\' || int(next)-int(last) > 10 {
 				return nil, false
 			}
@@ -660,8 +661,8 @@ func (p *reParser) escape() (*rune, bool) {
 	if p.pos >= len(p.s) {
 		return nil, false
 	}
-	next := rune(p.s[p.pos])
-	p.pos++
+	next, size := utf8.DecodeRuneInString(p.s[p.pos:])
+	p.pos += size
 	if strings.ContainsRune("0xucpP", next) {
 		return nil, false
 	}
