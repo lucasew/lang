@@ -16,6 +16,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	rulesnl "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	rulesru "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -234,6 +235,10 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 					_ = RegisterArabicPOSTagger(lt, posPath)
 				} else {
 					_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
+				}
+				// Java NoDisambiguationRussianPartialPosTagFilter uses Languages.get("ru").getTagger().
+				if strings.EqualFold(base, "ru") && lt.TagWord != nil {
+					rulesru.WireRussianFilterTaggerFromTagWord(lt.TagWord)
 				}
 			}
 			// Java createDefaultSynthesizer when *_synth.dict is present.

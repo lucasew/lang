@@ -7,6 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	rulesru "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ca"
@@ -153,6 +154,8 @@ func registerRussianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOpti
 		return false
 	}
 	lt.Disambiguator = h
+	// Java RussianPartialPosTagFilter uses Russian.getInstance().getDisambiguator().
+	rulesru.WireRussianFilterDisambiguator(h)
 	return true
 }
 
