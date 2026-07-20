@@ -385,7 +385,8 @@ func (r *AnalyzedTokenReadings) AddReading(token *AnalyzedToken, ruleApplied str
 	token.SetWhitespaceBefore(r.isWhitespaceBefore)
 	l = append(l, token)
 	r.anTokReadings = l
-	if len(token.GetToken()) > len(r.token) {
+	// Java: token.getToken().length() > this.token.length() (UTF-16 code units)
+	if utf16Len(token.GetToken()) > utf16Len(r.token) {
 		r.token = token.GetToken()
 	}
 	r.anTokReadings[len(r.anTokReadings)-1].SetWhitespaceBefore(r.isWhitespaceBefore)

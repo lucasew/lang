@@ -402,3 +402,16 @@ func TestStringTools_NormalizeNFKC(t *testing.T) {
 	// fullwidth digit → ASCII
 	require.Equal(t, "1", NormalizeNFKC("\uFF11"))
 }
+
+// Twin of Java String.length() gates (UTF-16): non-BMP is 2 units.
+func TestStringTools_JavaStringLenGates(t *testing.T) {
+	// emoji is 1 rune, 2 UTF-16 units → length != 1
+	require.Equal(t, 2, javaStringLen("😀"))
+	require.Equal(t, 1, javaStringLen("."))
+	// AddSpace: only single UTF-16 unit punctuation drops space
+	require.Equal(t, " ", AddSpace("😀", "en"), "surrogate pair is not length 1")
+	require.Equal(t, "", AddSpace(".", "en"))
+	// IsWhitespace: single UTF-16 unit only for Character.isWhitespace branch
+	require.False(t, IsWhitespace("😀"), "non-BMP not length-1 whitespace")
+	require.True(t, IsWhitespace("\u00a0"))
+}

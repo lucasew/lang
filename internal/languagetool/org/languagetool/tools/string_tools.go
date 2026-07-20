@@ -245,7 +245,8 @@ func TrimWhitespace(s string) string {
 		}
 	}
 	out := filter.String()
-	if len([]rune(out)) == len(runes) {
+	// Java: filter.length() == str.length() (UTF-16 code units)
+	if javaStringLen(out) == javaStringLen(str) {
 		return str
 	}
 	return out
@@ -282,7 +283,8 @@ func IsWhitespace(str string) bool {
 	if trimStr == "" {
 		return true
 	}
-	if len([]rune(trimStr)) == 1 {
+	// Java: trimStr.length() == 1 (UTF-16 code units)
+	if javaStringLen(trimStr) == 1 {
 		// Java special-cases full str (not only trimStr) for these
 		if str == "\u200B" || str == "\u00A0" || str == "\u202F" {
 			return true
@@ -291,6 +293,11 @@ func IsWhitespace(str string) bool {
 		return CharacterIsWhitespace(r)
 	}
 	return false
+}
+
+// javaStringLen ports Java String.length() (UTF-16 code units).
+func javaStringLen(s string) int {
+	return len(utf16Units(s))
 }
 
 func trimJava(s string) string {
@@ -436,7 +443,8 @@ func ToId(input, languageCode string) string {
 // AddSpace ports StringTools.addSpace.
 func AddSpace(word, languageShortCode string) string {
 	space := " "
-	if len([]rune(word)) == 1 {
+	// Java: word.length() == 1 (UTF-16); then charAt(0)
+	if javaStringLen(word) == 1 {
 		c := []rune(word)[0]
 		if languageShortCode == "fr" {
 			if c == '.' || c == ',' {
