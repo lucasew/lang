@@ -6,92 +6,92 @@
 
 ## languagetool-commandline
 
-- [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions
-- [x] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions.OutputFormat
-- [x] org/languagetool/commandline/CommandLineParser.java::CommandLineParser
-- [x] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
-- [x] org/languagetool/commandline/Main.java::Main
-- [x] org/languagetool/commandline/Main.java::Main.SystemExitHandler
-- [x] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
-- [x] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
+- [ ] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions
+- [ ] org/languagetool/commandline/CommandLineOptions.java::CommandLineOptions.OutputFormat
+- [ ] org/languagetool/commandline/CommandLineParser.java::CommandLineParser
+- [ ] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
+- [ ] org/languagetool/commandline/Main.java::Main
+- [ ] org/languagetool/commandline/Main.java::Main.SystemExitHandler
+- [ ] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
+- [ ] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
 
 ## languagetool-core
 
-- [x] org/languagetool/AnalyzedSentence.java::AnalyzedSentence
-- [x] org/languagetool/AnalyzedToken.java::AnalyzedToken
+- [ ] org/languagetool/AnalyzedSentence.java::AnalyzedSentence
+- [ ] org/languagetool/AnalyzedToken.java::AnalyzedToken
 - [ ] org/languagetool/AnalyzedTokenReadings.java::AnalyzedTokenReadings
-- [x] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
-- [x] org/languagetool/CheckResults.java::CheckResults
-- [x] org/languagetool/DetectedLanguage.java::DetectedLanguage
-- [x] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
-- [x] org/languagetool/DynamicLanguage.java::DynamicLanguage
-- [x] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
-- [x] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
-- [x] org/languagetool/Experimental.java::Experimental
-- [x] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
-- [x] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
-- [x] org/languagetool/GlobalConfig.java::GlobalConfig
-- [x] org/languagetool/InputSentence.java::InputSentence
+- [ ] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
+- [ ] org/languagetool/CheckResults.java::CheckResults
+- [ ] org/languagetool/DetectedLanguage.java::DetectedLanguage
+- [ ] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
+- [ ] org/languagetool/DynamicLanguage.java::DynamicLanguage
+- [ ] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
+- [ ] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
+- [ ] org/languagetool/Experimental.java::Experimental
+- [ ] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
+- [ ] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
+- [ ] org/languagetool/GlobalConfig.java::GlobalConfig
+- [ ] org/languagetool/InputSentence.java::InputSentence
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool
-- [x] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
-- [x] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
-- [x] org/languagetool/JLanguageTool.java::JLanguageTool.Level
-- [x] org/languagetool/JLanguageTool.java::JLanguageTool.CleanToken
-- [x] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
-- [x] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
+- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
+- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
+- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Level
+- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CleanToken
+- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
+- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable
-- [x] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable.LineColumnPosition
+- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable.LineColumnPosition
 - [ ] org/languagetool/Language.java::Language
-- [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator
-- [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
-- [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
-- [x] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
-- [x] org/languagetool/LanguageWithModel.java::LanguageWithModel
-- [x] org/languagetool/Languages.java::Languages
-- [x] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
-- [x] org/languagetool/LinguServices.java::LinguServices
-- [x] org/languagetool/LtBuildInfo.java::LtBuildInfo
-- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
-- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
-- [x] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
-- [x] org/languagetool/Premium.java::Premium
-- [x] org/languagetool/PremiumOff.java::PremiumOff
-- [x] org/languagetool/Range.java::Range
-- [x] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
-- [x] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
-- [x] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
-- [x] org/languagetool/ResultCache.java::ResultCache
-- [x] org/languagetool/ResultCache.java::ResultCache.MatchesWeigher
-- [x] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
-- [x] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
-- [x] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
-- [x] org/languagetool/RuleMatchListener.java::RuleMatchListener
-- [x] org/languagetool/SentenceRange.java::SentenceRange
-- [x] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider
-- [x] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
-- [x] org/languagetool/Tag.java::Tag
-- [x] org/languagetool/ToneTag.java::ToneTag
-- [x] org/languagetool/UserConfig.java::UserConfig
-- [x] org/languagetool/UserConfig.java::UserConfig.TokenType
-- [x] org/languagetool/XMLValidator.java::XMLValidator
-- [x] org/languagetool/XMLValidator.java::XMLValidator.LSRuleEntityResolver
-- [x] org/languagetool/XMLValidator.java::XMLValidator.EntityAsInput
-- [x] org/languagetool/XMLValidator.java::XMLValidator.ErrorHandler
-- [x] org/languagetool/bitext/BitextReader.java::BitextReader
-- [x] org/languagetool/bitext/StringPair.java::StringPair
-- [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader
-- [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader.TabReader
-- [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader
-- [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader.TabReader
-- [x] org/languagetool/broker/ClassBroker.java::ClassBroker
-- [x] org/languagetool/broker/DefaultClassBroker.java::DefaultClassBroker
-- [x] org/languagetool/broker/DefaultResourceDataBroker.java::DefaultResourceDataBroker
-- [x] org/languagetool/broker/ResourceDataBroker.java::ResourceDataBroker
-- [x] org/languagetool/chunking/ChunkTag.java::ChunkTag
-- [x] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
-- [x] org/languagetool/chunking/Chunker.java::Chunker
-- [x] org/languagetool/chunking/TokenExpressionFactory.java::TokenExpressionFactory
-- [x] org/languagetool/chunking/TokenPredicate.java::TokenPredicate
+- [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator
+- [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
+- [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
+- [ ] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
+- [ ] org/languagetool/LanguageWithModel.java::LanguageWithModel
+- [ ] org/languagetool/Languages.java::Languages
+- [ ] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
+- [ ] org/languagetool/LinguServices.java::LinguServices
+- [ ] org/languagetool/LtBuildInfo.java::LtBuildInfo
+- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
+- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
+- [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
+- [ ] org/languagetool/Premium.java::Premium
+- [ ] org/languagetool/PremiumOff.java::PremiumOff
+- [ ] org/languagetool/Range.java::Range
+- [ ] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
+- [ ] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
+- [ ] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
+- [ ] org/languagetool/ResultCache.java::ResultCache
+- [ ] org/languagetool/ResultCache.java::ResultCache.MatchesWeigher
+- [ ] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
+- [ ] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
+- [ ] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
+- [ ] org/languagetool/RuleMatchListener.java::RuleMatchListener
+- [ ] org/languagetool/SentenceRange.java::SentenceRange
+- [ ] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider
+- [ ] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
+- [ ] org/languagetool/Tag.java::Tag
+- [ ] org/languagetool/ToneTag.java::ToneTag
+- [ ] org/languagetool/UserConfig.java::UserConfig
+- [ ] org/languagetool/UserConfig.java::UserConfig.TokenType
+- [ ] org/languagetool/XMLValidator.java::XMLValidator
+- [ ] org/languagetool/XMLValidator.java::XMLValidator.LSRuleEntityResolver
+- [ ] org/languagetool/XMLValidator.java::XMLValidator.EntityAsInput
+- [ ] org/languagetool/XMLValidator.java::XMLValidator.ErrorHandler
+- [ ] org/languagetool/bitext/BitextReader.java::BitextReader
+- [ ] org/languagetool/bitext/StringPair.java::StringPair
+- [ ] org/languagetool/bitext/TabBitextReader.java::TabBitextReader
+- [ ] org/languagetool/bitext/TabBitextReader.java::TabBitextReader.TabReader
+- [ ] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader
+- [ ] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader.TabReader
+- [ ] org/languagetool/broker/ClassBroker.java::ClassBroker
+- [ ] org/languagetool/broker/DefaultClassBroker.java::DefaultClassBroker
+- [ ] org/languagetool/broker/DefaultResourceDataBroker.java::DefaultResourceDataBroker
+- [ ] org/languagetool/broker/ResourceDataBroker.java::ResourceDataBroker
+- [ ] org/languagetool/chunking/ChunkTag.java::ChunkTag
+- [ ] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
+- [ ] org/languagetool/chunking/Chunker.java::Chunker
+- [ ] org/languagetool/chunking/TokenExpressionFactory.java::TokenExpressionFactory
+- [ ] org/languagetool/chunking/TokenPredicate.java::TokenPredicate
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc.AsyncService
 - [ ] org/languagetool/grpc/SynthesizeServerGrpc.java::SynthesizeServerGrpc.SynthesizeServerImplBase
@@ -112,29 +112,29 @@
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponse
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponseItemOrBuilder
 - [ ] org/languagetool/grpc/Synthesizer.java::Synthesizer.SynthesizeResponseItem
-- [x] org/languagetool/language/Contributor.java::Contributor
-- [x] org/languagetool/language/Contributors.java::Contributors
-- [x] org/languagetool/language/LanguageBuilder.java::LanguageBuilder
-- [x] org/languagetool/language/LanguageBuilder.java::LanguageBuilder.ExtendedLanguage
-- [x] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
-- [x] org/languagetool/language/identifier/DefaultLanguageIdentifier.java::DefaultLanguageIdentifier
-- [x] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier
-- [x] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
-- [x] org/languagetool/language/identifier/LanguageIdentifierService.java::LanguageIdentifierService
-- [x] org/languagetool/language/identifier/SimpleLanguageIdentifier.java::SimpleLanguageIdentifier
-- [x] org/languagetool/language/identifier/detector/CommonWordsDetector.java::CommonWordsDetector
-- [x] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector
-- [x] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector.FastTextException
-- [x] org/languagetool/language/identifier/detector/NGramDetector.java::NGramDetector
-- [x] org/languagetool/language/identifier/detector/UnicodeBasedDetector.java::UnicodeBasedDetector
-- [x] org/languagetool/languagemodel/BaseLanguageModel.java::BaseLanguageModel
-- [x] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
-- [x] org/languagetool/languagemodel/LuceneLanguageModel.java::LuceneLanguageModel
-- [x] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel
-- [x] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel.LuceneSearcher
-- [x] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
-- [x] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel
-- [x] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel.Request
+- [ ] org/languagetool/language/Contributor.java::Contributor
+- [ ] org/languagetool/language/Contributors.java::Contributors
+- [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder
+- [ ] org/languagetool/language/LanguageBuilder.java::LanguageBuilder.ExtendedLanguage
+- [ ] org/languagetool/language/RuleFilenameException.java::RuleFilenameException
+- [ ] org/languagetool/language/identifier/DefaultLanguageIdentifier.java::DefaultLanguageIdentifier
+- [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier
+- [ ] org/languagetool/language/identifier/LanguageIdentifier.java::LanguageIdentifier.ParsedLanguageLists
+- [ ] org/languagetool/language/identifier/LanguageIdentifierService.java::LanguageIdentifierService
+- [ ] org/languagetool/language/identifier/SimpleLanguageIdentifier.java::SimpleLanguageIdentifier
+- [ ] org/languagetool/language/identifier/detector/CommonWordsDetector.java::CommonWordsDetector
+- [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector
+- [ ] org/languagetool/language/identifier/detector/FastTextDetector.java::FastTextDetector.FastTextException
+- [ ] org/languagetool/language/identifier/detector/NGramDetector.java::NGramDetector
+- [ ] org/languagetool/language/identifier/detector/UnicodeBasedDetector.java::UnicodeBasedDetector
+- [ ] org/languagetool/languagemodel/BaseLanguageModel.java::BaseLanguageModel
+- [ ] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
+- [ ] org/languagetool/languagemodel/LuceneLanguageModel.java::LuceneLanguageModel
+- [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel
+- [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel.LuceneSearcher
+- [ ] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
+- [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel
+- [ ] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel.Request
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc.AsyncService
 - [ ] org/languagetool/languagemodel/bert/grpc/BertLmGrpc.java::BertLmGrpc.BertLmImplBase

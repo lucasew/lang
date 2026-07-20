@@ -15,8 +15,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | Mark | Meaning |
 |------|---------|
 | `[ ]` | Not done |
-| `[~]` | Partial / in progress |
-| `[x]` | Done (reviewer/human ACCEPT) |
+| `[x]` | Done — proven 1:1 with Java (reviewer/human ACCEPT) |
 | **N/A** | Not applicable yet (depends on earlier item) |
 
 **Status column** below is the current known state as of the first deletion wave (`2b1b4ee5`). Update as sectors land.
@@ -30,9 +29,9 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 0.1 | Policy doc is sole law; no competing soft-port policy in repo | [x] `docs/faithful-port-policy.md`, soft-port removed |
 | 0.2 | Agents load policy (`AGENTS.md` + nested `internal/languagetool/AGENTS.md`) | [x] |
 | 0.3 | Implementer → reviewer ACCEPT loop used on every sector (no self-ACCEPT) | [ ] process discipline |
-| 0.4 | Outside-tree freeze holds (no golden/vendor/cmd edits to greenwash) | [~] freeze declared; enforce on each PR |
+| 0.4 | Outside-tree freeze holds (no golden/vendor/cmd edits to greenwash) | [ ] freeze declared; enforce on each PR |
 | 0.5 | Path law: new files under wall map to `inspiration/languagetool/...` | [ ] CI or reviewer always verifies |
-| 0.6 | No percentage / soft-score “parity” gates | [~] soft miss-scan removed; watch for new knobs |
+| 0.6 | No percentage / soft-score “parity” gates | [ ] soft miss-scan removed; watch for new knobs |
 
 ---
 
@@ -49,16 +48,16 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.7 | Soft pack loading removed from `configureCoreLT` / server pipeline | [x] first wave |
 | 1.8 | **Soft POS surface invent** removed from `pattern_token_matcher.go` (closed-class lists, FreeLing soft, STTS soft, URL soft surface, etc.) | [x] sector: PatternTokenMatcher |
 | 1.9 | Soft cover/align hacks removed from `pattern_rule_matcher.go` (CJK surface align, fused prep, hyphen cover, …) | [x] |
-| 1.10 | Soft expand / backref invent removed if not Java-equivalent | [~] formatMatches + multi-lang `*_synth.dict` + suppress_misspelled + setpos getPosTagCorrection |
-| 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [~] soft invent lists removed; POS→BIO interim until OpenNLP maxent wired |
-| 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [~] `RuleMeta` (Soft* aliases); fallback only for known Java families |
+| 1.10 | Soft expand / backref invent removed if not Java-equivalent | [ ] formatMatches + multi-lang `*_synth.dict` + suppress_misspelled + setpos getPosTagCorrection |
+| 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [ ] soft invent lists removed; POS→BIO interim until OpenNLP maxent wired |
+| 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [ ] `RuleMeta` (Soft* aliases); fallback only for known Java families |
 | 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [x] soft discover deleted; official discover added |
-| 1.14 | Soft picky XML load paths removed from server text checker | [~] picky uses official RegisterPickyEnglishRules; pipeline uses official resources |
-| 1.15 | Demo/map tagger & speller not presented as default engine (or moved outside when freeze lifts) | [~] binary speller default (no invent map); demo only under `LANG_DEMO_SPELLER` |
-| 1.16 | Invent multiword lists / embedded soft multiwords gone | [~] SoftEnglish phrase/token invent packs removed from EN core |
-| 1.17 | `SoftForeignIgnoreRanges` / soft user-dict naming cleaned to Java twins or removed | [~] `ForeignScriptIgnoreRanges` + `UserDictionary` (Soft* aliases kept) |
-| 1.18 | ZH tokenizer: real HanLP-equivalent or explicit incomplete (no soft POS invent) | [~] per-rune + `x`; needs real twin |
-| 1.19 | Dead soft comments / CLI help (`--level` soft packs) cleaned | [~] help text + false-friends resolve use official paths; SoftRuleMeta labels remain |
+| 1.14 | Soft picky XML load paths removed from server text checker | [ ] picky uses official RegisterPickyEnglishRules; pipeline uses official resources |
+| 1.15 | Demo/map tagger & speller not presented as default engine (or moved outside when freeze lifts) | [ ] binary speller default (no invent map); demo only under `LANG_DEMO_SPELLER` |
+| 1.16 | Invent multiword lists / embedded soft multiwords gone | [ ] SoftEnglish phrase/token invent packs removed from EN core |
+| 1.17 | `SoftForeignIgnoreRanges` / soft user-dict naming cleaned to Java twins or removed | [ ] `ForeignScriptIgnoreRanges` + `UserDictionary` (Soft* aliases kept) |
+| 1.18 | ZH tokenizer: real HanLP-equivalent or explicit incomplete (no soft POS invent) | [ ] per-rune + `x`; needs real twin |
+| 1.19 | Dead soft comments / CLI help (`--level` soft packs) cleaned | [ ] help text + false-friends resolve use official paths; SoftRuleMeta labels remain |
 | 1.20 | No resurrected soft modules (path law + reviewer) | [ ] ongoing |
 
 **Keep (not invent):** Java-named types such as UK `SimpleReplaceSoftRule`, `TestHackHelper` — verify against Java periodically.
@@ -69,16 +68,16 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 
 | # | Check | Status |
 |---|--------|--------|
-| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] LANG_USE_UPSTREAM_GRAMMAR=1: getRuleFileNames order (grammar/style/custom + variant); filters/dicts wired |
-| 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [~] EN/FR/ES/PT/DE/CA/NL hybrids load official XML+global when present |
-| 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN hybrid multiwords; EnglishMultitokenSpeller loads multiwords+spelling_global for MultitokenSpellerFilter |
-| 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] EN english.dict for tagger + FindSuggestions desiredPostag; other langs partial |
-| 2.5 | Engine loads **same** speller dicts | [~] EN en_US.dict for speller rule + grammar filter hooks |
-| 2.6 | Engine loads **same** SRX / tokenizer resources | [~] |
-| 2.7 | OpenNLP / chunker models where Java uses them (or documented missing asset = incomplete, not soft invent) | [~] models in third_party/opennlp-models; runtime still POS→BIO interim (no invent OpenNLP) |
+| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [ ] LANG_USE_UPSTREAM_GRAMMAR=1: getRuleFileNames order (grammar/style/custom + variant); filters/dicts wired |
+| 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [ ] EN/FR/ES/PT/DE/CA/NL hybrids load official XML+global when present |
+| 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [ ] EN hybrid multiwords; EnglishMultitokenSpeller loads multiwords+spelling_global for MultitokenSpellerFilter |
+| 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [ ] EN english.dict for tagger + FindSuggestions desiredPostag; other langs partial |
+| 2.5 | Engine loads **same** speller dicts | [ ] EN en_US.dict for speller rule + grammar filter hooks |
+| 2.6 | Engine loads **same** SRX / tokenizer resources | [ ] |
+| 2.7 | OpenNLP / chunker models where Java uses them (or documented missing asset = incomplete, not soft invent) | [ ] models in third_party/opennlp-models; runtime still POS→BIO interim (no invent OpenNLP) |
 | 2.8 | FreeLing / language-specific tagger resources as Java | [ ] |
 | 2.9 | `spelling_global.txt` and other core resource files as Java | [ ] |
-| 2.10 | No soft extract as production input | [~] loaders removed; discover helpers still point at soft paths |
+| 2.10 | No soft extract as production input | [ ] loaders removed; discover helpers still point at soft paths |
 
 ---
 
@@ -90,33 +89,33 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 
 | # | Java area (examples) | Check | Status |
 |---|----------------------|--------|--------|
-| 3.A.1 | Tokenizers (word + sentence / SRX) | 1:1 with Java for supported langs | [~] partial |
-| 3.A.2 | Taggers (Morfologik / language-specific) | 1:1 readings | [~] |
-| 3.A.3 | `MultiWordChunker` | Official multiwords only | [~] EN hybrid multiword stage |
-| 3.A.4 | `XmlRuleDisambiguator` | Full lang XML + global when Java enables | [~] EN hybrid wires official XML+global; loader has rulegroup/`and`/`marker` |
-| 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [~] EN/FR/ES/PT/DE/CA/NL wired to official resources |
-| 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [~] EnglishChunkFilter 1:1; POS→BIO without soft invent; OpenNLP models not executed |
-| 3.A.7 | `JLanguageTool` analyze/check wiring | Same stages, mode flags | [~] |
-| 3.A.8 | Rule match pipeline (enable/disable, categories, text-level) | Java semantics | [~] |
+| 3.A.1 | Tokenizers (word + sentence / SRX) | 1:1 with Java for supported langs | [ ] partial |
+| 3.A.2 | Taggers (Morfologik / language-specific) | 1:1 readings | [ ] |
+| 3.A.3 | `MultiWordChunker` | Official multiwords only | [ ] EN hybrid multiword stage |
+| 3.A.4 | `XmlRuleDisambiguator` | Full lang XML + global when Java enables | [ ] EN hybrid wires official XML+global; loader has rulegroup/`and`/`marker` |
+| 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [ ] EN/FR/ES/PT/DE/CA/NL wired to official resources |
+| 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [ ] EnglishChunkFilter 1:1; POS→BIO without soft invent; OpenNLP models not executed |
+| 3.A.7 | `JLanguageTool` analyze/check wiring | Same stages, mode flags | [ ] |
+| 3.A.8 | Rule match pipeline (enable/disable, categories, text-level) | Java semantics | [ ] |
 
 ### 3.B Pattern rules
 
 | # | Check | Status |
 |---|--------|--------|
 | 3.B.1 | Pattern token matching = Java (no soft POS accept) | [ ] blocked on 1.8 |
-| 3.B.2 | Exceptions, skip, regex, inflected, negation, `<or>`/`phraseref`/setpos/and/raw_pos | [~] + exception negate/negate_pos XOR; prev/next surface; multi-exception remaining |
-| 3.B.3 | Unification | [~] Loader parses `<unification>`+`<unify>`; matcher ports testUnification; UniFeatures/Last/Neg/Neutral wired |
-| 3.B.4 | Filters / rule filters as Java | [~] AdvancedSynthesizer+postagReplace (fail-closed); CA/NL dates; DE NumberInWord; CA Adjust* remaining |
-| 3.B.5 | Full grammar/style load (entities, includes) | [~] SYSTEM `.ent`; phrases/phraseref/includephrases expand; style/variant/L2 |
+| 3.B.2 | Exceptions, skip, regex, inflected, negation, `<or>`/`phraseref`/setpos/and/raw_pos | [ ] + exception negate/negate_pos XOR; prev/next surface; multi-exception remaining |
+| 3.B.3 | Unification | [ ] Loader parses `<unification>`+`<unify>`; matcher ports testUnification; UniFeatures/Last/Neg/Neutral wired |
+| 3.B.4 | Filters / rule filters as Java | [ ] AdvancedSynthesizer+postagReplace (fail-closed); CA/NL dates; DE NumberInWord; CA Adjust* remaining |
+| 3.B.5 | Full grammar/style load (entities, includes) | [ ] SYSTEM `.ent`; phrases/phraseref/includephrases expand; style/variant/L2 |
 
 ### 3.C Rule families (per language, after stack)
 
 | # | Check | Status |
 |---|--------|--------|
-| 3.C.1 | Core layout rules (whitespace, unpaired, …) | [~] Tools.isParagraphEnd shared; ConvertToSentenceCaseFilter registered |
-| 3.C.2 | Speller rules (Morfologik/Hunspell) | [~] |
-| 3.C.3 | Language-specific Java rules (EN AvsAn, DE, …) | [~] by language |
-| 3.C.4 | False friends | [~] |
+| 3.C.1 | Core layout rules (whitespace, unpaired, …) | [ ] Tools.isParagraphEnd shared; ConvertToSentenceCaseFilter registered |
+| 3.C.2 | Speller rules (Morfologik/Hunspell) | [ ] |
+| 3.C.3 | Language-specific Java rules (EN AvsAn, DE, …) | [ ] by language |
+| 3.C.4 | False friends | [ ] |
 | 3.C.5 | Picky / default-off rules as Java (not soft picky XML) | [ ] |
 
 ### 3.D Languages
@@ -125,7 +124,7 @@ For **each** language claimed supported, check:
 
 | # | Check | Status |
 |---|--------|--------|
-| 3.D.0 | Language module structure mirrors Java package | [~] many packages exist |
+| 3.D.0 | Language module structure mirrors Java package | [ ] many packages exist |
 | 3.D.1 | createDefaultTagger / Tokenizer / Disambiguator / Chunker twins | [ ] per lang |
 | 3.D.2 | Default rule registration matches Java | [ ] per lang |
 | 3.D.3 | Resources resolve like Java (same paths/names) | [ ] per lang |
