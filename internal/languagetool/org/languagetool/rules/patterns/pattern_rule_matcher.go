@@ -388,6 +388,16 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 				if m.SkipImmunized && tokens[try].IsImmunized() {
 					continue
 				}
+				// Java AbstractPatternRulePerformer.testAllReadings prevMatched:
+				// when previous element had skip>0, its scope=next exception rejects
+				// candidate tokens in the skip window that match the exception.
+				if prevSkip > 0 && ki > 0 {
+					if prevM := m.matchers[ki-1]; prevM != nil && prevM.Base != nil &&
+						prevM.Base.HasNextException() &&
+						prevM.IsMatchedByNextException(tokens[try]) {
+						continue
+					}
+				}
 				// When first element, Java still has firstMatchToken=-1 until match;
 				// re-resolve with try as provisional first if needed for refs on later elems only.
 				if matcher.IsMatchedReadings(tokens[try]) {
@@ -396,9 +406,9 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 						matcher.IsMatchedByPreviousException(tokens[try-1]) {
 						continue
 					}
-					// Java: scope="next" exception blocks when following token matches
-					// (also when skip=0 and next is the immediate neighbor).
-					if pt.HasNextException() && try+1 < len(tokens) &&
+					// Java: scope="next" on *this* element vs immediate next token only when
+					// prevSkipNext == 0 (skip>0 uses the prevMatched path above for following elems).
+					if prevSkip == 0 && pt.HasNextException() && try+1 < len(tokens) &&
 						matcher.IsMatchedByNextException(tokens[try+1]) {
 						continue
 					}

@@ -59,6 +59,72 @@ func TestPatternRuleMatcherNoMatch(t *testing.T) {
 	require.Empty(t, matches)
 }
 
+// Java AbstractPatternRulePerformer: scope=next on element blocks when immediate next matches
+// (prevSkipNext == 0 path).
+func TestPatternRuleMatcher_NextExceptionImmediate(t *testing.T) {
+	// pattern: can + verb; exception next be|do → "can be" does not match
+	can := Token("can")
+	can.AddNextException(NewPatternToken("be", false, false, false))
+	can.AddNextException(NewPatternToken("do", false, false, false))
+	rule := NewPatternRule("NEXT", "en",
+		[]*PatternToken{can, Token("run")},
+		"d", "m", "")
+	// "can be" — next exception fires
+	sent1 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("can", 0), atr("be", 4),
+	})
+	ms, err := rule.Match(sent1)
+	require.NoError(t, err)
+	require.Empty(t, ms)
+	// "can run" — ok
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("can", 0), atr("run", 4),
+	})
+	ms, err = rule.Match(sent2)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+}
+
+// Java: when prev element has skip>0, its scope=next exception rejects skip-window
+// candidates that match the exception (prevMatched path with prevSkipNext > 0).
+func TestPatternRuleMatcher_NextExceptionSkipWindow(t *testing.T) {
+	// Pattern: see (skip=3, next-exception "bad") + good
+	// Immediate next of "see" must NOT be "bad" (path 2 when matching see with prevSkip==0).
+	// Within the skip window, "bad" cannot be the match position for "good" (path 1).
+	see := Token("see")
+	see.SetSkipNext(3)
+	see.AddNextException(NewPatternToken("bad", false, false, false))
+	rule := NewPatternRule("SKIPNEXT", "en",
+		[]*PatternToken{see, Token("good")},
+		"d", "m", "")
+
+	// see foo bad good → match; "bad" skipped over as non-candidate for "good"
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("see", 0), atr("foo", 4), atr("bad", 8), atr("good", 12),
+	})
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+	require.Equal(t, 0, ms[0].FromPos)
+	require.Equal(t, sent.GetTokensWithoutWhitespace()[3].GetEndPos(), ms[0].ToPos)
+
+	// see bad good → path 2 blocks matching "see" (immediate next is exception)
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("see", 0), atr("bad", 4), atr("good", 8),
+	})
+	ms, err = rule.Match(sent2)
+	require.NoError(t, err)
+	require.Empty(t, ms)
+
+	// see good — adjacent; next of see is good (not bad) → match
+	sent3 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("see", 0), atr("good", 4),
+	})
+	ms, err = rule.Match(sent3)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+}
+
 // testPOS builds AnalyzedTokenReadings with a POS tag at start.
 func atrPOS(token, pos string, start int) *languagetool.AnalyzedTokenReadings {
 	return languagetool.NewAnalyzedTokenReadingsAt(
