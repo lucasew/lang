@@ -106,11 +106,38 @@ func TestRegisterEnglishVariantExtraRules(t *testing.T) {
 	}
 }
 
-func TestRegisterPickyEnglishRules_OnlyProfanity(t *testing.T) {
+// Java has no separate picky registration; Tag.picky rules are in getRelevantRules.
+func TestRegisterPickyEnglishRules_NoInvent(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("en-US")
 	RegisterPickyEnglishRules(lt)
-	ids := lt.GetAllRegisteredRuleIDs()
-	require.Equal(t, []string{"PROFANITY"}, ids)
+	require.Empty(t, lt.GetAllRegisteredRuleIDs())
+}
+
+// PROFANITY is in core with Tag.picky — active only at Level.PICKY (Java setLevel).
+func TestRegisterCoreEnglish_ProfanityGatedByLevel(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("en-US")
+	RegisterCoreEnglishLanguageRules(lt)
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PROFANITY")
+	// Isolate from speller/overlap demotion of Tag.picky matches.
+	lt.DisableCleanOverlapping()
+	lt.DisableRule("MORFOLOGIK_RULE_EN_US")
+	// "albo" is a key-only entry in replace_profanity.txt
+	text := "That albo was rude."
+	lt.Level = languagetool.LevelDefault
+	def := lt.Check(text)
+	for _, m := range def {
+		require.NotEqual(t, "PROFANITY", m.RuleID)
+	}
+	lt.Level = languagetool.LevelPicky
+	picky := lt.Check(text)
+	var hasProf bool
+	for _, m := range picky {
+		if m.RuleID == "PROFANITY" {
+			hasProf = true
+			require.True(t, m.IsPicky)
+		}
+	}
+	require.True(t, hasProf, "%+v", picky)
 }
 
 func TestRegisterDemoEnglishSpeller(t *testing.T) {

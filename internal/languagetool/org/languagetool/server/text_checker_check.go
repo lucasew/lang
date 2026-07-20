@@ -7,7 +7,6 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 )
 
 // CheckOptions carries optional check-query knobs beyond language/disabled rules.
@@ -122,7 +121,7 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 	p, settings, fromPool := t.preparePipeline(lang, opts)
 	defer t.releasePipeline(settings, p, fromPool)
 	locals := p.Check(text)
-	locals = applyLevelPickyBoost(lang, opts.Level, locals, text)
+	// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
 	locals = applyRuleValues(lang, text, locals, opts.RuleValues)
 	locals = filterLocalsByIgnoreWords(text, locals, opts.IgnoreWords)
 	locals = filterLocalsByCategories(locals, opts)
@@ -142,7 +141,7 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 	defer t.releasePipeline(settings, p, fromPool)
 	locals := p.CheckAnnotated(at)
 	plain := at.GetPlainText()
-	locals = applyLevelPickyBoost(lang, opts.Level, locals, plain)
+	// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
 	locals = applyRuleValues(lang, plain, locals, opts.RuleValues)
 	locals = filterLocalsByIgnoreWords(plain, locals, opts.IgnoreWords)
 	locals = filterLocalsByCategories(locals, opts)
@@ -248,46 +247,6 @@ func applyRuleValues(lang, text string, existing []languagetool.LocalMatch, raw 
 		}
 	}
 	return out
-}
-
-// applyLevelPickyBoost runs official Tag.picky rules when level is PICKY.
-// Java: English.getRelevantRules Tag.picky (e.g. SimpleReplaceProfanityRule).
-// Unit conversion is locale default (RegisterEnglishVariantExtraRules), not picky.
-// Soft invent packs / picky-soft.xml are not loaded (faithful-port policy).
-func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool.LocalMatch, text string) []languagetool.LocalMatch {
-	if !strings.EqualFold(string(level), string(CheckLevelPicky)) {
-		return existing
-	}
-	base := lang
-	if i := strings.IndexByte(lang, '-'); i > 0 {
-		base = lang[:i]
-	}
-	if !strings.EqualFold(base, "en") {
-		// Non-EN picky grammar.xml packs deferred until full official load is wired.
-		return existing
-	}
-	lt := languagetool.NewJLanguageTool(lang)
-	en.RegisterPickyEnglishRules(lt)
-	// Official picky rule IDs from RegisterPickyEnglishRules (not invent sequences).
-	pickyIDs := map[string]struct{}{}
-	for _, id := range lt.GetAllRegisteredRuleIDs() {
-		pickyIDs[id] = struct{}{}
-	}
-	seen := map[string]struct{}{}
-	for _, m := range existing {
-		seen[m.RuleID] = struct{}{}
-	}
-	for _, m := range lt.Check(text) {
-		if _, ok := pickyIDs[m.RuleID]; !ok {
-			continue
-		}
-		if _, dup := seen[m.RuleID]; dup {
-			continue
-		}
-		existing = append(existing, m)
-		seen[m.RuleID] = struct{}{}
-	}
-	return existing
 }
 
 // CheckAndBuildJSON is a V2 convenience: Check + BuildResponse.

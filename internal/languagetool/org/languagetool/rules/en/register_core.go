@@ -204,17 +204,13 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(esp.GetID(), rules.AsSentenceChecker(esp.Match))
 }
 
-// RegisterPickyEnglishRules installs Java English Tag.picky rules (official data only).
-// Invent token-sequence packs (alot/irregardless/…) are not registered — use grammar.xml when wired.
-// Unit conversion is Tag.picky in Java UnitConversionRule but registered via getRelevantRules
-// (locale-specific Imperial/US) in RegisterEnglishVariantExtraRules.
+// RegisterPickyEnglishRules is a no-op. Java has no separate picky registration —
+// Tag.picky rules (SimpleReplaceProfanityRule, LongSentenceRule, UnitConversion, …)
+// live in getRelevantRules / RegisterCoreEnglishLanguageRules and are filtered by
+// JLanguageTool.setLevel via isRuleActiveForLevelAndToneTags. Invent picky packs
+// (token sequences / picky-soft.xml) must not reappear here.
 func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
-	if lt == nil {
-		return
-	}
-	// Official profanity list (Tag.picky in Java English.getRelevantRules).
-	pf := NewSimpleReplaceProfanityRule(nil)
-	lt.AddRuleChecker(pf.GetID(), rules.AsSentenceCheckerSimple(pf.Match))
+	_ = lt
 }
 
 // RegisterEnglishVariantExtraRules installs locale extras from Java *English.getRelevantRules

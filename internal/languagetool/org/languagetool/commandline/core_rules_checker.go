@@ -159,18 +159,11 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 	checker := NewCoreRulesChecker(lang)
 	lt := checker.lt
 	if opts != nil {
-		picky := strings.EqualFold(opts.Level, "PICKY")
-		// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends, long sentence, …).
-		if picky {
+		// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends,
+		// PROFANITY, long sentence, …). Tag.picky rules live in core packs —
+		// no invent RegisterPickyEnglishRules / picky-soft packs.
+		if strings.EqualFold(opts.Level, "PICKY") {
 			lt.Level = languagetool.LevelPicky
-		}
-		baseLang := lang
-		if i := strings.IndexByte(lang, '-'); i > 0 {
-			baseLang = lang[:i]
-		}
-		if picky && strings.EqualFold(baseLang, "en") {
-			// Java English picky-level rules (not soft invent packs).
-			en.RegisterPickyEnglishRules(lt)
 		}
 		// Soft grammar packs (testdata/*-soft.xml) are not loaded — faithful port only.
 		// Official grammar.xml by default (Java getRuleFileNames); opt out with
