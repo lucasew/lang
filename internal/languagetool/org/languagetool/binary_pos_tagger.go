@@ -58,6 +58,9 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	case "gl":
 		// Java GalicianTagger: exact lookups + mente/auto|re prefixes (not BaseTagger alone).
 		tw = galicianTaggerTagWord(wordTagger)
+	case "pt":
+		// Java PortugueseTagger: exact lookups + ordinals/mente/soto- (not BaseTagger alone).
+		tw = portugueseTaggerTagWord(wordTagger)
 	default:
 		// Java BaseTagger: tagLowercaseWithUppercase=true by default (most language taggers).
 		base := tagging.NewBaseTagger(wordTagger, dictPath, langBase, true)
@@ -66,6 +69,131 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 	lt.TagWord = tw
 	wireTokenizerIsTaggedFromPOS(lt.GetLanguageCode(), tw)
 	return true
+}
+
+// portugueseTaggerTagWord ports Java PortugueseTagger.tag for TagWord inject
+// (exact case merge + number expressions + mente + soto- prefixes).
+func portugueseTaggerTagWord(wt tagging.WordTagger) func(token string) []TokenTag {
+	if wt == nil {
+		return nil
+	}
+	lookup := func(w string) []TokenTag {
+		tws := wt.Tag(w)
+		if len(tws) == 0 {
+			return nil
+		}
+		out := make([]TokenTag, 0, len(tws))
+		for _, tw := range tws {
+			out = append(out, TokenTag{POS: tw.PosTag, Lemma: tw.Lemma})
+		}
+		return out
+	}
+	// Patterns aligned with PortugueseTagger.java / tagging/pt.
+	adjPartFS := regexp.MustCompile(`^V.P..SF.|A[QO].[FC][SN].$`)
+	verbRE := regexp.MustCompile(`^V.+`)
+	prefixes := regexp.MustCompile(`(?i)^(soto-)(...+)$`)
+	const (
+		ordMasc = "oºᵒ"
+		ordFem  = "aªᵃ"
+		ordPl   = "sˢ"
+	)
+	ordSuf := "[" + ordMasc + ordFem + "][" + ordPl + "]?"
+	ordPat := regexp.MustCompile(`^\d+[\d,.]*\.?` + ordSuf + `$`)
+	ordMascSg := regexp.MustCompile("[" + ordMasc + "]$")
+	ordFemSg := regexp.MustCompile("[" + ordFem + "]$")
+	ordMascPl := regexp.MustCompile("[" + ordMasc + "][" + ordPl + "]$")
+	ordFemPl := regexp.MustCompile("[" + ordFem + "][" + ordPl + "]$")
+	ordReplace := regexp.MustCompile(ordSuf)
+	percentPat := regexp.MustCompile(`^−?\d+[\d,.]*%$`)
+	degreePat := regexp.MustCompile(`^−?\d+[\d,.]*°$`)
+
+	hyphenMixed := func(word string) bool {
+		if strings.Contains(word, "-") {
+			for _, part := range strings.Split(word, "-") {
+				if tools.IsMixedCase(part) {
+					return true
+				}
+			}
+			return false
+		}
+		return tools.IsMixedCase(word)
+	}
+
+	return func(token string) []TokenTag {
+		if token == "" {
+			return nil
+		}
+		w := strings.ReplaceAll(token, "’", "'")
+		lower := strings.ToLower(w)
+		isLower := w == lower
+		isMixed := hyphenMixed(w)
+		var out []TokenTag
+		seen := map[string]struct{}{}
+		add := func(tags []TokenTag) {
+			for _, t := range tags {
+				key := t.POS + "\x00" + t.Lemma
+				if _, ok := seen[key]; ok {
+					continue
+				}
+				seen[key] = struct{}{}
+				out = append(out, t)
+			}
+		}
+		add(lookup(w))
+		if !isLower && !isMixed {
+			add(lookup(lower))
+		}
+		if len(out) == 0 {
+			if ordPat.MatchString(w) {
+				lemma := ordReplace.ReplaceAllString(w, "º")
+				ng := ""
+				switch {
+				case ordMascPl.MatchString(w):
+					ng = "MP"
+				case ordFemPl.MatchString(w):
+					ng = "FP"
+				case ordMascSg.MatchString(w):
+					ng = "MS"
+				case ordFemSg.MatchString(w):
+					ng = "FS"
+				}
+				if ng != "" {
+					add([]TokenTag{
+						{POS: "NC" + ng + "000", Lemma: lemma},
+						{POS: "AO0" + ng + "0", Lemma: lemma},
+					})
+				}
+			} else if percentPat.MatchString(w) || degreePat.MatchString(w) {
+				add([]TokenTag{{POS: "NCMP000", Lemma: w}})
+			}
+		}
+		if len(out) == 0 && !isMixed && strings.HasSuffix(lower, "mente") {
+			possibleAdj := strings.TrimSuffix(lower, "mente")
+			for _, tw := range lookup(possibleAdj) {
+				if tw.POS != "" && adjPartFS.MatchString(tw.POS) {
+					add([]TokenTag{{POS: "RG", Lemma: lower}})
+					break
+				}
+			}
+		}
+		if len(out) == 0 && !isMixed {
+			if m := prefixes.FindStringSubmatch(w); m != nil {
+				pref := strings.ToLower(m[1])
+				verb := strings.ToLower(m[2])
+				for _, tw := range lookup(verb) {
+					if tw.POS == "" || !verbRE.MatchString(tw.POS) {
+						continue
+					}
+					lemma := pref + tw.Lemma
+					if len(lookup(lemma)) > 0 {
+						continue
+					}
+					add([]TokenTag{{POS: tw.POS, Lemma: lemma}})
+				}
+			}
+		}
+		return out
+	}
 }
 
 // galicianTaggerTagWord ports Java GalicianTagger.tag case + additionalTags for TagWord inject.

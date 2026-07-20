@@ -1,6 +1,7 @@
 package pt
 
-// Twin of PortugueseTaggerTest — MapWordTagger + contraction greens
+// Twin of languagetool-language-modules/pt PortugueseTagger tests (MapWordTagger smokes).
+
 import (
 	"testing"
 
@@ -13,60 +14,47 @@ func TestPortugueseTagger_Basic(t *testing.T) {
 	got := NewPortugueseTagger(wt).Tag([]string{"Casa", "xyz"})
 	require.Len(t, got, 2)
 	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.Equal(t, "NCFS000", *got[0].GetReadings()[0].GetPOSTag())
+	// unknown → null POS
+	require.Nil(t, got[1].GetReadings()[0].GetPOSTag())
 }
 
-func TestPortugueseTagger_Contractions(t *testing.T) {
-	tg := NewPortugueseTagger(tagging.MapWordTagger{})
-	got := tg.Tag([]string{"do", "da", "no", "à"})
-	require.True(t, got[0].IsTagged())
-	require.True(t, got[1].IsTagged())
-	require.True(t, got[2].IsTagged())
-	require.True(t, got[3].IsTagged())
-	// do → de + o readings
-	require.GreaterOrEqual(t, len(got[0].GetReadings()), 2)
-}
-
-func TestPortugueseTagger_OrdinalAbbreviations(t *testing.T) {
+func TestPortugueseTagger_Ordinals(t *testing.T) {
 	tg := NewPortugueseTagger(tagging.MapWordTagger{})
 	got := tg.Tag([]string{"1.º", "2.ª"})
 	require.True(t, got[0].IsTagged())
 	require.True(t, got[1].IsTagged())
+	// noun + adj readings
+	require.GreaterOrEqual(t, len(got[0].GetReadings()), 2)
 }
-func TestPortugueseTagger_ContractionTagging(t *testing.T) {
-	// green path covered by TestPortugueseTagger_Contractions
-	require.NotEmpty(t, ContractionReadings("pelo"))
+
+func TestPortugueseTagger_PercentDegree(t *testing.T) {
+	tg := NewPortugueseTagger(tagging.MapWordTagger{})
+	got := tg.Tag([]string{"10%", "20°"})
+	require.Equal(t, "NCMP000", *got[0].GetReadings()[0].GetPOSTag())
+	require.Equal(t, "NCMP000", *got[1].GetReadings()[0].GetPOSTag())
 }
-func TestPortugueseTagger_Compound(t *testing.T) {
-	// compound case variants: inject jiu-jitsu
+
+func TestPortugueseTagger_Mente(t *testing.T) {
+	// possibleAdj = lowerWord without "mente"; ADJ FS tag → RG
 	wt := tagging.MapWordTagger{
-		"jiu-jitsu": {tagging.NewTaggedWord("jiu-jitsu", "NCMS000")},
+		"rapida": {tagging.NewTaggedWord("rapido", "AQ0FS0")},
 	}
-	tg := NewPortugueseTagger(wt)
-	for _, w := range []string{"jiu-jitsu", "Jiu-jitsu", "JIU-JITSU"} {
-		got := tg.Tag([]string{w})
-		require.True(t, got[0].IsTagged(), w)
-	}
+	got := NewPortugueseTagger(wt).Tag([]string{"rapidamente"})
+	require.True(t, got[0].IsTagged())
+	require.Equal(t, "RG", *got[0].GetReadings()[0].GetPOSTag())
 }
-func TestPortugueseTagger_ProductivePrefixes(t *testing.T) {
-	// soto-trepei: bare verb trepei in inject dict
+
+func TestPortugueseTagger_SotoPrefix(t *testing.T) {
 	wt := tagging.MapWordTagger{
-		"trepei": {tagging.NewTaggedWord("trepar", "VMIS1S0")},
+		"por": {tagging.NewTaggedWord("por", "VMIP1S0")},
 	}
-	tg := NewPortugueseTagger(wt)
-	got := tg.Tag([]string{"soto-trepei", "xoxotrepei"})
+	got := NewPortugueseTagger(wt).Tag([]string{"soto-por"})
 	require.True(t, got[0].IsTagged())
-	require.False(t, got[1].IsTagged()) // not a real prefix
-	lemma := got[0].GetReadings()[0].GetLemma()
-	require.NotNil(t, lemma)
-	require.Equal(t, "soto-trepar", *lemma)
+	require.Equal(t, "VMIP1S0", *got[0].GetReadings()[0].GetPOSTag())
+	require.Equal(t, "soto-por", *got[0].GetReadings()[0].GetLemma())
 }
-func TestPortugueseTagger_Enclitics(t *testing.T) {
-	wt := tagging.MapWordTagger{"diz": {tagging.NewTaggedWord("dizer", "VMIP3S0")}}
-	tg := NewPortugueseTagger(wt)
-	got := tg.Tag([]string{"diz-me"})
-	require.True(t, got[0].IsTagged())
-	verb, clit, ok := EncliticSplit("diz-me")
-	require.True(t, ok)
-	require.Equal(t, "diz", verb)
-	require.Equal(t, "me", clit)
+
+func TestPortugueseTagger_DictionaryPath(t *testing.T) {
+	require.Equal(t, PortugueseDictPath, NewPortugueseTagger(nil).GetDictionaryPath())
 }
