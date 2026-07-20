@@ -23,4 +23,15 @@ func TestParseDayOfMonthArg(t *testing.T) {
 	n, err := ParseDayOfMonthArg("22nd", nil)
 	require.NoError(t, err)
 	require.Equal(t, 22, n)
+	// full Matcher.matches — invent leading-digit-only would still work, but mid invent "x22" must fail
+	n, err = ParseDayOfMonthArg("x22", nil)
+	require.NoError(t, err)
+	require.Equal(t, 0, n, "no full match → Java getDayOfMonth default 0")
+	// day required; missing panics
+	f := &FutureDateFilterCore{
+		Now: func() time.Time { return time.Date(2014, time.January, 1, 0, 0, 0, 0, time.UTC) },
+	}
+	require.Panics(t, func() {
+		f.AcceptFromArgs(map[string]string{"year": "2015", "month": "3"})
+	})
 }
