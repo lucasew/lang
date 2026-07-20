@@ -69,6 +69,10 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 		if sm == "" {
 			sm = short
 		}
+		ruleURL := languagetool.RuleURL(id, languageCode)
+		if u := matchURL(m); u != "" {
+			ruleURL = u
+		}
 		mj = append(mj, tools.MatchForJSON{
 			Message:               m.GetMessage(),
 			ShortMessage:          sm,
@@ -81,9 +85,11 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 			CategoryID:            catID,
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
-			RuleURL:               languagetool.RuleURL(id, languageCode),
+			RuleURL:               ruleURL,
 			Tags:                  ruleTagsOf(m),
 			TempOff:               ruleTempOffOf(m),
+			SubID:                 ruleSubIDOf(m),
+			SourceFile:            ruleSourceFileOf(m),
 		})
 	}
 	s, err := ser.RuleMatchesToJSON(mj, text, 45)

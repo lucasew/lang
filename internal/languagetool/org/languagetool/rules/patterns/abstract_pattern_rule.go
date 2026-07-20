@@ -22,6 +22,10 @@ type AbstractPatternRule struct {
 	CategoryDefaultOff bool
 	// CategoryType ports category type="…" for ITS when the rule has no type (Java categoryIssueType).
 	CategoryType string
+	// IssueType ports resolved LocQualityIssueType string (rule > rulegroup > category type).
+	IssueType string
+	// URL ports Rule.url from XML <url>.
+	URL string
 	SuggestionsOutMsg       string
 	SourceFile              string
 	Filter                  RuleFilter

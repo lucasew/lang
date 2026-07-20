@@ -32,6 +32,10 @@ type MatchForJSON struct {
 	Tags []string
 	// TempOff ports Rule.isDefaultTempOff() → JSON rule.tempOff (only when true).
 	TempOff bool
+	// SubID ports Rule.getSubId() → JSON rule.subId (omit when empty).
+	SubID string
+	// SourceFile ports Rule.getSourceFile() basename → JSON rule.sourceFile (omit when empty / compact).
+	SourceFile string
 }
 
 // RuleMatchesAsJsonSerializer ports org.languagetool.tools.RuleMatchesAsJsonSerializer
@@ -73,6 +77,10 @@ type ReplacementJSON struct {
 
 type RuleJSON struct {
 	ID          string        `json:"id"`
+	// SubID ports Rule.getSubId (Java writeRule when non-null).
+	SubID string `json:"subId,omitempty"`
+	// SourceFile ports Rule.getSourceFile basename (Java writeRule when non-null and not compact).
+	SourceFile  string        `json:"sourceFile,omitempty"`
 	Description string        `json:"description,omitempty"`
 	IssueType   string        `json:"issueType,omitempty"`
 	Category    *CategoryJSON `json:"category,omitempty"`
@@ -168,6 +176,13 @@ func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSONWithReason(matches []Matc
 			},
 			Severity: m.Severity,
 		}
+		if m.SubID != "" {
+			mj.Rule.SubID = m.SubID
+		}
+		// Java: sourceFile only when compactMode != 1 and rule.getSourceFile() != null.
+		if s.CompactMode != 1 && m.SourceFile != "" {
+			mj.Rule.SourceFile = sourceFileBasename(m.SourceFile)
+		}
 		if m.CategoryID != "" || m.CategoryName != "" {
 			mj.Rule.Category = &CategoryJSON{ID: m.CategoryID, Name: m.CategoryName}
 		}
@@ -204,6 +219,19 @@ func cleanSuggestion(s string) string {
 	s = strings.ReplaceAll(s, "<suggestion>", "")
 	s = strings.ReplaceAll(s, "</suggestion>", "")
 	return s
+}
+
+// sourceFileBasename ports Java ANYTHING_SLASH_PATTERN.matcher(path).replaceFirst("")
+// (strip directories; keep last path segment).
+func sourceFileBasename(path string) string {
+	path = strings.TrimSpace(path)
+	if path == "" {
+		return ""
+	}
+	if i := strings.LastIndexAny(path, `/\`); i >= 0 && i+1 < len(path) {
+		return path[i+1:]
+	}
+	return path
 }
 
 func buildContext(text string, from, to, size int) *ContextJSON {

@@ -64,6 +64,45 @@ func TestPatternRuleLoader_DefaultTempOff(t *testing.T) {
 	require.False(t, byID["O1"].DefaultTempOff)
 }
 
+// Java type inheritance: rule > rulegroup > category; url: rule else rulegroup.
+func TestPatternRuleLoader_TypeAndURLInheritance(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category id="C" name="Cat" type="misspelling">
+    <rule id="R1" name="rule type" type="grammar">
+      <pattern><token>a</token></pattern>
+      <message>m</message>
+      <url>https://example.com/rule</url>
+    </rule>
+    <rulegroup id="G" name="g" type="typographical">
+      <url>https://example.com/group</url>
+      <rule>
+        <pattern><token>b</token></pattern>
+        <message>m</message>
+      </rule>
+    </rulegroup>
+    <rule id="R2" name="cat type only">
+      <pattern><token>c</token></pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "/path/to/grammar.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 3)
+	byID := map[string]*AbstractPatternRule{}
+	for _, ar := range ars {
+		byID[ar.ID] = ar
+		require.Equal(t, "/path/to/grammar.xml", ar.SourceFile)
+	}
+	require.Equal(t, "grammar", byID["R1"].IssueType)
+	require.Equal(t, "https://example.com/rule", byID["R1"].URL)
+	require.Equal(t, "typographical", byID["G"].IssueType)
+	require.Equal(t, "https://example.com/group", byID["G"].URL)
+	require.Equal(t, "misspelling", byID["R2"].IssueType)
+	require.Empty(t, byID["R2"].URL)
+}
+
 // Java category default="off" → Category.isDefaultOff; rules stay default-on until ignoreRule.
 func TestPatternRuleLoader_CategoryDefaultOff(t *testing.T) {
 	xml := `<?xml version="1.0"?>

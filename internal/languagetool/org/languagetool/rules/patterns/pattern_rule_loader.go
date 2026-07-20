@@ -24,13 +24,13 @@ func NewPatternRuleLoader() *PatternRuleLoader { return &PatternRuleLoader{} }
 func (l *PatternRuleLoader) SetRelaxedMode(v bool) { l.RelaxedMode = v }
 
 // GetRulesFromReader parses a simplified pattern-rules XML stream.
-// filename is used only in error messages.
+// filename is used in error messages and stored as Rule.sourceFile.
 func (l *PatternRuleLoader) GetRulesFromReader(r io.Reader, filename, languageCode string) ([]*AbstractPatternRule, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, fmt.Errorf("Cannot load or parse input stream of '%s': %w", filename, err)
 	}
-	rules, err := l.parseRulesXML(data, languageCode)
+	rules, err := l.parseRulesXML(data, languageCode, filename)
 	if err != nil {
 		return nil, fmt.Errorf("Cannot load or parse input stream of '%s': %w", filename, err)
 	}
@@ -118,9 +118,13 @@ type xmlRuleGroup struct {
 	Name  string    `xml:"name,attr"`
 	// Default ports rulegroup default="off"|"temp_off" (inherited by child rules).
 	Default string `xml:"default,attr"`
+	// Type ports rulegroup type="grammar|typographical|…" (Java ruleGroupIssueType).
+	Type string `xml:"type,attr"`
 	Tags  string    `xml:"tags,attr"`
 	ToneTags string `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
+	// URL ports rulegroup <url> inherited when child omits url (Java urlForRuleGroup).
+	URL string `xml:"url"`
 	// AntiPatterns on the rulegroup apply to every child rule (Java PatternRuleHandler).
 	AntiPatterns []xmlPattern `xml:"antipattern"`
 	Rules        []xmlRule    `xml:"rule"`
@@ -130,6 +134,8 @@ type xmlRule struct {
 	ID      string     `xml:"id,attr"`
 	Name    string     `xml:"name,attr"`
 	Default string     `xml:"default,attr"`
+	// Type ports rule type="…" → LocQualityIssueType (overrides rulegroup/category).
+	Type string `xml:"type,attr"`
 	Tags    string     `xml:"tags,attr"`
 	ToneTags string    `xml:"tone_tags,attr"`
 	GoalSpecific string `xml:"is_goal_specific,attr"`
@@ -137,6 +143,8 @@ type xmlRule struct {
 	// Message keeps inner XML so <suggestion>…</suggestion> and soft \N backrefs survive.
 	Message xmlMessage `xml:"message"`
 	Short   string     `xml:"short"`
+	// URL ports rule <url> element (Java setUrl).
+	URL string `xml:"url"`
 	// Filter is Java <filter class="…"/> — not implemented for most classes.
 	// Rules with an unsupported filter must not register (would match without filter = cheat).
 	Filter *xmlFilter `xml:"filter"`
@@ -737,7 +745,7 @@ type xmlException struct {
 	Content       string `xml:",chardata"`
 }
 
-func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*AbstractPatternRule, error) {
+func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename string) ([]*AbstractPatternRule, error) {
 	var root xmlRulesRoot
 	if err := xml.Unmarshal(data, &root); err != nil {
 		return nil, err
@@ -767,7 +775,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
 	idPrefix := strings.TrimSpace(root.IdPrefix)
-	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType string) error {
+	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -840,6 +848,11 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				r.CategoryName = catName
 				r.CategoryDefaultOff = catDefaultOff
 				r.CategoryType = catType
+				// Java: rule type → rulegroup type → category type
+				r.IssueType = resolveIssueType(xr.Type, groupType, catType)
+				// Java: rule url else rulegroup url
+				r.URL = resolveRuleURL(xr.URL, groupURL)
+				r.SourceFile = sourceFile
 				if defaultOff {
 					r.DefaultOff = true
 				}
@@ -857,6 +870,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 		return nil
 	}
+	srcFile := strings.TrimSpace(filename)
 	for _, cat := range root.Categories {
 		catTags := parseRuleTagsAttr(cat.Tags)
 		catTones := parseToneTagsAttr(cat.ToneTags)
@@ -864,7 +878,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		catDefaultOff := strings.EqualFold(strings.TrimSpace(cat.Default), XMLOff)
 		catType := strings.TrimSpace(cat.Type)
 		for _, xr := range cat.Rules {
-			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile); err != nil {
 				return nil, err
 			}
 		}
@@ -877,13 +891,15 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 			groupAntis := antiPatternsFromXML(groupID, languageCode, g.AntiPatterns, cfg, phraseMap)
 			groupTags := parseRuleTagsAttr(g.Tags)
 			groupTones := parseToneTagsAttr(g.ToneTags)
+			groupType := strings.TrimSpace(g.Type)
+			groupURL := strings.TrimSpace(g.URL)
 			for i, xr := range g.Rules {
 				id := xr.ID
 				if id == "" {
 					id = g.ID
 				}
 				start := len(out)
-				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name, catTags, groupTags, catTones, groupTones, cat.GoalSpecific, g.GoalSpecific, g.Default, catDefaultOff, catType, groupType, groupURL, srcFile); err != nil {
 					return nil, err
 				}
 				// sub id 1-based per XML rule (shared by OR expansions of that rule)
@@ -903,11 +919,31 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, ""); err != nil {
+		if err := add(xr, "", "", "", nil, nil, nil, nil, "", "", "", false, "", "", "", srcFile); err != nil {
 			return nil, err
 		}
 	}
 	return out, nil
+}
+
+// resolveIssueType ports PatternRuleHandler type inheritance:
+// rule type → rulegroup type → category type (Java setLocQualityIssueType).
+func resolveIssueType(ruleType, groupType, catType string) string {
+	for _, t := range []string{ruleType, groupType, catType} {
+		t = strings.TrimSpace(t)
+		if t != "" {
+			return strings.ToLower(t)
+		}
+	}
+	return ""
+}
+
+// resolveRuleURL ports rule <url> else rulegroup <url>.
+func resolveRuleURL(ruleURL, groupURL string) string {
+	if u := strings.TrimSpace(ruleURL); u != "" {
+		return u
+	}
+	return strings.TrimSpace(groupURL)
 }
 
 // resolveRuleDefaultOff ports PatternRuleHandler default inheritance:

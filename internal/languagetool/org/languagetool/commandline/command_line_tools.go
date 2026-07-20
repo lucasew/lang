@@ -427,6 +427,18 @@ func ruleTempOffOf(m *rules.RuleMatch) bool {
 	return false
 }
 
+// ruleSourceFileOf ports Rule.getSourceFile for JSON rule.sourceFile.
+func ruleSourceFileOf(m *rules.RuleMatch) string {
+	if m == nil || m.Rule == nil {
+		return ""
+	}
+	type src interface{ GetSourceFile() string }
+	if r, ok := m.Rule.(src); ok {
+		return r.GetSourceFile()
+	}
+	return ""
+}
+
 func ruleXMLLineOf(m *rules.RuleMatch) int {
 	if m == nil || m.Rule == nil {
 		return 0

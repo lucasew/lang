@@ -57,6 +57,29 @@ func TestRuleMatchesAsJsonSerializer_JsonWithTags(t *testing.T) {
 	require.Contains(t, json, `"tags":["picky"]`)
 }
 
+// Java writeRule: subId + sourceFile basename (when not compact).
+func TestRuleMatchesAsJsonSerializer_JsonSubIdSourceFile(t *testing.T) {
+	s := NewRuleMatchesAsJsonSerializer()
+	m := MatchForJSON{
+		Message:    "msg",
+		FromPos:    0,
+		ToPos:      1,
+		RuleID:     "GRP",
+		SubID:      "2",
+		SourceFile: "/org/languagetool/rules/en/grammar.xml",
+	}
+	json, err := s.RuleMatchesToJSON([]MatchForJSON{m}, "x", 2)
+	require.NoError(t, err)
+	require.Contains(t, json, `"subId":"2"`)
+	require.Contains(t, json, `"sourceFile":"grammar.xml"`)
+	// compact mode omits sourceFile
+	s.CompactMode = 1
+	json, err = s.RuleMatchesToJSON([]MatchForJSON{m}, "x", 2)
+	require.NoError(t, err)
+	require.Contains(t, json, `"subId":"2"`)
+	require.NotContains(t, json, "sourceFile")
+}
+
 // Java writeRule: isDefaultTempOff → "tempOff": true
 func TestRuleMatchesAsJsonSerializer_JsonTempOff(t *testing.T) {
 	s := NewRuleMatchesAsJsonSerializer()

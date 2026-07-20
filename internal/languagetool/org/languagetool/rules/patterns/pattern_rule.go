@@ -38,6 +38,14 @@ type PatternRule struct {
 	DefaultOff bool
 	// DefaultTempOff ports Rule.isDefaultTempOff (XML default="temp_off" only).
 	DefaultTempOff bool
+	// SubID ports AbstractPatternRule.subId (rulegroup child index as string).
+	SubID string
+	// SourceFile ports Rule.sourceFile (grammar XML path).
+	SourceFile string
+	// IssueType ports Rule.locQualityIssueType string form (e.g. "grammar", "misspelling").
+	IssueType string
+	// URL ports Rule.url.
+	URL string
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -96,6 +104,38 @@ func (r *PatternRule) IsDefaultOff() bool {
 // IsDefaultTempOff ports Rule.isDefaultTempOff.
 func (r *PatternRule) IsDefaultTempOff() bool {
 	return r != nil && r.DefaultTempOff
+}
+
+// GetSubID ports AbstractPatternRule.getSubId (empty when unset).
+func (r *PatternRule) GetSubID() string {
+	if r == nil {
+		return ""
+	}
+	return r.SubID
+}
+
+// GetSourceFile ports Rule.getSourceFile.
+func (r *PatternRule) GetSourceFile() string {
+	if r == nil {
+		return ""
+	}
+	return r.SourceFile
+}
+
+// GetURL ports Rule.getUrl.
+func (r *PatternRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType as string.
+func (r *PatternRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ""
+	}
+	return rules.ITSIssueType(r.IssueType)
 }
 
 // SetDefaultTempOff ports Rule.setDefaultTempOff (defaultOff + defaultTempOff).

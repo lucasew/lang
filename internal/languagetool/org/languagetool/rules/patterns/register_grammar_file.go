@@ -56,6 +56,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.GoalSpecific = ar.GoalSpecific
 		pr.DefaultOff = ar.DefaultOff
 		pr.DefaultTempOff = ar.DefaultTempOff
+		pr.SubID = ar.SubID
+		pr.SourceFile = ar.SourceFile
+		pr.IssueType = ar.IssueType
+		pr.URL = ar.URL
 		if len(ar.Tags) > 0 {
 			pr.SetTags(ar.Tags)
 		}
@@ -69,7 +73,8 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		}
 		rule := pr
 		catID, catName := ar.CategoryID, ar.CategoryName
-		catType := ar.CategoryType
+		issueType := ar.IssueType
+		ruleURL := ar.URL
 		desc := ar.Description
 		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
 			ms, err := rule.Match(s)
@@ -92,11 +97,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 					out[i].CategoryName = catName
 				}
 				if out[i].IssueType == "" {
-					// Java: rule type → rulegroup type → category type (ITSIssueType.getIssueType).
-					if catType != "" {
-						out[i].IssueType = strings.ToLower(catType)
+					// Java: rule/group/category type; then soft id-based fallback.
+					if issueType != "" {
+						out[i].IssueType = issueType
 					} else if catID != "" {
-						// Fallback when category omits type= (legacy soft map by id).
 						switch strings.ToUpper(catID) {
 						case "TYPOS":
 							out[i].IssueType = "misspelling"
@@ -110,6 +114,9 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 							out[i].IssueType = "grammar"
 						}
 					}
+				}
+				if out[i].URL == "" && ruleURL != "" {
+					out[i].URL = ruleURL
 				}
 				// Case adjustment when matcher left suggestions (formatMatches already ran).
 				if text != "" {

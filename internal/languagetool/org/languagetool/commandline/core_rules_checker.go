@@ -779,6 +779,10 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 		if sm == "" {
 			sm = short
 		}
+		ruleURL := languagetool.RuleURL(id, lang)
+		if u := matchURL(m); u != "" {
+			ruleURL = u
+		}
 		item := tools.MatchForJSON{
 			Message:               m.GetMessage(),
 			ShortMessage:          sm,
@@ -791,9 +795,11 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 			CategoryID:            catID,
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
-			RuleURL:               languagetool.RuleURL(id, lang),
+			RuleURL:               ruleURL,
 			Tags:                  ruleTagsOf(m),
 			TempOff:               ruleTempOffOf(m),
+			SubID:                 ruleSubIDOf(m),
+			SourceFile:            ruleSourceFileOf(m),
 		}
 		mj = append(mj, item)
 	}
