@@ -17,19 +17,32 @@ const matchMarker = "\x01"
 // Group 1 = attributes, group 2 = optional body (lemma string).
 var reMatchTag = regexp.MustCompile(`(?is)<match\b([^>]*)(?:/>|>(.*?)</match>)`)
 
-// ProcessRuleMessage ports message-side Match handling:
-//  1. inject <pleasespellme/> into suppress_misspelled suggestions (PatternRuleHandler)
-//  2. rewrite <match no="N" …/> → \u0001\N + Match list (XMLRuleHandler.setMatchElement)
-//  3. addLegacyMatches for bare \N (inMessageOnly)
-//  4. strip SOH markers left in the string
-//
-// Returns cleaned message text and ordered SuggestionMatches for formatMatches.
+// ProcessRuleMessage ports message-side Match handling with no message-level suppress.
 func ProcessRuleMessage(raw string) (string, []*Match) {
+	return ProcessRuleMessageOpts(raw, false, false)
+}
+
+// ProcessRuleMessageOpts ports PatternRuleHandler MESSAGE + SUGGESTION handling:
+//  1. inject <pleasespellme/> into suppress suggestions (PatternRuleHandler SUGGESTION)
+//  2. when ruleSuppressMisspelled (message suppress_misspelled="yes"):
+//     - prepend PLEASE_SPELL_ME to the message body (forMessage only — Java MESSAGE case)
+//     - every <suggestion> also gets PLEASE_SPELL_ME (isRuleSuppressMisspelled)
+//  3. rewrite <match no="N" …/> → \u0001\N + Match list (XMLRuleHandler.setMatchElement)
+//  4. addLegacyMatches for bare \N (inMessageOnly)
+//  5. strip SOH markers left in the string
+//
+// forMessage: true for <message> content; false for outer suggestionsOutMsg
+// (outer path inherits rule suppress into suggestions/matches but does not prepend).
+func ProcessRuleMessageOpts(raw string, ruleSuppressMisspelled, forMessage bool) (string, []*Match) {
 	if raw == "" {
 		return "", nil
 	}
-	msg := injectPleaseSpellMe(raw)
-	msg, fromTags := rewriteMatchTags(msg)
+	msg := injectPleaseSpellMe(raw, ruleSuppressMisspelled)
+	if forMessage && ruleSuppressMisspelled {
+		// Java MESSAGE: message.append(PLEASE_SPELL_ME) before body
+		msg = PleaseSpellMe + msg
+	}
+	msg, fromTags := rewriteMatchTags(msg, ruleSuppressMisspelled)
 	// addLegacyMatches: one Match per \digits occurrence, using tag Matches for SOH-prefixed refs
 	combined := addLegacyMatches(fromTags, msg)
 	// strip remaining SOH
@@ -42,12 +55,12 @@ var reSuggestionOpen = regexp.MustCompile(`(?is)<suggestion(\s[^>]*)?>`)
 
 // injectPleaseSpellMe ports PatternRuleHandler SUGGESTION start:
 // always emit plain <suggestion> (never attributes), and append PLEASE_SPELL_ME when
-// suppress_misspelled="yes" on the suggestion (or inherited — see message-level path).
-func injectPleaseSpellMe(msg string) string {
+// suppress_misspelled="yes" on the suggestion OR ruleSuppressMisspelled (message attr).
+func injectPleaseSpellMe(msg string, ruleSuppressMisspelled bool) string {
 	return reSuggestionOpen.ReplaceAllStringFunc(msg, func(open string) string {
 		attrs := parseXMLAttrs(open)
-		// Java: strToAppend = "<suggestion>"; if suppress → + PLEASE_SPELL_ME
-		if strings.EqualFold(attrs["suppress_misspelled"], "yes") {
+		// Java: if (isSuggestionSuppressMisspelled || isRuleSuppressMisspelled)
+		if ruleSuppressMisspelled || strings.EqualFold(attrs["suppress_misspelled"], "yes") {
 			return suggestionStartTag + PleaseSpellMe
 		}
 		return suggestionStartTag
@@ -55,7 +68,8 @@ func injectPleaseSpellMe(msg string) string {
 }
 
 // rewriteMatchTags replaces <match …/> with \u0001\N and builds Match configs.
-func rewriteMatchTags(msg string) (string, []*Match) {
+// ruleSuppressMisspelled ports Java isRuleSuppressMisspelled for setMatchElement.
+func rewriteMatchTags(msg string, ruleSuppressMisspelled bool) (string, []*Match) {
 	var matches []*Match
 	var b strings.Builder
 	last := 0
@@ -84,8 +98,8 @@ func rewriteMatchTags(msg string) (string, []*Match) {
 		}
 		inSug := isInsideSuggestion(msg, fullStart)
 		m.SetInMessageOnly(!inSug)
-		// Inherit suppress_misspelled from enclosing <suggestion> (Java setMatchElement).
-		if inSug && suggestionSuppressMisspelled(msg, fullStart) {
+		// Java setMatchElement(attrs, inSuggestion && (sugSuppress || ruleSuppress))
+		if inSug && (suggestionSuppressMisspelled(msg, fullStart) || ruleSuppressMisspelled) {
 			m.SuppressMisspelled = true
 		}
 		matches = append(matches, m)

@@ -246,7 +246,10 @@ type xmlFilter struct {
 }
 
 type xmlMessage struct {
-	Inner string `xml:",innerxml"`
+	// SuppressMisspelled ports message/suggestion suppress_misspelled="yes"
+	// (Java PatternRuleHandler isRuleSuppressMisspelled / isSuggestionSuppressMisspelled).
+	SuppressMisspelled string `xml:"suppress_misspelled,attr"`
+	Inner              string `xml:",innerxml"`
 }
 
 // xmlPattern holds ordered pattern children: <token>, <marker>, <and>, <unify>, <phraseref>.
@@ -914,11 +917,14 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		}
 		antis := antiPatternsFromXML(id, languageCode, xr.AntiPatterns, cfg, phraseMap)
 		rawMsg := strings.TrimSpace(xr.Message.Inner)
-		msg, sugMatches := ProcessRuleMessage(rawMsg)
+		// Java isRuleSuppressMisspelled from <message suppress_misspelled="yes">
+		msgSuppress := strings.EqualFold(xr.Message.SuppressMisspelled, "yes")
+		msg, sugMatches := ProcessRuleMessageOpts(rawMsg, msgSuppress, true)
 		short := strings.TrimSpace(xr.Short)
 		// Java suggestionsOutMsg: <suggestion> outside <message>
+		// isRuleSuppressMisspelled stays true for outer suggestions (not reset on </message>).
 		sugOutRaw := buildSuggestionsOutMsg(xr.Suggestions)
-		sugOut, sugMatchesOut := ProcessRuleMessage(sugOutRaw)
+		sugOut, sugMatchesOut := ProcessRuleMessageOpts(sugOutRaw, msgSuppress, false)
 		// Java: rulegroup default off/temp_off overrides per-rule default=…
 		defaultOff, defaultTempOff := resolveRuleDefaultOff(xr.Default, groupDefault)
 		// tags / tone_tags: rule + group + category (Java addTags/addToneTags order).
@@ -1452,6 +1458,8 @@ func anyTokenUnified(tokens []*PatternToken) bool {
 }
 
 // buildSuggestionsOutMsg ports Java suggestionsOutMsg append of outer <suggestion> elements.
+// Preserves suppress_misspelled on the open tag so ProcessRuleMessageOpts can inject
+// PLEASE_SPELL_ME (Java SUGGESTION attrs when outside message).
 func buildSuggestionsOutMsg(sugs []xmlMessage) string {
 	if len(sugs) == 0 {
 		return ""
@@ -1464,7 +1472,12 @@ func buildSuggestionsOutMsg(sugs []xmlMessage) string {
 		}
 		// Java always wraps with suggestion tags in suggestionsOutMsg.
 		if !strings.Contains(strings.ToLower(inner), "<suggestion") {
-			b.WriteString(suggestionStartTag)
+			if strings.EqualFold(s.SuppressMisspelled, "yes") {
+				// Attr retained for injectPleaseSpellMe; normalized to plain tag + PLEASE_SPELL_ME.
+				b.WriteString(`<suggestion suppress_misspelled="yes">`)
+			} else {
+				b.WriteString(suggestionStartTag)
+			}
 			b.WriteString(inner)
 			b.WriteString(suggestionEndTag)
 		} else {

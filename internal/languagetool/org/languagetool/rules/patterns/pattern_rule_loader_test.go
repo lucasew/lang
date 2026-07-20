@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -1021,4 +1022,34 @@ func TestLineNumberAtOffset(t *testing.T) {
 	require.Equal(t, 1, lineNumberAtOffset(data, 1)) // at 'a' end / before \n
 	require.Equal(t, 2, lineNumberAtOffset(data, 2)) // after \n
 	require.Equal(t, 3, lineNumberAtOffset(data, int64(len(data))))
+}
+
+// Twin of PatternRuleHandler: <message suppress_misspelled="yes"> prepends PLEASE_SPELL_ME
+// and outer <suggestion> inherits isRuleSuppressMisspelled (LOOK_SLIKE-style).
+func TestPatternRuleLoader_MessageSuppressMisspelled(t *testing.T) {
+	xml := `<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="en">
+  <category id="CAT" name="Cat">
+    <rule id="LOOK_SLIKE_TWIN" name="look slike">
+      <pattern>
+        <token>sound</token>
+        <token>slike</token>
+      </pattern>
+      <message suppress_misspelled="yes">Possibly misplaced space found.</message>
+      <suggestion><match no="1" postag="VBZ"/> <match no="2" regexp_match="^s" regexp_replace=""/></suggestion>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	// Message body starts with PLEASE_SPELL_ME (Java MESSAGE case)
+	require.True(t, strings.HasPrefix(ars[0].Message, PleaseSpellMe), "msg=%q", ars[0].Message)
+	require.Contains(t, ars[0].Message, "Possibly misplaced")
+	// Outer suggestion inherits rule suppress
+	require.Contains(t, ars[0].SuggestionsOutMsg, suggestionStartTag+PleaseSpellMe)
+	require.NotEmpty(t, ars[0].SuggestionMatchesOutMsg)
+	for _, m := range ars[0].SuggestionMatchesOutMsg {
+		require.True(t, m.ChecksSpelling(), "outer match must inherit rule suppress")
+	}
 }

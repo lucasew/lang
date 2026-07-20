@@ -210,6 +210,43 @@ func TestProcessRuleMessage_NormalizesSuggestionOpen(t *testing.T) {
 	require.NotContains(t, msg, `case_conversion`)
 }
 
+// Twin of PatternRuleHandler MESSAGE suppress_misspelled="yes":
+// prepend PLEASE_SPELL_ME; every nested suggestion also gets it; matches inherit.
+func TestProcessRuleMessageOpts_MessageLevelSuppress(t *testing.T) {
+	// Java: message starts with PLEASE_SPELL_ME; suggestion open also gets it.
+	raw := `Did you mean <suggestion><match no="1"/></suggestion>?`
+	msg, matches := ProcessRuleMessageOpts(raw, true, true)
+	require.True(t, strings.HasPrefix(msg, PleaseSpellMe), "message prepend: %q", msg)
+	// Nested suggestion: <suggestion><pleasespellme/>
+	require.Contains(t, msg, suggestionStartTag+PleaseSpellMe)
+	require.NotEmpty(t, matches)
+	require.True(t, matches[0].ChecksSpelling())
+	require.False(t, matches[0].IsInMessageOnly())
+
+	// Outer suggestionsOutMsg: rule suppress injects into suggestions, no whole-string prepend.
+	outRaw := suggestionStartTag + `<match no="2"/>` + `</suggestion>`
+	out, outMatches := ProcessRuleMessageOpts(outRaw, true, false)
+	require.False(t, strings.HasPrefix(out, PleaseSpellMe), "outer must not prepend: %q", out)
+	require.Contains(t, out, suggestionStartTag+PleaseSpellMe)
+	require.NotEmpty(t, outMatches)
+	require.True(t, outMatches[0].ChecksSpelling())
+}
+
+// LOOK_SLIKE-style: message suppress + outer suggestion (no suggestion inside message).
+func TestProcessRuleMessageOpts_MessageSuppressOuterSuggestion(t *testing.T) {
+	msgBody := `Possibly misplaced space found.`
+	msg, _ := ProcessRuleMessageOpts(msgBody, true, true)
+	require.Equal(t, PleaseSpellMe+msgBody, msg)
+
+	// Outer suggestion body as buildSuggestionsOutMsg would produce
+	outRaw := `<suggestion suppress_misspelled="yes"><match no="3" postag="VBZ"/></suggestion>`
+	// When message had suppress, outer still gets ruleSuppress even if attr present
+	out, matches := ProcessRuleMessageOpts(outRaw, true, false)
+	require.Contains(t, out, suggestionStartTag+PleaseSpellMe)
+	require.NotEmpty(t, matches)
+	require.True(t, matches[0].ChecksSpelling())
+}
+
 // Twin of XMLRuleHandler.addLegacyMatches: SOH-prefixed backref needs a matching
 // <match> element — Java IndexOutOfBoundsException; do not invent bare Match.
 func TestAddLegacyMatches_IncompleteSOHPairingPanics(t *testing.T) {
