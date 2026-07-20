@@ -49,12 +49,22 @@ func (m *TokenMatcher) Matches(tok *languagetool.AnalyzedToken) bool {
 		if e.Lemma != "*" && e.Lemma != "" && lemma != e.Lemma {
 			continue
 		}
-		if e.POS == nil || !e.POS.MatchString(pos) {
+		// Java Pattern.matcher(posTag).matches() = entire string
+		if e.POS == nil || !posMatchesFullDisambig(e.POS, pos) {
 			continue
 		}
 		return true
 	}
 	return false
+}
+
+// posMatchesFullDisambig ports Matcher.matches() for disambig POS patterns.
+func posMatchesFullDisambig(re *regexp.Regexp, pos string) bool {
+	if re == nil || pos == "" {
+		return false
+	}
+	loc := re.FindStringIndex(pos)
+	return loc != nil && loc[0] == 0 && loc[1] == len(pos)
 }
 
 // SimpleDisambiguator ports tagging.disambiguation.uk.SimpleDisambiguator.

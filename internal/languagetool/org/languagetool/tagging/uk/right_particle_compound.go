@@ -4,6 +4,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
@@ -188,27 +189,36 @@ func DynamicDualPropReadings(token string, tagWord func(string) []tagging.Tagged
 		return []struct{ Lemma, POS string }{{Lemma: token, POS: "noninfl:prop:geo"}}
 	}
 	if has(leftTags, fname) && has(rightTags, fname) {
-		// Java returns tagMatch of filtered fname — use shared FullTagMatch path
-		// simplified: noninfl dual fname not exact; emit tagMatch-style noun readings
-		var out []struct{ Lemma, POS string }
+		// Java: filter both to .*fname.* then tagMatch
+		var leftToks, rightToks []*languagetool.AnalyzedToken
 		for _, lt := range leftTags {
 			if !fname(lt.PosTag) {
 				continue
 			}
-			for _, rt := range rightTags {
-				if !fname(rt.PosTag) {
-					continue
-				}
-				lem := lt.Lemma
-				if lem == "" {
-					lem = leftWord
-				}
-				rlem := rt.Lemma
-				if rlem == "" {
-					rlem = rightWord
-				}
-				out = append(out, struct{ Lemma, POS string }{Lemma: lem + "-" + rlem, POS: lt.PosTag})
+			p, l := lt.PosTag, lt.Lemma
+			leftToks = append(leftToks, languagetool.NewAnalyzedToken(leftWord, &p, &l))
+		}
+		for _, rt := range rightTags {
+			if !fname(rt.PosTag) {
+				continue
 			}
+			p, l := rt.PosTag, rt.Lemma
+			rightToks = append(rightToks, languagetool.NewAnalyzedToken(rightWord, &p, &l))
+		}
+		matched := TagMatch(token, leftToks, rightToks)
+		if len(matched) == 0 {
+			return nil
+		}
+		var out []struct{ Lemma, POS string }
+		for _, m := range matched {
+			pos, lem := "", ""
+			if m.GetPOSTag() != nil {
+				pos = *m.GetPOSTag()
+			}
+			if m.GetLemma() != nil {
+				lem = *m.GetLemma()
+			}
+			out = append(out, struct{ Lemma, POS string }{Lemma: lem, POS: pos})
 		}
 		return out
 	}
