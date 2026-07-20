@@ -235,6 +235,32 @@ func TestDisambigLoader_UnifyBlock(t *testing.T) {
 	require.True(t, ars[1].Tokens[2].IsUniNegated())
 }
 
+func TestDisambigLoader_Examples(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="EX" name="with examples">
+    <pattern>
+      <token>or</token>
+    </pattern>
+    <disambig action="remove"><wd pos="JJ"/></disambig>
+    <example type="untouched">Do a <marker>4-Hour</marker> test.</example>
+    <example type="ambiguous" inputform="or[or/CC,or/JJ]" outputform="or[or/CC]">
+      A <marker>or</marker> B.
+    </example>
+  </rule>
+</rules>`
+	ars, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t.xml")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.Len(t, ars[0].GetUntouchedExamples(), 1)
+	require.Contains(t, ars[0].GetUntouchedExamples()[0], "4-Hour")
+	require.Contains(t, ars[0].GetUntouchedExamples()[0], "<marker>")
+	require.Len(t, ars[0].GetExamples(), 1)
+	require.Equal(t, "or[or/CC,or/JJ]", ars[0].GetExamples()[0].Input)
+	require.Equal(t, "or[or/CC]", ars[0].GetExamples()[0].Output)
+	require.Contains(t, ars[0].GetExamples()[0].Example, "or")
+}
+
 func TestDisambigLoader_TokenNegatePos(t *testing.T) {
 	xml := `<?xml version="1.0"?>
 <rules>

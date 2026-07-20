@@ -91,6 +91,17 @@ type disambigRule struct {
 	// Filter ports Java DisambiguationRuleHandler case "filter".
 	Filter   *disambigFilter `xml:"filter"`
 	Disambig disambigElem    `xml:"disambig"`
+	// Examples ports Java <example type="untouched|ambiguous" …/> under <rule>.
+	Examples []disambigExample `xml:"example"`
+}
+
+// disambigExample ports DisambiguationRuleHandler EXAMPLE.
+type disambigExample struct {
+	Type       string `xml:"type,attr"`
+	InputForm  string `xml:"inputform,attr"`
+	OutputForm string `xml:"outputform,attr"`
+	// Inner keeps <marker> markup (Java example.toString() body).
+	Inner string `xml:",innerxml"`
 }
 
 // disambigPattern holds pattern children in document order: <token>, <and>, <unify>, <marker>.
@@ -724,6 +735,34 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	if len(xr.AntiPatterns) > 0 {
 		if aps := antiPatternsFromDisambigXML(xr.ID, languageCode, xr.AntiPatterns, "anti"); len(aps) > 0 {
 			rule.SetAntiPatterns(aps)
+		}
+	}
+	// Java DisambiguationRuleHandler EXAMPLE: untouched vs ambiguous (inputform/outputform).
+	if len(xr.Examples) > 0 {
+		var disEx []DisambiguatedExample
+		var untouched []string
+		for _, ex := range xr.Examples {
+			body := strings.TrimSpace(ex.Inner)
+			// Normalize whitespace like typical SAX char accumulation (collapse pure indent).
+			switch strings.ToLower(strings.TrimSpace(ex.Type)) {
+			case "untouched":
+				if body != "" {
+					untouched = append(untouched, body)
+				}
+			case "ambiguous":
+				disEx = append(disEx, NewDisambiguatedExampleFull(body, ex.InputForm, ex.OutputForm))
+			default:
+				// Java only branches untouched vs else (ambiguous); other types go to disambExamples.
+				if body != "" || ex.InputForm != "" || ex.OutputForm != "" {
+					disEx = append(disEx, NewDisambiguatedExampleFull(body, ex.InputForm, ex.OutputForm))
+				}
+			}
+		}
+		if len(disEx) > 0 {
+			rule.SetExamples(disEx)
+		}
+		if len(untouched) > 0 {
+			rule.SetUntouchedExamples(untouched)
 		}
 	}
 	return rule

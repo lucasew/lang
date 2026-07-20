@@ -82,6 +82,9 @@ type PatternRule struct {
 	// stores Unifier.getFinalUnified() for disambiguation UNIFY actions.
 	// Java DisambiguationPatternRule always constructs with getUnified=true.
 	GetUnified bool
+	// LineNumber ports AbstractPatternRule.lineNumber (XML source line; -1 if unset).
+	// Used by disambiguation IMMUNIZE (immunize(getXmlLineNumber)).
+	LineNumber int
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -92,6 +95,7 @@ func NewPatternRule(id, languageCode string, tokens []*PatternToken, description
 		Description:  description,
 		Message:      message,
 		ShortMessage: shortMessage,
+		LineNumber:   -1,
 	}
 	pr.computeElementNo()
 	return pr

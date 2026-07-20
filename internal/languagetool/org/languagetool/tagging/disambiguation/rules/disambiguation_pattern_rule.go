@@ -401,8 +401,18 @@ func (r *DisambiguationPatternRule) applyAction(
 ) {
 	switch r.Action {
 	case ActionImmunize:
+		// Java: immunize(rule.getXmlLineNumber())
+		line := 0
+		if r.PatternRule != nil {
+			line = r.LineNumber
+			if line < 0 {
+				line = 0
+			}
+		}
 		for i := first; i <= last && i < len(nws); i++ {
-			nws[i].Immunize(0)
+			if nws[i] != nil {
+				nws[i].Immunize(line)
+			}
 		}
 	case ActionRemove:
 		// Java REMOVE (DisambiguationPatternRuleReplacer):
