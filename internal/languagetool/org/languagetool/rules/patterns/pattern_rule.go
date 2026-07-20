@@ -30,6 +30,10 @@ type PatternRule struct {
 	SuggestionTemplates []string
 	// InterpretPreDisambig ports PatternRule.interpretPosTagsPreDisambiguation (raw_pos="yes").
 	InterpretPreDisambig bool
+	// ToneTags ports Rule.toneTags from XML tone_tags attributes.
+	ToneTags []languagetool.ToneTag
+	// GoalSpecific ports Rule.isGoalSpecific from XML is_goal_specific.
+	GoalSpecific bool
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -60,6 +64,32 @@ func (r *PatternRule) SetTags(tags []rules.Tag) {
 }
 func (r *PatternRule) HasTag(tag rules.Tag) bool {
 	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+// GetToneTags ports Rule.getToneTags.
+func (r *PatternRule) GetToneTags() []languagetool.ToneTag {
+	if r == nil || len(r.ToneTags) == 0 {
+		return nil
+	}
+	return append([]languagetool.ToneTag(nil), r.ToneTags...)
+}
+
+// IsGoalSpecific ports Rule.isGoalSpecific.
+func (r *PatternRule) IsGoalSpecific() bool {
+	return r != nil && r.GoalSpecific
+}
+
+// HasToneTag ports Rule.hasToneTag.
+func (r *PatternRule) HasToneTag(tag languagetool.ToneTag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.ToneTags {
 		if t == tag {
 			return true
 		}

@@ -3,6 +3,7 @@ package patterns
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -61,4 +62,35 @@ func TestPatternRuleCheck(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, matches)
 	require.Equal(t, "DEMO_RULE", matches[0].GetRule().(interface{ GetID() string }).GetID())
+}
+
+func TestPatternRuleHandler_ToneTagsAndGoalSpecific(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="C" name="Cat" tone_tags="clarity formal">
+    <rule id="R1" name="n" is_goal_specific="yes" tone_tags="professional">
+      <pattern><token>foo</token></pattern>
+      <message>m</message>
+    </rule>
+    <rulegroup id="G" tone_tags="informal">
+      <rule id="R2" name="n2">
+        <pattern><token>bar</token></pattern>
+        <message>m2</message>
+      </rule>
+    </rulegroup>
+  </category>
+</rules>`
+	h := NewPatternRuleHandler("test.xml", "en")
+	require.NoError(t, h.ParseString(xml))
+	require.Len(t, h.LoadedPatternRules, 2)
+	r1 := h.LoadedPatternRules[0]
+	require.True(t, r1.GoalSpecific)
+	// rule + category tones (order: rule, group, category — R1 has no group)
+	require.Contains(t, r1.ToneTags, languagetool.ToneProfessional)
+	require.Contains(t, r1.ToneTags, languagetool.ToneClarity)
+	require.Contains(t, r1.ToneTags, languagetool.ToneFormal)
+	r2 := h.LoadedPatternRules[1]
+	require.False(t, r2.GoalSpecific)
+	require.Contains(t, r2.ToneTags, languagetool.ToneInformal)
+	require.Contains(t, r2.ToneTags, languagetool.ToneClarity)
 }

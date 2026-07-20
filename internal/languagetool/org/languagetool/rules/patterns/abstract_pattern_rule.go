@@ -1,5 +1,7 @@
 package patterns
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
 // AbstractPatternRule ports shared fields of org.languagetool.rules.patterns.AbstractPatternRule.
 type AbstractPatternRule struct {
 	ID                      string
@@ -34,6 +36,10 @@ type AbstractPatternRule struct {
 	Premium              bool
 	// DefaultOff is true when XML default="off" or default="temp_off" (soft grammar).
 	DefaultOff bool
+	// ToneTags ports Rule.toneTags (XML tone_tags on rule/rulegroup/category).
+	ToneTags []languagetool.ToneTag
+	// GoalSpecific ports Rule.isGoalSpecific (XML is_goal_specific).
+	GoalSpecific bool
 }
 
 func NewAbstractPatternRule(id, description, languageCode string, patternTokens []*PatternToken, getUnified bool) *AbstractPatternRule {
@@ -70,3 +76,16 @@ func (r *AbstractPatternRule) SetFilterArgs(a string)   { r.FilterArgs = a }
 func (r *AbstractPatternRule) GetDistanceTokens() int   { return r.DistanceTokens }
 func (r *AbstractPatternRule) IsPremium() bool          { return r.Premium }
 func (r *AbstractPatternRule) SetPremium(v bool)        { r.Premium = v }
+
+// GetToneTags ports Rule.getToneTags.
+func (r *AbstractPatternRule) GetToneTags() []languagetool.ToneTag {
+	if r == nil || len(r.ToneTags) == 0 {
+		return nil
+	}
+	return append([]languagetool.ToneTag(nil), r.ToneTags...)
+}
+
+// IsGoalSpecific ports Rule.isGoalSpecific.
+func (r *AbstractPatternRule) IsGoalSpecific() bool {
+	return r != nil && r.GoalSpecific
+}

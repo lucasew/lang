@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
@@ -120,29 +121,33 @@ type grammarEquivalence struct {
 }
 
 type grammarCategory struct {
-	ID     string         `xml:"id,attr"`
-	Name   string         `xml:"name,attr"`
-	Type   string         `xml:"type,attr"`
-	Rules  []grammarRule  `xml:"rule"`
-	Groups []grammarGroup `xml:"rulegroup"`
+	ID       string         `xml:"id,attr"`
+	Name     string         `xml:"name,attr"`
+	Type     string         `xml:"type,attr"`
+	ToneTags string         `xml:"tone_tags,attr"` // space-separated ToneTag names
+	Rules    []grammarRule  `xml:"rule"`
+	Groups   []grammarGroup `xml:"rulegroup"`
 }
 
 type grammarGroup struct {
-	ID    string        `xml:"id,attr"`
-	Name  string        `xml:"name,attr"`
-	Rules []grammarRule `xml:"rule"`
+	ID       string        `xml:"id,attr"`
+	Name     string        `xml:"name,attr"`
+	ToneTags string        `xml:"tone_tags,attr"`
+	Rules    []grammarRule `xml:"rule"`
 }
 
 type grammarRule struct {
-	ID      string          `xml:"id,attr"`
-	Name    string          `xml:"name,attr"`
-	Default string          `xml:"default,attr"`
-	Pattern *grammarPattern `xml:"pattern"`
-	Regexp  *grammarRegexp  `xml:"regexp"`
-	Filter  *grammarFilter  `xml:"filter"`
-	Message string          `xml:"message"`
-	Short   string          `xml:"short"`
-	URL     string          `xml:"url"`
+	ID           string          `xml:"id,attr"`
+	Name         string          `xml:"name,attr"`
+	Default      string          `xml:"default,attr"`
+	ToneTags     string          `xml:"tone_tags,attr"`
+	GoalSpecific string          `xml:"is_goal_specific,attr"` // "yes" / "true"
+	Pattern      *grammarPattern `xml:"pattern"`
+	Regexp       *grammarRegexp  `xml:"regexp"`
+	Filter       *grammarFilter  `xml:"filter"`
+	Message      string          `xml:"message"`
+	Short        string          `xml:"short"`
+	URL          string          `xml:"url"`
 }
 
 type grammarFilter struct {
@@ -198,17 +203,19 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 		if cat.ID != "" {
 			h.Categories[cat.ID] = rules.NewCategory(rules.NewCategoryId(cat.ID), orDefault(cat.Name, cat.ID))
 		}
+		catTones := parseToneTagsAttr(cat.ToneTags)
 		for _, xr := range cat.Rules {
-			if err := h.addRule(xr, cat.ID); err != nil {
+			if err := h.addRule(xr, cat.ID, catTones, nil); err != nil {
 				return err
 			}
 		}
 		for _, g := range cat.Groups {
+			groupTones := parseToneTagsAttr(g.ToneTags)
 			for i, xr := range g.Rules {
 				if xr.ID == "" {
 					xr.ID = g.ID
 				}
-				if err := h.addRule(xr, cat.ID); err != nil {
+				if err := h.addRule(xr, cat.ID, catTones, groupTones); err != nil {
 					return err
 				}
 				if len(h.XMLRuleHandler.Rules) > 0 {
@@ -220,11 +227,49 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 	return nil
 }
 
-func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string) error {
+// parseToneTagsAttr ports PatternRuleHandler tone_tags="a b c" split + ToneTag.valueOf.
+// Unknown names are skipped (Java valueOf would throw — we fail soft for incomplete enums).
+func parseToneTagsAttr(s string) []languagetool.ToneTag {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return nil
+	}
+	var out []languagetool.ToneTag
+	for _, p := range strings.Fields(s) {
+		if p == "" {
+			continue
+		}
+		// Java ToneTag enum names are upper-ish; Go constants are lowercase values.
+		tag := languagetool.ToneTag(strings.ToLower(p))
+		out = append(out, tag)
+	}
+	return out
+}
+
+// mergeToneTags ports successive rule.addToneTags(category/group/rule) lists.
+func mergeToneTags(parts ...[]languagetool.ToneTag) []languagetool.ToneTag {
+	var out []languagetool.ToneTag
+	seen := map[languagetool.ToneTag]struct{}{}
+	for _, part := range parts {
+		for _, t := range part {
+			if _, ok := seen[t]; ok {
+				continue
+			}
+			seen[t] = struct{}{}
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, categoryTones, groupTones []languagetool.ToneTag) error {
 	if xr.ID == "" && !h.RelaxedMode {
 		return fmt.Errorf("rule without id in %s", h.SourceFile)
 	}
 	lang := h.LanguageCode
+	ruleTones := parseToneTagsAttr(xr.ToneTags)
+	tones := mergeToneTags(ruleTones, groupTones, categoryTones)
+	goalSpecific := strings.EqualFold(xr.GoalSpecific, "yes") || strings.EqualFold(xr.GoalSpecific, "true")
 	if xr.Regexp != nil {
 		content := strings.TrimSpace(xr.Regexp.Content)
 		re, err := regexp.Compile(content)
@@ -241,6 +286,10 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string) error {
 			if strings.Contains(xr.Filter.Class, "RegexAntiPatternFilter") || strings.Contains(xr.Filter.Args, "antipatterns:") {
 				// applied at check time via FilterArgs
 			}
+		}
+		if rr.AbstractPatternRule != nil {
+			rr.AbstractPatternRule.ToneTags = tones
+			rr.AbstractPatternRule.GoalSpecific = goalSpecific
 		}
 		h.LoadedRegexRules = append(h.LoadedRegexRules, rr)
 		// also as abstract for listing
@@ -266,6 +315,8 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string) error {
 		tokens = append(tokens, tokenFromGrammar(xt, caseSens))
 	}
 	pr := NewPatternRule(xr.ID, lang, tokens, xr.Name, strings.TrimSpace(xr.Message), strings.TrimSpace(xr.Short))
+	pr.ToneTags = tones
+	pr.GoalSpecific = goalSpecific
 	h.LoadedPatternRules = append(h.LoadedPatternRules, pr)
 	abs := NewAbstractPatternRule(xr.ID, xr.Name, lang, tokens, false)
 	abs.Message = pr.Message
