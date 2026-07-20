@@ -22,6 +22,9 @@ type WordRepeatRule struct {
 	CreateMatchFn func(r *WordRepeatRule, sentence *languagetool.AnalyzedSentence, prevToken, token string, prevPos, pos int, msg string) *RuleMatch
 	// IDOverride when non-empty replaces the default WORD_REPEAT_RULE id.
 	IDOverride string
+	// AntiPatterns ports Rule.getAntiPatterns (IMMUNIZE/IGNORE_SPELLING via Replace).
+	// Used by Match via SentenceWithImmunization (Java WordRepeatRule.match).
+	AntiPatterns []SentenceReplacer
 	// incorrectExamples / correctExamples port Rule.addExamplePair.
 	incorrectExamples []IncorrectExample
 	correctExamples   []CorrectExample
@@ -128,7 +131,12 @@ func (r *WordRepeatRule) wordRepetitionOf(word string, tokens []*languagetool.An
 
 func (r *WordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
-	tokens := sentence.GetTokensWithoutWhitespace()
+	// Java: getSentenceWithImmunization(sentence).getTokensWithoutWhitespace()
+	work := sentence
+	if r != nil {
+		work = SentenceWithImmunization(sentence, r.AntiPatterns)
+	}
+	tokens := work.GetTokensWithoutWhitespace()
 	prevToken := ""
 	msg := r.Messages["repetition"]
 	if msg == "" {

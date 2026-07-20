@@ -37,6 +37,8 @@ type UppercaseSentenceStartRule struct {
 	IssueType ITSIssueType
 	// IsException skips this sentence's start check (language-specific).
 	IsException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
+	// AntiPatterns ports Rule.getAntiPatterns; MatchList uses SentenceWithImmunization.
+	AntiPatterns []SentenceReplacer
 }
 
 func NewUppercaseSentenceStartRule(messages map[string]string, langCode string) *UppercaseSentenceStartRule {
@@ -89,7 +91,12 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 	pos := 0
 	isPrevSentenceNumberedList := false
 	for _, sentence := range sentences {
-		tokens := sentence.GetTokensWithoutWhitespace()
+		// Java: getSentenceWithImmunization(sentence).getTokensWithoutWhitespace()
+		work := sentence
+		if r != nil {
+			work = SentenceWithImmunization(sentence, r.AntiPatterns)
+		}
+		tokens := work.GetTokensWithoutWhitespace()
 		if len(tokens) < 2 {
 			// Java: return immediately (drop remaining sentences)
 			return ruleMatches
