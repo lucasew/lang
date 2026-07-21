@@ -3,6 +3,8 @@ package languagetool
 import (
 	"hash/fnv"
 	"sort"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // MessageBundle is a minimal string-key message lookup (Java ResourceBundle surface).
@@ -107,11 +109,9 @@ func messageBundleHash(b MessageBundle) uint64 {
 	return h.Sum64()
 }
 
+// stringsTrimSpaceEmpty reports whether Java String.trim() would be empty.
+// Java String.trim strips UTF-16 code units ≤ U+0020 (includes \t \n \v \f \r space),
+// not Go strings.TrimSpace (which also strips NBSP).
 func stringsTrimSpaceEmpty(s string) bool {
-	for _, r := range s {
-		if r != ' ' && r != '\t' && r != '\n' && r != '\r' {
-			return false
-		}
-	}
-	return true
+	return tools.JavaStringTrimIsEmpty(s)
 }

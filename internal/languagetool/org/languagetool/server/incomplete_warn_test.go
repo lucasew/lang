@@ -55,3 +55,30 @@ func TestBuildResponse_IncompleteResultsWarningsObject(t *testing.T) {
 	require.False(t, resp2.Warnings.IncompleteResults)
 	require.Empty(t, resp2.Warnings.IncompleteResultsReason)
 }
+
+func TestFormatTimeoutIncompleteReason(t *testing.T) {
+	// Java Locale.ENGLISH "%.2f" of maxCheckTimeMillis/1000.0
+	require.Equal(t,
+		"Results are incomplete: text checking took longer than allowed maximum of 1.50 seconds",
+		formatTimeoutIncompleteReason(1500),
+	)
+	require.Equal(t,
+		"Results are incomplete: text checking took longer than allowed maximum of 0.01 seconds",
+		formatTimeoutIncompleteReason(10),
+	)
+}
+
+func TestCheckWithOptions_AllowIncompleteResults_Timeout(t *testing.T) {
+	// When MaxCheckTimeMillis is extremely small, check may timeout before finish.
+	// Message must match Java TimeoutException incomplete path when it fires.
+	tc := NewTextChecker(nil, false, nil)
+	opts := CheckOptions{
+		AllowIncompleteResults: true,
+		MaxCheckTimeMillis:     1,
+	}
+	_, _, reason := tc.CheckWithOptionsAndIgnore(strings.Repeat("word ", 5000), "en", opts)
+	if reason != "" {
+		require.True(t, strings.HasPrefix(reason, "Results are incomplete: text checking took longer than allowed maximum of "), reason)
+		require.Contains(t, reason, "seconds")
+	}
+}

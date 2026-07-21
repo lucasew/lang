@@ -2,8 +2,10 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
@@ -30,11 +32,15 @@ type CheckOptions struct {
 	// Java: Pipeline(lang, altLanguages, …) → JLanguageTool.altLanguages.
 	AltLanguages []string
 	// AllowIncompleteResults ports QueryParams.allowIncompleteResults —
-	// when true, ErrorRateTooHighException returns partial matches + incomplete reason.
+	// when true, ErrorRateTooHighException / check timeout return partial matches + incomplete reason.
 	AllowIncompleteResults bool
 	// MaxErrorsPerWordRate ports JLanguageTool.maxErrorsPerWordRate (0 = disabled).
 	// Used for tests / server config; Java often sets from server properties.
 	MaxErrorsPerWordRate float64
+	// MaxCheckTimeMillis ports UserLimits.maxCheckTimeMillis / future.get(timeout).
+	// <0 means unlimited (Java). When >0 and exceeded with AllowIncompleteResults,
+	// incompleteReason = "Results are incomplete: text checking took longer than allowed maximum of X.XX seconds".
+	MaxCheckTimeMillis int64
 }
 
 // Check runs core rules for language on text and returns RemoteRuleMatch results.
@@ -144,36 +150,89 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 // CheckWithOptionsAndIgnore ports check2 → matches + ignoreRanges + incomplete reason.
 // When AllowIncompleteResults and ErrorRateTooHighException: returns matches so far and
 // incompleteReason = "Results are incomplete: " + exception message (Java TextChecker).
-// Not invent ForeignScriptIgnoreRanges / size-threshold soft warnings.
+// When MaxCheckTimeMillis > 0 and check exceeds it with AllowIncompleteResults:
+// incompleteReason = "Results are incomplete: text checking took longer than allowed maximum of X.XX seconds"
+// (Java TimeoutException path). Not invent ForeignScriptIgnoreRanges / size-threshold soft warnings.
 func (t *TextChecker) CheckWithOptionsAndIgnore(text, lang string, opts CheckOptions) (matches []RemoteRuleMatch, ignore []IgnoreRangeInfo, incompleteReason string) {
-	p, settings, fromPool := t.preparePipeline(lang, opts)
-	defer t.releasePipeline(settings, p, fromPool)
-	cr, err := p.CheckWithResults(text)
-	if err != nil {
-		var rateErr *languagetool.ErrorRateTooHighException
-		if errors.As(err, &rateErr) {
-			if opts.AllowIncompleteResults {
-				// Java: localReason = "Results are incomplete: " + rootCause.getMessage()
-				incompleteReason = "Results are incomplete: " + rateErr.Error()
-			} else {
-				// Without allowIncompleteResults, surface as failed check (no invent swallow).
-				return nil, nil, ""
+	type out struct {
+		matches []RemoteRuleMatch
+		ignore  []IgnoreRangeInfo
+		reason  string
+	}
+	run := func() out {
+		p, settings, fromPool := t.preparePipeline(lang, opts)
+		defer t.releasePipeline(settings, p, fromPool)
+		cr, err := p.CheckWithResults(text)
+		var reason string
+		if err != nil {
+			var rateErr *languagetool.ErrorRateTooHighException
+			if errors.As(err, &rateErr) {
+				if opts.AllowIncompleteResults {
+					// Java: localReason = "Results are incomplete: " + rootCause.getMessage()
+					reason = "Results are incomplete: " + rateErr.Error()
+				} else {
+					return out{}
+				}
 			}
 		}
+		locals := languagetool.LocalMatchesFromCheckResults(cr)
+		// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
+		locals = applyRuleValues(lang, text, locals, opts.RuleValues)
+		locals = filterLocalsByIgnoreWords(text, locals, opts.IgnoreWords)
+		locals = filterLocalsByCategories(locals, opts)
+		ctxSize := DefaultContextSize
+		if t != nil && t.ContextSize > 0 {
+			ctxSize = t.ContextSize
+		}
+		var ign []IgnoreRangeInfo
+		if cr != nil {
+			ign = RangesToIgnoreRangeInfo(cr.GetIgnoredRanges())
+		}
+		return out{
+			matches: LocalMatchesToRemote(text, locals, ctxSize, lang),
+			ignore:  ign,
+			reason:  reason,
+		}
 	}
-	locals := languagetool.LocalMatchesFromCheckResults(cr)
-	// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
-	locals = applyRuleValues(lang, text, locals, opts.RuleValues)
-	locals = filterLocalsByIgnoreWords(text, locals, opts.IgnoreWords)
-	locals = filterLocalsByCategories(locals, opts)
-	ctxSize := DefaultContextSize
-	if t != nil && t.ContextSize > 0 {
-		ctxSize = t.ContextSize
+
+	maxMs := opts.MaxCheckTimeMillis
+	if maxMs < 0 {
+		// unlimited — Java future.get() without timeout
+		o := run()
+		return o.matches, o.ignore, o.reason
 	}
-	if cr != nil {
-		ignore = RangesToIgnoreRangeInfo(cr.GetIgnoredRanges())
+	if maxMs == 0 {
+		// treat 0 as unlimited unless config says otherwise
+		o := run()
+		return o.matches, o.ignore, o.reason
 	}
-	return LocalMatchesToRemote(text, locals, ctxSize, lang), ignore, incompleteReason
+
+	// Java: future.get(limits.getMaxCheckTimeMillis(), TimeUnit.MILLISECONDS)
+	ch := make(chan out, 1)
+	go func() { ch <- run() }()
+	select {
+	case o := <-ch:
+		return o.matches, o.ignore, o.reason
+	case <-time.After(time.Duration(maxMs) * time.Millisecond):
+		// Without cooperative cancel, matches-so-far is empty (no invent partial invent).
+		// Message format matches Java Locale.ENGLISH "%.2f" seconds.
+		if opts.AllowIncompleteResults {
+			return nil, nil, formatTimeoutIncompleteReason(maxMs)
+		}
+		// Java: throw RuntimeException — callers without allowIncomplete get empty (no body invent).
+		return nil, nil, ""
+	}
+}
+
+// formatTimeoutIncompleteReason ports Java TextChecker TimeoutException incomplete message:
+// "Results are incomplete: text checking took longer than allowed maximum of " +
+// String.format(Locale.ENGLISH, "%.2f", maxCheckTimeMillis / 1000.0) + " seconds"
+func formatTimeoutIncompleteReason(maxCheckTimeMillis int64) string {
+	sec := float64(maxCheckTimeMillis) / 1000.0
+	return fmt.Sprintf(
+		"Results are incomplete: text checking took longer than allowed maximum of %.2f seconds",
+		sec,
+	)
 }
 
 // RangesToIgnoreRangeInfo maps languagetool.Range (UTF-16 spans from Java Range)

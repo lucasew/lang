@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/attic/srx"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // createSrxDocument ports SrxTools.createSrxDocument(path):
@@ -25,7 +26,9 @@ func createSrxDocument(srxInClassPath string) (*srx.Document, error) {
 }
 
 func normalizeSrxClasspath(p string) string {
-	p = strings.TrimSpace(p)
+	// Classpath paths are ASCII; Java does not Unicode-trim. Strip only ≤U+0020
+	// like String.trim for accidental padding (not Go TrimSpace / NBSP).
+	p = tools.JavaStringTrim(p)
 	if p == "" {
 		return "/segment.srx"
 	}
