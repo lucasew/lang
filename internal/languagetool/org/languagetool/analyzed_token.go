@@ -1,5 +1,7 @@
 package languagetool
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+
 // AnalyzedToken ports org.languagetool.AnalyzedToken (1:1 behavior).
 type AnalyzedToken struct {
 	token            string
@@ -56,15 +58,8 @@ func NewAnalyzedTokenStr(token, posTag, lemma string, posNull, lemmaNull bool) *
 }
 
 func trimSpace(s string) string {
-	// Java String.trim()
-	start, end := 0, len(s)
-	for start < end && (s[start] <= ' ') {
-		start++
-	}
-	for end > start && (s[end-1] <= ' ') {
-		end--
-	}
-	return s[start:end]
+	// Java String.trim() — UTF-16 units ≤ U+0020 (keeps NBSP).
+	return tools.JavaStringTrim(s)
 }
 
 func (t *AnalyzedToken) GetToken() string { return t.token }

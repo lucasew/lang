@@ -26,7 +26,8 @@ var (
 	// Match Java PUNCT_PATTERN: hyphen is NOT a member (the `-` between `}` and `«`
 	// is a character range in Java, not a literal hyphen), so "Autohaus-Wirklichkeit"
 	// stays hyphenated until SPACE_OR_HYPHEN_PATTERN splits it.
-	punctPattern = regexp.MustCompile(`[(),.:;!?„“"¡¿\s\[\]{}«»”]`)
+	// Java \\s without UNICODE_CHARACTER_CLASS is [ \t\n\x0B\f\r] (not NBSP).
+	punctPattern = regexp.MustCompile(`[(),.:;!?„“"¡¿ \t\n\v\f\r\[\]{}«»”]`)
 	charsPattern   = regexp.MustCompile(`\p{L}+$`)
 	spaceOrHyphen  = regexp.MustCompile(`[ -]`)
 )

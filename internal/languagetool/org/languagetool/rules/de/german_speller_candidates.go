@@ -8,9 +8,10 @@ import (
 // Patterns from GermanSpellerRule for candidate / language filters.
 var (
 	// HYPHENED_UPPER_WORD: [A-ZÖÄÜ][a-zöäüß]+-[\\-\\s]?[a-zöäüß]+
-	reHyphenedUpperWord = regexp.MustCompile(`^[A-ZÖÄÜ][a-zöäüß]+-[\-\s]?[a-zöäüß]+$`)
+	// Java \\s without UNICODE_CHARACTER_CLASS in optional class after hyphen.
+	reHyphenedUpperWord = regexp.MustCompile(`^[A-ZÖÄÜ][a-zöäüß]+-[\- \t\n\v\f\r]?[a-zöäüß]+$`)
 	// HYPHENED_WORD: [a-zöäüß]+-[\\-\\s][A-ZÖÄÜa-zöäüß]+
-	reHyphenedWord = regexp.MustCompile(`^[a-zöäüß]+-[\-\s][A-ZÖÄÜa-zöäüß]+$`)
+	reHyphenedWord = regexp.MustCompile(`^[a-zöäüß]+-[\- \t\n\v\f\r][A-ZÖÄÜa-zöäüß]+$`)
 	// WORD_WITH_PUNCT: \w\p{Punct}?  (single letter + optional punct token)
 	reWordWithPunct = regexp.MustCompile(`^[\p{L}\p{N}_]\p{P}?$`)
 	// STARTING_WITH_SINGLE_CHAR: \p{L} \p{L}+

@@ -1049,8 +1049,9 @@ var (
 	reStartNeger       = regexp.MustCompile(`(?i)^neger`)
 	reContainsNeger    = regexp.MustCompile(`(?i).+neger(?:s|n|in|innen)?.+`)
 	reContainsNeger2   = regexp.MustCompile(`(?i).+-neger(?:s|n|in|innen)?-.+`)
-	reUncommonNounEnd  = regexp.MustCompile(`.+\s(?:hunger|zeit|käse|zwiebel|kommoden?|lager|angst|freund|feind)$`)
-	reUncommonNounBeg  = regexp.MustCompile(`^(?:hunger|zeit|käse|zwiebel|kommoden?|lager|angst|freund|feind)\s.+`)
+	// Java: "\\s" without UNICODE_CHARACTER_CLASS between tokens.
+	reUncommonNounEnd = regexp.MustCompile(`.+[ \t\n\v\f\r](?:hunger|zeit|käse|zwiebel|kommoden?|lager|angst|freund|feind)$`)
+	reUncommonNounBeg = regexp.MustCompile(`^(?:hunger|zeit|käse|zwiebel|kommoden?|lager|angst|freund|feind)[ \t\n\v\f\r].+`)
 	reGenderStarMatch  = regexp.MustCompile(`(?:[A-ZÖÄÜ][a-zöäüß]{1,25}|[A-ZÖÄÜ]{1,10}-[A-ZÖÄÜ][a-zöäüß]{1,25})[*:_][a-zöäüß]{1,25}`)
 	reFileUnderline    = regexp.MustCompile(`[a-zA-Z0-9-]{1,25}_[a-zA-Z0-9-]{1,25}\.[a-zA-Z]{1,5}`)
 	reMentionUnderline = regexp.MustCompile(`@[a-zA-Z0-9-]{1,25}_[a-zA-Z0-9_-]{1,25}`)

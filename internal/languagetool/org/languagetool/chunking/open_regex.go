@@ -223,7 +223,8 @@ func (r *SeqRegex) minMatchingLength() int {
 
 func tokenizeOpenRegex(s string, factory func(string) func(ChunkTaggedToken) bool) []seqNode {
 	var expressions []seqNode
-	ws := regexp.MustCompile(`\s+`)
+	// Java OpenNLP / OpenRegex whitespace is Pattern \\s (ASCII without UNICODE_CHARACTER_CLASS).
+	ws := regexp.MustCompile(`[ \t\n\v\f\r]+`)
 	unary := regexp.MustCompile(`[*?+]`)
 	minMax := regexp.MustCompile(`\{(\d+),(\d+)\}`)
 	start := 0

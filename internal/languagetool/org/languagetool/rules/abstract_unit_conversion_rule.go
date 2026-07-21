@@ -90,13 +90,14 @@ const (
 )
 
 // convertedParenRE ports AbstractUnitConversionRule.convertedPatterns:
-// whitespace + (optional "ca. " / "aprox. ") + number + unit body in parentheses.
-var convertedParenRE = regexp.MustCompile(`(?i)^\s*\((?:(?:ca\.|aprox\.)\s*)?` + unitNumberRegex + `\s*([^)]+?)\s*\)`)
+// Pattern.compile("\\s*\\((?:ca. )?" + NUMBER + "\\s*([^)]+)\\s*\\)") without
+// UNICODE_CHARACTER_CLASS — ASCII \\s only (also accepts "aprox." as LT variant).
+var convertedParenRE = regexp.MustCompile(`(?i)^[ \t\n\v\f\r]*\((?:(?:ca\.|aprox\.)[ \t\n\v\f\r]*)?` + unitNumberRegex + `[ \t\n\v\f\r]*([^)]+?)[ \t\n\v\f\r]*\)`)
 
 // feetInchParenBodyRE ports Java convertedMatcher.group().trim().matches(
 // "\\(\\d+ (feet|ft) \\d+ inch\\)") on the unit-body half after the number group.
 // e.g. "(2 ft 6 inch)" → unitBody "ft 6 inch" — skip CHECK (would misread as 2 ft).
-var feetInchParenBodyRE = regexp.MustCompile(`(?i)^(feet|ft)\s+\d+\s+inch$`)
+var feetInchParenBodyRE = regexp.MustCompile(`(?i)^(feet|ft)[ \t\n\v\f\r]+\d+[ \t\n\v\f\r]+inch$`)
 
 // numberRangePartRE ports AbstractUnitConversionRule.numberRangePart:
 // a number at the end of the text before a match that captured a leading "-".
@@ -182,13 +183,14 @@ func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConv
 		Category:  CatStyle.GetCategory(messages),
 		IssueType: ITSStyle,
 		antiPatterns: []*regexp.Regexp{
-			// Java AbstractUnitConversionRule.antiPatterns (order preserved)
-			regexp.MustCompile(`\s?\d+'\d{3}\s?`), // de-CH thousands "100'000"
-			regexp.MustCompile(`\d+[-‐–]\d+`),     // "3-5 pounds"
-			regexp.MustCompile(`\d+/\d+`),         // "1/4 mile"
-			regexp.MustCompile(`\d+:\d+`),         // "A 2:1 cup"
-			regexp.MustCompile(`Pfund Sterling`), // currency, not mass
-			regexp.MustCompile(`\d+⁄\d+`),         // "1⁄4 cup" non-standard slash
+			// Java AbstractUnitConversionRule.antiPatterns (order preserved).
+			// Pattern \\s without UNICODE_CHARACTER_CLASS → ASCII only.
+			regexp.MustCompile(`[ \t\n\v\f\r]?\d+'\d{3}[ \t\n\v\f\r]?`), // de-CH thousands "100'000"
+			regexp.MustCompile(`\d+[-‐–]\d+`),                           // "3-5 pounds"
+			regexp.MustCompile(`\d+/\d+`),                               // "1/4 mile"
+			regexp.MustCompile(`\d+:\d+`),                               // "A 2:1 cup"
+			regexp.MustCompile(`Pfund Sterling`),                       // currency, not mass
+			regexp.MustCompile(`\d+⁄\d+`),                               // "1⁄4 cup" non-standard slash
 		},
 	}
 	// default unit registrations (Java AbstractUnitConversionRule constructor; commented-out Java units omitted)
@@ -277,14 +279,17 @@ func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConv
 		return feet + inch/12.0, true
 	}
 	// with leading whitespace: " 5'6" or " 5ft 6"
+	// Java: "(?:(?<=[^º°\\d]))\\s(\\d+)(?:ft|′|')\\s*(\\d+)\\s*(?:in|\"|″)?"
+	// RE2 has no lookbehind; ^| prefix. ASCII \\s only.
 	r.specialPatterns = append(r.specialPatterns, specialUnitPattern{
-		re:    regexp.MustCompile(`(?:^|[^º°\d])\s(\d+)(?:ft|′|')\s*(\d+)\s*(?:in|"|″)?`),
+		re:    regexp.MustCompile(`(?:^|[^º°\d])[ \t\n\v\f\r](\d+)(?:ft|′|')[ \t\n\v\f\r]*(\d+)[ \t\n\v\f\r]*(?:in|"|″)?`),
 		unit:  UnitFeet,
 		parse: parseFeetInch,
 	})
 	// no leading space after non-digit non-space: "ist5'6"
+	// Java: "(?:(?<=[^º°\\d\\s]))(\\d+)..." — \\s is ASCII whitespace class.
 	r.specialPatterns = append(r.specialPatterns, specialUnitPattern{
-		re:    regexp.MustCompile(`(?:^|[^º°\d\s])(\d+)(?:ft|′|')\s*(\d+)\s*(?:in|"|″)?`),
+		re:    regexp.MustCompile(`(?:^|[^º°\d \t\n\v\f\r])(\d+)(?:ft|′|')[ \t\n\v\f\r]*(\d+)[ \t\n\v\f\r]*(?:in|"|″)?`),
 		unit:  UnitFeet,
 		parse: parseFeetInch,
 	})
