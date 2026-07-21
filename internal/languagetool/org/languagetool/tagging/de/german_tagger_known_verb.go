@@ -3,7 +3,7 @@ package de
 import (
 	"regexp"
 	"strings"
-	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -57,26 +57,50 @@ func startsWithNotAVerb(wordLower string) bool {
 	return false
 }
 
-// isTitleOrLower: Capitalized or all-lowercase (Java Title case or lower).
+// isTitleOrLower ports Java:
+//
+//	word.equals(word.substring(0,1).toUpperCase()+word.substring(1).toLowerCase())
+//	  || word.equals(word.toLowerCase())
+//
+// substring uses UTF-16 units (Java String).
 func isTitleOrLower(word string) bool {
 	if word == "" {
 		return false
 	}
-	low := strings.ToLower(word)
-	if word == low {
+	if word == strings.ToLower(word) {
 		return true
 	}
-	// Title: first upper, rest lower
-	rs := []rune(word)
-	if !unicode.IsUpper(rs[0]) {
+	return word == utf16FirstUpperRestLower(word)
+}
+
+// isFirstCharLowerRestUnchanged ports Java:
+//
+//	word.equals(word.substring(0, 1).toLowerCase() + word.substring(1))
+func isFirstCharLowerRestUnchanged(word string) bool {
+	if word == "" {
 		return false
 	}
-	for _, r := range rs[1:] {
-		if unicode.IsLetter(r) && !unicode.IsLower(r) {
-			return false
-		}
+	return word == utf16FirstLowerRest(word)
+}
+
+func utf16FirstUpperRestLower(word string) string {
+	u := utf16.Encode([]rune(word))
+	if len(u) == 0 {
+		return word
 	}
-	return true
+	first := string(utf16.Decode(u[:1]))
+	rest := string(utf16.Decode(u[1:]))
+	return strings.ToUpper(first) + strings.ToLower(rest)
+}
+
+func utf16FirstLowerRest(word string) string {
+	u := utf16.Encode([]rune(word))
+	if len(u) == 0 {
+		return word
+	}
+	first := string(utf16.Decode(u[:1]))
+	rest := string(utf16.Decode(u[1:]))
+	return strings.ToLower(first) + rest
 }
 
 // addImpPraesSFTMutual ports the known-word IMP:SIN:SFT ↔ 1:SIN:PRÄ:SFT mutual tags.
@@ -117,10 +141,11 @@ func (t *GermanTagger) addImpPraesSFTMutual(word string, sentenceTokens []string
 	if lstPrt == "gar" || lstPrt == "mal" || lstPrt == "null" || lstPrt == "trotz" {
 		return readings
 	}
-	// Java: sentenceTokens.indexOf(word)==0 OR word is already all-lowercase
+	// Java: sentenceTokens.indexOf(word)==0
+	//   || word.equals(word.substring(0,1).toLowerCase()+word.substring(1))
+	// First-char lower (rest unchanged), NOT full toLowerCase.
 	atStart := idxPos == 0
-	isAllLower := word == strings.ToLower(word)
-	if !atStart && !isAllLower {
+	if !atStart && !isFirstCharLowerRestUnchanged(word) {
 		return readings
 	}
 	// avoid duplicates
