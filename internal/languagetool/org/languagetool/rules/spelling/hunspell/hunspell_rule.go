@@ -18,7 +18,14 @@ const HunspellRuleID = "HUNSPELL_RULE"
 // FileExtension ports HunspellRule.FILE_EXTENSION.
 const FileExtension = ".dic"
 
-var nonAlphabeticRE = regexp.MustCompile(`^[^\p{L}]+$`)
+// tooManyErrorsMsg ports MessagesBundle too_many_errors (en default).
+const tooManyErrorsMsg = "(suggestion limit reached)"
+
+var (
+	nonAlphabeticRE              = regexp.MustCompile(`^[^\p{L}]+$`)
+	minusPlusRE                  = regexp.MustCompile(`^-+$`)
+	startsWithTwoUppercaseChars  = regexp.MustCompile(`^[A-Z][A-Z]\p{Ll}+`)
+)
 
 // HunspellRule ports org.languagetool.rules.spelling.hunspell.HunspellRule
 // with a pluggable HunspellDictionary (native hunspell deferred).
@@ -27,6 +34,18 @@ type HunspellRule struct {
 	Dict HunspellDictionary
 	// IgnoreTaggedWords skips tokens that already have a real POS tag.
 	IgnoreTaggedWords bool
+	// UserConfig ports HunspellRule.userConfig (suggestionsEnabled / maxSpellingSuggestions /
+	// preferredLanguages for ForeignLanguageChecker).
+	UserConfig *languagetool.UserConfig
+	// ForeignDetect ports ForeignLanguageChecker language-id hook.
+	// When nil, foreign-language scoring is inactive (Java langIdent == null → empty).
+	ForeignDetect spelling.DetectScoresFunc
+	// GetOnlySuggestionsFn ports getOnlySuggestions: when non-empty, replaces dict sugs.
+	GetOnlySuggestionsFn func(word string) []string
+	// GetAdditionalTopSuggestionsFn ports getAdditionalTopSuggestions language overrides.
+	GetAdditionalTopSuggestionsFn func(existing []string, word string) []string
+	// AcceptSuggestionFn ports acceptSuggestion (default true).
+	AcceptSuggestionFn func(suggestion string) bool
 }
 
 func NewHunspellRule(languageCode string, dict HunspellDictionary) *HunspellRule {
@@ -40,12 +59,41 @@ func NewHunspellRule(languageCode string, dict HunspellDictionary) *HunspellRule
 	return r
 }
 
-// IsMisspelledWord ports HunspellRule.isMisspelled.
+// SetUserConfig stores UserConfig for Match suggestion / foreign-language gates.
+func (r *HunspellRule) SetUserConfig(uc *languagetool.UserConfig) {
+	if r != nil {
+		r.UserConfig = uc
+	}
+}
+
+// IsMisspelledWord ports HunspellRule.isMisspelled (minus ignoreWord — applied in Match
+// via AcceptWord / IgnoreToken; prohibited always flags).
 func (r *HunspellRule) IsMisspelledWord(word string) bool {
-	if r == nil || r.Dict == nil {
+	if r == nil {
 		return false
 	}
+	// Java: isProhibited(cutOffDot(word)) forces misspell even when dict accepts.
+	if r.SpellingCheckRule != nil && r.IsProhibited(cutOffDotHun(word)) {
+		return true
+	}
+	if r.Dict == nil {
+		return false
+	}
+	if word == "--" {
+		return false
+	}
+	// Java: length==1 → only alphabetic punctuation check; else treat as alphabetic path.
+	if utf16LenHun(word) == 1 {
+		rns := []rune(word)
+		if len(rns) == 1 && !unicode.IsLetter(rns[0]) {
+			return false
+		}
+	}
 	if nonAlphabeticRE.MatchString(word) {
+		return false
+	}
+	// Java: (hunspell != null && !hunspell.spell(word)) && !ignoreWord(word)
+	if r.SpellingCheckRule != nil && r.IgnoreWord(word) {
 		return false
 	}
 	return !r.Dict.Spell(word)
@@ -60,9 +108,14 @@ func (r *HunspellRule) Suggest(word string) []string {
 }
 
 // Match flags misspelled tokens in the analyzed sentence.
-// Ports HunspellRule.match including wrong-split suggestions (thanky ou → thank you).
+// Ports HunspellRule.match: wrong-split, leading-dash, UserConfig sug gates,
+// ForeignLanguageChecker, high-confidence DE case, Type.UnknownWord.
 func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if sentence == nil || r == nil {
+		return nil, nil
+	}
+	// Java: if (hunspell == null) return empty
+	if r.Dict == nil {
 		return nil, nil
 	}
 	// Java HunspellRule.match: getSentenceWithImmunization(sentence).
@@ -73,26 +126,49 @@ func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 	}
 	tokens := work.GetTokensWithoutWhitespace()
 	var out []*rules.RuleMatch
+
+	// ForeignLanguageChecker when preferredLanguages ≥ 2 (Java).
+	var foreignChecker *spelling.ForeignLanguageChecker
+	gotForeignResults := false
+	if r.UserConfig != nil {
+		pref := r.UserConfig.GetPreferredLanguages()
+		if preferredLanguagesActiveHun(pref) {
+			langCode := ""
+			if r.SpellingCheckRule != nil {
+				langCode = r.SpellingCheckRule.LanguageCode
+			}
+			if i := strings.IndexAny(langCode, "-_"); i > 0 {
+				langCode = langCode[:i]
+			}
+			text := ""
+			if sentence != nil {
+				text = sentence.GetText()
+			}
+			foreignChecker = spelling.NewForeignLanguageChecker(langCode, text, foreignSentenceLengthHun(sentence), pref)
+			if r.ForeignDetect != nil {
+				foreignChecker.Detect = r.ForeignDetect
+			}
+		}
+	}
+
 	var prevTok *languagetool.AnalyzedTokenReadings
 	for idx, tok := range tokens {
-		// Java: immunized / ignoredBySpeller / isUrl / isEMail
+		// Java canBeIgnored-like: immunized / ignoredBySpeller / isUrl / isEMail
 		if spelling.CanBeIgnoredToken(tok) {
 			prevTok = tok
 			continue
 		}
-		// Java ignoreToken → ignoreWord
+		// Java ignoreToken → ignoreWord (via IgnoreToken)
 		if r.SpellingCheckRule != nil && r.IgnoreToken(tokens, idx) {
 			prevTok = tok
 			continue
 		}
 		w := tok.GetToken()
-		// Sentence-end markers with no letters (e.g. bare ".") are skipped; the last
-		// content word may still carry IsSentenceEnd in AnalyzePlain and must be checked.
 		if w == "" || !hasLetter(w) {
 			prevTok = tok
 			continue
 		}
-		// Java getSentenceTextWithoutImmunizedTokens: stringForSpeller strips emoji etc.
+		// Java getSentenceTextWithoutUrlsAndImmunizedTokens: stringForSpeller
 		check := tools.StringForSpeller(w)
 		check = strings.TrimSpace(check)
 		if check == "" || !hasLetter(check) {
@@ -105,58 +181,139 @@ func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 				continue
 			}
 		}
-		// AcceptWord is true when the word should not be flagged.
+		// Java: (ignoreWord(...) || ignoreWord(word)) && !isProhibited(cutOffDot(word))
+		// AcceptWord already folds ignore + prohibited + dict.
 		if r.AcceptWord(check) {
 			prevTok = tok
 			continue
 		}
-		// Java HunspellRule.match: after isMisspelled, ignorePotentiallyMisspelledWord.
+		// Java: after isMisspelled, ignorePotentiallyMisspelledWord
 		if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(check) {
 			prevTok = tok
 			continue
 		}
 
-		cleanWord := check
-		if strings.HasSuffix(cleanWord, ".") {
-			cleanWord = cleanWord[:len(cleanWord)-1]
+		cleanWord := cutOffDotHun(check)
+		dashCorr := 0
+		// Java: word.startsWith("-")
+		if strings.HasPrefix(check, "-") {
+			rest := cleanWord
+			if len(rest) > 0 {
+				// UTF-16 first unit may be multi-byte; use rune-aware drop of first '-'
+				rest = strings.TrimPrefix(rest, "-")
+			}
+			if !r.IsMisspelledWord(rest) || minusPlusRE.MatchString(cleanWord) {
+				prevTok = tok
+				continue
+			}
+			dashCorr = 1
 		}
 
-		// Java wrong-split: rejoin across space using UTF-16 substring/charAt
+		// Java wrong-split: may ADD matches (does not skip the per-word match below).
 		if prevTok != nil {
 			prevWord := tools.StringForSpeller(prevTok.GetToken())
 			prevWord = strings.TrimSpace(prevWord)
-			if prevWord != "" {
-				if ws := r.tryWrongSplit(sentence, &out, prevWord, prevTok.GetStartPos(), check, tok.GetStartPos(), cleanWord); ws != nil {
-					out = append(out, ws)
-					prevTok = tok
-					continue
-				}
+			if prevWord != "" && !r.ignoreWrongSplit(prevWord, check) {
+				r.addWrongSplits(sentence, &out, prevWord, prevTok.GetStartPos(), check, tok.GetStartPos(), cleanWord)
 			}
 		}
 
-		m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
-			"Possible spelling mistake found")
-		if sug := r.Suggest(check); len(sug) > 0 {
-			// Java: getAdditionalTopSuggestions then filterSuggestions
-			if top := spelling.AdditionalTopSuggestions(sug, check); len(top) > 0 {
-				sug = append(top, sug...)
-			}
-			if r.SpellingCheckRule != nil {
-				sug = r.SpellingCheckRule.FilterSuggestions(sug)
-			}
-			if len(sug) > 0 {
-				m.SetSuggestedReplacements(sug)
+		// Java: RuleMatch from len+dashCorr .. len+cleanWord.length()
+		// Token-based twin uses ATR positions with dashCorr on fromPos.
+		from := tok.GetStartPos() + dashCorr
+		to := tok.GetStartPos() + utf16LenHun(cleanWord)
+		// Prefer token end when no dash correction and end is known.
+		if dashCorr == 0 && tok.GetEndPos() > to {
+			to = tok.GetEndPos()
+		}
+		m := rules.NewRuleMatch(r, sentence, from, to, "Possible spelling mistake found")
+		m.SetType(rules.RuleMatchTypeUnknownWord)
+
+		cleanWord2 := cleanWord
+		if dashCorr > 0 && utf16LenHun(cleanWord) > dashCorr {
+			// Java: cleanWord.substring(dashCorr)
+			u := utf16.Encode([]rune(cleanWord))
+			if dashCorr < len(u) {
+				cleanWord2 = string(utf16.Decode(u[dashCorr:]))
 			}
 		}
+
+		// Java: userConfig suggestions gates
+		if r.UserConfig != nil && !r.UserConfig.IsSuggestionsEnabled() {
+			m.SetSuggestedReplacements(nil)
+		} else if r.allowMoreSpellingSuggestions(len(out)) {
+			sug := r.calcSuggestions(check, cleanWord2)
+			if r.isFirstItemHighConfidenceSuggestion(check, sug) && len(sug) > 0 {
+				// Attach high confidence on SuggestedReplacementObjects path.
+				objs := make([]*rules.SuggestedReplacement, 0, len(sug))
+				for i, s := range sug {
+					sr := rules.NewSuggestedReplacement(s)
+					if i == 0 {
+						c := rules.SpellingHighConfidence
+						sr.SetConfidence(&c)
+					}
+					objs = append(objs, sr)
+				}
+				m.SetSuggestedReplacementObjects(objs)
+			} else if len(sug) > 0 {
+				m.SetSuggestedReplacements(sug)
+			}
+		} else {
+			m.SetSuggestedReplacement(tooManyErrorsMsg)
+		}
 		out = append(out, m)
+
+		if foreignChecker != nil && !gotForeignResults {
+			scores := foreignChecker.Check(len(out))
+			if len(scores) > 0 {
+				if _, noForeign := scores[spelling.NoForeignLangDetected]; !noForeign && out[0] != nil {
+					out[0].SetNewLanguageMatches(scores)
+				}
+				gotForeignResults = true
+			}
+		}
 		prevTok = tok
 	}
 	return out, nil
 }
 
-// tryWrongSplit ports HunspellRule wrong-split join (UTF-16 charAt/substring).
-// If a match is returned, the previous match covering prevFrom is removed when present.
-func (r *HunspellRule) tryWrongSplit(
+func (r *HunspellRule) allowMoreSpellingSuggestions(ruleMatchesSoFar int) bool {
+	if r == nil || r.UserConfig == nil {
+		return true
+	}
+	max := r.UserConfig.GetMaxSpellingSuggestions()
+	if max == 0 {
+		return true
+	}
+	return ruleMatchesSoFar <= max
+}
+
+// ignoreWrongSplit ports PT/DE common-word skip for wrong-split.
+func (r *HunspellRule) ignoreWrongSplit(prevWord, word string) bool {
+	if r == nil || r.SpellingCheckRule == nil {
+		return false
+	}
+	code := strings.ToLower(r.SpellingCheckRule.LanguageCode)
+	if i := strings.IndexAny(code, "-_"); i > 0 {
+		code = code[:i]
+	}
+	pl := strings.ToLower(prevWord)
+	wl := strings.ToLower(word)
+	switch code {
+	case "pt":
+		_, a := commonPortugueseWords[pl]
+		_, b := commonPortugueseWords[wl]
+		return a || b
+	case "de":
+		_, a := commonGermanWords[pl]
+		_, b := commonGermanWords[wl]
+		return a || b
+	}
+	return false
+}
+
+// addWrongSplits ports both wrong-split arms (may add 0–2 matches; second may replace first).
+func (r *HunspellRule) addWrongSplits(
 	sentence *languagetool.AnalyzedSentence,
 	ruleMatches *[]*rules.RuleMatch,
 	prevWord string,
@@ -164,29 +321,40 @@ func (r *HunspellRule) tryWrongSplit(
 	word string,
 	wordFrom int,
 	cleanWord string,
-) *rules.RuleMatch {
-	if r == nil || prevWord == "" || word == "" {
-		return nil
-	}
+) {
 	// "thanky ou" → "thank you"
 	if pu := utf16.Encode([]rune(prevWord)); len(pu) >= 1 {
 		sugg1a := string(utf16.Decode(pu[:len(pu)-1]))
 		sugg1b := cutOffDotHun(string(utf16.Decode(pu[len(pu)-1:])) + word)
+		joined := strings.TrimSpace(sugg1a + " " + sugg1b)
 		if sugg1a != "" && sugg1b != "" &&
-			!r.IsMisspelledWord(sugg1a) && !r.IsMisspelledWord(sugg1b) {
-			return r.createWrongSplitMatch(sentence, ruleMatches, wordFrom, cleanWord, sugg1a, sugg1b, prevFrom)
+			!r.IsMisspelledWord(sugg1a) && !r.IsMisspelledWord(sugg1b) &&
+			r.acceptSuggestion(joined) {
+			if rm := r.createWrongSplitMatch(sentence, ruleMatches, wordFrom, cleanWord, sugg1a, sugg1b, prevFrom); rm != nil {
+				*ruleMatches = append(*ruleMatches, rm)
+			}
 		}
 	}
 	// "than kyou" → "thank you"
 	if wu := utf16.Encode([]rune(word)); len(wu) > 1 {
 		sugg2a := prevWord + string(utf16.Decode(wu[:1]))
 		sugg2b := cutOffDotHun(string(utf16.Decode(wu[1:])))
+		joined := strings.TrimSpace(sugg2a + " " + sugg2b)
 		if sugg2a != "" && sugg2b != "" &&
-			!r.IsMisspelledWord(sugg2a) && !r.IsMisspelledWord(sugg2b) {
-			return r.createWrongSplitMatch(sentence, ruleMatches, wordFrom, cleanWord, sugg2a, sugg2b, prevFrom)
+			!r.IsMisspelledWord(sugg2a) && !r.IsMisspelledWord(sugg2b) &&
+			r.acceptSuggestion(joined) {
+			if rm := r.createWrongSplitMatch(sentence, ruleMatches, wordFrom, cleanWord, sugg2a, sugg2b, prevFrom); rm != nil {
+				*ruleMatches = append(*ruleMatches, rm)
+			}
 		}
 	}
-	return nil
+}
+
+func (r *HunspellRule) acceptSuggestion(s string) bool {
+	if r != nil && r.AcceptSuggestionFn != nil {
+		return r.AcceptSuggestionFn(s)
+	}
+	return true
 }
 
 // createWrongSplitMatch ports SpellingCheckRule.createWrongSplitMatch.
@@ -204,11 +372,126 @@ func (r *HunspellRule) createWrongSplitMatch(
 		}
 	}
 	// Java: prevPos .. pos + coveredWord.length() (UTF-16)
-	to := pos + len(utf16.Encode([]rune(coveredWord)))
+	to := pos + utf16LenHun(coveredWord)
 	m := rules.NewRuleMatch(r, sentence, prevPos, to, "Possible spelling mistake found")
 	m.SetType(rules.RuleMatchTypeUnknownWord)
 	m.SetSuggestedReplacements([]string{strings.TrimSpace(suggestion1 + " " + suggestion2)})
 	return m
+}
+
+// calcSuggestions ports HunspellRule.calcSuggestions (core arms).
+func (r *HunspellRule) calcSuggestions(word, cleanWord string) []string {
+	if r == nil {
+		return nil
+	}
+	if r.GetOnlySuggestionsFn != nil {
+		if only := r.GetOnlySuggestionsFn(cleanWord); len(only) > 0 {
+			return r.filterSugs(only)
+		}
+	}
+	suggestions := r.Suggest(cleanWord)
+	// Java: if word.endsWith("."), interleave suggestions for word with trailing dot stripped
+	if strings.HasSuffix(word, ".") {
+		pos := 1
+		for _, s := range r.Suggest(word) {
+			// insert stripped-dot form at pos (mixing lists)
+			stripped := s
+			if strings.HasSuffix(s, ".") {
+				stripped = s[:len(s)-1]
+			}
+			if !containsStr(suggestions, stripped) {
+				if pos > len(suggestions) {
+					pos = len(suggestions)
+				}
+				suggestions = insertAt(suggestions, pos, stripped)
+				pos += 2
+			}
+		}
+	}
+	// additional top suggestions
+	var top []string
+	if r.GetAdditionalTopSuggestionsFn != nil {
+		top = r.GetAdditionalTopSuggestionsFn(suggestions, cleanWord)
+	}
+	if len(top) == 0 {
+		top = spelling.AdditionalTopSuggestions(suggestions, cleanWord)
+	}
+	if len(top) == 0 && strings.HasSuffix(word, ".") {
+		if r.GetAdditionalTopSuggestionsFn != nil {
+			top = r.GetAdditionalTopSuggestionsFn(suggestions, word)
+		} else {
+			top = spelling.AdditionalTopSuggestions(suggestions, word)
+		}
+		// Java: append "." when top does not end with "."
+		for i, t := range top {
+			if !strings.HasSuffix(t, ".") {
+				top[i] = t + "."
+			}
+		}
+	}
+	// Java Collections.reverse(additionalTopSuggestions) then add(0, ...)
+	for i := len(top) - 1; i >= 0; i-- {
+		t := top[i]
+		if t != cleanWord {
+			suggestions = append([]string{t}, suggestions...)
+		}
+	}
+	// filter acceptSuggestion + filterSuggestions + filterDupes
+	filtered := make([]string, 0, len(suggestions))
+	for _, s := range suggestions {
+		if r.acceptSuggestion(s) {
+			filtered = append(filtered, s)
+		}
+	}
+	return r.filterSugs(filtered)
+}
+
+func (r *HunspellRule) filterSugs(sug []string) []string {
+	if r.SpellingCheckRule != nil {
+		sug = r.SpellingCheckRule.FilterSuggestions(sug)
+	}
+	return filterDupesHun(sug)
+}
+
+// isFirstItemHighConfidenceSuggestion ports HunspellRule.isFirstItemHighConfidenceSuggestion (DE).
+func (r *HunspellRule) isFirstItemHighConfidenceSuggestion(word string, sug []string) bool {
+	if len(sug) == 0 || word == "IPs" {
+		return false
+	}
+	if !strings.EqualFold(word, sug[0]) {
+		return false
+	}
+	if !startsWithTwoUppercaseChars.MatchString(word) {
+		return false
+	}
+	code := ""
+	if r != nil && r.SpellingCheckRule != nil {
+		code = strings.ToLower(r.SpellingCheckRule.LanguageCode)
+	}
+	if i := strings.IndexAny(code, "-_"); i > 0 {
+		code = code[:i]
+	}
+	if code != "de" {
+		return false
+	}
+	// Java: word.endsWith("s") && StringUtils.isAllUpperCase(sugg.get(0)) → false
+	if strings.HasSuffix(word, "s") && isAllUpperCase(sug[0]) {
+		return false
+	}
+	return true
+}
+
+func isAllUpperCase(s string) bool {
+	hasLetter := false
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			hasLetter = true
+			if !unicode.IsUpper(r) {
+				return false
+			}
+		}
+	}
+	return hasLetter
 }
 
 func cutOffDotHun(s string) string {
@@ -225,4 +508,73 @@ func hasLetter(s string) bool {
 		}
 	}
 	return false
+}
+
+func utf16LenHun(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
+func filterDupesHun(in []string) []string {
+	if len(in) == 0 {
+		return in
+	}
+	seen := make(map[string]struct{}, len(in))
+	out := make([]string, 0, len(in))
+	for _, s := range in {
+		if s == "" {
+			continue
+		}
+		if _, ok := seen[s]; ok {
+			continue
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	return out
+}
+
+func containsStr(ss []string, s string) bool {
+	for _, x := range ss {
+		if x == s {
+			return true
+		}
+	}
+	return false
+}
+
+func insertAt(ss []string, i int, s string) []string {
+	if i < 0 {
+		i = 0
+	}
+	if i >= len(ss) {
+		return append(ss, s)
+	}
+	out := make([]string, 0, len(ss)+1)
+	out = append(out, ss[:i]...)
+	out = append(out, s)
+	out = append(out, ss[i:]...)
+	return out
+}
+
+func preferredLanguagesActiveHun(pref []string) bool {
+	n := 0
+	for _, p := range pref {
+		if strings.TrimSpace(p) != "" {
+			n++
+		}
+	}
+	return n >= 2
+}
+
+func foreignSentenceLengthHun(sentence *languagetool.AnalyzedSentence) int64 {
+	if sentence == nil {
+		return 0
+	}
+	var n int64
+	for _, t := range sentence.GetTokensWithoutWhitespace() {
+		if t != nil && !t.IsNonWord() {
+			n++
+		}
+	}
+	return n - 1
 }
