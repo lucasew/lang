@@ -82,7 +82,8 @@ func (m *MultitokenSpeller) LoadWords(r io.Reader) error {
 			if !strings.Contains(normalizedKey, " ") {
 				continue
 			}
-			first := []rune(normalizedKey)[0]
+			// Java: Character firstChar = normalizedKey.charAt(0) — UTF-16 unit
+			first := firstUTF16UnitAsRune(normalizedKey)
 			m.mu.Lock()
 			if m.byFirstChar[first] == nil {
 				m.byFirstChar[first] = map[string][]string{}
@@ -148,9 +149,8 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 			weightedCandidates = append(weightedCandidates, weighted{c, 0})
 		}
 	}
-	// Java: Character firstChar = normalizedWord.charAt(0); String UTF-16
-	// Use first rune for non-BMP safety (same for BMP multiword lists).
-	first := []rune(normalizedWord)[0]
+	// Java: Character firstChar = normalizedWord.charAt(0) — UTF-16 unit as Character key
+	first := firstUTF16UnitAsRune(normalizedWord)
 	byChar := m.byFirstChar[first]
 	if len(weightedCandidates) == 0 && byChar != nil {
 		for normalizedCandidate, candidates := range byChar {
@@ -405,6 +405,19 @@ func getNormalizeKey(word string) string {
 	// Java: removeDiacritics(word.toLowerCase()).replace("-", " ") — no collapse
 	s := tools.RemoveDiacritics(strings.ToLower(word))
 	return strings.ReplaceAll(s, "-", " ")
+}
+
+// firstUTF16UnitAsRune ports Java String.charAt(0) used as Character map key
+// in MultitokenSpeller (first UTF-16 code unit, not full Unicode code point).
+func firstUTF16UnitAsRune(s string) rune {
+	if s == "" {
+		return 0
+	}
+	u := utf16.Encode([]rune(s))
+	if len(u) == 0 {
+		return 0
+	}
+	return rune(u[0])
 }
 
 // utf16Len ports Java String.length() for length comparisons in MultitokenSpeller.

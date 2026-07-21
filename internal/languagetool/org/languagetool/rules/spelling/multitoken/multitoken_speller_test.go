@@ -34,6 +34,15 @@ func TestGetNormalizeKey(t *testing.T) {
 	require.Equal(t, "cafe latte", getNormalizeKey("Café-Latte"))
 }
 
+// Twin: MultitokenSpeller first-char map key is String.charAt(0) (UTF-16 unit).
+func TestFirstUTF16UnitAsRune(t *testing.T) {
+	require.Equal(t, 'n', firstUTF16UnitAsRune("new york"))
+	require.Equal(t, 'N', firstUTF16UnitAsRune("New York"))
+	// BMP letter
+	require.Equal(t, 'c', firstUTF16UnitAsRune("café latte"))
+	require.Equal(t, rune(0), firstUTF16UnitAsRune(""))
+}
+
 // Twin of MultitokenSpeller.WHITESPACE_AND_SEP = \p{Zs}+
 func TestCollapseWhitespace_ZsOnly(t *testing.T) {
 	// NBSP (\u00a0) is Zs → single space
