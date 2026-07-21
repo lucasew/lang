@@ -126,3 +126,47 @@ func TestIgnorePotentiallyMisspelledWord_DefaultFalse(t *testing.T) {
 	require.True(t, r.IgnorePotentiallyMisspelledWord("compoundok"))
 	require.False(t, r.IgnorePotentiallyMisspelledWord("stillbad"))
 }
+
+func TestIsDictionaryBasedSpellingRule(t *testing.T) {
+	r := NewSpellingCheckRule("S", "d", "en")
+	require.True(t, r.IsDictionaryBasedSpellingRule())
+}
+
+func TestAddIgnoreTokens(t *testing.T) {
+	r := NewSpellingCheckRule("S", "d", "en")
+	r.AddIgnoreTokens([]string{"foo", "bar"})
+	require.True(t, r.IsInIgnoredSet("foo"))
+	require.True(t, r.IsInIgnoredSet("bar"))
+}
+
+func TestSetConsiderIgnoreWords(t *testing.T) {
+	r := NewSpellingCheckRule("S", "d", "en")
+	r.AddIgnoreWords("xyzzy")
+	require.True(t, r.IgnoreWord("xyzzy"))
+	r.SetConsiderIgnoreWords(false)
+	// MaxTokenLength still ignores oversize; normal ignore set does not apply
+	require.False(t, r.IgnoreWord("xyzzy"))
+	r.SetConsiderIgnoreWords(true)
+	require.True(t, r.IgnoreWord("xyzzy"))
+}
+
+func TestIsIgnoredNoCase_LocaleLower(t *testing.T) {
+	// Turkish: ASCII "I" → "ı" (dotless) with tr locale (Java Locale("tr")).
+	// "ISTANBUL".toLowerCase(tr) → "ıstanbul"; Unicode ToLower would yield "istanbul".
+	r := NewSpellingCheckRule("S", "d", "tr")
+	r.SetConvertsCase(true)
+	r.AddIgnoreWords("ıstanbul")
+	require.True(t, r.IsIgnoredNoCase("ISTANBUL"), "tr locale lower of ISTANBUL should hit ıstanbul")
+	// English locale would not match dotless-i ignore entry
+	rEN := NewSpellingCheckRule("S", "d", "en")
+	rEN.SetConvertsCase(true)
+	rEN.AddIgnoreWords("ıstanbul")
+	require.False(t, rEN.IsIgnoredNoCase("ISTANBUL"), "en locale lower is istanbul ≠ ıstanbul")
+}
+
+func TestIgnoreWordAt(t *testing.T) {
+	r := NewSpellingCheckRule("S", "d", "en")
+	r.AddIgnoreWords("ok")
+	require.True(t, r.IgnoreWordAt([]string{"no", "ok", "no"}, 1))
+	require.False(t, r.IgnoreWordAt([]string{"no", "ok", "no"}, 0))
+}

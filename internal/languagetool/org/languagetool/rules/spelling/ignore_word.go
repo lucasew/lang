@@ -8,6 +8,8 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // IgnoreWord ports SpellingCheckRule.ignoreWord(String).
@@ -62,7 +64,8 @@ func (r *SpellingCheckRule) IsIgnoredNoCase(word string) bool {
 		return true
 	}
 	// Case conversion only when not mixed case and convertsCase (Java Morfologik setConvertsCase).
-	if r.ConvertsCase && !tools.IsMixedCase(word) && r.IsInIgnoredSet(strings.ToLower(word)) {
+	// Java: word.toLowerCase(language.getLocale())
+	if r.ConvertsCase && !tools.IsMixedCase(word) && r.IsInIgnoredSet(r.toLowerLocale(word)) {
 		return true
 	}
 	// Java: ignoreWordsWithLength > 0 && word.length() <= ignoreWordsWithLength
@@ -70,6 +73,37 @@ func (r *SpellingCheckRule) IsIgnoredNoCase(word string) bool {
 		return true
 	}
 	return false
+}
+
+// toLowerLocale ports word.toLowerCase(language.getLocale()) for ignore-set probes.
+func (r *SpellingCheckRule) toLowerLocale(word string) string {
+	if word == "" {
+		return word
+	}
+	tag := r.languageLocaleTag()
+	if tag == language.Und {
+		return strings.ToLower(word)
+	}
+	return cases.Lower(tag).String(word)
+}
+
+// languageLocaleTag maps LanguageCode (e.g. en-US, tr) to a BCP-47 tag for casing.
+func (r *SpellingCheckRule) languageLocaleTag() language.Tag {
+	if r == nil || r.LanguageCode == "" {
+		return language.Und
+	}
+	code := r.LanguageCode
+	// Java Locale separators; normalize underscore to hyphen for language.Parse.
+	code = strings.ReplaceAll(code, "_", "-")
+	if tag, err := language.Parse(code); err == nil {
+		return tag
+	}
+	if i := strings.IndexByte(code, '-'); i > 0 {
+		if tag, err := language.Parse(code[:i]); err == nil {
+			return tag
+		}
+	}
+	return language.Und
 }
 
 // IgnoreToken ports SpellingCheckRule.ignoreToken(tokens, idx):
@@ -82,7 +116,26 @@ func (r *SpellingCheckRule) IgnoreToken(tokens []*languagetool.AnalyzedTokenRead
 	if r.IgnoreTokenFn != nil {
 		return r.IgnoreTokenFn(tokens, idx)
 	}
-	return r.IgnoreWord(tokens[idx].GetToken())
+	// Java: List<String> words from tokens → ignoreWord(words, idx) → ignoreWord(words.get(idx))
+	return r.IgnoreWordAt(tokensToWords(tokens), idx)
+}
+
+// IgnoreWordAt ports ignoreWord(List<String> words, int idx) — default uses words.get(idx).
+func (r *SpellingCheckRule) IgnoreWordAt(words []string, idx int) bool {
+	if r == nil || idx < 0 || idx >= len(words) {
+		return false
+	}
+	return r.IgnoreWord(words[idx])
+}
+
+func tokensToWords(tokens []*languagetool.AnalyzedTokenReadings) []string {
+	out := make([]string, len(tokens))
+	for i, t := range tokens {
+		if t != nil {
+			out[i] = t.GetToken()
+		}
+	}
+	return out
 }
 
 // IgnorePotentiallyMisspelledWord ports SpellingCheckRule.ignorePotentiallyMisspelledWord.

@@ -114,6 +114,36 @@ func (r *SpellingCheckRule) ApplyUserAcceptedWords(accepted []string) {
 func (r *SpellingCheckRule) GetID() string          { return r.ID }
 func (r *SpellingCheckRule) GetDescription() string { return r.Description }
 
+// IsDictionaryBasedSpellingRule ports SpellingCheckRule.isDictionaryBasedSpellingRule (always true).
+func (r *SpellingCheckRule) IsDictionaryBasedSpellingRule() bool { return true }
+
+// AddIgnoreTokens ports addIgnoreTokens — add all tokens to wordsToBeIgnored.
+func (r *SpellingCheckRule) AddIgnoreTokens(tokens []string) {
+	if r == nil || len(tokens) == 0 {
+		return
+	}
+	r.AddIgnoreWords(tokens...)
+}
+
+// SetConsiderIgnoreWords ports setConsiderIgnoreWords.
+// When false, ignoreWord returns false without consulting the ignore set
+// (Java considerIgnoreWords=false; tokens still subject to MaxTokenLength? —
+// Java ignoreWord: after MaxTokenLength check, if !considerIgnoreWords return false).
+func (r *SpellingCheckRule) SetConsiderIgnoreWords(consider bool) {
+	if r == nil {
+		return
+	}
+	r.DisableConsiderIgnoreWords = !consider
+}
+
+// SetConvertsCase ports setConvertsCase (dictionary case conversions for ignore set).
+func (r *SpellingCheckRule) SetConvertsCase(convertsCase bool) {
+	if r == nil {
+		return
+	}
+	r.ConvertsCase = convertsCase
+}
+
 // AcceptWord reports whether word should not be flagged (ignore list or not misspelled).
 // Java SpellingCheckRule: prohibited wins over dictionary accept; ignoreWord wins over misspell.
 func (r *SpellingCheckRule) AcceptWord(word string) bool {
