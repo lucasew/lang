@@ -11,6 +11,18 @@ type Pipeline struct {
 	enabledRules  map[string]struct{}
 	cleanOverlaps bool
 	maxErrRate    float64
+	// checkToneTags ports QueryParams.toneTags for the current check2 call.
+	// Not part of PipelineSettings equals/hashCode (Java same).
+	checkToneTags []string
+}
+
+// SetCheckToneTags sets per-request tone tags (Java check2 toneTags argument).
+// Allowed after freeze — not a pipeline configuration mutation.
+func (p *Pipeline) SetCheckToneTags(tags []string) {
+	if p == nil {
+		return
+	}
+	p.checkToneTags = append([]string(nil), tags...)
 }
 
 func NewPipeline(settings PipelineSettings) *Pipeline {

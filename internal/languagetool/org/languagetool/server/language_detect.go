@@ -275,3 +275,47 @@ func ValidateNoopLanguages(parameters map[string]string) error {
 	}
 	return nil
 }
+
+// ParseNoopLanguages ports TextChecker:
+// params.get("noopLanguages") != null ? Arrays.asList(split(",")) : emptyList.
+func ParseNoopLanguages(parameters map[string]string) []string {
+	return parseOptionalCommaParam(parameters, "noopLanguages")
+}
+
+// ParsePreferredLanguages ports TextChecker preferredLanguages split(",").
+func ParsePreferredLanguages(parameters map[string]string) []string {
+	return parseOptionalCommaParam(parameters, "preferredLanguages")
+}
+
+func parseOptionalCommaParam(parameters map[string]string, key string) []string {
+	if parameters == nil {
+		return nil
+	}
+	if _, ok := parameters[key]; !ok {
+		return nil
+	}
+	return commaSeparated(parameters[key])
+}
+
+// DetectLanguageOfString ports TextChecker.detectLanguageOfString using the
+// instance languageIdentifier (cleanAndShorten + detect + preferred/default variants).
+// nil receiver / nil identifier falls back to package DetectLanguageOfStringResult (heuristic).
+func (t *TextChecker) DetectLanguageOfString(
+	text string,
+	preferredVariants, noopLangs, preferredLangs []string,
+) (DetectLanguageResult, error) {
+	if t == nil || t.LanguageIdentifier == nil {
+		return DetectLanguageOfStringResult(text, preferredVariants, nil)
+	}
+	// Java: cleanText = languageIdentifier.cleanAndShortenText(text)
+	//       detected = languageIdentifier.detectLanguage(cleanText, noopLangs, preferredLangs, forcePreferred)
+	clean := t.LanguageIdentifier.CleanAndShortenText(text)
+	if noopLangs == nil {
+		noopLangs = []string{}
+	}
+	if preferredLangs == nil {
+		preferredLangs = []string{}
+	}
+	detected := t.LanguageIdentifier.Detect(clean, noopLangs, preferredLangs)
+	return DetectLanguageOfStringFromDetected(detected, "", preferredVariants, nil)
+}

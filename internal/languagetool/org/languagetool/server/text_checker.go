@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -109,6 +110,9 @@ type TextChecker struct {
 	ContextSize    int
 	// Pool optional pipeline cache; when nil, pipelines are created per check.
 	Pool *PipelinePool
+	// LanguageIdentifier ports TextChecker.languageIdentifier
+	// (Simple when LocalAPIMode, else Default via LanguageIdentifierService).
+	LanguageIdentifier identifier.LanguageIdentifier
 }
 
 const DefaultContextSize = 40
@@ -129,6 +133,12 @@ func NewTextChecker(cfg *HTTPServerConfig, internal bool, reqCounter *RequestCou
 	}
 	if cfg != nil && cfg.IsPipelineCachingEnabled() {
 		tc.Pool = NewPipelinePool(cfg)
+	}
+	// Java TextChecker ctor: localApiMode → simple identifier; else default (ngram/fasttext deferred).
+	if cfg != nil && cfg.LocalAPIMode {
+		tc.LanguageIdentifier = identifier.Instance.GetSimpleLanguageIdentifier(cfg.PreferredLanguages)
+	} else {
+		tc.LanguageIdentifier = identifier.Instance.GetDefaultLanguageIdentifier(0)
 	}
 	return tc
 }

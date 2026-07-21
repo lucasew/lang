@@ -19,6 +19,9 @@ type CheckOptions struct {
 	UseEnabledOnly bool
 	Mode           CheckMode
 	Level          CheckLevel
+	// ToneTags ports QueryParams.toneTags (Java check2 arg; not in PipelineSettings equals).
+	// Empty → JLanguageTool default ALL_WITHOUT_GOAL_SPECIFIC filter behavior.
+	ToneTags []string
 	// MotherTongue enables false-friend rules when official false-friends.xml is available.
 	MotherTongue string
 	// IgnoreWords user-dictionary surfaces (suppresses spelling matches).
@@ -87,6 +90,7 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 
 // preparePipeline builds a pipeline for check options (from pool when available).
 // Caller must call releasePipeline when done if pool was used.
+// Tone tags are applied per check (Java check2 args), not pool keys.
 func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) (pl *Pipeline, settings PipelineSettings, fromPool bool) {
 	settings = pipelineSettingsFor(lang, opts)
 	if t != nil && t.Pool != nil {
@@ -97,6 +101,8 @@ func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) (pl *Pipel
 				_ = borrowed.SetCleanOverlappingMatches(true)
 				borrowed.SetupFinished()
 			}
+			// Java: check2(..., mode, level, toneTags, …) — toneTags per request
+			borrowed.SetCheckToneTags(opts.ToneTags)
 			return borrowed, settings, true
 		}
 	}
@@ -112,6 +118,7 @@ func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) (pl *Pipel
 	if opts.MaxErrorsPerWordRate > 0 {
 		_ = p.SetMaxErrorsPerWordRate(opts.MaxErrorsPerWordRate)
 	}
+	p.SetCheckToneTags(opts.ToneTags)
 	p.SetupFinished()
 	return p, settings, false
 }

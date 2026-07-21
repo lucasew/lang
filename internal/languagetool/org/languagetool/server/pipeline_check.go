@@ -212,16 +212,50 @@ func (p *Pipeline) CheckAnnotatedWithResults(at *markup.AnnotatedText) (*languag
 	return languagetool.NewCheckResultsFull(anyMatches, cr.GetIgnoredRanges(), cr.GetExtendedSentenceRanges()), nil
 }
 
-// configuredLT builds JLanguageTool for this pipeline (level, overlaps, altLanguages).
+// configuredLT builds JLanguageTool for this pipeline (level, mode, toneTags, overlaps, altLanguages).
 func (p *Pipeline) configuredLT() *languagetool.JLanguageTool {
 	lt := p.newConfiguredLT()
 	if p == nil {
 		return lt
 	}
-	// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends, …).
-	if strings.EqualFold(string(p.settings.Level), string(CheckLevelPicky)) {
-		lt.Level = languagetool.LevelPicky
+	// Java check2(..., mode, level, toneTags, …) / setLevel
+	level := p.settings.Query.Level
+	if level == "" {
+		level = p.settings.Level
 	}
+	lt.SetLevel(mapCheckLevel(level))
+
+	// Mode from Query.Mode (preferred) or legacy LanguageCode carrier
+	mode := p.settings.Query.Mode
+	if mode == "" {
+		mode = CheckMode(p.settings.Query.LanguageCode)
+	}
+	switch mode {
+	case CheckModeTextLevelOnly:
+		lt.SetMode(languagetool.ModeTextLevelOnly)
+	case CheckModeAllButTextLevelOnly:
+		lt.SetMode(languagetool.ModeAllButTextLevel)
+	default:
+		// ALL / empty
+	}
+
+	// Tone tags per request (not pool key). Empty → ALL_WITHOUT_GOAL_SPECIFIC (Java default).
+	if len(p.checkToneTags) > 0 {
+		tags := make([]languagetool.ToneTag, 0, len(p.checkToneTags))
+		for _, name := range p.checkToneTags {
+			if t, ok := languagetool.ParseToneTag(name); ok {
+				tags = append(tags, t)
+			}
+		}
+		if len(tags) > 0 {
+			lt.SetToneTags(tags...)
+		} else {
+			lt.SetToneTags(languagetool.ToneAllWithoutGoalSpecific)
+		}
+	} else {
+		lt.SetToneTags(languagetool.ToneAllWithoutGoalSpecific)
+	}
+
 	// Pipeline cleanOverlaps=false → JLanguageTool.setCleanOverlappingMatches(false).
 	if !p.cleanOverlaps {
 		lt.DisableCleanOverlapping()
@@ -234,6 +268,32 @@ func (p *Pipeline) configuredLT() *languagetool.JLanguageTool {
 		lt.AltLanguageCodes = append([]string(nil), p.settings.Query.AltLanguages...)
 	}
 	return lt
+}
+
+// mapCheckLevel maps server CheckLevel to JLanguageTool.Level (enum names).
+func mapCheckLevel(level CheckLevel) languagetool.Level {
+	switch level {
+	case CheckLevelPicky:
+		return languagetool.LevelPicky
+	case CheckLevelAcademic:
+		return languagetool.LevelAcademic
+	case CheckLevelClarity:
+		return languagetool.LevelClarity
+	case CheckLevelProfessional:
+		return languagetool.LevelProfessional
+	case CheckLevelCreative:
+		return languagetool.LevelCreative
+	case CheckLevelCustomer:
+		return languagetool.LevelCustomer
+	case CheckLevelJobApp:
+		return languagetool.LevelJobApp
+	case CheckLevelObjective:
+		return languagetool.LevelObjective
+	case CheckLevelElegant:
+		return languagetool.LevelElegant
+	default:
+		return languagetool.LevelDefault
+	}
 }
 
 // DisableRuleID records a rule to skip (before SetupFinished).

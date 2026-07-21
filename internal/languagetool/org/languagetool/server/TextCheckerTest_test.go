@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier"
 	"github.com/stretchr/testify/require"
 )
 
@@ -338,4 +339,82 @@ func TestDetectLanguageOfStringFromDetected_PreservesConfidence(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "en-US", r2.Code) // fallback en → default variant
 	require.Equal(t, float32(0), r2.Confidence)
+}
+
+// TextChecker uses LanguageIdentifierService (Java ctor local vs default).
+func TestTextChecker_LanguageIdentifierWired(t *testing.T) {
+	tc := NewTextChecker(nil, false, nil)
+	require.NotNil(t, tc.LanguageIdentifier)
+
+	// Inject profile scores (Java optimaize stand-in) so Detect is non-null without invent.
+	d := identifier.NewDefaultLanguageIdentifier(1000)
+	d.ProfileScore = func(text string, preferred []string) map[string]float64 {
+		if strings.Contains(text, "Größe") || strings.Contains(text, "deutsch") {
+			return map[string]float64{"de": 0.92}
+		}
+		return map[string]float64{"en": 0.95}
+	}
+	tc.LanguageIdentifier = d
+
+	// German → de + default variant de-DE; confidence from identifier
+	r, err := tc.DetectLanguageOfString("Die Größe des Hauses ist enorm und sehr deutlich.", nil, nil, nil)
+	require.NoError(t, err)
+	require.Equal(t, "de-DE", r.Code)
+	require.InDelta(t, 0.92, float64(r.Confidence), 1e-6)
+	require.NotNil(t, r.Source)
+
+	// preferredVariants promote short code (Java preferred short equals)
+	r2, err := tc.DetectLanguageOfString("This is clearly English text for detection purposes.", []string{"en-GB"}, nil, nil)
+	require.NoError(t, err)
+	require.Equal(t, "en-GB", r2.Code)
+
+	// empty detect → fallback en conf 0 (null identifier result)
+	d.ProfileScore = func(string, []string) map[string]float64 { return nil }
+	r3, err := tc.DetectLanguageOfString("", nil, nil, nil)
+	require.NoError(t, err)
+	require.Equal(t, "en-US", r3.Code)
+	require.Equal(t, float32(0), r3.Confidence)
+
+	// LocalAPIMode → simple identifier (Java getSimpleLanguageIdentifier)
+	cfg := NewHTTPServerConfig()
+	cfg.LocalAPIMode = true
+	tcLocal := NewTextChecker(cfg, false, nil)
+	require.NotNil(t, tcLocal.LanguageIdentifier)
+}
+
+func TestParseNoopAndPreferredLanguages(t *testing.T) {
+	require.Nil(t, ParseNoopLanguages(map[string]string{"language": "auto"}))
+	require.Equal(t, []string{"cs", "sk"}, ParseNoopLanguages(map[string]string{"noopLanguages": "cs,sk"}))
+	require.Equal(t, []string{"en", "de"}, ParsePreferredLanguages(map[string]string{"preferredLanguages": "en,de"}))
+}
+
+func TestPipeline_ToneTagsAppliedToLT(t *testing.T) {
+	// Java check2 passes toneTags; pool key must not change when only tone tags differ.
+	a := pipelineSettingsFor("en", CheckOptions{Level: CheckLevelDefault})
+	b := pipelineSettingsFor("en", CheckOptions{Level: CheckLevelDefault, ToneTags: []string{"formal"}})
+	require.Equal(t, a.Key(), b.Key(), "toneTags must not affect pool key (Java QueryParams equals omits them)")
+
+	p := NewPipeline(a)
+	p.SetCheckToneTags([]string{"formal"})
+	lt := p.configuredLT()
+	require.Contains(t, lt.ToneTags, languagetool.ToneFormal)
+	require.NotContains(t, lt.ToneTags, languagetool.ToneAllWithoutGoalSpecific)
+
+	p.SetCheckToneTags(nil)
+	lt2 := p.configuredLT()
+	require.Contains(t, lt2.ToneTags, languagetool.ToneAllWithoutGoalSpecific)
+}
+
+func TestApiV2_CheckPassesToneTagsAndDetect(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "This is an test.",
+		"toneTags": "clarity",
+	})
+	require.NoError(t, err)
+	require.Equal(t, 200, r.Status)
+	// Nested detectedLanguage always present (writeLanguageSection)
+	require.Contains(t, r.Body, `"detectedLanguage"`)
+	require.Contains(t, r.Body, `"confidence"`)
 }

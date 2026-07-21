@@ -158,8 +158,12 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if err := ValidatePreferredVariants(preferred, nil); err != nil {
 			return HandleResult{}, err
 		}
-		// Java V2 getLanguage: always detectLanguageOfString; given = detected when auto else parseLanguage(langParam)
-		det, err := DetectLanguageOfStringResult(text, preferred, nil)
+		// Java TextChecker: noopLanguages/preferredLanguages split(",") into detectLanguageOfString
+		noopLangs := ParseNoopLanguages(parameters)
+		preferredLangs := ParsePreferredLanguages(parameters)
+		// Java V2 getLanguage: always detectLanguageOfString via languageIdentifier;
+		// given = detected when auto else parseLanguage(langParam)
+		det, err := a.TextChecker.DetectLanguageOfString(text, preferred, noopLangs, preferredLangs)
 		if err != nil {
 			return HandleResult{}, err
 		}
@@ -191,9 +195,10 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			// Java: QueryParams.altLanguages → Pipeline(lang, altLanguages, …)
 			// Already validated in ParseCheckQueryParams when present.
 			AltLanguages: append([]string(nil), qp.AltLanguages...),
-			// Mode/Level already validated in ParseCheckQueryParams (ServerTools)
-			Mode:  qp.Mode,
-			Level: qp.Level,
+			// Mode/Level/ToneTags from ParseCheckQueryParams (ServerTools + TextChecker)
+			Mode:     qp.Mode,
+			Level:    qp.Level,
+			ToneTags: append([]string(nil), qp.ToneTags...),
 		}
 		langName := LanguageNameForCode(lang)
 		// AllowIncompleteResults: Java returns partial matches + incompleteResultsReason
