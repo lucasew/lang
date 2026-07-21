@@ -42,5 +42,8 @@ func TestMorfologikSpeller_IgnoreNumbersOff(t *testing.T) {
 	sp := NewMorfologikSpeller("/x.dict", 1)
 	sp.IgnoreNumbers = false
 	sp.AddWord("ok")
-	require.True(t, sp.IsMisspelled("175ºC"))
+	// Java: ignore-all-uppercase defaults true, so "175ºC" (no lowercase letter) is accepted.
+	// Probe a mixed-case form with digits so only the numbers gate is under test.
+	require.True(t, sp.IsMisspelled("word1"))
+	require.False(t, sp.IsMisspelled("175ºC"), "all-upper+digits still ignored by ignore-all-uppercase")
 }

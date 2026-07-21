@@ -74,14 +74,8 @@ func FilterDictIsMisspelled(word string) bool {
 	if d == nil || word == "" {
 		return false
 	}
-	if d.Contains(word) {
-		return false
-	}
-	low := strings.ToLower(word)
-	if low != word && d.Contains(low) {
-		return false
-	}
-	return true
+	// Java Speller.isMisspelled (.info gates + Contains + convertCase)
+	return d.IsMisspelled(word)
 }
 
 // FilterDictSuggest returns edit-distance suggestions from the wired dict.

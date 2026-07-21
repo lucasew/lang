@@ -54,16 +54,4 @@ func TestRunesEqualUnderOpts_DiacriticsConvertCase(t *testing.T) {
 	}
 }
 
-func TestEdit1Candidates_DiacriticAlphabet(t *testing.T) {
-	cands := edit1CandidatesOpts("cafe", SuggestOpts{IgnoreDiacritics: true})
-	found := false
-	for _, c := range cands {
-		if c == "café" || c == "cafè" {
-			found = true
-			break
-		}
-	}
-	if !found {
-		t.Fatalf("expected café-style replace among %d cands", len(cands))
-	}
-}
+

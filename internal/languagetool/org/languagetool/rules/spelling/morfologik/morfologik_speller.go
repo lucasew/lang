@@ -4,6 +4,8 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf16"
+
+	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 )
 
 // MorfologikSpeller ports org.languagetool.rules.spelling.morfologik.MorfologikSpeller
@@ -186,16 +188,29 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 	if word == "LanguageTool" || word == "LanguageTooler" {
 		return false
 	}
-	// Java: input conversion before all gates
+	// When binary FSA is attached, prefer Dictionary.IsMisspelled (Java Speller twin).
+	// Sync flags that LoadInfoBesideDict may have set on MorfologikSpeller.
+	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
+		d.IgnoreDiacritics = s.IgnoreDiacritics
+		d.ConvertCase = s.ConvertCase
+		d.IgnoreNumbers = s.IgnoreNumbers
+		d.IgnorePunctuation = s.IgnorePunctuation
+		d.IgnoreCamelCase = s.IgnoreCamelCase
+		d.IgnoreAllUppercase = s.IgnoreAllUppercase
+		d.SupportRunOnWords = s.SupportRunOnWords
+		if len(s.InputConversionPairs) > 0 {
+			d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
+		}
+		return d.IsMisspelled(word)
+	}
+	// Map-inject / no-FSA path: same gates with Words / InDictionaryFn.
 	wordToCheck := s.applyInputConversion(word)
 	// Java: isAlphabetic = word.length() != 1 || isAlphabetic(charAt(0))  (UTF-16 length/charAt)
 	u := utf16.Encode([]rune(wordToCheck))
 	isAlpha := len(u) != 1 || isAlphabeticCodePoint(rune(u[0]))
-	// (!ignorePunctuation || isAlphabetic) — single non-letter ignored when ignorePunctuation
 	if s.IgnorePunctuation && !isAlpha {
 		return false
 	}
-	// (!ignoreNumbers || containsNoDigit)
 	if s.IgnoreNumbers && containsDigitUTF16(wordToCheck) {
 		return false
 	}
@@ -208,14 +223,12 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 	if s.inDictionary(wordToCheck) {
 		return false
 	}
-	// convertCase: accept lowercase / initial-upper forms of non-mixed-case words
 	if s.ConvertCase && !isMixedCaseWord(wordToCheck) {
 		low := strings.ToLower(wordToCheck)
 		if s.inDictionary(low) {
 			return false
 		}
 		if isAllUppercaseWord(wordToCheck) {
-			// initialUppercase: first upper, rest lower
 			if iu := initialUppercaseWord(wordToCheck); iu != wordToCheck && s.inDictionary(iu) {
 				return false
 			}
@@ -271,26 +284,19 @@ func isAlphabeticCodePoint(r rune) bool {
 		unicode.Is(unicode.Lm, r) || unicode.Is(unicode.Lo, r) || unicode.Is(unicode.Nl, r)
 }
 
+// isAllUppercaseWord ports Speller.isAllUppercase (true unless a letter is lowercase).
 func isAllUppercaseWord(s string) bool {
-	hasLetter := false
 	for _, r := range s {
-		if unicode.IsLetter(r) {
-			hasLetter = true
-			if !unicode.IsUpper(r) {
-				return false
-			}
+		if unicode.IsLetter(r) && unicode.IsLower(r) {
+			return false
 		}
 	}
-	return hasLetter
+	return true
 }
 
-// isMixedCaseWord ports Speller.isMixedCase:
-// !isAllUppercase && isNotCapitalizedWord && isNotAllLowercase
+// isMixedCaseWord ports Speller.isMixedCase.
 // Capitalized "Water" is NOT mixed case.
 func isMixedCaseWord(s string) bool {
-	if s == "" {
-		return false
-	}
 	return !isAllUppercaseWord(s) && isNotCapitalizedWord(s) && isNotAllLowercaseWord(s)
 }
 
@@ -303,7 +309,7 @@ func isNotAllLowercaseWord(s string) bool {
 	return false
 }
 
-// isNotCapitalizedWord ports Speller.isNotCapitalizedWord (UTF-16 charAt approx via runes for BMP).
+// isNotCapitalizedWord ports Speller.isNotCapitalizedWord.
 func isNotCapitalizedWord(s string) bool {
 	r := []rune(s)
 	if len(r) == 0 {
@@ -320,28 +326,22 @@ func isNotCapitalizedWord(s string) bool {
 	return false
 }
 
-// isCamelCaseWord ports Speller.isCamelCase (simplified: internal uppercase after lowercase).
+// isCamelCaseWord ports Speller.isCamelCase.
 func isCamelCaseWord(s string) bool {
-	// morfologik: more than one capital, not all upper, first may be upper
-	runes := []rune(s)
-	if len(runes) < 2 {
+	if s == "" {
 		return false
 	}
-	if isAllUppercaseWord(s) {
+	r := []rune(s)
+	if isAllUppercaseWord(s) || !isNotCapitalizedWord(s) {
 		return false
 	}
-	// at least one upper not at start after a lower
-	seenLower := false
-	for i, r := range runes {
-		if unicode.IsLower(r) {
-			seenLower = true
-			continue
-		}
-		if unicode.IsUpper(r) && seenLower && i > 0 {
-			return true
-		}
+	if !unicode.IsUpper(r[0]) {
+		return false
 	}
-	return false
+	if len(r) > 1 && !unicode.IsLower(r[1]) {
+		return false
+	}
+	return isNotAllLowercaseWord(s)
 }
 
 func initialUppercaseWord(s string) string {
