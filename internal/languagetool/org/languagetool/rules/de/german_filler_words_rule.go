@@ -295,12 +295,20 @@ func (r *GermanFillerWordsRule) getLimitMessage(limit int, percent float64) stri
 		limit, int(percent+0.5))
 }
 
+func (r *GermanFillerWordsRule) isFillerSurface(tok string) bool {
+	if r == nil {
+		return false
+	}
+	_, ok := r.fillers[tok]
+	return ok
+}
+
 func (r *GermanFillerWordsRule) conditionFulfilled(tokens []*languagetool.AnalyzedTokenReadings, nToken int) int {
 	if r == nil || nToken < 0 || nToken >= len(tokens) {
 		return -1
 	}
 	tok := tokens[nToken].GetToken()
-	if _, ok := r.fillers[tok]; !ok {
+	if !r.isFillerSurface(tok) {
 		return -1
 	}
 	if germanFillerIsException(tokens, nToken) {
@@ -324,9 +332,14 @@ func (r *GermanFillerWordsRule) sentenceConditionFulfilled(tokens []*languagetoo
 		return false
 	}
 	r.sentenceMessage = ""
+	// Java sentenceConditionFulfilled for two-following uses fillerWords.contains +
+	// !isException only — NOT isTwoWordException / full conditionFulfilled.
 	if r.TestTwoFollowing {
-		if (nToken > 1 && r.conditionFulfilled(tokens, nToken-1) == nToken-1) ||
-			(nToken < len(tokens)-1 && r.conditionFulfilled(tokens, nToken+1) == nToken+1) {
+		prevFiller := nToken > 1 && tokens[nToken-1] != nil &&
+			r.isFillerSurface(tokens[nToken-1].GetToken()) && !germanFillerIsException(tokens, nToken-1)
+		nextFiller := nToken < len(tokens)-1 && tokens[nToken+1] != nil &&
+			r.isFillerSurface(tokens[nToken+1].GetToken()) && !germanFillerIsException(tokens, nToken+1)
+		if prevFiller || nextFiller {
 			r.sentenceMessage = "Zwei potentielle Füllwörter hintereinander. Mindestens eins sollte gelöscht werden."
 			r.SentenceMessage = r.sentenceMessage
 			return true

@@ -36,6 +36,8 @@ func TestNonSignificantVerbsRule_Rule(t *testing.T) {
 	))
 	require.Equal(t, 2, len(r.Match(s1))) // machen, tun
 	require.Equal(t, 1, len(r.Match(s2))) // ist/sein
+	// Java lt.check multi-sentence → 3 total (text-level MatchList)
+	require.Equal(t, 3, len(r.MatchList([]*languagetool.AnalyzedSentence{s1, s2})))
 
 	// "Der Vorgang war abgeschlossen." — sein + PA2 exception → 0
 	abgeschlossen := languagetool.NewAnalyzedSentence(withPositions(
@@ -46,7 +48,19 @@ func TestNonSignificantVerbsRule_Rule(t *testing.T) {
 		atrWithPOS("abgeschlossen", "VER:PA2:SFT", "abschließen"),
 		atrWithPOS(".", "PKT", "."),
 	))
+	// second Java no-match sentence
+	bedacht := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Das", "PRO:DEM:NOM:SIN:NEU", "das"),
+		atrWithPOS("hatte", "VER:AUX:3:SIN:PRT:SFT", "haben"),
+		atrWithPOS("er", "PRO:PER:NOM:SIN:MAS", "er"),
+		atrWithPOS("nicht", "PTKNEG", "nicht"),
+		atrWithPOS("bedacht", "VER:PA2:SFT", "bedenken"),
+		atrWithPOS(".", "PKT", "."),
+	))
 	require.Empty(t, r.Match(abgeschlossen))
+	require.Empty(t, r.Match(bedacht))
+	require.Empty(t, r.MatchList([]*languagetool.AnalyzedSentence{abgeschlossen, bedacht}))
 
 	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
@@ -59,4 +73,5 @@ func TestNonSignificantVerbsRule_Rule(t *testing.T) {
 
 	// untagged must not invent
 	require.Empty(t, r.Match(languagetool.AnalyzePlain("Er machte einen Kuchen.")))
+	require.Empty(t, r.Match(languagetool.AnalyzePlain("Wenn man das machen kann, sollte man das tun. Das ist so.")))
 }
