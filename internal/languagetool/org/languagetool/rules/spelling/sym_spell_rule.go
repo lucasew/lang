@@ -7,25 +7,35 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/suggestions"
+	symimpl "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/symspell/implementation"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // SymSpellRuleID ports SymSpellRule.getId.
 const SymSpellRuleID = "SYMSPELL_RULE"
 
-// SymSpellRule ports org.languagetool.rules.spelling.SymSpellRule as a
-// dictionary + edit-distance suggestion rule (full SymSpell index deferred;
-// lookup uses in-memory Dictionary + edit distance like the Java SuggestItem path).
+// SymSpellRule ports org.languagetool.rules.spelling.SymSpellRule.
+// When Speller is set, getSpellerMatches uses SymSpell.lookup (Java path).
+// When Speller is nil, falls back to map Dictionary + edit-distance scan (tests).
 type SymSpellRule struct {
 	*SpellingCheckRule
+	// EditDistance ports default editDistance (3 in Java initParameters unless experiment).
 	EditDistance int
-	// Dictionary accepted words (Java defaultDictSpeller surface).
+	// Verbosity ports SymSpell.Verbosity for lookup (default Closest like Java default
+	// when experiment not set — Java uses Top in some experiment paths; Closest is safer default for tests).
+	// Java match uses getSpellerMatches → lookup(word, verbosity, editDistance).
+	Verbosity symimpl.Verbosity
+	// Speller is the defaultDictSpeller (Java).
+	Speller *symimpl.SymSpell
+	// UserSpeller is the userDictSpeller (Java); nil → no user candidates.
+	UserSpeller *symimpl.SymSpell
+	// Dictionary accepted words — used when Speller is nil (map-inject tests).
 	Dictionary map[string]struct{}
-	// UserDictionary ports userDictSpeller accepted words.
+	// UserDictionary map-inject user words when UserSpeller is nil.
 	UserDictionary map[string]struct{}
-	// Prohibited words always flagged (filterCandidates).
+	// Prohibited words always filtered from candidates (filterCandidates).
 	Prohibited map[string]struct{}
-	// Orderer ports SymSpellRule.orderer for addSuggestionsToRuleMatch (optional ML).
+	// Orderer ports SymSpellRule.orderer for addSuggestionsToRuleMatch.
 	Orderer suggestions.SuggestionsOrderer
 	mu      sync.RWMutex
 }
@@ -37,6 +47,7 @@ func NewSymSpellRule(id, languageCode string) *SymSpellRule {
 	r := &SymSpellRule{
 		SpellingCheckRule: NewSpellingCheckRule(id, "Spell checking rule using SymSpell algorithm", languageCode),
 		EditDistance:      3,
+		Verbosity:         symimpl.VerbosityClosest,
 		Dictionary:        map[string]struct{}{},
 		UserDictionary:    map[string]struct{}{},
 		Prohibited:        map[string]struct{}{},
@@ -45,11 +56,28 @@ func NewSymSpellRule(id, languageCode string) *SymSpellRule {
 	return r
 }
 
+// SetSpeller wires the default SymSpell dictionary (Java defaultDictSpeller).
+func (r *SymSpellRule) SetSpeller(sp *symimpl.SymSpell) {
+	if r != nil {
+		r.Speller = sp
+	}
+}
+
+// SetUserSpeller wires the user SymSpell dictionary (Java userDictSpeller).
+func (r *SymSpellRule) SetUserSpeller(sp *symimpl.SymSpell) {
+	if r != nil {
+		r.UserSpeller = sp
+	}
+}
+
 func (r *SymSpellRule) AddWords(words ...string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	for _, w := range words {
 		r.Dictionary[w] = struct{}{}
+		if r.Speller != nil {
+			r.Speller.CreateDictionaryEntry(w, 1, nil)
+		}
 	}
 }
 
@@ -62,6 +90,9 @@ func (r *SymSpellRule) AddUserWords(words ...string) {
 	}
 	for _, w := range words {
 		r.UserDictionary[w] = struct{}{}
+		if r.UserSpeller != nil {
+			r.UserSpeller.CreateDictionaryEntry(w, 1, nil)
+		}
 	}
 }
 
@@ -73,6 +104,18 @@ func (r *SymSpellRule) isMisspelled(word string) bool {
 	}
 	if r.inDictLocked(word) {
 		return false
+	}
+	// When Speller is set: known if exact Lookup distance 0.
+	if r.Speller != nil {
+		got := r.Speller.LookupMax(word, symimpl.VerbosityTop, 0)
+		if len(got) > 0 && got[0].Term == word && got[0].Distance == 0 {
+			return false
+		}
+		// also try with edit distance 0 only — if empty, misspelled
+		// Java isMisspelled throws not implemented on SymSpellRule — Match uses candidates instead.
+		// For AcceptWord path: treat as misspelled if not exact in words map.
+		// CreateDictionaryEntry puts into Speller.words — Lookup Top max 0 should find exact.
+		return true
 	}
 	return true
 }
@@ -97,12 +140,44 @@ func (r *SymSpellRule) inDictLocked(word string) bool {
 	return false
 }
 
-// Suggestions returns default-dict words within EditDistance (small dicts).
+// Suggestions returns default-dict spelling suggestions (getSpellerMatches + filterCandidates).
 func (r *SymSpellRule) Suggestions(word string) []string {
-	return r.suggestionsFrom(word, false)
+	return r.filterCandidates(r.getSpellerMatches(word, false))
 }
 
-func (r *SymSpellRule) suggestionsFrom(word string, user bool) []string {
+// getSpellerMatches ports SymSpellRule.getSpellerMatches.
+func (r *SymSpellRule) getSpellerMatches(word string, user bool) []string {
+	if r == nil {
+		return nil
+	}
+	// Real SymSpell path
+	var sp *symimpl.SymSpell
+	if user {
+		sp = r.UserSpeller
+	} else {
+		sp = r.Speller
+	}
+	if sp != nil {
+		maxEd := r.EditDistance
+		if maxEd <= 0 {
+			maxEd = sp.MaxDictionaryEditDistance()
+		}
+		// clamp to speller max (LookupMax panics if larger)
+		if maxEd > sp.MaxDictionaryEditDistance() {
+			maxEd = sp.MaxDictionaryEditDistance()
+		}
+		items := sp.LookupMax(word, r.Verbosity, maxEd)
+		out := make([]string, 0, len(items))
+		for _, it := range items {
+			out = append(out, it.Term)
+		}
+		return out
+	}
+	// Map-inject fallback (tests without full SymSpell)
+	return r.suggestionsFromMap(word, user)
+}
+
+func (r *SymSpellRule) suggestionsFromMap(word string, user bool) []string {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	dict := r.Dictionary
@@ -112,13 +187,13 @@ func (r *SymSpellRule) suggestionsFrom(word string, user bool) []string {
 	if len(dict) == 0 || len(dict) > 10000 {
 		return nil
 	}
+	maxEd := r.EditDistance
+	if maxEd <= 0 {
+		maxEd = 3
+	}
 	var out []string
 	for w := range dict {
-		// filterCandidates: skip prohibited
-		if _, bad := r.Prohibited[w]; bad {
-			continue
-		}
-		if levenshtein(word, w) <= r.EditDistance {
+		if levenshtein(word, w) <= maxEd {
 			out = append(out, w)
 			if len(out) >= 10 {
 				break
@@ -128,18 +203,32 @@ func (r *SymSpellRule) suggestionsFrom(word string, user bool) []string {
 	return out
 }
 
-// Match ports SymSpellRule.match:
-// skip sentence start / immunized / ignored / non-word;
-// empty candidates → misspelling match;
-// top candidate equals word → no match;
-// else match + addSuggestionsToRuleMatch(user, default, orderer).
+// filterCandidates ports SymSpellRule.filterCandidates — drop ignore + prohibited.
+func (r *SymSpellRule) filterCandidates(candidates []string) []string {
+	if len(candidates) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(candidates))
+	for _, c := range candidates {
+		if r.SpellingCheckRule != nil && r.IsInIgnoredSet(c) {
+			continue
+		}
+		if _, bad := r.Prohibited[c]; bad {
+			continue
+		}
+		out = append(out, c)
+	}
+	return out
+}
+
+// Match ports SymSpellRule.match.
 func (r *SymSpellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if sentence == nil || r == nil {
 		return nil, nil
 	}
 	var out []*rules.RuleMatch
 	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		// Java: token.isSentenceStart() || immunized || ignoredBySpeller || isNonWord
+		// Java: sentenceStart || immunized || ignoredBySpeller || isNonWord
 		if tok == nil || tok.IsSentenceStart() {
 			continue
 		}
@@ -150,18 +239,18 @@ func (r *SymSpellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 		if w == "" || tokenizers.UTF16Len(w) > MaxTokenLength {
 			continue
 		}
-		// IgnoreWord list (Java ignoredWords.contains)
+		// Java ignoredWords.contains(word)
 		if r.SpellingCheckRule != nil && r.IgnoreWord(w) {
 			continue
 		}
-		candidates := r.suggestionsFrom(w, false)
-		userCandidates := r.suggestionsFrom(w, true)
-		// Java: candidates empty && user empty → match "Misspelling or unknown word!"
-		// else if top candidate != word → match + suggestions
+		candidates := r.filterCandidates(r.getSpellerMatches(w, false))
+		userCandidates := r.filterCandidates(r.getSpellerMatches(w, true))
+
 		var m *rules.RuleMatch
 		if len(candidates) == 0 && len(userCandidates) == 0 {
-			if !r.isMisspelled(w) {
-				// in dict but no edit-distance sugs from small dict scan — accept
+			// unknown — flag (Java always creates match when both empty)
+			// Skip if AcceptWord (map dict exact / ignore)
+			if r.AcceptWord(w) {
 				continue
 			}
 			m = rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
