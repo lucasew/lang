@@ -2,6 +2,7 @@ package de
 
 // Twin of SwissGermanTaggerTest — MapWordTagger ss↔ß mapping
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -39,4 +40,20 @@ func TestSwissGermanTagger_Tagger(t *testing.T) {
 	require.Equal(t,
 		*german.Lookup("Auto").GetReadings()[0].GetLemma(),
 		*swiss.Lookup("Auto").GetReadings()[0].GetLemma())
+}
+
+// Twin: SS_PATTERN is Pattern.LITERAL "ss" → replaceAll every non-overlapping "ss".
+func TestSwissGermanTagger_MultiSSReplace(t *testing.T) {
+	// Java Pattern.compile("ss", LITERAL).matcher("ssss").replaceAll("ß") → "ßß"
+	require.Equal(t, "ßß", strings.ReplaceAll("ssss", "ss", "ß"))
+	require.Equal(t, "groß", strings.ReplaceAll("gross", "ss", "ß"))
+	wt := tagging.MapWordTagger{
+		"groß": {tagging.NewTaggedWord("groß", "ADJ:PRD:GRU")},
+	}
+	swiss := NewSwissGermanTagger(wt)
+	// already-tagged with POS must not re-map
+	tagged := swiss.Tag([]string{"gross"})
+	require.NotNil(t, tagged[0].GetReadings()[0].GetPOSTag())
+	// isTagged after map → no second conversion path needed
+	require.True(t, tagged[0].IsTagged())
 }

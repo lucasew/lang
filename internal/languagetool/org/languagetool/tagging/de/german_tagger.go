@@ -520,7 +520,9 @@ func (t *SwissGermanTagger) Tag(sentenceTokens []string) []*languagetool.Analyze
 }
 
 // TagIgnoreCase ports SwissGermanTagger.tag(List, ignoreCase):
-// super.tag then for untagged tokens with "ss", Lookup(ss→ß) and addReading.
+// super.tag then for untagged tokens with "ss", lookup(ss→ß) and addReading.
+// Java uses Pattern.compile("ss", LITERAL).matcher(token).replaceAll("ß") and
+// reading.getToken() (not the sentenceTokens index).
 func (t *SwissGermanTagger) TagIgnoreCase(sentenceTokens []string, ignoreCase bool) []*languagetool.AnalyzedTokenReadings {
 	if t == nil || t.GermanTagger == nil {
 		return nil
@@ -529,28 +531,31 @@ func (t *SwissGermanTagger) TagIgnoreCase(sentenceTokens []string, ignoreCase bo
 	if out == nil {
 		return nil
 	}
-	for i, reading := range out {
-		if reading == nil || i >= len(sentenceTokens) {
+	for _, reading := range out {
+		if reading == nil {
 			continue
 		}
-		word := sentenceTokens[i]
-		if !strings.Contains(word, "ss") || reading.IsTagged() {
+		// Java: reading.getToken()
+		word := reading.GetToken()
+		if word == "" || !strings.Contains(word, "ss") || reading.IsTagged() {
 			continue
 		}
+		// Java: SS_PATTERN.matcher(token).replaceAll("ß") — literal replace all "ss"
 		alt := strings.ReplaceAll(word, "ss", "ß")
 		if alt == word {
 			continue
 		}
-		// Java: replacementReading = lookup(ss→ß) — recursive Lookup (ignoreCase=false)
+		// Java: lookup(...) on this instance is polymorphic → Swiss.tag → German.lookup path
+		// for ß surfaces (no "ss") super path only; use German Lookup (ignoreCase=false).
 		repl := t.GermanTagger.Lookup(alt)
 		if repl == nil {
 			continue
 		}
 		for _, at := range repl.GetReadings() {
-			if at == nil || at.GetPOSTag() == nil {
+			if at == nil {
 				continue
 			}
-			// keep Swiss surface (ss)
+			// Java adds all readings (including null POS); keep Swiss surface
 			reading.AddReading(languagetool.NewAnalyzedToken(word, at.GetPOSTag(), at.GetLemma()), "SwissGermanTagger")
 		}
 	}

@@ -21,10 +21,10 @@ func TestGermanCompoundTokenizer_AllSplits(t *testing.T) {
 	tok := NewGermanCompoundTokenizer(true)
 	// clear extras noise for deterministic small lexicon
 	tok.Words = map[string]struct{}{
-		"arbeit": {},
-		"amt":    {},
-		"s":      {}, // not used: MinPartLen 3
-		"platz":  {},
+		"arbeit":      {},
+		"amt":         {},
+		"s":           {}, // not used: MinPartLen 3
+		"platz":       {},
 		"arbeitplatz": {}, // whole form also in dict
 	}
 	// "arbeitsplatz" with arbeit + platz only if "s" not needed as separate
@@ -57,4 +57,11 @@ func TestGermanCompoundTokenizer_AllSplits(t *testing.T) {
 	}
 	require.Contains(t, joined, "foo+bar+baz")
 	require.Contains(t, joined, "foobar+baz")
+}
+
+// Twin: Maskerade exception is commented out in Java — not an active exception.
+func TestCompoundTokenizer_MaskeradeNotException(t *testing.T) {
+	tok := NewGermanCompoundTokenizer(true)
+	_, ok := tok.Exceptions["maskerade"]
+	require.False(t, ok, "Maskerade is commented out in GermanCompoundTokenizer.java")
 }
