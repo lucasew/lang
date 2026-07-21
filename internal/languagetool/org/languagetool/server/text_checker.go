@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -118,6 +119,8 @@ type TextChecker struct {
 const DefaultContextSize = 40
 
 func NewTextChecker(cfg *HTTPServerConfig, internal bool, reqCounter *RequestCounter) *TextChecker {
+	// Java Languages modules loaded before TextChecker / languageIdentifier use.
+	languagetool.EnsureBuiltInLanguagesRegistered()
 	if cfg == nil {
 		cfg = NewHTTPServerConfig()
 	}
