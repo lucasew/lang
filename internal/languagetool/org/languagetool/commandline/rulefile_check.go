@@ -100,14 +100,16 @@ func CheckBitextWithRuleFile(w io.Writer, contents, ruleFile string) (int, error
 	return CheckBitextFile(w, contents, nil)
 }
 
-// SimplePolishSpellingMatch is a green-surface spelling checker for "PL" CLI tests:
-// flags unknown tokens not in known set.
+// SimplePolishSpellingMatch is a test-only spelling stub for "PL" CLI harnesses
+// until Morfologik PL rule is wired. ASCII space split only — not strings.Fields
+// (Unicode WS collapse invent).
 func SimplePolishSpellingMatch(text string, known map[string]bool) []*rules.RuleMatch {
 	var out []*rules.RuleMatch
-	// simple space split
 	offset := 0
-	for _, field := range strings.Fields(text) {
-		// find field in text from offset
+	for _, field := range strings.Split(text, " ") {
+		if field == "" {
+			continue
+		}
 		idx := strings.Index(text[offset:], field)
 		if idx < 0 {
 			continue
@@ -119,7 +121,6 @@ func SimplePolishSpellingMatch(text string, known map[string]bool) []*rules.Rule
 		if known != nil && (known[field] || known[low]) {
 			continue
 		}
-		// skip punctuation-only
 		if !isWordToken(field) {
 			continue
 		}

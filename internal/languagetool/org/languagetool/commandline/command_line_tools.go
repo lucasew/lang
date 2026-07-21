@@ -39,6 +39,10 @@ type CheckTextOptions struct {
 	UnknownWords []string
 	// JSONWriter optional custom JSON body; when nil and JSON is true, emits a minimal array.
 	JSONSerializer func(matches []*rules.RuleMatch, contents string, contextSize int) string
+	// SentenceTokenize ports Java lt.getLanguage().getSentenceTokenizer().tokenize
+	// used only for displayTimeStats sentence count (not invent punctuation FieldsFunc).
+	// When nil, falls back to a single sentence if contents are non-empty after Java trim.
+	SentenceTokenize func(string) []string
 }
 
 // CheckTextOpts is the full check/print entry used by the CLI.
@@ -71,8 +75,8 @@ func CheckTextOpts(w io.Writer, contents string, checker TextChecker, opts Check
 		return len(matches), nil
 	}
 	PrintMatches(w, matches, opts.PrevMatches, contents, ctx, opts.LineOffset, opts.Verbose)
-	// sentence count estimate: non-empty lines of punctuation splits
-	sentCount := estimateSentences(contents)
+	// Java: sentenceTokenizer.tokenize(contents).size()
+	sentCount := sentenceCountForStats(contents, opts.SentenceTokenize)
 	DisplayTimeStats(w, start, sentCount)
 	if opts.ListUnknown && len(opts.UnknownWords) > 0 {
 		_, _ = fmt.Fprintf(w, "Unknown words: %s\n", strings.Join(opts.UnknownWords, ", "))
@@ -229,12 +233,11 @@ func TagTextWithAnalyzed(w io.Writer, contents string, sentenceTokenize func(str
 }
 
 // TagText writes simple token lines for each sentence (pluggable sentence split + token strings).
+// analyze must be provided — Java tagText always uses lt.getAnalyzedSentence (no Fields invent).
+// Prefer TagTextWithAnalyzed for the real CommandLineTools.tagText twin.
 func TagText(w io.Writer, contents string, sentences []string, analyze func(sentence string) []string) {
-	if w == nil {
+	if w == nil || analyze == nil {
 		return
-	}
-	if analyze == nil {
-		analyze = func(s string) []string { return strings.Fields(s) }
 	}
 	if len(sentences) == 0 {
 		sentences = []string{contents}
@@ -327,22 +330,18 @@ func ruleSubIDOf(m *rules.RuleMatch) string {
 	return ""
 }
 
-func estimateSentences(text string) int {
+// sentenceCountForStats ports CommandLineTools checkText display stats:
+// sentenceTokenizer.tokenize(contents).size(). No punctuation Fields invent.
+func sentenceCountForStats(text string, sentenceTokenize func(string) []string) int {
+	if sentenceTokenize != nil {
+		return len(sentenceTokenize(text))
+	}
+	// Without a real SentenceTokenizer (tests without LT), Java still requires one.
+	// Fail-closed: empty after Java trim → 0; else 1 whole text as one sentence.
 	if tools.JavaStringTrimIsEmpty(text) {
 		return 0
 	}
-	n := 0
-	for _, p := range strings.FieldsFunc(text, func(r rune) bool {
-		return r == '.' || r == '!' || r == '?' || r == '\n'
-	}) {
-		if !tools.JavaStringTrimIsEmpty(p) {
-			n++
-		}
-	}
-	if n == 0 {
-		return 1
-	}
-	return n
+	return 1
 }
 
 func matchesToMinimalJSON(matches []*rules.RuleMatch) string {

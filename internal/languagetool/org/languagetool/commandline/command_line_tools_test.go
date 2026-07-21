@@ -57,6 +57,17 @@ func TestDisplayTimeStatsAndProfile(t *testing.T) {
 	require.Contains(t, out, "6", "matchCount must sum across iterations like Java")
 }
 
+func TestSentenceCountForStats(t *testing.T) {
+	// Java: sentenceTokenizer.tokenize(contents).size()
+	n := sentenceCountForStats("A. B! C?", func(s string) []string {
+		return []string{"A. ", "B! ", "C?"}
+	})
+	require.Equal(t, 3, n)
+	// Without tokenizer: fail-closed single sentence (no punctuation Fields invent)
+	require.Equal(t, 1, sentenceCountForStats("A. B! C?", nil))
+	require.Equal(t, 0, sentenceCountForStats("   ", nil))
+}
+
 func TestLineColumnAt(t *testing.T) {
 	line, col := lineColumnAt("ab\ncd", 4) // at 'd' (0-based index 4 is 'd')
 	require.Equal(t, 2, line)

@@ -19,30 +19,44 @@ func SplitLines(text string) []string {
 	return strings.Split(text, "\n")
 }
 
-// SplitParagraphs splits on blank lines (one or more).
-// When singleLineBreakMarksParagraph is true, each non-empty line is a paragraph.
+// SplitParagraphs ports Main line-by-line paragraph accumulation for bulk splits.
+// Java Main.runOnFile: readLine, append line+"\n", break when isBreakPoint(line).
+// isBreakPoint: singleLineBreakMarksPara || "".equals(line) (exact empty, not TrimSpace).
+// Each emitted paragraph includes the trailing '\n' after each read line (Java sb).
 func SplitParagraphs(text string, singleLineBreakMarksParagraph bool) []string {
 	text = strings.ReplaceAll(text, "\r\n", "\n")
 	text = strings.ReplaceAll(text, "\r", "\n")
-	if singleLineBreakMarksParagraph {
-		var out []string
-		for _, line := range strings.Split(text, "\n") {
-			// Java Main.isBreakPoint: "".equals(line) — exact empty only, not TrimSpace.
-			if line == "" {
-				continue
-			}
-			out = append(out, line)
-		}
-		return out
-	}
-	// double newline paragraphs — keep content; only drop exact-empty segments
-	parts := strings.Split(text, "\n\n")
+	// Do not use strings.Split alone for the double-newline invent path — mirror Main's
+	// BufferedReader.readLine loop so trailing newlines match Java StringBuilder content.
 	var out []string
-	for _, p := range parts {
-		if p != "" {
-			out = append(out, p)
+	var sb strings.Builder
+	// strings.Split drops a trailing empty only when text ends with \n — readLine semantics
+	// for "a\nb\n" yield lines "a","b"; for "a\nb" yield "a","b". Use Split and treat
+	// trailing empty from a final \n as no extra readLine.
+	rawLines := strings.Split(text, "\n")
+	// If text ends with \n, Split yields a final "" that is not a readLine result.
+	if strings.HasSuffix(text, "\n") && len(rawLines) > 0 {
+		rawLines = rawLines[:len(rawLines)-1]
+	}
+	for _, line := range rawLines {
+		sb.WriteString(line)
+		sb.WriteByte('\n')
+		// Java isBreakPoint: singleLineBreakMarksPara || "".equals(line)
+		if singleLineBreakMarksParagraph || line == "" {
+			if sb.Len() > 0 {
+				out = append(out, sb.String())
+				sb.Reset()
+			}
 		}
 	}
+	if sb.Len() > 0 {
+		out = append(out, sb.String())
+	}
+	// Empty-line breakpoints produce a paragraph that is just "\n" (the empty line's
+	// appended newline). Java still calls handleLine on that; for SplitParagraphs
+	// consumers that want content paragraphs only, drop pure-empty-break segments
+	// that are only newlines from empty breakpoints when they are sole content.
+	// Keep Java-faithful: include all handleLine payloads (including "\n" only).
 	return out
 }
 

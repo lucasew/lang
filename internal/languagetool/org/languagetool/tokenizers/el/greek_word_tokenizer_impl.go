@@ -1,7 +1,8 @@
 package el
 
-// GreekWordTokenizerImpl ports the JFlex-generated GreekWordTokenizerImpl.
-// Full DFA deferred; delegates to GreekWordTokenizer rune-class splitting.
+// GreekWordTokenizerImpl ports the surface of the JFlex-generated
+// GreekWordTokenizerImpl scanner. Full DFA tables deferred; tokenize is
+// one-shot via greekJflexTokenize (same Delim / "ό,τι" rules as the jflex).
 type GreekWordTokenizerImpl struct {
 	inner *GreekWordTokenizer
 }
@@ -11,9 +12,11 @@ func NewGreekWordTokenizerImpl() *GreekWordTokenizerImpl {
 }
 
 // YylexTokenize tokenizes text (Java scanner surface reduced to one-shot tokenize).
+// Does not run joinEMailsAndUrls — that is GreekWordTokenizer.Tokenize's job
+// (Java: tokenizer loop then joinEMailsAndUrls on the collected list).
 func (t *GreekWordTokenizerImpl) YylexTokenize(text string) []string {
-	if t == nil || t.inner == nil {
-		return NewGreekWordTokenizer().Tokenize(text)
+	if text == "" {
+		return nil
 	}
-	return t.inner.Tokenize(text)
+	return greekJflexTokenize(text)
 }

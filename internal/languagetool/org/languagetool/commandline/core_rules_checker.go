@@ -571,6 +571,8 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 		Lint:        opts != nil && opts.OutputFormat == OutputLint,
 		Verbose:     opts != nil && opts.Verbose,
 		ListUnknown: opts != nil && opts.IsListUnknown(),
+		// Java CommandLineTools.checkText: lt.getLanguage().getSentenceTokenizer().tokenize(contents).size()
+		SentenceTokenize: func(s string) []string { return lt.SentenceTokenize(s) },
 	}
 	if opts != nil {
 		cto.Filename = opts.Filename

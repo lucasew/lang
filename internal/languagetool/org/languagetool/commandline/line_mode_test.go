@@ -14,15 +14,18 @@ type idR struct{ id string }
 func (r idR) GetID() string { return r.id }
 
 func TestSplitParagraphs(t *testing.T) {
+	// Java Main.runOnFile: each readLine is appended with '\n'; empty line breaks.
+	// Input lines: "P1 line a", "P1 line b", "", "P2 only"
+	// → para0 "P1 line a\nP1 line b\n\n", para1 "P2 only\n"
 	text := "P1 line a\nP1 line b\n\nP2 only\n"
 	paras := SplitParagraphs(text, false)
 	require.Len(t, paras, 2)
-	require.Contains(t, paras[0], "P1")
-	require.Equal(t, "P2 only", paras[1])
+	require.Equal(t, "P1 line a\nP1 line b\n\n", paras[0])
+	require.Equal(t, "P2 only\n", paras[1])
 
-	// single line breaks mark paragraphs
+	// singleLineBreakMarksPara: every line is a breakpoint after append
 	paras2 := SplitParagraphs("A\nB\n\nC\n", true)
-	require.Equal(t, []string{"A", "B", "C"}, paras2)
+	require.Equal(t, []string{"A\n", "B\n", "\n", "C\n"}, paras2)
 }
 
 func TestCheckLineByLine(t *testing.T) {
