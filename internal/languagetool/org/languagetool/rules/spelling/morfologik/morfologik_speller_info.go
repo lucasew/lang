@@ -199,13 +199,15 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 				}
 			}
 		}
-		// edit-distance search on this variant (Java findRepl / our WeightedEditSuggestions)
+		// edit-distance search: Java findRepl FSA walk (HMatrix/Oflazer) via SpellerFSA.
 		// skip very short after first (Java MIN_WORD_LENGTH=4 && i>2)
 		if len([]rune(wordChecked)) < 4 && i > 2 {
 			continue
 		}
-		opt := s.suggestOpts()
-		for _, e := range d.WeightedEditSuggestionsOpts(wordChecked, maxResults, maxEdit, opt) {
+		fsaSp := atticmorfo.NewSpellerFSA(d, maxEdit)
+		fsaSp.IgnoreDiacritics = s.IgnoreDiacritics
+		fsaSp.EquivalentChars = s.EquivalentChars
+		for _, e := range fsaSp.FindReplacementCandidates(wordChecked) {
 			w := s.applyOutputConversion(e.Word)
 			if w == "" || w == word {
 				continue
@@ -214,10 +216,13 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 				continue
 			}
 			seen[w] = struct{}{}
-			wt := e.Weight
+			wt := e.Distance
 			if w != e.Word {
 				// output conversion changed surface — recompute weight for new form
-				wt = s.suggestionWeightDist(w, 1)
+				wt = s.suggestionWeightDist(w, e.OrigDistance)
+				if e.OrigDistance < 1 {
+					wt = s.suggestionWeightDist(w, 1)
+				}
 			}
 			candidates = append(candidates, NewWeightedSuggestion(w, wt))
 		}
