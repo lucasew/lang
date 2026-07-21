@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -39,18 +40,23 @@ func loadSynthMapping(r io.Reader) (map[string][]string, error) {
 	sc := bufio.NewScanner(r)
 	separator := "\t"
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java ManualSynthesizer.loadMapping: line = line.trim() (String.trim).
+		line := tools.JavaStringTrim(sc.Text())
 		if strings.HasPrefix(line, "#separatorRegExp=") {
-			separator = strings.TrimPrefix(line, "#separatorRegExp=")
-			continue
+			// Java: separator = line.replace("#separatorRegExp=", "") (literal, not only prefix).
+			separator = strings.ReplaceAll(line, "#separatorRegExp=", "")
+			// fall through: line still starts with '#' → continue below
 		}
 		if tools.IsEmptyStr(line) || line[0] == '#' {
 			continue
 		}
+		// Java: StringUtils.substringBefore(line, "#").trim()
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
-		parts := strings.Split(line, separator)
+		// Java: line.split(separator) — separator is Pattern when from #separatorRegExp=
+		// (default "\t" is literal). Use regexp when separator is not plain tab.
+		parts := splitManualSynthParts(line, separator)
 		if len(parts) != 3 {
 			return nil, fmt.Errorf("Unknown line format when loading manual synthesizer dictionary, expected 3 parts separated by '%s', found %d: '%s'", separator, len(parts), line)
 		}
@@ -64,6 +70,25 @@ func loadSynthMapping(r io.Reader) (map[string][]string, error) {
 		m[key] = append(m[key], form)
 	}
 	return m, sc.Err()
+}
+
+// splitManualSynthParts ports Java String.split(separator) used by ManualSynthesizer.
+// Default separator is "\t" (literal). #separatorRegExp= sets a regex pattern.
+func splitManualSynthParts(line, separator string) []string {
+	if separator == "\t" || separator == "" {
+		return strings.Split(line, "\t")
+	}
+	// Java String.split(regex) with limit 0 drops trailing empties.
+	re, err := regexp.Compile(separator)
+	if err != nil {
+		// Fail closed to literal split (invalid pattern would throw in Java).
+		return strings.Split(line, separator)
+	}
+	parts := re.Split(line, -1)
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
+	}
+	return parts
 }
 
 // Lookup returns inflected forms for lemma+POS, or nil if none (Java null).

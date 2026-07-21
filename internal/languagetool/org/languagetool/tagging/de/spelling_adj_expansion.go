@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // SpellingAdjExpansion ports GermanTagger ExpansionInfos.adjInfos built from
@@ -34,12 +35,13 @@ func LoadSpellingAdjExpansion(r io.Reader) (*SpellingAdjExpansion, error) {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java CachingWordListLoader already String.trim()'s lines; re-trim for direct readers.
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line == "" {
 			continue
@@ -65,7 +67,7 @@ func LoadSpellingAdjExpansion(r io.Reader) (*SpellingAdjExpansion, error) {
 		if i := strings.IndexByte(line, '/'); i >= 0 {
 			base = line[:i]
 		}
-		base = strings.TrimSpace(base)
+		base = tools.JavaStringTrim(base)
 		if base == "" {
 			continue
 		}

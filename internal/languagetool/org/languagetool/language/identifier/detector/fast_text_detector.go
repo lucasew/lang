@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 const (
@@ -126,17 +128,16 @@ func (d *FastTextDetector) RunFasttext(text string, additionalLanguageCodes []st
 // When CanDetect is nil and additionalLanguageCodes is non-empty, only those codes are kept
 // (Java LanguageIdentifierService.canLanguageBeDetected with supported+additional).
 func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []string) (map[string]float64, error) {
-	buffer = strings.TrimSpace(buffer)
-	if buffer == "" {
-		return nil, &FastTextException{Msg: "empty fasttext buffer", Disabled: true}
-	}
+	// Java: String[] values = WHITESPACE.split(buffer.trim());
+	// WHITESPACE = Pattern.compile("\\s+") without UNICODE_CHARACTER_CLASS;
+	// buffer.trim() is String.trim (≤U+0020). startsWith checks the *raw* buffer.
+	values := javaFastTextWhitespaceSplit(tools.JavaStringTrim(buffer))
 	if !strings.HasPrefix(buffer, "__label__") {
 		return nil, &FastTextException{
 			Msg:      "FastText output is expected to start with '__label__': '" + buffer + "'",
 			Disabled: true,
 		}
 	}
-	values := strings.Fields(buffer)
 	if len(values)%2 != 0 {
 		return nil, &FastTextException{
 			Msg:      "Error while parsing fasttext output, expected pairs: '" + buffer + "'",
@@ -185,4 +186,42 @@ func (d *FastTextDetector) Destroy() {
 		_, _ = d.cmd.Process.Wait()
 	}
 	d.cmd = nil
+}
+
+// javaFastTextWhitespaceSplit ports Pattern.compile("\\s+").split without UNICODE_CHARACTER_CLASS.
+// limit 0: trailing empties dropped; empty input → [""] like Java Pattern.split("").
+func javaFastTextWhitespaceSplit(s string) []string {
+	if s == "" {
+		return []string{""}
+	}
+	var parts []string
+	start := 0
+	i := 0
+	for i < len(s) {
+		c := s[i]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r' {
+			if start < i {
+				parts = append(parts, s[start:i])
+			}
+			j := i + 1
+			for j < len(s) {
+				c2 := s[j]
+				if c2 != ' ' && c2 != '\t' && c2 != '\n' && c2 != '\v' && c2 != '\f' && c2 != '\r' {
+					break
+				}
+				j++
+			}
+			start = j
+			i = j
+			continue
+		}
+		i++
+	}
+	if start < len(s) {
+		parts = append(parts, s[start:])
+	}
+	if len(parts) == 0 {
+		return []string{""}
+	}
+	return parts
 }

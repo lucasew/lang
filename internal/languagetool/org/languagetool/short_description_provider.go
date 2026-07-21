@@ -6,6 +6,8 @@ import (
 	"io"
 	"strings"
 	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // ShortDescriptionProvider ports org.languagetool.ShortDescriptionProvider.
@@ -68,7 +70,8 @@ func (p *ShortDescriptionProvider) init(langCode string) map[string]string {
 	for _, line := range lines {
 		// Java: if (line.startsWith("#") || line.trim().isEmpty()) continue;
 		// Note: startsWith("#") is on the raw line (not trimmed).
-		if strings.HasPrefix(line, "#") || strings.TrimSpace(line) == "" {
+		// line.trim() is String.trim (≤U+0020), not Unicode TrimSpace.
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrimIsEmpty(line) {
 			continue
 		}
 		parts := strings.Split(line, "\t")
@@ -88,7 +91,7 @@ func ParseWordDefinitions(r io.Reader) (map[string]string, error) {
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		line := sc.Text()
-		if strings.HasPrefix(line, "#") || strings.TrimSpace(line) == "" {
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrimIsEmpty(line) {
 			continue
 		}
 		parts := strings.Split(line, "\t")

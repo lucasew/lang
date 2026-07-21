@@ -97,8 +97,9 @@ func (m *BrazilianToponymMap) IsToponymInState(toponym, state string) bool {
 }
 
 func (m *BrazilianToponymMap) toponymIter(toponym string, ok func(string) bool) bool {
+	// Java: toponym.replace('-', ' ').toLowerCase().split(" ")
 	norm := strings.ToLower(strings.ReplaceAll(toponym, "-", " "))
-	parts := strings.Fields(norm)
+	parts := strings.Split(norm, " ")
 	for i := 0; i < len(parts); i++ {
 		check := strings.Join(parts[i:], " ")
 		if ok(check) {

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -33,8 +34,8 @@ func loadMapping(r io.Reader) (map[string][]TaggedWord, error) {
 		line := tools.JavaStringTrim(sc.Text())
 		lineCount++
 		if strings.HasPrefix(line, "#separatorRegExp=") {
-			separator = strings.TrimPrefix(line, "#separatorRegExp=")
-			continue
+			// Java: separator = line.replace("#separatorRegExp=", "") then fall through to # skip.
+			separator = strings.ReplaceAll(line, "#separatorRegExp=", "")
 		}
 		if tools.IsEmptyStr(line) || line[0] == '#' {
 			continue
@@ -42,10 +43,12 @@ func loadMapping(r io.Reader) (map[string][]TaggedWord, error) {
 		if strings.Contains(line, "\u00A0") {
 			return nil, fmt.Errorf("Non-breaking space found in line #%d: '%s', please remove it", lineCount, line)
 		}
+		// Java: StringUtils.substringBefore(line, "#").trim()
 		if i := strings.IndexByte(line, '#'); i >= 0 {
 			line = tools.JavaStringTrim(line[:i])
 		}
-		parts := strings.Split(line, separator)
+		// Java: line.split(separator) — separator is a regex when set via #separatorRegExp=
+		parts := splitManualTaggerParts(line, separator)
 		if len(parts) != 3 {
 			return nil, fmt.Errorf("Unknown line format in line %d when loading manual tagger dictionary, expected three tab-separated fields: '%s'", lineCount, line)
 		}
@@ -59,6 +62,22 @@ func loadMapping(r io.Reader) (map[string][]TaggedWord, error) {
 		m[form] = append(m[form], NewTaggedWord(lemma, tag))
 	}
 	return m, sc.Err()
+}
+
+// splitManualTaggerParts ports Java String.split(separator) for ManualTagger.
+func splitManualTaggerParts(line, separator string) []string {
+	if separator == "\t" || separator == "" {
+		return strings.Split(line, "\t")
+	}
+	re, err := regexp.Compile(separator)
+	if err != nil {
+		return strings.Split(line, separator)
+	}
+	parts := re.Split(line, -1)
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
+	}
+	return parts
 }
 
 // Tag looks up a word's lemma and POS (word is typically lowercased by adapter).

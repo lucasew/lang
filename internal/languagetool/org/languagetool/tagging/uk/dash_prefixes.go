@@ -2,12 +2,14 @@ package uk
 
 import (
 	"bufio"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Official /uk/dash_prefixes.txt and dash_prefixes_invalid.txt (Java CompoundTagger).
@@ -92,6 +94,7 @@ func discoverUKResource(name string) string {
 }
 
 // loadDashPrefixesMap ports ExtraDictionaryLoader.loadMap (key [value]).
+// Java: skip lines starting with #; str.trim().split(" ") → key=parts[0], value=parts[1] or "".
 func loadDashPrefixesMap(path string) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -100,18 +103,16 @@ func loadDashPrefixesMap(path string) {
 	defer f.Close()
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
+		line := sc.Text()
+		if strings.HasPrefix(line, "#") {
 			continue
 		}
-		if i := strings.Index(line, "#"); i >= 0 {
-			line = strings.TrimSpace(line[:i])
-		}
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}
-		parts := strings.Fields(line)
-		if len(parts) == 0 {
+		parts := strings.Split(line, " ")
+		if len(parts) == 0 || parts[0] == "" {
 			continue
 		}
 		key := parts[0]
@@ -131,20 +132,18 @@ func loadSetInto(path string, set map[string]struct{}) {
 	defer f.Close()
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
+		// Same loadMap first-field extraction for set membership files.
+		line := sc.Text()
+		if strings.HasPrefix(line, "#") {
 			continue
 		}
-		if i := strings.Index(line, "#"); i >= 0 {
-			line = strings.TrimSpace(line[:i])
-		}
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}
-		// first field only
-		fields := strings.Fields(line)
-		if len(fields) > 0 {
-			set[fields[0]] = struct{}{}
+		parts := strings.Split(line, " ")
+		if len(parts) > 0 && parts[0] != "" {
+			set[parts[0]] = struct{}{}
 		}
 	}
 }

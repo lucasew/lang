@@ -38,3 +38,27 @@ func TestFastTextException(t *testing.T) {
 	require.Equal(t, "bad", e.Error())
 	require.True(t, e.IsDisabled())
 }
+
+// Twin: WHITESPACE = Pattern.compile("\\s+") + buffer.trim(); startsWith on raw buffer.
+func TestFastTextParseBuffer_JavaWhitespaceAndTrim(t *testing.T) {
+	d := NewFastTextDetectorForTest()
+	// tab between pairs
+	m, err := d.ParseBuffer("__label__en\t0.9\t__label__de\t0.1", nil)
+	require.NoError(t, err)
+	require.InDelta(t, 0.9, m["en"], 1e-9)
+	// leading spaces: Java startsWith("__label__") fails on untrimmed buffer
+	_, err = d.ParseBuffer("  __label__en 0.9", nil)
+	require.Error(t, err)
+	// NBSP is not \s without UNICODE_CHARACTER_CLASS → one field with NBSP inside
+	// "__label__en\u00a00.9" after trim still has NBSP → not even pairs of space-split tokens
+	// (single token if only NBSP between) → odd length error or parse fail
+	_, err = d.ParseBuffer("__label__en\u00a00.9", nil)
+	require.Error(t, err)
+}
+
+func TestJavaFastTextWhitespaceSplit(t *testing.T) {
+	require.Equal(t, []string{"a", "b"}, javaFastTextWhitespaceSplit("a  b"))
+	require.Equal(t, []string{""}, javaFastTextWhitespaceSplit(""))
+	// NBSP not delimiter
+	require.Equal(t, []string{"a\u00a0b"}, javaFastTextWhitespaceSplit("a\u00a0b"))
+}

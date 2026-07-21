@@ -61,13 +61,15 @@ func LoadSpellingVerbExpansionWithSynth(r io.Reader, synth VerbFormSynth) (*Spel
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java: CachingWordListLoader lines are already String.trim()'d; twin for direct readers.
+		// Verb branch: line.replace("#.*", "").trim().split("_") — replace is *literal* "#.*".
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
-		}
+		// Java String.replace("#.*","") is literal, not regex comment strip.
+		line = strings.ReplaceAll(line, "#.*", "")
+		line = tools.JavaStringTrim(line)
 		if line == "" || !strings.Contains(line, "_") || strings.HasSuffix(line, "_in") {
 			continue
 		}
