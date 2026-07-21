@@ -3,9 +3,11 @@ package morfologik
 import (
 	"bufio"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
+	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 )
 
@@ -19,6 +21,7 @@ type PrepareLineFn func(line string) []string
 // LoadPlainTextAcceptFile loads a Java multi-speller plain-text .txt (spelling.txt, multiwords.txt)
 // into the map Words set. prepareLine nil uses default strip (# comment, trim).
 // Missing file is skipped (fail closed).
+// Prefer AttachWordsAsBinaryFSA after collecting all lines (Java FSABuilder runtime dict).
 func (s *MorfologikSpeller) LoadPlainTextAcceptFile(path string, prepareLine PrepareLineFn) int {
 	if s == nil || path == "" {
 		return 0
@@ -35,6 +38,61 @@ func (s *MorfologikSpeller) LoadPlainTextAcceptFile(path string, prepareLine Pre
 		n++
 	}
 	return n
+}
+
+// AttachWordsAsBinaryFSA ports Java MorfologikMultiSpeller.getDictionary:
+// FSABuilder.build(sorted UTF-8 lines) + Dictionary.read with binary .info metadata.
+// Replaces invent map-only SpellerED scan with real SpellerFSA findRepl over the word FSA.
+// Returns number of words encoded (0 if empty).
+func (s *MorfologikSpeller) AttachWordsAsBinaryFSA(words []string, infoBesideDictPath string) int {
+	if s == nil || len(words) == 0 {
+		return 0
+	}
+	// Load .info flags (Java uses dictPath.replace(.dict, .info) for plain-text runtime dict).
+	var info map[string]string
+	if infoBesideDictPath != "" {
+		infoPath := strings.TrimSuffix(infoBesideDictPath, filepath.Ext(infoBesideDictPath)) + ".info"
+		if m, err := readSpellerInfoFile(infoPath); err == nil {
+			info = m
+			s.ApplyInfoProperties(m)
+		}
+	}
+	// Also keep Words for HasDictionary / any map fallback.
+	uniq := make([]string, 0, len(words))
+	for _, w := range words {
+		w = strings.TrimSpace(w)
+		if w == "" {
+			continue
+		}
+		s.AddWord(w)
+		uniq = append(uniq, w)
+	}
+	if len(uniq) == 0 {
+		return 0
+	}
+	d := atticmorfo.NewDictionaryFromWords(uniq, info)
+	if d == nil {
+		return 0
+	}
+	// Wire like AttachBinaryDictionary suggest path without re-opening a file dict.
+	s.InDictionaryFn = d.Contains
+	s.binaryDict = d
+	s.BinaryDictPath = s.FileInClassPath
+	s.FrequencyIncluded = d.FrequencyIncluded()
+	s.GetFrequencyFn = func(word string) int {
+		return d.GetFrequency(word)
+	}
+	maxEdit := s.MaxEditDistance
+	if maxEdit < 1 {
+		maxEdit = 1
+	}
+	s.WeightedSuggestFn = func(word string) []WeightedSuggestion {
+		return s.binaryFindReplacementCandidates(d, word, 8)
+	}
+	s.SuggestFn = func(word string) []string {
+		return wordsFromWeighted(s.binaryFindReplacementCandidates(d, word, 8))
+	}
+	return len(uniq)
 }
 
 // LoadPlainTextAcceptClasspaths discovers resource-dir relative paths and loads accept words.

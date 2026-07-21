@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"unicode/utf16"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 )
 
 // MorfologikMultiSpeller ports org.languagetool.rules.spelling.morfologik.MorfologikMultiSpeller
@@ -215,19 +217,37 @@ func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels
 	}
 	main := NewMorfologikSpeller(binaryClasspath, maxEditDistance)
 	_ = main.TryAttachBinaryFromClasspath(binaryClasspath)
+	// Absolute path for .info beside binary (plain/user runtime FSA metadata).
+	binaryDiskPath := DiscoverLanguageDict(binaryClasspath)
+	if binaryDiskPath == "" {
+		binaryDiskPath = binaryClasspath
+	}
 
+	// Plain-text: Java FSABuilder.build(lines) + Dictionary.read(.info).
 	plain := NewMorfologikSpeller(binaryClasspath+"#plain", maxEditDistance)
-	// Match binary .info flags for isMisspelled gates on plain-only surfaces.
-	_ = plain.LoadInfoFromClasspath(binaryClasspath)
 	rels := append([]string(nil), plainTextRels...)
 	if languageVariantRel != "" {
 		rels = append(rels, languageVariantRel)
 	}
-	plain.LoadPlainTextAcceptClasspaths(rels, prepareLine)
+	var plainWords []string
+	for _, rel := range rels {
+		rel = strings.TrimPrefix(strings.TrimSpace(rel), "/")
+		if rel == "" {
+			continue
+		}
+		p := spelling.DiscoverSpellingResource(rel)
+		if p == "" {
+			continue
+		}
+		plainWords = append(plainWords, loadPlainTextAcceptCached(p, prepareLine)...)
+	}
 	// Java: LanguageTool added when language variant reader present
 	if languageVariantRel != "" {
-		plain.AddWord("LanguageTool")
-		plain.AddWord("LanguageTooler")
+		plainWords = append(plainWords, "LanguageTool", "LanguageTooler")
+	}
+	if n := plain.AttachWordsAsBinaryFSA(plainWords, binaryDiskPath); n == 0 {
+		// fail closed: no plain speller if empty
+		plain = nil
 	}
 
 	var userDictSpellers []*MorfologikSpeller
@@ -235,16 +255,14 @@ func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels
 	// Java: user dict first so personal suggestions are not drowned (before weight sort).
 	if len(userWords) > 0 {
 		user := NewMorfologikSpeller(binaryClasspath+"#user", maxEditDistance)
-		// Inherit binary .info case flags (Java uses same .info for runtime FSA).
-		_ = user.LoadInfoFromClasspath(binaryClasspath)
+		cleaned := make([]string, 0, len(userWords))
 		for _, w := range userWords {
 			w = strings.TrimSpace(w)
-			if w == "" {
-				continue
+			if w != "" {
+				cleaned = append(cleaned, w)
 			}
-			user.AddWord(w)
 		}
-		if user.HasDictionary() {
+		if user.AttachWordsAsBinaryFSA(cleaned, binaryDiskPath) > 0 {
 			userDictSpellers = []*MorfologikSpeller{user}
 			spellers = append(spellers, user)
 		}
@@ -252,7 +270,7 @@ func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels
 
 	defaultDict := []*MorfologikSpeller{main}
 	spellers = append(spellers, main)
-	if plain.HasDictionary() {
+	if plain != nil && plain.HasDictionary() {
 		defaultDict = append(defaultDict, plain)
 		spellers = append(spellers, plain)
 	}

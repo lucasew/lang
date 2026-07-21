@@ -612,3 +612,30 @@ func (d *Dictionary) GetFrequency(word string) int {
 	// last byte contains the frequency after a separator (Java)
 	return int(ba[len(ba)-1]) - firstRangeCode
 }
+
+// NewDictionaryFromWords builds a speller Dictionary from a word list (Java
+// MorfologikMultiSpeller runtime FSABuilder.build(lines) + Dictionary.read metadata).
+// info may be nil (defaults); typically load sibling .info flags for gates.
+func NewDictionaryFromWords(words []string, info map[string]string) *Dictionary {
+	fsa := BuildFSAFromWords(words)
+	if fsa == nil {
+		return nil
+	}
+	d := &Dictionary{
+		FSA:               fsa,
+		Separator:         '+',
+		Encoder:           "NONE",
+		Encoding:          "utf-8",
+		frequencyIncluded: false,
+		ConvertCase:       true,
+		IgnoreNumbers:     true,
+		SupportRunOnWords: true,
+	}
+	if info != nil {
+		if s, ok := info["fsa.dict.separator"]; ok && s != "" {
+			d.Separator = s[0]
+		}
+		d.applySpellerInfo(info)
+	}
+	return d
+}

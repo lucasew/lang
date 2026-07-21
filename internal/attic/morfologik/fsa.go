@@ -16,8 +16,9 @@ const (
 	fsaMagic3 = 'a'
 
 	// Versions (Java morfologik.fsa.FSAHeader)
-	versionFSA5   byte = 0x05
-	versionCFSA2  byte = 0xc6
+	versionFSA5         byte = 0x05
+	versionCFSA2        byte = 0xc6
+	versionConstantArc  byte = 0x00 // in-memory ConstantArcSizeFSA (FSABuilder), not file format
 
 	// CFSA2 flags
 	cfsa2BitTargetNext = 1 << 7
@@ -34,7 +35,7 @@ const (
 	fsa5AddressOffset  = 1
 )
 
-// FSA is a morfologik automaton (CFSA2 or FSA5).
+// FSA is a morfologik automaton (CFSA2, FSA5, or in-memory ConstantArcSizeFSA).
 type FSA struct {
 	version byte
 	arcs    []byte
@@ -48,6 +49,10 @@ type FSA struct {
 	gtl            int // goto length in bytes
 	filler         byte
 	annotation     byte
+
+	// ConstantArcSizeFSA (FSABuilder)
+	constantArc bool
+	constantEps int // epsilon state offset (usually 0)
 }
 
 // OpenFSA loads a morfologik FSA from path.
@@ -137,6 +142,10 @@ func readFSA5(r io.Reader) (*FSA, error) {
 }
 
 func (f *FSA) RootNode() int {
+	if f.constantArc || f.version == versionConstantArc {
+		// ConstantArcSizeFSA: getEndNode(getFirstArc(epsilon))
+		return f.destinationNodeOffset(f.firstArc(f.constantEps))
+	}
 	if f.version == versionFSA5 {
 		// Skip dummy node marking terminating state, then follow epsilon.
 		epsilonNode := f.skipArc(f.firstArc(0))
@@ -146,6 +155,13 @@ func (f *FSA) RootNode() int {
 }
 
 func (f *FSA) firstArc(node int) int {
+	if f.constantArc || f.version == versionConstantArc {
+		// Java ConstantArcSizeFSA: return node (arcs packed from node offset)
+		if node == 0 && !f.constantArc {
+			// terminal sentinel
+		}
+		return node
+	}
 	if f.version == versionFSA5 {
 		return f.nodeDataLength + node
 	}
@@ -158,6 +174,9 @@ func (f *FSA) firstArc(node int) int {
 func (f *FSA) nextArc(arc int) int {
 	if f.isArcLast(arc) {
 		return 0
+	}
+	if f.constantArc || f.version == versionConstantArc {
+		return arc + casArcSize
 	}
 	return f.skipArc(arc)
 }
@@ -176,6 +195,9 @@ func (f *FSA) endNode(arc int) int {
 }
 
 func (f *FSA) arcLabel(arc int) byte {
+	if f.constantArc || f.version == versionConstantArc {
+		return f.arcs[arc+casLabelOffset]
+	}
 	if f.version == versionFSA5 {
 		return f.arcs[arc]
 	}
@@ -187,6 +209,9 @@ func (f *FSA) arcLabel(arc int) byte {
 }
 
 func (f *FSA) isArcFinal(arc int) bool {
+	if f.constantArc || f.version == versionConstantArc {
+		return f.arcs[arc+casFlagsOffset]&casBitArcFinal != 0
+	}
 	if f.version == versionFSA5 {
 		return f.arcs[arc+fsa5AddressOffset]&fsa5BitFinalArc != 0
 	}
@@ -198,6 +223,9 @@ func (f *FSA) isArcTerminal(arc int) bool {
 }
 
 func (f *FSA) isArcLast(arc int) bool {
+	if f.constantArc || f.version == versionConstantArc {
+		return f.arcs[arc+casFlagsOffset]&casBitArcLast != 0
+	}
 	if f.version == versionFSA5 {
 		return f.arcs[arc+fsa5AddressOffset]&fsa5BitLastArc != 0
 	}
@@ -205,6 +233,9 @@ func (f *FSA) isArcLast(arc int) bool {
 }
 
 func (f *FSA) isNextSet(arc int) bool {
+	if f.constantArc || f.version == versionConstantArc {
+		return false // constant-arc always stores full address
+	}
 	if f.version == versionFSA5 {
 		return f.arcs[arc+fsa5AddressOffset]&fsa5BitTargetNext != 0
 	}
@@ -212,6 +243,13 @@ func (f *FSA) isNextSet(arc int) bool {
 }
 
 func (f *FSA) destinationNodeOffset(arc int) int {
+	if f.constantArc || f.version == versionConstantArc {
+		a := arc + casAddressOffset
+		return int(f.arcs[a])<<24 |
+			int(f.arcs[a+1]&0xff)<<16 |
+			int(f.arcs[a+2]&0xff)<<8 |
+			int(f.arcs[a+3]&0xff)
+	}
 	if f.version == versionFSA5 {
 		if f.isNextSet(arc) {
 			return f.skipArc(arc)
