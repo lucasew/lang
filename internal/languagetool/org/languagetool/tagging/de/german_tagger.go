@@ -174,7 +174,7 @@ func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, id
 		}
 	}
 
-	// compound split fallback (with lemma stem rebuild when multi-part)
+	// compound split fallback — ports GermanTagger compoundParts branch (~643–672)
 	// skip domain-like sequences: example . com
 	if len(readings) == 0 && t.SplitCompound != nil && !isDomainLikeSequence(sentenceTokens, idxPos) {
 		parts := t.SplitCompound(w)
@@ -190,35 +190,57 @@ func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, id
 			if len(lastTags) == 0 && t.AdjExpansion != nil {
 				lastTags = t.AdjExpansion.Tag(last)
 			}
-			// rebuild lemma: part0 + lowercase(part1…) + lowercase(lemma)
-			stem := ""
-			for i, p := range parts[:len(parts)-1] {
-				if i == 0 {
-					stem += p
-				} else {
-					stem += tools.LowercaseFirstChar(p)
-				}
-			}
-			for _, tw := range lastTags {
-				if strings.HasPrefix(tw.PosTag, "VER:IMP") {
-					continue
-				}
-				lem := tw.Lemma
-				if lem == "" {
-					lem = last
-				}
-				lem = tools.LowercaseFirstChar(lem)
-				// Java prfxs.contains(firstPart) + VER:1/2/3 → :NEB lemma prefix+lemma
-				pos := tw.PosTag
-				if len(parts) >= 2 && isExactSeparablePrefix(strings.ToLower(parts[0])) {
-					if (strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3")) &&
-						(idxPos == 0 || isFirstCharLowerRestUnchanged(word)) {
-						if !strings.HasSuffix(pos, ":NEB") {
-							pos = pos + ":NEB"
+			if len(lastTags) == 0 {
+				// Java: getNoInfoToken — fall through to empty → no-info below
+			} else {
+				firstPart := parts[0]
+				// Java: prfxs.contains(firstPart) — exact, case-sensitive
+				if isExactSeparablePrefix(firstPart) {
+					// prefix compound: lemma = firstPart + tag.lemma (not full stem rebuild)
+					atStartOrFirstLower := indexOfToken(sentenceTokens, word) == 0 || isFirstCharLowerRestUnchanged(word)
+					for _, tw := range lastTags {
+						pos := tw.PosTag
+						lem := tw.Lemma
+						if lem == "" {
+							lem = last
+						}
+						lemma := firstPart + lem
+						if (strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3")) &&
+							atStartOrFirstLower {
+							if strings.HasSuffix(pos, "NEB") {
+								readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos)))
+							} else {
+								readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos+":NEB")))
+							}
+						} else if !strings.HasPrefix(pos, "VER:IMP") {
+							readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos)))
 						}
 					}
+				} else {
+					// non-prefix compound: getAnalyzedTokens stem rebuild; drop any VER-containing tag
+					stem := ""
+					for i, p := range parts[:len(parts)-1] {
+						if i == 0 {
+							stem += p
+						} else {
+							stem += tools.LowercaseFirstChar(p)
+						}
+					}
+					for _, tw := range lastTags {
+						if tw.PosTag != "" && strings.Contains(tw.PosTag, "VER") {
+							continue
+						}
+						if strings.HasPrefix(tw.PosTag, "VER:IMP") {
+							continue
+						}
+						lem := tw.Lemma
+						if lem == "" {
+							lem = last
+						}
+						lem = tools.LowercaseFirstChar(lem)
+						readings = append(readings, toToken(word, tagging.NewTaggedWord(stem+lem, tw.PosTag)))
+					}
 				}
-				readings = append(readings, toToken(word, tagging.NewTaggedWord(stem+lem, pos)))
 			}
 		}
 	}

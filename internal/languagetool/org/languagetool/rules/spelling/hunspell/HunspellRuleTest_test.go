@@ -38,9 +38,22 @@ func TestHunspellRule_MultitokensWithSepllerRule(t *testing.T) {
 }
 
 func TestHunspellRule_RuleWithWrongSplit(t *testing.T) {
-	dict := NewMapHunspellDictionary([]string{"wrong", "split"})
+	// Java HunspellRule wrong-split: "thanky ou" → "thank you"
+	dict := NewMapHunspellDictionary([]string{"thank", "you", "wrong", "split"})
 	r := NewHunspellRule("en", dict)
-	require.True(t, r.IsMisspelledWord("wrongs"))
+	require.True(t, r.IsMisspelledWord("thanky"))
+	require.True(t, r.IsMisspelledWord("ou"))
+	require.False(t, r.IsMisspelledWord("thank"))
+	require.False(t, r.IsMisspelledWord("you"))
+
+	sent := languagetool.AnalyzePlain("thanky ou")
+	matches, err := r.Match(sent)
+	require.NoError(t, err)
+	require.NotEmpty(t, matches)
+	// First match should be wrong-split covering both tokens
+	require.Contains(t, matches[0].GetSuggestedReplacements(), "thank you")
+	// Span from start of thanky through ou (UTF-16 positions from AnalyzePlain)
+	require.Equal(t, 0, matches[0].GetFromPos())
 }
 
 func TestHunspellRule_RuleWithAustrianGerman(t *testing.T) {
