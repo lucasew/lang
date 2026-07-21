@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMorfologikGermanyGermanSpellerRule(t *testing.T) {
+func TestMorfologikGermanyGermanSpellerRule_MorfologikSpeller(t *testing.T) {
 	r := NewMorfologikGermanyGermanSpellerRule(nil)
 	require.NotNil(t, r)
 	// Java MorfologikGermanyGermanSpellerRule.getId / getFileName

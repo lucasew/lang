@@ -38,3 +38,19 @@ func TestAdaptSuggestionFilter_DetAdjBranchDisabled(t *testing.T) {
 	f := withTestHooks(NewAdaptSuggestionFilter())
 	require.NotNil(t, f)
 }
+
+// Twin of AdaptSuggestionFilterTest.testAcceptRuleMatchDevTest (Java @Ignore for development).
+func TestAdaptSuggestionFilter_AcceptRuleMatchDevTest(t *testing.T) {
+	t.Skip("Java @Ignore(\"for development\")")
+}
+
+// Twin of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDetAdj (Java @Ignore WIP).
+func TestAdaptSuggestionFilter_AcceptRuleMatchWithDetAdj(t *testing.T) {
+	// Java detAdjNoun branch disabled (&& false); twin is fail-closed / skip.
+	t.Skip("Java @Ignore(\"WIP\") — detAdjNoun path not active upstream")
+}
+
+// Twin of AdaptSuggestionFilterTest.testdAdaptedDetAdj (Java method name has lowercase d).
+func TestAdaptSuggestionFilter_DAdaptedDetAdj(t *testing.T) {
+	t.Skip("Java @Ignore(\"WIP\") — getAdaptedDetAdj not active")
+}

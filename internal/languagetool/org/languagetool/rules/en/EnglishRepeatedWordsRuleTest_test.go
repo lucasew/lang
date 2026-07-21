@@ -33,7 +33,7 @@ func enSent(toks ...*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedS
 	return languagetool.NewAnalyzedSentence(toks)
 }
 
-func TestEnglishRepeatedWordsRule(t *testing.T) {
+func TestEnglishRepeatedWordsRule_Rule(t *testing.T) {
 	rule := NewEnglishRepeatedWordsRule(nil)
 	// synonyms: need/VB.*/B-VP=require — Java uses lemma + POS + chunk
 	ss := languagetool.SentenceStartTagName
