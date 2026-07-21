@@ -114,6 +114,10 @@ func TestStringTools_TrimWhitespace(t *testing.T) {
 	require.Equal(t, "word", TrimWhitespace("word"))
 	require.Equal(t, "1 234,56", TrimWhitespace("1 234,56"))
 	require.Equal(t, "1234,56", TrimWhitespace("1  234,56"))
+	// Java String.trim keeps NBSP (U+00A0); Go strings.TrimSpace would strip it.
+	require.Equal(t, "\u00a0word\u00a0", TrimWhitespace("\u00a0word\u00a0"))
+	// Multi-byte + internal double space (UTF-16 charAt loop)
+	require.Equal(t, "caféX", TrimWhitespace("café  X"))
 }
 
 func TestStringTools_IsWhitespace(t *testing.T) {

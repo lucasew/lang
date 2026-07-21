@@ -30,7 +30,8 @@ const (
 func IsEmptyStr(str string) bool { return str == "" }
 
 func AssureSet(s, varName string) {
-	if IsEmptyStr(strings.TrimSpace(s)) {
+	// Java: isEmpty(s.trim()) — String.trim strips only code units <= ' '.
+	if IsEmptyStr(trimJava(s)) {
 		panic("IllegalArgumentException: " + varName + " cannot be empty or whitespace only")
 	}
 }
@@ -261,33 +262,34 @@ func EscapeHTML(s string) string {
 }
 
 // TrimWhitespace ports StringTools.trimWhitespace.
+// Java: String str = s.trim() then charAt loop (UTF-16 units, not Unicode runes).
+// Java String.trim() only strips code units <= ' ' (not Go strings.TrimSpace / NBSP).
 func TrimWhitespace(s string) string {
-	str := strings.TrimSpace(s)
-	// Java uses charAt with <= ' ' for whitespace
-	var filter strings.Builder
-	runes := []rune(str)
-	for i := 0; i < len(runes); i++ {
-		for runes[i] <= ' ' && i < len(runes) &&
-			(i+1 < len(runes) && runes[i+1] <= ' ' || i > 1 && runes[i-1] <= ' ') {
+	str := trimJava(s)
+	// Java uses charAt with <= ' ' for whitespace over UTF-16 units.
+	u := utf16Units(str)
+	var filter []uint16
+	for i := 0; i < len(u); i++ {
+		for u[i] <= ' ' && i < len(u) &&
+			(i+1 < len(u) && u[i+1] <= ' ' || i > 1 && u[i-1] <= ' ') {
 			i++
-			if i >= len(runes) {
+			if i >= len(u) {
 				break
 			}
 		}
-		if i >= len(runes) {
+		if i >= len(u) {
 			break
 		}
-		c := runes[i]
+		c := u[i]
 		if c != '\n' && c != '\t' && c != '\r' {
-			filter.WriteRune(c)
+			filter = append(filter, c)
 		}
 	}
-	out := filter.String()
 	// Java: filter.length() == str.length() (UTF-16 code units)
-	if javaStringLen(out) == javaStringLen(str) {
+	if len(filter) == len(u) {
 		return str
 	}
-	return out
+	return utf16ToString(filter)
 }
 
 // CharacterIsWhitespace ports java.lang.Character.isWhitespace(int) used by
@@ -465,8 +467,9 @@ var nonCharID = regexp.MustCompile(`[^A-Z\x{00c0}-\x{00D6}\x{00D8}-\x{00DE}]`)
 
 // ToId ports StringTools.toId(input, language).
 func ToId(input, languageCode string) string {
-	// Java String.toUpperCase maps ß → SS; Go's strings.ToUpper does not.
-	trimmed := strings.TrimSpace(input)
+	// Java: input.toUpperCase().trim() — String.trim is code units <= ' ' only.
+	// String.toUpperCase maps ß → SS; Go's strings.ToUpper does not.
+	trimmed := trimJava(input)
 	trimmed = strings.ReplaceAll(trimmed, "ß", "SS")
 	normalised := strings.ToUpper(trimmed)
 	normalised = strings.ReplaceAll(normalised, " ", "_")
@@ -781,27 +784,34 @@ func NumberOf(s, t string) int {
 }
 
 // SplitCamelCase ports StringTools.splitCamelCase.
+// Java iterates input.charAt(i) / Character.isUpperCase over UTF-16 units,
+// then result.toString().trim().split(" ").
 func SplitCamelCase(input string) []string {
 	if IsAllUppercase(input) {
 		return []string{input}
 	}
-	var word, result strings.Builder
+	u := utf16Units(input)
+	var word, result []uint16
 	previousIsUppercase := false
-	for _, r := range input {
-		if unicode.IsUpper(r) {
+	for i := 0; i < len(u); i++ {
+		currentChar := u[i]
+		// Character.isUpperCase on a UTF-16 code unit (surrogates → false)
+		if unicode.IsUpper(rune(currentChar)) {
 			if !previousIsUppercase {
-				result.WriteString(word.String())
-				result.WriteByte(' ')
-				word.Reset()
+				result = append(result, word...)
+				result = append(result, ' ')
+				word = word[:0]
 			}
 			previousIsUppercase = true
 		} else {
 			previousIsUppercase = false
 		}
-		word.WriteRune(r)
+		word = append(word, currentChar)
 	}
-	result.WriteString(word.String())
-	trimmed := strings.TrimSpace(result.String())
+	result = append(result, word...)
+	trimmed := trimJava(utf16ToString(result))
+	// Java String.split(" ") keeps empty trailing segments differently than Go;
+	// for camelCase results there is no empty trailing part after trim.
 	if trimmed == "" {
 		return []string{""}
 	}
@@ -809,16 +819,15 @@ func SplitCamelCase(input string) []string {
 }
 
 // SplitDigitsAtEnd ports StringTools.splitDigitsAtEnd.
-// Java uses charAt + Character.isDigit from the end; digits and LT tails are BMP,
-// so iterating runes with unicode.IsDigit matches Character.isDigit for those inputs.
+// Java: lastIndex = length()-1; while isDigit(charAt(lastIndex)) lastIndex--.
 func SplitDigitsAtEnd(input string) []string {
-	runes := []rune(input)
-	lastIndex := len(runes) - 1
-	for lastIndex >= 0 && unicode.IsDigit(runes[lastIndex]) {
+	u := utf16Units(input)
+	lastIndex := len(u) - 1
+	for lastIndex >= 0 && unicode.IsDigit(rune(u[lastIndex])) {
 		lastIndex--
 	}
-	nonDigit := string(runes[:lastIndex+1])
-	digit := string(runes[lastIndex+1:])
+	nonDigit := utf16ToString(u[:lastIndex+1])
+	digit := utf16ToString(u[lastIndex+1:])
 	if nonDigit != "" && digit != "" {
 		return []string{nonDigit, digit}
 	}
