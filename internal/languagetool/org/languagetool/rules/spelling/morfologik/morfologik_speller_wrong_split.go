@@ -16,7 +16,13 @@ const digitRunes = "0123456789"
 
 // getSpellerFrequency ports getFrequency(speller1, word).
 func (r *MorfologikSpellerRule) getSpellerFrequency(word string) int {
-	if r == nil || r.Speller == nil {
+	if r == nil {
+		return 0
+	}
+	if r.Multi != nil {
+		return r.Multi.GetFrequency(word)
+	}
+	if r.Speller == nil {
 		return 0
 	}
 	return r.Speller.GetFrequency(word)

@@ -39,11 +39,24 @@ type MorfologikVariantSpellerRule struct {
 }
 
 func newVariantSpeller(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string) *MorfologikVariantSpellerRule {
-	sp := morfologik.NewMorfologikSpeller(dictPath, 1)
-	// Java MorfologikSpeller loads FSA + .info from getFileName() when resource exists.
-	_ = sp.TryAttachBinaryFromClasspath(dictPath)
+	// Java MorfologikSpellerRule.initSpeller: MorfologikMultiSpeller(binary, plainTexts, variant, …).
+	// plain: spelling.txt + spelling_global + multiwords (getAdditionalSpellingFileNames) + variant file.
+	plainRels := []string{
+		"en/hunspell/spelling.txt",
+		"spelling.txt", // EnglishGlobalSpellingFile
+		"en/multiwords.txt",
+	}
+	multi := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 1, PrepareLineForSpeller)
+	var sp *morfologik.MorfologikSpeller
+	if multi != nil && len(multi.Spellers) > 0 {
+		sp = multi.Spellers[0]
+	} else {
+		sp = morfologik.NewMorfologikSpeller(dictPath, 1)
+		_ = sp.TryAttachBinaryFromClasspath(dictPath)
+	}
 	base := NewAbstractEnglishSpellerRule(id, variantCode, sp)
 	base.FileName = dictPath
+	base.Multi = multi
 	// Java Morfologik*SpellerRule.getLanguageVariantSpellingFileName → plain-text accept list.
 	// ApplyDefaultSpellingWordLists used LanguageShortCode "en" only; load variant file here.
 	if base.SpellingCheckRule != nil {

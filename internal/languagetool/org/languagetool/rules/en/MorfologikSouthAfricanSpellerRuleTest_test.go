@@ -14,6 +14,7 @@ func withZA(words ...string) *MorfologikVariantSpellerRule {
 	for _, w := range words {
 		sp.AddWord(w)
 	}
+	r.Multi = nil // map inject: disable multi-speller (Java tests use single inject)
 	r.Speller = sp
 	r.IsMisspelled = r.MorfologikSpellerRule.IsMisspelled
 	if r.SpellingCheckRule != nil {

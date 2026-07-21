@@ -14,6 +14,7 @@ func withGB(words ...string) *MorfologikVariantSpellerRule {
 	for _, w := range words {
 		sp.AddWord(w)
 	}
+	r.Multi = nil // map inject: disable multi-speller (Java tests use single inject)
 	r.Speller = sp
 	r.IsMisspelled = r.MorfologikSpellerRule.IsMisspelled
 	if r.SpellingCheckRule != nil {
@@ -65,6 +66,7 @@ func TestMorfologikBritishSpellerRule_VariantMessages(t *testing.T) {
 	for _, w := range []string{"This", "is", "a", "nice", "the", "American", "English", "word"} {
 		sp.AddWord(w)
 	}
+	r.Multi = nil // map inject: disable multi-speller (Java tests use single inject)
 	r.Speller = sp
 	r.IsMisspelled = r.MorfologikSpellerRule.IsMisspelled
 

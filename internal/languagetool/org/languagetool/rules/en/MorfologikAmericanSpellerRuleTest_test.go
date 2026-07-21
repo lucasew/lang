@@ -16,6 +16,7 @@ func withUS(words ...string) *MorfologikVariantSpellerRule {
 	for _, w := range words {
 		sp.AddWord(w)
 	}
+	r.Multi = nil // map inject: disable multi-speller
 	r.Speller = sp
 	// Use compound-aware isMisspelledWord (Java MorfologikSpellerRule.isMisspelled).
 	r.IsMisspelled = r.MorfologikSpellerRule.IsMisspelled
@@ -82,6 +83,7 @@ func TestMorfologikAmericanSpellerRule_VariantMessages(t *testing.T) {
 	for _, w := range []string{"This", "is", "a", "nice", "words", "the", "British"} {
 		sp.AddWord(w)
 	}
+	r.Multi = nil
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	ms, err := r.Match(analyzeEN("This is a nice colour."))
@@ -363,6 +365,7 @@ func TestMorfologikAmericanSpellerRule_GetOnlySuggestions(t *testing.T) {
 	r := NewMorfologikAmericanSpellerRule()
 	// EnglishOnlySuggestions already wires cemetary; assert Match path
 	sp := morfologik.NewMorfologikSpeller(AmericanSpellerDict, 1)
+	r.Multi = nil
 	r.Speller = sp
 	// empty dict is fail-closed for IsMisspelled — force misspell probe
 	r.IsMisspelled = func(w string) bool {

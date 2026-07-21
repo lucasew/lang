@@ -88,3 +88,57 @@ func (m *MorfologikMultiSpeller) GetSuggestions(word string) []string {
 	}
 	return out
 }
+
+// GetFrequency ports MorfologikMultiSpeller.getFrequency — first positive freq wins.
+func (m *MorfologikMultiSpeller) GetFrequency(word string) int {
+	if m == nil {
+		return 0
+	}
+	for _, s := range m.Spellers {
+		if s == nil {
+			continue
+		}
+		if f := s.GetFrequency(word); f > 0 {
+			return f
+		}
+	}
+	return 0
+}
+
+// OpenMultiSpellerFromClasspath ports MorfologikMultiSpeller(binary, plainTexts, variant, maxEdit)
+// without user-dict: binary FSA + plain-text map membership (Java builds runtime FSA from lines).
+// prepareLine is Language.prepareLineForSpeller (nil → raw lines).
+func OpenMultiSpellerFromClasspath(binaryClasspath string, plainTextRels []string, languageVariantRel string, maxEditDistance int, prepareLine PrepareLineFn) *MorfologikMultiSpeller {
+	if maxEditDistance < 1 {
+		maxEditDistance = 1
+	}
+	if err := ValidateMultiSpellerDictPath(binaryClasspath); err != nil {
+		// still allow shell with plain only when path is .dict-shaped
+		_ = err
+	}
+	main := NewMorfologikSpeller(binaryClasspath, maxEditDistance)
+	_ = main.TryAttachBinaryFromClasspath(binaryClasspath)
+
+	plain := NewMorfologikSpeller(binaryClasspath+"#plain", maxEditDistance)
+	// Match binary .info flags for isMisspelled gates on plain-only surfaces.
+	_ = plain.LoadInfoFromClasspath(binaryClasspath)
+	rels := append([]string(nil), plainTextRels...)
+	if languageVariantRel != "" {
+		rels = append(rels, languageVariantRel)
+	}
+	plain.LoadPlainTextAcceptClasspaths(rels, prepareLine)
+	// Java: LanguageTool added when language variant reader present
+	if languageVariantRel != "" {
+		plain.AddWord("LanguageTool")
+		plain.AddWord("LanguageTooler")
+	}
+
+	spellers := []*MorfologikSpeller{main}
+	if plain.HasDictionary() {
+		spellers = append(spellers, plain)
+	}
+	return &MorfologikMultiSpeller{
+		Spellers:       spellers,
+		BinaryDictPath: binaryClasspath,
+	}
+}

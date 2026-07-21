@@ -39,6 +39,9 @@ type MorfologikSpellerRule struct {
 	// AddHyphenSuggestionsFn ports addHyphenSuggestions: when dict sugs empty and word
 	// contains '-', rebuild hyphenated forms by fixing one misspelled part (EN).
 	AddHyphenSuggestionsFn func(parts []string) []string
+	// Multi ports MorfologikMultiSpeller (binary + plain-text dicts). When set,
+	// isMisspelled / suggestions / frequency use Multi; Speller remains primary binary.
+	Multi *MorfologikMultiSpeller
 }
 
 func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *MorfologikSpeller) *MorfologikSpellerRule {
@@ -197,6 +200,32 @@ func (r *MorfologikSpellerRule) isMisspelledWord(word string) bool {
 	if r == nil || word == "" {
 		return false
 	}
+	// Multi-speller: accepted if any component accepts (Java MorfologikMultiSpeller.isMisspelled).
+	if r.Multi != nil && len(r.Multi.Spellers) > 0 {
+		if !r.Multi.IsMisspelled(word) {
+			return false
+		}
+		if !r.CheckCompound {
+			return true
+		}
+		re := r.CompoundRegex
+		if re == nil {
+			re = defaultCompoundRegex
+		}
+		if !re.MatchString(word) {
+			return true
+		}
+		parts := re.Split(word, -1)
+		for _, p := range parts {
+			if p == "" {
+				continue
+			}
+			if r.Multi.IsMisspelled(p) {
+				return true
+			}
+		}
+		return false
+	}
 	// Fail-closed empty dict (map inject empty and no binary FSA).
 	if r.Speller == nil || !r.Speller.HasDictionary() {
 		return false
@@ -243,7 +272,9 @@ func (r *MorfologikSpellerRule) collectSuggestions(word string) []string {
 		}
 	}
 	var sug []string
-	if r.Speller != nil {
+	if r.Multi != nil {
+		sug = r.Multi.GetSuggestions(word)
+	} else if r.Speller != nil {
 		sug = r.Speller.FindReplacements(word)
 	}
 	// Java: if no default/user sugs and word contains "-", addHyphenSuggestions first into top.
