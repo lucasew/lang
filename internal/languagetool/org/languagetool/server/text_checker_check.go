@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
@@ -28,6 +29,12 @@ type CheckOptions struct {
 	// AltLanguages ports QueryParams.altLanguages (e.g. "de-DE", "ru-RU").
 	// Java: Pipeline(lang, altLanguages, …) → JLanguageTool.altLanguages.
 	AltLanguages []string
+	// AllowIncompleteResults ports QueryParams.allowIncompleteResults —
+	// when true, ErrorRateTooHighException returns partial matches + incomplete reason.
+	AllowIncompleteResults bool
+	// MaxErrorsPerWordRate ports JLanguageTool.maxErrorsPerWordRate (0 = disabled).
+	// Used for tests / server config; Java often sets from server properties.
+	MaxErrorsPerWordRate float64
 }
 
 // Check runs core rules for language on text and returns RemoteRuleMatch results.
@@ -114,6 +121,10 @@ func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) (pl *Pipel
 		}
 	}
 	_ = p.SetCleanOverlappingMatches(true)
+	// maxErrorsPerWordRate before freeze (Java JLanguageTool field used in TextCheckCallable).
+	if opts.MaxErrorsPerWordRate > 0 {
+		_ = p.SetMaxErrorsPerWordRate(opts.MaxErrorsPerWordRate)
+	}
 	p.SetupFinished()
 	return p, settings, false
 }
@@ -126,16 +137,30 @@ func (t *TextChecker) releasePipeline(settings PipelineSettings, pl *Pipeline, f
 
 // CheckWithOptions is Check with enabled-only, mode, and level support.
 func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []RemoteRuleMatch {
-	ms, _ := t.CheckWithOptionsAndIgnore(text, lang, opts)
+	ms, _, _ := t.CheckWithOptionsAndIgnore(text, lang, opts)
 	return ms
 }
 
-// CheckWithOptionsAndIgnore ports check2 → matches + ignoreRanges from
-// CheckResults (NewLanguageMatches), not invent ForeignScriptIgnoreRanges.
-func (t *TextChecker) CheckWithOptionsAndIgnore(text, lang string, opts CheckOptions) ([]RemoteRuleMatch, []IgnoreRangeInfo) {
+// CheckWithOptionsAndIgnore ports check2 → matches + ignoreRanges + incomplete reason.
+// When AllowIncompleteResults and ErrorRateTooHighException: returns matches so far and
+// incompleteReason = "Results are incomplete: " + exception message (Java TextChecker).
+// Not invent ForeignScriptIgnoreRanges / size-threshold soft warnings.
+func (t *TextChecker) CheckWithOptionsAndIgnore(text, lang string, opts CheckOptions) (matches []RemoteRuleMatch, ignore []IgnoreRangeInfo, incompleteReason string) {
 	p, settings, fromPool := t.preparePipeline(lang, opts)
 	defer t.releasePipeline(settings, p, fromPool)
-	cr, _ := p.CheckWithResults(text)
+	cr, err := p.CheckWithResults(text)
+	if err != nil {
+		var rateErr *languagetool.ErrorRateTooHighException
+		if errors.As(err, &rateErr) {
+			if opts.AllowIncompleteResults {
+				// Java: localReason = "Results are incomplete: " + rootCause.getMessage()
+				incompleteReason = "Results are incomplete: " + rateErr.Error()
+			} else {
+				// Without allowIncompleteResults, surface as failed check (no invent swallow).
+				return nil, nil, ""
+			}
+		}
+	}
 	locals := languagetool.LocalMatchesFromCheckResults(cr)
 	// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
 	locals = applyRuleValues(lang, text, locals, opts.RuleValues)
@@ -145,11 +170,10 @@ func (t *TextChecker) CheckWithOptionsAndIgnore(text, lang string, opts CheckOpt
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
 	}
-	var ignore []IgnoreRangeInfo
 	if cr != nil {
 		ignore = RangesToIgnoreRangeInfo(cr.GetIgnoredRanges())
 	}
-	return LocalMatchesToRemote(text, locals, ctxSize, lang), ignore
+	return LocalMatchesToRemote(text, locals, ctxSize, lang), ignore, incompleteReason
 }
 
 // RangesToIgnoreRangeInfo maps languagetool.Range (UTF-16 spans from Java Range)
@@ -167,19 +191,27 @@ func RangesToIgnoreRangeInfo(ranges []languagetool.Range) []IgnoreRangeInfo {
 
 // CheckAnnotatedWithOptions checks annotated markup text; match offsets are in original markup space.
 func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang string, opts CheckOptions) []RemoteRuleMatch {
-	ms, _ := t.CheckAnnotatedWithOptionsAndIgnore(at, lang, opts)
+	ms, _, _ := t.CheckAnnotatedWithOptionsAndIgnore(at, lang, opts)
 	return ms
 }
 
 // CheckAnnotatedWithOptionsAndIgnore is the annotated twin of CheckWithOptionsAndIgnore
-// (Java check2 on AnnotatedText → matches + ignoreRanges).
-func (t *TextChecker) CheckAnnotatedWithOptionsAndIgnore(at *markup.AnnotatedText, lang string, opts CheckOptions) ([]RemoteRuleMatch, []IgnoreRangeInfo) {
+// (Java check2 on AnnotatedText → matches + ignoreRanges + incomplete reason).
+func (t *TextChecker) CheckAnnotatedWithOptionsAndIgnore(at *markup.AnnotatedText, lang string, opts CheckOptions) (matches []RemoteRuleMatch, ignore []IgnoreRangeInfo, incompleteReason string) {
 	if at == nil {
-		return nil, nil
+		return nil, nil, ""
 	}
 	p, settings, fromPool := t.preparePipeline(lang, opts)
 	defer t.releasePipeline(settings, p, fromPool)
-	cr, _ := p.CheckAnnotatedWithResults(at)
+	cr, err := p.CheckAnnotatedWithResults(at)
+	if err != nil {
+		var rateErr *languagetool.ErrorRateTooHighException
+		if errors.As(err, &rateErr) && opts.AllowIncompleteResults {
+			incompleteReason = "Results are incomplete: " + rateErr.Error()
+		} else if errors.As(err, &rateErr) {
+			return nil, nil, ""
+		}
+	}
 	locals := languagetool.LocalMatchesFromCheckResults(cr)
 	plain := at.GetPlainText()
 	// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
@@ -192,11 +224,10 @@ func (t *TextChecker) CheckAnnotatedWithOptionsAndIgnore(at *markup.AnnotatedTex
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
 	}
-	var ignore []IgnoreRangeInfo
 	if cr != nil {
 		ignore = RangesToIgnoreRangeInfo(cr.GetIgnoredRanges())
 	}
-	return LocalMatchesToRemote(orig, locals, ctxSize, lang), ignore
+	return LocalMatchesToRemote(orig, locals, ctxSize, lang), ignore, incompleteReason
 }
 
 func filterLocalsByIgnoreWords(text string, ms []languagetool.LocalMatch, ignore []string) []languagetool.LocalMatch {

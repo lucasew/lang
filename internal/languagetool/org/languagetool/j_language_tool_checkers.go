@@ -330,14 +330,17 @@ func (lt *JLanguageTool) checkResultsFromMatches(text string, matches []LocalMat
 	if name == "" {
 		name = lang
 	}
-	if err := CheckErrorRate(len(matches), wordCounter, lt.MaxErrorsPerWordRate, name, utf16Len(text)); err != nil {
-		return nil, err
-	}
 	anyMatches := make([]any, len(matches))
 	for i := range matches {
 		anyMatches[i] = matches[i]
 	}
-	return NewCheckResultsFull(anyMatches, ignore, ext), nil
+	cr := NewCheckResultsFull(anyMatches, ignore, ext)
+	// Java TextCheckCallable: still has matches collected when rate trips; server may
+	// return partial results if allowIncompleteResults (ErrorRateTooHighException).
+	if err := CheckErrorRate(len(matches), wordCounter, lt.MaxErrorsPerWordRate, name, utf16Len(text)); err != nil {
+		return cr, err
+	}
+	return cr, nil
 }
 
 // LocalMatchesFromCheckResults unpacks LocalMatch values from CheckResults.RuleMatches.

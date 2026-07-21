@@ -21,7 +21,9 @@ func CachedCheck(cache *ResultCache, lt *JLanguageTool, text string) []LocalMatc
 		// (full InputSentence multi-sentence keying deferred).
 		keySent = AnalyzePlain(text)
 	}
-	key := NewInputSentence(keySent, lt.LanguageCode, "", lt.DisabledRuleIDs, nil, nil, nil, nil, nil, string(lt.Mode), lt.Level, nil, nil)
+	// Java InputSentence includes altLanguages in equality/hash (cache key).
+	// NewInputSentence(..., userConfig, altLanguages, mode, level, sessionID, toneTags)
+	key := NewInputSentence(keySent, lt.LanguageCode, "", lt.DisabledRuleIDs, nil, nil, nil, nil, lt.AltLanguageCodes, string(lt.Mode), lt.Level, nil, nil)
 	if v, ok := cache.GetMatchesIfPresent(key); ok {
 		if ms, ok := v.([]LocalMatch); ok {
 			return ms

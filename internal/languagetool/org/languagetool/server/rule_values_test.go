@@ -33,13 +33,16 @@ func TestApiV2_RuleValuesLongSentence(t *testing.T) {
 	require.Contains(t, r.Body, `"id":"STYLE"`)
 }
 
-func TestApiV2_AutoWarnings(t *testing.T) {
+func TestApiV2_AutoDetectedLanguage(t *testing.T) {
+	// language=auto sets detectedLanguage; invent preferredVariants string warning removed
+	// (Java warnings object is incompleteResults only).
 	api := NewApiV2(nil, nil)
 	r, err := api.Handle("check", map[string]string{
 		"language": "auto",
 		"text":     "Hello world.",
 	})
 	require.NoError(t, err)
-	require.Contains(t, r.Body, "preferredVariants")
+	require.Contains(t, r.Body, "detectedLanguage")
 	require.Contains(t, r.Body, "warnings")
+	require.Contains(t, r.Body, "incompleteResults")
 }

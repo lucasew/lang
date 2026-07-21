@@ -4,10 +4,12 @@ import (
 	"math"
 	"strings"
 	"unicode"
+
+	"golang.org/x/text/unicode/norm"
 )
 
-// CharNGramDetector is a lightweight stand-in for Java NGramDetector zip models.
-// Stores per-language character n-gram relative frequencies and scores text by log-likelihood.
+// CharNGramDetector is a lightweight stand-in for Java NGramDetector zip models
+// (full BPE vocab encode deferred). Character n-gram relative frequencies only.
 type CharNGramDetector struct {
 	// N is n-gram order (default 3).
 	N int
@@ -85,15 +87,21 @@ func (d *CharNGramDetector) DetectLanguages(text string) map[string]float64 {
 	return out
 }
 
+// normalizeNGramText mirrors the start of Java NGramDetector.encode:
+// Normalizer.normalize(text, NFKC).toLowerCase() then keeps letters/spaces for
+// the incomplete char-ngram path (full <NUM>/<KO>/… BPE replacements deferred).
 func normalizeNGramText(s string) string {
+	// Java: Normalizer.normalize(text, Normalizer.Form.NFKC).toLowerCase()
+	s = norm.NFKC.String(s)
+	s = strings.ToLower(s)
 	var b strings.Builder
-	for _, r := range strings.ToLower(s) {
+	for _, r := range s {
+		// Keep letters; Unicode White_Space as space class (NFKC path before BPE).
 		if unicode.IsLetter(r) || unicode.IsSpace(r) {
 			b.WriteRune(r)
 		}
 	}
-	// Collapse runs of whitespace to a single ASCII space (not full Unicode Fields
-	// invent beyond IsSpace filter already applied).
+	// Collapse runs of ASCII whitespace to a single ' ' (not strings.Fields invent).
 	return collapseASCIIWhitespaceRuns(b.String())
 }
 

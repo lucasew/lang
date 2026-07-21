@@ -38,17 +38,19 @@ func (v *V2TextChecker) BuildResponse(text, langCode, langName string, matches [
 
 // BuildResponseEx builds a check response; when autoDetected is true, sets detectedLanguage.
 func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool) (string, error) {
-	return v.BuildResponseExFull(text, langCode, langName, matches, autoDetected, nil, nil, 0)
+	return v.BuildResponseExFull(text, langCode, langName, matches, autoDetected, "", nil, 0)
 }
 
-// BuildResponseExWarnings is BuildResponseEx with optional non-fatal warnings.
-func (v *V2TextChecker) BuildResponseExWarnings(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, warnings []string) (string, error) {
-	return v.BuildResponseExFull(text, langCode, langName, matches, autoDetected, warnings, nil, 0)
+// BuildResponseExWithIncomplete is BuildResponseEx with Java incompleteResultsReason.
+func (v *V2TextChecker) BuildResponseExWithIncomplete(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, incompleteReason string) (string, error) {
+	return v.BuildResponseExFull(text, langCode, langName, matches, autoDetected, incompleteReason, nil, 0)
 }
 
-// BuildResponseExFull is the full check response builder (warnings + ignore ranges).
-// checkMs is soft wall-clock check duration for metrics (milliseconds).
-func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, warnings []string, ignore []IgnoreRangeInfo, checkMs int64) (string, error) {
+// BuildResponseExFull builds /v2/check JSON.
+// incompleteReason ports incompleteResultsReason (Java writeWarningsSection):
+// when non-empty → warnings.incompleteResults=true + incompleteResultsReason.
+// checkMs is wall-clock check duration for metrics (milliseconds).
+func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, incompleteReason string, ignore []IgnoreRangeInfo, checkMs int64) (string, error) {
 	if langName == "" || langName == langCode {
 		if n := LanguageNameForCode(langCode); n != "" {
 			langName = n
@@ -66,8 +68,14 @@ func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, mat
 		dl := lang
 		resp.DetectedLanguage = &dl
 	}
-	if len(warnings) > 0 {
-		resp.Warnings = append([]string(nil), warnings...)
+	// Java always writes warnings object when not compactMode; include when incomplete.
+	if incompleteReason != "" {
+		resp.Warnings = &WarningsInfo{
+			IncompleteResults:       true,
+			IncompleteResultsReason: incompleteReason,
+		}
+	} else {
+		resp.Warnings = &WarningsInfo{IncompleteResults: false}
 	}
 	for i := range matches {
 		resp.Matches = append(resp.Matches, matches[i].ToMatchInfo())

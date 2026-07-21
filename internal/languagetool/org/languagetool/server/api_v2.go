@@ -186,31 +186,24 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			opts.Level = CheckLevel(strings.ToUpper(v))
 		}
 		langName := LanguageNameForCode(lang)
-		var warnings []string
-		if autoDetected {
-			preferred := commaSeparated(parameters["preferredVariants"])
-			if len(preferred) == 0 {
-				warnings = append(warnings, "language=auto without preferredVariants; detected variant may be imprecise")
-			}
-		}
-		// Soft incomplete-results notice for very large texts when client opts in.
-		if qp.AllowIncompleteResults && len(text) > 100_000 {
-			warnings = append(warnings, "allowIncompleteResults: text exceeds soft size threshold; results may be incomplete")
-		}
-		// Multi-language: ignoreRanges from CheckResults (NewLanguageMatches), not invent script spans.
+		// AllowIncompleteResults: Java returns partial matches + incompleteResultsReason
+		// on ErrorRateTooHigh / timeout — not invent size-threshold soft warnings.
+		opts.AllowIncompleteResults = qp.AllowIncompleteResults
+		// Multi-language: ignoreRanges from CheckResults (NewLanguageMatches).
 		var ignoreRanges []IgnoreRangeInfo
+		var incompleteReason string
 		var body string
 		checkStart := time.Now()
 		if annotated != nil {
 			var matches []RemoteRuleMatch
-			matches, ignoreRanges = a.TextChecker.CheckAnnotatedWithOptionsAndIgnore(annotated, lang, opts)
+			matches, ignoreRanges, incompleteReason = a.TextChecker.CheckAnnotatedWithOptionsAndIgnore(annotated, lang, opts)
 			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
-			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings, ignoreRanges, time.Since(checkStart).Milliseconds())
+			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, incompleteReason, ignoreRanges, time.Since(checkStart).Milliseconds())
 		} else {
 			var matches []RemoteRuleMatch
-			matches, ignoreRanges = a.TextChecker.CheckWithOptionsAndIgnore(text, lang, opts)
+			matches, ignoreRanges, incompleteReason = a.TextChecker.CheckWithOptionsAndIgnore(text, lang, opts)
 			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
-			body, err = a.TextChecker.BuildResponseExFull(text, lang, langName, matches, autoDetected, warnings, ignoreRanges, time.Since(checkStart).Milliseconds())
+			body, err = a.TextChecker.BuildResponseExFull(text, lang, langName, matches, autoDetected, incompleteReason, ignoreRanges, time.Since(checkStart).Milliseconds())
 		}
 		if err != nil {
 			return HandleResult{}, err

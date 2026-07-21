@@ -14,3 +14,14 @@ func TestCharNGramDetector(t *testing.T) {
 	require.NotEmpty(t, scores)
 	require.Greater(t, scores["en"], scores["de"])
 }
+
+func TestNormalizeNGramText_NFKCAndLower(t *testing.T) {
+	// Java NGramDetector.encode: NFKC + toLowerCase (keeps precomposed é)
+	require.Equal(t, "café", normalizeNGramText("CAFÉ"))
+	// fullwidth digit → ASCII digit via NFKC then stripped (not letter/space)
+	require.Equal(t, "", normalizeNGramText("\uFF11"))
+	// soft hyphen removed by letter filter; letters kept lowercased
+	require.Equal(t, "foobar", normalizeNGramText("Foo\u00ADBar"))
+	// spaces collapsed
+	require.Equal(t, "a b", normalizeNGramText("a \t\n b"))
+}

@@ -22,10 +22,17 @@ type CheckResponse struct {
 	DetectedLanguage *LanguageInfo       `json:"detectedLanguage,omitempty"`
 	// SentenceRanges lists plain-text sentence spans (offset/length).
 	SentenceRanges   []SentenceRangeInfo `json:"sentenceRanges,omitempty"`
-	// IgnoreRanges is multi-language foreign-span output (soft; often empty array).
-	IgnoreRanges     []IgnoreRangeInfo   `json:"ignoreRanges"`
-	// Warnings is a soft list of non-fatal notices.
-	Warnings         []string            `json:"warnings,omitempty"`
+	// IgnoreRanges is multi-language foreign-span output from CheckResults.
+	IgnoreRanges []IgnoreRangeInfo `json:"ignoreRanges"`
+	// Warnings ports RuleMatchesAsJsonSerializer.writeWarningsSection:
+	// { "incompleteResults": bool, "incompleteResultsReason"?: string }.
+	Warnings *WarningsInfo `json:"warnings,omitempty"`
+}
+
+// WarningsInfo ports the JSON "warnings" object (not a string list invent).
+type WarningsInfo struct {
+	IncompleteResults       bool   `json:"incompleteResults"`
+	IncompleteResultsReason string `json:"incompleteResultsReason,omitempty"`
 }
 
 // SentenceRangeInfo is one sentence span in the public API.
