@@ -91,9 +91,11 @@ var similarNameExclude = map[string]struct{}{
 	"Ihr": {}, "Ihre": {}, "Ihren": {}, "Ihrer": {}, "Ihres": {}, "Ihrem": {},
 }
 
+// levenshteinSimilar ports Apache StringUtils.getLevenshteinDistance on
+// CharSequence — Java String length/charAt are UTF-16 code units, not runes.
 func levenshteinSimilar(a, b string) int {
-	ar, br := []rune(a), []rune(b)
-	la, lb := len(ar), len(br)
+	au, bu := utf16EncodeDE(a), utf16EncodeDE(b)
+	la, lb := len(au), len(bu)
 	if la == 0 {
 		return lb
 	}
@@ -109,7 +111,7 @@ func levenshteinSimilar(a, b string) int {
 		cur[0] = i
 		for j := 1; j <= lb; j++ {
 			cost := 1
-			if ar[i-1] == br[j-1] {
+			if au[i-1] == bu[j-1] {
 				cost = 0
 			}
 			ins, del, sub := cur[j-1]+1, prev[j]+1, prev[j-1]+cost

@@ -3,8 +3,10 @@ package de
 import (
 	"bufio"
 	"embed"
+	"fmt"
 	"strings"
 	"sync"
+	"unicode"
 )
 
 //go:embed data/case_rule_exceptions.txt
@@ -17,6 +19,8 @@ var (
 
 // CaseRuleExceptions returns the set of CaseRule exception phrases/regexes
 // from case_rule_exceptions.txt (eigennamen_gross.txt is Premium and omitted).
+// Load twins CaseRuleExceptions.loadExceptions: no TrimSpace invent; lines that
+// start/end with whitespace (charAt UTF-16) throw like Java IllegalArgumentException.
 func CaseRuleExceptions() map[string]struct{} {
 	caseExcOnce.Do(func() {
 		caseExcSet = map[string]struct{}{}
@@ -29,9 +33,20 @@ func CaseRuleExceptions() map[string]struct{} {
 		buf := make([]byte, 0, 64*1024)
 		sc.Buffer(buf, 1024*1024)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
+			// Java getFromResourceDirAsLines: strip line terminators only, not spaces.
+			// Scanner drops \n; strip leftover \r from CRLF resources.
+			line := strings.TrimSuffix(sc.Text(), "\r")
 			if line == "" || strings.HasPrefix(line, "#") {
 				continue
+			}
+			// Character.isWhitespace(line.charAt(0)) || charAt(length-1)
+			n := utf16LenDE(line)
+			if n > 0 {
+				c0 := javaCharAtDE(line, 0)
+				cN := javaCharAtDE(line, n-1)
+				if unicode.IsSpace(c0) || unicode.IsSpace(cN) {
+					panic(fmt.Sprintf("Invalid line in case_rule_exceptions.txt, starts or ends with whitespace: '%s'", line))
+				}
 			}
 			caseExcSet[line] = struct{}{}
 		}
