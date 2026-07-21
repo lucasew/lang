@@ -97,3 +97,40 @@ func stringsContains(s, p string) bool {
 			return false
 		}())
 }
+
+// Twin: VER:INF with first-upper rest-unchanged → SUB:…:INF; VER:INF only at index 0.
+func TestPrefixPath_InfTitleNominalized(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"geben": {tagging.NewTaggedWord("geben", "VER:INF:NON")},
+	}
+	tagger := NewGermanTagger(wt)
+	// mid-sentence Title infinitive
+	got := tagger.Tag([]string{"Das", "Herumgeben"})
+	// "Herumgeben" may hit verb expansion nominalized if attached — without expansion, prefix path
+	tags := posTagsOf(got[1])
+	// Without VerbExpansion, strip herum+geben via prefixesVerbs
+	// need lastPart "geben" after strip
+	require.Contains(t, tags, "SUB:NOM:SIN:NEU:INF")
+	require.NotContains(t, tags, "VER:INF:NON", "mid-sentence Title INF must not keep VER:INF")
+}
+
+func TestPrefixPath_InfTitleAtStartKeepsVER(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"geben": {tagging.NewTaggedWord("geben", "VER:INF:NON")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Herumgeben", "ist", "toll"})
+	tags := posTagsOf(got[0])
+	require.Contains(t, tags, "SUB:NOM:SIN:NEU:INF")
+	require.Contains(t, tags, "VER:INF:NON")
+}
+
+func TestIsFirstCharUpperRestUnchanged(t *testing.T) {
+	require.True(t, isFirstCharUpperRestUnchanged("Herumgeben"))
+	require.True(t, isFirstCharUpperRestUnchanged("HerumGeben")) // rest unchanged may be mixed
+	require.False(t, isFirstCharUpperRestUnchanged("herumgeben"))
+	// Java: ALLCAPS also matches (first.toUpper + rest == word)
+	require.True(t, isFirstCharUpperRestUnchanged("HERUMGEBEN"))
+	require.True(t, isFirstCharUpperRestUnchanged("Übergeben"))
+	require.False(t, isFirstCharUpperRestUnchanged("üBergeben"))
+}

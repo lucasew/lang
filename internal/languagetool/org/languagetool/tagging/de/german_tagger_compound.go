@@ -165,14 +165,15 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 		}
 		fullLemma := strings.ToLower(firstPart) + lemmaBase
 		if strings.HasPrefix(pos, "VER:INF") {
-			// Title case infinitive → also nominalized SUB:…:INF
-			if isTitleCaseWord(wordOrig) {
+			// Java: word.equals(substring(0,1).toUpperCase()+substring(1)) — first upper, rest unchanged
+			// (not full TitleCase with rest lower). Then SUB:…:INF; VER:INF only if indexOf==0.
+			if isFirstCharUpperRestUnchanged(wordOrig) {
 				readings = append(readings,
 					toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "SUB:NOM:SIN:NEU:INF")),
 					toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "SUB:DAT:SIN:NEU:INF")),
 					toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "SUB:AKK:SIN:NEU:INF")),
 				)
-				if idxPos == 0 {
+				if indexOfToken(sentenceTokens, wordOrig) == 0 {
 					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, pos)))
 				}
 			} else {
@@ -277,6 +278,25 @@ func isTitleCaseWord(word string) bool {
 		return false
 	}
 	return word == utf16FirstUpperRestLower(word)
+}
+
+// isFirstCharUpperRestUnchanged ports
+// word.equals(substring(0,1).toUpperCase()+substring(1)) — UTF-16 (VER:INF nominalization gate).
+func isFirstCharUpperRestUnchanged(word string) bool {
+	if word == "" {
+		return false
+	}
+	return word == utf16FirstUpperRest(word)
+}
+
+func utf16FirstUpperRest(word string) string {
+	u := utf16.Encode([]rune(word))
+	if len(u) == 0 {
+		return word
+	}
+	first := string(utf16.Decode(u[:1]))
+	rest := string(utf16.Decode(u[1:]))
+	return strings.ToUpper(first) + rest
 }
 
 // isDomainLikeSequence ports GermanTagger domain skip: word . com|net|org|…
