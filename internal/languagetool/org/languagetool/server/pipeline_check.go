@@ -10,6 +10,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // newConfiguredLT builds a language tool aligned with commandline.configureCoreLT
@@ -28,7 +29,7 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		base = lang[:i]
 	}
-	mt := strings.TrimSpace(p.settings.MotherTongueCode)
+	mt := tools.JavaStringTrim(p.settings.MotherTongueCode)
 
 	// EN: official dicts/filters/multitoken/hybrid; demo only under LANG_DEMO_SPELLER.
 	if strings.EqualFold(base, "en") {

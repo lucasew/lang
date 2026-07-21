@@ -90,7 +90,9 @@ func readGISModel(r io.Reader) (*GISModel, error) {
 		if err != nil {
 			return nil, err
 		}
-		for _, f := range strings.Fields(s) {
+		// OpenNLP AbstractModelReader: StringTokenizer(pattern) default delim
+		// " \t\n\r\f" — collapse consecutive, not Unicode Fields / NBSP.
+		for _, f := range asciiStringTokenizerSplit(s) {
 			v, err := strconv.Atoi(f)
 			if err != nil {
 				return nil, err
@@ -256,4 +258,29 @@ func readJavaDouble(r io.Reader) (float64, error) {
 	var v float64
 	err := binary.Read(r, binary.BigEndian, &v)
 	return v, err
+}
+
+// asciiStringTokenizerSplit ports java.util.StringTokenizer default delimiters
+// " \t\n\r\f": consecutive delimiters collapse; no empty tokens; not Unicode Zs.
+func asciiStringTokenizerSplit(s string) []string {
+	var out []string
+	start := -1
+	flush := func(end int) {
+		if start >= 0 && end > start {
+			out = append(out, s[start:end])
+		}
+		start = -1
+	}
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' {
+			flush(i)
+			continue
+		}
+		if start < 0 {
+			start = i
+		}
+	}
+	flush(len(s))
+	return out
 }

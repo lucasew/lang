@@ -104,9 +104,14 @@ type TaggerEntry struct {
 }
 
 // ParseTaggerLine parses wordform\tlemma\tpostag (or spelling-only wordform).
+// Java DictionaryBuilder: line.split("\t") with no trim; ignore unless length==3 for POS export.
+// Here we accept ≥1 tab fields for tooling; do not invent Unicode TrimSpace.
 func ParseTaggerLine(line string) (TaggerEntry, bool) {
-	line = strings.TrimSpace(line)
-	if line == "" || strings.HasPrefix(line, "#") {
+	if line == "" {
+		return TaggerEntry{}, false
+	}
+	// Soft skip comments for human-edited files (not in Java path for raw dict build).
+	if strings.HasPrefix(line, "#") {
 		return TaggerEntry{}, false
 	}
 	parts := strings.Split(line, "\t")
@@ -151,9 +156,10 @@ func WriteSpellingList(w io.Writer, entries []TaggerEntry) error {
 }
 
 // Separator returns fsa.dict.separator from props.
+// Java DictionaryBuilder.getOption: return property.trim().
 func (b *DictionaryBuilder) Separator() string {
 	if b == nil || b.Props == nil {
 		return ""
 	}
-	return b.Props["fsa.dict.separator"]
+	return JavaStringTrim(b.Props["fsa.dict.separator"])
 }

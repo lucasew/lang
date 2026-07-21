@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // POSTaggerME ports opennlp.tools.postag.POSTaggerME for OpenNLP 1.5 en-pos-maxent.bin.
@@ -249,12 +251,14 @@ func loadPOSTagDictFromZip(path string) (map[string][]string, error) {
 	}
 	out := make(map[string][]string, len(doc.Entries))
 	for _, e := range doc.Entries {
-		tok := strings.TrimSpace(e.Token)
+		// Token surfaces are model-dict XML; avoid Unicode TrimSpace invent.
+		tok := tools.JavaStringTrim(e.Token)
 		if tok == "" {
 			continue
 		}
 		var tags []string
-		for _, t := range strings.Fields(e.Tags) {
+		// Tags are space-separated POS labels (ASCII tokenizer-like).
+		for _, t := range asciiStringTokenizerSplit(e.Tags) {
 			if t != "" {
 				tags = append(tags, t)
 			}

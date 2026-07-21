@@ -47,17 +47,17 @@ func (b *POSDictionaryBuilder) Encoding() string {
 	return "utf-8"
 }
 
-// Separator returns fsa.dict.separator if set.
+// Separator returns fsa.dict.separator if set (Java getOption → property.trim()).
 func (b *POSDictionaryBuilder) Separator() string {
 	if b == nil || b.Props == nil {
 		return ""
 	}
-	return b.Props["fsa.dict.separator"]
+	return JavaStringTrim(b.Props["fsa.dict.separator"])
 }
 
 // ValidateTaggerLine checks tab format has at least a wordform.
 func ValidateTaggerLine(line string) error {
-	line = strings.TrimSpace(line)
+	// Java DictionaryBuilder does not trim lines before split("\t").
 	if line == "" || strings.HasPrefix(line, "#") {
 		return nil
 	}

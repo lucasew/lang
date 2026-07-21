@@ -92,7 +92,41 @@ func normalizeNGramText(s string) string {
 			b.WriteRune(r)
 		}
 	}
-	return strings.Join(strings.Fields(b.String()), " ")
+	// Collapse runs of whitespace to a single ASCII space (not full Unicode Fields
+	// invent beyond IsSpace filter already applied).
+	return collapseASCIIWhitespaceRuns(b.String())
+}
+
+// collapseASCIIWhitespaceRuns maps any run of [ \t\n\v\f\r] to one ' '.
+// Other Unicode spaces that passed IsSpace stay as single chars (not collapsed as Fields would).
+func collapseASCIIWhitespaceRuns(s string) string {
+	var out strings.Builder
+	out.Grow(len(s))
+	inWS := false
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r' {
+			if !inWS {
+				out.WriteByte(' ')
+				inWS = true
+			}
+			continue
+		}
+		inWS = false
+		// multi-byte UTF-8: write full rune from this index
+		// since we only special-case ASCII WS bytes, copy remaining as-is per byte is OK
+		// for multi-byte sequences that are not ASCII WS.
+		out.WriteByte(c)
+	}
+	// trim leading/trailing single spaces produced by collapse
+	res := out.String()
+	for len(res) > 0 && res[0] == ' ' {
+		res = res[1:]
+	}
+	for len(res) > 0 && res[len(res)-1] == ' ' {
+		res = res[:len(res)-1]
+	}
+	return res
 }
 
 func countNGrams(s string, n int) map[string]int {

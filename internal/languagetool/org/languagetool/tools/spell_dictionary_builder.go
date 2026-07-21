@@ -28,7 +28,9 @@ func (b *SpellDictionaryBuilder) TokenizeInput(r io.Reader, w io.Writer) (int, e
 	sc := bufio.NewScanner(r)
 	n := 0
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java SpellDictionaryBuilder: scanner.nextLine() as token (no trim).
+		// Soft-skip comments/empty for human lists only.
+		line := sc.Text()
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}

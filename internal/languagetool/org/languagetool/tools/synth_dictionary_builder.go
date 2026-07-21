@@ -99,7 +99,8 @@ func (b *SynthDictionaryBuilder) LoadIgnoreItems(r io.Reader) error {
 		return err
 	}
 	for _, line := range strings.Split(string(data), "\n") {
-		line = strings.TrimSpace(line)
+		// Java scanners often keep raw lines; use String.trim for list membership files.
+		line = JavaStringTrim(line)
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}

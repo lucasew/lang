@@ -12,7 +12,8 @@ func NumberToArabicWords(n string) string {
 
 // NumberToArabicWordsGender converts a decimal integer string to Arabic words.
 func NumberToArabicWordsGender(n string, feminine bool) string {
-	bi, ok := new(big.Int).SetString(strings.TrimSpace(n), 10)
+	// Java: new BigInteger(number) — no trim of input; invalid if spaces.
+	bi, ok := new(big.Int).SetString(n, 10)
 	if !ok {
 		return ""
 	}
@@ -74,7 +75,8 @@ func NumberToArabicWordsBig(number *big.Int, feminine bool) string {
 			break
 		}
 	}
-	return strings.TrimSpace(strings.Join(parts, " و"))
+	// Java: convertToArabic(...).trim() — String.trim
+	return JavaStringTrim(strings.Join(parts, " و"))
 }
 
 func arabicGroupName(n, group int) string {

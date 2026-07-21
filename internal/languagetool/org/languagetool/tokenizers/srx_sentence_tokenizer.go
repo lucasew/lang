@@ -6,6 +6,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/attic/srx"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // SRXSentenceTokenizer ports org.languagetool.tokenizers.SRXSentenceTokenizer.
@@ -125,7 +126,8 @@ func mergeTrailingWhitespaceSents(sents []string) []string {
 	}
 	out := make([]string, 0, len(sents))
 	for _, s := range sents {
-		if len(out) > 0 && strings.TrimSpace(s) == "" {
+		// Fold segments that Java String.trim() would treat as empty (not Unicode Zs-only).
+		if len(out) > 0 && tools.JavaStringTrimIsEmpty(s) {
 			out[len(out)-1] += s
 			continue
 		}
