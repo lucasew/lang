@@ -3,6 +3,7 @@ package rules
 import (
 	"bufio"
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"strings"
 )
@@ -23,7 +24,7 @@ func LoadSimpleReplaceWords(r io.Reader) (map[string][]string, error) {
 		if len(parts) != 2 {
 			return nil, fmt.Errorf("simple replace line %d: expected word=replacement", lineNo)
 		}
-		if strings.TrimSpace(parts[1]) == "" {
+		if tools.JavaStringTrim(parts[1]) == "" {
 			return nil, fmt.Errorf("simple replace line %d: empty replacement", lineNo)
 		}
 		// Java: parts[0].split("\\|") / parts[1].split("\\|") — no trim of wrong forms.

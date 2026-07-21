@@ -2,6 +2,7 @@ package hunspell
 
 import (
 	"bufio"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"strconv"
 	"strings"
@@ -14,7 +15,7 @@ func LoadDicWords(r io.Reader) ([]string, error) {
 	var words []string
 	first := true
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -28,7 +29,7 @@ func LoadDicWords(r io.Reader) ([]string, error) {
 		if i := strings.IndexByte(line, '/'); i >= 0 {
 			line = line[:i]
 		}
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line != "" {
 			words = append(words, line)
 		}

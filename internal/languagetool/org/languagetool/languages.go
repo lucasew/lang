@@ -2,6 +2,7 @@ package languagetool
 
 import (
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -106,7 +107,7 @@ func (L *Languages) AddLanguage(name, code, dictPath string) LanguageMeta {
 // ValidateLanguageCodeFormat checks Java-compatible lang code structure.
 // Returns an error for structurally invalid codes (e.g. too many hyphen parts).
 func ValidateLanguageCodeFormat(langCode string) error {
-	if strings.TrimSpace(langCode) == "" {
+	if tools.JavaStringTrim(langCode) == "" {
 		return fmt.Errorf("langCode cannot be empty")
 	}
 	if strings.Contains(langCode, "-x-") {

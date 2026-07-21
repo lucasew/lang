@@ -70,7 +70,7 @@ func (f *PossessiusRedundantsFilter) Suggest(in PossessiveSuggestionInput) strin
 		if in.CasingModel != "" {
 			s = tools.PreserveCase(s, in.CasingModel)
 		}
-		return strings.TrimSpace(s)
+		return tools.JavaStringTrim(s)
 	}
 	return "" // no suggestion
 }

@@ -3,6 +3,7 @@ package rules
 import (
 	"bufio"
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"strings"
 	"unicode"
@@ -31,12 +32,12 @@ func (v *WordListValidator) ValidateLines(r io.Reader) []error {
 		lineNo++
 		line := sc.Text()
 		if v.AllowComments {
-			trim := strings.TrimSpace(line)
+			trim := tools.JavaStringTrim(line)
 			if trim == "" || strings.HasPrefix(trim, "#") {
 				continue
 			}
 		}
-		if line != strings.TrimSpace(line) {
+		if line != tools.JavaStringTrim(line) {
 			errs = append(errs, fmt.Errorf("line %d: leading/trailing whitespace: %q", lineNo, line))
 		}
 		if strings.Contains(line, "\t") {
@@ -64,13 +65,13 @@ func LoadCustomSpellingWords(r io.Reader) ([]string, error) {
 	var words []string
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		// strip trailing comments
 		if i := strings.Index(line, "#"); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line != "" {
 			words = append(words, line)

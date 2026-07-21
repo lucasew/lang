@@ -80,4 +80,3 @@ func TestCatalanUnpairedBracketsRule_QuestionExclamation(t *testing.T) {
 	require.Equal(t, 1, len(ms))
 	require.Equal(t, "¿oi", ms[0].GetSuggestedReplacements()[0])
 }
-

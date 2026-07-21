@@ -307,6 +307,5 @@ func matchSurfaceCA(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) str
 	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
 
-
 // UseInOffice ports useInOffice() — force-enable in LO/OO extension.
 func (r *MorfologikCatalanSpellerRule) UseInOffice() bool { return true }

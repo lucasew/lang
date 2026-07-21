@@ -129,7 +129,7 @@ func GetDictFilenameInResources(shortCode, langCountry string) string {
 // only a language code (possibly with region) is known.
 // "de-DE" → shortCode de, langCountry de_DE; "da" → da / da.
 func GetDictFilenameInResourcesFromLangCode(langCode string) string {
-	c := strings.TrimSpace(langCode)
+	c := tools.JavaStringTrim(langCode)
 	if c == "" {
 		return ""
 	}

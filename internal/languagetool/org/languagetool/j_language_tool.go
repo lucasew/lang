@@ -50,7 +50,6 @@ const (
 // CheckCancelledCallback ports JLanguageTool.CheckCancelledCallback.
 type CheckCancelledCallback func() bool
 
-
 // SentenceData ports JLanguageTool.SentenceData (package-private in Java).
 type SentenceData struct {
 	Analyzed    *AnalyzedSentence
@@ -745,7 +744,7 @@ func (lt *JLanguageTool) ignoreLocalMatch(m LocalMatch) bool {
 	if lt == nil {
 		return false
 	}
-	catKey := strings.ToUpper(strings.TrimSpace(m.CategoryID))
+	catKey := strings.ToUpper(tools.JavaStringTrim(m.CategoryID))
 	if catKey == "" {
 		catKey, _, _, _ = RuleMeta(m.RuleID)
 		catKey = strings.ToUpper(catKey)
@@ -1204,7 +1203,7 @@ func (lt *JLanguageTool) applyRulePriorities(ms []LocalMatch) []LocalMatch {
 }
 
 func isStyleIssueType(it string) bool {
-	return strings.EqualFold(strings.TrimSpace(it), "style")
+	return strings.EqualFold(tools.JavaStringTrim(it), "style")
 }
 
 // collectUnknown ports JLanguageTool.rememberUnknownWords:
@@ -1367,10 +1366,10 @@ func cleanOverlapEffectivePriority(m LocalMatch, hidePremium bool) int {
 }
 
 // cleanOverlapIsPremium ports CleanOverlappingFilter.isPremiumRule:
-//   1. explicit LocalMatch.IsPremium (ToLocalMatches / inject)
-//   2. DefaultPremium.IsPremiumRule(ruleID) — Java Premium.get().isPremiumRule(rule)
-//   3. RuleID contains "PREMIUM" — LocalMatch fallback when no Premium registry
-//      and the rule id itself encodes premium (open-source PremiumOff is always false)
+//  1. explicit LocalMatch.IsPremium (ToLocalMatches / inject)
+//  2. DefaultPremium.IsPremiumRule(ruleID) — Java Premium.get().isPremiumRule(rule)
+//  3. RuleID contains "PREMIUM" — LocalMatch fallback when no Premium registry
+//     and the rule id itself encodes premium (open-source PremiumOff is always false)
 func cleanOverlapIsPremium(m LocalMatch) bool {
 	if m.IsPremium {
 		return true

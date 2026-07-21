@@ -56,7 +56,7 @@ func (f *AdjustVerbSuggestionsFilter) Suggest(ctx VerbSuggestionContext, actions
 	var out []string
 	seen := map[string]struct{}{}
 	for _, action := range actions {
-		action = strings.TrimSpace(action)
+		action = tools.JavaStringTrim(action)
 		var replacement string
 		switch action {
 		case "addPronounEn":
@@ -159,7 +159,7 @@ func (f *AdjustVerbSuggestionsFilter) AcceptRuleMatch(match *rules.RuleMatch, ar
 		makeIntransitive := false
 		desiredNumber := ""
 		desiredPersona := ""
-		action := strings.TrimSpace(actions[0])
+		action := tools.JavaStringTrim(actions[0])
 		if strings.HasSuffix(originalSuggestion, " [intr]") {
 			originalSuggestion = originalSuggestion[:len(originalSuggestion)-7]
 			makeIntransitive = true
@@ -334,7 +334,7 @@ func (f *AdjustVerbSuggestionsFilter) AcceptRuleMatch(match *rules.RuleMatch, ar
 				replacement = ConvertPronounsForIntransitiveVerb(replacement)
 			}
 			replacement = FixApostrophes(replacement)
-			replacement = strings.TrimSpace(replacement + " " + afterLemma)
+			replacement = tools.JavaStringTrim(replacement + " " + afterLemma)
 			replacements = append(replacements, tools.PreserveCase(replacement, verbSynthesizer.GetCasingModel()))
 		}
 	}

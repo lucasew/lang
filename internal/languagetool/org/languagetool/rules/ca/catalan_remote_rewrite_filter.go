@@ -33,7 +33,7 @@ func (f *CatalanRemoteRewriteFilter) AcceptRuleMatch(match *rules.RuleMatch, arg
 		}
 		return match
 	}
-	orig := strings.TrimSpace(match.Sentence.GetText())
+	orig := tools.JavaStringTrim(match.Sentence.GetText())
 	ruleID := ruleIDFromMatch(match)
 	res := f.Apply(orig, match.GetFromPos(), match.GetToPos(), ruleID, suppress)
 	if !res.Keep {
@@ -62,7 +62,7 @@ type RemoteRewriteResult struct {
 
 // Apply maps a remote correction onto the original match span using DiffsAsMatches.
 func (f *CatalanRemoteRewriteFilter) Apply(originalSentence string, fromPos, toPos int, ruleID string, suppressMatch bool) RemoteRewriteResult {
-	trim := func(s string) string { return strings.TrimSpace(s) }
+	trim := func(s string) string { return tools.JavaStringTrim(s) }
 	orig := trim(originalSentence)
 	if f.Rewrite == nil {
 		return RemoteRewriteResult{Keep: !suppressMatch, FromPos: fromPos, ToPos: toPos}

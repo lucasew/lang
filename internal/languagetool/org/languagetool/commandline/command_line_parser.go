@@ -3,6 +3,8 @@ package commandline
 import (
 	"fmt"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // CommandLineParser ports org.languagetool.commandline.CommandLineParser.
@@ -228,7 +230,7 @@ func needArg(flag string, i int, args []string) error {
 // parseOutputFormat maps SPEC --format values to OutputFormat.
 // text and lint both produce SPEC tabwriter columns.
 func parseOutputFormat(s string) (OutputFormat, error) {
-	switch strings.ToLower(strings.TrimSpace(s)) {
+	switch strings.ToLower(tools.JavaStringTrim(s)) {
 	case "text", "lint":
 		return OutputLint, nil
 	case "json":

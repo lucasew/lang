@@ -11,13 +11,14 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/multiwords.txt
 var multiwordsFS embed.FS
 
 var (
-	multiwordsOnce sync.Once
+	multiwordsOnce  sync.Once
 	multiwordsLines []string
 )
 
@@ -82,14 +83,14 @@ func parseUkrainianMultiwordReader(r io.Reader) ([]string, error) {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
 			// only strip trailing comments when space before #
 			if i == 0 || line[i-1] == ' ' {
-				line = strings.TrimSpace(line[:i])
+				line = tools.JavaStringTrim(line[:i])
 			}
 		}
 		if line == "" {
@@ -111,15 +112,15 @@ var ukMultiwordGluedTags = []string{
 func normalizeUkrainianMultiwordLine(line string) (string, bool) {
 	if strings.Contains(line, "\t") {
 		parts := strings.SplitN(line, "\t", 2)
-		if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" || strings.TrimSpace(parts[1]) == "" {
+		if len(parts) != 2 || tools.JavaStringTrim(parts[0]) == "" || tools.JavaStringTrim(parts[1]) == "" {
 			return "", false
 		}
-		return strings.TrimSpace(parts[0]) + "\t" + strings.TrimSpace(parts[1]), true
+		return tools.JavaStringTrim(parts[0]) + "\t" + tools.JavaStringTrim(parts[1]), true
 	}
 	// glued tag at end (no tab in official resource)
 	for _, tag := range ukMultiwordGluedTags {
 		if strings.HasSuffix(line, tag) {
-			phrase := strings.TrimSpace(line[:len(line)-len(tag)])
+			phrase := tools.JavaStringTrim(line[:len(line)-len(tag)])
 			if phrase == "" {
 				continue
 			}

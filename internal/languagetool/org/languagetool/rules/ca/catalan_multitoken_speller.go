@@ -2,11 +2,11 @@ package ca
 
 import (
 	"os"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // CatalanMultitokenSpeller ports org.languagetool.rules.ca.CatalanMultitokenSpeller.
@@ -44,7 +44,7 @@ var CatalanMultitokenSpellerInstance = NewCatalanMultitokenSpeller()
 func LoadCatalanMultitokenSpeller(paths ...string) (*CatalanMultitokenSpeller, error) {
 	s := NewCatalanMultitokenSpeller()
 	for _, p := range paths {
-		if strings.TrimSpace(p) == "" {
+		if tools.JavaStringTrim(p) == "" {
 			continue
 		}
 		f, err := os.Open(p)

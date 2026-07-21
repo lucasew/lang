@@ -67,7 +67,7 @@ func (f *SynthesizeWithAnyDeterminerFilter) SuggestAll(forms []struct{ Form, POS
 
 // PrepositionKey maps a full preposition token to the first-letter key.
 func PrepositionKey(prep string) string {
-	prep = strings.ToLower(strings.TrimSpace(prep))
+	prep = strings.ToLower(tools.JavaStringTrim(prep))
 	if prep == "" {
 		return ""
 	}

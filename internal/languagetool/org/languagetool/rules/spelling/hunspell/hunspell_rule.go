@@ -569,7 +569,7 @@ func insertAt(ss []string, i int, s string) []string {
 func preferredLanguagesActiveHun(pref []string) bool {
 	n := 0
 	for _, p := range pref {
-		if strings.TrimSpace(p) != "" {
+		if tools.JavaStringTrim(p) != "" {
 			n++
 		}
 	}

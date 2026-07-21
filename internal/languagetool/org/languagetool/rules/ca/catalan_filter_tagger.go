@@ -1,10 +1,10 @@
 package ca
 
 import (
-	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Process-wide CatalanTagger-equivalent for FindSuggestionsFilter.Tag
@@ -39,7 +39,7 @@ func FilterTagWord(word string) *languagetool.AnalyzedTokenReadings {
 	if tw == nil {
 		return nil
 	}
-	if strings.TrimSpace(word) == "" {
+	if tools.JavaStringTrim(word) == "" {
 		return languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(word, nil, nil))
 	}
 	tags := tw(word)

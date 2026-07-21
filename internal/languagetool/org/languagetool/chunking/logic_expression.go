@@ -2,7 +2,8 @@ package chunking
 
 import (
 	"fmt"
-	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // LogicExpression ports edu.washington.cs.knowitall.logic.LogicExpression for
@@ -17,7 +18,7 @@ type LogicExpression[T any] struct {
 // CompileLogicExpression compiles an infix logic string; atomFactory builds
 // predicates for argument tokens (e.g. TokenPredicate descriptions).
 func CompileLogicExpression[T any](input string, atomFactory func(string) func(T) bool) *LogicExpression[T] {
-	input = strings.TrimSpace(input)
+	input = tools.JavaStringTrim(input)
 	if input == "" {
 		return &LogicExpression[T]{empty: true, apply: func(T) bool { return true }}
 	}
@@ -135,7 +136,7 @@ func readLogicToken(remainder string) string {
 		}
 		next++
 	}
-	token := strings.TrimSpace(remainder[:next])
+	token := tools.JavaStringTrim(remainder[:next])
 	if token == "" {
 		panic(fmt.Sprintf("logic: zero-length token in %q", remainder))
 	}

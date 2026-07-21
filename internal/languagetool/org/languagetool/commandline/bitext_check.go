@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/bitext"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // CheckBitextFile runs bitext rules on tab-separated source\ttarget lines.
@@ -16,7 +17,7 @@ func CheckBitextFile(w io.Writer, contents string, rulesList []bitext.BitextRule
 	}
 	total := 0
 	for i, line := range strings.Split(contents, "\n") {
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}

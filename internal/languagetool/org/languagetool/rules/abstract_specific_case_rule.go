@@ -51,7 +51,7 @@ func LoadSpecificCasePhrases(r io.Reader) (map[string]string, int, error) {
 	maxLen := 0
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || line[0] == '#' {
 			continue
 		}

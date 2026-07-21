@@ -328,14 +328,14 @@ func ruleSubIDOf(m *rules.RuleMatch) string {
 }
 
 func estimateSentences(text string) int {
-	if strings.TrimSpace(text) == "" {
+	if tools.JavaStringTrimIsEmpty(text) {
 		return 0
 	}
 	n := 0
 	for _, p := range strings.FieldsFunc(text, func(r rune) bool {
 		return r == '.' || r == '!' || r == '?' || r == '\n'
 	}) {
-		if strings.TrimSpace(p) != "" {
+		if !tools.JavaStringTrimIsEmpty(p) {
 			n++
 		}
 	}

@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DisambiguationRuleHandler ports the SAX handler surface as a structured XML parser
@@ -80,7 +81,7 @@ func (h *DisambiguationRuleHandler) buildRule(xr drhRule, groupID, groupName str
 	}
 	var tokens []*patterns.PatternToken
 	for _, xt := range xr.Pattern.Tokens {
-		content := strings.TrimSpace(xt.Content)
+		content := tools.JavaStringTrim(xt.Content)
 		re := strings.EqualFold(xt.Regexp, "yes")
 		caseSens := strings.EqualFold(xt.CaseSensitive, "yes")
 		inflected := strings.EqualFold(xt.Inflected, "yes")
@@ -102,9 +103,9 @@ func (h *DisambiguationRuleHandler) buildRule(xr drhRule, groupID, groupName str
 	// new readings from <wd>
 	var newReadings []*languagetool.AnalyzedToken
 	for _, w := range xr.Disambig.Words {
-		lemma := strings.TrimSpace(w.Lemma)
-		pos := strings.TrimSpace(w.Pos)
-		tok := strings.TrimSpace(w.Content)
+		lemma := tools.JavaStringTrim(w.Lemma)
+		pos := tools.JavaStringTrim(w.Pos)
+		tok := tools.JavaStringTrim(w.Content)
 		var posP, lemP *string
 		if pos != "" {
 			posP = &pos
@@ -125,7 +126,7 @@ func (h *DisambiguationRuleHandler) buildRule(xr drhRule, groupID, groupName str
 	var untouched []string
 	for _, ex := range xr.Examples {
 		typ := strings.ToLower(ex.Type)
-		text := strings.TrimSpace(ex.Content)
+		text := tools.JavaStringTrim(ex.Content)
 		switch typ {
 		case "untouched":
 			untouched = append(untouched, text)
@@ -161,11 +162,11 @@ type drhRuleGroup struct {
 }
 
 type drhRule struct {
-	ID       string         `xml:"id,attr"`
-	Name     string         `xml:"name,attr"`
-	Pattern  drhPattern     `xml:"pattern"`
-	Disambig drhDisambig    `xml:"disambig"`
-	Examples []drhExample   `xml:"example"`
+	ID       string       `xml:"id,attr"`
+	Name     string       `xml:"name,attr"`
+	Pattern  drhPattern   `xml:"pattern"`
+	Disambig drhDisambig  `xml:"disambig"`
+	Examples []drhExample `xml:"example"`
 }
 
 type drhPattern struct {
@@ -182,9 +183,9 @@ type drhToken struct {
 }
 
 type drhDisambig struct {
-	Action string   `xml:"action,attr"`
-	Postag string   `xml:"postag,attr"`
-	Words  []drhWd  `xml:"wd"`
+	Action string  `xml:"action,attr"`
+	Postag string  `xml:"postag,attr"`
+	Words  []drhWd `xml:"wd"`
 }
 
 type drhWd struct {

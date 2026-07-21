@@ -1,6 +1,7 @@
 package ca
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"regexp"
 	"strings"
 )
@@ -718,7 +719,7 @@ func GetDativePronoun(key string) string {
 
 // Transform maps a weak pronoun form to another position variant.
 func Transform(inputPronom string, pronounPos PronounPosition) string {
-	inputPronom = strings.ToLower(strings.TrimSpace(inputPronom))
+	inputPronom = strings.ToLower(tools.JavaStringTrim(inputPronom))
 	if v, ok := incorrectOrders[inputPronom]; ok {
 		inputPronom = v
 	}
@@ -775,7 +776,7 @@ func DoAddPronounEn(pronounsStr, verbStr string, pronounsAfter bool) string {
 // DoRemovePronounReflexive strips em/et/es/ens/us/vos from a cluster.
 func DoRemovePronounReflexive(pronounsStr, verbStr string, pronounsAfter bool) string {
 	re := regexp.MustCompile(`(?i)(em|et|es|ens|us|vos)`)
-	pronounsReplacement := strings.TrimSpace(re.ReplaceAllString(Transform(strings.ToLower(pronounsStr), PronounNormalized), ""))
+	pronounsReplacement := tools.JavaStringTrim(re.ReplaceAllString(Transform(strings.ToLower(pronounsStr), PronounNormalized), ""))
 	if pronounsAfter {
 		replacement := verbStr
 		pronounsReplacement = TransformDarrere(pronounsReplacement, verbStr)

@@ -1,10 +1,10 @@
 package ca
 
 import (
-	"strings"
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // catalan_filter_speller wires the official Catalan Morfologik speller dict into
@@ -19,7 +19,7 @@ var (
 // WireCatalanFilterSpeller opens a CFSA2/FSA speller dictionary for filter hooks.
 // Returns false if path cannot be opened (filters stay fail-closed).
 func WireCatalanFilterSpeller(dictPath string) bool {
-	if strings.TrimSpace(dictPath) == "" {
+	if tools.JavaStringTrim(dictPath) == "" {
 		return false
 	}
 	d, err := atticmorfo.OpenDictionary(dictPath)

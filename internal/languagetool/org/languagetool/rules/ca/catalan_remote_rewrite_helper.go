@@ -2,9 +2,9 @@ package ca
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"os"
 	"strconv"
-	"strings"
 )
 
 // CatalanRemoteRewriteHelper ports env/config surface of CatalanRemoteRewriteHelper
@@ -27,7 +27,7 @@ func DefaultRemoteRewriteConfig() CatalanRemoteRewriteConfig {
 		}
 	}
 	return CatalanRemoteRewriteConfig{
-		ServerURL: strings.TrimSpace(os.Getenv("CA_REMOTE_REWRITE_SERVER")),
+		ServerURL: tools.JavaStringTrim(os.Getenv("CA_REMOTE_REWRITE_SERVER")),
 		APIKey:    os.Getenv("CA_REMOTE_REWRITE_API_KEY"),
 		Provider:  os.Getenv("CA_REMOTE_REWRITE_PROVIDER"),
 		Model:     os.Getenv("CA_REMOTE_REWRITE_MODEL"),
@@ -47,5 +47,5 @@ func (c CatalanRemoteRewriteConfig) AcceptsSentence(sentence string) bool {
 	if max <= 0 {
 		max = 1200
 	}
-	return tokenizers.UTF16Len(strings.TrimSpace(sentence)) <= max && strings.TrimSpace(sentence) != ""
+	return tokenizers.UTF16Len(tools.JavaStringTrim(sentence)) <= max && tools.JavaStringTrim(sentence) != ""
 }

@@ -43,11 +43,11 @@ func (f *AdjustPronounsFilter) Suggest(ctx PronounVerbContext, actionsCSV string
 	seen := map[string]struct{}{}
 	actions := strings.Split(actionsCSV, ",")
 	for _, action := range actions {
-		action = strings.TrimSpace(action)
+		action = tools.JavaStringTrim(action)
 		var replacement string
 		switch action {
 		case "removePronounEn":
-			pr := strings.TrimSpace(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(ctx.PronounsStr, "en", ""), "n'", ""), "'n", ""))
+			pr := tools.JavaStringTrim(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(ctx.PronounsStr, "en", ""), "n'", ""), "'n", ""))
 			replacement = TransformDavant(pr, ctx.VerbStr) + ctx.VerbStr
 		case "addPronounEn":
 			newPronoun := DoAddPronounEn(ctx.PronounsStr, ctx.VerbStr, ctx.PronounsAfter)
@@ -63,7 +63,7 @@ func (f *AdjustPronounsFilter) Suggest(ctx PronounVerbContext, actionsCSV string
 		case "replaceEmEn":
 			replacement = DoReplaceEmEn(ctx.PronounsStr, ctx.VerbStr, false)
 		case "replaceHiEn":
-			norm := Transform(strings.TrimSpace(strings.ReplaceAll(ctx.PronounsStr, "hi", "")), PronounNormalized)
+			norm := Transform(tools.JavaStringTrim(strings.ReplaceAll(ctx.PronounsStr, "hi", "")), PronounNormalized)
 			replacement = DoAddPronounEn(norm, ctx.VerbStr, false) + ctx.VerbStr
 		case "addPronounReflexive":
 			replacement = DoAddPronounReflexive(ctx.PronounsStr, ctx.VerbStr, ctx.FirstVerbPersonaNumber, ctx.PronounsAfter)
@@ -74,7 +74,7 @@ func (f *AdjustPronounsFilter) Suggest(ctx PronounVerbContext, actionsCSV string
 		case "changeOnlyLemma":
 			pronounsStr := ctx.PronounsStr
 			if containsAction(actions, "replaceHiEn") {
-				pronounsStr = strings.TrimSpace(strings.ReplaceAll(pronounsStr, "hi", ""))
+				pronounsStr = tools.JavaStringTrim(strings.ReplaceAll(pronounsStr, "hi", ""))
 			}
 			verb2 := ctx.VerbStr2
 			if verb2 == "" {
@@ -103,7 +103,7 @@ func (f *AdjustPronounsFilter) Suggest(ctx PronounVerbContext, actionsCSV string
 
 func containsAction(actions []string, want string) bool {
 	for _, a := range actions {
-		if strings.TrimSpace(a) == want {
+		if tools.JavaStringTrim(a) == want {
 			return true
 		}
 	}
@@ -187,11 +187,11 @@ func (f *AdjustPronounsFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments
 
 	var replacements []string
 	for _, action := range actions {
-		action = strings.TrimSpace(action)
+		action = tools.JavaStringTrim(action)
 		var replacement string
 		switch action {
 		case "removePronounEn":
-			pr := strings.TrimSpace(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(pronounsStr, "en", ""), "n'", ""), "'n", ""))
+			pr := tools.JavaStringTrim(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(pronounsStr, "en", ""), "n'", ""), "'n", ""))
 			replacement = TransformDavant(pr, verbStr) + verbStr
 		case "addPronounEn":
 			newPronoun := DoAddPronounEn(pronounsStr, verbStr, pronounsAfter)
@@ -207,7 +207,7 @@ func (f *AdjustPronounsFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments
 		case "replaceEmEn":
 			replacement = DoReplaceEmEn(pronounsStr, verbStr, false)
 		case "replaceHiEn":
-			norm := Transform(strings.TrimSpace(strings.ReplaceAll(pronounsStr, "hi", "")), PronounNormalized)
+			norm := Transform(tools.JavaStringTrim(strings.ReplaceAll(pronounsStr, "hi", "")), PronounNormalized)
 			replacement = DoAddPronounEn(norm, verbStr, false) + verbStr
 		case "addPronounReflexive":
 			replacement = DoAddPronounReflexive(pronounsStr, verbStr, firstVerbPersonaNumber, pronounsAfter)
@@ -218,7 +218,7 @@ func (f *AdjustPronounsFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments
 		case "changeOnlyLemma":
 			ps := pronounsStr
 			if containsAction(actions, "replaceHiEn") {
-				ps = strings.TrimSpace(strings.ReplaceAll(ps, "hi", ""))
+				ps = tools.JavaStringTrim(strings.ReplaceAll(ps, "hi", ""))
 			}
 			ps = TransformDavant(ps, verbStr2)
 			replacement = ps + verbStr2

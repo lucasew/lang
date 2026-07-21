@@ -3,12 +3,12 @@ package rules
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DisambiguatorAction ports DisambiguationPatternRule.DisambiguatorAction.
@@ -748,7 +748,7 @@ func (r *DisambiguationPatternRule) applyUnify(
 	}
 	uFeatures := make(map[string][]string, len(r.UnifyFeatures))
 	for _, f := range r.UnifyFeatures {
-		f = strings.TrimSpace(f)
+		f = tools.JavaStringTrim(f)
 		if f == "" {
 			continue
 		}
@@ -787,5 +787,3 @@ func (r *DisambiguationPatternRule) applyUnify(
 		setNWS(nws, fullIdx, whTokens, i, languagetool.NewAnalyzedTokenReadingsFromOld(nws[i], rds, r.ID))
 	}
 }
-
-

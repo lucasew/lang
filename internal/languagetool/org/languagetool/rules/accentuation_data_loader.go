@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // AccentuationDataLoader ports CA ConfusionPairsDataLoader / ES / PT PortugueseAccentuationDataLoader.
@@ -32,7 +33,7 @@ func (l *AccentuationDataLoader) LoadWords(r io.Reader, pathHint string) (map[st
 	lineNo := 0
 	for sc.Scan() {
 		lineNo++
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || line[0] == '#' {
 			continue
 		}
