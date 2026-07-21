@@ -39,6 +39,8 @@ func NewMorfologikIrishSpellerRule() *MorfologikIrishSpellerRule {
 	r := &MorfologikIrishSpellerRule{MorfologikSpellerRule: base}
 	// Java tokenizingPattern(): Pattern.compile("-") — base Match splits per segment.
 	r.TokenizingPattern = irishTokenizingPattern
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
 	// Wrap IsMisspelled for maths/halfwidth normalization (Java isMisspelled override).
 	inner := r.IsMisspelled
 	r.IsMisspelled = func(word string) bool {

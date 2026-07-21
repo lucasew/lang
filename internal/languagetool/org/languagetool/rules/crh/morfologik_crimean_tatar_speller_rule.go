@@ -21,6 +21,8 @@ func NewMorfologikCrimeanTatarSpellerRule() *MorfologikCrimeanTatarSpellerRule {
 	if r.SpellingCheckRule != nil {
 		r.NonLatinScript = true
 	}
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
 	return r
 }
 

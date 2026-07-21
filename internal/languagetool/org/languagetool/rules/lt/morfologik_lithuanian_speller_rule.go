@@ -13,8 +13,11 @@ type MorfologikLithuanianSpellerRule struct {
 }
 
 func NewMorfologikLithuanianSpellerRule() *MorfologikLithuanianSpellerRule {
-	return &MorfologikLithuanianSpellerRule{
+	r := &MorfologikLithuanianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikLithuanianSpellerRuleID, "lt", MorfologikLithuanianSpellerRuleDict, nil),
 	}
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
+	return r
 }

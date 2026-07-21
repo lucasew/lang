@@ -88,6 +88,8 @@ func NewMorfologikUkrainianSpellerRule() *MorfologikUkrainianSpellerRule {
 		r.NonLatinScript = true
 	}
 	r.IgnoreTokenFn = r.ukIgnoreToken
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
 	inner := r.IsMisspelled
 	r.IsMisspelled = func(word string) bool {
 		return r.ukIsMisspelled(word, inner)

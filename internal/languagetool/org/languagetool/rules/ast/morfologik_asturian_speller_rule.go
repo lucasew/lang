@@ -17,8 +17,11 @@ type MorfologikAsturianSpellerRule struct {
 }
 
 func NewMorfologikAsturianSpellerRule() *MorfologikAsturianSpellerRule {
-	return &MorfologikAsturianSpellerRule{
+	r := &MorfologikAsturianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikAsturianSpellerRuleID, "ast", AsturianSpellerDict, nil),
 	}
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
+	return r
 }
