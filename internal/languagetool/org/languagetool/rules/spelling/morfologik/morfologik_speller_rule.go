@@ -118,6 +118,30 @@ func (r *MorfologikSpellerRule) ClearMultiSpellers() {
 	r.Multi = nil
 }
 
+// ApplyUserConfig ports SpellingCheckRule(userConfig) + Multi user-dict (premium only).
+// acceptedWords always go to wordsToBeIgnored; user FSA Multis only when premiumUID != nil.
+// When rebuilding Multis, binaryClasspath/plainRels/variant/prepareLine match initSpeller paths.
+func (r *MorfologikSpellerRule) ApplyUserConfig(acceptedWords []string, premiumUID *int64, binaryClasspath string, plainTextRels []string, languageVariantRel string, prepareLine PrepareLineFn) {
+	if r == nil {
+		return
+	}
+	if r.SpellingCheckRule != nil {
+		r.SpellingCheckRule.ApplyUserAcceptedWords(acceptedWords)
+	}
+	userWords := UserDictWordsForMulti(acceptedWords, premiumUID)
+	if binaryClasspath == "" {
+		binaryClasspath = r.FileName
+	}
+	if binaryClasspath == "" {
+		return
+	}
+	// Rebuild Multis with same plain paths; edit distances 1/2/3.
+	s1 := OpenMultiSpellerFromClasspathWithUser(binaryClasspath, plainTextRels, languageVariantRel, 1, prepareLine, userWords)
+	s2 := OpenMultiSpellerFromClasspathWithUser(binaryClasspath, plainTextRels, languageVariantRel, 2, prepareLine, userWords)
+	s3 := OpenMultiSpellerFromClasspathWithUser(binaryClasspath, plainTextRels, languageVariantRel, 3, prepareLine, userWords)
+	r.SetMultiSpellers(s1, s2, s3)
+}
+
 // Match flags misspelled tokens.
 func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if sentence == nil || r == nil {

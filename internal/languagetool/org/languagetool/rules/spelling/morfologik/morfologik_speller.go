@@ -117,43 +117,49 @@ func (s *MorfologikSpeller) SetFrequency(word string, freq int) {
 }
 
 // GetFrequency ports MorfologikSpeller.getFrequency (exact then lowercase).
-// Order: inject Frequencies map → binary GetFrequencyFn → known map/binary membership → 1 → 0.
+// Java Speller.getFrequency returns 0 when frequency not included / unknown / tag 0 —
+// do not invent 1 for known map words (weights: dist*26+26-freq-1 → wordone/51 with freq 0).
 func (s *MorfologikSpeller) GetFrequency(word string) int {
 	if s == nil || word == "" {
 		return 0
 	}
-	if s.Frequencies != nil {
-		if f, ok := s.Frequencies[word]; ok {
-			return f
-		}
-	}
-	// Java MorfologikSpeller.getFrequency: speller.getFrequency then lowercase
-	if s.GetFrequencyFn != nil {
-		if f := s.GetFrequencyFn(word); f > 0 {
-			return f
-		}
-		low := strings.ToLower(word)
-		if low != word {
-			if f := s.GetFrequencyFn(low); f > 0 {
-				return f
-			}
-		}
-	}
-	if s.inDictionary(word) {
-		return 1 // map inject without explicit freq (or binary with freq 0)
+	if f, ok := s.lookupFrequency(word); ok {
+		return f
 	}
 	low := strings.ToLower(word)
 	if low != word {
-		if s.Frequencies != nil {
-			if f, ok := s.Frequencies[low]; ok {
-				return f
-			}
-		}
-		if s.inDictionary(low) {
-			return 1
+		if f, ok := s.lookupFrequency(low); ok {
+			return f
 		}
 	}
 	return 0
+}
+
+// lookupFrequency returns (freq, true) when word is known to this speller's freq sources.
+// true with 0 is valid (rare word / no frequency tags).
+func (s *MorfologikSpeller) lookupFrequency(word string) (int, bool) {
+	if s.Frequencies != nil {
+		if f, ok := s.Frequencies[word]; ok {
+			return f, true
+		}
+	}
+	if s.GetFrequencyFn != nil {
+		// Binary path: Speller.getFrequency; 0 when unknown OR known with tag 0.
+		// Distinguish via inDictionary when FrequencyIncluded.
+		f := s.GetFrequencyFn(word)
+		if f > 0 {
+			return f, true
+		}
+		if s.inDictionary(word) {
+			return f, true // may be 0
+		}
+		return 0, false
+	}
+	// Map inject without explicit Frequencies: Java test.dict without frequency → 0
+	if s.inDictionary(word) {
+		return 0, true
+	}
+	return 0, false
 }
 
 // IsMisspelled ports morfologik.speller.Speller.isMisspelled metadata gates + dictionary probe.

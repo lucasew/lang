@@ -13,6 +13,10 @@ func newUSWrongSplitRule(words ...string) *MorfologikSpellerRule {
 	sp := NewMorfologikSpeller("/en/hunspell/en_US.dict", 1)
 	for _, w := range words {
 		sp.AddWord(w)
+		// Map inject has no frequency tags (Java Speller → 0). Wrong-split gates require
+		// freq(sugg parts) > freq(prev); give known words a modest positive frequency
+		// so join beats unknown misspellings at freq 0 (real en_US.dict has tags).
+		sp.SetFrequency(w, 10)
 	}
 	r := NewMorfologikSpellerRule("MORFOLOGIK_RULE_EN_US", "en", "/en/hunspell/en_US.dict", sp)
 	// Java AbstractEnglishSpellerRule: ignoreWordsWithLength = 1
@@ -86,7 +90,8 @@ func TestMorfologikSpeller_GetFrequency(t *testing.T) {
 	sp := NewMorfologikSpeller("/x.dict", 1)
 	require.Equal(t, 0, sp.GetFrequency("unknown"))
 	sp.AddWord("table")
-	require.Equal(t, 1, sp.GetFrequency("table"))
+	// Java Speller.getFrequency without frequency tags → 0 (not invent 1)
+	require.Equal(t, 0, sp.GetFrequency("table"))
 	sp.SetFrequency("table", 15)
 	require.Equal(t, 15, sp.GetFrequency("table"))
 	require.Equal(t, 15, sp.GetFrequency("TABLE"))

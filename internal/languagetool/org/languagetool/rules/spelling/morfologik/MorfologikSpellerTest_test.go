@@ -53,3 +53,27 @@ func TestMorfologikSpeller_GetSuggestions(t *testing.T) {
 	// too far
 	require.Empty(t, sp2.GetSuggestions("wordoxix"))
 }
+
+// Twin of Java WeightedSuggestion toString weights on test.dict (freq 0):
+// wordonex → wordone/51 (dist1*26+26-0-1); wordonix → wordone/77 (dist2).
+func TestMorfologikSpeller_GetWeightedSuggestions_JavaWeights(t *testing.T) {
+	sp1 := testDictSpeller(1)
+	sp2 := testDictSpeller(2)
+
+	require.Empty(t, sp1.GetWeightedSuggestions("wordone"))
+
+	w1 := sp1.GetWeightedSuggestions("wordonex")
+	require.NotEmpty(t, w1)
+	require.Equal(t, "wordone", w1[0].Word)
+	require.Equal(t, 51, w1[0].Weight, "Java: wordone/51")
+	require.Equal(t, "wordone/51", w1[0].String())
+
+	require.Empty(t, sp1.GetWeightedSuggestions("wordonix"))
+	w2 := sp2.GetWeightedSuggestions("wordonix")
+	require.NotEmpty(t, w2)
+	require.Equal(t, "wordone", w2[0].Word)
+	require.Equal(t, 77, w2[0].Weight, "Java: wordone/77")
+	require.Equal(t, "wordone/77", w2[0].String())
+
+	require.Empty(t, sp2.GetWeightedSuggestions("wordoxix"))
+}

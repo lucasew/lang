@@ -15,6 +15,9 @@ func withUS(words ...string) *MorfologikVariantSpellerRule {
 	sp := morfologik.NewMorfologikSpeller(AmericanSpellerDict, 1)
 	for _, w := range words {
 		sp.AddWord(w)
+		// Map inject: no frequency tags (Java → 0). Wrong-split needs positive freqs on
+		// known parts so join beats misspellings at 0 (real en_US.dict has tags).
+		sp.SetFrequency(w, 10)
 	}
 	r.ClearMultiSpellers() // map inject: disable multi-speller
 	r.Speller = sp

@@ -3,6 +3,7 @@ package en
 import (
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
@@ -38,17 +39,33 @@ type MorfologikVariantSpellerRule struct {
 	LanguageVariantSpellingFile string
 }
 
+// englishPlainSpellingRels ports getSpellingFileName + getAdditionalSpellingFileNames.
+var englishPlainSpellingRels = []string{
+	"en/hunspell/spelling.txt",
+	"spelling.txt", // EnglishGlobalSpellingFile
+	"en/multiwords.txt",
+}
+
 func newVariantSpeller(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string) *MorfologikVariantSpellerRule {
+	return newVariantSpellerWithUser(id, variantCode, dictPath, variantSpellingFile, otherName, other, nil)
+}
+
+// newVariantSpellerWithUser ports Morfologik*SpellerRule(..., UserConfig).
+func newVariantSpellerWithUser(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string, userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
 	// Java MorfologikSpellerRule.initSpeller: three Multis at maxEditDistance 1, 2, 3.
-	// plain: spelling.txt + spelling_global + multiwords (getAdditionalSpellingFileNames) + variant file.
-	plainRels := []string{
-		"en/hunspell/spelling.txt",
-		"spelling.txt", // EnglishGlobalSpellingFile
-		"en/multiwords.txt",
+	// User dict FSA only when premiumUid + accepted words (Java getUserDictSpellerOrNull).
+	var userWords []string
+	var premium *int64
+	var accepted []string
+	if userConfig != nil {
+		accepted = userConfig.GetAcceptedWords()
+		premium = userConfig.GetPremiumUid()
+		userWords = morfologik.UserDictWordsForMulti(accepted, premium)
 	}
-	s1 := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 1, PrepareLineForSpeller)
-	s2 := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 2, PrepareLineForSpeller)
-	s3 := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 3, PrepareLineForSpeller)
+	plainRels := append([]string(nil), englishPlainSpellingRels...)
+	s1 := morfologik.OpenMultiSpellerFromClasspathWithUser(dictPath, plainRels, variantSpellingFile, 1, PrepareLineForSpeller, userWords)
+	s2 := morfologik.OpenMultiSpellerFromClasspathWithUser(dictPath, plainRels, variantSpellingFile, 2, PrepareLineForSpeller, userWords)
+	s3 := morfologik.OpenMultiSpellerFromClasspathWithUser(dictPath, plainRels, variantSpellingFile, 3, PrepareLineForSpeller, userWords)
 	var sp *morfologik.MorfologikSpeller
 	if s1 != nil && len(s1.DefaultDictSpellers) > 0 {
 		sp = s1.DefaultDictSpellers[0]
@@ -69,6 +86,8 @@ func newVariantSpeller(id, variantCode, dictPath, variantSpellingFile, otherName
 		spelling.ApplyDefaultSpellingWordLists(base.SpellingCheckRule)
 		// Explicit variant path (same as Java LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT constant).
 		spelling.ApplyVariantSpellingFile(base.SpellingCheckRule, variantSpellingFile)
+		// Java SpellingCheckRule: wordsToBeIgnored.addAll(userConfig.getAcceptedWords()) always.
+		base.SpellingCheckRule.ApplyUserAcceptedWords(accepted)
 	}
 	r := &MorfologikVariantSpellerRule{
 		AbstractEnglishSpellerRule:  base,
@@ -106,9 +125,14 @@ func usGbVariantMap(column int) map[string]string {
 }
 
 func NewMorfologikAmericanSpellerRule() *MorfologikVariantSpellerRule {
+	return NewMorfologikAmericanSpellerRuleWithUser(nil)
+}
+
+// NewMorfologikAmericanSpellerRuleWithUser ports MorfologikAmericanSpellerRule(..., UserConfig).
+func NewMorfologikAmericanSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
 	// Java: loadWordlist("en/en-US-GB.txt", 1) — British form as key → American form
-	r := newVariantSpeller(MorfologikAmericanSpellerRuleID, "en-US", AmericanSpellerDict,
-		AmericanVariantSpellingFile, "British English", usGbVariantMap(1))
+	r := newVariantSpellerWithUser(MorfologikAmericanSpellerRuleID, "en-US", AmericanSpellerDict,
+		AmericanVariantSpellingFile, "British English", usGbVariantMap(1), userConfig)
 	// Java MorfologikAmericanSpellerRule.getAdditionalTopSuggestions: automize*
 	if r.AbstractEnglishSpellerRule != nil && r.MorfologikSpellerRule != nil {
 		baseFn := r.GetAdditionalTopSuggestionsFn

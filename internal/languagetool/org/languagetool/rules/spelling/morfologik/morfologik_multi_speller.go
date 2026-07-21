@@ -180,9 +180,29 @@ func OpenMultiSpellerFromClasspath(binaryClasspath string, plainTextRels []strin
 	return OpenMultiSpellerFromClasspathWithUser(binaryClasspath, plainTextRels, languageVariantRel, maxEditDistance, prepareLine, nil)
 }
 
+// UserDictWordsForMulti ports getUserDictSpellerOrNull gate:
+// non-empty accepted words AND premiumUid != null. Otherwise nil (no user FSA).
+// Free users still get accepted words via SpellingCheckRule wordsToBeIgnored only.
+func UserDictWordsForMulti(acceptedWords []string, premiumUID *int64) []string {
+	if premiumUID == nil || len(acceptedWords) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(acceptedWords))
+	for _, w := range acceptedWords {
+		w = strings.TrimSpace(w)
+		if w != "" {
+			out = append(out, w)
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
 // OpenMultiSpellerFromClasspathWithUser ports MorfologikMultiSpeller with UserConfig accepted words.
 // userWords non-empty builds a user-dict speller first (Java: premiumUid + acceptedWords).
-// Java also gates on premiumUid != null; callers pass words only when that applies.
+// Callers should pass UserDictWordsForMulti(...) so free accounts do not get a user FSA.
 func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels []string, languageVariantRel string, maxEditDistance int, prepareLine PrepareLineFn, userWords []string) *MorfologikMultiSpeller {
 	if maxEditDistance < 1 {
 		maxEditDistance = 1

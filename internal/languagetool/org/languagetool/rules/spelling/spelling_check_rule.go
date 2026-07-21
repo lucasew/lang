@@ -90,6 +90,15 @@ func NewSpellingCheckRule(id, description, languageCode string) *SpellingCheckRu
 	}
 }
 
+// ApplyUserAcceptedWords ports SpellingCheckRule ctor:
+// wordsToBeIgnored.addAll(userConfig.getAcceptedWords()) for all users (premium or free).
+func (r *SpellingCheckRule) ApplyUserAcceptedWords(accepted []string) {
+	if r == nil || len(accepted) == 0 {
+		return
+	}
+	r.AddIgnoreWords(accepted...)
+}
+
 func (r *SpellingCheckRule) GetID() string          { return r.ID }
 func (r *SpellingCheckRule) GetDescription() string { return r.Description }
 
