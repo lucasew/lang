@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 )
 
 // maxFrequencyForSplitting ports MorfologikSpellerRule.MAX_FREQUENCY_FOR_SPLITTING (0..21).
@@ -28,8 +29,7 @@ func (r *MorfologikSpellerRule) getSpellerFrequency(word string) int {
 	return r.Speller.GetFrequency(word)
 }
 
-// createWrongSplitMatch ports SpellingCheckRule.createWrongSplitMatch.
-// toPos = pos + coveredWord.length() in Java UTF-16 units.
+// createWrongSplitMatch ports SpellingCheckRule.createWrongSplitMatch via shared twin.
 func (r *MorfologikSpellerRule) createWrongSplitMatch(
 	sentence *languagetool.AnalyzedSentence,
 	ruleMatches *[]*rules.RuleMatch,
@@ -37,17 +37,7 @@ func (r *MorfologikSpellerRule) createWrongSplitMatch(
 	coveredWord, suggestion1, suggestion2 string,
 	prevPos int,
 ) *rules.RuleMatch {
-	if ruleMatches != nil && len(*ruleMatches) > 0 {
-		last := (*ruleMatches)[len(*ruleMatches)-1]
-		if last != nil && last.GetFromPos() == prevPos {
-			*ruleMatches = (*ruleMatches)[:len(*ruleMatches)-1]
-		}
-	}
-	to := pos + utf16LenMF(coveredWord)
-	m := rules.NewRuleMatch(r, sentence, prevPos, to, "Possible spelling mistake found")
-	m.SetType(rules.RuleMatchTypeUnknownWord)
-	m.SetSuggestedReplacements([]string{strings.TrimSpace(suggestion1 + " " + suggestion2)})
-	return m
+	return spelling.CreateWrongSplitMatch(r, sentence, ruleMatches, pos, coveredWord, suggestion1, suggestion2, prevPos)
 }
 
 // tryWrongSplitPrev ports getRuleMatches wrong-split with previous token.
@@ -115,9 +105,7 @@ func (r *MorfologikSpellerRule) tryWrongSplitPrev(
 		if ruleMatch == nil {
 			if r.getSpellerFrequency(sugg) >= r.getSpellerFrequency(prevWord) {
 				// Java: prevStartPos .. startPos + word.length()
-				ruleMatch = rules.NewRuleMatch(r, sentence, prevStartPos, startPos+utf16LenMF(word),
-					"Possible spelling mistake found")
-				ruleMatch.SetType(rules.RuleMatchTypeUnknownWord)
+				ruleMatch = spelling.NewSpellingRuleMatch(r, sentence, prevStartPos, startPos+utf16LenMF(word))
 				ruleMatch.SetSuggestedReplacement(sugg)
 				beforeStr = prevWord + " "
 			}
@@ -189,9 +177,7 @@ func (r *MorfologikSpellerRule) tryWrongSplitNext(
 		if ruleMatch == nil {
 			if r.getSpellerFrequency(sugg) >= r.getSpellerFrequency(nextWord) {
 				// Java: startPos .. nextStartPos + nextWord.length()
-				ruleMatch = rules.NewRuleMatch(r, sentence, startPos, nextStartPos+utf16LenMF(nextWord),
-					"Possible spelling mistake found")
-				ruleMatch.SetType(rules.RuleMatchTypeUnknownWord)
+				ruleMatch = spelling.NewSpellingRuleMatch(r, sentence, startPos, nextStartPos+utf16LenMF(nextWord))
 				ruleMatch.SetSuggestedReplacement(sugg)
 				afterStr = " " + nextWord
 			}

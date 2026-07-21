@@ -74,7 +74,7 @@ func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *Morfol
 		speller = NewMorfologikSpeller(fileName, 1)
 	}
 	r := &MorfologikSpellerRule{
-		SpellingCheckRule: spelling.NewSpellingCheckRule(id, "Possible spelling mistake", languageCode),
+		SpellingCheckRule: spelling.NewSpellingCheckRule(id, spelling.DescSpelling, languageCode),
 		Speller:           speller,
 		FileName:          fileName,
 	}
@@ -495,8 +495,7 @@ func (r *MorfologikSpellerRule) appendGetRuleMatches(
 		if word == wholeWord && tok != nil && tok.GetEndPos() > toPos {
 			toPos = tok.GetEndPos()
 		}
-		ruleMatch = rules.NewRuleMatch(r, sentence, startPos, toPos, "Possible spelling mistake found")
-		ruleMatch.SetType(rules.RuleMatchTypeUnknownWord)
+		ruleMatch = spelling.NewSpellingRuleMatch(r, sentence, startPos, toPos)
 	}
 
 	// Java: if (userConfig != null && !userConfig.isSuggestionsEnabled()) { add; return; }

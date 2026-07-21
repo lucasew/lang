@@ -22,9 +22,9 @@ const FileExtension = ".dic"
 const tooManyErrorsMsg = "(suggestion limit reached)"
 
 var (
-	nonAlphabeticRE              = regexp.MustCompile(`^[^\p{L}]+$`)
-	minusPlusRE                  = regexp.MustCompile(`^-+$`)
-	startsWithTwoUppercaseChars  = regexp.MustCompile(`^[A-Z][A-Z]\p{Ll}+`)
+	nonAlphabeticRE             = regexp.MustCompile(`^[^\p{L}]+$`)
+	minusPlusRE                 = regexp.MustCompile(`^-+$`)
+	startsWithTwoUppercaseChars = regexp.MustCompile(`^[A-Z][A-Z]\p{Ll}+`)
 )
 
 // HunspellRule ports org.languagetool.rules.spelling.hunspell.HunspellRule
@@ -59,7 +59,7 @@ type HunspellRule struct {
 
 func NewHunspellRule(languageCode string, dict HunspellDictionary) *HunspellRule {
 	r := &HunspellRule{
-		SpellingCheckRule: spelling.NewSpellingCheckRule(HunspellRuleID, "Possible spelling mistake", languageCode),
+		SpellingCheckRule: spelling.NewSpellingCheckRule(HunspellRuleID, spelling.DescSpelling, languageCode),
 		Dict:              dict,
 	}
 	r.IsMisspelled = r.IsMisspelledWord
@@ -242,8 +242,7 @@ func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 		if dashCorr == 0 && tok.GetEndPos() > to {
 			to = tok.GetEndPos()
 		}
-		m := rules.NewRuleMatch(r, sentence, from, to, "Possible spelling mistake found")
-		m.SetType(rules.RuleMatchTypeUnknownWord)
+		m := spelling.NewSpellingRuleMatch(r, sentence, from, to)
 
 		cleanWord2 := cleanWord
 		if dashCorr > 0 && utf16LenHun(cleanWord) > dashCorr {
@@ -373,7 +372,7 @@ func (r *HunspellRule) acceptSuggestion(s string) bool {
 	return true
 }
 
-// createWrongSplitMatch ports SpellingCheckRule.createWrongSplitMatch.
+// createWrongSplitMatch ports SpellingCheckRule.createWrongSplitMatch via shared twin.
 func (r *HunspellRule) createWrongSplitMatch(
 	sentence *languagetool.AnalyzedSentence,
 	ruleMatches *[]*rules.RuleMatch,
@@ -381,18 +380,7 @@ func (r *HunspellRule) createWrongSplitMatch(
 	coveredWord, suggestion1, suggestion2 string,
 	prevPos int,
 ) *rules.RuleMatch {
-	if ruleMatches != nil && len(*ruleMatches) > 0 {
-		last := (*ruleMatches)[len(*ruleMatches)-1]
-		if last != nil && last.GetFromPos() == prevPos {
-			*ruleMatches = (*ruleMatches)[:len(*ruleMatches)-1]
-		}
-	}
-	// Java: prevPos .. pos + coveredWord.length() (UTF-16)
-	to := pos + utf16LenHun(coveredWord)
-	m := rules.NewRuleMatch(r, sentence, prevPos, to, "Possible spelling mistake found")
-	m.SetType(rules.RuleMatchTypeUnknownWord)
-	m.SetSuggestedReplacements([]string{strings.TrimSpace(suggestion1 + " " + suggestion2)})
-	return m
+	return spelling.CreateWrongSplitMatch(r, sentence, ruleMatches, pos, coveredWord, suggestion1, suggestion2, prevPos)
 }
 
 // calcSuggestions ports HunspellRule.calcSuggestions (core arms).

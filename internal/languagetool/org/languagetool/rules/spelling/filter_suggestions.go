@@ -31,7 +31,7 @@ func (r *SpellingCheckRule) FilterSuggestions(suggestions []string) []string {
 		}
 		newSuggestions = append(newSuggestions, replacement)
 	}
-	newSuggestions = filterSuggestionDupes(newSuggestions)
+	newSuggestions = FilterDupes(newSuggestions)
 	newSuggestions = r.filterNoSuggestWords(newSuggestions)
 	if r.FilterSuggestionsExtraFn != nil {
 		newSuggestions = r.FilterSuggestionsExtraFn(newSuggestions)
@@ -66,20 +66,4 @@ func (r *SpellingCheckRule) filterNoSuggestWords(suggestions []string) []string 
 		return r.FilterNoSuggestWordsFn(suggestions)
 	}
 	return suggestions
-}
-
-func filterSuggestionDupes(in []string) []string {
-	if len(in) == 0 {
-		return in
-	}
-	seen := make(map[string]struct{}, len(in))
-	out := make([]string, 0, len(in))
-	for _, s := range in {
-		if _, ok := seen[s]; ok {
-			continue
-		}
-		seen[s] = struct{}{}
-		out = append(out, s)
-	}
-	return out
 }
