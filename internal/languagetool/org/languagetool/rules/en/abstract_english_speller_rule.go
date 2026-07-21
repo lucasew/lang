@@ -13,9 +13,11 @@ import (
 )
 
 // English spelling resource paths used by AbstractEnglishSpellerRule.
+// Match Java AbstractEnglishSpellerRule.getAdditionalSpellingFileNames:
+// short + CUSTOM_SPELLING_FILE, GLOBAL_SPELLING_FILE, "/en/multiwords.txt".
 const (
-	EnglishCustomSpellingFile = "/en/hunspell/spelling.txt" // language-relative custom
-	EnglishGlobalSpellingFile = "/spelling.txt"
+	EnglishCustomSpellingFile = "en/hunspell/spelling_custom.txt"
+	EnglishGlobalSpellingFile = "spelling_global.txt"
 	EnglishMultiwordsFile     = "/en/multiwords.txt"
 )
 
@@ -51,11 +53,19 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 	base := morfologik.NewMorfologikSpellerRule(id, short, "", speller)
 	// Java AbstractEnglishSpellerRule: setCheckCompound(true) with default compoundRegex "-"
 	base.SetCheckCompound(true)
+	r := &AbstractEnglishSpellerRule{
+		MorfologikSpellerRule: base,
+		LanguageShortCode:     short,
+		VariantCode:           variantCode,
+		LanguageName:          englishLanguageName(variantCode),
+	}
 	// Java AbstractEnglishSpellerRule: super.ignoreWordsWithLength = 1
 	// tokenizeNewWords() = false — re-load lists as whole-line ignores.
+	// Path getters: EN multiwords via getAdditionalSpellingFileNames (or SpellingCheckRule en case).
 	if base.SpellingCheckRule != nil {
 		base.IgnoreWordsWithLength = 1
 		base.DisableTokenizeNewWords = true
+		base.GetAdditionalSpellingFileNamesFn = r.GetAdditionalSpellingFileNames
 		spelling.ReapplyDefaultSpellingWordLists(base.SpellingCheckRule)
 		// Java AbstractEnglishSpellerRule.filterNoSuggestWords (lcDoNotSuggestWords).
 		base.FilterNoSuggestWordsFn = filterEnglishNoSuggestWords
@@ -76,12 +86,6 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 				return base.Speller.FindReplacements(w)
 			})
 		}
-	}
-	r := &AbstractEnglishSpellerRule{
-		MorfologikSpellerRule: base,
-		LanguageShortCode:     short,
-		VariantCode:           variantCode,
-		LanguageName:          englishLanguageName(variantCode),
 	}
 	// Java AbstractEnglishSpellerRule: sentenc → sentence
 	r.AddExamplePair(
@@ -243,14 +247,14 @@ func utf16SliceEN(s string, from, to int) string {
 	return string(utf16.Decode(u[from:to]))
 }
 
-// GetAdditionalSpellingFileNames ports getAdditionalSpellingFileNames.
+// GetAdditionalSpellingFileNames ports AbstractEnglishSpellerRule.getAdditionalSpellingFileNames:
+// shortCode + CUSTOM_SPELLING_FILE, GLOBAL_SPELLING_FILE, "/en/multiwords.txt".
 func (r *AbstractEnglishSpellerRule) GetAdditionalSpellingFileNames() []string {
-	custom := r.LanguageShortCode + "/hunspell/spelling.txt"
-	if r.VariantCode != "" {
-		// Java: language.getShortCode() + CUSTOM_SPELLING_FILE
-		custom = r.LanguageShortCode + "/hunspell/spelling.txt"
+	sc := r.LanguageShortCode
+	if sc == "" {
+		sc = "en"
 	}
-	return []string{custom, EnglishGlobalSpellingFile, EnglishMultiwordsFile}
+	return []string{sc + "/hunspell/spelling_custom.txt", EnglishGlobalSpellingFile, EnglishMultiwordsFile}
 }
 
 // IsDoNotSuggest reports whether the word is blocked from suggestions.

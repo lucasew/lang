@@ -79,6 +79,13 @@ type SpellingCheckRule struct {
 	// Used when loading prohibit.txt / prohibit_custom.txt (Java init).
 	// DE GermanSpellerRule overrides to LineExpander (/S /N /A /E /F, .*prefix, …).
 	ExpandLineFn func(line string) []string
+	// Path override hooks (Java subclass overrides of get*FileName).
+	GetIgnoreFileNameFn                  func() string
+	GetSpellingFileNameFn                func() string
+	GetAdditionalSpellingFileNamesFn     func() []string
+	GetLanguageVariantSpellingFileNameFn func() string
+	GetProhibitFileNameFn                func() string
+	GetAdditionalProhibitFileNamesFn     func() []string
 	// Cached sorted ignore lists for startsWithIgnoredWord (invalidated on AddIgnoreWords).
 	ignoreDictSorted     []string
 	ignoreDictSortedFold []string

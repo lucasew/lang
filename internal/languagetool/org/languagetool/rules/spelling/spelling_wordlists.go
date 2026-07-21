@@ -232,94 +232,94 @@ func LoadSpellingWordListFile(path string) ([]string, error) {
 	return out, sc.Err()
 }
 
-// ApplyDefaultSpellingWordLists ports SpellingCheckRule.init() for a language short code:
-//   - ignore.txt + spelling.txt + spelling_custom.txt → wordsToBeIgnored
-//   - getAdditionalSpellingFileNames: spelling_custom (above) + spelling_global.txt
-//   - prohibit.txt + prohibit_custom.txt → wordsToBeProhibited
+// ApplyDefaultSpellingWordLists ports SpellingCheckRule.init():
 //
-// Multi-token lines go to MultiWordIgnore (Java IGNORE_SPELLING antipatterns);
-// single-token lines go to IgnoreWords. Tokenization uses WordTokenizerForLanguage
-// (same family as JLanguageTool.Analyze).
-// Missing files are skipped (fail closed, no invent).
+//	loadWords(getIgnoreFileName()) → addIgnoreWords
+//	if getSpellingFileName() != null → loadWords → addIgnoreWords
+//	for getAdditionalSpellingFileNames() if resourceExists → addIgnoreWords
+//	loadWords(getProhibitFileName()) → expandLine → addProhibitedWords
+//	for getAdditionalProhibitFileNames() → expandLine → addProhibitedWords
+//
+// Plus variant file from getLanguageVariantSpellingFileName (Java Morfologik initSpeller).
+// Multi-token lines go to MultiWordIgnore (Java IGNORE_SPELLING antipatterns).
+// Missing files are skipped (fail closed, no invent) — Java resourceExists false.
 func ApplyDefaultSpellingWordLists(r *SpellingCheckRule) {
 	if r == nil {
 		return
 	}
-	lang := r.LanguageCode
-	if i := strings.IndexByte(lang, '-'); i > 0 {
-		lang = lang[:i]
-	}
-	if lang != "" {
-		for _, name := range []string{"ignore.txt", "spelling.txt", "spelling_custom.txt"} {
-			p := DiscoverLangHunspellWordList(lang, name)
-			if p == "" {
-				continue
-			}
-			words, err := LoadSpellingWordListFile(p)
-			if err != nil {
-				continue
-			}
-			r.AddIgnoreWords(words...)
+	loadIgnoreClasspath := func(rel string) {
+		if rel == "" {
+			return
 		}
-		for _, name := range []string{"prohibit.txt", "prohibit_custom.txt"} {
-			p := DiscoverLangHunspellWordList(lang, name)
-			if p == "" {
-				continue
-			}
-			words, err := LoadSpellingWordListFile(p)
-			if err != nil {
-				continue
-			}
-			// Java: addProhibitedWords(expandLine(prohibitedWord)) per line.
-			for _, line := range words {
-				expanded := r.ExpandLine(line)
-				if len(expanded) == 0 {
-					continue
+		// Prefer exact resource path; fall back to DiscoverLang hunspell/spelling/root layouts.
+		p := DiscoverSpellingResource(strings.TrimPrefix(rel, "/"))
+		if p == "" {
+			// e.g. "en/hunspell/ignore.txt" → short "en", name "ignore.txt"
+			rel2 := strings.TrimPrefix(rel, "/")
+			if lang, rest, ok := strings.Cut(rel2, "/"); ok {
+				// rest may be "hunspell/ignore.txt" or "ignore.txt"
+				if strings.HasPrefix(rest, "hunspell/") {
+					p = DiscoverLangHunspellWordList(lang, strings.TrimPrefix(rest, "hunspell/"))
+				} else if strings.HasPrefix(rest, "spelling/") {
+					p = DiscoverLangHunspellWordList(lang, strings.TrimPrefix(rest, "spelling/"))
+				} else {
+					p = DiscoverLangHunspellWordList(lang, rest)
 				}
-				r.AddProhibitedWords(expanded...)
 			}
 		}
-	}
-	// Java getAdditionalSpellingFileNames → GLOBAL_SPELLING_FILE (all languages).
-	if p := DiscoverSpellingGlobal(); p != "" {
+		if p == "" {
+			return
+		}
 		words, err := LoadSpellingWordListFile(p)
-		if err == nil {
-			// AddIgnoreWords splits multi-token phrases into MultiWordIgnore.
-			r.AddIgnoreWords(words...)
+		if err != nil {
+			return
 		}
+		r.AddIgnoreWords(words...)
 	}
-	// Java language-specific getAdditionalSpellingFileNames multiwords extras:
-	// PT: pt/multiwords.txt; ES: /es/multiwords.txt; CA: /ca/multiwords.txt + spelling-special.txt.
-	// spelling.txt already loaded via DiscoverLang hunspell/spelling/root fallbacks.
-	switch lang {
-	case "pt":
-		if p := DiscoverSpellingResource("pt/multiwords.txt"); p != "" {
-			if words, err := LoadSpellingWordListFile(p); err == nil {
-				r.AddIgnoreWords(words...)
-			}
+	loadProhibitClasspath := func(rel string) {
+		if rel == "" {
+			return
 		}
-	case "es":
-		if p := DiscoverSpellingResource("es/multiwords.txt"); p != "" {
-			if words, err := LoadSpellingWordListFile(p); err == nil {
-				r.AddIgnoreWords(words...)
-			}
-		}
-	case "ca":
-		// MorfologikCatalanSpellerRule.getAdditionalSpellingFileNames
-		for _, rel := range []string{"ca/multiwords.txt", "ca/spelling-special.txt"} {
-			if p := DiscoverSpellingResource(rel); p != "" {
-				if words, err := LoadSpellingWordListFile(p); err == nil {
-					r.AddIgnoreWords(words...)
+		p := DiscoverSpellingResource(strings.TrimPrefix(rel, "/"))
+		if p == "" {
+			rel2 := strings.TrimPrefix(rel, "/")
+			if lang, rest, ok := strings.Cut(rel2, "/"); ok {
+				if strings.HasPrefix(rest, "hunspell/") {
+					p = DiscoverLangHunspellWordList(lang, strings.TrimPrefix(rest, "hunspell/"))
+				} else {
+					p = DiscoverLangHunspellWordList(lang, rest)
 				}
 			}
 		}
+		if p == "" {
+			return
+		}
+		words, err := LoadSpellingWordListFile(p)
+		if err != nil {
+			return
+		}
+		// Java: addProhibitedWords(expandLine(prohibitedWord)) per line.
+		for _, line := range words {
+			expanded := r.ExpandLine(line)
+			if len(expanded) == 0 {
+				continue
+			}
+			r.AddProhibitedWords(expanded...)
+		}
 	}
-	// Java MorfologikSpellerRule.initSpeller / getLanguageVariantSpellingFileName
-	// (e.g. en/hunspell/spelling_en-GB.txt, de/hunspell/spelling-de-CH.txt).
-	// Prefer full LanguageCode (en-GB); fall back to short code (en → en-US file).
-	variantRel := LanguageVariantSpellingClasspath(r.LanguageCode)
-	if variantRel == "" && lang != "" {
-		variantRel = LanguageVariantSpellingClasspath(lang)
+
+	// Java init order
+	loadIgnoreClasspath(r.GetIgnoreFileName())
+	if name := r.GetSpellingFileName(); name != "" {
+		loadIgnoreClasspath(name)
 	}
-	ApplyVariantSpellingFile(r, variantRel)
+	for _, name := range r.GetAdditionalSpellingFileNames() {
+		loadIgnoreClasspath(name)
+	}
+	loadProhibitClasspath(r.GetProhibitFileName())
+	for _, name := range r.GetAdditionalProhibitFileNames() {
+		loadProhibitClasspath(name)
+	}
+	// Variant spelling file (Java MorfologikSpellerRule / language variant overrides).
+	ApplyVariantSpellingFile(r, r.GetLanguageVariantSpellingFileName())
 }
