@@ -44,7 +44,9 @@ func segmentRunes(text string) []string {
 		}
 	}
 	for _, r := range text {
-		if unicode.IsSpace(r) {
+		// Incomplete no-HanLP path: drop Character.isWhitespace runs (not Go unicode.IsSpace —
+		// NBSP is not whitespace in Java Character.isWhitespace and stays as surface).
+		if tools.CharacterIsWhitespace(r) {
 			flushLatin()
 			continue
 		}

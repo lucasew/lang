@@ -6,6 +6,8 @@ import (
 	"unicode"
 	"unicode/utf16"
 	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // TokenizerME ports opennlp.tools.tokenize.TokenizerME for OpenNLP 1.5 en-token.bin.
@@ -145,12 +147,11 @@ func addCharPreds(key string, c rune, preds *[]string) {
 	}
 }
 
-// openNLPIsWhitespace ports StringUtil.isWhitespace.
+// openNLPIsWhitespace ports opennlp.tools.util.StringUtil.isWhitespace:
+// Character.isWhitespace(c) || Character.getType(c) == SPACE_SEPARATOR (Zs).
+// Includes no-break spaces (Zs) that Character.isWhitespace alone excludes.
 func openNLPIsWhitespace(c rune) bool {
-	if unicode.IsSpace(c) || unicode.Is(unicode.Zs, c) {
-		return true
-	}
-	return c == '\u00A0'
+	return tools.CharacterIsWhitespace(c) || unicode.Is(unicode.Zs, c)
 }
 
 // whitespaceTokenizePos ports WhitespaceTokenizer.tokenizePos.

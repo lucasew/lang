@@ -6,6 +6,8 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // IsKnownWordFunc reports whether a token is known in the language dictionary.
@@ -13,13 +15,15 @@ type IsKnownWordFunc func(token string) bool
 
 // CollectUnknownWords tokenizes text and returns sorted unique unknown tokens
 // (letter/digit sequences only; skips pure punctuation).
+// Tokenization uses WordTokenizer (Java list-unknown path collects from analyzed
+// tokens; this helper is for tests/hooks without a full JLanguageTool).
 func CollectUnknownWords(text string, isKnown IsKnownWordFunc) []string {
 	if isKnown == nil {
 		return nil
 	}
 	seen := map[string]struct{}{}
 	var out []string
-	for _, tok := range simpleTokenize(text) {
+	for _, tok := range tokenizers.NewWordTokenizer().Tokenize(text) {
 		if !isWordToken(tok) {
 			continue
 		}
@@ -54,29 +58,6 @@ func isWordToken(s string) bool {
 		return false
 	}
 	return has
-}
-
-func simpleTokenize(text string) []string {
-	var out []string
-	var cur strings.Builder
-	flush := func() {
-		if cur.Len() > 0 {
-			out = append(out, cur.String())
-			cur.Reset()
-		}
-	}
-	for _, r := range text {
-		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '\'' || r == '-' || r == '’' {
-			cur.WriteRune(r)
-		} else {
-			flush()
-			if !unicode.IsSpace(r) {
-				out = append(out, string(r))
-			}
-		}
-	}
-	flush()
-	return out
 }
 
 // PrintUnknownWords writes "Unknown words: a, b" line.

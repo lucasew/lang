@@ -3,7 +3,8 @@ package languagetool
 import (
 	"regexp"
 	"strings"
-	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 const languageAnnotatorMinTokens = 4
@@ -276,24 +277,10 @@ func isAnnotatorWord(s string) bool {
 	return javaTrim(s) != "" && langAnnotatorWordRE.MatchString(s)
 }
 
-// defaultWordTokenize keeps whitespace and punctuation as separate tokens (simple).
+// defaultWordTokenize ports LanguageAnnotator.getTokensWithPotentialLanguages when
+// no custom Tokenize is set: Java uses mainLang.getWordTokenizer().tokenize(input).
+// WordTokenizer is the shared character-based tokenizer (returnDelims); language-specific
+// tokenizers can still be injected via LanguageAnnotator.Tokenize.
 func defaultWordTokenize(input string) []string {
-	var out []string
-	var b strings.Builder
-	flush := func() {
-		if b.Len() > 0 {
-			out = append(out, b.String())
-			b.Reset()
-		}
-	}
-	for _, r := range input {
-		if unicode.IsSpace(r) || strings.ContainsRune(`.,?!;:"„“»«()[]`+"\n", r) {
-			flush()
-			out = append(out, string(r))
-			continue
-		}
-		b.WriteRune(r)
-	}
-	flush()
-	return out
+	return tokenizers.NewWordTokenizer().Tokenize(input)
 }

@@ -164,13 +164,22 @@ var (
 )
 
 // sentenceTokenizerAdapter lets SimpleSentenceTokenizer satisfy SentenceTokenizer.
+// Forwards paragraph mode to SimpleSentenceTokenizer (segment-simple.srx _one/_two maps).
 type sentenceTokenizerAdapter struct {
 	*SimpleSentenceTokenizer
-	single bool
 }
 
-func (a *sentenceTokenizerAdapter) SetSingleLineBreaksMarksParagraph(v bool) { a.single = v }
-func (a *sentenceTokenizerAdapter) SingleLineBreaksMarksPara() bool          { return a.single }
+func (a *sentenceTokenizerAdapter) SetSingleLineBreaksMarksParagraph(v bool) {
+	if a != nil && a.SimpleSentenceTokenizer != nil {
+		a.SimpleSentenceTokenizer.SetSingleLineBreaksMarksParagraph(v)
+	}
+}
+func (a *sentenceTokenizerAdapter) SingleLineBreaksMarksPara() bool {
+	if a == nil || a.SimpleSentenceTokenizer == nil {
+		return false
+	}
+	return a.SimpleSentenceTokenizer.SingleLineBreaksMarksPara()
+}
 
 // AsSentenceTokenizer wraps SimpleSentenceTokenizer.
 func (t *SimpleSentenceTokenizer) AsSentenceTokenizer() SentenceTokenizer {

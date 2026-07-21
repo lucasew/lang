@@ -141,3 +141,10 @@ func TestLanguageAnnotator_GetTokenRanges3(t *testing.T) {
 	ranges := a.GetTokenRanges(tokens)
 	require.GreaterOrEqual(t, len(ranges), 2)
 }
+
+func TestLanguageAnnotator_DefaultWordTokenizer(t *testing.T) {
+	// Java: mainLang.getWordTokenizer().tokenize — WordTokenizer keeps space tokens.
+	a := NewLanguageAnnotator()
+	toks := a.tokenize("Hello, world.")
+	require.Equal(t, []string{"Hello", ",", " ", "world", "."}, toks)
+}

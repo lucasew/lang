@@ -99,3 +99,17 @@ func readingsFromSpacedWords(sentence string) []*languagetool.AnalyzedTokenReadi
 	}
 	return out
 }
+
+func TestOpenNLPIsWhitespace_JavaStringUtil(t *testing.T) {
+	// opennlp.tools.util.StringUtil.isWhitespace:
+	// Character.isWhitespace || SPACE_SEPARATOR (Zs)
+	require.True(t, openNLPIsWhitespace(' '))
+	require.True(t, openNLPIsWhitespace('\t'))
+	require.True(t, openNLPIsWhitespace('\n'))
+	// NBSP is Zs — included (OpenNLP docs: no-break spaces are whitespace)
+	require.True(t, openNLPIsWhitespace('\u00A0'))
+	require.True(t, openNLPIsWhitespace('\u2007')) // figure space Zs
+	require.True(t, openNLPIsWhitespace('\u202F')) // narrow NBSP Zs
+	require.False(t, openNLPIsWhitespace('a'))
+	require.False(t, openNLPIsWhitespace('.'))
+}
