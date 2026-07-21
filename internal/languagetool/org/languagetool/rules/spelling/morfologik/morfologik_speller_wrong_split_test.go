@@ -130,3 +130,36 @@ func summary(ms []*rules.RuleMatch) string {
 	}
 	return b
 }
+
+// joinBeforeAfterSuggestions: before + str + after with no trim (Java).
+func TestJoinBeforeAfterSuggestion(t *testing.T) {
+	require.Equal(t, "to throw", joinBeforeAfterSuggestion("throw", "to ", ""))
+	require.Equal(t, "to throw ", joinBeforeAfterSuggestion("throw", "to ", " ")) // after keeps trailing space
+	require.Equal(t, "prev word next", joinBeforeAfterSuggestion("word", "prev ", " next"))
+	require.Equal(t, "only", joinBeforeAfterSuggestion("only", "", ""))
+}
+
+// When wrong-split with prev finds a join but prev is correctly spelled (Java
+// does not early-return), dict suggestions still attach with beforeSuggestionStr.
+// Example: "than kyou" → wrong-split "thank you" plus "than "+dictSugs("kyou").
+func TestWrongSplit_NonEarly_JoinBeforeDictSugs(t *testing.T) {
+	sp := NewMorfologikSpeller("/xx.dict", 1)
+	// prev "than" is in dict (correct); "kyou" misspelled; "thank"/"you" for split.
+	for _, w := range []string{"than", "thank", "you", "But", "for"} {
+		sp.AddWord(w)
+		sp.SetFrequency(w, 10)
+	}
+	// Speller suggest: "kyou" → "you" (map inject)
+	sp.Suggestions = map[string][]string{"kyou": {"you"}}
+	r := NewMorfologikSpellerRule("TEST", "en", "/xx.dict", sp)
+	if r.SpellingCheckRule != nil {
+		r.IgnoreWordsWithLength = 1
+	}
+
+	ms, err := r.Match(languagetool.AnalyzePlain("But than kyou for"))
+	require.NoError(t, err)
+	m := firstWithSuggestion(ms, "thank you")
+	require.NotNil(t, m, summary(ms))
+	// Java joinBeforeAfter: beforeSuggestionStr ("than ") + dict sug ("you")
+	require.Contains(t, m.GetSuggestedReplacements(), "than you", summary(ms))
+}

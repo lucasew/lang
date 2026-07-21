@@ -64,6 +64,9 @@ type MorfologikSpellerRule struct {
 	TokenizingPattern *regexp.Regexp
 	// UserConfig ports MorfologikSpellerRule.userConfig (suggestionsEnabled / maxSpellingSuggestions).
 	UserConfig *languagetool.UserConfig
+	// ForeignDetect ports ForeignLanguageChecker language-id hook (LanguageIdentifierService).
+	// When nil, foreign-language scoring is inactive (Java langIdent == null → empty).
+	ForeignDetect spelling.DetectScoresFunc
 }
 
 func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *MorfologikSpeller) *MorfologikSpellerRule {
@@ -202,7 +205,8 @@ func (r *MorfologikSpellerRule) allowMoreSpellingSuggestions(ruleMatchesSoFar in
 }
 
 // Match flags misspelled tokens.
-// Ports MorfologikSpellerRule.match including isFirstWord capitalization of suggestions.
+// Ports MorfologikSpellerRule.match including isFirstWord capitalization of suggestions
+// and ForeignLanguageChecker newLanguageMatches when preferredLanguages ≥ 2.
 func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if sentence == nil || r == nil {
 		return nil, nil
@@ -219,8 +223,53 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 	var out []*rules.RuleMatch
 	// Java: boolean isFirstWord = true; capitalize lower-case sugs on first real word.
 	isFirstWord := true
+	// Java: ForeignLanguageChecker when userConfig preferredLanguages size >= 2.
+	var foreignChecker *spelling.ForeignLanguageChecker
+	gotForeignResults := false
+	if r.UserConfig != nil {
+		pref := r.UserConfig.GetPreferredLanguages()
+		// Java: !getPreferredLanguages().isEmpty() && size() >= 2
+		// Go empty config splits to [""] (len 1) — not ≥ 2.
+		if preferredLanguagesActive(pref) {
+			// sentenceLength = non-word-filtered tokens count - 1 (Java stream).
+			sentenceLength := foreignSentenceLength(sentence)
+			langCode := ""
+			if r.SpellingCheckRule != nil {
+				langCode = r.SpellingCheckRule.LanguageCode
+			}
+			// Prefer short code (en from en-US) like language.getShortCode().
+			if i := strings.IndexAny(langCode, "-_"); i > 0 {
+				langCode = langCode[:i]
+			}
+			text := ""
+			if sentence != nil {
+				text = sentence.GetText()
+			}
+			foreignChecker = spelling.NewForeignLanguageChecker(langCode, text, sentenceLength, pref)
+			// Optional Detect hook: set ForeignDetect on the rule when identifier is wired.
+			if r.ForeignDetect != nil {
+				foreignChecker.Detect = r.ForeignDetect
+			}
+		}
+	}
+	// applyForeign ports end-of-loop foreignLanguageChecker.check (once until result).
+	applyForeign := func() {
+		if foreignChecker == nil || gotForeignResults {
+			return
+		}
+		scores := foreignChecker.Check(len(out))
+		if len(scores) == 0 {
+			return
+		}
+		if _, noForeign := scores[spelling.NoForeignLangDetected]; !noForeign && len(out) > 0 && out[0] != nil {
+			out[0].SetNewLanguageMatches(scores)
+		}
+		gotForeignResults = true
+	}
+
 	for idx, tok := range tokens {
 		// Java canBeIgnored continue arm also clears isFirstWord when idx>0 and non-punct.
+		// Foreign checker is not invoked on canBeIgnored continues (Java continue).
 		if spelling.CanBeIgnoredToken(tok) {
 			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
@@ -259,9 +308,11 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			}
 		}
 		startPos := tok.GetStartPos()
-		// Java: previous match already covers this token (wrong-split span).
+		// Java: previous match already covers this token → getRuleMatches returns empty,
+		// but the loop still runs first-word clear + foreign check.
 		if len(out) > 0 && out[len(out)-1] != nil && out[len(out)-1].GetToPos() > startPos {
 			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
+			applyForeign()
 			continue
 		}
 
@@ -281,26 +332,57 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 				adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 				capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 				clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
+				applyForeign()
 				continue
 			}
 		}
 
 		// No tokenizing pattern (or pattern not found): Java getRuleMatches(word, startPos).
-		// Dictionary misspell (ignore set already handled by IgnoreToken/IgnoreWord).
+		// getRuleMatches early-returns when not misspelled; foreign still runs after.
 		if r.AcceptWord(w) {
 			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
+			applyForeign()
 			continue
 		}
 		if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(w) {
+			// Java getRuleMatches: ignorePotentiallyMisspelledWord → empty; foreign still runs.
 			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
+			applyForeign()
 			continue
 		}
 		r.appendGetRuleMatches(sentence, tokens, idx, tok, surface, w, w, startPos, &out)
 		adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 		capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 		clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
+		applyForeign()
 	}
 	return out, nil
+}
+
+// preferredLanguagesActive ports Java preferredLanguages size >= 2 with non-empty entries.
+func preferredLanguagesActive(pref []string) bool {
+	n := 0
+	for _, p := range pref {
+		if strings.TrimSpace(p) != "" {
+			n++
+		}
+	}
+	return n >= 2
+}
+
+// foreignSentenceLength ports match's sentenceLength:
+// count of non-isNonWord tokens without whitespace, minus 1.
+func foreignSentenceLength(sentence *languagetool.AnalyzedSentence) int64 {
+	if sentence == nil {
+		return 0
+	}
+	var n int64
+	for _, t := range sentence.GetTokensWithoutWhitespace() {
+		if t != nil && !t.IsNonWord() {
+			n++
+		}
+	}
+	return n - 1
 }
 
 // tokSeg is one segment from tokenizingPattern split (Java match loop).
@@ -354,6 +436,15 @@ func byteIndexToUTF16(s string, byteIdx int) int {
 // appendGetRuleMatches ports getRuleMatches for one word/segment at startPos.
 // wholeWord is the token clean surface (for hidden-char / multi-token gates);
 // word is the segment under check; startPos is absolute UTF-16 start of the segment.
+//
+// Control flow matches Java MorfologikSpellerRule.getRuleMatches:
+//  1. misspell / prohibit / ignorePotentially / covered-by-prev gates
+//  2. wrong-split with prev (early return only when prev is also misspelled)
+//  3. wrong-split with next when no match yet (early when next is misspelled)
+//  4. create default match if still null
+//  5. suggestionsEnabled gate
+//  6. numbers/bullets prefix (may rewrite beforeStr / cleanWord / preventFurther)
+//  7. maxSpellingSuggestions + joinBeforeAfterSuggestions(calcSpellerSuggestions)
 func (r *MorfologikSpellerRule) appendGetRuleMatches(
 	sentence *languagetool.AnalyzedSentence,
 	tokens []*languagetool.AnalyzedTokenReadings,
@@ -378,90 +469,72 @@ func (r *MorfologikSpellerRule) appendGetRuleMatches(
 		return
 	}
 
-	// Wrong-split uses neighboring sentence tokens; only meaningful for full-token word.
-	// Java still runs it on segments; neighbor checks use token index (same for all segs).
-	sugsOK := r.suggestionsEnabled()
+	// Wrong-split uses neighboring sentence tokens; Java still runs it on segments.
+	beforeStr := ""
+	afterStr := ""
 	ruleMatch, beforeStr, early := r.tryWrongSplitPrev(sentence, out, idx, tokens, word, startPos)
 	if early && ruleMatch != nil {
-		// Java may already have wrong-split sugs on ruleMatch; no further dict sugs when disabled.
+		// Java: ruleMatches.add(ruleMatch); return (no further dict sugs).
 		*out = append(*out, ruleMatch)
 		return
 	}
+	// Java: if (ruleMatch == null && idx < tokens.length - 1 && ...)
 	if ruleMatch == nil {
-		var afterStr string
-		ruleMatch, afterStr, early = r.tryWrongSplitNext(sentence, out, idx, tokens, word, startPos)
+		var after string
+		ruleMatch, after, early = r.tryWrongSplitNext(sentence, out, idx, tokens, word, startPos)
+		afterStr = after
 		if early && ruleMatch != nil {
 			*out = append(*out, ruleMatch)
 			return
 		}
-		if ruleMatch != nil {
-			if sugsOK {
-				if r.allowMoreSpellingSuggestions(len(*out)) {
-					sug := r.collectSuggestions(word)
-					for _, s := range sug {
-						joined := strings.TrimSpace(beforeStr + s)
-						if afterStr != "" {
-							joined = strings.TrimSpace(beforeStr + s + afterStr)
-						}
-						addSug(ruleMatch, joined)
-					}
-				} else {
-					ruleMatch.SetSuggestedReplacement(tooManyErrorsMsg)
-				}
-			}
-			*out = append(*out, ruleMatch)
-			return
+	}
+
+	// Java: if (ruleMatch == null) { new RuleMatch(... UnknownWord); }
+	if ruleMatch == nil {
+		toPos := startPos + utf16LenMF(word)
+		if word == wholeWord && tok != nil && tok.GetEndPos() > toPos {
+			toPos = tok.GetEndPos()
 		}
-	} else {
-		if sugsOK {
-			if r.allowMoreSpellingSuggestions(len(*out)) {
-				sug := r.collectSuggestions(word)
-				for _, s := range sug {
-					addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
-				}
-			} else {
-				ruleMatch.SetSuggestedReplacement(tooManyErrorsMsg)
-			}
-		}
+		ruleMatch = rules.NewRuleMatch(r, sentence, startPos, toPos, "Possible spelling mistake found")
+		ruleMatch.SetType(rules.RuleMatchTypeUnknownWord)
+	}
+
+	// Java: if (userConfig != null && !userConfig.isSuggestionsEnabled()) { add; return; }
+	if !r.suggestionsEnabled() {
 		*out = append(*out, ruleMatch)
 		return
 	}
 
-	// Span: startPos .. startPos+utf16Len(word). For full-token matches without
-	// tokenizing, prefer tok.GetEndPos() when word equals wholeWord (surface end).
-	toPos := startPos + utf16LenMF(word)
-	if word == wholeWord && tok != nil && tok.GetEndPos() > toPos {
-		toPos = tok.GetEndPos()
-	}
-	m := rules.NewRuleMatch(r, sentence, startPos, toPos, "Possible spelling mistake found")
-	m.SetType(rules.RuleMatchTypeUnknownWord)
-
-	// Java: if (userConfig != null && !userConfig.isSuggestionsEnabled()) { add; return; }
-	if !sugsOK {
-		*out = append(*out, m)
-		return
-	}
-
+	// Numbers/bullets may rewrite beforeStr / cleanWord (Java assigns beforeSuggestionStr).
 	cleanWord, beforePrefix, preventFurther, spaceInsert := r.applyNumbersBulletsPrefix(word)
-	if spaceInsert != "" {
-		addSug(m, spaceInsert)
+	if beforePrefix != "" {
+		// Java: beforeSuggestionStr = firstPart + " "; (replaces prior before when set)
+		beforeStr = beforePrefix
 	}
+	if spaceInsert != "" {
+		addSug(ruleMatch, spaceInsert)
+	}
+
 	// Java: maxSpellingSuggestions gate around appendLazySuggestions
 	if r.allowMoreSpellingSuggestions(len(*out)) {
 		if !preventFurther {
-			sug := r.collectSuggestions(cleanWord)
-			for _, s := range sug {
-				joined := strings.TrimSpace(beforePrefix + s)
-				if joined != "" {
-					addSug(m, joined)
-				}
+			// appendLazySuggestions: prev (already on match) + joinBeforeAfter(calcSpellerSuggestions)
+			for _, s := range r.collectSuggestions(cleanWord) {
+				// Java joinBeforeAfterSuggestions: before + str + after (no trim)
+				addSug(ruleMatch, joinBeforeAfterSuggestion(s, beforeStr, afterStr))
 			}
 		}
 	} else {
 		// messages.getString("too_many_errors")
-		m.SetSuggestedReplacement(tooManyErrorsMsg)
+		ruleMatch.SetSuggestedReplacement(tooManyErrorsMsg)
 	}
-	*out = append(*out, m)
+	*out = append(*out, ruleMatch)
+}
+
+// joinBeforeAfterSuggestion ports joinBeforeAfterSuggestions for one replacement:
+// beforeSuggestionStr + str + afterSuggestionStr (Java SuggestedReplacement copy).
+func joinBeforeAfterSuggestion(str, before, after string) string {
+	return before + str + after
 }
 
 // tooManyErrorsMsg ports MessagesBundle too_many_errors (en default).

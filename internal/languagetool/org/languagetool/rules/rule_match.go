@@ -52,6 +52,10 @@ type RuleMatch struct {
 	IssueType    string
 	CategoryID   string
 	CategoryName string
+	// NewLanguageMatches ports RuleMatch.newLanguageMatches (since 6.4):
+	// language short code → confidence when ForeignLanguageChecker fires.
+	// Empty means unset / not a foreign-language hint.
+	NewLanguageMatches map[string]float32
 }
 
 func NewRuleMatch(rule any, sentence *languagetool.AnalyzedSentence, fromPos, toPos int, message string) *RuleMatch {
@@ -81,7 +85,37 @@ func CloneRuleMatch(clone *RuleMatch) *RuleMatch {
 	out := *clone
 	out.SuggestedReplacements = append([]string(nil), clone.SuggestedReplacements...)
 	out.SuggestedReplacementObjects = append([]*SuggestedReplacement(nil), clone.SuggestedReplacementObjects...)
+	if clone.NewLanguageMatches != nil {
+		out.NewLanguageMatches = make(map[string]float32, len(clone.NewLanguageMatches))
+		for k, v := range clone.NewLanguageMatches {
+			out.NewLanguageMatches[k] = v
+		}
+	}
 	return &out
+}
+
+// GetNewLanguageMatches ports RuleMatch.getNewLanguageMatches.
+func (m *RuleMatch) GetNewLanguageMatches() map[string]float32 {
+	if m == nil || m.NewLanguageMatches == nil {
+		return map[string]float32{}
+	}
+	return m.NewLanguageMatches
+}
+
+// SetNewLanguageMatches ports RuleMatch.setNewLanguageMatches.
+func (m *RuleMatch) SetNewLanguageMatches(langs map[string]float32) {
+	if m == nil {
+		return
+	}
+	if langs == nil {
+		m.NewLanguageMatches = nil
+		return
+	}
+	out := make(map[string]float32, len(langs))
+	for k, v := range langs {
+		out[k] = v
+	}
+	m.NewLanguageMatches = out
 }
 
 // GetType ports RuleMatch.getType.
