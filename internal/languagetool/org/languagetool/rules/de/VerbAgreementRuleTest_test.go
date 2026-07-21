@@ -50,3 +50,48 @@ func TestVerbAgreementRule_Positions(t *testing.T) {
 	)))
 	require.Equal(t, 1, len(ms))
 }
+
+// Twin of VerbAgreementRuleTest.testWrongVerbSubject
+func TestVerbAgreementRule_WrongVerbSubject(t *testing.T) {
+	rule := NewVerbAgreementRule(nil)
+	// Good: Du lebst
+	good := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Du", "PRO:PER:NOM:SIN:ALG", "du"),
+		atrWithPOS("lebst", "VER:2:SIN:PRÄ:SFT", "leben"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	require.Equal(t, 0, len(rule.Match(good)))
+
+	// Bad: Du leben (plural verb with du)
+	bad := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Du", "PRO:PER:NOM:SIN:ALG", "du"),
+		atrWithPOS("leben", "VER:1:PLU:PRÄ:SFT", "leben"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	require.GreaterOrEqual(t, len(rule.Match(bad)), 1)
+
+	// Bad: Ich sind
+	bad2 := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Ich", "PRO:PER:NOM:SIN:ALG", "ich"),
+		atrWithPOS("sind", "VER:1:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("nett", "ADJ:PRD:GRU", "nett"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	require.GreaterOrEqual(t, len(rule.Match(bad2)), 1)
+
+	// Good: Wir leben
+	good2 := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Wir", "PRO:PER:NOM:PLU:ALG", "wir"),
+		atrWithPOS("leben", "VER:1:PLU:PRÄ:SFT", "leben"),
+		atrWithPOS("noch", "ADV", "noch"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	require.Equal(t, 0, len(rule.Match(good2)))
+
+	// untagged must not invent
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Auch morgen leben du."))))
+}

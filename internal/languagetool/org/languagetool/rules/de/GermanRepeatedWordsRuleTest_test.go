@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGermanRepeatedWordsRule(t *testing.T) {
+func TestGermanRepeatedWordsRule_Rule(t *testing.T) {
 	rule := NewGermanRepeatedWordsRule(nil)
 	// Java match uses AnalyzedToken lemmas (not surface invent). Morph tokens with lemma außerdem.
 	ss := languagetool.SentenceStartTagName

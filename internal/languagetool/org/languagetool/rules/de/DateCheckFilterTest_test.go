@@ -105,3 +105,17 @@ func TestDateCheckFilter_AdjustSuggestion(t *testing.T) {
 	// short "So.," — ".," at index 2, not in (5,12) → unchanged
 	require.Equal(t, "So., den 1.", AdjustDateCheckSuggestion("So., den 1."))
 }
+
+// Twin of DateCheckFilterTest.testAccept (filter-level; Java @Test body commented).
+func TestDateCheckFilter_Accept(t *testing.T) {
+	f := NewDateCheckFilter()
+	m := rules.NewRuleMatch(rules.NewFakeRule("D"), nil, 0, 10, "msg")
+	// 2014-08-23 Saturday
+	require.Nil(t, f.AcceptRuleMatch(m, map[string]string{
+		"year": "2014", "month": "8", "day": "23", "weekDay": "Samstag",
+	}, -1, nil, nil))
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"year": "2014", "month": "8", "day": "23", "weekDay": "Sonntag",
+	}, -1, nil, nil)
+	require.NotNil(t, out)
+}

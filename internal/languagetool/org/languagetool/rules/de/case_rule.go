@@ -100,6 +100,14 @@ func (r *CaseRule) GetURL() string {
 	return "https://dict.leo.org/grammatik/deutsch/Rechtschreibung/Regeln/Gross-klein/index.html"
 }
 
+// SupportsLanguage ports Rule.supportsLanguage for German CaseRule (de + variants).
+func (r *CaseRule) SupportsLanguage(code string) bool {
+	if r == nil || code == "" {
+		return false
+	}
+	return code == "de" || strings.HasPrefix(code, "de-")
+}
+
 const (
 	caseUppercaseMessage = "Außer am Satzanfang werden nur Nomen und Eigennamen großgeschrieben."
 	caseLowercaseMessage = "Falls es sich um ein substantiviertes Verb handelt, wird es großgeschrieben."
