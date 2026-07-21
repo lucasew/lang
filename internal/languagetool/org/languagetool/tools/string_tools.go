@@ -327,7 +327,7 @@ func IsWhitespace(str string) bool {
 		if str == "\u200B" || str == "\u00A0" || str == "\u202F" {
 			return true
 		}
-		r := []rune(trimStr)[0]
+		r := rune(utf16Units(trimStr)[0])
 		return CharacterIsWhitespace(r)
 	}
 	return false
@@ -449,13 +449,14 @@ func IsNumeric(string_ string) bool {
 }
 
 // IsNotWordCharacter ports StringTools.isNotWordCharacter (Pattern "[^\p{L}]").matches.
+// Java Matcher.matches requires the full string match a single code unit class.
 func IsNotWordCharacter(input string) bool {
-	runes := []rune(input)
-	if len(runes) != 1 {
-		// Java pattern is a single char class; multi-char never matches fully
+	// length == 1 in UTF-16 (Java char) — surrogate pairs / multi-char fail
+	u := utf16Units(input)
+	if len(u) != 1 {
 		return false
 	}
-	return !unicode.IsLetter(runes[0])
+	return !unicode.IsLetter(rune(u[0]))
 }
 
 // --- remaining StringTools ports ---
@@ -483,7 +484,7 @@ func AddSpace(word, languageShortCode string) string {
 	space := " "
 	// Java: word.length() == 1 (UTF-16); then charAt(0)
 	if javaStringLen(word) == 1 {
-		c := []rune(word)[0]
+		c := rune(utf16Units(word)[0])
 		if languageShortCode == "fr" {
 			if c == '.' || c == ',' {
 				space = ""
@@ -824,17 +825,15 @@ func SplitDigitsAtEnd(input string) []string {
 	return []string{input}
 }
 
-// IsAnagram ports StringTools.isAnagram (Java String.length is UTF-16 code units;
-// sort is on UTF-16 char array — for BMP-only LT inputs this equals rune sort).
+// IsAnagram ports StringTools.isAnagram:
+// length check + Arrays.sort on toCharArray() (UTF-16 code units).
 func IsAnagram(string1, string2 string) bool {
-	if utf16LenTools(string1) != utf16LenTools(string2) {
-		return false
-	}
-	a := []rune(string1)
-	b := []rune(string2)
+	a := utf16Units(string1)
+	b := utf16Units(string2)
 	if len(a) != len(b) {
 		return false
 	}
+	// Java: Arrays.sort(charArray) then Arrays.equals
 	sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
 	sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })
 	for i := range a {

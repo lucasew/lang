@@ -152,7 +152,7 @@ func TestStringTools_IsPositiveNumber(t *testing.T) {
 	require.Equal(t, false, IsPositiveNumber('0'))
 	// Unicode digits are not positive numbers in Java (ASCII range only)
 	require.Equal(t, false, IsPositiveNumber('\u0967')) // DEVANAGARI DIGIT ONE
-	require.Equal(t, false, IsPositiveNumber('٠'))     // Arabic-Indic zero-ish digit
+	require.Equal(t, false, IsPositiveNumber('٠'))      // Arabic-Indic zero-ish digit
 }
 
 func TestStringTools_LoadLinesFromReader(t *testing.T) {
@@ -345,6 +345,16 @@ func TestStringTools_IsAnagram(t *testing.T) {
 	require.False(t, IsAnagram("listen", "listens"))
 	require.True(t, IsAnagram("a", "a"))
 	require.False(t, IsAnagram("ab", "baa"))
+}
+
+// Java toCharArray sorts UTF-16 units; 😀 is two units (surrogates).
+func TestStringTools_IsAnagram_UTF16(t *testing.T) {
+	// café / écaf — same BMP multiset
+	require.True(t, IsAnagram("café", "éfac"))
+	// two emoji same units
+	require.True(t, IsAnagram("😀😀", "😀😀"))
+	// single emoji length 2 vs two BMP chars length 2 — not equal char multisets
+	require.False(t, IsAnagram("😀", "ab"))
 }
 
 func TestStringTools_IsNumeric(t *testing.T) {
