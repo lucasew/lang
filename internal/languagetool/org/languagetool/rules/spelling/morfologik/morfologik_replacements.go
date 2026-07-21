@@ -145,22 +145,95 @@ func stripAnchors(key string) string {
 }
 
 // partitionReplacementPairs splits pairs like Java createReplacementsMaps:
-// target len 1 / 2 go to HMatrix maps (returned separately); longer → theRest for getAllReplacements.
-func partitionReplacementPairs(pairs []ReplacementPair) (theRest map[string][]string) {
+// target len 1 / 2 → shortPairs (HMatrix anyToOne/anyToTwo); longer → theRest for getAllReplacements.
+// Without full HMatrix, shortPairs are applied as single-position rewrites on the misspelling
+// (same surface effect: replace From with To to reach the dictionary form).
+func partitionReplacementPairs(pairs []ReplacementPair) (theRest map[string][]string, short []ReplacementPair) {
 	theRest = map[string][]string{}
 	for _, p := range pairs {
 		toRunes := []rune(p.To)
 		// Java: s.length() is UTF-16
 		toLen := len(utf16.Encode(toRunes))
 		if toLen == 1 || toLen == 2 {
-			// HMatrix path — not used in getAllReplacements; still store under theRest for
-			// approximate edit path when HMatrix missing? Java does NOT put them in theRest.
-			// Keep only length >= 3 for getAllReplacements.
+			short = append(short, p)
 			continue
 		}
 		theRest[p.From] = append(theRest[p.From], p.To)
 	}
-	return theRest
+	return theRest, short
+}
+
+// ShortReplacementVariants applies each short pair once at every occurrence (and once
+// combined pass of non-overlapping first-hit), producing candidates for dict probe.
+// Ports the surface effect of HMatrix anyToOne/anyToTwo match without FSA traversal.
+func ShortReplacementVariants(word string, short []ReplacementPair) []string {
+	if word == "" || len(short) == 0 {
+		return nil
+	}
+	seen := map[string]struct{}{word: {}}
+	var out []string
+	add := func(s string) {
+		if s == "" || s == word {
+			return
+		}
+		if _, ok := seen[s]; ok {
+			return
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	for _, p := range short {
+		from, to := p.From, p.To
+		if from == "" || from == to {
+			continue
+		}
+		// strip anchors for application (Java patterns may be anchored)
+		src := stripAnchors(from)
+		if src == "" {
+			continue
+		}
+		startOnly := isStartAnchored(from)
+		endOnly := isEndAnchored(from)
+		// single application at each index
+		searchFrom := 0
+		for searchFrom <= len(word) {
+			var idx int
+			if startOnly {
+				if searchFrom > 0 {
+					break
+				}
+				if strings.HasPrefix(word, src) {
+					idx = 0
+				} else {
+					break
+				}
+			} else if endOnly {
+				if !strings.HasSuffix(word, src) {
+					break
+				}
+				idx = len(word) - len(src)
+				if idx < searchFrom {
+					break
+				}
+			} else {
+				rel := strings.Index(word[searchFrom:], src)
+				if rel < 0 {
+					break
+				}
+				idx = searchFrom + rel
+			}
+			cand := word[:idx] + to + word[idx+len(src):]
+			add(cand)
+			if startOnly || endOnly {
+				break
+			}
+			searchFrom = idx + len(src)
+			if len(src) == 0 {
+				break
+			}
+		}
+	}
+	return out
 }
 
 // GetAllReplacements ports Speller.getAllReplacements (theRest multi-char targets only).

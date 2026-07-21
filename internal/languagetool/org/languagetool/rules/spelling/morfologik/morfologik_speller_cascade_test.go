@@ -6,7 +6,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Twin of Java calcSpellerSuggestions: speller1 (edit-1) empty → speller2 (edit-2).
+// Twin of Java calcSpellerSuggestions: speller1 maxEdit=1 may still get replacement-pair
+// hits (e.g. grantee); "guarantee" needs edit distance 2 (speller2).
 func TestBinaryCascadeSuggestions_Garentee(t *testing.T) {
 	path := DiscoverLanguageDict("/en/hunspell/en_US.dict")
 	if path == "" {
@@ -15,7 +16,11 @@ func TestBinaryCascadeSuggestions_Garentee(t *testing.T) {
 	// Java: Speller(dict, maxEdit) alone does not cascade — rule uses speller1/2/3 Multis.
 	sp1 := NewMorfologikSpeller("/en/hunspell/en_US.dict", 1)
 	require.True(t, sp1.AttachBinaryDictionary(path))
-	require.Empty(t, sp1.FindReplacements("garentee"), "edit-1 alone must not invent edit-2 hits")
+	s1 := sp1.FindReplacements("garentee")
+	// edit-1 must not already include the classic edit-2 form "guarantee"
+	for _, s := range s1 {
+		require.NotEqual(t, "guarantee", s, "edit-1 must not return guarantee; sugs=%v", s1)
+	}
 
 	sp2 := NewMorfologikSpeller("/en/hunspell/en_US.dict", 2)
 	require.True(t, sp2.AttachBinaryDictionary(path))
@@ -53,7 +58,8 @@ func TestRuleCascadeSuggestions_Garentee(t *testing.T) {
 	r.SetMultiSpellers(s1, s2, s3)
 
 	sugs := r.collectSuggestions("garentee")
-	require.NotEmpty(t, sugs, "rule cascade speller2 should suggest for garentee")
+	require.NotEmpty(t, sugs, "rule cascade should suggest for garentee")
+	// speller1 may contribute replacement-pair hits (e.g. grantee); speller2 adds guarantee
 	found := false
 	for _, s := range sugs {
 		if s == "guarantee" || s == "guaranteed" || s == "guarantees" {

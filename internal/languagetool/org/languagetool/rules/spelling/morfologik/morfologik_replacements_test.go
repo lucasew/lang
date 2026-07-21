@@ -21,17 +21,25 @@ func TestParseConversionPairs(t *testing.T) {
 }
 
 func TestParseAndPartitionReplacementPairs(t *testing.T) {
-	// from en_US-style: short targets skipped for theRest; long kept
+	// from en_US-style: short targets → short list; long → theRest
 	raw := "f ph, lite light, shun tion, a ei"
 	pairs := ParseReplacementPairs(raw)
 	require.GreaterOrEqual(t, len(pairs), 4)
-	rest := partitionReplacementPairs(pairs)
-	// lite→light (5), shun→tion (4) kept; f→ph and a→ei skipped (len 2)
+	rest, short := partitionReplacementPairs(pairs)
+	// lite→light (5), shun→tion (4) kept in theRest; f→ph and a→ei in short
 	require.Contains(t, rest, "lite")
 	require.Contains(t, rest["lite"], "light")
 	require.Contains(t, rest, "shun")
 	require.NotContains(t, rest, "f")
 	require.NotContains(t, rest, "a")
+	require.NotEmpty(t, short)
+	foundF := false
+	for _, p := range short {
+		if p.From == "f" && p.To == "ph" {
+			foundF = true
+		}
+	}
+	require.True(t, foundF, "short=%v", short)
 }
 
 func TestGetAllReplacements_LiteLight(t *testing.T) {
@@ -69,4 +77,30 @@ func TestInputConversion_IsMisspelled(t *testing.T) {
 	// æ converts to ae which is in dict
 	require.False(t, sp.IsMisspelled("æ"))
 	require.True(t, sp.IsMisspelled("ø"))
+}
+func TestShortReplacementVariants_Fone(t *testing.T) {
+	// pair f→ph applied once: fone → phone
+	short := []ReplacementPair{{From: "f", To: "ph"}, {From: "kw", To: "qu"}}
+	got := ShortReplacementVariants("fone", short)
+	require.Contains(t, got, "phone")
+	got2 := ShortReplacementVariants("kwality", short)
+	require.Contains(t, got2, "quality")
+}
+
+func TestBinaryShortReplacementPairs_EN(t *testing.T) {
+	path := DiscoverLanguageDict("/en/hunspell/en_US.dict")
+	if path == "" {
+		t.Skip("en_US.dict not in tree")
+	}
+	sp := NewMorfologikSpeller("/en/hunspell/en_US.dict", 1)
+	require.True(t, sp.AttachBinaryDictionary(path))
+	require.NotEmpty(t, sp.ReplacementShort, "short f/ph etc. pairs")
+	// f→ph: fone → phone (distance-0 rewrite)
+	require.True(t, sp.IsMisspelled("fone"))
+	sugs := sp.FindReplacements("fone")
+	require.Contains(t, sugs, "phone", "sugs=%v", sugs)
+	// kw→qu: kwality → quality
+	require.True(t, sp.IsMisspelled("kwality"))
+	sugs2 := sp.FindReplacements("kwality")
+	require.Contains(t, sugs2, "quality", "sugs=%v", sugs2)
 }

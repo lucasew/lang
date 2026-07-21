@@ -63,7 +63,9 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 		s.OutputConversionPairs = ParseConversionPairs(v)
 	}
 	if v, ok := meta[infoReplacementPairs]; ok {
-		s.ReplacementTheRest = partitionReplacementPairs(ParseReplacementPairs(v))
+		rest, short := partitionReplacementPairs(ParseReplacementPairs(v))
+		s.ReplacementTheRest = rest
+		s.ReplacementShort = short
 	}
 	// ignore-diacritics affects suggestion search, not isMisspelled gates — stored when needed later.
 	_ = meta[infoIgnoreDiacritics]
@@ -133,10 +135,15 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 	if d.Contains(word) {
 		return nil
 	}
+	// Multi-char theRest variants seed edit search (Java getAllReplacements → findRepl).
 	variants := GetAllReplacements(word, s.ReplacementTheRest, 0, 0)
 	if len(variants) == 0 {
 		variants = []string{word}
 	}
+	// Short anyToOne/Two: apply only on the original misspelling. Pure rewrite → distance 0
+	// if in dict. Do NOT stack short rewrites onto theRest variants or feed them into edit
+	// search — that invents multi-step paths outside a single HMatrix budget.
+	shortHits := ShortReplacementVariants(word, s.ReplacementShort)
 	var candidates []WeightedSuggestion
 	seen := map[string]struct{}{}
 	addCand := func(w string, dist int) {
@@ -149,6 +156,18 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 		}
 		seen[w] = struct{}{}
 		candidates = append(candidates, NewWeightedSuggestion(w, s.suggestionWeightDist(w, dist)))
+	}
+	for _, h := range shortHits {
+		if d.Contains(h) {
+			addCand(h, 0)
+		} else {
+			low := strings.ToLower(h)
+			if d.Contains(low) {
+				addCand(low, 0)
+			} else if firstUp := uppercaseFirstChar(low); firstUp != low && d.Contains(firstUp) {
+				addCand(firstUp, 0)
+			}
+		}
 	}
 	// Java: for each replacement variant — if in dict, distance 0; always queue for edit search
 	i := 0
