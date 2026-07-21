@@ -309,8 +309,8 @@ func (r *GermanSpellerRule) FilterForLanguage(suggestions []string) []string {
 		if drop {
 			continue
 		}
-		// drop leading "-" suggestions (length > 1)
-		if len(s) > 1 && strings.HasPrefix(s, "-") {
+		// Java: s.length() > 1 && s.startsWith("-") — UTF-16 length
+		if utf16LenDE(s) > 1 && strings.HasPrefix(s, "-") {
 			continue
 		}
 		out = append(out, s)

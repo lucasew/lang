@@ -167,18 +167,16 @@ func (r *GermanSpellerRule) GetMessage(word, suggestion string) string {
 	if suggestion != "" {
 		// Java StringUtils.replaceOnce(origWord, "ss", "ß").equals(suggestion)
 		if replacedOnceSS(word) == suggestion {
-			if idx := strings.Index(word, "ss"); idx >= 2 {
-				prefix := []rune(word[:idx])
-				if len(prefix) >= 2 {
-					prevPrev := prefix[len(prefix)-2]
-					prev := prefix[len(prefix)-1]
-					if IsVowel(prevPrev) && IsVowel(prev) {
-						return "Nach einer Silbe aus zwei Vokalen (hier: " + string(prevPrev) + string(prev) +
-							") schreibt man 'ß' statt 'ss'."
-					}
-					return "Nach einer lang gesprochenen Silbe (hier: " + string(prev) +
+			// Java: firstSz = origWord.indexOf("ss"); charAt(firstSz-2/1) are UTF-16 units
+			if firstSz := utf16IndexOf(word, "ss"); firstSz >= 2 {
+				prevPrev := javaCharAtDE(word, firstSz-2)
+				prev := javaCharAtDE(word, firstSz-1)
+				if IsVowel(prevPrev) && IsVowel(prev) {
+					return "Nach einer Silbe aus zwei Vokalen (hier: " + string(prevPrev) + string(prev) +
 						") schreibt man 'ß' statt 'ss'."
 				}
+				return "Nach einer lang gesprochenen Silbe (hier: " + string(prev) +
+					") schreibt man 'ß' statt 'ss'."
 			}
 		}
 	}
@@ -843,11 +841,39 @@ func (r *GermanSpellerRule) IgnoreCompoundWithIgnoredWord(word string) bool {
 }
 
 // cutOffDot ports HunspellRule.cutOffDot for isProhibited checks.
+// Java: endsWith(".") ? substring(0, length()-1) : word — UTF-16.
 func cutOffDot(s string) string {
-	if strings.HasSuffix(s, ".") {
-		return s[:len(s)-1]
+	if strings.HasSuffix(s, ".") && utf16LenDE(s) >= 1 {
+		return substringByUTF16(s, 0, utf16LenDE(s)-1)
 	}
 	return s
+}
+
+// utf16IndexOf ports String.indexOf(sub) as UTF-16 start index, or -1.
+func utf16IndexOf(s, sub string) int {
+	if sub == "" {
+		return 0
+	}
+	// For BMP-only needles (e.g. "ss"), byte Index equals UTF-16 for BMP prefixes.
+	// General path: scan UTF-16 windows.
+	su := utf16EncodeDE(s)
+	nu := utf16EncodeDE(sub)
+	if len(nu) == 0 || len(nu) > len(su) {
+		return -1
+	}
+	for i := 0; i+len(nu) <= len(su); i++ {
+		match := true
+		for j := 0; j < len(nu); j++ {
+			if su[i+j] != nu[j] {
+				match = false
+				break
+			}
+		}
+		if match {
+			return i
+		}
+	}
+	return -1
 }
 
 // AddProhibitedWords ports GermanSpellerRule.addProhibitedWords:

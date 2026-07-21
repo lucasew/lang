@@ -12,7 +12,8 @@ func (r *GermanSpellerRule) SortSuggestionByQuality(misspelling string, suggesti
 	}
 
 	filtered := suggestions
-	if r.TagPOS != nil && len(misspelling) > 1 {
+	// Java: misspelling.length() > 1 (UTF-16) before lemma/POS filter stage
+	if r.TagPOS != nil && utf16LenDE(misspelling) > 1 {
 		filtered = r.filterSameLemmaInflections(misspelling, suggestions)
 	}
 
@@ -37,11 +38,11 @@ func (r *GermanSpellerRule) SortSuggestionByQuality(misspelling string, suggesti
 // filterSameLemmaInflections ports the ADJ/SUB/PA same-lemma filter at the
 // start of sortSuggestionByQuality.
 func (r *GermanSpellerRule) filterSameLemmaInflections(misspelling string, suggestions []string) []string {
-	rs := []rune(misspelling)
-	if len(rs) < 2 {
+	// Java: misspelling.substring(misspelling.length() - 2) — UTF-16 units
+	if utf16LenDE(misspelling) < 2 {
 		return suggestions
 	}
-	suffix2 := string(rs[len(rs)-2:])
+	suffix2 := substringByUTF16(misspelling, utf16LenDE(misspelling)-2, utf16LenDE(misspelling))
 
 	formToAccept := ""
 	lemmaToFilter := ""
@@ -61,6 +62,7 @@ func (r *GermanSpellerRule) filterSameLemmaInflections(misspelling string, sugge
 		if !okPOS {
 			continue
 		}
+		// Java: readings.getToken().endsWith(suffix2)
 		if !strings.HasSuffix(sug, suffix2) {
 			continue
 		}

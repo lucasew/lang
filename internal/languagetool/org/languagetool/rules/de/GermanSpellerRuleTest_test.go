@@ -1603,3 +1603,19 @@ func TestGermanSpellerRule_AdditionalTopSuggestions_EmailAndPiek(t *testing.T) {
 	require.True(t, strings.HasPrefix(got[0], "E-Mail-"), "got %q", got[0])
 	require.Equal(t, "E-Mail-Adresse", got[0]) // A uppercased from adresse
 }
+
+func TestGermanSpellerRule_GetMessage_SSPedagogyUTF16(t *testing.T) {
+	r := NewGermanSpellerRule(nil)
+	// replaceOnce ss→ß equals suggestion; two vowels before "ss"
+	msg := r.GetMessage("Maasse", "Maaße")
+	require.Contains(t, msg, "zwei Vokalen")
+	// one long vowel before ss
+	msg2 := r.GetMessage("Gruss", "Gruß")
+	require.Contains(t, msg2, "lang gesprochenen")
+}
+
+func TestCutOffDot_UTF16(t *testing.T) {
+	require.Equal(t, "café", cutOffDot("café."))
+	require.Equal(t, "x", cutOffDot("x."))
+	require.Equal(t, "ok", cutOffDot("ok"))
+}
