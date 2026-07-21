@@ -1,6 +1,6 @@
 package chunking
 
-import "strings"
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 
 // ChunkTag ports org.languagetool.chunking.ChunkTag.
 type ChunkTag struct {
@@ -13,7 +13,8 @@ func NewChunkTag(chunkTag string) ChunkTag {
 }
 
 func NewChunkTagRegexp(chunkTag string, isRegexp bool) ChunkTag {
-	if strings.TrimSpace(chunkTag) == "" {
+	// Java: chunkTag == null || chunkTag.trim().isEmpty()
+	if tools.JavaStringTrimIsEmpty(chunkTag) {
 		panic("chunkTag cannot be null or empty: '" + chunkTag + "'")
 	}
 	return ChunkTag{ChunkTag: chunkTag, IsRegexp: isRegexp}

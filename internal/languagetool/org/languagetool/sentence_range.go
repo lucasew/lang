@@ -3,7 +3,6 @@ package languagetool
 import (
 	"fmt"
 	"regexp"
-	"strings"
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
@@ -40,8 +39,10 @@ func (r SentenceRange) CompareTo(o SentenceRange) int {
 }
 
 var (
-	beginsWithSpace = regexp.MustCompile(`^\s*`)
-	endsWithSpace   = regexp.MustCompile(`\s+$`)
+	// Java Pattern \s without UNICODE_CHARACTER_CLASS: [ \t\n\x0B\f\r]
+	// (not Go RE2 \s which includes NBSP and other Unicode spaces).
+	beginsWithSpace = regexp.MustCompile(`^[ \t\n\v\f\r]*`)
+	endsWithSpace   = regexp.MustCompile(`[ \t\n\v\f\r]+$`)
 )
 
 // GetRangesFromSentences ports SentenceRange.getRangesFromSentences.
@@ -52,7 +53,8 @@ func GetRangesFromSentences(annotatedText *markup.AnnotatedText, sentences []str
 	markupTextLength := utf16LenSR(annotatedText.GetTextWithMarkup())
 	diff := markupTextLength - utf16LenSR(annotatedText.GetPlainText())
 	for _, sentence := range sentences {
-		if strings.TrimSpace(sentence) == "" {
+		// Java: sentence.trim().isEmpty() — String.trim, not Unicode TrimSpace.
+		if javaTrim(sentence) == "" {
 			// No content no sentence
 			pos += utf16LenSR(sentence)
 			continue

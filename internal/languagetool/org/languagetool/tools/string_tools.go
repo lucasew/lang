@@ -340,15 +340,32 @@ func javaStringLen(s string) int {
 	return len(utf16Units(s))
 }
 
+// JavaStringTrim ports java.lang.String.trim():
+// strip leading/trailing UTF-16 code units with value <= U+0020.
+// Does not strip NBSP (U+00A0) or other Unicode Zs — unlike strings.TrimSpace.
+func JavaStringTrim(s string) string {
+	return trimJava(s)
+}
+
+// JavaStringTrimIsEmpty reports whether Java String.trim() is empty.
+func JavaStringTrimIsEmpty(s string) bool {
+	return trimJava(s) == ""
+}
+
 func trimJava(s string) string {
-	start, end := 0, len(s)
-	for start < end && s[start] <= ' ' {
+	// Work on UTF-16 units (Java char[]), not UTF-8 bytes or Unicode runes.
+	u := utf16Units(s)
+	start, end := 0, len(u)
+	for start < end && u[start] <= ' ' {
 		start++
 	}
-	for end > start && s[end-1] <= ' ' {
+	for end > start && u[end-1] <= ' ' {
 		end--
 	}
-	return s[start:end]
+	if start == 0 && end == len(u) {
+		return s
+	}
+	return utf16ToString(u[start:end])
 }
 
 // IsPositiveNumber ports StringTools.isPositiveNumber:

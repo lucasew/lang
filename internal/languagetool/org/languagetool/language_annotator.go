@@ -272,7 +272,8 @@ func isAnnotatorQuote(token string) bool {
 }
 
 func isAnnotatorWord(s string) bool {
-	return strings.TrimSpace(s) != "" && langAnnotatorWordRE.MatchString(s)
+	// Java: !s.trim().isEmpty() && s.matches("\\w+")
+	return javaTrim(s) != "" && langAnnotatorWordRE.MatchString(s)
 }
 
 // defaultWordTokenize keeps whitespace and punctuation as separate tokens (simple).

@@ -164,28 +164,9 @@ func stripLeadingJava(s string) string {
 	return s[i:]
 }
 
-// javaTrim ports String.trim(): strip code points ≤ U+0020 from both ends.
+// javaTrim ports String.trim(): strip UTF-16 units ≤ U+0020 from both ends.
 func javaTrim(s string) string {
-	start, end := 0, len(s)
-	for start < end {
-		r, size := utf8.DecodeRuneInString(s[start:])
-		if r > 0x20 {
-			break
-		}
-		start += size
-	}
-	for end > start {
-		i := end - 1
-		for i > start && (s[i]&0xC0) == 0x80 {
-			i--
-		}
-		r, _ := utf8.DecodeRuneInString(s[i:end])
-		if r > 0x20 {
-			break
-		}
-		end = i
-	}
-	return s[start:end]
+	return tools.JavaStringTrim(s)
 }
 
 // LocalMatch is a cycle-free rule-match surface for JLanguageTool.Check

@@ -144,7 +144,8 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 			preventError = true
 		}
 
-		if strings.TrimSpace(strings.ReplaceAll(sentence.GetText(), "\u00A0", " ")) != "" {
+		// Java: !sentence.getText().replace('\u00A0',' ').trim().isEmpty()
+		if !tools.JavaStringTrimIsEmpty(strings.ReplaceAll(sentence.GetText(), "\u00A0", " ")) {
 			lastParagraphString = lastToken
 		}
 

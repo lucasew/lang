@@ -7,6 +7,7 @@ import (
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // OpenNLP-backed path for EnglishChunker — faithful to Java:
@@ -118,14 +119,7 @@ func javaStringLen(s string) int {
 // javaTrimIsEmpty ports Java token.trim().isEmpty() —
 // String.trim only strips code units <= ' ' (not NBSP / other Zs).
 func javaTrimIsEmpty(token string) bool {
-	start, end := 0, len(token)
-	for start < end && token[start] <= ' ' {
-		start++
-	}
-	for end > start && token[end-1] <= ' ' {
-		end--
-	}
-	return start >= end
+	return tools.JavaStringTrimIsEmpty(token)
 }
 
 // characterIsSpaceChar ports Character.isSpaceChar for a BMP code unit.

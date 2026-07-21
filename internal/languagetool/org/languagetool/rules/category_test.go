@@ -13,6 +13,10 @@ func TestCategoryId(t *testing.T) {
 	require.Equal(t, "GRAMMAR", a.String())
 	require.Panics(t, func() { NewCategoryId("") })
 	require.Panics(t, func() { NewCategoryId("   ") })
+	// Java String.trim: control chars <= ' ' count as empty
+	require.Panics(t, func() { NewCategoryId("\x01\x02") })
+	// NBSP is not stripped by String.trim — valid CategoryId
+	require.NotPanics(t, func() { NewCategoryId("\u00a0") })
 }
 
 func TestCategory(t *testing.T) {

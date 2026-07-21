@@ -23,6 +23,29 @@ func TestSentenceRange_EqualsCompareToString(t *testing.T) {
 	require.Equal(t, "1-5", a.String())
 }
 
+// Java sentence.trim() keeps NBSP; Go strings.TrimSpace would skip the sentence.
+func TestSentenceRange_NBSPNotEmptySentence(t *testing.T) {
+	// Sentence that is only NBSP + content: NBSP must not make trim().isEmpty() true.
+	sentences := []string{"\u00a0Hello.", " world"}
+	text := strings.Join(sentences, "")
+	annotated := markup.NewAnnotatedTextBuilder().AddText(text).Build()
+	ranges := GetRangesFromSentences(annotated, sentences)
+	require.Len(t, ranges, 2)
+	// First sentence includes leading NBSP in content span (Java \s does not match NBSP).
+	require.Equal(t, 0, ranges[0].GetFromPos())
+	require.Equal(t, "\u00a0Hello.", utf16SubstrSR(text, ranges[0].GetFromPos(), ranges[0].GetToPos()))
+}
+
+// Pure ASCII whitespace sentence is skipped (Java trim().isEmpty()).
+func TestSentenceRange_EmptyWhitespaceSkipped(t *testing.T) {
+	sentences := []string{"  \n\t  ", "Hi."}
+	text := strings.Join(sentences, "")
+	annotated := markup.NewAnnotatedTextBuilder().AddText(text).Build()
+	ranges := GetRangesFromSentences(annotated, sentences)
+	require.Len(t, ranges, 1)
+	require.Equal(t, "Hi.", utf16SubstrSR(text, ranges[0].GetFromPos(), ranges[0].GetToPos()))
+}
+
 func TestSentenceRange_CorrectSentenceRange(t *testing.T) {
 	sentences := []string{
 		"Hallo,\n\n",

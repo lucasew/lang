@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+
 // CategoryLocation ports Category.Location.
 type CategoryLocation int
 
@@ -16,19 +18,14 @@ type CategoryId struct {
 }
 
 // NewCategoryId creates a non-empty category identifier.
+// Java: Objects.requireNonNull; if (id.trim().isEmpty()) throw IAE.
 func NewCategoryId(id string) CategoryId {
 	if id == "" {
 		panic("Category id must not be null/empty")
 	}
-	empty := true
-	for _, r := range id {
-		if r != ' ' && r != '\t' && r != '\n' {
-			empty = false
-			break
-		}
-	}
-	if empty {
-		panic("Category id must not be empty")
+	// Java String.trim() — code units <= ' ' only (not Unicode TrimSpace).
+	if tools.JavaStringTrimIsEmpty(id) {
+		panic("Category id must not be empty: '" + id + "'")
 	}
 	return CategoryId{id: id}
 }

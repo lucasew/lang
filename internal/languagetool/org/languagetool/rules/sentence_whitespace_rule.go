@@ -5,6 +5,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // SentenceWhitespaceRule ports org.languagetool.rules.SentenceWhitespaceRule.
@@ -131,7 +132,7 @@ func (r *SentenceWhitespaceRule) MatchList(sentences []*languagetool.AnalyzedSen
 			lastToken := tokens[len(tokens)-1].GetToken()
 			replaced := strings.ReplaceAll(lastToken, "\u00A0", " ")
 			// Java: lastToken.replace('\u00A0',' ').trim().isEmpty() && lastToken.length() == 1
-			prevSentenceEndsWithWhitespace = strings.TrimSpace(replaced) == "" && utf16Len(lastToken) == 1
+			prevSentenceEndsWithWhitespace = tools.JavaStringTrimIsEmpty(replaced) && utf16Len(lastToken) == 1
 		}
 		if len(tokens) > 1 {
 			prevLastToken := tokens[len(tokens)-2].GetToken()
