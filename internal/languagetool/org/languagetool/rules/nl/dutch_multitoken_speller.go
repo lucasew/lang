@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DutchMultitokenSpeller ports org.languagetool.rules.nl.DutchMultitokenSpeller.
@@ -64,7 +65,7 @@ func (d *DutchMultitokenSpeller) IsException(original, candidate string) bool {
 func LoadDutchMultitokenSpeller(paths ...string) (*DutchMultitokenSpeller, error) {
 	s := NewDutchMultitokenSpeller()
 	for _, p := range paths {
-		if strings.TrimSpace(p) == "" {
+		if tools.JavaStringTrim(p) == "" {
 			continue
 		}
 		f, err := os.Open(p)

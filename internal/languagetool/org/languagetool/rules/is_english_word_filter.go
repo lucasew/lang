@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // EnglishTaggerFunc tags a single word into AnalyzedTokenReadings (pluggable EN tagger).
@@ -22,7 +23,7 @@ func NewIsEnglishWordFilter(tag EnglishTaggerFunc) *IsEnglishWordFilter {
 }
 
 var (
-	enWordTagMu sync.RWMutex
+	enWordTagMu      sync.RWMutex
 	defaultENWordTag EnglishTaggerFunc
 )
 
@@ -60,7 +61,7 @@ func (f *IsEnglishWordFilter) AcceptRuleMatch(match *RuleMatch, args map[string]
 	parts := strings.Split(formPosStr, ",")
 	var forms []string
 	for _, fp := range parts {
-		n, err := strconv.Atoi(strings.TrimSpace(fp))
+		n, err := strconv.Atoi(tools.JavaStringTrim(fp))
 		if err != nil {
 			panic(err)
 		}
@@ -77,7 +78,7 @@ func (f *IsEnglishWordFilter) AcceptRuleMatch(match *RuleMatch, args map[string]
 			panic("The number of forms and postags has to be the same in disambiguation rule with filter IsEnglishWordFilter.")
 		}
 		for i := range postags {
-			isEnglish = isEnglish && f.wordIsTaggedWith(forms[i], strings.TrimSpace(postags[i]))
+			isEnglish = isEnglish && f.wordIsTaggedWith(forms[i], tools.JavaStringTrim(postags[i]))
 		}
 	} else {
 		for _, form := range forms {

@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // MatchSpan is a simple from/to range for overlap checks.
@@ -86,7 +87,7 @@ func (f *SuppressIfAnyRuleMatchesFilter) ShouldSuppress(sentence string, fromPos
 		// Java: substring(0, fromPos) + replacement + substring(toPos)
 		newSentence := utf16Substring(sentence, 0, fromPos) + replacement + utf16Substring(sentence, toPos, textLen)
 		for _, id := range ids {
-			id = strings.TrimSpace(id)
+			id = tools.JavaStringTrim(id)
 			for _, m := range f.MatchesInSentence(id, newSentence) {
 				// overlap with original match range (Java logic)
 				if (m.To >= fromPos && m.To <= toPos) || (toPos >= m.From && toPos <= m.To) {

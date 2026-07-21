@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/verb_trans_to_untrans2.txt
@@ -37,21 +38,21 @@ func loadTransVerbs() map[string][]string {
 		}
 		transVerbMap = map[string][]string{}
 		for _, line := range strings.Split(string(b), "\n") {
-			line = strings.TrimSpace(line)
+			line = tools.JavaStringTrim(line)
 			if line == "" || strings.HasPrefix(line, "#") {
 				continue
 			}
 			if i := strings.IndexByte(line, '#'); i >= 0 {
-				line = strings.TrimSpace(line[:i])
+				line = tools.JavaStringTrim(line[:i])
 			}
 			kv := strings.SplitN(line, "=", 2)
 			if len(kv) < 2 {
 				continue
 			}
-			lemma := strings.TrimSpace(kv[0])
-			preps := strings.Split(strings.TrimSpace(kv[1]), "|")
+			lemma := tools.JavaStringTrim(kv[0])
+			preps := strings.Split(tools.JavaStringTrim(kv[1]), "|")
 			for i := range preps {
-				preps[i] = strings.TrimSpace(preps[i])
+				preps[i] = tools.JavaStringTrim(preps[i])
 			}
 			transVerbMap[lemma] = preps
 			// also index undiacritized for tagger lemmas without tashkeel
@@ -238,5 +239,3 @@ func (r *ArabicTransVerbRule) isRightPreposition(nextToken *languagetool.Analyze
 	}
 	return false
 }
-
-

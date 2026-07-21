@@ -128,8 +128,8 @@ func splitListLine(line string) []string {
 	rest := line
 	// Find first = as key separator if present
 	if idx := indexEqualsSep(rest); idx >= 0 {
-		key := strings.TrimSpace(rest[:idx])
-		rest = strings.TrimSpace(rest[idx+1:])
+		key := tools.JavaStringTrim(rest[:idx])
+		rest = tools.JavaStringTrim(rest[idx+1:])
 		parts = append(parts, key)
 		// rest split on |
 		if rest == "" {

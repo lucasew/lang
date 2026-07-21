@@ -59,7 +59,7 @@ func getCoherencyMap(r io.Reader, filePath string, sentStartMode bool, expand fu
 		if strings.HasPrefix(line, "#") {
 			continue
 		}
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}

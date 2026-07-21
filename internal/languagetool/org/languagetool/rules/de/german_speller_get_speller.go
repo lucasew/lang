@@ -5,6 +5,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/hunspell"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // GermanSpellerMaxEditDistance ports GermanSpellerRule.MAX_EDIT_DISTANCE (2).
@@ -38,7 +39,7 @@ func expandingPrepareLine(line string) []string {
 // variant ExpandingReader; OpenMultiSpellerFromClasspathWithUser loads each
 // plain path + variant through prepareLine (LineExpander twin).
 func GetSpeller(countryCode, languageVariantPlainTextDict string, userWords []string) *morfologik.MorfologikMultiSpeller {
-	country := strings.ToUpper(strings.TrimSpace(countryCode))
+	country := strings.ToUpper(tools.JavaStringTrim(countryCode))
 	if country == "" {
 		country = "DE"
 	}
@@ -47,7 +48,7 @@ func GetSpeller(countryCode, languageVariantPlainTextDict string, userWords []st
 		return nil
 	}
 	plain := GetSpellingFilePaths("de")
-	variant := strings.TrimSpace(languageVariantPlainTextDict)
+	variant := tools.JavaStringTrim(languageVariantPlainTextDict)
 	return morfologik.OpenMultiSpellerFromClasspathWithUser(
 		morfoFile, plain, variant, GermanSpellerMaxEditDistance, expandingPrepareLine, userWords)
 }

@@ -35,7 +35,7 @@ func NewCatalanRemoteRule() *CatalanRemoteRule {
 		MaxSentencesFirstServer: 4,
 		DefaultOff:              true,
 	}
-	if v := strings.TrimSpace(os.Getenv("CA_REMOTE_RULE_SERVER")); v != "" {
+	if v := tools.JavaStringTrim(os.Getenv("CA_REMOTE_RULE_SERVER")); v != "" {
 		r.ServerURLs = strings.Split(v, ",")
 		r.DefaultOff = false
 	}

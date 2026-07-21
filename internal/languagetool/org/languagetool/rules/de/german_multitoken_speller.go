@@ -6,6 +6,7 @@ import (
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // GermanMultitokenSpeller ports org.languagetool.rules.de.GermanMultitokenSpeller.
@@ -94,7 +95,7 @@ func (g *GermanMultitokenSpeller) IsException(original, candidate string) bool {
 func LoadGermanMultitokenSpeller(paths ...string) (*GermanMultitokenSpeller, error) {
 	s := NewGermanMultitokenSpeller()
 	for _, p := range paths {
-		if strings.TrimSpace(p) == "" {
+		if tools.JavaStringTrim(p) == "" {
 			continue
 		}
 		f, err := os.Open(p)

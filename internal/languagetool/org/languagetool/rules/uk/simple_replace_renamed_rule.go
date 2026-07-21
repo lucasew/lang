@@ -10,6 +10,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/replace_renamed.txt
@@ -49,7 +50,7 @@ func loadRenamed() map[string][]string {
 		sc.Buffer(buf, 1024*1024)
 		for sc.Scan() {
 			line := sc.Text()
-			if strings.HasPrefix(line, "#") || strings.TrimSpace(line) == "" {
+			if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
 				continue
 			}
 			// split on " *= *|" or "|"

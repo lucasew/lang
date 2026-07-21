@@ -28,7 +28,7 @@ func LoadConfusionPairs(r io.Reader) (ConfusionPairs, error) {
 	lineNo := 0
 	for sc.Scan() {
 		lineNo++
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || line[0] == '#' {
 			continue
 		}
@@ -36,9 +36,9 @@ func LoadConfusionPairs(r io.Reader) (ConfusionPairs, error) {
 		if len(parts) != 3 {
 			return nil, fmt.Errorf("format error line %d: expected 3 parts, got %d", lineNo, len(parts))
 		}
-		form := strings.TrimSpace(parts[0])
-		repl := strings.TrimSpace(parts[1])
-		pos := strings.TrimSpace(parts[2])
+		form := tools.JavaStringTrim(parts[0])
+		repl := tools.JavaStringTrim(parts[1])
+		pos := tools.JavaStringTrim(parts[2])
 		m[form] = append(m[form], ConfusionPairEntry{Token: repl, POS: pos})
 	}
 	if err := sc.Err(); err != nil {

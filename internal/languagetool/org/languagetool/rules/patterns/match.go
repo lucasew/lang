@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Match ports org.languagetool.rules.patterns.Match — configuration of a <match/> element.
@@ -16,20 +17,20 @@ type Match struct {
 	// RegexReplacePresent is true when Java regexReplace != null (attr present).
 	// filterReadings only replaces when both regexp_match and regexp_replace are non-null.
 	RegexReplacePresent bool
-	PosTagReplace string
+	PosTagReplace       string
 	// PosTagReplacePresent is true when Java posTagReplace != null (postag_replace attr).
 	PosTagReplacePresent bool
-	CaseConversionType CaseConversion
-	IncludeSkipped     IncludeRange
-	RegexMatch         string // raw pattern; compiled lazily
-	SetPos             bool
-	PostagRegexp       bool
-	StaticLemma        bool
-	Lemma              string
-	TokenRef           int
-	InMessageOnly      bool
-	regexCompiled      *regexp.Regexp
-	posRegexCompiled   *regexp.Regexp
+	CaseConversionType   CaseConversion
+	IncludeSkipped       IncludeRange
+	RegexMatch           string // raw pattern; compiled lazily
+	SetPos               bool
+	PostagRegexp         bool
+	StaticLemma          bool
+	Lemma                string
+	TokenRef             int
+	InMessageOnly        bool
+	regexCompiled        *regexp.Regexp
+	posRegexCompiled     *regexp.Regexp
 	// javaRE engines when RE2 cannot compile lookaround (Java Pattern).
 	regexJavaRE *javaRegexp
 	posJavaRE   *javaRegexp
@@ -39,7 +40,7 @@ type Match struct {
 // Prefer RE2; on lookaround syntax fall back to javaRegexp (full-string match).
 // Returns (re, javaRE) — at most one non-nil on success; both nil if uncompilable.
 func compileMatchPattern(s string) (*regexp.Regexp, *javaRegexp) {
-	s = strings.TrimSpace(s)
+	s = tools.JavaStringTrim(s)
 	if s == "" {
 		return nil, nil
 	}
@@ -77,11 +78,11 @@ func NewMatch(
 	includeSkipped IncludeRange,
 ) *Match {
 	m := &Match{
-		PosTag:             posTag,
-		PosTagReplace:      posTagReplace,
-		PostagRegexp:       postagRegexp,
-		RegexMatch:         regexMatch,
-		RegexReplace:       regexReplace,
+		PosTag:        posTag,
+		PosTagReplace: posTagReplace,
+		PostagRegexp:  postagRegexp,
+		RegexMatch:    regexMatch,
+		RegexReplace:  regexReplace,
 		// Non-empty replace implies attr present; empty replace with match-only → Present false
 		// (callers that need empty-string replace set *Present after NewMatch).
 		RegexReplacePresent:  regexReplace != "",

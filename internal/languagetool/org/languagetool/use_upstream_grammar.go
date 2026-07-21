@@ -1,6 +1,7 @@
 package languagetool
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"os"
 	"strings"
 )
@@ -17,7 +18,7 @@ import (
 //
 // Any other non-empty value (including "1" / "true") enables loading.
 func UseUpstreamGrammar() bool {
-	v := strings.TrimSpace(os.Getenv("LANG_USE_UPSTREAM_GRAMMAR"))
+	v := tools.JavaStringTrim(os.Getenv("LANG_USE_UPSTREAM_GRAMMAR"))
 	if v == "" {
 		return true
 	}

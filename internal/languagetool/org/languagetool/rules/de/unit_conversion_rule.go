@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UnitConversionRule ports org.languagetool.rules.de.UnitConversionRule
@@ -138,7 +139,7 @@ func (r *UnitConversionRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 
 // parseDEUnitNumber: German thousands '.' and decimal ','.
 func parseDEUnitNumber(s string) (float64, error) {
-	s = strings.TrimSpace(s)
+	s = tools.JavaStringTrim(s)
 	if strings.Contains(s, ",") && strings.Contains(s, ".") {
 		s = strings.ReplaceAll(s, ".", "")
 		s = strings.ReplaceAll(s, ",", ".")

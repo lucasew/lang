@@ -39,7 +39,7 @@ var allCaseConversions = []CaseConversion{
 // ParseCaseConversion ports Match.CaseConversion.valueOf (upper-case names).
 // Unknown names return false (no invent); Java would throw.
 func ParseCaseConversion(name string) (CaseConversion, bool) {
-	u := strings.ToUpper(strings.TrimSpace(name))
+	u := strings.ToUpper(tools.JavaStringTrim(name))
 	for _, c := range allCaseConversions {
 		if string(c) == u {
 			return c, true
@@ -53,7 +53,7 @@ var allIncludeRanges = []IncludeRange{IncludeNone, IncludeFollowing, IncludeAll}
 
 // ParseIncludeRange ports Match.IncludeRange.valueOf (upper-case names).
 func ParseIncludeRange(name string) (IncludeRange, bool) {
-	u := strings.ToUpper(strings.TrimSpace(name))
+	u := strings.ToUpper(tools.JavaStringTrim(name))
 	for _, r := range allIncludeRanges {
 		if string(r) == u {
 			return r, true

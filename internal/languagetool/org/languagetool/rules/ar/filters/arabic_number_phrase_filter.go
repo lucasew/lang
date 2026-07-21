@@ -226,7 +226,7 @@ func isAllDigits(s string) bool {
 }
 
 func parseLeadingInt(s string) (int, error) {
-	s = strings.TrimSpace(s)
+	s = tools.JavaStringTrim(s)
 	var b strings.Builder
 	for _, r := range s {
 		if unicode.IsDigit(r) {

@@ -6,6 +6,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // List-form ignoreWord extras from GermanSpellerRule.ignoreWord(List, idx).
@@ -68,7 +69,7 @@ func getWordAfterEnumerationOrNull(words []string, idx int) string {
 		if _, skip := enumerationConnectors[w]; skip {
 			continue
 		}
-		if strings.TrimSpace(w) == "" {
+		if tools.JavaStringTrim(w) == "" {
 			continue
 		}
 		return w

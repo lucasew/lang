@@ -23,7 +23,7 @@ func RegisterGrammarFile(lt *languagetool.JLanguageTool, path, languageCode stri
 
 // RegisterGrammarXML registers pattern rules from a simplified rules XML string.
 func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, languageCode string) (int, error) {
-	if lt == nil || strings.TrimSpace(xmlStr) == "" {
+	if lt == nil || tools.JavaStringTrim(xmlStr) == "" {
 		return 0, nil
 	}
 	if languageCode == "" {
@@ -282,5 +282,3 @@ func enrichLocalMatches(out []languagetool.LocalMatch, text string, meta grammar
 	}
 	return out
 }
-
-

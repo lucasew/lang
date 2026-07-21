@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/addedCompound.txt
@@ -31,9 +32,9 @@ func loadAddedCompounds() map[string]map[string]struct{} {
 		buf := make([]byte, 0, 64*1024)
 		sc.Buffer(buf, 1024*1024)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
+			line := tools.JavaStringTrim(sc.Text())
 			if i := strings.IndexByte(line, '#'); i >= 0 {
-				line = strings.TrimSpace(line[:i])
+				line = tools.JavaStringTrim(line[:i])
 			}
 			if line == "" {
 				continue
@@ -42,8 +43,8 @@ func loadAddedCompounds() map[string]map[string]struct{} {
 			if len(parts) != 2 {
 				continue
 			}
-			p0 := strings.ToLower(strings.TrimSpace(parts[0]))
-			p1 := strings.ToLower(strings.TrimSpace(parts[1]))
+			p0 := strings.ToLower(tools.JavaStringTrim(parts[0]))
+			p1 := strings.ToLower(tools.JavaStringTrim(parts[1]))
 			if p0 == "" || p1 == "" {
 				continue
 			}

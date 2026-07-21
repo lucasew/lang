@@ -213,5 +213,5 @@ func cleanTagsAndEscapeChars(s string) string {
 	if idx := strings.IndexByte(s, '#'); idx >= 0 {
 		s = s[:idx]
 	}
-	return strings.TrimSpace(strings.ReplaceAll(s, "\\", ""))
+	return tools.JavaStringTrim(strings.ReplaceAll(s, "\\", ""))
 }

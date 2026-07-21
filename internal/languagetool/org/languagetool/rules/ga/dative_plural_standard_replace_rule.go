@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/dative-plurals.txt
@@ -30,7 +31,7 @@ func loadDativeSimple() map[string][]string {
 		m := map[string][]string{}
 		sc := bufio.NewScanner(f)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
+			line := tools.JavaStringTrim(sc.Text())
 			if line == "" || line[0] == '#' {
 				continue
 			}

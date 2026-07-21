@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // LoadRemoteRuleFiltersFile ports RemoteRuleFilters.load: parse remote-rule-filters.xml
@@ -29,7 +30,7 @@ func LoadRemoteRuleFiltersFile(path, langCode string) (int, error) {
 
 // LoadRemoteRuleFiltersXML registers filters from a remote-rule-filters XML string.
 func LoadRemoteRuleFiltersXML(xmlStr, filename, langCode string) (int, error) {
-	if strings.TrimSpace(xmlStr) == "" || langCode == "" {
+	if tools.JavaStringTrim(xmlStr) == "" || langCode == "" {
 		return 0, nil
 	}
 	if filename == "" {

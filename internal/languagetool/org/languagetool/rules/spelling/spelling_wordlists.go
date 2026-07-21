@@ -2,6 +2,7 @@ package spelling
 
 import (
 	"bufio"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"os"
 	"path/filepath"
 	"strings"
@@ -44,7 +45,7 @@ func DiscoverSpellingResource(rel string) string {
 // well-known Java overrides (EN locales + de-AT/de-CH). Empty when Java returns null
 // (base SpellingCheckRule.SPELLING_FILE_VARIANT).
 func LanguageVariantSpellingClasspath(langCode string) string {
-	c := strings.ToLower(strings.TrimSpace(langCode))
+	c := strings.ToLower(tools.JavaStringTrim(langCode))
 	if c == "" {
 		return ""
 	}
@@ -221,9 +222,9 @@ func LoadSpellingWordListFile(path string) ([]string, error) {
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if i := strings.Index(line, "#"); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line != "" {
 			out = append(out, line)

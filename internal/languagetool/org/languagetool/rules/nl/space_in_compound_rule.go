@@ -11,6 +11,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/multipartcompounds.txt
@@ -55,7 +56,7 @@ func loadSpaceCompounds() map[string]spaceHit {
 		buf := make([]byte, 0, 64*1024)
 		sc.Buffer(buf, 1024*1024)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
+			line := tools.JavaStringTrim(sc.Text())
 			if line == "" || line[0] == '#' {
 				continue
 			}

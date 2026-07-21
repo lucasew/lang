@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // commonGermanWords ports HunspellRule.commonGermanWords (skip wrong-split).
@@ -86,7 +87,7 @@ func (r *GermanSpellerRule) createWrongSplitMatch(
 	if reLowerCaseWord.MatchString(suggestion2) {
 		return nil
 	}
-	joined := strings.TrimSpace(suggestion1 + " " + suggestion2)
+	joined := tools.JavaStringTrim(suggestion1 + " " + suggestion2)
 	msg := r.GetMessage(coveredWord, joined)
 	// span prevPos .. pos+len(coveredWord) in UTF-16 units like Java
 	m := rules.NewRuleMatch(r, sentence, prevPos, pos+utf16LenDE(coveredWord), msg)

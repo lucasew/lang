@@ -214,7 +214,7 @@ func (r *SpellingCheckRule) AddIgnoreWords(words ...string) {
 	r.ignoreDictSorted = nil
 	r.ignoreDictSortedFold = nil
 	for _, w := range words {
-		w = strings.TrimSpace(w)
+		w = tools.JavaStringTrim(w)
 		if w == "" {
 			continue
 		}

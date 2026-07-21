@@ -2,6 +2,7 @@ package ga
 
 import (
 	"bufio"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"strings"
 	"sync"
@@ -9,9 +10,9 @@ import (
 
 // DativePluralsData ports org.languagetool.rules.ga.DativePluralsData.
 type DativePluralsData struct {
-	Entries             []*DativePluralsEntry
-	SimpleReplacements  map[string]string
-	Modernisations      map[string]string
+	Entries            []*DativePluralsEntry
+	SimpleReplacements map[string]string
+	Modernisations     map[string]string
 }
 
 var (
@@ -50,7 +51,7 @@ func ParseDativePluralsData(r io.Reader) (*DativePluralsData, error) {
 	var entries []*DativePluralsEntry
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || line[0] == '#' {
 			continue
 		}

@@ -47,7 +47,7 @@ func ApplyConversionPairs(word string, pairs [][2]string) string {
 // ParseConversionPairs ports DictionaryAttribute.INPUT_CONVERSION / OUTPUT_CONVERSION fromString.
 // Format: "a b, c d" → ordered pairs; first value wins per key.
 func ParseConversionPairs(value string) [][2]string {
-	value = strings.TrimSpace(value)
+	value = tools.JavaStringTrim(value)
 	if value == "" {
 		return nil
 	}
@@ -78,7 +78,7 @@ type ReplacementPair struct {
 // Format: "a b, a c, x y" → multi-map (same key multiple values).
 // Java: '_' represents a space (hunspell REP convention).
 func ParseReplacementPairs(value string) []ReplacementPair {
-	value = strings.TrimSpace(value)
+	value = tools.JavaStringTrim(value)
 	if value == "" {
 		return nil
 	}
@@ -103,7 +103,7 @@ func splitCommaPairs(value string) []string {
 	start := 0
 	for i := 0; i < len(value); i++ {
 		if value[i] == ',' {
-			seg := strings.TrimSpace(value[start:i])
+			seg := tools.JavaStringTrim(value[start:i])
 			if seg != "" {
 				out = append(out, seg)
 			}
@@ -117,7 +117,7 @@ func splitCommaPairs(value string) []string {
 		}
 	}
 	if start < len(value) {
-		seg := strings.TrimSpace(value[start:])
+		seg := tools.JavaStringTrim(value[start:])
 		if seg != "" {
 			out = append(out, seg)
 		}

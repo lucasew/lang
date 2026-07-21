@@ -1,10 +1,10 @@
 package ru
 
 import (
-	"strings"
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // russian_filter_speller wires the official Russian Morfologik speller dict into
@@ -18,7 +18,7 @@ var (
 
 // WireRussianFilterSpeller opens a CFSA2/FSA speller dictionary for filter hooks.
 func WireRussianFilterSpeller(dictPath string) bool {
-	if strings.TrimSpace(dictPath) == "" {
+	if tools.JavaStringTrim(dictPath) == "" {
 		return false
 	}
 	d, err := atticmorfo.OpenDictionary(dictPath)

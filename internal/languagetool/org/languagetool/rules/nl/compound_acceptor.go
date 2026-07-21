@@ -10,6 +10,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // CompoundAcceptor ports org.languagetool.rules.nl.CompoundAcceptor.
@@ -107,12 +108,12 @@ var (
 func loadSetPreserveCase(r io.Reader, dest map[string]struct{}) error {
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		w := strings.TrimSpace(sc.Text())
+		w := tools.JavaStringTrim(sc.Text())
 		if w == "" || strings.HasPrefix(w, "#") {
 			continue
 		}
 		if i := strings.IndexByte(w, '#'); i >= 0 {
-			w = strings.TrimSpace(w[:i])
+			w = tools.JavaStringTrim(w[:i])
 		}
 		if w != "" {
 			dest[w] = struct{}{}

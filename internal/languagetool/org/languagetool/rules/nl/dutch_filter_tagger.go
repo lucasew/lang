@@ -1,11 +1,11 @@
 package nl
 
 import (
-	"strings"
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // dutch_filter_tagger wires official dutch.dict POS lookup for CompoundAcceptor
@@ -21,7 +21,7 @@ var (
 // WireDutchFilterTagger opens CFSA2 dutch.dict for getPostags-style probes.
 // Returns false if path cannot be opened (CompoundAcceptor POS stays fail-closed).
 func WireDutchFilterTagger(dictPath string) bool {
-	if strings.TrimSpace(dictPath) == "" {
+	if tools.JavaStringTrim(dictPath) == "" {
 		return false
 	}
 	d, err := atticmorfo.OpenDictionary(dictPath)

@@ -2,6 +2,7 @@ package de
 
 import (
 	"bufio"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"os"
 	"regexp"
 	"strings"
@@ -141,11 +142,11 @@ func LoadAltNeuOldSpelling(path string) (map[string]struct{}, error) {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		old := strings.TrimSpace(strings.SplitN(line, ";", 2)[0])
+		old := tools.JavaStringTrim(strings.SplitN(line, ";", 2)[0])
 		if old != "" {
 			out[old] = struct{}{}
 		}

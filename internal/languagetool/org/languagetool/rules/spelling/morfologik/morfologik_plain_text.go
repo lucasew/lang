@@ -107,7 +107,7 @@ func (s *MorfologikSpeller) LoadPlainTextAcceptClasspaths(relPaths []string, pre
 	}
 	total := 0
 	for _, rel := range relPaths {
-		rel = strings.TrimPrefix(strings.TrimSpace(rel), "/")
+		rel = strings.TrimPrefix(tools.JavaStringTrim(rel), "/")
 		if rel == "" {
 			continue
 		}

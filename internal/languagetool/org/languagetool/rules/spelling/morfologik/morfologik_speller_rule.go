@@ -396,7 +396,7 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 func preferredLanguagesActive(pref []string) bool {
 	n := 0
 	for _, p := range pref {
-		if strings.TrimSpace(p) != "" {
+		if tools.JavaStringTrim(p) != "" {
 			n++
 		}
 	}
@@ -714,7 +714,7 @@ func (r *MorfologikSpellerRule) applyNumbersBulletsPrefix(word string) (cleanWor
 	multitokenMisspelled := false
 	if wt := languagetool.WordTokenizerForLanguage(lang); wt != nil {
 		for _, t := range wt.Tokenize(secondPart) {
-			t = strings.TrimSpace(t)
+			t = tools.JavaStringTrim(t)
 			if t == "" {
 				continue
 			}

@@ -1,6 +1,8 @@
 package patterns
 
-import "strings"
+import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
 
 // NodeAccept constants mirror LSParserFilter accept codes.
 const (
@@ -18,7 +20,7 @@ type IgnoreWhitespaceFilter struct{}
 
 // AcceptText returns FilterReject when text is empty/whitespace-only.
 func (IgnoreWhitespaceFilter) AcceptText(text string) int {
-	if strings.TrimSpace(text) == "" {
+	if tools.JavaStringTrim(text) == "" {
 		return FilterReject
 	}
 	return FilterAccept

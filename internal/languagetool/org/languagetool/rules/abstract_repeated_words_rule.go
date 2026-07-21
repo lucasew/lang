@@ -144,7 +144,7 @@ func LoadSynonymsWords(reader io.Reader) (map[string]*SynonymsData, error) {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(hashPattern.ReplaceAllString(sc.Text(), ""))
+		line := tools.JavaStringTrim(hashPattern.ReplaceAllString(sc.Text(), ""))
 		if line == "" {
 			continue
 		}
@@ -168,7 +168,7 @@ func LoadSynonymsWords(reader io.Reader) (map[string]*SynonymsData, error) {
 			continue
 		}
 		for i := range parts {
-			parts[i] = strings.TrimSpace(parts[i])
+			parts[i] = tools.JavaStringTrim(parts[i])
 		}
 		if word != "" {
 			var syns []string

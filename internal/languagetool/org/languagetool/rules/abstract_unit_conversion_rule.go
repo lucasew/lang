@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UnitKind identifies dimension for compatibility checks.
@@ -109,12 +110,12 @@ var numberRangePartRE = regexp.MustCompile(unitNumberRegex + `$`)
 // AbstractUnitConversionRule ports org.languagetool.rules.AbstractUnitConversionRule.
 // Java: STYLE, Style.
 type AbstractUnitConversionRule struct {
-	ID           string
-	Messages     map[string]string
+	ID       string
+	Messages map[string]string
 	// Category ports Rule.category (Java STYLE).
 	Category *Category
 	// IssueType ports getLocQualityIssueType (Java Style).
-	IssueType ITSIssueType
+	IssueType    ITSIssueType
 	unitPatterns []unitPattern
 	// specialPatterns ports Java specialPatterns (e.g. 5'6" → feet + inches).
 	specialPatterns []specialUnitPattern
@@ -189,7 +190,7 @@ func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConv
 			regexp.MustCompile(`\d+[-‐–]\d+`),                           // "3-5 pounds"
 			regexp.MustCompile(`\d+/\d+`),                               // "1/4 mile"
 			regexp.MustCompile(`\d+:\d+`),                               // "A 2:1 cup"
-			regexp.MustCompile(`Pfund Sterling`),                       // currency, not mass
+			regexp.MustCompile(`Pfund Sterling`),                        // currency, not mass
 			regexp.MustCompile(`\d+⁄\d+`),                               // "1⁄4 cup" non-standard slash
 		},
 	}
@@ -630,7 +631,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 				numTo := fullEnd + cm[3]
 				unitBodyEnd := fullEnd + cm[5]
 				numInParen := text[numFrom:numTo]
-				unitBody := strings.TrimSpace(text[fullEnd+cm[4] : unitBodyEnd])
+				unitBody := tools.JavaStringTrim(text[fullEnd+cm[4] : unitBodyEnd])
 				if given, errG := r.parseNumber(numInParen); errG == nil {
 					highlight := text[from:fullEnd]
 					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, numFrom, numTo, unitBodyEnd, val, sp.unit, given, unitBody, highlight); check != nil {
@@ -657,13 +658,13 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					if len(suggs) >= unitMaxSuggestions {
 						break
 					}
-					suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(highlight), conv))
+					suggs = append(suggs, r.FormatSuggestion(tools.JavaStringTrim(highlight), conv))
 				}
 				if len(suggs) >= unitMaxSuggestions {
 					break
 				}
 			}
-			m := r.newUnitMatchWithURL(sentence, from, fullEnd, UnitMsgSuggestion, strings.TrimSpace(highlight))
+			m := r.newUnitMatchWithURL(sentence, from, fullEnd, UnitMsgSuggestion, tools.JavaStringTrim(highlight))
 			m.SetSuggestedReplacements(suggs)
 			matches = append(matches, m)
 		}
@@ -709,7 +710,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					numTo := loc[1] + cm[3]
 					unitBodyEnd := loc[1] + cm[5]
 					numInParen := text[numFrom:numTo]
-					unitBody := strings.TrimSpace(text[loc[1]+cm[4] : unitBodyEnd])
+					unitBody := tools.JavaStringTrim(text[loc[1]+cm[4] : unitBodyEnd])
 					given, errG := r.parseNumber(numInParen)
 					if errG == nil {
 						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, numFrom, numTo, unitBodyEnd, val, up.unit, given, unitBody, full); check != nil {
@@ -741,13 +742,13 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 						if len(suggs) >= unitMaxSuggestions {
 							break
 						}
-						suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(full), conv))
+						suggs = append(suggs, r.FormatSuggestion(tools.JavaStringTrim(full), conv))
 					}
 					if len(suggs) >= unitMaxSuggestions {
 						break
 					}
 				}
-				m := r.newUnitMatchWithURL(sentence, loc[0], loc[1], UnitMsgSuggestion, strings.TrimSpace(full))
+				m := r.newUnitMatchWithURL(sentence, loc[0], loc[1], UnitMsgSuggestion, tools.JavaStringTrim(full))
 				m.SetSuggestedReplacements(suggs)
 				matches = append(matches, m)
 			}
@@ -831,13 +832,13 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 ) *RuleMatch {
 	// Java: if convertedMatcher.group().trim().matches("\\(\\d+ (feet|ft) \\d+ inch\\)") return;
 	// e.g. "(2 ft 6 inch)" would be interpreted as just "2 ft", giving a wrong suggestion.
-	if feetInchParenBodyRE.MatchString(strings.TrimSpace(unitBody)) {
+	if feetInchParenBodyRE.MatchString(tools.JavaStringTrim(unitBody)) {
 		return nil
 	}
 	// Java: match converted unit against unitPatterns (not only metricUnits).
 	// Include non-metric paren units (e.g. "10 km (6.21 mi)").
 	var convertedUnit *UnitDef
-	bodyLow := strings.ToLower(strings.TrimSpace(unitBody))
+	bodyLow := strings.ToLower(tools.JavaStringTrim(unitBody))
 	// Prefer longer symbol matches: scan all registered unit patterns.
 	for i := range r.unitPatterns {
 		u := r.unitPatterns[i].unit

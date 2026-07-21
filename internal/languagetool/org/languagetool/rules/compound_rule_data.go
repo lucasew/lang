@@ -3,6 +3,7 @@ package rules
 import (
 	"bufio"
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"strings"
 )
@@ -56,9 +57,9 @@ func (d *CompoundRuleData) loadCompoundFile(r io.Reader, path string, expander L
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		} else {
-			line = strings.TrimSpace(line)
+			line = tools.JavaStringTrim(line)
 		}
 		if line == "" {
 			continue

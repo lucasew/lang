@@ -704,7 +704,7 @@ func lemmaOf(r *languagetool.AnalyzedTokenReadings) string {
 func joinNonEmpty(parts ...string) string {
 	var b []string
 	for _, p := range parts {
-		p = strings.TrimSpace(p)
+		p = tools.JavaStringTrim(p)
 		if p != "" {
 			b = append(b, p)
 		}

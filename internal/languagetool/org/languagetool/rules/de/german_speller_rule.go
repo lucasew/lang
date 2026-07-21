@@ -385,7 +385,7 @@ func (r *GermanSpellerRule) AddIgnorePhrase(tokens ...string) {
 	}
 	var phrase []string
 	for _, t := range tokens {
-		t = strings.TrimSpace(t)
+		t = tools.JavaStringTrim(t)
 		if t == "" {
 			continue
 		}
@@ -928,7 +928,7 @@ func (r *GermanSpellerRule) AddProhibitedWords(words []string) {
 		return
 	}
 	for _, w := range words {
-		w = strings.TrimSpace(w)
+		w = tools.JavaStringTrim(w)
 		if w == "" {
 			continue
 		}
@@ -1041,13 +1041,13 @@ func LoadSpellingWordList(path string) ([]string, error) {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		// strip trailing comments
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line == "" {
 			continue
@@ -1099,7 +1099,7 @@ func (r *GermanSpellerRule) AddIgnoredInCompounds(words ...string) {
 		r.IgnoredInCompounds = map[string]struct{}{}
 	}
 	for _, w := range words {
-		w = strings.TrimSpace(w)
+		w = tools.JavaStringTrim(w)
 		if w == "" {
 			continue
 		}

@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"strconv"
 	"strings"
 )
@@ -10,8 +11,8 @@ import (
 // Pairing logic lives in FalseFriendRuleLoader; this type accumulates mother-tongue suggestions
 // and formats description hints the way the Java handler does.
 type FalseFriendRuleHandler struct {
-	TextLanguage   string
-	MotherTongue   string
+	TextLanguage    string
+	MotherTongue    string
 	FalseFriendHint string
 	// SuggestionMap is rule ID → mother-tongue translation strings for the reverse side.
 	SuggestionMap map[string][]string
@@ -31,7 +32,7 @@ func NewFalseFriendRuleHandler(textLang, motherLang, falseFriendHint string) *Fa
 func FormatTranslations(translations []string) string {
 	parts := make([]string, 0, len(translations))
 	for _, t := range translations {
-		t = strings.TrimSpace(t)
+		t = tools.JavaStringTrim(t)
 		if t == "" {
 			continue
 		}
@@ -75,7 +76,7 @@ func (h *FalseFriendRuleHandler) AddSuggestions(ruleID string, translations []st
 		seen[s] = struct{}{}
 	}
 	for _, t := range translations {
-		t = strings.TrimSpace(t)
+		t = tools.JavaStringTrim(t)
 		if t == "" {
 			continue
 		}

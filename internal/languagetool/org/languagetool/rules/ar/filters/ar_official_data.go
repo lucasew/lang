@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -63,13 +62,13 @@ func loadARSimpleReplaceMap(name string) map[string][]string {
 	out := make(map[string][]string, len(m))
 	for k, v := range m {
 		// Official AR files may pad keys with spaces (e.g. " جميل=…").
-		k = strings.TrimSpace(k)
+		k = tools.JavaStringTrim(k)
 		if k == "" {
 			continue
 		}
 		reps := make([]string, 0, len(v))
 		for _, r := range v {
-			r = strings.TrimSpace(r)
+			r = tools.JavaStringTrim(r)
 			if r != "" {
 				reps = append(reps, r)
 			}

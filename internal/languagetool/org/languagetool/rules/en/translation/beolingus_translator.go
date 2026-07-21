@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	base "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/translation"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // BeoLingusTranslator ports org.languagetool.rules.en.translation.BeoLingusTranslator
@@ -30,7 +31,7 @@ func NewBeoLingusTranslator() *BeoLingusTranslator {
 func (b *BeoLingusTranslator) LoadDict(r io.Reader) error {
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -48,7 +49,7 @@ func (b *BeoLingusTranslator) LoadDict(r io.Reader) error {
 		default:
 			continue
 		}
-		de, en = strings.TrimSpace(de), strings.TrimSpace(en)
+		de, en = tools.JavaStringTrim(de), tools.JavaStringTrim(en)
 		if de == "" || en == "" {
 			continue
 		}
@@ -95,5 +96,5 @@ func stripBraces(s string) string {
 		}
 		s = s[:i] + s[i+j+1:]
 	}
-	return strings.TrimSpace(s)
+	return tools.JavaStringTrim(s)
 }

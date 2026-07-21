@@ -1,10 +1,10 @@
 package uk
 
 import (
-	"strings"
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 var (
@@ -14,7 +14,7 @@ var (
 
 // WireUkrainianFilterSpeller opens CFSA2 dict for IsMisspelled / Suggest.
 func WireUkrainianFilterSpeller(dictPath string) bool {
-	if strings.TrimSpace(dictPath) == "" {
+	if tools.JavaStringTrim(dictPath) == "" {
 		return false
 	}
 	d, err := atticmorfo.OpenDictionary(dictPath)

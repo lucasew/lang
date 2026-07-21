@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/replace_soft.txt
@@ -112,9 +113,9 @@ func splitSoftReplacements(reps []string) (contexts, suggestions []string) {
 	for _, rep := range reps {
 		// Java CONTEXT_PREFIX = "ctx:"; startsWith is case-sensitive
 		if strings.HasPrefix(rep, "ctx:") {
-			rest := strings.TrimSpace(rep[len("ctx:"):])
+			rest := tools.JavaStringTrim(rep[len("ctx:"):])
 			for _, c := range strings.Split(rest, ",") {
-				c = strings.TrimSpace(c)
+				c = tools.JavaStringTrim(c)
 				if c != "" {
 					contexts = append(contexts, c)
 				}

@@ -1,6 +1,7 @@
 package de
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"regexp"
 	"strings"
 )
@@ -29,7 +30,7 @@ func LoadWordSetFile(path string) (map[string]struct{}, error) {
 	}
 	out := make(map[string]struct{}, len(lines))
 	for _, w := range lines {
-		w = strings.TrimSpace(w)
+		w = tools.JavaStringTrim(w)
 		if w == "" {
 			continue
 		}

@@ -3,6 +3,7 @@ package rules
 import (
 	"bufio"
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"strconv"
 	"strings"
@@ -33,7 +34,7 @@ func (l *ConfusionSetLoader) LoadConfusionPairs(r io.Reader) (map[string][]*Conf
 	for sc.Scan() {
 		lineNo++
 		line := sc.Text()
-		if strings.HasPrefix(strings.TrimSpace(line), "#") || strings.TrimSpace(line) == "" {
+		if strings.HasPrefix(tools.JavaStringTrim(line), "#") || tools.JavaStringTrim(line) == "" {
 			continue
 		}
 		// Java: arrow check uses replaceFirst("#.*", ""); parts use replaceFirst("\\s*#.*", "")
@@ -41,7 +42,7 @@ func (l *ConfusionSetLoader) LoadConfusionPairs(r io.Reader) (map[string][]*Conf
 		if i := strings.Index(codeForArrow, "#"); i >= 0 {
 			codeForArrow = codeForArrow[:i]
 		}
-		stripped := strings.TrimSpace(stripConfusionComment(line))
+		stripped := tools.JavaStringTrim(stripConfusionComment(line))
 		if stripped == "" {
 			continue
 		}
@@ -74,7 +75,7 @@ func (l *ConfusionSetLoader) LoadConfusionPairs(r io.Reader) (map[string][]*Conf
 			confusionStrings = append(confusionStrings, NewConfusionString(word, description))
 			loadedForSet[word] = struct{}{}
 		}
-		factorStr := strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(parts[2]), ";"))
+		factorStr := tools.JavaStringTrim(strings.TrimSuffix(tools.JavaStringTrim(parts[2]), ";"))
 		factor, err := strconv.ParseInt(factorStr, 10, 64)
 		if err != nil {
 			return nil, fmt.Errorf("line %d: bad factor %q: %w", lineNo, factorStr, err)
@@ -119,11 +120,11 @@ func splitConfusionLine(stripped string) []string {
 		if cut < 0 {
 			break
 		}
-		parts = append(parts, strings.TrimSpace(rest[:cut]))
-		rest = strings.TrimSpace(rest[cut+sepLen:])
+		parts = append(parts, tools.JavaStringTrim(rest[:cut]))
+		rest = tools.JavaStringTrim(rest[cut+sepLen:])
 	}
 	if rest != "" {
-		parts = append(parts, strings.TrimSpace(rest))
+		parts = append(parts, tools.JavaStringTrim(rest))
 	}
 	return parts
 }

@@ -3,6 +3,7 @@ package nl
 import (
 	"bufio"
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"strings"
 )
@@ -25,7 +26,7 @@ func LoadPreferredWordData(r io.Reader, filePathHint string) (*PreferredWordData
 	d := &PreferredWordData{}
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -37,8 +38,8 @@ func LoadPreferredWordData(r io.Reader, filePathHint string) (*PreferredWordData
 			}
 			return nil, fmt.Errorf("unexpected format in file %s: %s", hint, line)
 		}
-		oldW := strings.TrimSpace(parts[0])
-		newW := strings.TrimSpace(parts[1])
+		oldW := tools.JavaStringTrim(parts[0])
+		newW := tools.JavaStringTrim(parts[1])
 		d.Rules = append(d.Rules, PreferredWordRuleWithSuggestion{
 			OldWord: oldW,
 			NewWord: newW,

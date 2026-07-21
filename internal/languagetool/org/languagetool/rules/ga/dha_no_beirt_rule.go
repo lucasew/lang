@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/people.txt
@@ -40,7 +41,7 @@ func loadPeople() map[string]bool {
 		m := map[string]bool{}
 		sc := bufio.NewScanner(f)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
+			line := tools.JavaStringTrim(sc.Text())
 			if line == "" || line[0] == '#' {
 				continue
 			}
