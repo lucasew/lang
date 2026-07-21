@@ -39,9 +39,17 @@ type MorfologikSpellerRule struct {
 	// AddHyphenSuggestionsFn ports addHyphenSuggestions: when dict sugs empty and word
 	// contains '-', rebuild hyphenated forms by fixing one misspelled part (EN).
 	AddHyphenSuggestionsFn func(parts []string) []string
-	// Multi ports MorfologikMultiSpeller (binary + plain-text dicts). When set,
-	// isMisspelled / suggestions / frequency use Multi; Speller remains primary binary.
+	// Multi is an alias for Speller1 (isMisspelled / frequency / legacy callers).
+	// Java: protected MorfologikMultiSpeller speller1.
 	Multi *MorfologikMultiSpeller
+	// Speller1/2/3 port Java speller1 (edit 1), speller2 (edit 2), speller3 (edit 3).
+	// calcSpellerSuggestions cascades 1→2→3; isMisspelled uses Speller1 only.
+	Speller1 *MorfologikMultiSpeller
+	Speller2 *MorfologikMultiSpeller
+	Speller3 *MorfologikMultiSpeller
+	// FullResults ports calcSpellerSuggestions(fullResults) — when true, always
+	// pulls speller2/3 even if speller1 already returned suggestions.
+	FullResults bool
 }
 
 func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *MorfologikSpeller) *MorfologikSpellerRule {
@@ -70,6 +78,45 @@ func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *Morfol
 }
 
 func (r *MorfologikSpellerRule) GetFileName() string { return r.FileName }
+
+// SetMultiSpellers ports initSpeller assignment of speller1/speller2/speller3.
+// Multi and Speller are wired to speller1 (binary primary) for isMisspelled.
+// Pass nil Multis to clear (map-inject tests).
+func (r *MorfologikSpellerRule) SetMultiSpellers(s1, s2, s3 *MorfologikMultiSpeller) {
+	if r == nil {
+		return
+	}
+	r.Speller1 = s1
+	r.Speller2 = s2
+	r.Speller3 = s3
+	r.Multi = s1
+	if s1 != nil {
+		// Prefer first non-user speller (binary) as Speller primary.
+		for _, sp := range s1.DefaultDictSpellers {
+			if sp != nil {
+				r.Speller = sp
+				break
+			}
+		}
+		if r.Speller == nil && len(s1.Spellers) > 0 {
+			r.Speller = s1.Spellers[0]
+		}
+		if r.SpellingCheckRule != nil && r.Speller != nil {
+			r.ConvertsCase = r.Speller.ConvertsCase()
+		}
+	}
+}
+
+// ClearMultiSpellers disables Multi / Speller1–3 so map-inject Speller is used alone.
+func (r *MorfologikSpellerRule) ClearMultiSpellers() {
+	if r == nil {
+		return
+	}
+	r.Speller1 = nil
+	r.Speller2 = nil
+	r.Speller3 = nil
+	r.Multi = nil
+}
 
 // Match flags misspelled tokens.
 func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
@@ -257,8 +304,8 @@ func (r *MorfologikSpellerRule) isMisspelledWord(word string) bool {
 }
 
 // collectSuggestions ports calcSpellerSuggestions:
-// only-suggestions early return; else user vs default dicts + tops; concat by word length;
-// then filterSuggestions / filterDupes.
+// only-suggestions early return; speller1 then optional speller2/3 cascade;
+// user vs default concat by word length; filterSuggestions / filterDupes.
 func (r *MorfologikSpellerRule) collectSuggestions(word string) []string {
 	if r == nil {
 		return nil
@@ -273,13 +320,43 @@ func (r *MorfologikSpellerRule) collectSuggestions(word string) []string {
 		}
 	}
 
-	// Java: defaultSuggestions / userSuggestions from speller1 (and 2/3 cascade inside Multi binary).
+	// Resolve speller1/2/3 (Multi aliases Speller1).
+	s1 := r.Speller1
+	if s1 == nil {
+		s1 = r.Multi
+	}
+	s2 := r.Speller2
+	s3 := r.Speller3
+	fullResults := r.FullResults
+
 	var defaultSug, userSug []string
-	if r.Multi != nil {
-		defaultSug = r.Multi.GetSuggestionsFromDefaultDicts(word)
-		userSug = r.Multi.GetSuggestionsFromUserDicts(word)
+	if s1 != nil {
+		defaultSug = s1.GetSuggestionsFromDefaultDicts(word)
+		userSug = s1.GetSuggestionsFromUserDicts(word)
 	} else if r.Speller != nil {
 		defaultSug = r.Speller.FindReplacements(word)
+	}
+
+	// Java: onlyCaseDiffers when first default suggestion is case-only change.
+	onlyCaseDiffers := false
+	if len(defaultSug) > 0 && strings.EqualFold(word, defaultSug[0]) {
+		onlyCaseDiffers = true
+	}
+	// Java: word.length() >= 3 && (onlyCaseDiffers || fullResults || defaultSuggestions.isEmpty())
+	// speller1 maxEdit=1 won't find "garentee", "greatful", etc. → pull speller2/3.
+	wLen := UTF16Len(word)
+	if wLen >= 3 && (onlyCaseDiffers || fullResults || len(defaultSug) == 0) {
+		if s2 != nil {
+			defaultSug = append(defaultSug, s2.GetSuggestionsFromDefaultDicts(word)...)
+			userSug = append(userSug, s2.GetSuggestionsFromUserDicts(word)...)
+		}
+		// Java: word.length() >= 5 && (fullResults || defaultSuggestions.isEmpty())
+		if wLen >= 5 && (fullResults || len(defaultSug) == 0) {
+			if s3 != nil {
+				defaultSug = append(defaultSug, s3.GetSuggestionsFromDefaultDicts(word)...)
+				userSug = append(userSug, s3.GetSuggestionsFromUserDicts(word)...)
+			}
+		}
 	}
 
 	// Java: if no default/user sugs and word contains "-", addHyphenSuggestions first into top.
@@ -317,7 +394,7 @@ func (r *MorfologikSpellerRule) collectSuggestions(word string) []string {
 	// Java: word.length()>4 → user then default; else default then user
 	// (short user-dict hits usually hide best suggestions).
 	var sug []string
-	if UTF16Len(word) > 4 {
+	if wLen > 4 {
 		sug = append(append([]string{}, userSug...), defaultSug...)
 	} else {
 		sug = append(append([]string{}, defaultSug...), userSug...)

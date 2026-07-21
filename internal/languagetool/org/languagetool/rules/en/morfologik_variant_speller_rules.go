@@ -39,24 +39,28 @@ type MorfologikVariantSpellerRule struct {
 }
 
 func newVariantSpeller(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string) *MorfologikVariantSpellerRule {
-	// Java MorfologikSpellerRule.initSpeller: MorfologikMultiSpeller(binary, plainTexts, variant, …).
+	// Java MorfologikSpellerRule.initSpeller: three Multis at maxEditDistance 1, 2, 3.
 	// plain: spelling.txt + spelling_global + multiwords (getAdditionalSpellingFileNames) + variant file.
 	plainRels := []string{
 		"en/hunspell/spelling.txt",
 		"spelling.txt", // EnglishGlobalSpellingFile
 		"en/multiwords.txt",
 	}
-	multi := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 1, PrepareLineForSpeller)
+	s1 := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 1, PrepareLineForSpeller)
+	s2 := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 2, PrepareLineForSpeller)
+	s3 := morfologik.OpenMultiSpellerFromClasspath(dictPath, plainRels, variantSpellingFile, 3, PrepareLineForSpeller)
 	var sp *morfologik.MorfologikSpeller
-	if multi != nil && len(multi.Spellers) > 0 {
-		sp = multi.Spellers[0]
+	if s1 != nil && len(s1.DefaultDictSpellers) > 0 {
+		sp = s1.DefaultDictSpellers[0]
+	} else if s1 != nil && len(s1.Spellers) > 0 {
+		sp = s1.Spellers[0]
 	} else {
 		sp = morfologik.NewMorfologikSpeller(dictPath, 1)
 		_ = sp.TryAttachBinaryFromClasspath(dictPath)
 	}
 	base := NewAbstractEnglishSpellerRule(id, variantCode, sp)
 	base.FileName = dictPath
-	base.Multi = multi
+	base.SetMultiSpellers(s1, s2, s3)
 	// Java Morfologik*SpellerRule.getLanguageVariantSpellingFileName → plain-text accept list.
 	// ApplyDefaultSpellingWordLists used LanguageShortCode "en" only; load variant file here.
 	if base.SpellingCheckRule != nil {

@@ -16,7 +16,7 @@ func withUS(words ...string) *MorfologikVariantSpellerRule {
 	for _, w := range words {
 		sp.AddWord(w)
 	}
-	r.Multi = nil // map inject: disable multi-speller
+	r.ClearMultiSpellers() // map inject: disable multi-speller
 	r.Speller = sp
 	// Use compound-aware isMisspelledWord (Java MorfologikSpellerRule.isMisspelled).
 	r.IsMisspelled = r.MorfologikSpellerRule.IsMisspelled
@@ -83,7 +83,7 @@ func TestMorfologikAmericanSpellerRule_VariantMessages(t *testing.T) {
 	for _, w := range []string{"This", "is", "a", "nice", "words", "the", "British"} {
 		sp.AddWord(w)
 	}
-	r.Multi = nil
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	ms, err := r.Match(analyzeEN("This is a nice colour."))
@@ -129,7 +129,7 @@ func TestMorfologikAmericanSpellerRule_MorfologikSpeller(t *testing.T) {
 		"C", "est", "vie", "guerre",
 		"web", "based", "software", "feature", "driven", "car",
 		"You're", "only", "foolin", "round", "This", "freakin", "hilarious",
-		"It", "s", "meal", "that", "keeps", "on", "givin", "Don", "t", "Stop", "Believin",
+		"It", "s", "'s", "meal", "that", "keeps", "on", "givin", "Don", "t", "Stop", "Believin",
 	)
 	// length-1 Greek letter μ ignored when configured (Java AbstractEnglishSpellerRule)
 	if r.SpellingCheckRule != nil {
@@ -178,12 +178,21 @@ func TestMorfologikAmericanSpellerRule_MorfologikSpeller(t *testing.T) {
 	r.Speller.AddWord("do")
 	r.Speller.AddWord("doesn")
 	r.Speller.AddWord("don")
+	// Java EnglishTagger keeps n't / 's whole when tagged
+	r.Speller.AddWord("n't")
+	r.Speller.AddWord("n\u2019t")
+	r.Speller.AddWord("'t")
 	ms, err = r.Match(analyzeEN("He doesn't know what to do."))
 	require.NoError(t, err)
 	require.Empty(t, ms)
-	// ma'am / o'clock / O'Connell — apostrophe pieces
-	r.Speller.AddWord("ma")
-	r.Speller.AddWord("am")
+	// ma'am / o'clock / O'Connell — pieces when untagged; whole forms when IsTaggedEN keeps them.
+	for _, w := range []string{
+		"ma", "am", "ma'am", "ma’am",
+		"o", "clock", "o'clock", "o’clock",
+		"O'Connell", "O’Connell", "O'Connor", "O’Connor", "O'Neill", "O’Neill",
+	} {
+		r.Speller.AddWord(w)
+	}
 	for _, s := range []string{
 		"Yes ma'am.", "Yes ma’am.",
 		"At 3 o'clock.", "At 3 o’clock.",
@@ -255,16 +264,24 @@ func TestMorfologikAmericanSpellerRule_MorfologikSpeller(t *testing.T) {
 	require.Equal(t, 1, len(ms))
 
 	// contractions with apostrophe pieces (foolin' / freakin' / givin' / Believin')
+	// When IsTaggedEN is live (english.dict), pattern splits You're → You + 're (clitic kept whole).
+	// Without tagger, further split to ' + re. Inject both shapes.
+	for _, w := range []string{
+		"You", "re", "'re", "\u2019re", "You're", "You\u2019re",
+		"It", "s", "'s", "\u2019s", "It's", "It\u2019s",
+		"Don", "t", "n't", "n\u2019t", "Don't", "Don\u2019t",
+		"foolin'", "foolin\u2019", "freakin'", "freakin\u2019",
+		"givin'", "givin\u2019", "Believin'", "Believin\u2019",
+		"round", "only", "hilarious", "meal", "that", "keeps", "on", "Stop",
+	} {
+		r.Speller.AddWord(w)
+	}
 	for _, s := range []string{
 		"You're only foolin' round.",
 		"This is freakin' hilarious.",
 		"It's the meal that keeps on givin'.",
 		"Don't Stop Believin'.",
 	} {
-		// inject apostrophe-split pieces
-		for _, w := range []string{"You", "re", "It", "s", "Don", "t"} {
-			r.Speller.AddWord(w)
-		}
 		ms, err = r.Match(analyzeEN(s))
 		require.NoError(t, err)
 		require.Empty(t, ms, "good %q", s)
@@ -365,7 +382,7 @@ func TestMorfologikAmericanSpellerRule_GetOnlySuggestions(t *testing.T) {
 	r := NewMorfologikAmericanSpellerRule()
 	// EnglishOnlySuggestions already wires cemetary; assert Match path
 	sp := morfologik.NewMorfologikSpeller(AmericanSpellerDict, 1)
-	r.Multi = nil
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	// empty dict is fail-closed for IsMisspelled — force misspell probe
 	r.IsMisspelled = func(w string) bool {
@@ -519,3 +536,4 @@ func firstENSuggestion(ms []*rules.RuleMatch, want string) *rules.RuleMatch {
 	}
 	return nil
 }
+

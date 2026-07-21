@@ -83,14 +83,13 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	s.BinaryDictPath = dictPath
 	s.binaryDict = d
 	s.FrequencyIncluded = d.FrequencyIncluded()
-	// Binary suggest: Java calcSpellerSuggestions cascade speller1→2→3 (edit distance 1,2,3).
-	// maxEditDistance on this speller is the primary; cascade uses 1 then 2 then 3 when empty.
+	// Binary suggest: Java MorfologikSpeller(Dictionary, maxEditDistance) — only this distance.
+	// Rule-level cascade (speller1/2/3) lives in MorfologikSpellerRule.collectSuggestions.
 	s.SuggestFn = func(word string) []string {
-		return binaryCascadeSuggestions(d, word, 8)
+		return binarySuggestionsAtDistance(d, word, 8, s.MaxEditDistance)
 	}
-	// Weighted candidates for multi-speller merge / Collections.sort by weight.
 	s.WeightedSuggestFn = func(word string) []WeightedSuggestion {
-		return binaryCascadeWeighted(d, word, 8)
+		return binaryWeightedAtDistance(d, word, 8, s.MaxEditDistance)
 	}
 	// Binary frequency: Java Speller.getFrequency last payload byte.
 	s.GetFrequencyFn = func(word string) int {
@@ -99,7 +98,34 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	return true
 }
 
-// binaryCascadeWeighted same cascade as binaryCascadeSuggestions but keeps weights.
+// binarySuggestionsAtDistance ports Speller.findReplacements for a fixed maxEditDistance.
+func binarySuggestionsAtDistance(d *atticmorfo.Dictionary, word string, maxResults, maxEdit int) []string {
+	return weightedWords(binaryWeightedRaw(d, word, maxResults, maxEdit))
+}
+
+// binaryWeightedAtDistance ports findReplacementCandidates weights for fixed maxEditDistance.
+func binaryWeightedAtDistance(d *atticmorfo.Dictionary, word string, maxResults, maxEdit int) []WeightedSuggestion {
+	return toWeighted(binaryWeightedRaw(d, word, maxResults, maxEdit))
+}
+
+func binaryWeightedRaw(d *atticmorfo.Dictionary, word string, maxResults, maxEdit int) []struct {
+	Word   string
+	Weight int
+} {
+	if d == nil || word == "" {
+		return nil
+	}
+	if maxEdit < 1 {
+		maxEdit = 1
+	}
+	if maxEdit > 3 {
+		maxEdit = 3
+	}
+	return d.WeightedEditSuggestions(word, maxResults, maxEdit)
+}
+
+// binaryCascadeWeighted ports calcSpellerSuggestions distance cascade at the binary layer
+// (used when a single Speller stands in for speller1+2+3 without Multis).
 func binaryCascadeWeighted(d *atticmorfo.Dictionary, word string, max int) []WeightedSuggestion {
 	if d == nil || word == "" {
 		return nil
@@ -110,9 +136,13 @@ func binaryCascadeWeighted(d *atticmorfo.Dictionary, word string, max int) []Wei
 	if len(word) >= 3 && (onlyCase || len(sugs) == 0) {
 		w2 := d.WeightedEditSuggestions(word, max, 2)
 		sugs = mergeWeightedUnique(sugs, toWeighted(w2))
-		if len(word) >= 5 && len(sugs) == 0 {
-			w3 := d.WeightedEditSuggestions(word, max, 3)
-			sugs = mergeWeightedUnique(sugs, toWeighted(w3))
+		if len(word) >= 5 && (len(sugs) == 0 || onlyCase) {
+			// Java: speller3 only when fullResults || defaultSuggestions.isEmpty() after speller2.
+			// onlyCase may leave non-empty list — then speller3 is skipped unless empty.
+			if len(sugs) == 0 {
+				w3 := d.WeightedEditSuggestions(word, max, 3)
+				sugs = mergeWeightedUnique(sugs, toWeighted(w3))
+			}
 		}
 	}
 	if len(sugs) > max {
