@@ -259,6 +259,12 @@ func containsDigit(str string) bool {
 	return false
 }
 
+// UTF16Substring ports Java String.substring(from, to) with UTF-16 indices.
+// Use for RuleMatch FromPos/ToPos and AnalyzedTokenReadings start/end spans.
+func UTF16Substring(s string, from, to int) string {
+	return utf16Substring(s, from, to)
+}
+
 // utf16Substring ports Java String.substring(from, to) with UTF-16 indices.
 func utf16Substring(s string, from, to int) string {
 	u := []uint16{}

@@ -378,13 +378,11 @@ func (f *AdjustVerbSuggestionsFilter) AcceptRuleMatch(match *rules.RuleMatch, ar
 		match.GetMessage())
 	out.ShortMessage = match.GetShortMessage()
 
+	// Java substring uses UTF-16 positions (token start/end, match ToPos).
 	text := match.Sentence.GetText()
 	from := tokens[posStartUnderline].GetStartPos()
 	to := match.GetToPos()
-	originalStr := ""
-	if from >= 0 && to <= len(text) && from <= to {
-		originalStr = text[from:to]
-	}
+	originalStr := rules.UTF16Substring(text, from, to)
 	out.SetSuggestedReplacements(adaptSuggestionsListCA(replacements, originalStr))
 	return out
 }

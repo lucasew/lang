@@ -206,13 +206,12 @@ func (f *EnNoInfinitiuSuggestionFilter) AcceptRuleMatch(match *rules.RuleMatch, 
 		return nil
 	}
 
+	// Java substring uses UTF-16 token start/end positions.
 	text := match.Sentence.GetText()
 	from := tokens[startPos].GetStartPos()
 	to := tokens[endPos].GetEndPos()
-	originalStr := ""
-	if from >= 0 && to <= len(text) && from <= to {
-		originalStr = text[from:to]
-	} else {
+	originalStr := rules.UTF16Substring(text, from, to)
+	if originalStr == "" {
 		originalStr = tokens[startPos].GetToken()
 	}
 

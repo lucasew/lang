@@ -500,13 +500,11 @@ func (f *ConvertToGenderAndNumberFilter) AcceptRuleMatch(match *rules.RuleMatch,
 					suggestionBuilder.WriteString(addTot)
 					suggestionBuilder.WriteString(body)
 				}
+				// Java substring uses UTF-16 token start/end positions.
 				text := match.Sentence.GetText()
 				from := tokens[startPos].GetStartPos()
 				to := tokens[endPos].GetEndPos()
-				originalSpan := ""
-				if from >= 0 && to <= len(text) && from <= to {
-					originalSpan = text[from:to]
-				}
+				originalSpan := rules.UTF16Substring(text, from, to)
 				suggestion := preserveCaseWordByWord(suggestionBuilder.String(), originalSpan)
 				if endPos == posWord && startPos == posWord && tokens[posWord].GetToken() == suggestion {
 					continue
@@ -525,13 +523,11 @@ func (f *ConvertToGenderAndNumberFilter) AcceptRuleMatch(match *rules.RuleMatch,
 		tokens[startPos].GetStartPos(), tokens[endPos].GetEndPos(),
 		match.GetMessage())
 	out.ShortMessage = match.GetShortMessage()
+	// Java substring uses UTF-16 token start/end positions.
 	text := match.Sentence.GetText()
 	from := tokens[startPos].GetStartPos()
 	to := tokens[endPos].GetEndPos()
-	originalStr := ""
-	if from >= 0 && to <= len(text) && from <= to {
-		originalStr = text[from:to]
-	}
+	originalStr := rules.UTF16Substring(text, from, to)
 	for _, s := range suggestions {
 		if s == originalStr {
 			return nil
