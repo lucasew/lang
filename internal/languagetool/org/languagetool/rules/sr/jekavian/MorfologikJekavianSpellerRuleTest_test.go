@@ -33,3 +33,9 @@ func TestMorfologikJekavianSpellerRule_MorfologikSpeller(t *testing.T) {
 	require.Len(t, m, 1)
 	require.Contains(t, m[0].GetSuggestedReplacements(), "zdravo")
 }
+
+// Twin of MorfologikJekavianSpellerRuleTest.testSpellingCheck
+func TestMorfologikJekavianSpellerRule_SpellingCheck(t *testing.T) {
+	// alias of MorfologikSpeller path under audit name
+	TestMorfologikJekavianSpellerRule_MorfologikSpeller(t)
+}

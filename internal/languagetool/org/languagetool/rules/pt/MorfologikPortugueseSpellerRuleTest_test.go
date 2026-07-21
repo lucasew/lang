@@ -20,19 +20,19 @@ func withPTSpeller(words ...string) *MorfologikPortugueseSpellerRule {
 	return r
 }
 
-func TestMorfologikPortugueseSpeller_PortugueseSpellerSanity(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerSanity(t *testing.T) {
 	r := withPTSpeller("casa", "teste")
 	require.Equal(t, MorfologikPortuguesePTSpellerRuleID, r.GetID())
 	require.False(t, r.Speller.IsMisspelled("casa"))
 	require.True(t, r.Speller.IsMisspelled("caza"))
 }
 
-func TestMorfologikPortugueseSpeller_PortugueseSpellerSpecificIds(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerSpecificIds(t *testing.T) {
 	require.Equal(t, "MORFOLOGIK_RULE_PT_PT", NewMorfologikPortugalPortugueseSpellerRule().GetID())
 	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", NewMorfologikBrazilianPortugueseSpellerRule().GetID())
 }
 
-func TestMorfologikPortugueseSpeller_EuropeanPortugueseSpelling(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_EuropeanPortugueseSpelling(t *testing.T) {
 	r := withPTSpeller("facto")
 	sent := languagetool.AnalyzePlain("fcto")
 	matches, err := r.Match(sent)
@@ -40,12 +40,12 @@ func TestMorfologikPortugueseSpeller_EuropeanPortugueseSpelling(t *testing.T) {
 	require.Len(t, matches, 1)
 }
 
-func TestMorfologikPortugueseSpeller_AfricanPortugueseSpelling(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_AfricanPortugueseSpelling(t *testing.T) {
 	r := NewMorfologikPortugueseSpellerRule("pt-AO", "/pt/spelling/pt-PT-45.dict", "MORFOLOGIK_RULE_PT_AO")
 	require.Equal(t, "pt-AO", r.VariantCode)
 }
 
-func TestMorfologikPortugueseSpeller_BrazilianPortugueseSpelling(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_BrazilianPortugueseSpelling(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(PortugueseBRDict, 1)
 	sp.AddWord("fato")
 	r := NewMorfologikBrazilianPortugueseSpellerRule()
@@ -54,12 +54,12 @@ func TestMorfologikPortugueseSpeller_BrazilianPortugueseSpelling(t *testing.T) {
 	require.False(t, r.Speller.IsMisspelled("fato"))
 }
 
-func TestMorfologikPortugueseSpeller_EuropeanPortugueseHyphenatedClitics(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_EuropeanPortugueseHyphenatedClitics(t *testing.T) {
 	r := withPTSpeller("dá-se")
 	require.False(t, r.Speller.IsMisspelled("dá-se"))
 }
 
-func TestMorfologikPortugueseSpeller_BrazilianPortugueseHyphenatedClitics(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_BrazilianPortugueseHyphenatedClitics(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(PortugueseBRDict, 1)
 	sp.AddWord("dá-se")
 	r := NewMorfologikBrazilianPortugueseSpellerRule()
@@ -68,22 +68,22 @@ func TestMorfologikPortugueseSpeller_BrazilianPortugueseHyphenatedClitics(t *tes
 	require.False(t, r.Speller.IsMisspelled("dá-se"))
 }
 
-func TestMorfologikPortugueseSpeller_PortugueseSpellerDoesNotAcceptVerbFormsWithElidedConsonants(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerDoesNotAcceptVerbFormsWithElidedConsonants(t *testing.T) {
 	r := withPTSpeller("estar")
 	require.True(t, r.Speller.IsMisspelled("tar")) // not in dict
 }
 
-func TestMorfologikPortugueseSpeller_PortugueseSpellerAcceptsVerbsWithProductivePrefixes(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerAcceptsVerbsWithProductivePrefixes(t *testing.T) {
 	r := withPTSpeller("recomeçar")
 	require.False(t, r.Speller.IsMisspelled("recomeçar"))
 }
 
-func TestMorfologikPortugueseSpeller_PortugueseHyphenationRules(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseHyphenationRules(t *testing.T) {
 	r := withPTSpeller("guarda-chuva")
 	require.False(t, r.Speller.IsMisspelled("guarda-chuva"))
 }
 
-func TestMorfologikPortugueseSpeller_PortugueseSymmetricalDialectDifferences(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseSymmetricalDialectDifferences(t *testing.T) {
 	// PT accepts facto; BR accepts fato — different variants.
 	pt := withPTSpeller("facto")
 	br := NewMorfologikBrazilianPortugueseSpellerRule()
@@ -96,7 +96,7 @@ func TestMorfologikPortugueseSpeller_PortugueseSymmetricalDialectDifferences(t *
 	require.False(t, br.Speller.IsMisspelled("fato"))
 }
 
-func TestMorfologikPortugueseSpeller_PortugueseAsymmetricalDialectDifferences(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseAsymmetricalDialectDifferences(t *testing.T) {
 	pt := withPTSpeller("óleo")
 	require.False(t, pt.Speller.IsMisspelled("óleo"))
 }

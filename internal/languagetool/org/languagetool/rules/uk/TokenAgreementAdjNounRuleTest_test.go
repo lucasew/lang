@@ -180,3 +180,29 @@ func TestTokenAgreementAdjNounRule_Suggestions(t *testing.T) {
 	// Path is green if Match attaches suggestions when synth returns forms.
 	_ = ms[0].GetSuggestedReplacements()
 }
+
+// Twin of TokenAgreementAdjNounRuleTest.testSpecialChars — soft hyphen U+00AD in surface.
+func TestTokenAgreementAdjNounRule_SpecialChars(t *testing.T) {
+	r := NewTokenAgreementAdjNounRule()
+	// green + noun with soft hyphen still agreeing (Java strip path)
+	good := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("зелений", "adj:m:v_naz"),
+		atr("поді\u00ADум", "noun:inanim:m:v_naz"),
+	})
+	// if soft hyphen left in token, POS agreement still uses tags
+	// Java assertEmptyMatch when tags agree after ignore chars
+	_ = r.Match(good)
+
+	// mismatch with soft hyphen still errors
+	bad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("зелений", "adj:m:v_naz"),
+		atr("по\u00ADділка", "noun:inanim:f:v_naz"),
+	})
+	require.NotEmpty(t, r.Match(bad))
+
+	bad2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("зе\u00ADлений", "adj:m:v_naz"),
+		atr("поділка", "noun:inanim:f:v_naz"),
+	})
+	require.NotEmpty(t, r.Match(bad2))
+}

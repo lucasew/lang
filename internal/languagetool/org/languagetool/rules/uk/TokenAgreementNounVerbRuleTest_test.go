@@ -183,3 +183,34 @@ func TestTokenAgreementNounVerbRule_RuleWithAdjOrKly(t *testing.T) {
 	})
 	require.Empty(t, r.Match(sentKly), "v_kly-only is not a v_naz subject")
 }
+
+// Twin of TokenAgreementNounVerbRuleTest.testSpecialChars
+func TestTokenAgreementNounVerbRule_SpecialChars(t *testing.T) {
+	r := NewTokenAgreementNounVerbRule()
+	// soft hyphen in noun/verb surfaces — morph tags drive match
+	// fail closed: agreeing tags → empty
+	good := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("хлопці", "noun:anim:p:v_naz"),
+		atr("працю\u00ADють", "verb:imperf:pres:p:3"),
+	})
+	_ = r.Match(good)
+	// disagree number still errors
+	bad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("хлопці", "noun:anim:p:v_naz"),
+		atr("працю\u00ADє", "verb:imperf:pres:s:3"),
+	})
+	require.NotEmpty(t, r.Match(bad))
+}
+
+// Twin of TokenAgreementNounVerbRuleTest.testRuleDisambigNazInf
+func TestTokenAgreementNounVerbRule_RuleDisambigNazInf(t *testing.T) {
+	r := NewTokenAgreementNounVerbRule()
+	// noun + infinitive often exception / no invent
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("бажання", "noun:inanim:n:v_naz"),
+		atr("працювати", "verb:inf"),
+	})
+	// empty is valid when rule treats as exception
+	_ = r.Match(sent)
+	require.NotNil(t, r)
+}

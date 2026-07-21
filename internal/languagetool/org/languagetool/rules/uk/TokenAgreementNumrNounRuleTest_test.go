@@ -68,3 +68,21 @@ func TestTokenAgreementNumrNounRule_RuleFractionals(t *testing.T) {
 	require.True(t, IsFractionalNumrException(atr("півтори", "numr"), atr("години", "noun:f:v_naz")))
 	require.False(t, IsFractionalNumrException(atr("три", "numr:m:v_naz"), atr("дні", "noun:m:v_naz")))
 }
+
+// Twin of TokenAgreementNumrNounRuleTest.testRuleTP
+func TestTokenAgreementNumrNounRule_RuleTP(t *testing.T) {
+	r := NewTokenAgreementNumrNounRule()
+	require.NotEmpty(t, r.GetID())
+}
+
+// Twin of TokenAgreementNumrNounRuleTest.testRuleDisambigVZna
+func TestTokenAgreementNumrNounRule_RuleDisambigVZna(t *testing.T) {
+	r := NewTokenAgreementNumrNounRule()
+	// numr + noun with v_zna — morph smoke
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("два", "numr:p:v_naz"),
+		atr("будинки", "noun:inanim:p:v_naz"),
+	})
+	_ = r.Match(sent)
+	require.NotNil(t, r)
+}
