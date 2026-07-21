@@ -180,35 +180,72 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 			}
 			continue
 		}
-		// finite / other VER: separable → append :NEB when conjugations 1/2/3 or general
+		// finite / other VER: separable / non-sep (Java equalsAny on firstPart + lower|index==0)
 		fpLow := strings.ToLower(firstPart)
-		if startsWithAnyPrefix(fpLow, prefixesSeparableVerbsLongestList) || isExactSeparablePrefix(fpLow) {
-			if strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3") {
-				if idxPos == 0 || wordOrig == strings.ToLower(wordOrig) || isTitleCaseWord(wordOrig) {
-					nebPos := pos
-					if !strings.HasSuffix(nebPos, ":NEB") {
-						nebPos = nebPos + ":NEB"
+		// Java: word.equals(toLowerCase()) || sentenceTokens.indexOf(word) == 0
+		atStartOrAllLower := wordOrig == strings.ToLower(wordOrig) || indexOfToken(sentenceTokens, wordOrig) == 0
+		if isExactSeparablePrefix(fpLow) {
+			if strings.HasPrefix(pos, "VER:IMP") {
+				flekt := posTagLast3(pos)
+				if atStartOrAllLower {
+					// Separable: no bare IMP; may add 1:SIN:PRÄ:flekt:NEB
+					// Java: !readings.contains("VER:1:SIN:PRÄ") always true for List<AnalyzedToken>
+					if flekt == "SFT" || !wordMatchesIInfix(wordOrig) {
+						readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:1:SIN:PRÄ:"+flekt+":NEB")))
 					}
-					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, nebPos)))
-					// durch/um: also non-separable PA2 readings (Java dual separable/non-sep)
-					if (fpLow == "durch" || fpLow == "um") && strings.HasPrefix(pos, "VER:3:SIN:PRÄ") {
-						if strings.HasPrefix(pos, "VER:3:SIN:PRÄ") {
-							// Java: VER:3:SIN:PRÄ → VER:PA2:SFT (inner if always true when outer matches)
-							readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:PA2:SFT")))
-						} else {
-							readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:PA2:NON")))
-						}
-						readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "PA2:PRD:GRU:VER")))
-					}
-					continue
 				}
+				continue
+			}
+			if (strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3")) && atStartOrAllLower {
+				nebPos := pos
+				if !strings.HasSuffix(nebPos, ":NEB") {
+					nebPos = nebPos + ":NEB"
+				}
+				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, nebPos)))
+				// durch/um dual PA2 (Java inner if always VER:PA2:SFT when VER:3:SIN:PRÄ)
+				if (fpLow == "durch" || fpLow == "um") && strings.HasPrefix(pos, "VER:3:SIN:PRÄ") {
+					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:PA2:SFT")))
+					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "PA2:PRD:GRU:VER")))
+				}
+				continue
 			}
 			if !strings.HasPrefix(pos, "VER:IMP") {
+				// non-finite or not at start/lower: plain tag without forced :NEB
 				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, pos)))
 			}
-		} else {
+		} else if isExactNonSeparablePrefix(fpLow) && atStartOrAllLower {
 			// non-separable prefix verb forms
-			readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, pos)))
+			if strings.HasPrefix(pos, "VER:IMP") {
+				flekt := posTagLast3(pos)
+				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, pos)))
+				if strings.HasPrefix(pos, "VER:IMP:SIN") {
+					// Java: !readings.contains("VER:IMP:SIN:NON") — always true via List.contains(String)
+					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:1:SIN:PRÄ:"+flekt)))
+				}
+			} else {
+				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, pos)))
+			}
+		}
+	}
+	// PA / VER:PA branch (Java separate from VER loop conditions above — tags lastPart again)
+	if wordOrig == strings.ToLower(wordOrig) || indexOfToken(sentenceTokens, wordOrig) == 0 {
+		fpLow := strings.ToLower(firstPart)
+		for _, taggedWord := range t.TagWordExact(lastPart) {
+			pos := taggedWord.PosTag
+			if !(strings.HasPrefix(pos, "PA") || strings.HasPrefix(pos, "VER:PA")) {
+				continue
+			}
+			if firstPart == "un" && strings.HasPrefix(pos, "VER:PA") {
+				continue
+			}
+			lemmaBase := taggedWord.Lemma
+			if lemmaBase == "" {
+				lemmaBase = lastPart
+			}
+			// only when we already entered the prefix-verbs branch (firstPart non-empty)
+			if fpLow != "" {
+				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(strings.ToLower(firstPart)+lemmaBase, pos)))
+			}
 		}
 	}
 	// PA2 derivation for non-separable prefixes (erstickt, erstickter, …)
@@ -271,4 +308,16 @@ func javaUTF16Prefix(s string, n int) string {
 		n = len(u)
 	}
 	return string(utf16.Decode(u[:n]))
+}
+
+// javaUTF16Suffix ports Java substring(n): drop first n UTF-16 units.
+func javaUTF16Suffix(s string, n int) string {
+	u := utf16.Encode([]rune(s))
+	if n <= 0 {
+		return s
+	}
+	if n >= len(u) {
+		return ""
+	}
+	return string(utf16.Decode(u[n:]))
 }

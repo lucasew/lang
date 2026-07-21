@@ -86,17 +86,29 @@ var domainTLDs = map[string]struct{}{
 	"gov": {},
 }
 
-// separablePrefixSet for exact first-part membership (Java prfxs.contains).
+// separablePrefixSet for exact first-part membership (Java equalsAny(prefixesSeparableVerbs)).
 var separablePrefixSet map[string]struct{}
+
+// nonSeparablePrefixSet for exact first-part membership (Java equalsAny(prefixesNonSeparableVerbs)).
+var nonSeparablePrefixSet map[string]struct{}
 
 func init() {
 	separablePrefixSet = make(map[string]struct{}, len(prefixesSeparableVerbsJava))
 	for _, p := range prefixesSeparableVerbsJava {
 		separablePrefixSet[p] = struct{}{}
 	}
+	nonSeparablePrefixSet = make(map[string]struct{}, len(prefixesNonSeparableVerbs))
+	for _, p := range prefixesNonSeparableVerbs {
+		nonSeparablePrefixSet[p] = struct{}{}
+	}
 }
 
 func isExactSeparablePrefix(p string) bool {
 	_, ok := separablePrefixSet[p]
+	return ok
+}
+
+func isExactNonSeparablePrefix(p string) bool {
+	_, ok := nonSeparablePrefixSet[p]
 	return ok
 }

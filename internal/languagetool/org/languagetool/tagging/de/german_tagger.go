@@ -144,7 +144,7 @@ func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, id
 
 	// known word path done; unknown → expansions + sentence-context forms
 	if len(readings) == 0 {
-		readings = t.tagFromExpansions(word, w, lower)
+		readings = t.tagFromExpansions(word, w, lower, sentenceTokens, idxPos)
 	}
 	if len(readings) == 0 {
 		if m := t.tagMitarbeitenden(word); len(m) > 0 {
@@ -228,66 +228,40 @@ func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, id
 	return readings
 }
 
+// nounTagExpansionExceptions ports GermanTagger.nounTagExpansionExceptions
+// (e.g. do not add SUB tags for "Wegstrecken" from weg_strecken).
+var nounTagExpansionExceptions = map[string]struct{}{
+	"Wegstrecken": {},
+}
+
 // tagFromExpansions ports the expansionInfos branch of GermanTagger for unknown words:
-// prefix verbs, nominalized verbs, adj /A /P, *erweise.
-func (t *GermanTagger) tagFromExpansions(surface, w, lower string) []*languagetool.AnalyzedToken {
+// prefix verbs (verbInfos), nominalized verbs, adj /A /P, *erweise.
+// Control flow twins Java if/else chain: verbInfo hit does not fall through to nom/adj.
+func (t *GermanTagger) tagFromExpansions(surface, w, lower string, sentenceTokens []string, idxPos int) []*languagetool.AnalyzedToken {
 	var readings []*languagetool.AnalyzedToken
 	if t.VerbExpansion != nil {
 		// Java maps are case-sensitive: verbInfos keys are lowercase; nominalized are Title case.
-		// 1) exact surface verbInfos (lowercase infinitives / zu-forms)
 		if vi, ok := t.VerbExpansion.LookupVerb(w); ok {
-			if vi.Infix == "zu" {
-				lemma := vi.Prefix + vi.VerbBaseform
-				readings = append(readings, toToken(surface, tagging.NewTaggedWord(lemma, "VER:EIZ:NON")))
-				return readings
-			}
-			// Java: only when prefix starts lowercase
+			// Java: if (verbInfo != null) { if startsWithLowercase(prefix) { … } }
+			// no fall-through to nom/adj when verbInfo is present
 			if tools.StartsWithLowercase(vi.Prefix) {
-				pref := vi.Prefix + vi.Infix
-				rest := ""
-				if strings.HasPrefix(w, pref) {
-					rest = w[len(pref):]
-				} else if strings.HasPrefix(lower, pref) {
-					rest = lower[len(pref):]
-				}
-				if rest != "" && !isNotAVerb(w) {
-					sep := startsWithAnyPrefix(strings.ToLower(vi.Prefix), prefixesSeparableVerbsLongestList)
-					for _, tw := range t.TagWordExact(rest) {
-						if tw.PosTag == "" {
-							continue
-						}
-						if !(strings.HasPrefix(tw.PosTag, "VER:") || strings.HasPrefix(tw.PosTag, "PA1:") || strings.HasPrefix(tw.PosTag, "PA2:")) {
-							continue
-						}
-						if strings.HasPrefix(tw.PosTag, "VER:MOD") || strings.HasPrefix(tw.PosTag, "VER:AUX") {
-							continue
-						}
-						lemma := vi.Prefix + tw.Lemma
-						if tw.Lemma == "" {
-							lemma = vi.Prefix + vi.VerbBaseform
-						}
-						pos := tw.PosTag
-						// separable finite → :NEB
-						if sep && (strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3")) {
-							pos = pos + ":NEB"
-						}
-						if sep && strings.HasPrefix(pos, "VER:IMP") {
-							continue // separable: no bare IMP on fused form
-						}
-						readings = append(readings, toToken(surface, tagging.NewTaggedWord(lemma, pos)))
-					}
+				readings = t.tagVerbInfoExpansion(surface, w, vi, sentenceTokens, idxPos)
+			}
+			return readings
+		}
+		// 2) nominalized / genitive fixed tags (exact surface, e.g. Herumgeben)
+		// Java: addNounTags = !nounTagExpansionExceptions.contains(word)
+		if _, ban := nounTagExpansionExceptions[w]; !ban {
+			for _, tw := range t.VerbExpansion.Tag(w) {
+				// Skip fixed VER:EIZ from byForm when verbInfos already handled above;
+				// Tag still serves nom/gen. zu-forms are only in VerbInfos keys, so Lookup hit first.
+				if strings.HasPrefix(tw.PosTag, "SUB:") {
+					readings = append(readings, toToken(surface, tw))
 				}
 			}
 			if len(readings) > 0 {
 				return readings
 			}
-		}
-		// 2) nominalized / genitive fixed tags (exact surface, e.g. Herumgeben)
-		for _, tw := range t.VerbExpansion.Tag(w) {
-			readings = append(readings, toToken(surface, tw))
-		}
-		if len(readings) > 0 {
-			return readings
 		}
 	}
 	if t.AdjExpansion != nil {
@@ -309,6 +283,140 @@ func (t *GermanTagger) tagFromExpansions(surface, w, lower string) []*languageto
 		}
 	}
 	return readings
+}
+
+// tagVerbInfoExpansion ports GermanTagger verbInfo branch (lines ~351–391):
+// strip prefix+infix, tag base, separable :NEB / IMP→1:SIN:PRÄ:NEB, non-sep mutual IMP,
+// zu → single VER:EIZ:SFT|NON.
+func (t *GermanTagger) tagVerbInfoExpansion(
+	surface, word string,
+	vi PrefixInfixVerb,
+	sentenceTokens []string,
+	idxPos int,
+) []*languagetool.AnalyzedToken {
+	// Java: noPrefixForm = word.substring(prefix.length() + infix.length()) — UTF-16 units
+	cut := tagging.UTF16Len(vi.Prefix) + tagging.UTF16Len(vi.Infix)
+	if cut <= 0 || cut >= tagging.UTF16Len(word) {
+		return nil
+	}
+	noPrefixForm := javaUTF16DropPrefix(word, cut)
+	if noPrefixForm == "" {
+		return nil
+	}
+	// Java: !StringUtils.containsAny(word, notAVerb) — case-sensitive substrings
+	blocked := containsNotAVerbCS(word)
+	sep := startsWithAnyPrefix(vi.Prefix, prefixesSeparableVerbsLongestList)
+	nonSep := startsWithAnyPrefix(vi.Prefix, prefixesNonSeparableVerbs)
+	// Java: indexOf(word)==0 || first-char-lower rest unchanged
+	atStartOrFirstLower := indexOfToken(sentenceTokens, word) == 0 || isFirstCharLowerRestUnchanged(word)
+
+	var readings []*languagetool.AnalyzedToken
+	isSFT := false
+	// Java: tag(noPrefixForm) → getWordTagger().tag
+	for _, tag := range t.TagWordExact(noPrefixForm) {
+		if tag.PosTag == "" {
+			continue
+		}
+		if !(strings.HasPrefix(tag.PosTag, "VER:") || strings.HasPrefix(tag.PosTag, "PA1:") || strings.HasPrefix(tag.PosTag, "PA2:")) {
+			continue
+		}
+		if strings.HasPrefix(tag.PosTag, "VER:MOD") || strings.HasPrefix(tag.PosTag, "VER:AUX") {
+			continue
+		}
+		flektion := posTagLast3(tag.PosTag)
+		lemma := vi.Prefix + tag.Lemma
+		if tag.Lemma == "" {
+			lemma = vi.Prefix + vi.VerbBaseform
+		}
+		if sep && !blocked {
+			if (strings.HasPrefix(tag.PosTag, "VER:1") || strings.HasPrefix(tag.PosTag, "VER:2") || strings.HasPrefix(tag.PosTag, "VER:3")) &&
+				atStartOrFirstLower {
+				// finite separable → :NEB
+				readings = append(readings, toToken(surface, tagging.NewTaggedWord(lemma, tag.PosTag+":NEB")))
+			} else if !strings.HasPrefix(tag.PosTag, "VER:IMP") {
+				readings = append(readings, toToken(surface, tagging.NewTaggedWord(lemma, tag.PosTag)))
+			} else if strings.HasPrefix(tag.PosTag, "VER:IMP:SIN") {
+				// Java readings.contains("VER:1:SIN:PRÄ") on List<AnalyzedToken> is always false
+				if flektion == "SFT" || !wordMatchesIInfix(word) {
+					readings = append(readings, toToken(surface, tagging.NewTaggedWord(lemma, "VER:1:SIN:PRÄ:"+flektion+":NEB")))
+				}
+			}
+		} else if nonSep && !blocked {
+			// mutual IMP:SIN ↔ 1:SIN:PRÄ (Java List.contains(String) never hits)
+			if strings.HasPrefix(tag.PosTag, "VER:IMP:SIN") || strings.HasPrefix(tag.PosTag, "VER:1:SIN:PRÄ") {
+				if flektion == "SFT" || !wordMatchesIInfix(word) {
+					// Java bug-for-bug: "VER:IMP:SIN" + flektion → "VER:IMP:SINSFT" (missing ':')
+					readings = append(readings,
+						toToken(surface, tagging.NewTaggedWord(lemma, "VER:IMP:SIN"+flektion)),
+						toToken(surface, tagging.NewTaggedWord(lemma, "VER:1:SIN:PRÄ:"+flektion)),
+					)
+				}
+			} else {
+				readings = append(readings, toToken(surface, tagging.NewTaggedWord(lemma, tag.PosTag)))
+			}
+		}
+		if strings.Contains(tag.PosTag, ":SFT") {
+			isSFT = true
+		}
+	}
+	if vi.Infix == "zu" {
+		// Java: readings.clear(); single VER:EIZ:SFT|NON
+		eiz := "VER:EIZ:NON"
+		if isSFT {
+			eiz = "VER:EIZ:SFT"
+		}
+		return []*languagetool.AnalyzedToken{
+			toToken(surface, tagging.NewTaggedWord(vi.Prefix+vi.VerbBaseform, eiz)),
+		}
+	}
+	return readings
+}
+
+// posTagLast3 ports tag.getPosTag().substring(length-3).
+func posTagLast3(pos string) string {
+	if tagging.UTF16Len(pos) < 3 {
+		return pos
+	}
+	// POS tags are ASCII; byte slice equals UTF-16 for last 3.
+	if len(pos) >= 3 {
+		return pos[len(pos)-3:]
+	}
+	return pos
+}
+
+// wordMatchesIInfix ports word.matches(".*i.+") (Java String.matches full match).
+func wordMatchesIInfix(word string) bool {
+	// full match of .*i.+ ⇒ contains 'i' with at least one char after
+	for i := 0; i < len(word); i++ {
+		if word[i] == 'i' && i+1 < len(word) {
+			return true
+		}
+	}
+	return false
+}
+
+// containsNotAVerbCS ports StringUtils.containsAny(word, notAVerb) — case-sensitive.
+func containsNotAVerbCS(word string) bool {
+	for n := range notAVerb {
+		if strings.Contains(word, n) {
+			return true
+		}
+	}
+	return false
+}
+
+// javaUTF16DropPrefix drops the first n UTF-16 code units (Java substring(n)).
+func javaUTF16DropPrefix(s string, n int) string {
+	if n <= 0 {
+		return s
+	}
+	// encode via shared helper: full len then drop
+	full := tagging.UTF16Len(s)
+	if n >= full {
+		return ""
+	}
+	// reuse prefix helper: take suffix by encoding
+	return javaUTF16Suffix(s, n)
 }
 
 // isWeiseException ports GermanTagger.isWeiseException: ends with "erweise" and
