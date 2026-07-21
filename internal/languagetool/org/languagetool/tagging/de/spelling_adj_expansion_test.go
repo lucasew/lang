@@ -66,3 +66,30 @@ func TestGermanTagger_AdjExpansion(t *testing.T) {
 	require.NotNil(t, rd.GetReadings()[0].GetPOSTag())
 	require.True(t, strings.HasPrefix(*rd.GetReadings()[0].GetPOSTag(), "ADJ:"))
 }
+
+// Twin: fillAdjInfos put replaces — second line for same fullform wins (no append).
+func TestSpellingAdjExpansion_PutReplaces(t *testing.T) {
+	ex, err := LoadSpellingAdjExpansion(strings.NewReader("foo/A\nfoo/P\n"))
+	require.NoError(t, err)
+	tags := ex.Tag("foo")
+	require.NotEmpty(t, tags)
+	// last wins: /P → PA2
+	require.True(t, strings.HasPrefix(tags[0].PosTag, "PA2:"), tags[0].PosTag)
+	// exact count of tags for base form = len(TagsForAdj) after ToPA2, not double
+	require.Equal(t, len(ToPA2(TagsForAdj)), len(tags))
+}
+
+// Twin: er/A and ste/A skipped
+func TestSpellingAdjExpansion_SkipComparative(t *testing.T) {
+	ex, err := LoadSpellingAdjExpansion(strings.NewReader("stärker/A\nschönste/A\n"))
+	require.NoError(t, err)
+	require.Equal(t, 0, ex.Size())
+}
+
+// Twin: base = replaceFirst("/.*","")
+func TestSpellingAdjExpansion_StripFromFirstSlash(t *testing.T) {
+	ex, err := LoadSpellingAdjExpansion(strings.NewReader("bar/A\n"))
+	require.NoError(t, err)
+	require.NotEmpty(t, ex.Tag("bar"))
+	require.Equal(t, "bar", ex.Tag("bar")[0].Lemma)
+}

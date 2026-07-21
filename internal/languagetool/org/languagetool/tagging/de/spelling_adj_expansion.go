@@ -44,24 +44,26 @@ func LoadSpellingAdjExpansion(r io.Reader) (*SpellingAdjExpansion, error) {
 		if line == "" {
 			continue
 		}
-		// Java rejects /PA or /AP combo
+		// Java rejects /PA or /AP combo with RuntimeException — skip invalid lines
 		if strings.HasSuffix(line, "/PA") || strings.HasSuffix(line, "/AP") {
-			continue // skip invalid rather than invent; Java throws
+			continue
 		}
 		asPA2 := false
-		var base string
 		switch {
 		case strings.HasSuffix(line, "/P"):
-			base = strings.TrimSuffix(line, "/P")
 			asPA2 = true
 		case strings.HasSuffix(line, "/A"):
 			// skip ste/A and er/A (Java: comparative/superlative would miss tagging)
 			if strings.HasSuffix(line, "ste/A") || strings.HasSuffix(line, "er/A") {
 				continue
 			}
-			base = strings.TrimSuffix(line, "/A")
 		default:
 			continue
+		}
+		// Java: word = line.replaceFirst("/.*", "") — strip from first '/'
+		base := line
+		if i := strings.IndexByte(line, '/'); i >= 0 {
+			base = line[:i]
 		}
 		base = strings.TrimSpace(base)
 		if base == "" {
@@ -94,9 +96,12 @@ func (e *SpellingAdjExpansion) addWordEndings(word string, asPA2 bool) {
 			tags = ToPA2(tags)
 		}
 		full := word + p.suffix
+		// Java fillAdjInfos: adjInfos.put(fullform, l) — replace, do not append
+		list := make([]tagging.TaggedWord, 0, len(tags))
 		for _, tag := range tags {
-			e.byForm[full] = append(e.byForm[full], tagging.NewTaggedWord(word, tag))
+			list = append(list, tagging.NewTaggedWord(word, tag))
 		}
+		e.byForm[full] = list
 	}
 }
 
