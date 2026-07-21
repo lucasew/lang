@@ -27,3 +27,19 @@ func TestMorfologikSpellerAndRule(t *testing.T) {
 	require.False(t, multi.IsMisspelled("cat"))
 	require.True(t, multi.IsMisspelled("zzz"))
 }
+
+// Late AddWord after ensureWordsAsDictionary FSA snapshot must still accept
+// (user/test inject; Java user multi-speller is separate component).
+func TestMorfologikSpeller_LateAddWordAfterEnsureFSA(t *testing.T) {
+	sp := NewMorfologikSpeller("/en/hunspell/en_US.dict", 1)
+	sp.AddWord("hello")
+	sp.ensureWordsAsDictionary()
+	require.NotNil(t, sp.binarySpeller, "FSA attached")
+	require.False(t, sp.IsMisspelled("hello"))
+	// late inject after FSA freeze
+	sp.AddWord("couldn")
+	sp.AddWord("You")
+	require.False(t, sp.IsMisspelled("couldn"), "late AddWord must accept")
+	require.False(t, sp.IsMisspelled("You"))
+	require.True(t, sp.IsMisspelled("xyzzynotaword"))
+}

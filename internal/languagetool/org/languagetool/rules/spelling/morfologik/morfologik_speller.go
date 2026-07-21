@@ -191,20 +191,6 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 	if word == "LanguageTool" || word == "LanguageTooler" {
 		return false
 	}
-	// When binary Speller is attached, use sticky Speller.isMisspelled (Java twin).
-	if s.binarySpeller != nil {
-		if d := s.binarySpeller.Dict; d != nil {
-			s.syncDictSpellerMeta(d)
-			s.binarySpeller.SyncFromDict()
-		}
-		return s.binarySpeller.IsMisspelled(word)
-	}
-	// Dictionary-only path (no Speller yet): cold Dictionary.IsMisspelled.
-	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
-		s.syncDictSpellerMeta(d)
-		return d.IsMisspelled(word)
-	}
-	// Map-inject / no-FSA path: same gates with Words / InDictionaryFn.
 	wordToCheck := s.applyInputConversion(word)
 	// Java: isAlphabetic = word.length() != 1 || isAlphabetic(charAt(0))  (UTF-16 length/charAt)
 	u := utf16.Encode([]rune(wordToCheck))
@@ -221,21 +207,68 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 	if s.IgnoreAllUppercase && isAlpha && isAllUppercaseWord(wordToCheck) {
 		return false
 	}
-	if s.inDictionary(wordToCheck) {
+
+	// Explicit Words map (AddWord / plain-text load) is checked before binary Speller.
+	// ensureWordsAsDictionary snapshots Words into an FSA once; later AddWord must still
+	// accept (user/test inject). Java keeps user dict as a separate multi-speller component.
+	if s.mapAccepts(wordToCheck) {
+		return false
+	}
+
+	// When binary Speller is attached, use sticky Speller.isMisspelled (Java twin).
+	if s.binarySpeller != nil {
+		if d := s.binarySpeller.Dict; d != nil {
+			s.syncDictSpellerMeta(d)
+			s.binarySpeller.SyncFromDict()
+		}
+		return s.binarySpeller.IsMisspelled(word)
+	}
+	// Dictionary-only path (no Speller yet): cold Dictionary.IsMisspelled.
+	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
+		s.syncDictSpellerMeta(d)
+		return d.IsMisspelled(word)
+	}
+	// Map-inject / no-FSA path: InDictionaryFn (if any) + already-checked Words.
+	if s.InDictionaryFn != nil && s.InDictionaryFn(wordToCheck) {
 		return false
 	}
 	if s.ConvertCase && !isMixedCaseWord(wordToCheck) {
 		low := s.toLower(wordToCheck)
-		if s.inDictionary(low) {
+		if s.InDictionaryFn != nil && s.InDictionaryFn(low) {
 			return false
 		}
 		if isAllUppercaseWord(wordToCheck) {
-			if iu := s.initialUppercase(wordToCheck); iu != wordToCheck && s.inDictionary(iu) {
+			if iu := s.initialUppercase(wordToCheck); iu != wordToCheck && s.InDictionaryFn != nil && s.InDictionaryFn(iu) {
 				return false
 			}
 		}
 	}
+	// No dict membership → misspelled when HasDictionary (caller may fail-closed empty).
 	return true
+}
+
+// mapAccepts reports membership in the explicit Words map (with convertCase probes).
+func (s *MorfologikSpeller) mapAccepts(word string) bool {
+	if s == nil || word == "" || len(s.Words) == 0 {
+		return false
+	}
+	if _, ok := s.Words[word]; ok {
+		return true
+	}
+	if !s.ConvertCase || isMixedCaseWord(word) {
+		return false
+	}
+	if _, ok := s.Words[s.toLower(word)]; ok {
+		return true
+	}
+	if isAllUppercaseWord(word) {
+		if iu := s.initialUppercase(word); iu != word {
+			if _, ok := s.Words[iu]; ok {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // toLower ports word.toLowerCase(dictionaryMetadata.getLocale()).
