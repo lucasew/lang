@@ -2,6 +2,7 @@ package morfologik
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -591,12 +592,25 @@ func (d *Dictionary) GetFrequency(word string) int {
 	return int(ba[len(ba)-1]) - firstRangeCode
 }
 
-// NewDictionaryFromWords builds a speller Dictionary from a word list (Java
-// MorfologikMultiSpeller runtime FSABuilder.build(lines) + Dictionary.read metadata).
+// NewDictionaryFromWords builds a speller Dictionary from a word list.
+// Ports Java MorfologikMultiSpeller.getDictionary:
+//
+//	FSABuilder.build(lines) → CFSA2Serializer.serialize → Dictionary.read(fsa, metadata)
+//
 // info may be nil (defaults); typically load sibling .info flags for gates.
 func NewDictionaryFromWords(words []string, info map[string]string) *Dictionary {
-	fsa := BuildFSAFromWords(words)
-	if fsa == nil {
+	built := BuildFSAFromWords(words)
+	if built == nil {
+		return nil
+	}
+	// Java always CFSA2-serializes the runtime FSA then Dictionary.read.
+	raw, err := SerializeFSA(built)
+	if err != nil {
+		// Fail closed: do not fall back to ConstantArc for production MultiSpeller path.
+		return nil
+	}
+	fsa, err := ReadFSA(bytes.NewReader(raw))
+	if err != nil || fsa == nil {
 		return nil
 	}
 	d := &Dictionary{
