@@ -62,6 +62,8 @@ type MorfologikSpellerRule struct {
 	// When set (e.g. BR/GA "-"), Match splits the clean word on pattern matches and
 	// runs getRuleMatches on each segment (Java match loop).
 	TokenizingPattern *regexp.Regexp
+	// UserConfig ports MorfologikSpellerRule.userConfig (suggestionsEnabled / maxSpellingSuggestions).
+	UserConfig *languagetool.UserConfig
 }
 
 func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *MorfologikSpeller) *MorfologikSpellerRule {
@@ -153,6 +155,50 @@ func (r *MorfologikSpellerRule) ApplyUserConfig(acceptedWords []string, premiumU
 	s2 := OpenMultiSpellerFromClasspathWithUser(binaryClasspath, plainTextRels, languageVariantRel, 2, prepareLine, userWords)
 	s3 := OpenMultiSpellerFromClasspathWithUser(binaryClasspath, plainTextRels, languageVariantRel, 3, prepareLine, userWords)
 	r.SetMultiSpellers(s1, s2, s3)
+}
+
+// SetUserConfig stores UserConfig for getRuleMatches suggestion gates (Java field).
+func (r *MorfologikSpellerRule) SetUserConfig(uc *languagetool.UserConfig) {
+	if r != nil {
+		r.UserConfig = uc
+	}
+}
+
+// GetSpellingSuggestions ports MorfologikSpellerRule.getSpellingSuggestions (since 5.6):
+// wrap word in a one-token sentence, Match, return first match's replacements.
+func (r *MorfologikSpellerRule) GetSpellingSuggestions(w string) []string {
+	if r == nil || w == "" {
+		return nil
+	}
+	at := languagetool.NewAnalyzedToken(w, nil, nil)
+	atr := languagetool.NewAnalyzedTokenReadingsAt(at, 0)
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{atr})
+	ms, err := r.Match(sent)
+	if err != nil || len(ms) == 0 || ms[0] == nil {
+		return nil
+	}
+	return ms[0].GetSuggestedReplacements()
+}
+
+// suggestionsEnabled ports userConfig == null || userConfig.isSuggestionsEnabled().
+func (r *MorfologikSpellerRule) suggestionsEnabled() bool {
+	if r == nil || r.UserConfig == nil {
+		return true
+	}
+	return r.UserConfig.IsSuggestionsEnabled()
+}
+
+// allowMoreSpellingSuggestions ports:
+// userConfig == null || maxSpellingSuggestions == 0 || ruleMatchesSoFar.size() <= max.
+func (r *MorfologikSpellerRule) allowMoreSpellingSuggestions(ruleMatchesSoFar int) bool {
+	if r == nil || r.UserConfig == nil {
+		return true
+	}
+	max := r.UserConfig.GetMaxSpellingSuggestions()
+	if max == 0 {
+		return true
+	}
+	return ruleMatchesSoFar <= max
 }
 
 // Match flags misspelled tokens.
@@ -320,8 +366,8 @@ func (r *MorfologikSpellerRule) appendGetRuleMatches(
 	if r == nil || word == "" || out == nil {
 		return
 	}
-	// Java getRuleMatches: if (!isMisspelled && !isProhibited) return
-	if !r.isMisspelledWord(word) && !r.IsProhibited(word) {
+	// Java getRuleMatches: if (!isMisspelled(speller1, word) && !isProhibited(word)) return
+	if !r.IsProhibited(word) && !r.segmentIsMisspelled(word) {
 		return
 	}
 	if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(word) {
@@ -334,8 +380,10 @@ func (r *MorfologikSpellerRule) appendGetRuleMatches(
 
 	// Wrong-split uses neighboring sentence tokens; only meaningful for full-token word.
 	// Java still runs it on segments; neighbor checks use token index (same for all segs).
+	sugsOK := r.suggestionsEnabled()
 	ruleMatch, beforeStr, early := r.tryWrongSplitPrev(sentence, out, idx, tokens, word, startPos)
 	if early && ruleMatch != nil {
+		// Java may already have wrong-split sugs on ruleMatch; no further dict sugs when disabled.
 		*out = append(*out, ruleMatch)
 		return
 	}
@@ -347,21 +395,33 @@ func (r *MorfologikSpellerRule) appendGetRuleMatches(
 			return
 		}
 		if ruleMatch != nil {
-			sug := r.collectSuggestions(word)
-			for _, s := range sug {
-				joined := strings.TrimSpace(beforeStr + s)
-				if afterStr != "" {
-					joined = strings.TrimSpace(beforeStr + s + afterStr)
+			if sugsOK {
+				if r.allowMoreSpellingSuggestions(len(*out)) {
+					sug := r.collectSuggestions(word)
+					for _, s := range sug {
+						joined := strings.TrimSpace(beforeStr + s)
+						if afterStr != "" {
+							joined = strings.TrimSpace(beforeStr + s + afterStr)
+						}
+						addSug(ruleMatch, joined)
+					}
+				} else {
+					ruleMatch.SetSuggestedReplacement(tooManyErrorsMsg)
 				}
-				addSug(ruleMatch, joined)
 			}
 			*out = append(*out, ruleMatch)
 			return
 		}
 	} else {
-		sug := r.collectSuggestions(word)
-		for _, s := range sug {
-			addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
+		if sugsOK {
+			if r.allowMoreSpellingSuggestions(len(*out)) {
+				sug := r.collectSuggestions(word)
+				for _, s := range sug {
+					addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
+				}
+			} else {
+				ruleMatch.SetSuggestedReplacement(tooManyErrorsMsg)
+			}
 		}
 		*out = append(*out, ruleMatch)
 		return
@@ -376,21 +436,36 @@ func (r *MorfologikSpellerRule) appendGetRuleMatches(
 	m := rules.NewRuleMatch(r, sentence, startPos, toPos, "Possible spelling mistake found")
 	m.SetType(rules.RuleMatchTypeUnknownWord)
 
+	// Java: if (userConfig != null && !userConfig.isSuggestionsEnabled()) { add; return; }
+	if !sugsOK {
+		*out = append(*out, m)
+		return
+	}
+
 	cleanWord, beforePrefix, preventFurther, spaceInsert := r.applyNumbersBulletsPrefix(word)
 	if spaceInsert != "" {
 		addSug(m, spaceInsert)
 	}
-	if !preventFurther {
-		sug := r.collectSuggestions(cleanWord)
-		for _, s := range sug {
-			joined := strings.TrimSpace(beforePrefix + s)
-			if joined != "" {
-				addSug(m, joined)
+	// Java: maxSpellingSuggestions gate around appendLazySuggestions
+	if r.allowMoreSpellingSuggestions(len(*out)) {
+		if !preventFurther {
+			sug := r.collectSuggestions(cleanWord)
+			for _, s := range sug {
+				joined := strings.TrimSpace(beforePrefix + s)
+				if joined != "" {
+					addSug(m, joined)
+				}
 			}
 		}
+	} else {
+		// messages.getString("too_many_errors")
+		m.SetSuggestedReplacement(tooManyErrorsMsg)
 	}
 	*out = append(*out, m)
 }
+
+// tooManyErrorsMsg ports MessagesBundle too_many_errors (en default).
+const tooManyErrorsMsg = "(suggestion limit reached)"
 
 // spellCheckWord ports match's word = token.getAnalyzedToken(0).getToken() intent:
 // surface without ignored characters so the speller does not choke (soft hyphen).
@@ -580,6 +655,23 @@ func (r *MorfologikSpellerRule) SetCompoundRegex(pattern string) {
 		return
 	}
 	r.CompoundRegex = regexp.MustCompile(pattern)
+}
+
+// segmentIsMisspelled is getRuleMatches' isMisspelled check for a word/segment.
+// Prefer Multi/Speller compound path; when no dict is loaded, fall back to
+// AcceptWord invert so tests/hooks that set SpellingCheckRule.IsMisspelled still work
+// (without recursing through the default IsMisspelled → isMisspelledWord wrapper).
+func (r *MorfologikSpellerRule) segmentIsMisspelled(word string) bool {
+	if r == nil || word == "" {
+		return false
+	}
+	hasMulti := r.Multi != nil && len(r.Multi.Spellers) > 0
+	hasDict := r.Speller != nil && r.Speller.HasDictionary()
+	if hasMulti || hasDict {
+		return r.isMisspelledWord(word)
+	}
+	// No dict: AcceptWord encodes IsMisspelled hook + ignore/prohibit
+	return !r.AcceptWord(word)
 }
 
 // isMisspelledWord ports isMisspelled(speller, word) including checkCompound.

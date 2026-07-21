@@ -56,6 +56,8 @@ func NewMorfologikPolishSpellerRule() *MorfologikPolishSpellerRule {
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikPolishSpellerRuleID, "pl", PolishSpellerDict, nil),
 	}
+	// Java tokenizingPattern(): (?:[Qq]uasi|[Nn]iby)- — base Match splits segments.
+	r.TokenizingPattern = polishTokenizingPattern
 	// Java: bledem → błędem (wrong example omits trailing period, same as upstream)
 	r.AddExamplePair(
 		rules.Wrong("To jest zdanie z <marker>bledem</marker>"),
