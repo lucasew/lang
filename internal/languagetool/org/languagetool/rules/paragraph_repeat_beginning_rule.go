@@ -3,6 +3,7 @@ package rules
 import (
 	"regexp"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -103,7 +104,8 @@ func (r *ParagraphRepeatBeginningRule) numCharEqualBeginning(lastTokens, nextTok
 		lastToken = lastTokens[nToken].GetToken()
 		nextToken = nextTokens[nToken].GetToken()
 	}
-	if lastToken == "" || !unicode.IsLetter([]rune(lastToken)[0]) {
+	// Java: Character.isLetter(lastToken.charAt(0)) — first UTF-16 unit
+	if lastToken == "" || !javaIsLetterCharAt0(lastToken) {
 		return 0
 	}
 	if len(lastTokens) > nToken+1 && r.isArticle(lastTokens[nToken]) && lastToken == nextToken {
@@ -114,7 +116,7 @@ func (r *ParagraphRepeatBeginningRule) numCharEqualBeginning(lastTokens, nextTok
 		lastToken = lastTokens[nToken].GetToken()
 		nextToken = nextTokens[nToken].GetToken()
 	}
-	if lastToken == "" || !unicode.IsLetter([]rune(lastToken)[0]) {
+	if lastToken == "" || !javaIsLetterCharAt0(lastToken) {
 		return 0
 	}
 	if lastToken == nextToken {
@@ -164,4 +166,13 @@ func (r *ParagraphRepeatBeginningRule) MatchList(sentences []*languagetool.Analy
 		lastPos = nextPos
 	}
 	return ruleMatches
+}
+
+// javaIsLetterCharAt0 ports Character.isLetter(str.charAt(0)).
+func javaIsLetterCharAt0(s string) bool {
+	u := utf16.Encode([]rune(s))
+	if len(u) == 0 {
+		return false
+	}
+	return unicode.IsLetter(rune(u[0]))
 }

@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
@@ -158,9 +159,9 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 			preventError = true
 		}
 
-		if len(checkToken) > 0 {
-			// Java charAt(0) = first UTF-16 code unit; first rune is fine for letters.
-			firstChar := []rune(checkToken)[0]
+		if javaStringLenUpper(checkToken) > 0 {
+			// Java Character.isLowerCase(checkToken.charAt(0)) — first UTF-16 unit
+			firstChar := javaFirstUTF16Rune(checkToken)
 			capitalized := tools.UppercaseFirstChar(checkToken)
 			if capitalized != checkToken && !preventError && unicode.IsLower(firstChar) &&
 				!onlyLowercaseStart.MatchString(checkToken) &&
@@ -229,4 +230,16 @@ func (r *UppercaseSentenceStartRule) isQuoteStart(word string) bool {
 		}
 	}
 	return false
+}
+
+func javaStringLenUpper(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
+func javaFirstUTF16Rune(s string) rune {
+	u := utf16.Encode([]rune(s))
+	if len(u) == 0 {
+		return 0
+	}
+	return rune(u[0])
 }

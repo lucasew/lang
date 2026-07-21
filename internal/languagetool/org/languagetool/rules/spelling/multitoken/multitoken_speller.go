@@ -283,23 +283,23 @@ func (m *MultitokenSpeller) discardRunOnWords(underlinedError string) bool {
 	if parts[0] == "" || parts[1] == "" {
 		return true
 	}
-	// sugg1a + sugg1b: last char of first token moved to second (Java substring UTF-16)
-	r0 := []rune(parts[0])
-	if len(r0) == 0 {
+	// sugg1a + sugg1b: last UTF-16 unit of first token moved to second (Java substring)
+	u0 := utf16.Encode([]rune(parts[0]))
+	if len(u0) == 0 {
 		return true
 	}
-	sugg1a := string(r0[:len(r0)-1])
-	sugg1b := string(r0[len(r0)-1:]) + parts[1]
+	sugg1a := string(utf16.Decode(u0[:len(u0)-1]))
+	sugg1b := string(utf16.Decode(u0[len(u0)-1:])) + parts[1]
 	if !m.IsMisspelledToken(sugg1a) && !m.IsMisspelledToken(sugg1b) {
 		return true
 	}
-	// sugg2a + sugg2b: first char of second moved to first
-	r1 := []rune(parts[1])
-	if len(r1) == 0 {
+	// sugg2a + sugg2b: first UTF-16 unit of second moved to first (Java charAt(0)/substring(1))
+	u1 := utf16.Encode([]rune(parts[1]))
+	if len(u1) == 0 {
 		return true
 	}
-	sugg2a := parts[0] + string(r1[0])
-	sugg2b := string(r1[1:])
+	sugg2a := parts[0] + string(utf16.Decode(u1[:1]))
+	sugg2b := string(utf16.Decode(u1[1:]))
 	return !m.IsMisspelledToken(sugg2a) && !m.IsMisspelledToken(sugg2b)
 }
 
@@ -340,9 +340,9 @@ func firstCharacterDistances(s1, s2 string) []float64 {
 				out[i] = 1
 				continue
 			}
-			// Java charAt(0) — first UTF-16 code unit; for BMP same as first rune
-			r1 := []rune(parts1[i])[0]
-			r2 := []rune(parts2[i])[0]
+			// Java charAt(0) — first UTF-16 code unit
+			r1 := rune(utf16.Encode([]rune(parts1[i]))[0])
+			r2 := rune(utf16.Encode([]rune(parts2[i]))[0])
 			out[i] = charDistance(r1, r2)
 		}
 		return out
@@ -450,10 +450,10 @@ func normalizeSimilarChars(s string) string {
 }
 
 func rawLevenshtein(a, b string) int {
-	// Apache commons LevenshteinDistance uses UTF-16 code units in Java;
-	// for multitoken Latin lists, rune-based distance matches in practice.
-	ra, rb := []rune(a), []rune(b)
-	la, lb := len(ra), len(rb)
+	// Apache commons-text LevenshteinDistance.apply(CharSequence) indexes with charAt
+	// → UTF-16 code units (Java String), not Unicode code points.
+	ua, ub := utf16.Encode([]rune(a)), utf16.Encode([]rune(b))
+	la, lb := len(ua), len(ub)
 	if la == 0 {
 		return lb
 	}
@@ -469,7 +469,7 @@ func rawLevenshtein(a, b string) int {
 		cur[0] = i
 		for j := 1; j <= lb; j++ {
 			cost := 1
-			if ra[i-1] == rb[j-1] {
+			if ua[i-1] == ub[j-1] {
 				cost = 0
 			}
 			ins := cur[j-1] + 1
