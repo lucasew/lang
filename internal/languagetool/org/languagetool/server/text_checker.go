@@ -17,13 +17,28 @@ const (
 	CheckModeAllButTextLevelOnly CheckMode = "ALL_BUT_TEXTLEVEL_ONLY"
 )
 
-// CheckLevel ports JLanguageTool.Level.
+// CheckLevel ports JLanguageTool.Level (enum name casing).
 type CheckLevel string
 
 const (
-	CheckLevelDefault CheckLevel = "DEFAULT"
-	CheckLevelPicky   CheckLevel = "PICKY"
+	CheckLevelDefault      CheckLevel = "DEFAULT"
+	CheckLevelPicky        CheckLevel = "PICKY"
+	CheckLevelAcademic     CheckLevel = "ACADEMIC"
+	CheckLevelClarity      CheckLevel = "CLARITY"
+	CheckLevelProfessional CheckLevel = "PROFESSIONAL"
+	CheckLevelCreative     CheckLevel = "CREATIVE"
+	CheckLevelCustomer     CheckLevel = "CUSTOMER"
+	CheckLevelJobApp       CheckLevel = "JOBAPP"
+	CheckLevelObjective    CheckLevel = "OBJECTIVE"
+	CheckLevelElegant      CheckLevel = "ELEGANT"
 )
+
+// allCheckLevels is JLanguageTool.Level.values() for error messages.
+var allCheckLevels = []CheckLevel{
+	CheckLevelDefault, CheckLevelPicky, CheckLevelAcademic, CheckLevelClarity,
+	CheckLevelProfessional, CheckLevelCreative, CheckLevelCustomer, CheckLevelJobApp,
+	CheckLevelObjective, CheckLevelElegant,
+}
 
 // CheckQueryParams ports TextChecker.QueryParams (full check request options).
 type CheckQueryParams struct {
@@ -255,6 +270,8 @@ func validateLangCodeShape(code string) error {
 }
 
 // ParseCheckQueryParams builds CheckQueryParams from HTTP query map.
+// Ports TextChecker.check request QueryParams construction (enabledOnly guards,
+// useQuerySettings, mode/level/toneTags/inputLogging) — ServerTools + TextChecker.
 func ParseCheckQueryParams(parameters map[string]string) (CheckQueryParams, error) {
 	p := NewCheckQueryParams()
 	if parameters == nil {
@@ -266,20 +283,42 @@ func ParseCheckQueryParams(parameters map[string]string) (CheckQueryParams, erro
 	p.DisabledCategories = commaSeparated(parameters["disabledCategories"])
 	// Java: COMMA_WHITESPACE_PATTERN.split(params.get("altLanguages"))
 	p.AltLanguages = ParseAltLanguages(parameters["altLanguages"])
-	p.UseEnabledOnly = strings.EqualFold(parameters["enabledOnly"], "true")
-	p.AllowIncompleteResults = strings.EqualFold(parameters["allowIncompleteResults"], "true")
-	p.EnableHiddenRules = strings.EqualFold(parameters["enableHiddenRules"], "true")
-	p.EnableTempOffRules = strings.EqualFold(parameters["enableTempOffRules"], "true")
-	p.RegressionTestMode = p.EnableTempOffRules
+	// Java: "yes".equals(enabledOnly) || "true".equals(enabledOnly) — case-sensitive
+	p.UseEnabledOnly = parameters["enabledOnly"] == "true" || parameters["enabledOnly"] == "yes"
+	// Java: "true".equals(...) only — not EqualFold
+	p.AllowIncompleteResults = parameters["allowIncompleteResults"] == "true"
+	p.EnableHiddenRules = parameters["enableHiddenRules"] == "true"
+	p.EnableTempOffRules = parameters["enableTempOffRules"] == "true"
+	p.RegressionTestMode = p.EnableTempOffRules // Java: regressionTestMode = enableTempOffRules
 	p.Callback = parameters["callback"]
-	if v := parameters["mode"]; v != "" {
-		p.Mode = CheckMode(strings.ToUpper(v))
+	// Java: !params.getOrDefault("inputLogging", "").equals("no")
+	p.InputLogging = parameters["inputLogging"] != "no"
+
+	// Java TextChecker: enabledOnly conflicts / empty guards (before useQuerySettings)
+	if (len(p.DisabledRules) > 0 || len(p.DisabledCategories) > 0) && p.UseEnabledOnly {
+		return p, NewBadRequestError("You cannot specify disabled rules or categories using enabledOnly=true")
 	}
-	if v := parameters["level"]; v != "" {
-		p.Level = CheckLevel(strings.ToUpper(v))
+	if len(p.EnabledRules) == 0 && len(p.EnabledCategories) == 0 && p.UseEnabledOnly {
+		return p, NewBadRequestError("You must specify enabled rules or categories when using enabledOnly=true")
 	}
+
+	// Java: useQuerySettings = rules/categories non-empty || enableTempOffRules
+	// (does not include useEnabledOnly)
 	p.UseQuerySettings = len(p.EnabledRules) > 0 || len(p.DisabledRules) > 0 ||
-		len(p.EnabledCategories) > 0 || len(p.DisabledCategories) > 0 || p.UseEnabledOnly
+		len(p.EnabledCategories) > 0 || len(p.DisabledCategories) > 0 || p.EnableTempOffRules
+
+	mode, err := GetMode(parameters)
+	if err != nil {
+		return p, err
+	}
+	p.Mode = mode
+	level, err := GetLevel(parameters)
+	if err != nil {
+		return p, err
+	}
+	p.Level = level
+	p.ToneTags = ParseToneTags(parameters)
+
 	if err := p.Validate(); err != nil {
 		return p, err
 	}

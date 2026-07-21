@@ -16,4 +16,7 @@ func TestServerTools_CleanUserTextFromMessage(t *testing.T) {
 	require.Equal(t, "<sentcontent>my test</sentcontent>", CleanUserTextFromMessage("<sentcontent>my test</sentcontent>", loggingOn))
 	require.Equal(t, "<< content removed >>", CleanUserTextFromMessage("<sentcontent>my test</sentcontent>", loggingOff))
 	require.Equal(t, "<< content removed >>", CleanUserTextFromMessage("<sentcontent>my\ntest</sentcontent>", loggingOff))
+	// Java: equals("no") only — "NO" does not strip
+	loggingNO := map[string]string{"inputLogging": "NO"}
+	require.Equal(t, "<sentcontent>x</sentcontent>", CleanUserTextFromMessage("<sentcontent>x</sentcontent>", loggingNO))
 }

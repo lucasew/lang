@@ -171,3 +171,99 @@ func TestV2TextChecker_CheckParamsRenamed(t *testing.T) {
 		"language": "en", "text": "x",
 	}))
 }
+
+// Ports TextChecker QueryParams construction + ServerTools.getMode/getLevel/toneTags.
+func TestParseCheckQueryParams_JavaQueryParams(t *testing.T) {
+	// useQuerySettings includes enableTempOffRules, not useEnabledOnly alone
+	p, err := ParseCheckQueryParams(map[string]string{"enableTempOffRules": "true"})
+	require.NoError(t, err)
+	require.True(t, p.EnableTempOffRules)
+	require.True(t, p.UseQuerySettings)
+	require.True(t, p.RegressionTestMode)
+	require.True(t, p.InputLogging)
+
+	// enabledOnly=yes (Java accepts "yes" and "true" only, case-sensitive)
+	p, err = ParseCheckQueryParams(map[string]string{
+		"enabledOnly":  "yes",
+		"enabledRules": "RULE_A",
+	})
+	require.NoError(t, err)
+	require.True(t, p.UseEnabledOnly)
+
+	// EqualFold invent: TRUE / YES / True must not enable
+	p, err = ParseCheckQueryParams(map[string]string{
+		"enabledOnly":  "TRUE",
+		"enabledRules": "RULE_A",
+	})
+	require.NoError(t, err)
+	require.False(t, p.UseEnabledOnly)
+
+	// enabledOnly without rules/categories
+	_, err = ParseCheckQueryParams(map[string]string{"enabledOnly": "true"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "enabled rules or categories")
+
+	// mode/level case-sensitive API values
+	p, err = ParseCheckQueryParams(map[string]string{"mode": "textLevelOnly", "level": "academic"})
+	require.NoError(t, err)
+	require.Equal(t, CheckModeTextLevelOnly, p.Mode)
+	require.Equal(t, CheckLevelAcademic, p.Level)
+
+	_, err = ParseCheckQueryParams(map[string]string{"mode": "ALL"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "Mode must be")
+
+	_, err = ParseCheckQueryParams(map[string]string{"level": "PICKY"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "level")
+
+	// inputLogging=no (exact)
+	p, err = ParseCheckQueryParams(map[string]string{"inputLogging": "no"})
+	require.NoError(t, err)
+	require.False(t, p.InputLogging)
+	p, err = ParseCheckQueryParams(map[string]string{"inputLogging": "NO"})
+	require.NoError(t, err)
+	require.True(t, p.InputLogging) // Java equals("no") only
+
+	// toneTags default / empty / known
+	p, err = ParseCheckQueryParams(map[string]string{})
+	require.NoError(t, err)
+	require.Equal(t, []string{"ALL_WITHOUT_GOAL_SPECIFIC"}, p.ToneTags)
+
+	p, err = ParseCheckQueryParams(map[string]string{"toneTags": ""})
+	require.NoError(t, err)
+	require.Equal(t, []string{"ALL_WITHOUT_GOAL_SPECIFIC"}, p.ToneTags)
+
+	p, err = ParseCheckQueryParams(map[string]string{"toneTags": "clarity,formal"})
+	require.NoError(t, err)
+	require.Equal(t, []string{"clarity", "formal"}, p.ToneTags)
+
+	// multi: meta tags ignored when length>1
+	p, err = ParseCheckQueryParams(map[string]string{"toneTags": "clarity,NO_TONE_RULE"})
+	require.NoError(t, err)
+	require.Equal(t, []string{"clarity"}, p.ToneTags)
+}
+
+func TestServerTools_GetModeGetLevel(t *testing.T) {
+	m, err := GetMode(nil)
+	require.NoError(t, err)
+	require.Equal(t, CheckModeAll, m)
+	m, err = GetMode(map[string]string{"mode": "allButTextLevelOnly"})
+	require.NoError(t, err)
+	require.Equal(t, CheckModeAllButTextLevelOnly, m)
+	require.Equal(t, "!tlo", GetModeForLog(m))
+	m, err = GetMode(map[string]string{"mode": "batch"})
+	require.NoError(t, err)
+	require.Equal(t, CheckModeAll, m)
+
+	lv, err := GetLevel(map[string]string{"level": "elegant"})
+	require.NoError(t, err)
+	require.Equal(t, CheckLevelElegant, lv)
+}
+
+func TestGetLanguageAutoDetect_CaseSensitive(t *testing.T) {
+	tc := NewV2TextChecker(nil, false, nil)
+	require.True(t, tc.GetLanguageAutoDetect(map[string]string{"language": "auto"}))
+	require.False(t, tc.GetLanguageAutoDetect(map[string]string{"language": "AUTO"}))
+	require.False(t, tc.GetLanguageAutoDetect(map[string]string{"language": "Auto"}))
+}

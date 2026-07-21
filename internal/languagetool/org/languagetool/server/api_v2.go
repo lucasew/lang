@@ -156,7 +156,8 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if err != nil {
 			return HandleResult{}, err
 		}
-		if strings.EqualFold(lang, "auto") {
+		// Java V2: getLanguageAutoDetect → "auto".equals(language) case-sensitive
+		if lang == "auto" {
 			autoDetected = true
 			if err := ValidatePreferredVariants(preferred, nil); err != nil {
 				return HandleResult{}, err
@@ -177,7 +178,8 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		opts := CheckOptions{
 			Disabled:       a.TextChecker.GetDisabledRuleIDs(parameters),
 			Enabled:        a.TextChecker.GetEnabledRuleIDs(parameters),
-			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true") || qp.UseEnabledOnly,
+			// Java: "yes".equals || "true".equals (via ParseCheckQueryParams)
+			UseEnabledOnly: qp.UseEnabledOnly,
 			MotherTongue:   parameters["motherTongue"],
 			// ignoreWords CSV + user dictionary (Java user-config ignore list).
 			IgnoreWords: ignoreWords,
@@ -188,12 +190,9 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			// Java: QueryParams.altLanguages → Pipeline(lang, altLanguages, …)
 			// Already validated in ParseCheckQueryParams when present.
 			AltLanguages: append([]string(nil), qp.AltLanguages...),
-		}
-		if v := parameters["mode"]; v != "" {
-			opts.Mode = CheckMode(strings.ToUpper(v))
-		}
-		if v := parameters["level"]; v != "" {
-			opts.Level = CheckLevel(strings.ToUpper(v))
+			// Mode/Level already validated in ParseCheckQueryParams (ServerTools)
+			Mode:  qp.Mode,
+			Level: qp.Level,
 		}
 		langName := LanguageNameForCode(lang)
 		// AllowIncompleteResults: Java returns partial matches + incompleteResultsReason
@@ -333,7 +332,8 @@ func (a *ApiV2) handleWordsAdd(parameters map[string]string) (string, error) {
 	user := parameters["username"]
 	// single word or batch: mode=batch&words="a b c"
 	// Java: parameters.get("words").split("\\s+") — ASCII whitespace runs (not Fields).
-	if strings.EqualFold(parameters["mode"], "batch") {
+	// Java ServerTools.getMode: "batch".equals(modeParam) — case-sensitive
+	if parameters["mode"] == "batch" {
 		added := 0
 		for _, w := range javaSplitASCIIWhitespacePlus(parameters["words"]) {
 			if w == "" {
@@ -360,7 +360,7 @@ func (a *ApiV2) handleWordsDelete(parameters map[string]string) (string, error) 
 		a.UserDict = NewUserDictionary()
 	}
 	user := parameters["username"]
-	if strings.EqualFold(parameters["mode"], "batch") {
+	if parameters["mode"] == "batch" {
 		deleted := 0
 		for _, w := range javaSplitASCIIWhitespacePlus(parameters["words"]) {
 			if w == "" {

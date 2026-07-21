@@ -159,6 +159,7 @@ func canonicalizePreferredVariant(code string) string {
 // ParsePreferredVariants ports V2TextChecker.getPreferredVariants:
 // COMMA_WHITESPACE_PATTERN.split; requires language=auto (or multilingual true).
 // Missing preferredVariants key → empty list (not an error).
+// Java: !"auto".equals(language) && (multilingual == null || multilingual.equals("false"))
 func ParsePreferredVariants(parameters map[string]string) ([]string, error) {
 	if parameters == nil {
 		return nil, nil
@@ -170,22 +171,25 @@ func ParsePreferredVariants(parameters map[string]string) ([]string, error) {
 	// Java: parameters.get("preferredVariants") != null → split even if empty string
 	preferred := splitCommaWhitespace(raw)
 	lang := parameters["language"]
-	multi := parameters["multilingual"]
-	if !strings.EqualFold(lang, "auto") && (multi == "" || multi == "false") {
+	multi, multiOK := parameters["multilingual"]
+	// multi missing → null in Java; multi=="false" exact
+	if lang != "auto" && (!multiOK || multi == "false") {
 		return nil, NewBadRequestError("You specified 'preferredVariants' but you didn't specify 'language=auto'")
 	}
 	return preferred, nil
 }
 
 // ValidateNoopLanguages ports TextChecker: noopLanguages only with language=auto.
+// Java: params.get("noopLanguages") != null && !autoDetectLanguage where
+// autoDetect = "auto".equals(language). Key present (even empty) counts as set.
 func ValidateNoopLanguages(parameters map[string]string) error {
 	if parameters == nil {
 		return nil
 	}
-	if parameters["noopLanguages"] == "" {
+	if _, ok := parameters["noopLanguages"]; !ok {
 		return nil
 	}
-	if !strings.EqualFold(parameters["language"], "auto") {
+	if parameters["language"] != "auto" {
 		return NewBadRequestError("You can specify 'noopLanguages' only when also using 'language=auto'")
 	}
 	return nil

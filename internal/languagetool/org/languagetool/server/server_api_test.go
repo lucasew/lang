@@ -78,16 +78,25 @@ func TestTextCheckerAndV2(t *testing.T) {
 
 	p, err := ParseCheckQueryParams(map[string]string{
 		"enabledRules": "A,B",
-		"disabledRules": "C",
-		"enabledOnly": "true",
-		"mode": "all",
-		"level": "picky",
-		"callback": "cb",
+		"enabledOnly":  "true",
+		"mode":         "all",
+		"level":        "picky",
+		"callback":     "cb",
 	})
 	require.NoError(t, err)
 	require.Equal(t, []string{"A", "B"}, p.EnabledRules)
 	require.True(t, p.UseEnabledOnly)
+	require.True(t, p.UseQuerySettings)
+	require.Equal(t, CheckModeAll, p.Mode)
 	require.Equal(t, CheckLevelPicky, p.Level)
+	// Java: disabledRules + enabledOnly → BadRequest
+	_, err = ParseCheckQueryParams(map[string]string{
+		"enabledRules":  "A",
+		"disabledRules": "C",
+		"enabledOnly":   "true",
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "enabledOnly")
 	_, err = ParseCheckQueryParams(map[string]string{"callback": "bad-1"})
 	require.Error(t, err)
 

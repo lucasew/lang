@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -27,8 +26,12 @@ func (v *V2TextChecker) GetDisabledRuleIDs(parameters map[string]string) []strin
 }
 
 // GetLanguageAutoDetect ports getLanguageAutoDetect.
+// Java: "auto".equals(parameters.get("language")) — case-sensitive.
 func (v *V2TextChecker) GetLanguageAutoDetect(parameters map[string]string) bool {
-	return strings.EqualFold(parameters["language"], "auto")
+	if parameters == nil {
+		return false
+	}
+	return parameters["language"] == "auto"
 }
 
 // BuildResponse builds a minimal JSON /v2/check response from matches.
