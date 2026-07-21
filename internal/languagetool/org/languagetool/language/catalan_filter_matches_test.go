@@ -47,6 +47,22 @@ func TestFilterCatalanRuleMatches_EmptySuggestionExpandSpace(t *testing.T) {
 	require.Equal(t, []string{""}, out[0].Suggestions)
 }
 
+// Java Catalan.adjustCatalanMatch uses sentenceText.substring UTF-16 units for spaces.
+func TestFilterCatalanRuleMatches_EmptySuggestionExpandSpace_UTF16(t *testing.T) {
+	// "é a " — é is one UTF-16 unit (U+00E9). Match "a" at UTF-16 [2,3); spaces at 1 and 3.
+	// Byte-indexing would mis-read the left space (é is 2 UTF-8 bytes).
+	in := []languagetool.LocalMatch{
+		{
+			FromPos: 2, ToPos: 3, RuleID: "X", Suggestions: []string{""},
+			SentenceText: "é a ", FromPosSentence: 2, ToPosSentence: 3,
+		},
+	}
+	out := FilterCatalanRuleMatches(in)
+	require.Len(t, out, 1)
+	require.Equal(t, 4, out[0].ToPos)
+	require.Equal(t, 4, out[0].ToPosSentence)
+}
+
 func TestFilterCatalanRuleMatchesAfterOverlapping_TrimAndSort(t *testing.T) {
 	in := []languagetool.LocalMatch{
 		{

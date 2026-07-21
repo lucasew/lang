@@ -155,3 +155,18 @@ func TestCheckParenthetical_NonMetricSourceSpanFull(t *testing.T) {
 	require.Equal(t, 12, m.GetToPos())
 }
 
+// Java Matcher/RuleMatch positions are UTF-16; multi-byte prefix must not shift FromPos.
+func TestAbstractUnitConversionRule_Match_UTF16Positions(t *testing.T) {
+	r := NewAbstractUnitConversionRule(nil)
+	// "café: 10 mi" — é is 1 UTF-16 unit, 2 UTF-8 bytes.
+	// "10 mi" starts at UTF-16 index 6 (c a f é : sp = 0..5), byte index 7.
+	text := "café: 10 mi"
+	ms, err := r.Match(languagetool.AnalyzePlain(text))
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
+	// surface via UTF-16 FromPos/ToPos must cover "10 mi"
+	from, to := ms[0].GetFromPos(), ms[0].GetToPos()
+	require.Equal(t, 6, from, "FromPos must be UTF-16, not byte offset")
+	require.Equal(t, "10 mi", UTF16Substring(text, from, to))
+}
+

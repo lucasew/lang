@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -117,10 +118,13 @@ func adjustCatalanMatchLocal(m languagetool.LocalMatch, enabledRules map[string]
 	if len(m.Suggestions) == 1 && m.Suggestions[0] == "" {
 		sent := m.SentenceText
 		fromSent, toSent := m.FromPosSentence, m.ToPosSentence
-		if sent != "" && fromSent >= 0 && toSent+1 <= len(sent) {
-			// Java uses char indices (UTF-16); for ASCII spaces byte/UTF-16 align.
-			leftOK := fromSent == 0 || (fromSent > 0 && sent[fromSent-1] == ' ')
-			rightOK := toSent < len(sent) && sent[toSent] == ' '
+		// Java: sentenceText.length()/substring are UTF-16 code units.
+		// right char exists iff substring(toSent, toSent+1) is non-empty (and space).
+		if sent != "" && fromSent >= 0 {
+			// Java: substring(fromSent-1, fromSent).equals(" ")
+			//       && substring(toSent, toSent+1).equals(" ")
+			leftOK := fromSent == 0 || caUTF16Substring(sent, fromSent-1, fromSent) == " "
+			rightOK := caUTF16Substring(sent, toSent, toSent+1) == " "
 			if leftOK && rightOK {
 				m.ToPos = m.ToPos + 1
 				m.ToPosSentence = toSent + 1
@@ -192,4 +196,20 @@ func containsString(ss []string, s string) bool {
 		}
 	}
 	return false
+}
+
+// caUTF16Substring ports Java String.substring(from, to) with UTF-16 indices
+// (Catalan.adjustCatalanMatch space checks). Local helper avoids rules import cycle.
+func caUTF16Substring(s string, from, to int) string {
+	u := utf16.Encode([]rune(s))
+	if from < 0 {
+		from = 0
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	return string(utf16.Decode(u[from:to]))
 }

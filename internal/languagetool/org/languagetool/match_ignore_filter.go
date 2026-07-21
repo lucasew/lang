@@ -41,11 +41,13 @@ func (lt *JLanguageTool) filterMatchesByIgnore(text string, ms []LocalMatch) []L
 	}
 	out := make([]LocalMatch, 0, len(ms))
 	for _, m := range ms {
-		if m.FromPos < 0 || m.ToPos > len(text) || m.FromPos >= m.ToPos {
+		// Java RuleMatch FromPos/ToPos are UTF-16 code units (String.substring).
+		// Keep matches whose span cannot be resolved (fail-closed surface filter).
+		if m.FromPos < 0 || m.FromPos >= m.ToPos || m.ToPos > localMatchUTF16Len(text) {
 			out = append(out, m)
 			continue
 		}
-		surface := text[m.FromPos:m.ToPos]
+		surface := localMatchUTF16Substring(text, m.FromPos, m.ToPos)
 		// drop spelling-like matches on ignored words (exact surface)
 		if isSpellRuleID(m.RuleID) {
 			if _, ok := ign[surface]; ok {

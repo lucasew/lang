@@ -751,7 +751,17 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 	// Java: deduplicate matches with equal start; longer match wins (miles per hour > miles).
 	matches = dedupeUnitMatchesByStart(matches)
 	// Java removeAntiPatternMatches after all matching (special + unit passes).
+	// Still on Go byte indices (regex); convert to UTF-16 only after.
 	matches = removeUnitAntiPatternMatches(text, matches, r.antiPatterns)
+	// Java Matcher.start/end and RuleMatch positions are UTF-16 code units.
+	// Matching used Go regexp byte offsets for text[from:to] slices — convert here.
+	for _, m := range matches {
+		if m == nil {
+			continue
+		}
+		m.FromPos = utf16Offset(text, m.FromPos)
+		m.ToPos = utf16Offset(text, m.ToPos)
+	}
 	return matches, nil
 }
 
