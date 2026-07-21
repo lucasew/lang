@@ -26,7 +26,12 @@ const (
 	redundantSubText  = "Der Satzteil scheint redundant zu sein. Prüfen Sie, ob es gelöscht oder der Satz umformuliert werden kann."
 )
 
-var redundantMarksRE = regexp.MustCompile(`^[,;.:?!\-–—’'"„“”»«‚‘›‹()\[\]]$`)
+// Java: Pattern.compile("[,;.:?!-–—’'\"„“”»«‚‘›‹()\\[\\]]")
+// ASCII '-' between '!' and en-dash is a character-class range → every single-unit
+// code point from '!' (U+0021) through en-dash (U+2013) matches under .matches().
+// Twin bug-for-bug; multi-char tokens still fail full-match.
+// Post-range symbols listed in Java after en-dash: em-dash and fancy quotes/brackets.
+var redundantMarksRE = regexp.MustCompile(`^[\x{0021}-\x{2013}\x{2014}’'"„“”»«‚‘›‹()\[\]]$`)
 
 func NewRedundantModalOrAuxiliaryVerb(messages map[string]string) *RedundantModalOrAuxiliaryVerb {
 	return &RedundantModalOrAuxiliaryVerb{

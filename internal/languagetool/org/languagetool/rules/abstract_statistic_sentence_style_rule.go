@@ -80,7 +80,10 @@ func (r *AbstractStatisticSentenceStyleRule) GetDescription() string {
 var (
 	statOpeningQuotes = regexp.MustCompile(`^["“„»«]$`)
 	statEndingQuotes  = regexp.MustCompile(`^["“”»«]$`)
-	statMarksRE       = regexp.MustCompile(`^[,;.:?•!\-–—]$`)
+	// Java: Pattern.compile("[,;.:?•!-–—]")
+	// ASCII '-' between '!' and en-dash is a character-class range (U+0021…U+2013).
+	// Twin bug-for-bug; • (U+2022) and em-dash sit outside that range and are listed.
+	statMarksRE = regexp.MustCompile(`^[\x{0021}-\x{2013}\x{2014}•]$`)
 )
 
 // IsStatisticMark ports AbstractStatisticSentenceStyleRule.isMark.

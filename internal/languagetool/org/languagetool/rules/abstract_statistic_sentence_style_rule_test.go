@@ -24,3 +24,29 @@ func TestAbstractStatisticSentenceStyleRule(t *testing.T) {
 	matches := r.MatchList([]*languagetool.AnalyzedSentence{s1, s2})
 	require.Len(t, matches, 1)
 }
+
+// Twin of Java AbstractStatisticSentenceStyleRule MARKS_REGEX range quirk (!-–).
+func TestStatisticMarksRE_JavaRangeQuirk(t *testing.T) {
+	require.True(t, statMarksRE.MatchString(","))
+	require.True(t, statMarksRE.MatchString("."))
+	require.True(t, statMarksRE.MatchString("!"))
+	require.True(t, statMarksRE.MatchString("a"))
+	require.True(t, statMarksRE.MatchString("5"))
+	require.True(t, statMarksRE.MatchString("—"))
+	require.True(t, statMarksRE.MatchString("•"))
+	require.False(t, statMarksRE.MatchString("Auto"))
+	require.False(t, statMarksRE.MatchString("ab"))
+	// isMark helper uses the same RE
+	tok := languagetool.AnalyzePlain("a").GetTokensWithoutWhitespace()
+	require.NotEmpty(t, tok)
+	// Find token "a"
+	var aTok *languagetool.AnalyzedTokenReadings
+	for _, t := range tok {
+		if t != nil && t.GetToken() == "a" {
+			aTok = t
+			break
+		}
+	}
+	require.NotNil(t, aTok)
+	require.True(t, IsStatisticMark(aTok))
+}

@@ -216,3 +216,22 @@ func TestRedundantModalOrAuxiliaryVerb_Meta(t *testing.T) {
 	require.True(t, r.IsDefaultOff())
 	require.NotNil(t, r.GetCategory())
 }
+
+// Twin of Java MARKS_REGEX character-class range quirk (!-– includes letters/digits).
+func TestRedundantMarksRE_JavaRangeQuirk(t *testing.T) {
+	require.True(t, redundantMarksRE.MatchString(","))
+	require.True(t, redundantMarksRE.MatchString("."))
+	require.True(t, redundantMarksRE.MatchString("!"))
+	require.True(t, redundantMarksRE.MatchString("a"))
+	require.True(t, redundantMarksRE.MatchString("5"))
+	require.True(t, redundantMarksRE.MatchString("—")) // em-dash after range
+	require.True(t, redundantMarksRE.MatchString("»"))
+	require.True(t, redundantMarksRE.MatchString("("))
+	// multi-char tokens never full-match (.matches())
+	require.False(t, redundantMarksRE.MatchString("Auto"))
+	require.False(t, redundantMarksRE.MatchString("und"))
+	require.False(t, redundantMarksRE.MatchString("Tom"))
+	// bullet/ellipsis not in this Java pattern (unlike MissingComma)
+	require.False(t, redundantMarksRE.MatchString("•"))
+	require.False(t, redundantMarksRE.MatchString("…"))
+}

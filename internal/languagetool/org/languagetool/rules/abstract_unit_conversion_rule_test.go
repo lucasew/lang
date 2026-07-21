@@ -154,3 +154,4 @@ func TestCheckParenthetical_NonMetricSourceSpanFull(t *testing.T) {
 	require.Equal(t, 0, m.GetFromPos())
 	require.Equal(t, 12, m.GetToPos())
 }
+

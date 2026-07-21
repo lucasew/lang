@@ -308,7 +308,9 @@ func (r *AbstractUnitConversionRule) AddUnit(pattern string, base UnitDef, symbo
 	u.Metric = metric
 	ws := fmt.Sprintf(`[ \x{00A0}]{0,%d}`, unitWSLimit)
 	// Use \p{L} boundaries — ASCII \b fails after non-ASCII letters (e.g. German ß in Fuß).
-	re := regexp.MustCompile(`(?i)` + unitNumberRegex + ws + `(?:` + pattern + `)(?:[^\p{L}]|$)`)
+	// Java unit patterns end with (?!(\w|\d)) — not letter and not digit (e.g. 330'000 ≠ feet).
+	// RE2 has no lookahead: require trailing non-letter-non-digit or EOS (digit cannot follow).
+	re := regexp.MustCompile(`(?i)` + unitNumberRegex + ws + `(?:` + pattern + `)(?:[^\p{L}\d]|$)`)
 	r.unitPatterns = append(r.unitPatterns, unitPattern{re: re, unit: u})
 	if metric {
 		for _, m := range r.metricUnits {
@@ -610,6 +612,11 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			if !ok {
 				continue
 			}
+			// Java removeAntiPatternMatches applies after all matches (incl. specialPatterns).
+			// de-CH thousands "330'000" must not become feet+inches.
+			if unitHitByAntiPattern(text, from, fullEnd, r.antiPatterns) {
+				continue
+			}
 			// Parenthetical conversion after special measure (CHECK path).
 			if cm := convertedParenRE.FindStringSubmatchIndex(text[fullEnd:]); cm != nil {
 				cFrom := fullEnd + cm[0]
@@ -742,7 +749,28 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 	}
 	// Java: deduplicate matches with equal start; longer match wins (miles per hour > miles).
-	return dedupeUnitMatchesByStart(matches), nil
+	matches = dedupeUnitMatchesByStart(matches)
+	// Java removeAntiPatternMatches after all matching (special + unit passes).
+	matches = removeUnitAntiPatternMatches(text, matches, r.antiPatterns)
+	return matches, nil
+}
+
+// removeUnitAntiPatternMatches ports AbstractUnitConversionRule.removeAntiPatternMatches.
+func removeUnitAntiPatternMatches(text string, matches []*RuleMatch, anti []*regexp.Regexp) []*RuleMatch {
+	if len(matches) == 0 || len(anti) == 0 {
+		return matches
+	}
+	out := make([]*RuleMatch, 0, len(matches))
+	for _, m := range matches {
+		if m == nil {
+			continue
+		}
+		if unitHitByAntiPattern(text, m.FromPos, m.ToPos, anti) {
+			continue
+		}
+		out = append(out, m)
+	}
+	return out
 }
 
 // dedupeUnitMatchesByStart keeps the longest match for each FromPos (Java matchesByStart).
@@ -827,7 +855,9 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 			matched = u.Kind == UnitMass && math.Abs(u.Factor-1) < 1e-12
 		case strings.HasPrefix(bodyLow, "tonelada") || bodyLow == "t" || strings.HasPrefix(bodyLow, "tonne"):
 			matched = u.Kind == UnitMass && math.Abs(u.Factor-1e3) < 1e-9
-		case bodyLow == "mi" || strings.HasPrefix(bodyLow, "mile"):
+		case bodyLow == "mi" || strings.HasPrefix(bodyLow, "mile") ||
+			bodyLow == "meile" || bodyLow == "meilen" || strings.HasPrefix(bodyLow, "meile"):
+			// DE UnitConversionRule addUnit("Meilen?", …, "Meile", …)
 			matched = u.Kind == UnitLength && math.Abs(u.Factor-UnitMile.Factor) < 1e-6
 		case bodyLow == "ft" || bodyLow == "feet" || bodyLow == "foot" || bodyLow == "fuß" || bodyLow == "fuss":
 			matched = u.Kind == UnitLength && math.Abs(u.Factor-UnitFeet.Factor) < 1e-9
@@ -838,18 +868,47 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 			uu := u
 			convertedUnit = &uu
 			// don't break — prefer exact symbol match above; long-name first hit is ok
-			if bodyLow == sym {
-				break
+			if bodyLow == sym || bodyLow == "meilen" || bodyLow == "meile" {
+				// Prefer DE long name "Meile" over bare "mi" when body is German.
+				if strings.HasPrefix(bodyLow, "meile") && (sym == "meile" || strings.HasPrefix(sym, "meile")) {
+					break
+				}
+				if bodyLow == sym {
+					break
+				}
 			}
 		}
 	}
 	if convertedUnit == nil {
+		// Java: CHECK_UNKNOWN_UNIT only when formatMeasurement produced suggestions
+		// (converted != null), i.e. non-metric source. Metric source + unknown paren
+		// unit → no match (e.g. unrecognized unit body after already-metric measure).
+		if srcUnit.Metric {
+			return nil
+		}
 		// Java CHECK_UNKNOWN_UNIT: start(1)…end(2) = number through unit body
 		from, to := numFrom, unitBodyEnd
 		if from <= 0 || to <= from {
 			from, to = convFrom, convTo
 		}
 		m := r.newUnitMatch(sentence, from, to, UnitMsgCheckUnknownUnit)
+		// Java: match.setSuggestedReplacements(converted) — metric equivalents of source
+		equivs := r.GetMetricEquivalent(srcVal, srcUnit)
+		var suggs []string
+		for _, eq := range equivs {
+			for _, conv := range r.formatConversionSuggestion(eq.Value, eq.Unit.Symbol) {
+				if len(suggs) >= unitMaxSuggestions {
+					break
+				}
+				suggs = append(suggs, conv)
+			}
+			if len(suggs) >= unitMaxSuggestions {
+				break
+			}
+		}
+		if len(suggs) > 0 {
+			m.SetSuggestedReplacements(suggs)
+		}
 		if u := buildURLForExplanation(originalFull); u != "" {
 			m.SetURL(u)
 		}
@@ -886,8 +945,19 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 		matchFrom, matchTo = numFrom, numTo
 	}
 	m := r.newUnitMatch(sentence, matchFrom, matchTo, UnitMsgCheck)
-	// suggest corrected number + unit
-	m.SetSuggestedReplacement(r.formatNumber(expected) + " " + convertedUnit.Symbol)
+	// Java getFormattedConversions for reverse CHECK: number + unit forms (not wrapped
+	// in "original (…)" — that wrapping is only for SUGGESTION path).
+	var suggs []string
+	for _, conv := range r.formatConversionSuggestion(expected, convertedUnit.Symbol) {
+		if len(suggs) >= unitMaxSuggestions {
+			break
+		}
+		suggs = append(suggs, conv)
+	}
+	if len(suggs) == 0 {
+		suggs = []string{r.formatNumber(expected) + " " + convertedUnit.Symbol}
+	}
+	m.SetSuggestedReplacements(suggs)
 	if u := buildURLForExplanation(originalFull); u != "" {
 		m.SetURL(u)
 	}
