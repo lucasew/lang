@@ -3,6 +3,7 @@ package identifier
 import (
 	"regexp"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -48,15 +49,33 @@ func NewBaseLanguageIdentifier(maxLength int) BaseLanguageIdentifier {
 	return BaseLanguageIdentifier{MaxLength: maxLength}
 }
 
+// javaStringLen ports Java String.length() (UTF-16 code units).
+func javaStringLen(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
+// javaSubstring ports Java String.substring(from, to) with UTF-16 indices.
+func javaSubstring(s string, from, to int) string {
+	u := utf16.Encode([]rune(s))
+	if from < 0 {
+		from = 0
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	return string(utf16.Decode(u[from:to]))
+}
+
 // CleanAndShortenText ports LanguageIdentifier.cleanAndShortenText.
+// Java: text.length() > maxLength ? text.substring(0, maxLength) : text
+// — length/substring are UTF-16 code units, not Go runes or bytes.
 func (b BaseLanguageIdentifier) CleanAndShortenText(text string) string {
 	short := text
-	if len(short) > b.MaxLength {
-		// rune-safe truncate
-		r := []rune(short)
-		if len(r) > b.MaxLength {
-			short = string(r[:b.MaxLength])
-		}
+	if javaStringLen(short) > b.MaxLength {
+		short = javaSubstring(short, 0, b.MaxLength)
 	}
 	short = nbspInvis.ReplaceAllString(short, " ")
 	short = mailRE.ReplaceAllString(urlRE.ReplaceAllString(short, " "), " ")

@@ -167,8 +167,9 @@ func (s *SimpleLanguageIdentifier) Detect(cleanText string, noopLangs, preferred
 		topCode, topScore = highestScore(scores)
 	}
 
-	// short text preferred filter
-	if len(cleanText) < ConsiderOnlyPreferredThreshold && len(preferred) > 0 {
+	// Java SimpleLanguageIdentifier: cleanText.length() < CONSIDER_ONLY_PREFERRED_THRESHOLD
+	// (UTF-16 units, not UTF-8 bytes).
+	if javaStringLen(cleanText) < ConsiderOnlyPreferredThreshold && len(preferred) > 0 {
 		for k := range scores {
 			if !containsStr(preferred, k) {
 				delete(scores, k)

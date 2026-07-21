@@ -71,8 +71,9 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 		return nil
 	}
 	preferred := append([]string(nil), preferredLangs...)
-	// short text: prefer preferred langs only
-	if len([]rune(text)) < ConsiderOnlyPreferredThreshold && len(preferred) > 0 {
+	// Java DefaultLanguageIdentifier: text.length() <= CONSIDER_ONLY_PREFERRED_THRESHOLD
+	// (UTF-16 units). Forces preferred-lang filter when short.
+	if javaStringLen(text) <= ConsiderOnlyPreferredThreshold && len(preferred) > 0 {
 		limitOnPreferred = true
 	}
 

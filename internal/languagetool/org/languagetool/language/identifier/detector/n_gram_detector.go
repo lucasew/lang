@@ -3,6 +3,7 @@ package detector
 import (
 	"strings"
 	"unicode"
+	"unicode/utf16"
 )
 
 // NGramDetector ports org.languagetool.language.identifier.detector.NGramDetector
@@ -28,9 +29,9 @@ func (d *NGramDetector) DetectLanguages(text string) map[string]float64 {
 	if d == nil {
 		return nil
 	}
-	if d.MaxLength > 0 && len([]rune(text)) > d.MaxLength {
-		r := []rune(text)
-		text = string(r[:d.MaxLength])
+	// Java: if (text.length() > maxLength) text = text.substring(0, maxLength);
+	if d.MaxLength > 0 && javaStringLenDet(text) > d.MaxLength {
+		text = javaSubstringDet(text, 0, d.MaxLength)
 	}
 	scores := d.CharNGramDetector.DetectLanguages(text)
 	if scores == nil {
@@ -114,4 +115,22 @@ func isDigitsOnlyText(text string) bool {
 		}
 	}
 	return true
+}
+
+func javaStringLenDet(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
+func javaSubstringDet(s string, from, to int) string {
+	u := utf16.Encode([]rune(s))
+	if from < 0 {
+		from = 0
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	return string(utf16.Decode(u[from:to]))
 }

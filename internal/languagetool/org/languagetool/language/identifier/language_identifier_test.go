@@ -35,3 +35,15 @@ func TestLanguageIdentifierService(t *testing.T) {
 	Instance.Clear()
 	require.True(t, CanLanguageBeDetected("en", []string{"en", "de"}, nil))
 }
+
+// Twin of LanguageIdentifier.cleanAndShortenText: maxLength is UTF-16 units.
+func TestCleanAndShortenText_UTF16MaxLength(t *testing.T) {
+	// maxLength 3 on "café" (4 UTF-16 units) → substring(0,3) = "caf"
+	got := BaseLanguageIdentifier{MaxLength: 3}.CleanAndShortenText("café")
+	require.Equal(t, "caf", got, "Java text.substring(0, maxLength) is UTF-16")
+	// full "café" kept when maxLength >= 4
+	require.Equal(t, "café", BaseLanguageIdentifier{MaxLength: 4}.CleanAndShortenText("café"))
+	// emoji is 2 UTF-16 units; maxLength 1 keeps first unit only
+	e := BaseLanguageIdentifier{MaxLength: 1}.CleanAndShortenText("😀x")
+	require.Equal(t, 1, javaStringLen(e))
+}

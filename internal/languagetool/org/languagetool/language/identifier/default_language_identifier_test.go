@@ -10,7 +10,7 @@ import (
 func TestDefaultLanguageIdentifier(t *testing.T) {
 	d := NewDefaultLanguageIdentifier(1000)
 	d.ProfileScore = func(text string, preferred []string) map[string]float64 {
-		if containsStr(preferred, "de") && len([]rune(text)) < 50 {
+		if containsStr(preferred, "de") && javaStringLen(text) <= ConsiderOnlyPreferredThreshold {
 			return map[string]float64{"de": 0.9}
 		}
 		return map[string]float64{"en": 0.95, "de": 0.1}
