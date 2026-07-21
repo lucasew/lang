@@ -6,6 +6,8 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+	"unicode/utf16"
+	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -97,17 +99,6 @@ func NewSpaceInCompoundRule(messages map[string]string) *SpaceInCompoundRule {
 
 func (r *SpaceInCompoundRule) GetID() string { return "NL_SPACE_IN_COMPOUND" }
 
-// isNonLetterBoundary is true when s is not a letter (word edge).
-func isNonLetterBoundary(s string) bool {
-	if s == "" {
-		return true
-	}
-	for _, r := range s {
-		return !unicode.IsLetter(r)
-	}
-	return true
-}
-
 func (r *SpaceInCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	hits := loadSpaceCompounds()
 	text := sentence.GetText()
@@ -120,22 +111,44 @@ func (r *SpaceInCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*
 			if idx < 0 {
 				break
 			}
+			// strings.Index returns UTF-8 byte offsets; Java AhoCorasick hit.begin/end
+			// and RuleMatch positions are UTF-16 code units.
 			begin := start + idx
 			end := begin + len(variant)
-			// boundary check: not substring of larger letter word
-			if begin > 0 && !isNonLetterBoundary(text[begin-1:begin]) {
-				start = begin + 1
-				continue
+			// Java isBoundary: !letter on char before begin / at end (UTF-16 substring).
+			if begin > 0 {
+				r0, _ := utf8.DecodeLastRuneInString(text[:begin])
+				if unicode.IsLetter(r0) {
+					start = begin + 1
+					continue
+				}
 			}
-			if end < len(text) && !isNonLetterBoundary(text[end:end+1]) {
-				start = begin + 1
-				continue
+			if end < len(text) {
+				r0, _ := utf8.DecodeRuneInString(text[end:])
+				if unicode.IsLetter(r0) {
+					start = begin + 1
+					continue
+				}
 			}
-			rm := rules.NewRuleMatch(r, sentence, begin, end, hit.message)
+			beginU16 := spaceUTF16Offset(text, begin)
+			endU16 := spaceUTF16Offset(text, end)
+			rm := rules.NewRuleMatch(r, sentence, beginU16, endU16, hit.message)
 			rm.SetSuggestedReplacement(hit.glued)
 			matches = append(matches, rm)
 			start = end
 		}
 	}
 	return matches
+}
+
+// spaceUTF16Offset maps a UTF-8 byte index to a Java String UTF-16 code-unit index.
+func spaceUTF16Offset(text string, byteIdx int) int {
+	n := 0
+	for i, r := range text {
+		if i >= byteIdx {
+			break
+		}
+		n += len(utf16.Encode([]rune{r}))
+	}
+	return n
 }
