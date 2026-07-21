@@ -3,6 +3,8 @@ package server
 // Twin of languagetool-server/src/test/java/org/languagetool/server/TextCheckerTest.java
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -417,4 +419,58 @@ func TestApiV2_CheckPassesToneTagsAndDetect(t *testing.T) {
 	// Nested detectedLanguage always present (writeLanguageSection)
 	require.Contains(t, r.Body, `"detectedLanguage"`)
 	require.Contains(t, r.Body, `"confidence"`)
+}
+
+// Ports V2 forcePreferredLanguages → detectLanguage(..., limitOnPreferredLangs=true).
+func TestForcePreferredLanguages_DetectLimit(t *testing.T) {
+	require.False(t, ParseForcePreferredLanguages(nil))
+	require.False(t, ParseForcePreferredLanguages(map[string]string{"forcePreferredLanguages": "TRUE"}))
+	require.True(t, ParseForcePreferredLanguages(map[string]string{"forcePreferredLanguages": "true"}))
+
+	// Long English-like text would normally rank "en" highest; force preferred → "de" only.
+	longEN := strings.Repeat("This is English text for language detection. ", 5)
+	d := identifier.NewDefaultLanguageIdentifier(1000)
+	d.ProfileScore = func(text string, preferred []string) map[string]float64 {
+		return map[string]float64{"en": 0.99, "de": 0.2}
+	}
+	tc := NewTextChecker(nil, false, nil)
+	tc.LanguageIdentifier = d
+
+	// without force: en → en-US default variant
+	r, err := tc.DetectLanguageOfStringForce(longEN, nil, nil, []string{"de"}, false)
+	require.NoError(t, err)
+	require.Equal(t, "en-US", r.Code)
+
+	// with force: only preferred de remains → de-DE
+	r2, err := tc.DetectLanguageOfStringForce(longEN, nil, nil, []string{"de"}, true)
+	require.NoError(t, err)
+	require.Equal(t, "de-DE", r2.Code)
+	require.NotNil(t, r2.Source)
+}
+
+func TestHTTPServerConfig_SetFasttextPaths(t *testing.T) {
+	dir := t.TempDir()
+	model := filepath.Join(dir, "lid.bin")
+	bin := filepath.Join(dir, "fasttext")
+	require.NoError(t, os.WriteFile(model, []byte("m"), 0o644))
+	require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\n"), 0o755))
+
+	cfg := NewHTTPServerConfig()
+	require.NoError(t, cfg.SetFasttextPaths(model, bin))
+	require.Equal(t, model, cfg.FasttextModel)
+	require.Equal(t, bin, cfg.FasttextBinary)
+
+	// model as directory invalid
+	require.Error(t, cfg.SetFasttextPaths(dir, bin))
+	// non-executable binary invalid
+	noexec := filepath.Join(dir, "noexec")
+	require.NoError(t, os.WriteFile(noexec, []byte("x"), 0o644))
+	require.Error(t, cfg.SetFasttextPaths(model, noexec))
+
+	// ngram must be file not dir
+	require.Error(t, cfg.SetNgramLangIdentData(dir))
+	zipPath := filepath.Join(dir, "ngrams.zip")
+	require.NoError(t, os.WriteFile(zipPath, []byte("z"), 0o644))
+	require.NoError(t, cfg.SetNgramLangIdentData(zipPath))
+	require.Equal(t, zipPath, cfg.NgramLangIdentData)
 }

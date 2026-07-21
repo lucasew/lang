@@ -67,6 +67,12 @@ func (s *SimpleLanguageIdentifier) RegisterSpeller(langCode string, fn SpellerFu
 
 // Detect ports detectLanguage(cleanText, noop, preferred).
 func (s *SimpleLanguageIdentifier) Detect(cleanText string, noopLangs, preferredLangs []string) *languagetool.DetectedLanguage {
+	// Java SimpleLanguageIdentifier.detectLanguage(..., limitOnPreferred) ignores the flag.
+	return s.DetectLimit(cleanText, noopLangs, preferredLangs, false)
+}
+
+// DetectLimit ports Java SimpleLanguageIdentifier — limitOnPreferredLangs is ignored.
+func (s *SimpleLanguageIdentifier) DetectLimit(cleanText string, noopLangs, preferredLangs []string, _ bool) *languagetool.DetectedLanguage {
 	if s == nil {
 		return nil
 	}

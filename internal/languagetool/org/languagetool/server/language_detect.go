@@ -299,10 +299,21 @@ func parseOptionalCommaParam(parameters map[string]string, key string) []string 
 
 // DetectLanguageOfString ports TextChecker.detectLanguageOfString using the
 // instance languageIdentifier (cleanAndShorten + detect + preferred/default variants).
-// nil receiver / nil identifier falls back to package DetectLanguageOfStringResult (heuristic).
+// forcePreferredLanguages=false (Java overload default).
 func (t *TextChecker) DetectLanguageOfString(
 	text string,
 	preferredVariants, noopLangs, preferredLangs []string,
+) (DetectLanguageResult, error) {
+	return t.DetectLanguageOfStringForce(text, preferredVariants, noopLangs, preferredLangs, false)
+}
+
+// DetectLanguageOfStringForce ports detectLanguageOfString(..., forcePreferredLanguages).
+// Java: languageIdentifier.detectLanguage(clean, noop, preferred, forcePreferredLanguages).
+// nil receiver / nil identifier falls back to package DetectLanguageOfStringResult (heuristic).
+func (t *TextChecker) DetectLanguageOfStringForce(
+	text string,
+	preferredVariants, noopLangs, preferredLangs []string,
+	forcePreferredLanguages bool,
 ) (DetectLanguageResult, error) {
 	if t == nil || t.LanguageIdentifier == nil {
 		return DetectLanguageOfStringResult(text, preferredVariants, nil)
@@ -316,6 +327,14 @@ func (t *TextChecker) DetectLanguageOfString(
 	if preferredLangs == nil {
 		preferredLangs = []string{}
 	}
-	detected := t.LanguageIdentifier.Detect(clean, noopLangs, preferredLangs)
+	detected := t.LanguageIdentifier.DetectLimit(clean, noopLangs, preferredLangs, forcePreferredLanguages)
 	return DetectLanguageOfStringFromDetected(detected, "", preferredVariants, nil)
+}
+
+// ParseForcePreferredLanguages ports V2: "true".equals(parameters.get("forcePreferredLanguages")).
+func ParseForcePreferredLanguages(parameters map[string]string) bool {
+	if parameters == nil {
+		return false
+	}
+	return parameters["forcePreferredLanguages"] == "true"
 }

@@ -32,8 +32,11 @@ var (
 
 // LanguageIdentifier ports org.languagetool.language.identifier.LanguageIdentifier surface.
 type LanguageIdentifier interface {
-	// Detect returns the best language score for cleaned text (codes only).
+	// Detect ports detectLanguage(clean, noop, preferred) — limitOnPreferredLangs=false.
 	Detect(cleanText string, noopLangs, preferredLangs []string) *languagetool.DetectedLanguage
+	// DetectLimit ports detectLanguage(clean, noop, preferred, limitOnPreferredLangs).
+	// forcePreferredLanguages on the server maps to limitOnPreferredLangs=true.
+	DetectLimit(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool) *languagetool.DetectedLanguage
 	// Scores returns top language scores.
 	Scores(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool, count int) []languagetool.DetectedLanguage
 	// CleanAndShortenText cleans and truncates input.
@@ -113,18 +116,34 @@ func NewMapLanguageIdentifier(maxLength int, score func(string, []string) map[st
 }
 
 func (m *MapLanguageIdentifier) Detect(cleanText string, noopLangs, preferredLangs []string) *languagetool.DetectedLanguage {
-	scores := m.Scores(cleanText, noopLangs, preferredLangs, false, 1)
+	return m.DetectLimit(cleanText, noopLangs, preferredLangs, false)
+}
+
+func (m *MapLanguageIdentifier) DetectLimit(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool) *languagetool.DetectedLanguage {
+	scores := m.Scores(cleanText, noopLangs, preferredLangs, limitOnPreferred, 1)
 	if len(scores) == 0 {
 		return nil
 	}
 	return &scores[0]
 }
 
-func (m *MapLanguageIdentifier) Scores(cleanText string, noopLangs, preferredLangs []string, _ bool, count int) []languagetool.DetectedLanguage {
+func (m *MapLanguageIdentifier) Scores(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool, count int) []languagetool.DetectedLanguage {
 	if m.Score == nil {
 		return nil
 	}
-	raw := m.Score(cleanText, preferredLangs)
+	srcMap := m.Score(cleanText, preferredLangs)
+	raw := make(map[string]float64, len(srcMap))
+	for k, v := range srcMap {
+		raw[k] = v
+	}
+	// force preferred filter (Java Default: limitOnPreferred removes non-preferred scores)
+	if limitOnPreferred && len(preferredLangs) > 0 {
+		for k := range raw {
+			if !containsStr(preferredLangs, k) {
+				delete(raw, k)
+			}
+		}
+	}
 	type pair struct {
 		code  string
 		score float64
@@ -169,14 +188,18 @@ func NewSimpleSpellScoreIdentifier(isKnown map[string]func(word string) bool) *S
 }
 
 func (s *SimpleSpellScoreIdentifier) Detect(cleanText string, noopLangs, preferredLangs []string) *languagetool.DetectedLanguage {
-	scores := s.Scores(cleanText, noopLangs, preferredLangs, false, 1)
+	return s.DetectLimit(cleanText, noopLangs, preferredLangs, false)
+}
+
+func (s *SimpleSpellScoreIdentifier) DetectLimit(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool) *languagetool.DetectedLanguage {
+	scores := s.Scores(cleanText, noopLangs, preferredLangs, limitOnPreferred, 1)
 	if len(scores) == 0 {
 		return nil
 	}
 	return &scores[0]
 }
 
-func (s *SimpleSpellScoreIdentifier) Scores(cleanText string, _ []string, preferredLangs []string, _ bool, count int) []languagetool.DetectedLanguage {
+func (s *SimpleSpellScoreIdentifier) Scores(cleanText string, _ []string, preferredLangs []string, limitOnPreferred bool, count int) []languagetool.DetectedLanguage {
 	// Java LanguageIdentifier / SimpleLanguageIdentifier: Pattern.compile("\\s+").split
 	// without UNICODE_CHARACTER_CLASS (ASCII only; not Go Fields).
 	words := splitASCIIWhitespaceWords(cleanText)
@@ -192,9 +215,9 @@ func (s *SimpleSpellScoreIdentifier) Scores(cleanText string, _ []string, prefer
 		if known == nil {
 			continue
 		}
-		if len(preferredLangs) > 0 && !containsStr(preferredLangs, lang) {
-			// still allow all if preferred empty; when preferred set, only those
-			// (simple surface)
+		// When force preferred (limitOnPreferred), only score preferred codes (Java Default filter).
+		if limitOnPreferred && len(preferredLangs) > 0 && !containsStr(preferredLangs, lang) {
+			continue
 		}
 		ok := 0
 		for _, w := range words {

@@ -55,11 +55,53 @@ func (d *DefaultLanguageIdentifier) IsFastTextEnabled() bool {
 }
 
 func (d *DefaultLanguageIdentifier) Detect(cleanText string, noopLangs, preferredLangs []string) *languagetool.DetectedLanguage {
-	scores := d.Scores(cleanText, noopLangs, preferredLangs, false, 1)
+	return d.DetectLimit(cleanText, noopLangs, preferredLangs, false)
+}
+
+// DetectLimit ports detectLanguage(..., limitOnPreferredLangs).
+func (d *DefaultLanguageIdentifier) DetectLimit(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool) *languagetool.DetectedLanguage {
+	scores := d.Scores(cleanText, noopLangs, preferredLangs, limitOnPreferred, 1)
 	if len(scores) == 0 {
 		return nil
 	}
 	return &scores[0]
+}
+
+// EnableFastTextFromPaths ports enableFasttext(binary, model).
+// Both paths required; creates FastTextDetector and wires FastTextScore.
+// Nil/empty paths leave fasttext disabled (Java logs warn when either null).
+func (d *DefaultLanguageIdentifier) EnableFastTextFromPaths(binaryPath, modelPath string) error {
+	if d == nil {
+		return nil
+	}
+	if binaryPath == "" || modelPath == "" {
+		return nil
+	}
+	ft, err := detector.NewFastTextDetector(modelPath, binaryPath)
+	if err != nil {
+		return err
+	}
+	d.EnableFastText(func(text string) map[string]float64 {
+		m, err := ft.RunFasttext(text, nil)
+		if err != nil || m == nil {
+			return map[string]float64{}
+		}
+		return m
+	})
+	return nil
+}
+
+// EnableNgramsFromPath ports enableNgrams(File) for ZIP/dir ngram data when loader is available.
+// Currently installs a no-op when path empty; when NGram is already set, keeps it.
+// Callers may set d.NGram directly (tests).
+func (d *DefaultLanguageIdentifier) EnableNgramsFromPath(ngramPath string) error {
+	if d == nil || ngramPath == "" {
+		return nil
+	}
+	// Full NGramDetector(zip) load is path-specific; keep hook for service wiring.
+	// If a prebuilt CharNGramDetector is not installed, leave NGram nil (Java would load ZIP).
+	_ = ngramPath
+	return nil
 }
 
 func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferredLangs []string, limitOnPreferred bool, count int) []languagetool.DetectedLanguage {

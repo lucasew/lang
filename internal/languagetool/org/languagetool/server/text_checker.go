@@ -134,11 +134,15 @@ func NewTextChecker(cfg *HTTPServerConfig, internal bool, reqCounter *RequestCou
 	if cfg != nil && cfg.IsPipelineCachingEnabled() {
 		tc.Pool = NewPipelinePool(cfg)
 	}
-	// Java TextChecker ctor: localApiMode → simple identifier; else default (ngram/fasttext deferred).
+	// Java TextChecker ctor: localApiMode → simple identifier; else default with ngram/fasttext paths.
 	if cfg != nil && cfg.LocalAPIMode {
 		tc.LanguageIdentifier = identifier.Instance.GetSimpleLanguageIdentifier(cfg.PreferredLanguages)
 	} else {
-		tc.LanguageIdentifier = identifier.Instance.GetDefaultLanguageIdentifier(0)
+		ngram, ftBin, ftModel := "", "", ""
+		if cfg != nil {
+			ngram, ftBin, ftModel = cfg.NgramLangIdentData, cfg.FasttextBinary, cfg.FasttextModel
+		}
+		tc.LanguageIdentifier = identifier.Instance.GetDefaultLanguageIdentifierFull(0, ngram, ftBin, ftModel)
 	}
 	return tc
 }

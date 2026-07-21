@@ -1,7 +1,9 @@
 package server
 
 import (
+	"fmt"
 	"math"
+	"os"
 	"strconv"
 	"strings"
 
@@ -69,6 +71,13 @@ type HTTPServerConfig struct {
 
 	// LanguageModelDir is the optional ngram / LM directory from --languageModel.
 	LanguageModelDir string
+
+	// FasttextModel / FasttextBinary ports HTTPServerConfig.fasttextModel/fasttextBinary
+	// for LanguageIdentifierService.getDefaultLanguageIdentifier.
+	FasttextModel  string
+	FasttextBinary string
+	// NgramLangIdentData ports ngramLangIdentData (ZIP path for lang-id ngrams).
+	NgramLangIdentData string
 
 	// BlockedReferrers is a list of HTTP Referer / Origin substrings that are rejected.
 	BlockedReferrers []string
@@ -243,6 +252,62 @@ func (c *HTTPServerConfig) GetMaxPipelinePoolSize() int {
 		return 10
 	}
 	return c.MaxPipelinePoolSize
+}
+
+// SetFasttextPaths ports HTTPServerConfig.setFasttextPaths(model, binary).
+// Validates files exist; binary must be executable (Java canExecute).
+func (c *HTTPServerConfig) SetFasttextPaths(fasttextModelPath, fasttextBinaryPath string) error {
+	if c == nil {
+		return NewIllegalConfigurationError("nil config")
+	}
+	if err := validateFasttextModelPath(fasttextModelPath); err != nil {
+		return err
+	}
+	if err := validateFasttextBinaryPath(fasttextBinaryPath); err != nil {
+		return err
+	}
+	c.FasttextModel = fasttextModelPath
+	c.FasttextBinary = fasttextBinaryPath
+	return nil
+}
+
+// SetNgramLangIdentData ports ngramLangIdentData property load:
+// must exist and must be a file (ZIP), not a directory.
+func (c *HTTPServerConfig) SetNgramLangIdentData(path string) error {
+	if c == nil {
+		return NewIllegalConfigurationError("nil config")
+	}
+	if path == "" {
+		c.NgramLangIdentData = ""
+		return nil
+	}
+	st, err := os.Stat(path)
+	if err != nil || st.IsDir() {
+		return NewIllegalConfigurationError(
+			"ngramLangIdentData does not exist or is a directory (needs to be a ZIP file): " + path)
+	}
+	c.NgramLangIdentData = path
+	return nil
+}
+
+func validateFasttextModelPath(path string) error {
+	st, err := os.Stat(path)
+	if err != nil || st.IsDir() {
+		return fmt.Errorf("Fasttext model path not valid (file doesn't exist or is a directory): %s", path)
+	}
+	return nil
+}
+
+func validateFasttextBinaryPath(path string) error {
+	st, err := os.Stat(path)
+	if err != nil || st.IsDir() {
+		return fmt.Errorf("Fasttext binary path not valid (file doesn't exist, is a directory or not executable): %s", path)
+	}
+	// Java File.canExecute(); Unix: any execute bit.
+	if st.Mode()&0o111 == 0 {
+		return fmt.Errorf("Fasttext binary path not valid (file doesn't exist, is a directory or not executable): %s", path)
+	}
+	return nil
 }
 
 // SetBlockedReferrers replaces the blocked referrer list (HTTPSServerTest parity).

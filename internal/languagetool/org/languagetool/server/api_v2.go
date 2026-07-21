@@ -161,9 +161,11 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		// Java TextChecker: noopLanguages/preferredLanguages split(",") into detectLanguageOfString
 		noopLangs := ParseNoopLanguages(parameters)
 		preferredLangs := ParsePreferredLanguages(parameters)
+		// Java V2: forcePreferredLanguages = "true".equals(...)
+		forcePreferred := ParseForcePreferredLanguages(parameters)
 		// Java V2 getLanguage: always detectLanguageOfString via languageIdentifier;
 		// given = detected when auto else parseLanguage(langParam)
-		det, err := a.TextChecker.DetectLanguageOfString(text, preferred, noopLangs, preferredLangs)
+		det, err := a.TextChecker.DetectLanguageOfStringForce(text, preferred, noopLangs, preferredLangs, forcePreferred)
 		if err != nil {
 			return HandleResult{}, err
 		}

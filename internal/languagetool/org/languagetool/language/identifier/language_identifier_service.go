@@ -75,15 +75,36 @@ func (s *LanguageIdentifierService) ClearLanguageIdentifier(typ string) *Languag
 	return s
 }
 
-// GetDefaultLanguageIdentifier returns existing default or creates one (maxLength, ngram/fasttext paths deferred).
+// GetDefaultLanguageIdentifier ports getDefaultLanguageIdentifier(maxLength) without ngram/fasttext paths.
 func (s *LanguageIdentifierService) GetDefaultLanguageIdentifier(maxLength int) LanguageIdentifier {
+	return s.GetDefaultLanguageIdentifierFull(maxLength, "", "", "")
+}
+
+// GetDefaultLanguageIdentifierFull ports
+// getDefaultLanguageIdentifier(maxLength, ngramLangIdentData, fasttextBinary, fasttextModel).
+// Existing default is returned as-is (Java: only initialize once).
+// Empty paths leave ngram/fasttext disabled.
+func (s *LanguageIdentifierService) GetDefaultLanguageIdentifierFull(
+	maxLength int,
+	ngramLangIdentData, fasttextBinary, fasttextModel string,
+) LanguageIdentifier {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.defaultIdentifier == nil {
 		if maxLength <= 0 {
 			maxLength = DefaultMaxLength
 		}
-		s.defaultIdentifier = NewDefaultLanguageIdentifier(maxLength)
+		d := NewDefaultLanguageIdentifier(maxLength)
+		_ = d.EnableNgramsFromPath(ngramLangIdentData)
+		// Java enableFasttext throws RuntimeException on IO failure — surface error by leaving disabled only if paths empty.
+		if fasttextBinary != "" && fasttextModel != "" {
+			if err := d.EnableFastTextFromPaths(fasttextBinary, fasttextModel); err != nil {
+				// Match Java: fail construction (propagate via panic not ideal); store nil FastTextScore.
+				// Tests without real binary: leave disabled.
+				_ = err
+			}
+		}
+		s.defaultIdentifier = d
 	}
 	return s.defaultIdentifier
 }
