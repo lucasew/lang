@@ -2,6 +2,7 @@ package patterns
 
 import (
 	"regexp"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -29,7 +30,9 @@ func (RegexAntiPatternFilter) AcceptRegexMatch(match *rules.RuleMatch, arguments
 		}
 		locs := re.FindAllStringIndex(text, -1)
 		for _, loc := range locs {
-			start, end := loc[0], loc[1]
+			// Go regexp indices are UTF-8 bytes; Java Matcher/RuleMatch are UTF-16.
+			start := antiByteToUTF16(text, loc[0])
+			end := antiByteToUTF16(text, loc[1])
 			// partial overlap is enough to filter out a match
 			if (start <= match.GetToPos() && end >= match.GetToPos()) ||
 				(start <= match.GetFromPos() && end >= match.GetFromPos()) {
@@ -38,6 +41,17 @@ func (RegexAntiPatternFilter) AcceptRegexMatch(match *rules.RuleMatch, arguments
 		}
 	}
 	return match
+}
+
+// antiByteToUTF16 maps a UTF-8 byte index to a Java String UTF-16 code-unit index.
+func antiByteToUTF16(s string, byteIdx int) int {
+	if byteIdx <= 0 {
+		return 0
+	}
+	if byteIdx >= len(s) {
+		return len(utf16.Encode([]rune(s)))
+	}
+	return len(utf16.Encode([]rune(s[:byteIdx])))
 }
 
 func splitAntiPatterns(s string) []string {

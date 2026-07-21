@@ -1134,7 +1134,9 @@ func (r *GermanSpellerRule) removeGenderCompoundMatches(sentence *languagetool.A
 		if r.IsMisspelled(stripped) {
 			continue
 		}
-		gs, ge := loc[0], loc[1]
+		// Go regexp loc is UTF-8 bytes; RuleMatch FromPos/ToPos are UTF-16 (Java).
+		gs := genderByteToUTF16(text, loc[0])
+		ge := genderByteToUTF16(text, loc[1])
 		var filtered []*rules.RuleMatch
 		for _, m := range out {
 			if m == nil {
@@ -1152,12 +1154,42 @@ func (r *GermanSpellerRule) removeGenderCompoundMatches(sentence *languagetool.A
 		out = filtered
 	}
 	for _, loc := range reFileUnderline.FindAllStringIndex(text, -1) {
-		out = filterMatchesInsideSpan(out, loc[0], loc[1])
+		out = filterMatchesInsideSpan(out, genderByteToUTF16(text, loc[0]), genderByteToUTF16(text, loc[1]))
 	}
 	for _, loc := range reMentionUnderline.FindAllStringIndex(text, -1) {
-		out = filterMatchesInsideSpan(out, loc[0], loc[1])
+		out = filterMatchesInsideSpan(out, genderByteToUTF16(text, loc[0]), genderByteToUTF16(text, loc[1]))
 	}
 	return out
+}
+
+// genderByteToUTF16 maps a UTF-8 byte index to Java String UTF-16 code units.
+func genderByteToUTF16(s string, byteIdx int) int {
+	if byteIdx <= 0 {
+		return 0
+	}
+	if byteIdx >= len(s) {
+		n := 0
+		for _, r := range s {
+			if r >= 0x10000 {
+				n += 2
+			} else {
+				n++
+			}
+		}
+		return n
+	}
+	n := 0
+	for i, r := range s {
+		if i >= byteIdx {
+			break
+		}
+		if r >= 0x10000 {
+			n += 2
+		} else {
+			n++
+		}
+	}
+	return n
 }
 
 func filterMatchesInsideSpan(ms []*rules.RuleMatch, start, end int) []*rules.RuleMatch {

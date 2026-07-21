@@ -27,6 +27,21 @@ func TestRegexAntiPatternFilter(t *testing.T) {
 	require.Nil(t, f.AcceptRegexMatch(m, map[string]string{"antipatterns": "world"}, sent))
 }
 
+// Java Matcher.start/end are UTF-16; multi-byte prefix must not desync antipattern overlap.
+func TestRegexAntiPatternFilter_UTF16(t *testing.T) {
+	f := RegexAntiPatternFilter{}
+	// "café world" — é is 1 UTF-16 unit / 2 UTF-8 bytes.
+	// "world" regex at byte 6; UTF-16 index 5.
+	// Match on the space (UTF-16 4..5): anti "world" partially overlaps ToPos==5 in UTF-16.
+	// Byte-only compare would miss (anti start 6 > ToPos 5) and wrongly keep the match.
+	text := "café world"
+	sent := languagetool.AnalyzePlain(text)
+	m := rules.NewRuleMatch(rules.NewFakeRule("R"), sent, 4, 5, "msg")
+	require.Nil(t, f.AcceptRegexMatch(m, map[string]string{"antipatterns": "world"}, sent),
+		"UTF-16 antipattern edge overlap must drop match")
+	require.NotNil(t, f.AcceptRegexMatch(m, map[string]string{"antipatterns": "xyz"}, sent))
+}
+
 func TestApostropheTypeFilter(t *testing.T) {
 	f := ApostropheTypeFilter{}
 	tok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("l'eau", nil, nil))
