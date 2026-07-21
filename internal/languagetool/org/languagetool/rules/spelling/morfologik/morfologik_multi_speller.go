@@ -80,9 +80,10 @@ func (m *MorfologikMultiSpeller) GetSuggestions(word string) []string {
 	return wordsFromWeighted(m.GetWeightedSuggestions(word))
 }
 
-// GetWeightedSuggestions ports getSuggestionsFromSpellers(word, spellers).
+// GetWeightedSuggestions ports getSuggestions (→ getSuggestionsFromSpellers(word, spellers)).
+// Java does not gate on isMisspelled; known words yield empty from each Speller.
 func (m *MorfologikMultiSpeller) GetWeightedSuggestions(word string) []WeightedSuggestion {
-	if m == nil || !m.IsMisspelled(word) {
+	if m == nil {
 		return nil
 	}
 	return m.getSuggestionsFromSpellers(word, m.Spellers)
@@ -120,7 +121,7 @@ func (m *MorfologikMultiSpeller) GetWeightedSuggestionsFromDefaultDicts(word str
 }
 
 // getSuggestionsFromSpellers ports private getSuggestionsFromSpellers:
-// merge unique words, then Collections.sort by weight ascending.
+// merge unique words (first occurrence wins), then Collections.sort by weight.
 func (m *MorfologikMultiSpeller) getSuggestionsFromSpellers(word string, spellerList []*MorfologikSpeller) []WeightedSuggestion {
 	if m == nil || word == "" || len(spellerList) == 0 {
 		return nil
@@ -131,15 +132,16 @@ func (m *MorfologikMultiSpeller) getSuggestionsFromSpellers(word string, speller
 		if s == nil {
 			continue
 		}
+		// Java: speller.getSuggestions(word)
 		for _, sug := range s.GetWeightedSuggestions(word) {
-			if sug.Word == "" || sug.Word == word {
+			// Java: if (!seenWords.contains(w) && !w.equals(word)) result.add; always seenWords.add(w)
+			if sug.Word == "" {
 				continue
 			}
-			if _, ok := seen[sug.Word]; ok {
-				continue
+			if _, ok := seen[sug.Word]; !ok && sug.Word != word {
+				result = append(result, sug)
 			}
 			seen[sug.Word] = struct{}{}
-			result = append(result, sug)
 		}
 	}
 	SortByWeight(result)

@@ -136,20 +136,30 @@ func (s *MorfologikSpeller) SetFrequency(word string, freq int) {
 }
 
 // GetFrequency ports MorfologikSpeller.getFrequency (exact then lowercase).
-// Java Speller.getFrequency returns 0 when frequency not included / unknown / tag 0 —
-// do not invent 1 for known map words (weights: dist*26+26-freq-1 → wordone/51 with freq 0).
+// Java: int freq = speller.getFrequency(word); if (freq == 0 && !word.equals(word.toLowerCase())) ...
+// Uses ConversionLocale when set (dict locale); else strings.ToLower like default Locale path.
+// Do not invent 1 for known map words (weights: dist*26+26-freq-1 → wordone/51 with freq 0).
 func (s *MorfologikSpeller) GetFrequency(word string) int {
 	if s == nil || word == "" {
 		return 0
 	}
 	if f, ok := s.lookupFrequency(word); ok {
-		return f
+		// Java returns speller freq even when 0 for exact hit path only if... actually
+		// Java always tries lowercase when freq==0, even for known words with tag 0.
+		if f > 0 {
+			return f
+		}
 	}
-	low := strings.ToLower(word)
+	// Java: if (freq == 0 && !word.equals(word.toLowerCase()))
+	low := s.toLower(word)
 	if low != word {
 		if f, ok := s.lookupFrequency(low); ok {
 			return f
 		}
+	}
+	// exact was known with freq 0
+	if f, ok := s.lookupFrequency(word); ok {
+		return f
 	}
 	return 0
 }
@@ -422,14 +432,24 @@ func (s *MorfologikSpeller) GetSuggestions(word string) []string {
 // FreqRanges ports morfologik Speller.FREQ_RANGES ('Z'-'A'+1 = 26).
 const FreqRanges = 26
 
+// stringMatcherMaxMatchLength ports StringMatcher.MAX_MATCH_LENGTH.
+const stringMatcherMaxMatchLength = 250
+
+// morfologikFindReplMaxLen ports MorfologikSpeller.getSuggestions: skip findReplacementCandidates
+// when word.length() >= 50 ("slow for long words (the limit is arbitrary)").
+const morfologikFindReplMaxLen = 50
+
 // GetWeightedSuggestions ports MorfologikSpeller.getSuggestions (WeightedSuggestion list):
-// findReplacementCandidates + replaceRunOnWordCandidates, then case fold.
+// findReplacementCandidates (if len < 50) + replaceRunOnWordCandidates, then case fold.
 // Weights match morfologik CandidateData: edit*FREQ_RANGES + FREQ_RANGES - freq - 1.
 func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSuggestion {
 	if s == nil || word == "" {
 		return nil
 	}
-	// Java: word.length() > StringMatcher.MAX_MATCH_LENGTH → empty (MAX is large; skip for now)
+	// Java: word.length() > StringMatcher.MAX_MATCH_LENGTH → empty
+	if UTF16Len(word) > stringMatcherMaxMatchLength {
+		return nil
+	}
 	// Inject Suggestions map: preserve injection order (tests stand in for already-ordered Speller hits).
 	if sug, ok := s.Suggestions[word]; ok {
 		out := make([]WeightedSuggestion, 0, len(sug))
@@ -447,23 +467,26 @@ func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSugges
 	}
 
 	var out []WeightedSuggestion
-	if s.WeightedSuggestFn != nil {
-		out = append(out, s.WeightedSuggestFn(word)...)
-	} else if s.SuggestFn != nil {
-		for _, w := range s.SuggestFn(word) {
-			if w == "" || w == word {
-				continue
+	// Java: if (word.length() < 50) { findReplacementCandidates... }
+	if UTF16Len(word) < morfologikFindReplMaxLen {
+		if s.WeightedSuggestFn != nil {
+			out = append(out, s.WeightedSuggestFn(word)...)
+		} else if s.SuggestFn != nil {
+			for _, w := range s.SuggestFn(word) {
+				if w == "" || w == word {
+					continue
+				}
+				out = append(out, NewWeightedSuggestion(w, s.suggestionWeight(word, w)))
 			}
-			out = append(out, NewWeightedSuggestion(w, s.suggestionWeight(word, w)))
-		}
-	} else if len(s.Words) > 0 && len(s.Words) <= 5000 {
-		// small map: peers within MaxEditDistance
-		for w := range s.Words {
-			d := editDistance(word, w)
-			if d > 0 && d <= s.MaxEditDistance {
-				out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
-				if len(out) >= 8 {
-					break
+		} else if len(s.Words) > 0 && len(s.Words) <= 5000 {
+			// small map: peers within MaxEditDistance
+			for w := range s.Words {
+				d := editDistance(word, w)
+				if d > 0 && d <= s.MaxEditDistance {
+					out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
+					if len(out) >= 8 {
+						break
+					}
 				}
 			}
 		}
