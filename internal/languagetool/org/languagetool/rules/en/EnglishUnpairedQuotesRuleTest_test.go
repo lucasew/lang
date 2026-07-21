@@ -49,3 +49,29 @@ func TestEnglishUnpairedQuotesRule_Metadata(t *testing.T) {
 	require.Equal(t, []string{"\""}, inc[0].GetCorrections())
 	require.Equal(t, "\"I'm over here,<marker>\"</marker> she said.", rule.GetCorrectExamples()[0].GetExample())
 }
+
+// Twin of EnglishUnpairedQuotesRuleTest.testMultipleSentences
+func TestEnglishUnpairedQuotesRule_MultipleSentences(t *testing.T) {
+	rule := NewEnglishUnpairedQuotesRule(nil)
+	matchN := func(parts ...string) int {
+		var as []*languagetool.AnalyzedSentence
+		for _, p := range parts {
+			as = append(as, languagetool.AnalyzePlain(p))
+		}
+		return len(rule.MatchList(as))
+	}
+	require.Equal(t, 0, matchN(
+		"This is multiple sentence text that contains Quotes: \"This is a bracket.",
+		"With some text.\" and this continues.\n",
+	))
+	// curly quotes across paragraphs
+	require.Equal(t, 0, matchN(
+		"This is multiple sentence text that contains Quotes. “This is a bracket.",
+		"\n\n With some text.” and this continues.",
+	))
+	// unclosed curly
+	require.Equal(t, 1, matchN(
+		"This is multiple sentence text that contains a Quote: “This is a bracket.",
+		"With some text. And this continues.\n\n",
+	))
+}

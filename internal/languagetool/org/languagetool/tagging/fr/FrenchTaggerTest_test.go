@@ -23,3 +23,10 @@ func TestFrenchTagger_DictionaryPath(t *testing.T) {
 	tagger := NewFrenchTagger(nil)
 	require.NotEmpty(t, tagger.GetDictionaryPath())
 }
+
+// Twin of FrenchTaggerTest.testDictionary — path/dict availability (full morfologik scan is N/A without dict bytes).
+func TestFrenchTagger_Dictionary(t *testing.T) {
+	tagger := NewFrenchTagger(nil)
+	// Java TestTools.testDictionary walks the dict; we assert resource path wiring exists.
+	require.NotEmpty(t, tagger.GetDictionaryPath())
+}

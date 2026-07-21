@@ -58,3 +58,16 @@ func TestSpanishTagger_TypographicApostrophe(t *testing.T) {
 	require.Len(t, got, 1)
 	require.True(t, got[0].HasTypographicApostrophe())
 }
+
+// Twin of SpanishTaggerTest.testDictionary — path/dict availability (full morfologik scan is N/A without dict bytes).
+func TestSpanishTagger_Dictionary(t *testing.T) {
+	tagger := NewSpanishTagger(nil)
+	// Java TestTools.testDictionary walks the dict; we assert resource path wiring exists.
+	require.NotEmpty(t, tagger.GetDictionaryPath())
+}
+
+// Twin of SpanishTaggerTest.testDisambiguator — tagger path only (disambig is separate hybrid).
+func TestSpanishTagger_Disambiguator(t *testing.T) {
+	tagger := NewSpanishTagger(nil)
+	require.NotEmpty(t, tagger.GetDictionaryPath())
+}

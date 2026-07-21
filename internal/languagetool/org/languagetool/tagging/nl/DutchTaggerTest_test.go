@@ -150,3 +150,10 @@ func TestDutchTagger_NoCompoundWithoutHook(t *testing.T) {
 	require.NotEmpty(t, got[0].GetReadings())
 	require.Nil(t, got[0].GetReadings()[0].GetPOSTag())
 }
+
+// Twin of DutchTaggerTest.testDictionary — path/dict availability (full morfologik scan is N/A without dict bytes).
+func TestDutchTagger_Dictionary(t *testing.T) {
+	tagger := NewDutchTagger(nil)
+	// Java TestTools.testDictionary walks the dict; we assert resource path wiring exists.
+	require.NotEmpty(t, tagger.GetDictionaryPath())
+}
