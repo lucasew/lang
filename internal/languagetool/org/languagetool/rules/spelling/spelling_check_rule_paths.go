@@ -73,7 +73,9 @@ func (r *SpellingCheckRule) GetAdditionalSpellingFileNames() []string {
 		// MorfologikPortugueseSpellerRule: GLOBAL, pt/spelling.txt, multiwords (no hunspell custom)
 		return []string{GlobalSpellingFile, "pt/spelling.txt", "pt/multiwords.txt"}
 	case "es":
-		return []string{sc + CustomSpellingFile, GlobalSpellingFile, "es/multiwords.txt"}
+		// MorfologikSpanishSpellerRule: "/es/"+CUSTOM, GLOBAL, multiwords
+		// Java: "/es/" + "/hunspell/spelling_custom.txt" → "/es//hunspell/..."
+		return []string{"/es/" + CustomSpellingFile, GlobalSpellingFile, "/es/multiwords.txt"}
 	case "ca":
 		// MorfologikCatalanSpellerRule: "/ca/"+CUSTOM, GLOBAL, multiwords, spelling-special
 		// Java string concat: "/ca/" + "/hunspell/spelling_custom.txt" → "/ca//hunspell/..."

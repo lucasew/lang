@@ -38,9 +38,17 @@ func NewMorfologikSpanishSpellerRule() *MorfologikSpanishSpellerRule {
 	}
 	// Java MorfologikSpanishSpellerRule ctor: setIgnoreTaggedWords().
 	r.IgnoreTaggedWords = true
-	// Java tokenizeNewWords() = false — re-load lists without multi-token antipatterns.
+	// Java tokenizeNewWords() = false; getAdditionalSpellingFileNames:
+	// "/es/"+CUSTOM, GLOBAL, "/es/multiwords.txt"
 	if r.SpellingCheckRule != nil {
 		r.DisableTokenizeNewWords = true
+		r.GetAdditionalSpellingFileNamesFn = func() []string {
+			return []string{
+				"/es/" + spelling.CustomSpellingFile,
+				spelling.GlobalSpellingFile,
+				"/es/multiwords.txt",
+			}
+		}
 		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
 	return r

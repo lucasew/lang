@@ -62,10 +62,18 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 	// Java AbstractEnglishSpellerRule: super.ignoreWordsWithLength = 1
 	// tokenizeNewWords() = false — re-load lists as whole-line ignores.
 	// Path getters: EN multiwords via getAdditionalSpellingFileNames (or SpellingCheckRule en case).
+	// languageSpecificIgnoreFile = spelling.txt → spelling_{variant}.txt (same as variant file).
 	if base.SpellingCheckRule != nil {
 		base.IgnoreWordsWithLength = 1
 		base.DisableTokenizeNewWords = true
+		// Prefer full variant for getLanguageVariantSpellingFileName / languageSpecificIgnoreFile.
+		if variantCode != "" {
+			base.LanguageCode = variantCode
+		}
 		base.GetAdditionalSpellingFileNamesFn = r.GetAdditionalSpellingFileNames
+		base.GetLanguageVariantSpellingFileNameFn = func() string {
+			return spelling.LanguageVariantSpellingClasspath(r.VariantCode)
+		}
 		spelling.ReapplyDefaultSpellingWordLists(base.SpellingCheckRule)
 		// Java AbstractEnglishSpellerRule.filterNoSuggestWords (lcDoNotSuggestWords).
 		base.FilterNoSuggestWordsFn = filterEnglishNoSuggestWords

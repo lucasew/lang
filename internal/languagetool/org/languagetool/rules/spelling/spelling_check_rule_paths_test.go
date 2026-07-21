@@ -44,3 +44,13 @@ func TestApplyDefault_UsesPathGetters(t *testing.T) {
 	// Should not panic; if pt ignore exists, words loaded
 	_ = r.IgnoreWords
 }
+
+func TestSpellingCheckRule_PathGetters_ES_CA(t *testing.T) {
+	es := NewSpellingCheckRule("S", "d", "es")
+	esAdd := es.GetAdditionalSpellingFileNames()
+	require.Equal(t, []string{"/es//hunspell/spelling_custom.txt", "spelling_global.txt", "/es/multiwords.txt"}, esAdd)
+
+	ca := NewSpellingCheckRule("S", "d", "ca")
+	caAdd := ca.GetAdditionalSpellingFileNames()
+	require.Equal(t, []string{"/ca//hunspell/spelling_custom.txt", "spelling_global.txt", "/ca/multiwords.txt", "/ca/spelling-special.txt"}, caAdd)
+}
