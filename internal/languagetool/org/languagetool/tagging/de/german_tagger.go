@@ -165,7 +165,8 @@ func (t *GermanTagger) tagOneInSentenceWithFirst(word string, sentenceTokens []s
 	// Unknown-word body ports Java after expansions/mitarbeitend:
 	// compoundParts = tokenize(word); if size<=1 → imp / sub / (elative + dash);
 	// else multi-part last-part path (domain skip).
-	if len(readings) == 0 && strings.TrimSpace(word) != "" {
+	// Java: unknown-word path when surface is non-empty (String.trim).
+	if len(readings) == 0 && tools.JavaStringTrim(word) != "" {
 		parts := []string{w}
 		multi := false
 		if t.SplitCompound != nil {

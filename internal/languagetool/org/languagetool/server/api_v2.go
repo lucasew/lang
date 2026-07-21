@@ -331,9 +331,13 @@ func (a *ApiV2) handleWordsAdd(parameters map[string]string) (string, error) {
 	}
 	user := parameters["username"]
 	// single word or batch: mode=batch&words="a b c"
+	// Java: parameters.get("words").split("\\s+") — ASCII whitespace runs (not Fields).
 	if strings.EqualFold(parameters["mode"], "batch") {
 		added := 0
-		for _, w := range strings.Fields(parameters["words"]) {
+		for _, w := range javaSplitASCIIWhitespacePlus(parameters["words"]) {
+			if w == "" {
+				continue
+			}
 			if a.UserDict.Add(user, w) {
 				added++
 			}
@@ -357,7 +361,10 @@ func (a *ApiV2) handleWordsDelete(parameters map[string]string) (string, error) 
 	user := parameters["username"]
 	if strings.EqualFold(parameters["mode"], "batch") {
 		deleted := 0
-		for _, w := range strings.Fields(parameters["words"]) {
+		for _, w := range javaSplitASCIIWhitespacePlus(parameters["words"]) {
+			if w == "" {
+				continue
+			}
 			if a.UserDict.Delete(user, w) {
 				deleted++
 			}
@@ -372,4 +379,42 @@ func (a *ApiV2) handleWordsDelete(parameters map[string]string) (string, error) 
 	ok := a.UserDict.Delete(user, word)
 	b, err := json.Marshal(map[string]any{"deleted": ok})
 	return string(b), err
+}
+
+// javaSplitASCIIWhitespacePlus ports Java String.split("\\s+") without UNICODE_CHARACTER_CLASS
+// (ApiV2 batch words). Trailing empties dropped; mid empties not produced by \s+.
+func javaSplitASCIIWhitespacePlus(s string) []string {
+	if s == "" {
+		return []string{""}
+	}
+	var parts []string
+	start := 0
+	i := 0
+	for i < len(s) {
+		c := s[i]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r' {
+			if start < i {
+				parts = append(parts, s[start:i])
+			}
+			j := i + 1
+			for j < len(s) {
+				c2 := s[j]
+				if c2 != ' ' && c2 != '\t' && c2 != '\n' && c2 != '\v' && c2 != '\f' && c2 != '\r' {
+					break
+				}
+				j++
+			}
+			start = j
+			i = j
+			continue
+		}
+		i++
+	}
+	if start < len(s) {
+		parts = append(parts, s[start:])
+	}
+	if len(parts) == 0 {
+		return []string{""}
+	}
+	return parts
 }

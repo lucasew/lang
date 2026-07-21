@@ -2,10 +2,12 @@ package de
 
 import (
 	"bufio"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"io"
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // GermanCompoundTokenizer ports tokenizers.de.GermanCompoundTokenizer
@@ -64,7 +66,8 @@ func (t *GermanCompoundTokenizer) LoadWords(r io.Reader) error {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		w := strings.TrimSpace(sc.Text())
+		// Prefer String.trim semantics for dictionary lines (Java loaders use trim).
+		w := tools.JavaStringTrim(sc.Text())
 		if w == "" || strings.HasPrefix(w, "#") {
 			continue
 		}
@@ -80,7 +83,7 @@ func (t *GermanCompoundTokenizer) LoadHunspellDic(r io.Reader) error {
 	sc.Buffer(buf, 1024*1024)
 	first := true
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -99,7 +102,7 @@ func (t *GermanCompoundTokenizer) LoadHunspellDic(r io.Reader) error {
 		if i := strings.IndexByte(line, '\t'); i >= 0 {
 			line = line[:i]
 		}
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}
@@ -124,7 +127,7 @@ func (t *GermanCompoundTokenizer) AddWord(w string) {
 	if t.Words == nil {
 		t.Words = map[string]struct{}{}
 	}
-	w = strings.TrimSpace(w)
+	w = tools.JavaStringTrim(w)
 	if w == "" {
 		return
 	}
@@ -142,7 +145,7 @@ func (t *GermanCompoundTokenizer) AddException(surface string, parts []string) {
 	key := strings.ToLower(surface)
 	out := make([]string, 0, len(parts))
 	for _, p := range parts {
-		p = strings.ToLower(strings.TrimSpace(p))
+		p = strings.ToLower(tools.JavaStringTrim(p))
 		if p == "" {
 			continue
 		}

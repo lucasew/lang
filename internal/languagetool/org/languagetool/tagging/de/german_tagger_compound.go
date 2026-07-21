@@ -29,7 +29,8 @@ func (t *GermanTagger) sanitizeWord(word string) string {
 	result := word
 	parts := strings.Split(word, "-")
 	lastPart := word
-	if len(parts) > 1 && strings.TrimSpace(parts[len(parts)-1]) != "" {
+	// Java: !splitWord[splitWord.length - 1].trim().equals("")
+	if len(parts) > 1 && tools.JavaStringTrim(parts[len(parts)-1]) != "" {
 		lastPart = parts[len(parts)-1]
 	}
 	// compound tokenize last segment when SplitCompound available

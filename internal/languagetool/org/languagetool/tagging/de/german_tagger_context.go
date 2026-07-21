@@ -136,7 +136,8 @@ func (t *GermanTagger) getSubstantivatedForms(word string, sentenceTokens []stri
 	idx := indexOfToken(sentenceTokens, word)
 	for j := idx + 1; j < len(sentenceTokens); j++ {
 		next := sentenceTokens[j]
-		if strings.TrimSpace(next) == "" {
+		// Java skips whitespace tokens via Character/String tools; String.trim empty.
+		if tools.JavaStringTrimIsEmpty(next) {
 			continue
 		}
 		// Java: nextWord.length() > 0 && (Character.isUpperCase(nextWord.charAt(0)) || "als")

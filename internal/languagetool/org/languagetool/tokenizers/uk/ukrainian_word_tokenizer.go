@@ -5,6 +5,8 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UkrainianWordTokenizer ports org.languagetool.tokenizers.uk.UkrainianWordTokenizer.
@@ -117,7 +119,8 @@ var (
 
 func (w *UkrainianWordTokenizer) Tokenize(text string) []string {
 	urls := map[string]string{}
-	if strings.TrimSpace(text) != "" {
+	// Java: if (!text.trim().isEmpty()) adjustTextForTokenizing — String.trim.
+	if !tools.JavaStringTrimIsEmpty(text) {
 		text = adjustTextForTokenizing(text, urls)
 	}
 

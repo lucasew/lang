@@ -49,7 +49,8 @@ func (f *ArabicNumberPhraseFilter) AcceptRuleMatch(match *rules.RuleMatch, argum
 		if patternTokens[i] == nil {
 			continue
 		}
-		numWordTokens = append(numWordTokens, strings.TrimSpace(patternTokens[i].GetToken()))
+		// Java: patternTokens[i].getToken().trim() — String.trim.
+		numWordTokens = append(numWordTokens, tools.JavaStringTrim(patternTokens[i].GetToken()))
 	}
 	numPhrase := strings.Join(numWordTokens, " ")
 	feminine := false
@@ -119,8 +120,9 @@ func PrepareSuggestionWithUnit(numPhrase, previousWord, unit, inflection string,
 }
 
 // SuggestionsForNumericPhrase converts a phrase of digits to Arabic words.
+// numPhrase is Java String.join(" ", tokens) — split on single ASCII spaces only.
 func SuggestionsForNumericPhrase(numPhrase string, feminine bool) []string {
-	numPhrase = strings.TrimSpace(numPhrase)
+	numPhrase = tools.JavaStringTrim(numPhrase)
 	if numPhrase == "" {
 		return nil
 	}
@@ -131,7 +133,10 @@ func SuggestionsForNumericPhrase(numPhrase string, feminine bool) []string {
 		}
 		return []string{w}
 	}
-	for _, tok := range strings.Fields(numPhrase) {
+	for _, tok := range strings.Split(numPhrase, " ") {
+		if tok == "" {
+			continue
+		}
 		if isAllDigits(tok) {
 			w := tools.NumberToArabicWordsGender(tok, feminine)
 			if w != "" {

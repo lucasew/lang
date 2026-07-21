@@ -110,8 +110,9 @@ func (s *NERService) postTo(endpoint, formBody string) (string, error) {
 
 // ParseBuffer ports NERService.parseBuffer.
 // Tokens look like: word/TAG/from/to  (slashes from the right).
+// Java: buffer.trim().split(" ") — String.trim + single-space split (not Fields).
 func ParseBuffer(buffer string) []Span {
-	values := strings.Fields(strings.TrimSpace(buffer))
+	values := strings.Split(tools.JavaStringTrim(buffer), " ")
 	var res []Span
 	for _, value := range values {
 		if value == "" {

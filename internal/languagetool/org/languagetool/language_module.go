@@ -3,7 +3,10 @@ package languagetool
 import (
 	"bufio"
 	"io"
+	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // LanguageModuleProperties ports META-INF/org/languagetool/language-module.properties.
@@ -12,12 +15,17 @@ type LanguageModuleProperties struct {
 	LanguageClasses []string
 }
 
+// languageClassesCommaSplit ports Languages.java: classNames.split("\\s*,\\s*")
+// (Pattern without UNICODE_CHARACTER_CLASS → ASCII whitespace around commas).
+var languageClassesCommaSplit = regexp.MustCompile(`[ \t\n\v\f\r]*,[ \t\n\v\f\r]*`)
+
 // ParseLanguageModuleProperties reads a properties stream.
 func ParseLanguageModuleProperties(r io.Reader) (LanguageModuleProperties, error) {
 	var out LanguageModuleProperties
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java Properties line handling is more complex; trim empty/# via String.trim.
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") || strings.HasPrefix(line, "!") {
 			continue
 		}
@@ -29,13 +37,14 @@ func ParseLanguageModuleProperties(r io.Reader) (LanguageModuleProperties, error
 		if i < 0 {
 			continue
 		}
-		key := strings.TrimSpace(line[:i])
-		val := strings.TrimSpace(line[i+1:])
+		key := tools.JavaStringTrim(line[:i])
+		val := tools.JavaStringTrim(line[i+1:])
 		if key != "languageClasses" {
 			continue
 		}
-		for _, part := range strings.Split(val, ",") {
-			part = strings.TrimSpace(part)
+		// Java: classNames.split("\\s*,\\s*")
+		for _, part := range languageClassesCommaSplit.Split(val, -1) {
+			part = tools.JavaStringTrim(part)
 			if part != "" {
 				out.LanguageClasses = append(out.LanguageClasses, part)
 			}
