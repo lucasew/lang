@@ -10,6 +10,7 @@ import (
 
 func TestUnnecessaryPhraseRule_Rule(t *testing.T) {
 	rule := NewUnnecessaryPhraseRule(nil)
+	rule.MinPercent = 0
 	matches := rule.Match(languagetool.AnalyzePlain("Das ist allem Anschein nach eine Phrase."))
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Das ist eine Phrase."))))

@@ -8,7 +8,7 @@ import (
 )
 
 func TestConjunctionAtBeginOfSentenceRule(t *testing.T) {
-	rule := NewConjunctionAtBeginOfSentenceRule(nil)
+	rule := NewConjunctionAtBeginOfSentenceRuleWithMinPercent(nil, 0)
 	// Java: hasPosTagStartingWith("KON") only
 	und := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),

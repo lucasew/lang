@@ -9,7 +9,7 @@ import (
 )
 
 func TestPassiveSentenceRule_Match(t *testing.T) {
-	r := NewPassiveSentenceRule(nil) // MinPercent 0 → report all passives
+	r := NewPassiveSentenceRuleWithMinPercent(nil, 0) // show-all for twin morph
 	hit := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
 		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "der"),

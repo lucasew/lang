@@ -33,8 +33,12 @@ func NewConjunctionAtBeginOfSentenceRule(messages map[string]string) *Conjunctio
 }
 
 func NewConjunctionAtBeginOfSentenceRuleWithDefaultLimit(messages map[string]string) *ConjunctionAtBeginOfSentenceRule {
+	return NewConjunctionAtBeginOfSentenceRule(messages)
+}
+
+func NewConjunctionAtBeginOfSentenceRuleWithMinPercent(messages map[string]string, min int) *ConjunctionAtBeginOfSentenceRule {
 	r := NewConjunctionAtBeginOfSentenceRule(messages)
-	r.MinPercent = conjunctionBeginDefaultMinPercent
+	r.MinPercent = min
 	return r
 }
 

@@ -8,7 +8,7 @@ import (
 )
 
 func TestSentenceWithManRule(t *testing.T) {
-	rule := NewSentenceWithManRule(nil)
+	rule := NewSentenceWithManRuleWithMinPercent(nil, 0)
 	// Java: hasLemma("man") only
 	manSent := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
@@ -33,7 +33,7 @@ func TestSentenceWithManRule(t *testing.T) {
 }
 
 func TestSentenceWithModalVerbRule(t *testing.T) {
-	rule := NewSentenceWithModalVerbRule(nil)
+	rule := NewSentenceWithModalVerbRuleWithMinPercent(nil, 0)
 	// Java: VER:MOD + VER:INF
 	hit := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
@@ -66,7 +66,7 @@ func TestSentenceWithModalVerbRule(t *testing.T) {
 }
 
 func TestPassiveSentenceRule(t *testing.T) {
-	rule := NewPassiveSentenceRule(nil)
+	rule := NewPassiveSentenceRuleWithMinPercent(nil, 0)
 	// Java: lemma werden + VER:PA2
 	hit := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),

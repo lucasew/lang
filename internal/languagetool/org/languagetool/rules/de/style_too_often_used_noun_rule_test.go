@@ -35,7 +35,7 @@ func TestStyleTooOftenUsedNounRule_JavaDefaults(t *testing.T) {
 func TestStyleTooOftenUsedNounRule_CountGateOff(t *testing.T) {
 	// Force MinWordCount 0 to exercise percent threshold (Java uses 100 in production).
 	rule := NewStyleTooOftenUsedNounRule(nil)
-	rule.MinWordCount = 0
+	rule.MinWordCount = 0 // Java MIN_WORD_COUNT=100; 0 only for unit percent gate
 	s1 := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
 		atrWithPOS("Er", "PRO:PER:NOM:SIN:MAS", "er"),
