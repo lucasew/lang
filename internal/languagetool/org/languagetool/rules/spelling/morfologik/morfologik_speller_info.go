@@ -20,6 +20,7 @@ const (
 	infoIgnoreDiacritics  = "fsa.dict.speller.ignore-diacritics"
 	infoConvertCase       = "fsa.dict.speller.convert-case"
 	infoFrequencyIncluded = "fsa.dict.frequency-included"
+	infoRunOnWords        = "fsa.dict.speller.runon-words"
 )
 
 // binaryDictCache caches OpenDictionary by absolute path (FSA is thread-safe).
@@ -48,6 +49,9 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 	}
 	if v, ok := meta[infoFrequencyIncluded]; ok {
 		s.FrequencyIncluded = parseInfoBool(v, s.FrequencyIncluded)
+	}
+	if v, ok := meta[infoRunOnWords]; ok {
+		s.SupportRunOnWords = parseInfoBool(v, s.SupportRunOnWords)
 	}
 	// ignore-diacritics affects suggestion search, not isMisspelled gates — stored when needed later.
 	_ = meta[infoIgnoreDiacritics]

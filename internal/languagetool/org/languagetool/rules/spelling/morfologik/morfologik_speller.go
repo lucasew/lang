@@ -46,6 +46,8 @@ type MorfologikSpeller struct {
 	BinaryDictPath string
 	// FrequencyIncluded ports fsa.dict.frequency-included (from .info / binary dict).
 	FrequencyIncluded bool
+	// SupportRunOnWords ports fsa.dict.speller.runon-words (default true).
+	SupportRunOnWords bool
 	// binaryDict is the attached FSA (typed as any to avoid exporting attic in all call sites).
 	// Set only via AttachBinaryDictionary; used for identity/debug.
 	binaryDict any
@@ -67,6 +69,7 @@ func NewMorfologikSpeller(fileInClassPath string, maxEditDistance int) *Morfolog
 		IgnoreCamelCase:    true,
 		IgnoreAllUppercase: true,
 		ConvertCase:        true,
+		SupportRunOnWords:  true,
 	}
 	// Prefer real sibling .info when the Java resource is on disk; else EN hunspell twin.
 	if !s.LoadInfoFromClasspath(fileInClassPath) && isEnglishHunspellDict(fileInClassPath) {
@@ -333,8 +336,9 @@ func (s *MorfologikSpeller) GetSuggestions(word string) []string {
 // FreqRanges ports morfologik Speller.FREQ_RANGES ('Z'-'A'+1 = 26).
 const FreqRanges = 26
 
-// GetWeightedSuggestions ports MorfologikSpeller.getSuggestions (WeightedSuggestion list).
-// Weights match morfologik CandidateData distance: edit*FREQ_RANGES + FREQ_RANGES - freq - 1.
+// GetWeightedSuggestions ports MorfologikSpeller.getSuggestions (WeightedSuggestion list):
+// findReplacementCandidates + replaceRunOnWordCandidates, then case fold.
+// Weights match morfologik CandidateData: edit*FREQ_RANGES + FREQ_RANGES - freq - 1.
 func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSuggestion {
 	if s == nil || word == "" {
 		return nil
@@ -350,43 +354,105 @@ func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSugges
 			// ascending weight by position so multi-merge keeps inject order when freqs equal
 			out = append(out, NewWeightedSuggestion(w, i))
 		}
+		// still merge run-ons after inject (Java always calls replaceRunOnWordCandidates)
+		out = mergeWeightedUnique(out, s.ReplaceRunOnWordCandidates(word))
+		SortByWeight(out)
 		return applyCaseToWeighted(s, word, out)
 	}
+
+	var out []WeightedSuggestion
 	if s.WeightedSuggestFn != nil {
-		return applyCaseToWeighted(s, word, s.WeightedSuggestFn(word))
-	}
-	// Binary FSA string SuggestFn: re-weight each hit
-	if s.SuggestFn != nil {
-		raw := s.SuggestFn(word)
-		if len(raw) == 0 {
-			return nil
-		}
-		out := make([]WeightedSuggestion, 0, len(raw))
-		for _, w := range raw {
+		out = append(out, s.WeightedSuggestFn(word)...)
+	} else if s.SuggestFn != nil {
+		for _, w := range s.SuggestFn(word) {
 			if w == "" || w == word {
 				continue
 			}
 			out = append(out, NewWeightedSuggestion(w, s.suggestionWeight(word, w)))
 		}
-		SortByWeight(out)
-		return applyCaseToWeighted(s, word, out)
-	}
-	// small map: peers within MaxEditDistance
-	if len(s.Words) == 0 || len(s.Words) > 5000 {
-		return nil
-	}
-	var out []WeightedSuggestion
-	for w := range s.Words {
-		d := editDistance(word, w)
-		if d > 0 && d <= s.MaxEditDistance {
-			out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
-			if len(out) >= 8 {
-				break
+	} else if len(s.Words) > 0 && len(s.Words) <= 5000 {
+		// small map: peers within MaxEditDistance
+		for w := range s.Words {
+			d := editDistance(word, w)
+			if d > 0 && d <= s.MaxEditDistance {
+				out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
+				if len(out) >= 8 {
+					break
+				}
 			}
 		}
 	}
+	// Java MorfologikSpeller.getSuggestions: always add replaceRunOnWordCandidates
+	out = mergeWeightedUnique(out, s.ReplaceRunOnWordCandidates(word))
+	if len(out) == 0 {
+		return nil
+	}
 	SortByWeight(out)
 	return applyCaseToWeighted(s, word, out)
+}
+
+// ReplaceRunOnWordCandidates ports morfologik.speller.Speller.replaceRunOnWordCandidates.
+// Suggests "prefix suffix" splits when both sides are in the dictionary (distance 1).
+func (s *MorfologikSpeller) ReplaceRunOnWordCandidates(original string) []WeightedSuggestion {
+	if s == nil || original == "" || !s.SupportRunOnWords {
+		return nil
+	}
+	wordToCheck := original
+	// no input conversion pairs yet (Java DictionaryLookup.applyReplacements)
+	if s.isInDictionaryExact(wordToCheck) {
+		return nil
+	}
+	// Java: for (i = 1; i < wordToCheck.length(); i++)  — UTF-16 length / code units ≈ runes for BMP
+	r := []rune(wordToCheck)
+	if len(r) < 2 {
+		return nil
+	}
+	var candidates []WeightedSuggestion
+	for i := 1; i < len(r); i++ {
+		prefix := string(r[:i])
+		suffix := string(r[i:])
+		// suffix accepted: exact OR capitalized with lowercase form in dict
+		suffixOK := s.isInDictionaryExact(suffix)
+		if !suffixOK && !isNotCapitalizedWord(suffix) {
+			suffixOK = s.isInDictionaryExact(strings.ToLower(suffix))
+		}
+		if !suffixOK {
+			continue
+		}
+		if s.isInDictionaryExact(prefix) {
+			candidates = append(candidates, s.runOnCandidate(prefix+" "+suffix))
+		} else if len(prefix) > 0 {
+			pr := []rune(prefix)
+			if unicode.IsUpper(pr[0]) && s.isInDictionaryExact(strings.ToLower(prefix)) {
+				// sentence-start capitalization only on prefix
+				candidates = append(candidates, s.runOnCandidate(prefix+" "+suffix))
+			}
+		}
+	}
+	return candidates
+}
+
+// ReplaceRunOnWords ports Speller.replaceRunOnWords (strings only).
+func (s *MorfologikSpeller) ReplaceRunOnWords(original string) []string {
+	ws := s.ReplaceRunOnWordCandidates(original)
+	if len(ws) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(ws))
+	for _, w := range ws {
+		out = append(out, w.Word)
+	}
+	return out
+}
+
+func (s *MorfologikSpeller) runOnCandidate(replacement string) WeightedSuggestion {
+	// Java addReplacement → CandidateData(replacement, 1)
+	return NewWeightedSuggestion(replacement, s.suggestionWeightDist(replacement, 1))
+}
+
+// isInDictionaryExact ports Speller.isInDictionary (exact form only, no misspell gates).
+func (s *MorfologikSpeller) isInDictionaryExact(word string) bool {
+	return s.inDictionary(word)
 }
 
 // suggestionWeight computes Java-like candidate weight for sug relative to word.

@@ -157,29 +157,50 @@ func NewMorfologikAmericanSpellerRuleWithUser(userConfig *languagetool.UserConfi
 }
 
 func NewMorfologikBritishSpellerRule() *MorfologikVariantSpellerRule {
+	return NewMorfologikBritishSpellerRuleWithUser(nil)
+}
+
+// NewMorfologikBritishSpellerRuleWithUser ports MorfologikBritishSpellerRule(..., UserConfig).
+func NewMorfologikBritishSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
 	// Java: loadWordlist("en/en-US-GB.txt", 0) — American form as key → British form
-	return newVariantSpeller(MorfologikBritishSpellerRuleID, "en-GB", BritishSpellerDict,
-		BritishVariantSpellingFile, "American English", usGbVariantMap(0))
+	return newVariantSpellerWithUser(MorfologikBritishSpellerRuleID, "en-GB", BritishSpellerDict,
+		BritishVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
 
 func NewMorfologikCanadianSpellerRule() *MorfologikVariantSpellerRule {
-	return newVariantSpeller(MorfologikCanadianSpellerRuleID, "en-CA", CanadianSpellerDict,
-		CanadianVariantSpellingFile, "American English", usGbVariantMap(0))
+	return NewMorfologikCanadianSpellerRuleWithUser(nil)
+}
+
+func NewMorfologikCanadianSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	return newVariantSpellerWithUser(MorfologikCanadianSpellerRuleID, "en-CA", CanadianSpellerDict,
+		CanadianVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
 
 func NewMorfologikAustralianSpellerRule() *MorfologikVariantSpellerRule {
-	return newVariantSpeller(MorfologikAustralianSpellerRuleID, "en-AU", AustralianSpellerDict,
-		AustralianVariantSpellingFile, "American English", usGbVariantMap(0))
+	return NewMorfologikAustralianSpellerRuleWithUser(nil)
+}
+
+func NewMorfologikAustralianSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	return newVariantSpellerWithUser(MorfologikAustralianSpellerRuleID, "en-AU", AustralianSpellerDict,
+		AustralianVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
 
 func NewMorfologikNewZealandSpellerRule() *MorfologikVariantSpellerRule {
-	return newVariantSpeller(MorfologikNewZealandSpellerRuleID, "en-NZ", NewZealandSpellerDict,
-		NewZealandVariantSpellingFile, "American English", usGbVariantMap(0))
+	return NewMorfologikNewZealandSpellerRuleWithUser(nil)
+}
+
+func NewMorfologikNewZealandSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	return newVariantSpellerWithUser(MorfologikNewZealandSpellerRuleID, "en-NZ", NewZealandSpellerDict,
+		NewZealandVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
 
 func NewMorfologikSouthAfricanSpellerRule() *MorfologikVariantSpellerRule {
-	return newVariantSpeller(MorfologikSouthAfricanSpellerRuleID, "en-ZA", SouthAfricanSpellerDict,
-		SouthAfricanVariantSpellingFile, "American English", usGbVariantMap(0))
+	return NewMorfologikSouthAfricanSpellerRuleWithUser(nil)
+}
+
+func NewMorfologikSouthAfricanSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	return newVariantSpellerWithUser(MorfologikSouthAfricanSpellerRuleID, "en-ZA", SouthAfricanSpellerDict,
+		SouthAfricanVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
 
 // LoadOtherVariantMap loads "local\tother" lines; column 1 reverses mapping.
