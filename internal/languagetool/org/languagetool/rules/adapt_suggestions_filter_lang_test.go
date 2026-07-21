@@ -36,3 +36,19 @@ func TestAdaptSuggestionsFilter_LanguageRegistry(t *testing.T) {
 	out := f.AcceptRuleMatch(m, nil, 0, nil, nil)
 	require.Equal(t, []string{"al"}, out.GetSuggestedReplacements())
 }
+
+// Twin: setOriginalErrorStr uses UTF-16 FromPos/ToPos (Java String.substring).
+func TestAdaptSuggestionsFilter_OriginalErrorStrUTF16(t *testing.T) {
+	var gotOrig string
+	f := NewAdaptSuggestionsFilter(func(s, orig string) string {
+		gotOrig = orig
+		return s
+	})
+	// "café" is 4 UTF-16 units; byte length is 5
+	sent := languagetool.AnalyzePlain("café")
+	m := NewRuleMatch(langCodeRule{id: "X", code: "es"}, sent, 0, 4, "msg")
+	m.SetSuggestedReplacement("cafe")
+	out := f.AcceptRuleMatch(m, nil, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Equal(t, "café", gotOrig, "original must be UTF-16 span [0,4), not byte slice")
+}

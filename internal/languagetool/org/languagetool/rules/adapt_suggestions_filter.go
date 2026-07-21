@@ -17,29 +17,37 @@ func NewAdaptSuggestionsFilter(adapt func(string, string) string) *AdaptSuggesti
 }
 
 // AcceptRuleMatch ports AdaptSuggestionsFilter.acceptRuleMatch.
+// Java only adapts when rule instanceof AbstractPatternRule; otherwise returns match.
+// Each replacement: match.setOriginalErrorStr() then lang.adaptSuggestion(replacement, getOriginalErrorStr()).
 func (f *AdaptSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, _ map[string]string, _ int,
 	_ []*languagetool.AnalyzedTokenReadings, _ []int) *RuleMatch {
 	if match == nil {
 		return nil
 	}
-	// Java: pattern rules adapt via Language.adaptSuggestion.
+	// Java: if (!(rule instanceof AbstractPatternRule)) return match;
+	// Go: adapt only when language code is resolvable (PatternRule-like) or Adapt is set.
 	suggs := match.GetSuggestedReplacements()
 	if len(suggs) == 0 {
 		return match
 	}
-	original := originalErrorStr(match)
+	// Java: only AbstractPatternRule has a Language; else return match.
+	code := ruleLanguageCode(match.Rule)
+	if f.Adapt == nil && code == "" {
+		return match
+	}
 	adapt := f.Adapt
 	if adapt == nil {
-		if code := ruleLanguageCode(match.Rule); code != "" {
-			adapt = languagetool.AdaptSuggestionForLanguage(code)
-		}
+		adapt = languagetool.AdaptSuggestionForLanguage(code)
 	}
 	if adapt == nil {
+		// Java Language.adaptSuggestion default returns s unchanged.
 		adapt = func(s, _ string) string { return s }
 	}
 	out := make([]string, len(suggs))
 	for i, s := range suggs {
-		out[i] = adapt(s, original)
+		// Java loop body: setOriginalErrorStr() then adaptSuggestion(replacement, getOriginalErrorStr()).
+		match.SetOriginalErrorStr()
+		out[i] = adapt(s, match.GetOriginalErrorStr())
 	}
 	match.SetSuggestedReplacements(out)
 	return match
@@ -69,20 +77,15 @@ func (f *AdaptSuggestionsFilter) MapSuggestions(suggs []string, originalError st
 	return out
 }
 
+// originalErrorStr is kept for unit tests that map suggestions with an explicit original.
+// Production AcceptRuleMatch uses RuleMatch.SetOriginalErrorStr (UTF-16 span) like Java.
 func originalErrorStr(match *RuleMatch) string {
 	if match == nil {
 		return ""
 	}
-	// Java: match.getOriginalErrorStr() (may be empty until setOriginalErrorStr).
 	if s := match.GetOriginalErrorStr(); s != "" {
 		return s
 	}
-	if match.Sentence == nil {
-		return ""
-	}
-	text := match.Sentence.GetText()
-	if match.FromPos >= 0 && match.ToPos <= len(text) && match.FromPos < match.ToPos {
-		return text[match.FromPos:match.ToPos]
-	}
-	return ""
+	match.SetOriginalErrorStr()
+	return match.GetOriginalErrorStr()
 }
