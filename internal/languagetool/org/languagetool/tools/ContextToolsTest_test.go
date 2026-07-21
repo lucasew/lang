@@ -63,3 +63,14 @@ func TestContextTools_Markers(t *testing.T) {
 	context := ct.GetContext(0, 2, "Hi, this is it.")
 	require.Equal(t, "<X>Hi</X>, this is it.", context)
 }
+
+// Java marker indices are String UTF-16 offsets into result; multi-byte must not desync.
+func TestContextTools_GetContext_UTF16(t *testing.T) {
+	ct := NewContextTools()
+	ct.SetEscapeHtml(false)
+	ct.SetErrorMarker("<X>", "</X>")
+	// "café this" — é is 1 UTF-16 unit; "this" at UTF-16 5..9
+	// Byte-slicing would mark the wrong span after multi-byte é.
+	context := ct.GetContext(5, 9, "café this word")
+	require.Equal(t, "café <X>this</X> word", context)
+}

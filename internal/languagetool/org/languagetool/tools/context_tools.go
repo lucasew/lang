@@ -52,23 +52,25 @@ func (c *ContextTools) GetContext(fromPos, toPos int, contents string) string {
 	chunk = strings.ReplaceAll(chunk, "\n", " ")
 	markerStr := getMarker(fromPos, toPos, startContent, endContent, prefix)
 	result := prefix + chunk + postfix
+	// Marker line is spaces/^ only (ASCII); indices equal Java String UTF-16 offsets
+	// into result. Slice result with UTF-16 substring, not Go bytes.
 	startMark := strings.IndexByte(markerStr, '^')
 	endMark := strings.LastIndexByte(markerStr, '^')
 	if startMark < 0 {
 		return result
 	}
+	// Java: result.substring(startMark, endMark+1) — end exclusive = endMark+1
+	errPart := utf16Substr(result, startMark, endMark+1)
+	before := utf16Substr(result, 0, startMark)
+	after := utf16Substr(result, endMark+1, utf16LenTools(result))
 	if c.escapeHTML {
-		escapedErrorPart := strings.ReplaceAll(EscapeHTML(result[startMark:endMark+1]), " ", "&nbsp;")
-		result = EscapeHTML(result[:startMark]) +
+		escapedErrorPart := strings.ReplaceAll(EscapeHTML(errPart), " ", "&nbsp;")
+		return EscapeHTML(before) +
 			c.errorMarkerStart +
 			escapedErrorPart +
-			c.errorMarkerEnd + EscapeHTML(result[endMark+1:])
-	} else {
-		result = result[:startMark] + c.errorMarkerStart +
-			result[startMark:endMark+1] + c.errorMarkerEnd +
-			result[endMark+1:]
+			c.errorMarkerEnd + EscapeHTML(after)
 	}
-	return result
+	return before + c.errorMarkerStart + errPart + c.errorMarkerEnd + after
 }
 
 // GetPlainTextContext ports getPlainTextContext — uses ^ markers on a second line.
