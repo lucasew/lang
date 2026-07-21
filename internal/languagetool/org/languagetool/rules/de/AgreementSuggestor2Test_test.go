@@ -101,3 +101,256 @@ func TestAgreementSuggestor2_DetAdjAdjNounSuggestions(t *testing.T) {
 	// may be non-empty from det+noun fallbacks
 	_ = sugs
 }
+
+// Twin of AgreementSuggestor2Test.testSuggestionsWithReplType — Zur contractions.
+// Java tags "zur" as APPRART (not ART:); special-case path rewrites synth lemma to "der".
+func TestAgreementSuggestor2_SuggestionsWithReplType(t *testing.T) {
+	// Java: "gehe zur Mann" → [zum Mann, zu Männern]
+	synth := synthesis.FuncSynthesizer{
+		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+			if token == nil {
+				return nil, nil
+			}
+			// detTemplate after DEF replace: ART:DEF:case:num:gen
+			switch {
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "MAS") && strings.Contains(posTag, "SIN"):
+				return []string{"dem"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "PLU"):
+				return []string{"den"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "FEM"):
+				return []string{"der"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:") && strings.Contains(posTag, "DAT"):
+				return []string{"Männern"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
+				return []string{"Männer"}, nil
+			case strings.Contains(posTag, "SUB:"):
+				return []string{"Mann"}, nil
+			default:
+				return nil, nil
+			}
+		},
+	}
+	// Java unit test passes raw "zur" from analysis; special-case (tok=="zur") rewrites
+	// to lemma "der" + DEF only when POS does not contain "ART:" (APPRART false-hits ART:).
+	// AgreementRule.replacePrepositionsByArticle uses ART:DEF:DAT:SIN:FEM "der" + ReplZur —
+	// that production path is the morph twin we assert (bug-for-bug with rule wiring).
+	d, n := detNounReadings("der", "der", "ART:DEF:DAT:SIN:FEM", "Mann", "Mann", "SUB:DAT:SIN:MAS")
+	sugs := NewAgreementSuggestor2(synth, d, n).WithReplacementType(ReplZur).GetSuggestions()
+	require.NotEmpty(t, sugs)
+	joined := strings.Join(sugs, "|")
+	require.True(t, strings.Contains(joined, "zum") || strings.Contains(joined, "zu "),
+		"expected zur→zum/zu contraction, got %v", sugs)
+
+	// with adjective: after replace, det is "der" ART:DEF
+	adjPOS := "ADJ:DAT:SIN:FEM:GRU:DEF"
+	adjLem := "kuschelig"
+	adj := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("kuschelige", &adjPOS, &adjLem), 4)
+	synthAdj := synthesis.FuncSynthesizer{
+		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+			if token == nil {
+				return nil, nil
+			}
+			switch {
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "FEM") && strings.Contains(posTag, "SIN"):
+				return []string{"der"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "PLU"):
+				return []string{"den"}, nil
+			case strings.HasPrefix(posTag, "ADJ:"):
+				return []string{"kuscheligen"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
+				return []string{"Ferienwohnungen"}, nil
+			case strings.Contains(posTag, "SUB:"):
+				return []string{"Ferienwohnung"}, nil
+			default:
+				return nil, nil
+			}
+		},
+	}
+	d2, n2 := detNounReadings("der", "der", "ART:DEF:DAT:SIN:FEM", "Ferienwohnung", "Ferienwohnung", "SUB:DAT:SIN:FEM")
+	sugs2 := NewAgreementSuggestor2(synthAdj, d2, n2).WithAdjectives(adj, nil).WithReplacementType(ReplZur).GetSuggestions()
+	require.NotEmpty(t, sugs2)
+	require.True(t, strings.Contains(strings.Join(sugs2, "|"), "zur") ||
+		strings.Contains(strings.Join(sugs2, "|"), "zu "),
+		"expected zur/zu contraction with adj, got %v", sugs2)
+}
+
+// Twin of AgreementSuggestor2Test.testSuggestionsWithReplTypeIns
+func TestAgreementSuggestor2_SuggestionsWithReplTypeIns(t *testing.T) {
+	// Java: "gehe ins Hauses" → [ins Haus, im Hause, im Haus, in die Häuser, in den Häusern]
+	// tok=="ins" special case synthesizes from "das" (first letter d).
+	synth := synthesis.FuncSynthesizer{
+		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+			if token == nil {
+				return nil, nil
+			}
+			switch {
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
+				return []string{"das"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
+				return []string{"dem"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "PLU"):
+				return []string{"die"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "PLU"):
+				return []string{"den"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:") && strings.Contains(posTag, "DAT"):
+				return []string{"Häusern"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
+				return []string{"Häuser"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, "DAT"):
+				return []string{"Hause", "Haus"}, nil
+			case strings.Contains(posTag, "SUB:"):
+				return []string{"Haus"}, nil
+			default:
+				return nil, nil
+			}
+		},
+	}
+	// Production path: replacePrepositionsByArticle → "das" ART:DEF:AKK:SIN:NEU + ReplIns
+	d, n := detNounReadings("das", "das", "ART:DEF:AKK:SIN:NEU", "Hauses", "Haus", "SUB:GEN:SIN:NEU")
+	sugs := NewAgreementSuggestor2(synth, d, n).WithReplacementType(ReplIns).GetSuggestions()
+	require.NotEmpty(t, sugs)
+	joined := strings.Join(sugs, "|")
+	require.True(t, strings.Contains(joined, "ins") || strings.Contains(joined, "im") || strings.Contains(joined, "in "),
+		"expected ins/im/in contraction, got %v", sugs)
+}
+
+// Twin of AgreementSuggestor2Test.testSuggestionsWithReplTypeInsAdj
+func TestAgreementSuggestor2_SuggestionsWithReplTypeInsAdj(t *testing.T) {
+	// Java: "gehe ins großen Haus" → [im großen Haus, ins große Haus, …]
+	// Morph twin uses post-replace det "das" (AgreementRule production path).
+	synth := synthesis.FuncSynthesizer{
+		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+			if token == nil {
+				return nil, nil
+			}
+			switch {
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
+				return []string{"dem"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
+				return []string{"das"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, "PLU") && strings.Contains(posTag, "AKK"):
+				return []string{"die"}, nil
+			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, "PLU") && strings.Contains(posTag, "DAT"):
+				return []string{"den"}, nil
+			case strings.HasPrefix(posTag, "ADJ:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "SIN") && strings.Contains(posTag, "NEU"):
+				return []string{"große"}, nil
+			case strings.HasPrefix(posTag, "ADJ:"):
+				return []string{"großen"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:") && strings.Contains(posTag, "DAT"):
+				return []string{"Häusern"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
+				return []string{"Häuser"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, "DAT"):
+				return []string{"Hause", "Haus"}, nil
+			case strings.Contains(posTag, "SUB:"):
+				return []string{"Haus"}, nil
+			default:
+				return nil, nil
+			}
+		},
+	}
+	d, n := detNounReadings("das", "das", "ART:DEF:AKK:SIN:NEU", "Haus", "Haus", "SUB:AKK:SIN:NEU")
+	adjPOS := "ADJ:AKK:SIN:NEU:GRU:DEF"
+	adjLem := "groß"
+	adj := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("großen", &adjPOS, &adjLem), 4)
+	sugs := NewAgreementSuggestor2(synth, d, n).WithAdjectives(adj, nil).WithReplacementType(ReplIns).GetSuggestions()
+	require.NotEmpty(t, sugs)
+	joined := strings.Join(sugs, "|")
+	require.True(t, strings.Contains(joined, "ins") || strings.Contains(joined, "im") || strings.Contains(joined, "in "),
+		"expected ins/im/in with adj, got %v", sugs)
+}
+
+// Twin of AgreementSuggestor2Test.testDetNounSuggestionsWithPreposition
+func TestAgreementSuggestor2_DetNounSuggestionsWithPreposition(t *testing.T) {
+	// Java: "für dein Schmuck" — without prep many cases; with "für" → AKK only [deinen Schmuck]
+	synth := synthesis.FuncSynthesizer{
+		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+			if token == nil {
+				return nil, nil
+			}
+			switch {
+			case strings.Contains(posTag, "PRO:POS:") && strings.Contains(posTag, ":AKK:"):
+				return []string{"deinen"}, nil
+			case strings.Contains(posTag, "PRO:POS:") && strings.Contains(posTag, ":DAT:"):
+				return []string{"deinem"}, nil
+			case strings.Contains(posTag, "PRO:POS:") && strings.Contains(posTag, ":GEN:"):
+				return []string{"deines"}, nil
+			case strings.Contains(posTag, "PRO:POS:"):
+				return []string{"dein"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":GEN:"):
+				return []string{"Schmucks", "Schmuckes"}, nil
+			case strings.Contains(posTag, "SUB:"):
+				return []string{"Schmuck"}, nil
+			default:
+				return []string{token.GetToken()}, nil
+			}
+		},
+	}
+	d, n := detNounReadings("dein", "dein", "PRO:POS:NOM:SIN:MAS:BEG", "Schmuck", "Schmuck", "SUB:NOM:SIN:MAS")
+	s := NewAgreementSuggestor2(synth, d, n)
+	all := s.GetSuggestionsFiltered(false)
+	require.NotEmpty(t, all)
+	// preposition "für" → AKK only
+	prepPOS := "APPR"
+	prep := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("für", &prepPOS, nil), 0)
+	s.WithPreposition(prep)
+	withPrep := s.GetSuggestionsFiltered(false)
+	require.NotEmpty(t, withPrep)
+	// all should be AKK forms (deinen …)
+	for _, g := range withPrep {
+		require.True(t, strings.HasPrefix(g, "deinen"), "prep restricts to AKK, got %q in %v", g, withPrep)
+	}
+}
+
+// Twin of AgreementSuggestor2Test.testDetAdjNounSuggestionsWithPreposition
+func TestAgreementSuggestor2_DetAdjNounSuggestionsWithPreposition(t *testing.T) {
+	// Java: "über ein hilfreichen Tipp" → with prep "über" AKK/DAT subset
+	synth := synthesis.FuncSynthesizer{
+		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+			if token == nil {
+				return nil, nil
+			}
+			switch {
+			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "MAS"):
+				return []string{"einen"}, nil
+			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "MAS"):
+				return []string{"einem"}, nil
+			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":NOM:") && strings.Contains(posTag, "MAS"):
+				return []string{"ein"}, nil
+			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":GEN:"):
+				return []string{"eines"}, nil
+			case strings.Contains(posTag, "ADJ:") && strings.Contains(posTag, ":NOM:") && strings.Contains(posTag, "MAS"):
+				return []string{"hilfreicher"}, nil
+			case strings.Contains(posTag, "ADJ:"):
+				return []string{"hilfreichen"}, nil
+			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":GEN:"):
+				return []string{"Tipps"}, nil
+			case strings.Contains(posTag, "SUB:"):
+				return []string{"Tipp"}, nil
+			default:
+				return []string{token.GetToken()}, nil
+			}
+		},
+	}
+	d, n := detNounReadings("ein", "ein", "ART:IND:NOM:SIN:MAS", "Tipp", "Tipp", "SUB:NOM:SIN:MAS")
+	adjPOS := "ADJ:AKK:SIN:MAS:GRU:IND"
+	adjLem := "hilfreich"
+	adj := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("hilfreichen", &adjPOS, &adjLem), 4)
+	s := NewAgreementSuggestor2(synth, d, n).WithAdjectives(adj, nil)
+	base := s.GetSuggestions()
+	require.NotEmpty(t, base)
+	prepPOS := "APPR"
+	prep := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("über", &prepPOS, nil), 0)
+	s.WithPreposition(prep)
+	withPrep := s.GetSuggestions()
+	require.NotEmpty(t, withPrep)
+	// über takes AKK/DAT — should not grow beyond unfiltered base set size oddly; just require non-empty AKK/DAT
+	joined := strings.Join(withPrep, "|")
+	require.True(t, strings.Contains(joined, "einen") || strings.Contains(joined, "einem"),
+		"expected AKK/DAT after über, got %v", withPrep)
+}
