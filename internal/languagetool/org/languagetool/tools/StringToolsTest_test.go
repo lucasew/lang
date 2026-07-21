@@ -472,3 +472,15 @@ func TestStringTools_CaseHelpers_UTF16CharAt(t *testing.T) {
 	// Leading quotes then first letter (Java isLetterOrDigit skip)
 	require.Equal(t, "'Test'", UppercaseFirstChar("'test'"))
 }
+
+func TestCharacterIsSpaceChar(t *testing.T) {
+	// Character.isSpaceChar: Zs/Zl/Zp — includes NBSP (unlike isWhitespace)
+	require.True(t, CharacterIsSpaceChar(' '))
+	require.True(t, CharacterIsSpaceChar('\u00A0'))
+	require.True(t, CharacterIsSpaceChar('\u2007'))
+	require.True(t, CharacterIsSpaceChar('\u2028')) // LINE SEPARATOR
+	require.False(t, CharacterIsSpaceChar('\t'))    // tab is not space separator
+	require.False(t, CharacterIsSpaceChar('a'))
+	// Title case: NBSP is space char → next letter titled
+	require.Equal(t, "A\u00A0B", ConvertToTitleCaseIteratingChars("a\u00A0b"))
+}

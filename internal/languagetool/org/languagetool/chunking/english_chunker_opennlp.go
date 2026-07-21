@@ -3,7 +3,6 @@ package chunking
 import (
 	"strings"
 	"sync"
-	"unicode"
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -124,8 +123,7 @@ func javaTrimIsEmpty(token string) bool {
 
 // characterIsSpaceChar ports Character.isSpaceChar for a BMP code unit.
 func characterIsSpaceChar(cu uint16) bool {
-	r := rune(cu)
-	return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
+	return tools.CharacterIsSpaceChar(rune(cu))
 }
 
 // getTokensWithTokenReadings ports EnglishChunker.getTokensWithTokenReadings —

@@ -5,7 +5,6 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/lucasew/lang/internal/attic/srx"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -47,22 +46,45 @@ func (t *SRXSentenceTokenizer) SingleLineBreaksMarksPara() bool {
 	return t.parCode == "_one"
 }
 
-// Tokenize splits text into sentences using embedded segment.srx (Java parity).
-// languageCode is passed as Java Language.getShortCode() would be; maps match
-// both "pt_two" and "pt-PT_two" via (PT|pt).*.
+// Tokenize ports SRXSentenceTokenizer.tokenize:
+// SrxTools.tokenize(text, srxDocument, language.getShortCode() + parCode).
+// srxDocument is loaded from SrxPath (Java constructor path), not always default segment.srx.
 func (t *SRXSentenceTokenizer) Tokenize(text string) []string {
 	if text == "" {
 		return nil
 	}
-	if t.Segment != nil {
-		return t.Segment(text, t.LanguageCode+t.parCode)
+	lang := "en"
+	par := "_two"
+	if t != nil {
+		if t.LanguageCode != "" {
+			lang = t.LanguageCode
+		}
+		if t.parCode != "" {
+			par = t.parCode
+		}
+		if t.Segment != nil {
+			return t.Segment(text, lang+par)
+		}
 	}
-	doc, err := srx.DefaultDocument()
+	path := "/segment.srx"
+	if t != nil && t.SrxPath != "" {
+		path = t.SrxPath
+	}
+	// Java: SrxTools.createSrxDocument(srxInClassPath) then tokenize with shortCode+parCode
+	doc, err := cachedCreateSrxDocument(path)
 	if err != nil || doc == nil {
-		// Fallback only if embed/parse failed (should not happen in normal builds).
-		return defaultSrxLikeTokenize(text, t.parCode)
+		// Fallback only if resource load failed.
+		np := normalizeSrxClasspath(path)
+		if np == "/segment.srx" {
+			return defaultSrxLikeTokenize(text, par)
+		}
+		if np == "/org/languagetool/tokenizers/segment-simple.srx" {
+			return simpleSrxDefaultRulesTokenize(text)
+		}
+		// Unknown path fail-closed: no invent rules for foreign SRX
+		return []string{text}
 	}
-	return doc.Split(text, t.LanguageCode, t.parCode)
+	return doc.Split(text, lang, par)
 }
 
 func defaultSrxLikeTokenize(text, parCode string) []string {

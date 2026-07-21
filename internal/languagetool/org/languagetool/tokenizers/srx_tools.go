@@ -1,83 +1,104 @@
 package tokenizers
 
 import (
-	"bufio"
-	"io"
+	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
+	"sync"
+
+	"github.com/lucasew/lang/internal/attic/srx"
 )
 
-// SrxDocument is a minimal stand-in for loomchild SrxDocument (rule language codes).
-type SrxDocument struct {
-	// LanguageCodes listed in the SRX (best-effort from <languagerule> tags).
-	LanguageCodes []string
-	// Raw is the original SRX payload (optional).
-	Raw string
+// createSrxDocument ports SrxTools.createSrxDocument(path):
+// Java loads from resource dir via JLanguageTool.getDataBroker().getFromResourceDirAsStream(path).
+// Known official resources are embedded/cached; unknown paths try filesystem candidates.
+func createSrxDocument(srxInClassPath string) (*srx.Document, error) {
+	path := normalizeSrxClasspath(srxInClassPath)
+	if path == "/segment.srx" {
+		return srx.DefaultDocument()
+	}
+	if path == "/org/languagetool/tokenizers/segment-simple.srx" {
+		return segmentSimpleDocument()
+	}
+	return loadSrxDocumentFromFS(path)
 }
 
-// SrxTools ports org.languagetool.tokenizers.SrxTools (without loomchild dependency).
-// CreateSrxDocument loads XML text; TokenizeWithSrx falls back to SRXSentenceTokenizer.
-type SrxTools struct{}
+func normalizeSrxClasspath(p string) string {
+	p = strings.TrimSpace(p)
+	if p == "" {
+		return "/segment.srx"
+	}
+	if !strings.HasPrefix(p, "/") {
+		p = "/" + p
+	}
+	return p
+}
 
-// CreateSrxDocumentFromReader parses a lightweight SRX document from r.
-func CreateSrxDocumentFromReader(r io.Reader) (*SrxDocument, error) {
-	data, err := io.ReadAll(r)
+// loadSrxDocumentFromFS tries to resolve a classpath-style SRX path under known
+// resource roots (inspiration submodule layout). Used for non-embedded SRX files.
+func loadSrxDocumentFromFS(classpath string) (*srx.Document, error) {
+	// Java resource dir root: org/languagetool/resource/ + path without leading /
+	// Full class path under LT: .../resource + path, e.g. .../resource/segment.srx
+	rel := strings.TrimPrefix(classpath, "/")
+	candidates := []string{
+		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
+			"org", "languagetool", "resource", rel),
+		filepath.Join("internal", "languagetool", "org", "languagetool", "tokenizers", "data", filepath.Base(rel)),
+	}
+	var lastErr error
+	for _, p := range candidates {
+		doc, err := srx.Load(p)
+		if err == nil && doc != nil {
+			return doc, nil
+		}
+		lastErr = err
+	}
+	if lastErr == nil {
+		lastErr = fmt.Errorf("srx not found for classpath %q", classpath)
+	}
+	return nil, fmt.Errorf("Could not load SRX rules: %w", lastErr)
+}
+
+// srxDocumentCache memoizes createSrxDocument by classpath (Java constructs per tokenizer instance;
+// caching is safe because SRX documents are immutable).
+var (
+	srxDocCacheMu sync.Mutex
+	srxDocCache   = map[string]*srx.Document{}
+)
+
+func cachedCreateSrxDocument(srxInClassPath string) (*srx.Document, error) {
+	path := normalizeSrxClasspath(srxInClassPath)
+	srxDocCacheMu.Lock()
+	if doc, ok := srxDocCache[path]; ok && doc != nil {
+		srxDocCacheMu.Unlock()
+		return doc, nil
+	}
+	srxDocCacheMu.Unlock()
+
+	doc, err := createSrxDocument(path)
+	if err != nil || doc == nil {
+		return doc, err
+	}
+	srxDocCacheMu.Lock()
+	srxDocCache[path] = doc
+	srxDocCacheMu.Unlock()
+	return doc, nil
+}
+
+// materializeEmbed writes embed bytes to a temp file for srx.Load (attic has no Parse(bytes) export).
+func materializeEmbed(prefix string, data []byte) (string, error) {
+	f, err := os.CreateTemp("", prefix+"-*.srx")
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return CreateSrxDocumentFromString(string(data)), nil
-}
-
-// CreateSrxDocumentFromString builds an SrxDocument by scanning language rule codes.
-func CreateSrxDocumentFromString(xml string) *SrxDocument {
-	doc := &SrxDocument{Raw: xml}
-	// crude attribute scan: languagerule languagerulename="en"
-	sc := bufio.NewScanner(strings.NewReader(xml))
-	seen := map[string]struct{}{}
-	for sc.Scan() {
-		line := sc.Text()
-		lower := strings.ToLower(line)
-		if !strings.Contains(lower, "languagerule") {
-			continue
-		}
-		// find languagerulename="..."
-		const key = `languagerulename="`
-		i := strings.Index(lower, key)
-		if i < 0 {
-			const key2 = `languagerulename='`
-			i = strings.Index(lower, key2)
-			if i < 0 {
-				continue
-			}
-			rest := line[i+len(key2):]
-			j := strings.IndexByte(rest, '\'')
-			if j > 0 {
-				code := rest[:j]
-				if _, ok := seen[code]; !ok {
-					seen[code] = struct{}{}
-					doc.LanguageCodes = append(doc.LanguageCodes, code)
-				}
-			}
-			continue
-		}
-		// use original line for case of code
-		idx := strings.Index(strings.ToLower(line), key)
-		rest := line[idx+len(key):]
-		j := strings.IndexByte(rest, '"')
-		if j > 0 {
-			code := rest[:j]
-			if _, ok := seen[code]; !ok {
-				seen[code] = struct{}{}
-				doc.LanguageCodes = append(doc.LanguageCodes, code)
-			}
-		}
+	name := f.Name()
+	if _, err := f.Write(data); err != nil {
+		_ = f.Close()
+		return "", err
 	}
-	return doc
-}
-
-// TokenizeWithSrx segments text using SRXSentenceTokenizer for languageCode.
-// The document is accepted for API parity; full rule evaluation is deferred.
-func TokenizeWithSrx(text string, doc *SrxDocument, languageCode string) []string {
-	_ = doc
-	tok := NewSRXSentenceTokenizer(languageCode)
-	return tok.Tokenize(text)
+	if err := f.Close(); err != nil {
+		return "", err
+	}
+	return name, nil
 }

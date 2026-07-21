@@ -151,8 +151,8 @@ func ConvertToTitleCaseIteratingChars(text string) string {
 	convertNext := true
 	for i, cu := range u {
 		ch := rune(cu)
-		// Character.isSpaceChar(ch) || ch == '-'
-		if unicode.Is(unicode.Zs, ch) || ch == '-' {
+		// Character.isSpaceChar(ch) || ch == '-'  (Zs|Zl|Zp, includes NBSP)
+		if CharacterIsSpaceChar(ch) || ch == '-' {
 			convertNext = true
 			out[i] = cu
 			continue
@@ -308,6 +308,13 @@ func CharacterIsWhitespace(r rune) bool {
 	if r == '\u00A0' || r == '\u2007' || r == '\u202F' {
 		return false
 	}
+	return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
+}
+
+// CharacterIsSpaceChar ports java.lang.Character.isSpaceChar(int):
+// true when the character's general category is SPACE_SEPARATOR (Zs),
+// LINE_SEPARATOR (Zl), or PARAGRAPH_SEPARATOR (Zp). Includes NBSP (unlike isWhitespace).
+func CharacterIsSpaceChar(r rune) bool {
 	return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
 }
 

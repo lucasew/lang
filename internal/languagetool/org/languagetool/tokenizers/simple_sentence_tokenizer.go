@@ -2,7 +2,6 @@ package tokenizers
 
 import (
 	_ "embed"
-	"os"
 	"path/filepath"
 	"sync"
 	"unicode"
@@ -15,51 +14,39 @@ var segmentSimpleSRX []byte
 
 // SimpleSentenceTokenizer ports org.languagetool.tokenizers.SimpleSentenceTokenizer.
 //
-// Java extends SRXSentenceTokenizer with
-// "/org/languagetool/tokenizers/segment-simple.srx" and AnyLanguage shortCode "xx".
-// Loads the same segment-simple.srx (embedded) via attic/srx for Default rules only
-// (map pattern ".*" → Default; ByLineBreak/ByTwoLineBreaks require _one/_two codes).
+// Java: extends SRXSentenceTokenizer(AnyLanguage, "/org/languagetool/tokenizers/segment-simple.srx")
+// with AnyLanguage.getShortCode() == "xx".
 type SimpleSentenceTokenizer struct {
-	parCode string // "_one" or "_two" — same as SRXSentenceTokenizer
+	*SRXSentenceTokenizer
 }
 
 func NewSimpleSentenceTokenizer() *SimpleSentenceTokenizer {
-	t := &SimpleSentenceTokenizer{}
-	t.SetSingleLineBreaksMarksParagraph(false)
-	return t
+	inner := NewSRXSentenceTokenizerWithPath("xx", "/org/languagetool/tokenizers/segment-simple.srx")
+	return &SimpleSentenceTokenizer{SRXSentenceTokenizer: inner}
 }
 
+// SetSingleLineBreaksMarksParagraph forwards to the embedded SRXSentenceTokenizer.
 func (t *SimpleSentenceTokenizer) SetSingleLineBreaksMarksParagraph(lineBreakParagraphs bool) {
-	if t == nil {
+	if t == nil || t.SRXSentenceTokenizer == nil {
 		return
 	}
-	if lineBreakParagraphs {
-		t.parCode = "_one"
-	} else {
-		t.parCode = "_two"
-	}
+	t.SRXSentenceTokenizer.SetSingleLineBreaksMarksParagraph(lineBreakParagraphs)
 }
 
+// SingleLineBreaksMarksPara forwards to the embedded SRXSentenceTokenizer.
 func (t *SimpleSentenceTokenizer) SingleLineBreaksMarksPara() bool {
-	return t != nil && t.parCode == "_one"
+	if t == nil || t.SRXSentenceTokenizer == nil {
+		return false
+	}
+	return t.SRXSentenceTokenizer.SingleLineBreaksMarksPara()
 }
 
-// Tokenize ports SRXSentenceTokenizer.tokenize with segment-simple.srx.
+// Tokenize uses the embedded SRXSentenceTokenizer (segment-simple.srx + "xx").
 func (t *SimpleSentenceTokenizer) Tokenize(text string) []string {
-	if text == "" {
-		return nil
+	if t == nil || t.SRXSentenceTokenizer == nil {
+		return NewSimpleSentenceTokenizer().Tokenize(text)
 	}
-	par := "_two"
-	if t != nil && t.parCode != "" {
-		par = t.parCode
-	}
-	doc, err := segmentSimpleDocument()
-	if err != nil || doc == nil {
-		// Fail-closed to local Default-rule twin (same segment-simple Default rules).
-		return simpleSrxDefaultRulesTokenize(text)
-	}
-	// Java AnyLanguage.getShortCode() → "xx"
-	return doc.Split(text, "xx", par)
+	return t.SRXSentenceTokenizer.Tokenize(text)
 }
 
 var (
@@ -68,11 +55,10 @@ var (
 	simpleDocErr  error
 )
 
-// segmentSimpleDocument loads the embedded official segment-simple.srx once.
-// attic/srx only exposes Load(path); materialize embed to a temp file (read-only use).
+// segmentSimpleDocument loads the embedded official segment-simple.srx once
+// (SrxTools.createSrxDocument for "/org/languagetool/tokenizers/segment-simple.srx").
 func segmentSimpleDocument() (*srx.Document, error) {
 	simpleDocOnce.Do(func() {
-		// Prefer in-tree copy next to this package for deterministic Load without temp I/O when CWD is module root.
 		candidates := []string{
 			filepath.Join("internal", "languagetool", "org", "languagetool", "tokenizers", "data", "segment-simple.srx"),
 			filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
@@ -84,27 +70,18 @@ func segmentSimpleDocument() (*srx.Document, error) {
 				return
 			}
 		}
-		// Materialize embed (works regardless of CWD).
-		f, err := os.CreateTemp("", "segment-simple-*.srx")
+		name, err := materializeEmbed("segment-simple", segmentSimpleSRX)
 		if err != nil {
 			simpleDocErr = err
 			return
 		}
-		name := f.Name()
-		if _, err := f.Write(segmentSimpleSRX); err != nil {
-			_ = f.Close()
-			simpleDocErr = err
-			return
-		}
-		_ = f.Close()
 		simpleDoc, simpleDocErr = srx.Load(name)
-		// leave temp file for process lifetime (Load may re-open); best-effort cleanup not required
 	})
 	return simpleDoc, simpleDocErr
 }
 
-// simpleSrxDefaultRulesTokenize is the segment-simple.srx Default languagerule only,
-// used if SRX load fails. Java SRX uses Pattern.UNICODE_CHARACTER_CLASS so \s ≈ unicode.IsSpace.
+// simpleSrxDefaultRulesTokenize mirrors segment-simple Default rules if SRX load fails.
+// Java SRX uses Pattern.UNICODE_CHARACTER_CLASS so \s ≈ unicode.IsSpace.
 func simpleSrxDefaultRulesTokenize(text string) []string {
 	var out []string
 	start := 0
@@ -123,18 +100,13 @@ func simpleSrxDefaultRulesTokenize(text string) []string {
 			}
 			break
 		}
-		// beforebreak [\.!?…]\s → break after one whitespace
 		if j+1 < len(runes) && unicode.IsSpace(runes[j+1]) {
 			end := j + 2
-			if end > len(runes) {
-				end = len(runes)
-			}
 			out = append(out, string(runes[start:end]))
 			start = end
 			i = end - 1
 			continue
 		}
-		// beforebreak [\.!?…]\p{Lu} → break before uppercase
 		if j+1 < len(runes) && unicode.IsUpper(runes[j+1]) {
 			end := j + 1
 			out = append(out, string(runes[start:end]))

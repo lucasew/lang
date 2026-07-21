@@ -6,8 +6,9 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"unicode"
 	"unicode/utf16"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // CommonWordsDetector ports org.languagetool.language.identifier.detector.CommonWordsDetector
@@ -50,7 +51,7 @@ func (d *CommonWordsDetector) LoadWords(langShortCode string, r io.Reader) error
 		// Java: key.length() == 1 && Character.isSpaceChar(key.charAt(0))
 		if len(utf16.Encode([]rune(key))) == 1 {
 			r := []rune(key)[0]
-			if unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r) {
+			if tools.CharacterIsSpaceChar(r) {
 				continue
 			}
 		}
