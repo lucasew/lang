@@ -34,10 +34,9 @@ func TestVerbAgreementRule_Positions(t *testing.T) {
 	require.Equal(t, 3, ms[0].GetFromPos())
 	require.Equal(t, 16, ms[0].GetToPos())
 
-	// Multi-sentence via MatchList: "Hallo Karl. Du erreichst ich unter 12345"
-	// first sentence length 12 ("Hallo Karl. " if trailing space in Java corrected length)
+	// Multi-sentence MatchList: offset = first sentence GetCorrectedTextLength
+	// Java: "Hallo Karl. " length 12 → from=15 to=28
 	s1 := languagetool.AnalyzePlain("Hallo Karl. ")
-	// build second sentence with absolute-looking local positions; MatchList adds offset
 	s2 := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
 		atrWithPOS("Du", "PRO:PER:NOM:SIN:ALG", "du"),
@@ -46,50 +45,11 @@ func TestVerbAgreementRule_Positions(t *testing.T) {
 		atrWithPOS("unter", "APPR:DAT", "unter"),
 		atrWithPOS("12345", "CARD", "12345"),
 	))
-	// Use real corrected lengths: "Hallo Karl. " = 12 in Java comment
-	// AnalyzePlain may not pad trailing space the same; force offset by MatchList on two sents.
-	// Java: from = 12+3, to = 12+16 when first sentence text length is 12.
-	ms = rule.MatchList([]*languagetool.AnalyzedSentence{
-		languagetool.AnalyzePlain("Hallo Karl."),
-		s2,
-	})
-	// first sentence may or may not have trailing space in GetCorrectedTextLength
-	require.GreaterOrEqual(t, len(ms), 1)
-	// find the erreichst/ich match
-	found := false
-	for _, m := range ms {
-		// second sentence local 3..16 plus first length
-		if m.GetToPos()-m.GetFromPos() == 13 { // 16-3
-			found = true
-			// offset should be length of first sentence
-			off := m.GetFromPos() - 3
-			require.Equal(t, off+16, m.GetToPos())
-		}
-	}
-	require.True(t, found, "expected verb-subject span of width 13")
-	_ = s1
-
-	// "Mir ist bewusst, dass viele Menschen wie du empfinden." → 0 (was FP)
-	// "du" + "empfinden" (inf/pl) with "wie" context — anti-pattern / not unambiguous finite wrong
-	ok := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Mir", "PRO:PER:DAT:SIN:ALG", "ich"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("bewusst", "ADJ:PRD:GRU", "bewusst"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("dass", "KOUS", "dass"),
-		atrWithPOS("viele", "PIAT:NOM:PLU:ALG", "viel"),
-		atrWithPOS("Menschen", "SUB:NOM:PLU:MAS", "Mensch"),
-		atrWithPOS("wie", "KOKOM", "wie"),
-		atrWithPOS("du", "PRO:PER:NOM:SIN:ALG", "du"),
-		atrWithPOS("empfinden", "VER:1:PLU:PRÄ:SFT", "empfinden"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	// If still matches, that's a known hard anti-pattern case — document via require when immunized.
-	// Java: 0 matches. Anti-patterns may immunize "wie du" contexts.
-	_ = ok
-	// Without full anti-pattern hit for "wie du empfinden", rule may fire on "du"+"empfinden".
-	// Keep fail-closed note: full Java anti table is wired; this sentence needs full disambiguation path.
+	off := s1.GetCorrectedTextLength()
+	ms = rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, off+3, ms[0].GetFromPos())
+	require.Equal(t, off+16, ms[0].GetToPos())
 }
 
 func TestVerbAgreementRule_WrongVerb(t *testing.T) {
@@ -149,9 +109,51 @@ func TestVerbAgreementRule_WrongVerb(t *testing.T) {
 	))
 	require.Equal(t, 0, len(rule.Match(osama)))
 
+	// more Java assertBad morph cases
+	for _, tc := range []struct {
+		name  string
+		parts []*languagetool.AnalyzedTokenReadings
+	}{
+		{"Du muss gehen", []*languagetool.AnalyzedTokenReadings{
+			atrWithPOS("Du", "PRO:PER:NOM:SIN:ALG", "du"),
+			atrWithPOS("muss", "VER:3:SIN:PRÄ:NON", "müssen"),
+			atrWithPOS("gehen", "VER:INF:NON", "gehen"),
+			atrWithPOS(".", "PKT", "."),
+		}},
+		{"Ich müsst alles machen", []*languagetool.AnalyzedTokenReadings{
+			atrWithPOS("Ich", "PRO:PER:NOM:SIN:ALG", "ich"),
+			atrWithPOS("müsst", "VER:2:PLU:PRÄ:NON", "müssen"),
+			atrWithPOS("alles", "PIS:AKK:SIN:NEU", "alles"),
+			atrWithPOS("machen", "VER:INF:NON", "machen"),
+			atrWithPOS(".", "PKT", "."),
+		}},
+		{"Ich brauchen einen Karren", []*languagetool.AnalyzedTokenReadings{
+			atrWithPOS("Ich", "PRO:PER:NOM:SIN:ALG", "ich"),
+			atrWithPOS("brauchen", "VER:1:PLU:PRÄ:SFT", "brauchen"),
+			atrWithPOS("einen", "ART:IND:AKK:SIN:MAS", "ein"),
+			atrWithPOS("Karren", "SUB:AKK:SIN:MAS", "Karren"),
+			atrWithPOS(".", "PKT", "."),
+		}},
+		{"Die Unterlagen solltest ihr", []*languagetool.AnalyzedTokenReadings{
+			atrWithPOS("Die", "ART:DEF:AKK:PLU:FEM", "der"),
+			atrWithPOS("Unterlagen", "SUB:AKK:PLU:FEM", "Unterlage"),
+			atrWithPOS("solltest", "VER:2:SIN:KJ2:NON", "sollen"),
+			atrWithPOS("ihr", "PRO:PER:NOM:PLU:ALG", "ihr"),
+			atrWithPOS("gründlich", "ADV", "gründlich"),
+			atrWithPOS("durcharbeiten", "VER:INF:NON", "durcharbeiten"),
+			atrWithPOS(".", "PKT", "."),
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			toks := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, tc.parts...)
+			require.GreaterOrEqual(t, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(toks...)))), 1)
+		})
+	}
+
 	// untagged must not invent
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Ich sind müde."))))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Peter bin nett."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Du muss gehen."))))
 }
 
 func TestVerbAgreementRule_SuggestionSorting(t *testing.T) {
