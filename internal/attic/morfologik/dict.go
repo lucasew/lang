@@ -30,8 +30,8 @@ type Dictionary struct {
 	IgnoreAllUppercase bool
 	SupportRunOnWords  bool
 	// Locale is fsa.dict.speller.locale (e.g. "en_US"); used for toLowerCase/toUpperCase.
-	Locale string
-	langTag language.Tag
+	Locale             string
+	langTag            language.Tag
 	EquivalentChars    map[rune][]rune
 	InputConversion    [][2]string // ordered LinkedHashMap pairs
 	OutputConversion   [][2]string
@@ -232,46 +232,24 @@ func (d *Dictionary) Lookup(word string) ([]WordForm, error) {
 	return out, nil
 }
 
-// Contains is the public alias for IsInDictionary (Java Speller.isInDictionary).
+// Contains is a cold membership probe (fresh Speller.containsSeparators=true each call).
+// Prefer Speller.IsInDictionary when sticky Java Speller state is required (shared across
+// isMisspelled / findRepl on one MorfologikSpeller). Dictionary is cache-shared and must
+// not hold mutable Speller fields.
 func (d *Dictionary) Contains(word string) bool {
 	return d.IsInDictionary(word)
 }
 
-// IsInDictionary ports morfologik.speller.Speller.isInDictionary (2.2.0).
-// Speller dicts: SEQUENCE_IS_A_PREFIX + separator arc. POS/exact: EXACT_MATCH without separators.
-// Note: Java mutates Speller.containsSeparators on EXACT_MATCH; we use a per-call local so
-// a cached Dictionary stays safe under concurrent use (LT often recreates Speller anyway).
+// IsInDictionary is a cold Speller.isInDictionary (per-call local containsSeparators).
+// For sticky Java field mutation, use NewSpeller(d, n).IsInDictionary.
 func (d *Dictionary) IsInDictionary(word string) bool {
 	if d == nil || d.FSA == nil || word == "" {
 		return false
 	}
-	seq, err := d.encodeBytes(word)
-	if err != nil || len(seq) == 0 {
-		return false
-	}
-	kind, _, node := d.FSA.Match(seq, d.FSA.RootNode())
-	// Java Speller.containsSeparators defaults true
-	containsSeparators := true
-	if containsSeparators && kind == ExactMatch {
-		// Make sure the word doesn't contain a separator if there is an exact match
-		containsSeparators = false
-		sep := rune(d.Separator)
-		for _, r := range word {
-			if r == sep {
-				containsSeparators = true
-				break
-			}
-		}
-	}
-	if kind == ExactMatch && !containsSeparators {
-		return true
-	}
-	// Java: remaining() > 0 after encoding ⇒ non-empty sequence (we use len(seq) > 0)
-	if containsSeparators && kind == SequenceIsAPrefix {
-		arc := d.FSA.getArc(node, d.Separator)
-		return arc != 0
-	}
-	return false
+	// Cold probe: same control flow as SpellerFSA.IsInDictionary with containsSeparators
+	// starting true and discarded after the call (no shared Dictionary mutation).
+	sp := &SpellerFSA{Dict: d, containsSeparators: true}
+	return sp.IsInDictionary(word)
 }
 
 // SetLocale ports DictionaryAttribute.LOCALE (e.g. "en_US" → language tag).

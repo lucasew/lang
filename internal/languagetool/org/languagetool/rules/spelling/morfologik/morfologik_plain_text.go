@@ -74,17 +74,18 @@ func (s *MorfologikSpeller) AttachWordsAsBinaryFSA(words []string, infoBesideDic
 	if d == nil {
 		return 0
 	}
-	// Wire like AttachBinaryDictionary suggest path without re-opening a file dict.
-	s.InDictionaryFn = d.Contains
+	// Wire like AttachBinaryDictionary: per-instance Speller (sticky containsSeparators).
+	// Plain FSABuilder words are ExactMatch → first isInDictionary clears separators (Java).
+	s.syncDictSpellerMeta(d)
+	sp := atticmorfo.NewSpeller(d, s.MaxEditDistance)
+	sp.SyncFromDict()
+	s.binarySpeller = sp
+	s.InDictionaryFn = sp.IsInDictionary
 	s.binaryDict = d
 	s.BinaryDictPath = s.FileInClassPath
 	s.FrequencyIncluded = d.FrequencyIncluded()
 	s.GetFrequencyFn = func(word string) int {
 		return d.GetFrequency(word)
-	}
-	maxEdit := s.MaxEditDistance
-	if maxEdit < 1 {
-		maxEdit = 1
 	}
 	s.WeightedSuggestFn = func(word string) []WeightedSuggestion {
 		return s.binaryFindReplacementCandidates(d, word, 8)

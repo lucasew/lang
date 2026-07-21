@@ -6,13 +6,24 @@ import (
 )
 
 // ReplaceRunOnWordCandidates ports Speller.replaceRunOnWordCandidates (2.2.0).
-// Suggests "prefix suffix" when both sides are in the dictionary (orig distance 1).
+// Cold Dictionary path (fresh Speller each call). Prefer Speller.ReplaceRunOnWordCandidates
+// for sticky containsSeparators.
 func (d *Dictionary) ReplaceRunOnWordCandidates(original string) []CandidateData {
-	if d == nil || original == "" || !d.SupportRunOnWords {
+	if d == nil {
 		return nil
 	}
+	return NewSpeller(d, 1).ReplaceRunOnWordCandidates(original)
+}
+
+// ReplaceRunOnWordCandidates ports Speller.replaceRunOnWordCandidates on this Speller
+// (sticky isInDictionary / containsSeparators).
+func (s *Speller) ReplaceRunOnWordCandidates(original string) []CandidateData {
+	if s == nil || s.Dict == nil || original == "" || !s.Dict.SupportRunOnWords {
+		return nil
+	}
+	d := s.Dict
 	wordToCheck := applyConversionPairs(original, d.InputConversion)
-	if wordToCheck == "" || d.IsInDictionary(wordToCheck) {
+	if wordToCheck == "" || s.IsInDictionary(wordToCheck) {
 		return nil
 	}
 	// Java: for (i = 1; i < wordToCheck.length(); i++) with substring UTF-16
@@ -25,19 +36,19 @@ func (d *Dictionary) ReplaceRunOnWordCandidates(original string) []CandidateData
 		prefix := string(utf16.Decode(u[:i]))
 		suffix := string(utf16.Decode(u[i:]))
 		// suffix: in dict OR capitalized with lowercase form in dict (GreatElephant)
-		suffixOK := d.IsInDictionary(suffix)
+		suffixOK := s.IsInDictionary(suffix)
 		if !suffixOK && !isNotCapitalizedWord(suffix) {
-			suffixOK = d.IsInDictionary(d.ToLower(suffix))
+			suffixOK = s.IsInDictionary(d.ToLower(suffix))
 		}
 		if !suffixOK {
 			continue
 		}
-		if d.IsInDictionary(prefix) {
+		if s.IsInDictionary(prefix) {
 			candidates = append(candidates, d.addRunOnReplacement(prefix+" "+suffix))
 		} else if prefix != "" {
 			pr := []rune(prefix)
 			// Java: Character.isUpperCase(prefix.charAt(0))
-			if len(pr) > 0 && unicode.IsUpper(pr[0]) && d.IsInDictionary(d.ToLower(prefix)) {
+			if len(pr) > 0 && unicode.IsUpper(pr[0]) && s.IsInDictionary(d.ToLower(prefix)) {
 				candidates = append(candidates, d.addRunOnReplacement(prefix+" "+suffix))
 			}
 		}

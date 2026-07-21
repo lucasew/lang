@@ -95,8 +95,9 @@ func (s *MorfologikSpeller) LoadInfoBesideDict(dictPath string) bool {
 	return true
 }
 
-// AttachBinaryDictionary opens/caches FSA at dictPath and sets InDictionaryFn to Dictionary.Contains.
-// Also loads sibling .info flags. Java MorfologikSpeller(Dictionary) path.
+// AttachBinaryDictionary opens/caches FSA at dictPath and wires a per-instance Speller
+// (Java MorfologikSpeller holds Speller; Dictionary is cache-shared/immutable).
+// Also loads sibling .info flags.
 func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	if s == nil || dictPath == "" {
 		return false
@@ -106,7 +107,12 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 		return false
 	}
 	s.LoadInfoBesideDict(dictPath)
-	s.InDictionaryFn = d.Contains
+	// Sync flags LT may have loaded onto Dictionary before building Speller.
+	s.syncDictSpellerMeta(d)
+	sp := atticmorfo.NewSpeller(d, s.MaxEditDistance)
+	sp.SyncFromDict()
+	s.binarySpeller = sp
+	s.InDictionaryFn = sp.IsInDictionary
 	s.BinaryDictPath = dictPath
 	s.binaryDict = d
 	s.FrequencyIncluded = d.FrequencyIncluded()
@@ -125,18 +131,28 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	return true
 }
 
-// binaryFindReplacementCandidates ports MorfologikSpeller → Speller.findReplacementCandidates.
-// Dictionary (OpenDictionary .info) owns Speller metadata; LT MaxEditDistance selects Speller distance.
-func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictionary, word string, maxResults int) []WeightedSuggestion {
-	if s == nil || d == nil || word == "" {
-		return nil
+// syncDictSpellerMeta copies MorfologikSpeller flags onto Dictionary before Speller use.
+func (s *MorfologikSpeller) syncDictSpellerMeta(d *atticmorfo.Dictionary) {
+	if s == nil || d == nil {
+		return
 	}
-	maxEdit := s.MaxEditDistance
-	if maxEdit < 1 {
-		maxEdit = 1
+	d.IgnoreDiacritics = s.IgnoreDiacritics
+	d.ConvertCase = s.ConvertCase
+	d.IgnoreNumbers = s.IgnoreNumbers
+	d.IgnorePunctuation = s.IgnorePunctuation
+	d.IgnoreCamelCase = s.IgnoreCamelCase
+	d.IgnoreAllUppercase = s.IgnoreAllUppercase
+	d.SupportRunOnWords = s.SupportRunOnWords
+	d.EquivalentChars = s.EquivalentChars
+	if s.ConversionLocale != "" {
+		d.SetLocale(s.ConversionLocale)
 	}
-	// Prefer LT-loaded replacement/conversion maps when present (same .info as Dictionary).
-	// Sync dict speller meta from MorfologikSpeller so AttachBinaryDictionary path is authoritative.
+	if len(s.InputConversionPairs) > 0 {
+		d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
+	}
+	if len(s.OutputConversionPairs) > 0 {
+		d.OutputConversion = append([][2]string(nil), s.OutputConversionPairs...)
+	}
 	if len(s.ReplacementShort) > 0 || (s.ReplacementTheRest != nil && s.ReplacementTheRest.Len() > 0) {
 		d.ReplacementShort = make([]atticmorfo.ReplPair, 0, len(s.ReplacementShort))
 		for _, p := range s.ReplacementShort {
@@ -151,17 +167,29 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 			}
 		}
 	}
-	if len(s.InputConversionPairs) > 0 {
-		d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
-	}
-	if len(s.OutputConversionPairs) > 0 {
-		d.OutputConversion = append([][2]string(nil), s.OutputConversionPairs...)
-	}
-	d.IgnoreDiacritics = s.IgnoreDiacritics
-	d.ConvertCase = s.ConvertCase
-	d.EquivalentChars = s.EquivalentChars
+}
 
-	cds := d.FindReplacementCandidates(word, maxEdit)
+// binaryFindReplacementCandidates ports MorfologikSpeller → Speller.findReplacementCandidates.
+// Reuses binarySpeller (sticky containsSeparators) when present; else ephemeral Speller on d.
+func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictionary, word string, maxResults int) []WeightedSuggestion {
+	if s == nil || d == nil || word == "" {
+		return nil
+	}
+	maxEdit := s.MaxEditDistance
+	if maxEdit < 1 {
+		maxEdit = 1
+	}
+	// Prefer LT-loaded replacement/conversion maps when present (same .info as Dictionary).
+	s.syncDictSpellerMeta(d)
+
+	var cds []atticmorfo.CandidateData
+	if s.binarySpeller != nil && s.binarySpeller.Dict == d {
+		// Java Speller is constructed once with fixed editDistance (AttachBinaryDictionary).
+		s.binarySpeller.SyncFromDict()
+		cds = s.binarySpeller.FindReplacementCandidatesFull(word, false)
+	} else {
+		cds = d.FindReplacementCandidates(word, maxEdit)
+	}
 	if len(cds) == 0 {
 		return nil
 	}

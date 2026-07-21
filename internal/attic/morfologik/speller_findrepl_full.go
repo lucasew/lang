@@ -60,53 +60,50 @@ func (d *Dictionary) ConvertsCase() bool {
 }
 
 func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfWordInDictionary bool) []CandidateData {
-	if d == nil || d.FSA == nil || word == "" {
+	// Ephemeral Speller (Dictionary cold path). Prefer Speller.FindReplacementCandidatesFull
+	// when sticky containsSeparators across isInDictionary is required.
+	sp := NewSpeller(d, maxEdit)
+	sp.SyncFromDict()
+	return sp.FindReplacementCandidatesFull(word, evenIfWordInDictionary)
+}
+
+// FindReplacementCandidatesFull ports Speller.findReplacementCandidates(word, evenIf).
+// Uses sticky IsInDictionary / containsSeparators on this Speller (Java same instance).
+func (s *Speller) FindReplacementCandidatesFull(word string, evenIfWordInDictionary bool) []CandidateData {
+	if s == nil || s.Dict == nil || s.Dict.FSA == nil || word == "" {
 		return nil
 	}
-	if maxEdit < 1 {
-		maxEdit = 1
-	}
+	d := s.Dict
 	word = applyConversionPairs(word, d.InputConversion)
 	if len(word) == 0 || len(word) >= MaxWordLength {
 		return nil
 	}
-	if d.Contains(word) && !evenIfWordInDictionary {
+	// Java: !isInDictionary(word) || evenIfWordInDictionary
+	if s.IsInDictionary(word) && !evenIfWordInDictionary {
 		return nil
-	}
-
-	fsaSp := NewSpellerFSA(d, maxEdit)
-	fsaSp.IgnoreDiacritics = d.IgnoreDiacritics
-	fsaSp.ConvertCase = d.ConvertCase
-	fsaSp.EquivalentChars = d.EquivalentChars
-	if len(d.ReplacementShort) > 0 {
-		pairs := make([]struct{ From, To string }, len(d.ReplacementShort))
-		for i, p := range d.ReplacementShort {
-			pairs[i].From, pairs[i].To = p.From, p.To
-		}
-		fsaSp.LoadReplacementPairs(pairs)
 	}
 
 	var wordsToCheck []string
 	var raw []CandidateData
 	if d.ReplacementTheRest != nil && d.ReplacementTheRest.Len() > 0 && len(word) > 1 {
 		for _, wordChecked := range getAllReplacements(word, d.ReplacementTheRest, 0, 0) {
-			if d.Contains(wordChecked) {
-				raw = append(raw, fsaSp.MakeCandidateData(wordChecked, 0))
+			if s.IsInDictionary(wordChecked) {
+				raw = append(raw, s.MakeCandidateData(wordChecked, 0))
 			} else {
 				// Java: toLowerCase/toUpperCase(dictionaryMetadata.getLocale())
 				low := d.ToLower(wordChecked)
 				up := d.ToUpper(wordChecked)
-				if d.Contains(low) {
-					raw = append(raw, fsaSp.MakeCandidateData(low, 0))
+				if s.IsInDictionary(low) {
+					raw = append(raw, s.MakeCandidateData(low, 0))
 				}
-				if d.Contains(up) {
-					raw = append(raw, fsaSp.MakeCandidateData(up, 0))
+				if s.IsInDictionary(up) {
+					raw = append(raw, s.MakeCandidateData(up, 0))
 				}
 				if len(low) > 1 {
 					// Java: Character.toUpperCase(lowerWord.charAt(0)) + lowerWord.substring(1)
 					firstUp := d.initialUppercase(low)
-					if d.Contains(firstUp) {
-						raw = append(raw, fsaSp.MakeCandidateData(firstUp, 0))
+					if s.IsInDictionary(firstUp) {
+						raw = append(raw, s.MakeCandidateData(firstUp, 0))
 					}
 				}
 			}
@@ -116,7 +113,7 @@ func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfW
 		wordsToCheck = []string{word}
 	}
 
-	fsaSp.ResetHMatrix()
+	s.ResetHMatrix()
 	i := 1
 	for _, wordChecked := range wordsToCheck {
 		i++
@@ -126,7 +123,7 @@ func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfW
 		if len([]rune(wordChecked)) < minWordLengthFindRepl && i > 2 {
 			break
 		}
-		fsaSp.AppendFindRepl(&raw, wordChecked)
+		s.AppendFindRepl(&raw, wordChecked)
 	}
 
 	sort.SliceStable(raw, func(a, b int) bool {
@@ -144,7 +141,7 @@ func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfW
 		}
 		seen[replaced] = struct{}{}
 		// Java: new CandidateData(replaced, cd.origDistance)
-		out = append(out, fsaSp.MakeCandidateData(replaced, cd.OrigDistance))
+		out = append(out, s.MakeCandidateData(replaced, cd.OrigDistance))
 	}
 	return out
 }

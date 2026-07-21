@@ -14,9 +14,9 @@ type CandidateData struct {
 
 // replPattern ports Speller.Pattern (source chars on the misspelled word side).
 type replPattern struct {
-	chars        []rune
-	startAnchor  bool
-	endAnchor    bool
+	chars       []rune
+	startAnchor bool
+	endAnchor   bool
 }
 
 // SpellerFSA ports Speller.findReplacementCandidates FSA walk over a Dictionary.
@@ -46,6 +46,51 @@ func NewSpellerFSA(dict *Dictionary, editDistance int) *SpellerFSA {
 		anyToOne:           map[rune][]replPattern{},
 		anyToTwo:           map[string][]replPattern{},
 	}
+}
+
+// IsInDictionary ports morfologik.speller.Speller.isInDictionary (2.2.0).
+// Mutates containsSeparators sticky field exactly like Java (first ExactMatch without
+// separator char permanently clears the flag for this Speller instance).
+func (s *SpellerFSA) IsInDictionary(word string) bool {
+	if s == nil || s.Dict == nil || s.Dict.FSA == nil || word == "" {
+		return false
+	}
+	d := s.Dict
+	seq, err := d.encodeBytes(word)
+	if err != nil || len(seq) == 0 {
+		return false
+	}
+	kind, _, node := d.FSA.Match(seq, d.FSA.RootNode())
+
+	// Java: if (containsSeparators && match.kind == EXACT_MATCH) { containsSeparators = false; scan word }
+	if s.containsSeparators && kind == ExactMatch {
+		s.containsSeparators = false
+		sep := rune(d.Separator)
+		for _, r := range word {
+			if r == sep {
+				s.containsSeparators = true
+				break
+			}
+		}
+	}
+
+	if kind == ExactMatch && !s.containsSeparators {
+		return true
+	}
+	// Java: containsSeparators && SEQUENCE_IS_A_PREFIX && remaining()>0 && getArc(sep)!=0
+	if s.containsSeparators && kind == SequenceIsAPrefix {
+		arc := d.FSA.getArc(node, d.Separator)
+		return arc != 0
+	}
+	return false
+}
+
+// ContainsSeparators reports Speller.containsSeparators (sticky).
+func (s *SpellerFSA) ContainsSeparators() bool {
+	if s == nil {
+		return true
+	}
+	return s.containsSeparators
 }
 
 // LoadReplacementPairs ports Speller.createReplacementsMaps for anyToOne/anyToTwo.
@@ -127,6 +172,7 @@ func (s *SpellerFSA) MakeCandidateData(word string, origDist int) CandidateData 
 
 // FindReplacementCandidates ports Speller.findReplacementCandidates(word, false) for a single word.
 // Resets HMatrix once (Java 2.2.0 Speller.findReplacementCandidates).
+// Uses sticky IsInDictionary (mutates containsSeparators like Java before findRepl).
 func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
 	if s == nil || s.Dict == nil || s.Dict.FSA == nil || word == "" {
 		return nil
@@ -134,8 +180,8 @@ func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
 	if len(word) == 0 || len(word) >= MaxWordLength {
 		return nil
 	}
-	// evenIfWordInDictionary=false
-	if s.Dict.Contains(word) {
+	// evenIfWordInDictionary=false — Java isInDictionary on same Speller
+	if s.IsInDictionary(word) {
 		return nil
 	}
 	s.ResetHMatrix()

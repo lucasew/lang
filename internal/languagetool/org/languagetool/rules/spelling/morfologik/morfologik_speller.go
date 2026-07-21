@@ -67,6 +67,9 @@ type MorfologikSpeller struct {
 	// binaryDict is the attached FSA (typed as any to avoid exporting attic in all call sites).
 	// Set only via AttachBinaryDictionary; used for identity/debug.
 	binaryDict any
+	// binarySpeller is the per-instance morfologik Speller (sticky containsSeparators).
+	// Java MorfologikSpeller holds one Speller; Dictionary is shared/immutable.
+	binarySpeller *atticmorfo.Speller
 }
 
 func NewMorfologikSpeller(fileInClassPath string, maxEditDistance int) *MorfologikSpeller {
@@ -200,22 +203,17 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 	if word == "LanguageTool" || word == "LanguageTooler" {
 		return false
 	}
-	// When binary FSA is attached, prefer Dictionary.IsMisspelled (Java Speller twin).
-	// Sync flags that LoadInfoBesideDict may have set on MorfologikSpeller.
+	// When binary Speller is attached, use sticky Speller.isMisspelled (Java twin).
+	if s.binarySpeller != nil {
+		if d := s.binarySpeller.Dict; d != nil {
+			s.syncDictSpellerMeta(d)
+			s.binarySpeller.SyncFromDict()
+		}
+		return s.binarySpeller.IsMisspelled(word)
+	}
+	// Dictionary-only path (no Speller yet): cold Dictionary.IsMisspelled.
 	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
-		d.IgnoreDiacritics = s.IgnoreDiacritics
-		d.ConvertCase = s.ConvertCase
-		d.IgnoreNumbers = s.IgnoreNumbers
-		d.IgnorePunctuation = s.IgnorePunctuation
-		d.IgnoreCamelCase = s.IgnoreCamelCase
-		d.IgnoreAllUppercase = s.IgnoreAllUppercase
-		d.SupportRunOnWords = s.SupportRunOnWords
-		if s.ConversionLocale != "" {
-			d.SetLocale(s.ConversionLocale)
-		}
-		if len(s.InputConversionPairs) > 0 {
-			d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
-		}
+		s.syncDictSpellerMeta(d)
 		return d.IsMisspelled(word)
 	}
 	// Map-inject / no-FSA path: same gates with Words / InDictionaryFn.
@@ -499,18 +497,23 @@ func (s *MorfologikSpeller) ReplaceRunOnWordCandidates(original string) []Weight
 	if s == nil || original == "" || !s.SupportRunOnWords {
 		return nil
 	}
-	// Binary FSA: Dictionary.ReplaceRunOnWordCandidates (Java Speller twin).
+	// Binary Speller: sticky replaceRunOnWordCandidates (Java Speller twin).
+	if s.binarySpeller != nil {
+		if d := s.binarySpeller.Dict; d != nil {
+			s.syncDictSpellerMeta(d)
+		}
+		cds := s.binarySpeller.ReplaceRunOnWordCandidates(original)
+		if len(cds) == 0 {
+			return nil
+		}
+		out := make([]WeightedSuggestion, 0, len(cds))
+		for _, c := range cds {
+			out = append(out, NewWeightedSuggestion(c.Word, c.Distance))
+		}
+		return out
+	}
 	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
-		d.SupportRunOnWords = s.SupportRunOnWords
-		if s.ConversionLocale != "" {
-			d.SetLocale(s.ConversionLocale)
-		}
-		if len(s.InputConversionPairs) > 0 {
-			d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
-		}
-		if len(s.OutputConversionPairs) > 0 {
-			d.OutputConversion = append([][2]string(nil), s.OutputConversionPairs...)
-		}
+		s.syncDictSpellerMeta(d)
 		cds := d.ReplaceRunOnWordCandidates(original)
 		if len(cds) == 0 {
 			return nil
