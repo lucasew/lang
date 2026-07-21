@@ -28,13 +28,26 @@ func TestPartizip2_Declined(t *testing.T) {
 	got := tagger.Tag([]string{"erstickter"})
 	tags := posTagsOf(got[0])
 	found := false
+	nomCount := 0
 	for _, tg := range tags {
 		if stringsHasPrefix(tg, "PA2:") && stringsHasSuffix(tg, ":VER") {
 			found = true
-			break
+		}
+		if tg == "PA2:NOM:SIN:MAS:GRU:SOL:VER" {
+			nomCount++
 		}
 	}
 	require.True(t, found, "expected declined PA2 tags, got %v", tags)
+	// Java postagsPartizipEndingEr lists each tag twice → two identical readings
+	require.Equal(t, 2, nomCount, "EndingEr list is duplicated in Java")
+	// lemma = word without suffix "er"
+	for _, r := range got[0].GetReadings() {
+		if r.GetPOSTag() != nil && *r.GetPOSTag() == "PA2:NOM:SIN:MAS:GRU:SOL:VER" {
+			require.NotNil(t, r.GetLemma())
+			require.Equal(t, "erstickt", *r.GetLemma())
+			break
+		}
+	}
 }
 
 func TestSwissTagger_UsesSentenceContext(t *testing.T) {

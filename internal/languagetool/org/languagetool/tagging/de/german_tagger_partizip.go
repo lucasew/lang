@@ -48,7 +48,13 @@ var postagsPartizipEndingEn = []string{
 	"NOM:PLU:FEM:GRU:IND:VER", "NOM:PLU:MAS:GRU:DEF:VER", "NOM:PLU:MAS:GRU:IND:VER",
 	"NOM:PLU:NEU:GRU:DEF:VER", "NOM:PLU:NEU:GRU:IND:VER",
 }
+
+// postagsPartizipEndingEr twins Java array including deliberate duplicates (emitted twice).
 var postagsPartizipEndingEr = []string{
+	"DAT:SIN:FEM:GRU:SOL:VER", "GEN:PLU:FEM:GRU:SOL:VER", "GEN:PLU:MAS:GRU:SOL:VER",
+	"GEN:PLU:NEU:GRU:SOL:VER", "GEN:SIN:FEM:GRU:SOL:VER", "NOM:SIN:MAS:GRU:IND:VER",
+	"NOM:SIN:MAS:GRU:SOL:VER",
+	// Java list repeats the same 7 tags a second time
 	"DAT:SIN:FEM:GRU:SOL:VER", "GEN:PLU:FEM:GRU:SOL:VER", "GEN:PLU:MAS:GRU:SOL:VER",
 	"GEN:PLU:NEU:GRU:SOL:VER", "GEN:SIN:FEM:GRU:SOL:VER", "NOM:SIN:MAS:GRU:IND:VER",
 	"NOM:SIN:MAS:GRU:SOL:VER",
@@ -112,10 +118,13 @@ func (t *GermanTagger) addPartizip2FromLastPart(
 	}
 
 	// 2) declined: lastPart ends with e/em/en/er/es; middle has VER:3:SIN:PRÄ:SFT
-	suffixes := []string{"em", "en", "er", "es", "e"} // longer first for em/en/er/es before e
+	// Java iterates {"e","em","en","er","es"} without break — last matching suffix wins.
+	// Equivalent for these ASCII endings: longer-first with break.
+	suffixes := []string{"em", "en", "er", "es", "e"}
 	middlePart, suffix := "", ""
 	for _, sffx := range suffixes {
 		if strings.HasSuffix(lastPart, sffx) {
+			// lastPart/suffix are ASCII here; byte cut == UTF-16 for these endings
 			middlePart = lastPart[:len(lastPart)-len(sffx)]
 			suffix = sffx
 			break
@@ -128,9 +137,11 @@ func (t *GermanTagger) addPartizip2FromLastPart(
 		if !strings.HasPrefix(taggedM.PosTag, "VER:3:SIN:PRÄ:SFT") {
 			continue
 		}
+		// Java: word.substring(0, word.length()-suffix.length()) — UTF-16 units
 		lemma := wordOrig
-		if len(wordOrig) >= len(suffix) {
-			lemma = wordOrig[:len(wordOrig)-len(suffix)]
+		sufN := tagging.UTF16Len(suffix)
+		if tagging.UTF16Len(wordOrig) >= sufN {
+			lemma = javaUTF16Prefix(wordOrig, tagging.UTF16Len(wordOrig)-sufN)
 		}
 		var ends []string
 		switch suffix {
