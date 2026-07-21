@@ -40,9 +40,19 @@ func NewMorfologikCatalanSpellerRule() *MorfologikCatalanSpellerRule {
 	}
 	// Java MorfologikCatalanSpellerRule ctor: setIgnoreTaggedWords().
 	r.IgnoreTaggedWords = true
-	// Java tokenizeNewWords() = false — re-load lists without multi-token antipatterns.
+	// Java tokenizeNewWords() = false; getSpellingFileName → /ca/spelling.txt;
+	// getAdditionalSpellingFileNames → /ca/+CUSTOM, GLOBAL, multiwords, spelling-special.
 	if r.SpellingCheckRule != nil {
 		r.DisableTokenizeNewWords = true
+		r.GetSpellingFileNameFn = func() string { return "/ca/spelling.txt" }
+		r.GetAdditionalSpellingFileNamesFn = func() []string {
+			return []string{
+				"/ca/" + spelling.CustomSpellingFile,
+				spelling.GlobalSpellingFile,
+				"/ca/multiwords.txt",
+				"/ca/spelling-special.txt",
+			}
+		}
 		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
 	return r

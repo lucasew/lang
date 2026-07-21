@@ -2,6 +2,7 @@ package nl
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
@@ -28,6 +29,13 @@ func NewMorfologikDutchSpellerRule() *MorfologikDutchSpellerRule {
 	r := &MorfologikDutchSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikDutchSpellerRuleID, "nl", DutchSpellerDict, nil),
+	}
+	// Java paths under /nl/spelling/ (not hunspell/).
+	if r.SpellingCheckRule != nil {
+		r.GetIgnoreFileNameFn = func() string { return "/nl/spelling/ignore.txt" }
+		r.GetSpellingFileNameFn = func() string { return "/nl/spelling/spelling.txt" }
+		r.GetProhibitFileNameFn = func() string { return "/nl/spelling/prohibit.txt" }
+		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
 	// Java MorfologikDutchSpellerRule.ignorePotentiallyMisspelledWord:
 	// return Dutch.getCompoundAcceptor().acceptCompound(word);

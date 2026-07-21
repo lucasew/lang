@@ -28,9 +28,12 @@ func TestSpellingCheckRule_PathGetters_OverrideFn(t *testing.T) {
 	require.Equal(t, "pt/ignore.txt", r.GetIgnoreFileName())
 	require.Equal(t, "pt/spelling.txt", r.GetSpellingFileName())
 	require.Equal(t, "pt/prohibit.txt", r.GetProhibitFileName())
-	// default additional still uses short code
-	require.Contains(t, r.GetAdditionalSpellingFileNames(), "pt/hunspell/spelling_custom.txt")
-	require.Contains(t, r.GetAdditionalSpellingFileNames(), "pt/multiwords.txt")
+	// PT additional (Java MorfologikPortugueseSpellerRule) replaces default list
+	add := r.GetAdditionalSpellingFileNames()
+	require.Contains(t, add, "spelling_global.txt")
+	require.Contains(t, add, "pt/spelling.txt")
+	require.Contains(t, add, "pt/multiwords.txt")
+	require.NotContains(t, add, "pt/hunspell/spelling_custom.txt")
 }
 
 func TestApplyDefault_UsesPathGetters(t *testing.T) {

@@ -30,7 +30,13 @@ func NewMorfologikEkavianSpellerRule() *MorfologikEkavianSpellerRule {
 	}
 	// Java getIgnoreFileName / getSpellingFileName / getProhibitFileName under dictionary/ekavian/.
 	if r.SpellingCheckRule != nil {
-		spelling.ApplySpellingResourcePaths(r.SpellingCheckRule, EkavianIgnoreFile, EkavianSpellingFile, EkavianProhibitFile)
+		r.GetIgnoreFileNameFn = func() string { return "/" + EkavianIgnoreFile }
+		r.GetSpellingFileNameFn = func() string { return "/" + EkavianSpellingFile }
+		r.GetProhibitFileNameFn = func() string { return "/" + EkavianProhibitFile }
+		// clear default additional prohibit/custom that don't apply to SR paths
+		r.GetAdditionalProhibitFileNamesFn = func() []string { return nil }
+		r.GetAdditionalSpellingFileNamesFn = func() []string { return []string{spelling.GlobalSpellingFile} }
+		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
 	// Java: бткие → битке
 	r.AddExamplePair(

@@ -5,6 +5,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -44,6 +45,16 @@ func NewMorfologikPortugueseSpellerRule(variantCode, dict, id string) *Morfologi
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(id, "pt", dict, nil),
 		VariantCode:           variantCode,
 		dialectMap:            loadDialectAlternationMapping(variantCode),
+	}
+	// Java path overrides: pt/ignore.txt, pt/prohibit.txt; additional = global + pt/spelling + multiwords.
+	if r.SpellingCheckRule != nil {
+		r.GetIgnoreFileNameFn = func() string { return "pt/ignore.txt" }
+		r.GetProhibitFileNameFn = func() string { return "pt/prohibit.txt" }
+		// getSpellingFileName stays default (may miss); spelling is in additional list.
+		r.GetAdditionalSpellingFileNamesFn = func() []string {
+			return []string{spelling.GlobalSpellingFile, "pt/spelling.txt", "pt/multiwords.txt"}
+		}
+		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
 	// Java getRuleMatches: if tokens[idx].hasPosTag("_english_ignore_") return empty.
 	r.SkipTokenFn = func(tok *languagetool.AnalyzedTokenReadings) bool {

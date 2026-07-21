@@ -1,12 +1,13 @@
 package fr
 
 import (
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 const (
@@ -31,6 +32,11 @@ func NewMorfologikFrenchSpellerRule() *MorfologikFrenchSpellerRule {
 	r := &MorfologikFrenchSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikFrenchSpellerRuleID, "fr", FrenchSpellerDict, nil),
+	}
+	// Java getSpellingFileName → "/fr/hunspell/spelling.txt"
+	if r.SpellingCheckRule != nil {
+		r.GetSpellingFileNameFn = func() string { return "/fr/hunspell/spelling.txt" }
+		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
 	// Java MorfologikFrenchSpellerRule ctor: setIgnoreTaggedWords().
 	r.IgnoreTaggedWords = true

@@ -62,23 +62,28 @@ func (r *SpellingCheckRule) GetAdditionalSpellingFileNames() []string {
 		return nil
 	}
 	sc := r.ShortCode()
-	out := make([]string, 0, 4)
-	if sc != "" {
-		out = append(out, sc+CustomSpellingFile)
-	}
-	out = append(out, GlobalSpellingFile)
+	// Default Java SpellingCheckRule.getAdditionalSpellingFileNames:
+	// [short+CUSTOM_SPELLING_FILE, GLOBAL_SPELLING_FILE]
+	// Language overrides replace/extend this list entirely when they override the method.
 	switch sc {
 	case "en":
-		// AbstractEnglishSpellerRule: + "/en/multiwords.txt"
-		out = append(out, "/en/multiwords.txt")
+		// AbstractEnglishSpellerRule
+		return []string{sc + CustomSpellingFile, GlobalSpellingFile, "/en/multiwords.txt"}
 	case "pt":
-		out = append(out, "pt/multiwords.txt")
+		// MorfologikPortugueseSpellerRule: GLOBAL, pt/spelling.txt, multiwords (no hunspell custom)
+		return []string{GlobalSpellingFile, "pt/spelling.txt", "pt/multiwords.txt"}
 	case "es":
-		out = append(out, "es/multiwords.txt")
+		return []string{sc + CustomSpellingFile, GlobalSpellingFile, "es/multiwords.txt"}
 	case "ca":
-		out = append(out, "ca/multiwords.txt", "ca/spelling-special.txt")
+		// MorfologikCatalanSpellerRule: "/ca/"+CUSTOM, GLOBAL, multiwords, spelling-special
+		// Java string concat: "/ca/" + "/hunspell/spelling_custom.txt" → "/ca//hunspell/..."
+		return []string{"/ca/" + CustomSpellingFile, GlobalSpellingFile, "/ca/multiwords.txt", "/ca/spelling-special.txt"}
+	default:
+		if sc == "" {
+			return []string{GlobalSpellingFile}
+		}
+		return []string{sc + CustomSpellingFile, GlobalSpellingFile}
 	}
-	return out
 }
 
 // GetLanguageVariantSpellingFileName ports getLanguageVariantSpellingFileName.

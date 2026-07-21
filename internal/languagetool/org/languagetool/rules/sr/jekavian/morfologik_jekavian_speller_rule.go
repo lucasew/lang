@@ -26,7 +26,12 @@ func NewMorfologikJekavianSpellerRule() *MorfologikJekavianSpellerRule {
 	}
 	// Java getIgnoreFileName / getSpellingFileName / getProhibitFileName under dictionary/jekavian/.
 	if r.SpellingCheckRule != nil {
-		spelling.ApplySpellingResourcePaths(r.SpellingCheckRule, JekavianIgnoreFile, JekavianSpellingFile, JekavianProhibitFile)
+		r.GetIgnoreFileNameFn = func() string { return "/" + JekavianIgnoreFile }
+		r.GetSpellingFileNameFn = func() string { return "/" + JekavianSpellingFile }
+		r.GetProhibitFileNameFn = func() string { return "/" + JekavianProhibitFile }
+		r.GetAdditionalProhibitFileNamesFn = func() []string { return nil }
+		r.GetAdditionalSpellingFileNamesFn = func() []string { return []string{spelling.GlobalSpellingFile} }
+		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
 	return r
 }
@@ -35,7 +40,11 @@ func NewMorfologikJekavianSpellerRule() *MorfologikJekavianSpellerRule {
 func (r *MorfologikJekavianSpellerRule) GetIgnoreFileName() string { return "/" + JekavianIgnoreFile }
 
 // GetSpellingFileName ports getSpellingFileName.
-func (r *MorfologikJekavianSpellerRule) GetSpellingFileName() string { return "/" + JekavianSpellingFile }
+func (r *MorfologikJekavianSpellerRule) GetSpellingFileName() string {
+	return "/" + JekavianSpellingFile
+}
 
 // GetProhibitFileName ports getProhibitFileName.
-func (r *MorfologikJekavianSpellerRule) GetProhibitFileName() string { return "/" + JekavianProhibitFile }
+func (r *MorfologikJekavianSpellerRule) GetProhibitFileName() string {
+	return "/" + JekavianProhibitFile
+}
