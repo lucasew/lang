@@ -20,9 +20,21 @@ var enVariantBlogPatterns = []struct {
 }
 
 // enVariantBlogURL ports Match loop that sets blog URL when isValidInOtherVariant.
+// Java: wordPatterns[i].matcher(misspelledWord).matches() — full-string match only.
 func enVariantBlogURL(word string) string {
+	if word == "" {
+		return ""
+	}
 	for _, e := range enVariantBlogPatterns {
-		if e.pat.MatchString(word) {
+		// regexp.MatchString is unanchored; Java Matcher.matches() is full-string.
+		// Prefer ^(?:pat)$ so empty alts (trailing |) do not match non-empty words via zero-width.
+		// Full-span FindStringIndex is equivalent for non-empty patterns.
+		loc := e.pat.FindStringIndex(word)
+		if loc != nil && loc[0] == 0 && loc[1] == len(word) {
+			// Zero-width match only for empty word (handled above).
+			if loc[1] == 0 {
+				continue
+			}
 			return e.url
 		}
 	}
