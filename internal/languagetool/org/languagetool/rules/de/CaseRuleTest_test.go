@@ -155,7 +155,7 @@ func TestCaseRule_SubstantivierteVerben(t *testing.T) {
 	))
 	require.Equal(t, 0, len(rule.Match(good)))
 
-	// Bad: "Das fahren" — lowercased after das
+	// Bad: "Das fahren" — lowercased after das (Java assertBad)
 	bad := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
 		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
@@ -164,13 +164,147 @@ func TestCaseRule_SubstantivierteVerben(t *testing.T) {
 		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
 		atrWithPOS(".", "PKT", "."),
 	))
-	// Match may need Lookup of lowercase form — Java assertBad
 	ms := rule.Match(bad)
-	// If morph path not fully wired, still must not invent on untagged plain text
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Das fahren ist einfach."))))
-	_ = ms // morph assertion depends on CaseRule potentiallyAddLowercaseMatch
-	// Prefer assert when rule fires
-	if len(ms) > 0 {
-		require.Equal(t, 1, len(ms))
+	require.Equal(t, 1, len(ms), "Das fahren → lowercase nominalization error")
+	// untagged must not invent
+	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Das fahren ist einfach."))))
+}
+
+// caseRuleTwinLookup returns morph dict twins for CaseRuleTest surfaces
+// (Java GermanTagger.lookup when german.dict is present).
+func caseRuleTwinLookup(word string) *languagetool.AnalyzedTokenReadings {
+	// map surface → POS tags (non-ADJ SUB for nouns; VER for infinitives used in lowercase path)
+	type tags []string
+	m := map[string]tags{
+		// nouns / substantivized (hasNounReading true)
+		"Haus": {"SUB:NOM:SIN:NEU"}, "haus": {"SUB:NOM:SIN:NEU"},
+		"Zeit": {"SUB:AKK:SIN:FEM"}, "zeit": {"SUB:AKK:SIN:FEM"},
+		"Satz": {"SUB:NOM:SIN:MAS"}, "satz": {"SUB:NOM:SIN:MAS"},
+		"Testen": {"SUB:DAT:SIN:NEU:INF", "VER:INF:NON"}, "testen": {"VER:INF:NON", "SUB:DAT:SIN:NEU:INF"},
+		"Laufen": {"SUB:NOM:SIN:NEU:INF", "VER:INF:NON"}, "laufen": {"VER:INF:NON"},
+		"Fahren": {"SUB:NOM:SIN:NEU:INF", "VER:INF:NON"}, "fahren": {"VER:INF:NON"},
+		"Vater": {"SUB:NOM:SIN:MAS"}, "Vaters": {"SUB:GEN:SIN:MAS"},
+		// adjectives / adverbs (no pure SUB → can be uppercase errors when capitalized wrongly)
+		"neu": {"ADJ:PRD:GRU"}, "neue": {"ADJ:NOM:SIN:NEU:GRU:DEF"},
+		"Neue": {"ADJ:NOM:SIN:NEU:GRU:DEF", "SUB:NOM:SIN:NEU:ADJ"}, // :ADJ ignored for hasNounReading
+		"heute": {"ADV"}, "Heute": {"ADV"},
+		"groß": {"ADJ:PRD:GRU"}, "Groß": {"ADJ:PRD:GRU"},
+		"mein": {"PRO:POS"}, "meines": {"PRO:POS:GEN:SIN:MAS"}, "Meines": {"PRO:POS:GEN:SIN:MAS"},
 	}
+	ts, ok := m[word]
+	if !ok {
+		return nil
+	}
+	var readings []*languagetool.AnalyzedToken
+	for _, p := range ts {
+		pp, ww := p, word
+		readings = append(readings, languagetool.NewAnalyzedToken(ww, &pp, &ww))
+	}
+	if len(readings) == 0 {
+		return nil
+	}
+	atr := languagetool.NewAnalyzedTokenReadingsAt(readings[0], 0)
+	for _, rd := range readings[1:] {
+		atr.AddReading(rd, "")
+	}
+	return atr
+}
+
+func newCaseRuleTwin() *CaseRule {
+	r := NewCaseRule(nil)
+	r.Lookup = caseRuleTwinLookup
+	// known lowercased common words are not misspelled (Java speller)
+	r.IsMisspelled = func(w string) bool {
+		known := map[string]bool{
+			"haus": true, "zeit": true, "satz": true, "testen": true, "laufen": true,
+			"fahren": true, "neu": true, "neue": true, "heute": true, "groß": true,
+			"mein": true, "meines": true, "vater": true, "vaters": true, "einfach": true,
+		}
+		return !known[w]
+	}
+	return r
+}
+
+// Twin of CaseRuleTest.testRule good/bad morph samples (POS inject + Lookup twin).
+func TestCaseRule_MorphJavaSamples(t *testing.T) {
+	rule := newCaseRuleTwin()
+
+	assertGood := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		ms := rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))
+		require.Equal(t, 0, len(ms), "good %s got %d", label, len(ms))
+	}
+	assertBad := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		ms := rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))
+		require.GreaterOrEqual(t, len(ms), 1, "bad %s", label)
+	}
+
+	// Java assertGood
+	assertGood("Ein einfacher Satz zum Testen.",
+		atrWithPOS("Ein", "ART:IND:NOM:SIN:MAS", "ein"),
+		atrWithPOS("einfacher", "ADJ:NOM:SIN:MAS:GRU:IND", "einfach"),
+		atrWithPOS("Satz", "SUB:NOM:SIN:MAS", "Satz"),
+		atrWithPOS("zum", "APPRART:DAT:SIN:NEU", "zu"),
+		atrWithPOS("Testen", "SUB:DAT:SIN:NEU:INF", "Testen"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("Das Laufen fällt mir leicht.",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("Laufen", "SUB:NOM:SIN:NEU:INF", "Laufen"),
+		atrWithPOS("fällt", "VER:3:SIN:PRÄ:SFT", "fallen"),
+		atrWithPOS("mir", "PRO:PER:DAT:SIN:1", "ich"),
+		atrWithPOS("leicht", "ADV", "leicht"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("Das Fahren ist einfach.",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("Fahren", "SUB:NOM:SIN:NEU:INF", "Fahren"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
+		atrWithPOS(".", "PKT", "."),
+	)
+
+	// Java assertBad
+	assertBad("Und das Neue Haus.",
+		atrWithPOS("Und", "KON:NEB", "und"),
+		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("Neue", "ADJ:NOM:SIN:NEU:GRU:DEF", "neu"),
+		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("Ich habe Heute keine Zeit.",
+		atrWithPOS("Ich", "PRO:PER:NOM:SIN:1", "ich"),
+		atrWithPOS("habe", "VER:1:SIN:PRÄ:NON", "haben"),
+		atrWithPOS("Heute", "ADV", "heute"),
+		atrWithPOS("keine", "PIAT:AKK:SIN:FEM", "kein"),
+		atrWithPOS("Zeit", "SUB:AKK:SIN:FEM", "Zeit"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("Er ist Groß.",
+		atrWithPOS("Er", "PRO:PER:NOM:SIN:3:MAS", "er"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("Groß", "ADJ:PRD:GRU", "groß"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("Das fahren ist einfach.",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("fahren", "VER:INF:NON", "fahren"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("Das Auto Meines Vaters.",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
+		atrWithPOS("Meines", "PRO:POS:GEN:SIN:MAS", "mein"),
+		atrWithPOS("Vaters", "SUB:GEN:SIN:MAS", "Vater"),
+		atrWithPOS(".", "PKT", "."),
+	)
+
+	// untagged must not invent
+	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Und das Neue Haus."))))
+	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Ich habe Heute keine Zeit."))))
 }
