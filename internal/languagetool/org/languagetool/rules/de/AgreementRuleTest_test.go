@@ -510,6 +510,66 @@ func TestAgreementRule_ZurReplacement(t *testing.T) {
 	))
 	require.Equal(t, 1, len(rule.Match(bad)))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("gehe zur Mann."))))
+
+	assertBad := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		require.GreaterOrEqual(t, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))), 1, "bad %s", label)
+	}
+	assertGood := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		require.Equal(t, 0, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))), "good %s", label)
+	}
+	// Hier geht's zur Schrank. / zum Schrank / zur Sonne
+	assertBad("zur Schrank",
+		atrWithPOS("Hier", "ADV", "hier"),
+		atrWithPOS("geht", "VER:3:SIN:PRÄ:SFT", "gehen"),
+		atrWithPOS("'s", "PRO:PER:NOM:SIN:NEU", "es"),
+		atrWithPOS("zur", "APPRART:DAT:FEM", "zu"),
+		atrWithPOS("Schrank", "SUB:DAT:SIN:MAS", "Schrank"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("zur Portal",
+		atrWithPOS("Hier", "ADV", "hier"),
+		atrWithPOS("geht", "VER:3:SIN:PRÄ:SFT", "gehen"),
+		atrWithPOS("'s", "PRO:PER:NOM:SIN:NEU", "es"),
+		atrWithPOS("zur", "APPRART:DAT:FEM", "zu"),
+		atrWithPOS("Portal", "SUB:DAT:SIN:NEU", "Portal"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("zur Männern",
+		atrWithPOS("Hier", "ADV", "hier"),
+		atrWithPOS("geht", "VER:3:SIN:PRÄ:SFT", "gehen"),
+		atrWithPOS("'s", "PRO:PER:NOM:SIN:NEU", "es"),
+		atrWithPOS("zur", "APPRART:DAT:FEM", "zu"),
+		atrWithPOS("Männern", "SUB:DAT:PLU:MAS", "Mann"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("zur Frauen",
+		atrWithPOS("Sie", "PRO:PER:NOM:PLU:3", "sie"),
+		atrWithPOS("gehen", "VER:3:PLU:PRÄ:NON", "gehen"),
+		atrWithPOS("zur", "APPRART:DAT:FEM", "zu"),
+		atrWithPOS("Frauen", "SUB:DAT:PLU:FEM", "Frau"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("zur Sonne",
+		atrWithPOS("Hier", "ADV", "hier"),
+		atrWithPOS("geht", "VER:3:SIN:PRÄ:SFT", "gehen"),
+		atrWithPOS("'s", "PRO:PER:NOM:SIN:NEU", "es"),
+		atrWithPOS("zur", "APPRART:DAT:FEM", "zu"),
+		atrWithPOS("Sonne", "SUB:DAT:SIN:FEM", "Sonne"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// zum is not rewritten by zur path; APPRART MAS OK
+	assertGood("zum Schrank",
+		atrWithPOS("Hier", "ADV", "hier"),
+		atrWithPOS("geht", "VER:3:SIN:PRÄ:SFT", "gehen"),
+		atrWithPOS("'s", "PRO:PER:NOM:SIN:NEU", "es"),
+		atrWithPOS("zum", "APPRART:DAT:SIN:MAS", "zu"),
+		atrWithPOS("Schrank", "SUB:DAT:SIN:MAS", "Schrank"),
+		atrWithPOS(".", "PKT", "."),
+	)
 }
 
 // Twin of AgreementRuleTest.testVieleWenige — viele/wenige with skipSol=false path.
@@ -524,23 +584,51 @@ func TestAgreementRule_VieleWenige(t *testing.T) {
 	))
 	require.GreaterOrEqual(t, len(rule.Match(bad)), 1, "viele Mann PLU vs SIN")
 
-	bad2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("wenige", "PIAT:NOM:PLU:NEU", "wenig"),
-		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	// PIAT may or may not be determiner in isDeterminer — if not, 0 is correct fail-closed
-	_ = rule.Match(bad2)
-
-	// good: viele Häuser
-	good := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
+	// good: viele Häuser / viele englische Wörter / viele gute Sachen
+	assertGood := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		require.Equal(t, 0, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))), label)
+	}
+	assertGood("viele Häuser",
 		atrWithPOS("viele", "ART:IND:NOM:PLU:NEU", "viel"),
 		atrWithPOS("Häuser", "SUB:NOM:PLU:NEU", "Haus"),
 		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(good)))
+	)
+	assertGood("viele gute Sachen",
+		atrWithPOS("Es", "PRO:PER:NOM:SIN:NEU", "es"),
+		atrWithPOS("gibt", "VER:3:SIN:PRÄ:NON", "geben"),
+		atrWithPOS("viele", "ART:IND:AKK:PLU:FEM", "viel"),
+		atrWithPOS("gute", "ADJ:AKK:PLU:FEM:GRU:IND", "gut"),
+		atrWithPOS("Sachen", "SUB:AKK:PLU:FEM", "Sache"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("viele englische Wörter",
+		atrWithPOS("Viele", "ART:IND:NOM:PLU:NEU", "viel"),
+		atrWithPOS("englische", "ADJ:NOM:PLU:NEU:GRU:IND", "englisch"),
+		atrWithPOS("Wörter", "SUB:NOM:PLU:NEU", "Wort"),
+		atrWithPOS("haben", "VER:3:PLU:PRÄ:NON", "haben"),
+		atrWithPOS("lateinischen", "ADJ:AKK:SIN:MAS:GRU:IND", "lateinisch"),
+		atrWithPOS("Ursprung", "SUB:AKK:SIN:MAS", "Ursprung"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("einige markante Szenen",
+		atrWithPOS("Für", "APPR", "für"),
+		atrWithPOS("einige", "PIAT:AKK:PLU:FEM", "einig"),
+		atrWithPOS("markante", "ADJ:AKK:PLU:FEM:GRU:IND", "markant"),
+		atrWithPOS("Szenen", "SUB:AKK:PLU:FEM", "Szene"),
+	)
+	assertGood("seit einiger Zeit",
+		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
+		atrWithPOS("Typ", "SUB:NOM:SIN:MAS", "Typ"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("der", "PRELS:NOM:SIN:MAS", "der"),
+		atrWithPOS("seit", "APPR", "seit"),
+		atrWithPOS("einiger", "PIAT:DAT:SIN:FEM", "einig"),
+		atrWithPOS("Zeit", "SUB:DAT:SIN:FEM", "Zeit"),
+		atrWithPOS("kommt", "VER:3:SIN:PRÄ:SFT", "kommen"),
+		atrWithPOS(".", "PKT", "."),
+	)
 
 	// untagged fail-closed always
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("viele Mann."))))
@@ -620,20 +708,192 @@ func TestAgreementRule_DetAdjNounRule(t *testing.T) {
 		atrWithPOS("Jury", "SUB:NOM:SIN:FEM", "Jury"),
 		atrWithPOS(".", "PKT", "."),
 	)
+
+	// Java: An der roten Ampel. vs An der roter/rote/rotes/rotem Ampel.
+	assertGood("An der roten Ampel",
+		atrWithPOS("An", "APPR", "an"),
+		atrWithPOS("der", "ART:DEF:DAT:SIN:FEM", "der"),
+		atrWithPOS("roten", "ADJ:DAT:SIN:FEM:GRU:DEF", "rot"),
+		atrWithPOS("Ampel", "SUB:DAT:SIN:FEM", "Ampel"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("An der roter Ampel",
+		atrWithPOS("An", "APPR", "an"),
+		atrWithPOS("der", "ART:DEF:DAT:SIN:FEM", "der"),
+		atrWithPOS("roter", "ADJ:DAT:SIN:MAS:GRU:IND", "rot"),
+		atrWithPOS("Ampel", "SUB:DAT:SIN:FEM", "Ampel"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("An der rote Ampel",
+		atrWithPOS("An", "APPR", "an"),
+		atrWithPOS("der", "ART:DEF:DAT:SIN:FEM", "der"),
+		atrWithPOS("rote", "ADJ:NOM:SIN:FEM:GRU:DEF", "rot"),
+		atrWithPOS("Ampel", "SUB:DAT:SIN:FEM", "Ampel"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("An der rotes Ampel",
+		atrWithPOS("An", "APPR", "an"),
+		atrWithPOS("der", "ART:DEF:DAT:SIN:FEM", "der"),
+		atrWithPOS("rotes", "ADJ:NOM:SIN:NEU:GRU:IND", "rot"),
+		atrWithPOS("Ampel", "SUB:DAT:SIN:FEM", "Ampel"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("An der rotem Ampel",
+		atrWithPOS("An", "APPR", "an"),
+		atrWithPOS("der", "ART:DEF:DAT:SIN:FEM", "der"),
+		atrWithPOS("rotem", "ADJ:DAT:SIN:MAS:GRU:IND", "rot"),
+		atrWithPOS("Ampel", "SUB:DAT:SIN:FEM", "Ampel"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// Der riesige Tisch / Es sind die riesigen Tisch.
+	assertGood("Der riesige Tisch",
+		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
+		atrWithPOS("riesige", "ADJ:NOM:SIN:MAS:GRU:DEF", "riesig"),
+		atrWithPOS("Tisch", "SUB:NOM:SIN:MAS", "Tisch"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("die riesigen Tisch",
+		atrWithPOS("Es", "PRO:PER:NOM:SIN:NEU", "es"),
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("die", "ART:DEF:NOM:PLU:MAS", "der"),
+		atrWithPOS("riesigen", "ADJ:NOM:PLU:MAS:GRU:DEF", "riesig"),
+		atrWithPOS("Tisch", "SUB:NOM:SIN:MAS", "Tisch"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertBad("ein sehr schönes Tisch",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
+		atrWithPOS("sehr", "ADV", "sehr"),
+		atrWithPOS("schönes", "ADJ:NOM:SIN:NEU:GRU:IND", "schön"),
+		atrWithPOS("Tisch", "SUB:NOM:SIN:MAS", "Tisch"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// Java Morphy tags "allem" as PRO/PIAT; isRelevantPronoun needs PRO: prefix
+	assertBad("bei allem Teams",
+		atrWithPOS("Wir", "PRO:PER:NOM:PLU:1", "wir"),
+		atrWithPOS("bedanken", "VER:1:PLU:PRÄ:SFT", "bedanken"),
+		atrWithPOS("uns", "PRF:AKK:PLU:1", "wir"),
+		atrWithPOS("bei", "APPR", "bei"),
+		atrWithPOS("allem", "PRO:IND:DAT:SIN:NEU", "all"),
+		atrWithPOS("Teams", "SUB:DAT:PLU:NEU", "Team"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// Den mit Ihnen geschlossene Vertrag vs geschlossenen
+	assertBad("geschlossene Vertrag",
+		atrWithPOS("Ich", "PRO:PER:NOM:SIN:1", "ich"),
+		atrWithPOS("widerrufe", "VER:1:SIN:PRÄ:SFT", "widerrufen"),
+		atrWithPOS("den", "ART:DEF:AKK:SIN:MAS", "der"),
+		atrWithPOS("mit", "APPR", "mit"),
+		atrWithPOS("Ihnen", "PRO:PER:DAT:PLU:2", "Sie"),
+		atrWithPOS("geschlossene", "ADJ:AKK:SIN:FEM:GRU:DEF", "geschlossen"),
+		atrWithPOS("Vertrag", "SUB:AKK:SIN:MAS", "Vertrag"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("geschlossenen Vertrag",
+		atrWithPOS("Ich", "PRO:PER:NOM:SIN:1", "ich"),
+		atrWithPOS("widerrufe", "VER:1:SIN:PRÄ:SFT", "widerrufen"),
+		atrWithPOS("den", "ART:DEF:AKK:SIN:MAS", "der"),
+		atrWithPOS("mit", "APPR", "mit"),
+		atrWithPOS("Ihnen", "PRO:PER:DAT:PLU:2", "Sie"),
+		atrWithPOS("geschlossenen", "ADJ:AKK:SIN:MAS:GRU:DEF", "geschlossen"),
+		atrWithPOS("Vertrag", "SUB:AKK:SIN:MAS", "Vertrag"),
+		atrWithPOS(".", "PKT", "."),
+	)
 }
 
 // Twin of AgreementRuleTest.testDetAdjAdjNounRule
 func TestAgreementRule_DetAdjAdjNounRule(t *testing.T) {
 	rule := NewAgreementRule(nil)
-	bad := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
+	assertBad := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		require.GreaterOrEqual(t, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))), 1, "bad %s", label)
+	}
+	assertGood := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		require.Equal(t, 0, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))), "good %s", label)
+	}
+
+	assertBad("der große alte Haus",
 		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
 		atrWithPOS("große", "ADJ:NOM:SIN:MAS:GRU:DEF", "groß"),
 		atrWithPOS("alte", "ADJ:NOM:SIN:MAS:GRU:DEF", "alt"),
 		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
 		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 1, len(rule.Match(bad)))
+	)
+	// Das ist eine solides strategisches Fundament
+	assertBad("eine solides strategisches Fundament",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("eine", "ART:IND:NOM:SIN:FEM", "ein"),
+		atrWithPOS("solides", "ADJ:NOM:SIN:NEU:GRU:IND", "solid"),
+		atrWithPOS("strategisches", "ADJ:NOM:SIN:NEU:GRU:IND", "strategisch"),
+		atrWithPOS("Fundament", "SUB:NOM:SIN:NEU", "Fundament"),
+	)
+	assertBad("eine solide strategisches Fundament",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("eine", "ART:IND:NOM:SIN:FEM", "ein"),
+		atrWithPOS("solide", "ADJ:NOM:SIN:FEM:GRU:IND", "solid"),
+		atrWithPOS("strategisches", "ADJ:NOM:SIN:NEU:GRU:IND", "strategisch"),
+		atrWithPOS("Fundament", "SUB:NOM:SIN:NEU", "Fundament"),
+	)
+	assertBad("ein solides strategische Fundament",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
+		atrWithPOS("solides", "ADJ:NOM:SIN:NEU:GRU:IND", "solid"),
+		atrWithPOS("strategische", "ADJ:NOM:SIN:FEM:GRU:IND", "strategisch"),
+		atrWithPOS("Fundament", "SUB:NOM:SIN:NEU", "Fundament"),
+	)
+	assertBad("ein solides strategisches Fundamente",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
+		atrWithPOS("solides", "ADJ:NOM:SIN:NEU:GRU:IND", "solid"),
+		atrWithPOS("strategisches", "ADJ:NOM:SIN:NEU:GRU:IND", "strategisch"),
+		atrWithPOS("Fundamente", "SUB:NOM:PLU:NEU", "Fundament"),
+	)
+	// Die deutsche Kommasetzung bedarf einiger technisches Ausarbeitung.
+	// "einiger" is PRO:IND (Java DETERMINER / relevant pronoun path).
+	assertBad("einiger technisches Ausarbeitung",
+		atrWithPOS("Die", "ART:DEF:NOM:SIN:FEM", "die"),
+		atrWithPOS("deutsche", "ADJ:NOM:SIN:FEM:GRU:DEF", "deutsch"),
+		atrWithPOS("Kommasetzung", "SUB:NOM:SIN:FEM", "Kommasetzung"),
+		atrWithPOS("bedarf", "VER:3:SIN:PRÄ:SFT", "bedürfen"),
+		atrWithPOS("einiger", "PRO:IND:GEN:SIN:FEM", "einig"),
+		atrWithPOS("technisches", "ADJ:GEN:SIN:NEU:GRU:IND", "technisch"),
+		atrWithPOS("Ausarbeitung", "SUB:GEN:SIN:FEM", "Ausarbeitung"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// goods
+	assertGood("Das jetzige gemeinsame Ergebnis",
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("jetzige", "ADJ:NOM:SIN:NEU:GRU:DEF", "jetzig"),
+		atrWithPOS("gemeinsame", "ADJ:NOM:SIN:NEU:GRU:DEF", "gemeinsam"),
+		atrWithPOS("Ergebnis", "SUB:NOM:SIN:NEU", "Ergebnis"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("Die strahlend roten Blumen",
+		atrWithPOS("Die", "ART:DEF:NOM:PLU:FEM", "die"),
+		atrWithPOS("strahlend", "ADV", "strahlend"),
+		atrWithPOS("roten", "ADJ:NOM:PLU:FEM:GRU:DEF", "rot"),
+		atrWithPOS("Blumen", "SUB:NOM:PLU:FEM", "Blume"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	assertGood("einiger guter technischer Ausarbeitung",
+		atrWithPOS("Die", "ART:DEF:NOM:SIN:FEM", "die"),
+		atrWithPOS("deutsche", "ADJ:NOM:SIN:FEM:GRU:DEF", "deutsch"),
+		atrWithPOS("Kommasetzung", "SUB:NOM:SIN:FEM", "Kommasetzung"),
+		atrWithPOS("bedarf", "VER:3:SIN:PRÄ:SFT", "bedürfen"),
+		atrWithPOS("einiger", "PRO:IND:GEN:SIN:FEM", "einig"),
+		atrWithPOS("guter", "ADJ:GEN:SIN:FEM:GRU:IND", "gut"),
+		atrWithPOS("technischer", "ADJ:GEN:SIN:FEM:GRU:IND", "technisch"),
+		atrWithPOS("Ausarbeitung", "SUB:GEN:SIN:FEM", "Ausarbeitung"),
+		atrWithPOS(".", "PKT", "."),
+	)
 }
 
 // Twin of AgreementRuleTest.testDetNounRuleErrorMessages
@@ -673,6 +933,38 @@ func TestAgreementRule_KonUntArtDefSub(t *testing.T) {
 		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
 	))
 	require.Equal(t, 1, len(rule.Match(bad)))
+
+	// Java: das moderne Charakter → mismatch
+	require.GreaterOrEqual(t, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Dies", "PDS:NOM:SIN:NEU", "dies"),
+		atrWithPOS("wurde", "VER:AUX:3:SIN:PRT:SFT", "werden"),
+		atrWithPOS("durchgeführt", "PA2:PRD:GRU:VER", "durchführen"),
+		atrWithPOS("um", "KOUI", "um"),
+		atrWithPOS("das", "ART:DEF:AKK:SIN:NEU", "das"),
+		atrWithPOS("moderne", "ADJ:AKK:SIN:NEU:GRU:DEF", "modern"),
+		atrWithPOS("Charakter", "SUB:AKK:SIN:MAS", "Charakter"),
+		atrWithPOS("zu", "PTKZU", "zu"),
+		atrWithPOS("betonen", "VER:INF:NON", "betonen"),
+		atrWithPOS(".", "PKT", "."),
+	)))), 1)
+
+	// Java good: dass das komplett verschiedene Dinge sind
+	require.Equal(t, 0, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Wieso", "PWAV", "wieso"),
+		atrWithPOS("verstehst", "VER:2:SIN:PRÄ:SFT", "verstehen"),
+		atrWithPOS("du", "PRO:PER:NOM:SIN:2", "du"),
+		atrWithPOS("nicht", "ADV", "nicht"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("dass", "KOUS", "dass"),
+		atrWithPOS("das", "PDS:NOM:SIN:NEU", "das"),
+		atrWithPOS("komplett", "ADV", "komplett"),
+		atrWithPOS("verschiedene", "ADJ:NOM:PLU:NEU:GRU:IND", "verschieden"),
+		atrWithPOS("Dinge", "SUB:NOM:PLU:NEU", "Ding"),
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("?", "PKT", "?"),
+	)))))
 }
 
 // Twin of AgreementRuleTest.testBugFixes
@@ -680,5 +972,31 @@ func TestAgreementRule_BugFixes(t *testing.T) {
 	rule := NewAgreementRule(nil)
 	// untagged plain text never invents
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Ein interessanter Film."))))
+	// Java: "Peter, iss nicht meine" — no AIOOB / no invent match
+	require.NotPanics(t, func() {
+		_ = rule.Match(languagetool.NewAnalyzedSentence(withPositions(
+			sentStartATR(),
+			atrWithPOS("Peter", "EIG:NOM:SIN:MAS", "Peter"),
+			atrWithPOS(",", "PKT", ","),
+			atrWithPOS("iss", "VER:IMP:SIN:SFT", "essen"),
+			atrWithPOS("nicht", "ADV", "nicht"),
+			atrWithPOS("meine", "PRO:POS:AKK:SIN:FEM", "mein"),
+		)))
+	})
+	// der zu Pflegende bereit — good (participle as noun)
+	require.Equal(t, 0, len(rule.Match(languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Das", "PDS:NOM:SIN:NEU", "das"),
+		atrWithPOS("passiert", "VER:3:SIN:PRÄ:SFT", "passieren"),
+		atrWithPOS("nur", "ADV", "nur"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("wenn", "KOUS", "wenn"),
+		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
+		atrWithPOS("zu", "PTKZU", "zu"),
+		atrWithPOS("Pflegende", "SUB:NOM:SIN:MAS:ADJ", "Pflegende"),
+		atrWithPOS("bereit", "ADJ:PRD:GRU", "bereit"),
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS(".", "PKT", "."),
+	)))))
 	require.NotNil(t, rule)
 }
