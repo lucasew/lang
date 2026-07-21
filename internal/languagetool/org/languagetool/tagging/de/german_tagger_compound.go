@@ -84,45 +84,66 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 	var readings []*languagetool.AnalyzedToken
 	wordOrig := word
 	sanitized := t.sanitizeWord(word)
+	// Java: wordStem = wordOrig.substring(0, wordOrig.length() - word.length()) after sanitize
 	wordStem := ""
-	if tagging.UTF16Len(sanitized) < tagging.UTF16Len(wordOrig) && strings.HasSuffix(wordOrig, sanitized) {
+	if tagging.UTF16Len(sanitized) <= tagging.UTF16Len(wordOrig) {
 		wordStem = javaUTF16Prefix(wordOrig, tagging.UTF16Len(wordOrig)-tagging.UTF16Len(sanitized))
-	} else if sanitized != wordOrig && strings.Contains(wordOrig, "-") {
-		// stem is everything before last dash part used as sanitized
-		if i := strings.LastIndex(wordOrig, sanitized); i > 0 {
-			wordStem = wordOrig[:i]
+	}
+	// Tokenize sanitized head (Java compoundedWord)
+	compoundedWord := []string{sanitized}
+	if t.SplitCompound != nil {
+		if cp := t.SplitCompound(sanitized); len(cp) > 0 {
+			compoundedWord = cp
 		}
 	}
-	// compound tokenize sanitized head
-	head := sanitized
-	if t.SplitCompound != nil {
-		if cp := t.SplitCompound(head); len(cp) > 1 {
-			head = tools.UppercaseFirstChar(cp[len(cp)-1])
-		}
+	head := compoundedWord[len(compoundedWord)-1]
+	if len(compoundedWord) > 1 {
+		// Java always uppercases last when multi-part (unlike sanitizeWord which requires StartsWithUppercase)
+		head = tools.UppercaseFirstChar(head)
 	}
 	linked := addStem(t.TagWordExact(head), wordStem)
-	// dash + uppercase adj: retry lowercase
-	if wordOrig != "" && strings.Contains(wordOrig, "-") && len(linked) == 0 && t.matchesUppercaseAdjective(head) {
+	// dash + uppercase adj: retry lowercase — Java does NOT addStem on this branch
+	if strings.Contains(wordOrig, "-") && len(linked) == 0 && t.matchesUppercaseAdjective(head) {
 		lowHead := tools.LowercaseFirstChar(head)
 		linked = t.TagWordExact(lowHead)
-		// no addStem on this Java branch for empty linked retry — just re-tag lower
-		if len(linked) > 0 && wordStem != "" {
-			linked = addStem(linked, wordStem)
-		}
 	}
+	// Java: if (!linked.isEmpty()) { upper → simple tokens; lower → compound rebuild } else { prefix path }
+	// When linked non-empty, never fall through to prefix path (even if all IMP filtered).
 	if len(linked) > 0 {
-		for _, tw := range linked {
-			if strings.HasPrefix(tw.PosTag, "VER:IMP") {
-				continue // compound path skips IMP
+		if tools.StartsWithUppercase(wordOrig) {
+			// getAnalyzedTokens(linked, word) — no IMP filter
+			for _, tw := range linked {
+				readings = append(readings, toToken(wordOrig, tw))
 			}
-			readings = append(readings, toToken(wordOrig, tw))
-		}
-		if len(readings) > 0 {
 			return readings
 		}
+		// getAnalyzedTokens(linked, word, compoundedWord) — skip VER:IMP; rebuild lemma
+		for _, tw := range linked {
+			if tw.PosTag != "" && strings.HasPrefix(tw.PosTag, "VER:IMP") {
+				continue
+			}
+			stem := ""
+			if len(compoundedWord) > 1 {
+				for i, p := range compoundedWord[:len(compoundedWord)-1] {
+					if i == 0 {
+						stem += p
+					} else {
+						stem += tools.LowercaseFirstChar(p)
+					}
+				}
+			}
+			lem := tw.Lemma
+			if lem == "" {
+				lem = head
+			}
+			lem = tools.LowercaseFirstChar(lem)
+			readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(stem+lem, tw.PosTag)))
+		}
+		return readings
 	}
 
 	// Separable / general verb prefixes: einlädst → VER:…:NEB
+	// Java firstPart = removeEnd(word, lastPart) with lastPart from lower removePattern
 	low := strings.ToLower(wordOrig)
 	if !startsWithAnyPrefix(low, prefixesVerbsLongestList) || containsNotAVerb(low) {
 		return readings
@@ -130,22 +151,21 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 	if !isTitleOrLower(wordOrig) {
 		return readings
 	}
-	lastPart, firstPart := stripLongestPrefix(low, prefixesVerbsLongestList)
+	lastPart, _ := stripLongestPrefix(low, prefixesVerbsLongestList)
 	// Java: lastPart.length() > 2
 	if tagging.UTF16Len(lastPart) <= 2 {
 		return readings
 	}
-	// recover firstPart casing: Java prefix length is String.length of lower prefix
-	if tagging.UTF16Len(wordOrig) >= tagging.UTF16Len(firstPart) {
-		firstPart = javaUTF16Prefix(wordOrig, tagging.UTF16Len(firstPart))
-	}
-	// zu + infinitive → EIZ
+	// Java: firstPart = StringUtils.removeEnd(word, lastPart) — case-sensitive suffix strip
+	firstPart := javaRemoveEnd(wordOrig, lastPart)
+	// zu + infinitive → EIZ; lemma = firstPart + inf.lemma (NOT firstPart.toLowerCase)
 	if strings.HasPrefix(lastPart, "zu") {
 		infinitiv := strings.TrimPrefix(lastPart, "zu")
 		for _, inf := range t.TagWordExact(infinitiv) {
 			if strings.HasPrefix(inf.PosTag, "VER:INF") {
+				// Java: RegExUtils.replaceFirst(pos, "INF", "EIZ")
 				pstg := strings.Replace(inf.PosTag, "INF", "EIZ", 1)
-				lemma := strings.ToLower(firstPart) + inf.Lemma
+				lemma := firstPart + inf.Lemma
 				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(lemma, pstg)))
 			}
 		}
@@ -156,7 +176,8 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 			strings.HasPrefix(pos, "VER:AUX") || strings.HasPrefix(pos, "VER:MOD") {
 			continue
 		}
-		if strings.EqualFold(firstPart, "un") {
+		// Java: !firstPart.equals("un") — case-sensitive
+		if firstPart == "un" {
 			continue
 		}
 		lemmaBase := taggedWord.Lemma
@@ -166,7 +187,6 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 		fullLemma := strings.ToLower(firstPart) + lemmaBase
 		if strings.HasPrefix(pos, "VER:INF") {
 			// Java: word.equals(substring(0,1).toUpperCase()+substring(1)) — first upper, rest unchanged
-			// (not full TitleCase with rest lower). Then SUB:…:INF; VER:INF only if indexOf==0.
 			if isFirstCharUpperRestUnchanged(wordOrig) {
 				readings = append(readings,
 					toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "SUB:NOM:SIN:NEU:INF")),
@@ -181,7 +201,6 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 			}
 			continue
 		}
-		// finite / other VER: separable / non-sep (Java equalsAny on firstPart + lower|index==0)
 		fpLow := strings.ToLower(firstPart)
 		// Java: word.equals(toLowerCase()) || sentenceTokens.indexOf(word) == 0
 		atStartOrAllLower := wordOrig == strings.ToLower(wordOrig) || indexOfToken(sentenceTokens, wordOrig) == 0
@@ -189,9 +208,8 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 			if strings.HasPrefix(pos, "VER:IMP") {
 				flekt := posTagLast3(pos)
 				if atStartOrAllLower {
-					// Separable: no bare IMP; may add 1:SIN:PRÄ:flekt:NEB
-					// Java: !readings.contains("VER:1:SIN:PRÄ") always true for List<AnalyzedToken>
 					if flekt == "SFT" || !wordMatchesIInfix(wordOrig) {
+						// separable: lemma firstPart (not lower) + lemma
 						readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:1:SIN:PRÄ:"+flekt+":NEB")))
 					}
 				}
@@ -203,24 +221,21 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 					nebPos = nebPos + ":NEB"
 				}
 				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, nebPos)))
-				// durch/um dual PA2 (Java inner if always VER:PA2:SFT when VER:3:SIN:PRÄ)
-				if (fpLow == "durch" || fpLow == "um") && strings.HasPrefix(pos, "VER:3:SIN:PRÄ") {
+				// durch/um: Java firstPart.equals("durch"|"um") case-sensitive
+				if (firstPart == "durch" || firstPart == "um") && strings.HasPrefix(pos, "VER:3:SIN:PRÄ") {
 					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:PA2:SFT")))
 					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "PA2:PRD:GRU:VER")))
 				}
 				continue
 			}
 			if !strings.HasPrefix(pos, "VER:IMP") {
-				// non-finite or not at start/lower: plain tag without forced :NEB
 				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, pos)))
 			}
 		} else if isExactNonSeparablePrefix(fpLow) && atStartOrAllLower {
-			// non-separable prefix verb forms
 			if strings.HasPrefix(pos, "VER:IMP") {
 				flekt := posTagLast3(pos)
 				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(fullLemma, pos)))
 				if strings.HasPrefix(pos, "VER:IMP:SIN") {
-					// Java: !readings.contains("VER:IMP:SIN:NON") — always true via List.contains(String)
 					readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(firstPart+lemmaBase, "VER:1:SIN:PRÄ:"+flekt)))
 				}
 			} else {
@@ -228,9 +243,8 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 			}
 		}
 	}
-	// PA / VER:PA branch (Java separate from VER loop conditions above — tags lastPart again)
+	// PA / VER:PA on lastPart tags (same loop conditions in Java as else-if of VER branch)
 	if wordOrig == strings.ToLower(wordOrig) || indexOfToken(sentenceTokens, wordOrig) == 0 {
-		fpLow := strings.ToLower(firstPart)
 		for _, taggedWord := range t.TagWordExact(lastPart) {
 			pos := taggedWord.PosTag
 			if !(strings.HasPrefix(pos, "PA") || strings.HasPrefix(pos, "VER:PA")) {
@@ -243,8 +257,7 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 			if lemmaBase == "" {
 				lemmaBase = lastPart
 			}
-			// only when we already entered the prefix-verbs branch (firstPart non-empty)
-			if fpLow != "" {
+			if firstPart != "" {
 				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(strings.ToLower(firstPart)+lemmaBase, pos)))
 			}
 		}
@@ -252,6 +265,14 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 	// PA2 derivation for non-separable prefixes (erstickt, erstickter, …)
 	readings = t.addPartizip2FromLastPart(wordOrig, firstPart, lastPart, idxPos, readings)
 	return readings
+}
+
+// javaRemoveEnd ports StringUtils.removeEnd(str, remove): if str ends with remove, strip it.
+func javaRemoveEnd(str, remove string) string {
+	if remove == "" || !strings.HasSuffix(str, remove) {
+		return str
+	}
+	return str[:len(str)-len(remove)]
 }
 
 func containsNotAVerb(wordLower string) bool {

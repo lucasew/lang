@@ -1,6 +1,7 @@
 package de
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -133,4 +134,75 @@ func TestIsFirstCharUpperRestUnchanged(t *testing.T) {
 	require.True(t, isFirstCharUpperRestUnchanged("HERUMGEBEN"))
 	require.True(t, isFirstCharUpperRestUnchanged("Übergeben"))
 	require.False(t, isFirstCharUpperRestUnchanged("üBergeben"))
+}
+
+// Twin: EIZ lemma uses firstPart + base lemma without firstPart.toLowerCase (Java).
+func TestPrefixPath_EIZ_LemmaKeepsFirstPartCase(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"geben": {tagging.NewTaggedWord("geben", "VER:INF:NON")},
+	}
+	tagger := NewGermanTagger(wt)
+	// Title "Einzugeben" is title-or-lower; lastPart zugeben→zu+geben
+	got := tagger.Tag([]string{"Einzugeben"})
+	// firstPart = removeEnd("Einzugeben","zugeben") = "Ein"
+	found := false
+	for _, r := range got[0].GetReadings() {
+		if r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), "EIZ") {
+			require.NotNil(t, r.GetLemma())
+			require.Equal(t, "Eingeben", *r.GetLemma())
+			found = true
+		}
+	}
+	require.True(t, found, "expected EIZ reading, tags=%v", posTagsOf(got[0]))
+}
+
+// Twin: firstPart.equals("un") case-sensitive — "Un…" is not skipped.
+func TestPrefixPath_UnCaseSensitive(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"beeindruckt": {tagging.NewTaggedWord("beeindrucken", "VER:PA2:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	// lower un* skips VER
+	got := tagger.Tag([]string{"unbeeindruckt"})
+	for _, tg := range posTagsOf(got[0]) {
+		require.False(t, strings.HasPrefix(tg, "VER") && !strings.HasPrefix(tg, "VER:PA"), "lower un should skip bare VER")
+	}
+}
+
+// Twin: durch dual PA2 requires firstPart.equals("durch") exact (not "Durch").
+func TestDurch_TitleFirstPartNoDualPA2(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"läuft": {tagging.NewTaggedWord("laufen", "VER:3:SIN:PRÄ:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	// "Durchläuft" is title-or-lower; firstPart removeEnd = "Durch" ≠ "durch"
+	got := tagger.Tag([]string{"Durchläuft"})
+	tags := posTagsOf(got[0])
+	require.NotContains(t, tags, "VER:PA2:SFT")
+	require.NotContains(t, tags, "PA2:PRD:GRU:VER")
+}
+
+// Twin: dash-linked upper surface uses addStem + simple getAnalyzedTokens (lemma stem+lemma).
+func TestDashLinked_UpperStemLemma(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"Zentrum": {tagging.NewTaggedWord("Zentrum", "SUB:NOM:SIN:NEU")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Diabetes-Zentrum"})
+	require.Contains(t, posTagsOf(got[0]), "SUB:NOM:SIN:NEU")
+	// stem "Diabetes-" ends with '-' → addStem does not lowercase SUB lemma
+	var lemma string
+	for _, r := range got[0].GetReadings() {
+		if r.GetLemma() != nil {
+			lemma = *r.GetLemma()
+		}
+	}
+	require.Equal(t, "Diabetes-Zentrum", lemma)
+}
+
+// Twin: javaRemoveEnd case-sensitive suffix strip.
+func TestJavaRemoveEnd(t *testing.T) {
+	require.Equal(t, "Ein", javaRemoveEnd("Einlädst", "lädst"))
+	require.Equal(t, "Einlädst", javaRemoveEnd("Einlädst", "Lädst")) // case-sensitive miss
+	require.Equal(t, "durch", javaRemoveEnd("durchläuft", "läuft"))
 }
