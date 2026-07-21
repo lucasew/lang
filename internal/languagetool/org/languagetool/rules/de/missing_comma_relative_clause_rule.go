@@ -57,7 +57,14 @@ func (r *MissingCommaRelativeClauseRule) GetCategory() *rules.Category {
 }
 
 var (
-	missingCommaMarksRE   = regexp.MustCompile(`^[,;.:?•!\-–—’'"„“”…»«‚‘›‹()/\[\]\\]$`)
+	// Java: Pattern.compile("[,;.:?•!-–—’'\"„“”…»«‚‘›‹()\\/\\[\\]]")
+	// Note: between '!' (U+0021) and en-dash (U+2013) sits ASCII '-' which is a
+	// character-class range operator → matches every single-unit code point from
+	// '!' through en-dash (letters, digits, most punctuation). Twin that quirk
+	// bug-for-bug; multi-char tokens still fail full-match (.matches()).
+	// Characters outside that range that appear after en-dash in Java are listed
+	// explicitly (em-dash, guillemets, brackets, …, •).
+	missingCommaMarksRE = regexp.MustCompile(`^[•\x{0021}-\x{2013}\x{2014}’'"„“”…»«‚‘›‹()/\[\]\\]$`)
 	missingCommaPronounRE = regexp.MustCompile(`^(d(e[mnr]|ie|as|e([nr]|ss)en)|welche[mrs]?|wessen|was)$`)
 
 	missingCommaAntiOnce  sync.Once

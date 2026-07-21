@@ -239,3 +239,22 @@ func TestWithPositions_UTF16AndPunctSpacing(t *testing.T) {
 	require.Equal(t, 29, toks[7].GetStartPos()) // steht
 	require.Equal(t, 11, utf16LenDE("Straßenrand"))
 }
+
+// Twin of Java MARKS_REGEX character-class range quirk (!-– includes letters).
+func TestMissingCommaMarksRE_JavaRangeQuirk(t *testing.T) {
+	// Java .matches() on character class: single-char full match only
+	require.True(t, missingCommaMarksRE.MatchString(","))
+	require.True(t, missingCommaMarksRE.MatchString("."))
+	// Range U+0021..U+2013 includes ASCII letters/digits (Java quirk)
+	require.True(t, missingCommaMarksRE.MatchString("a"))
+	require.True(t, missingCommaMarksRE.MatchString("5"))
+	require.True(t, missingCommaMarksRE.MatchString("—")) // em-dash after range
+	require.True(t, missingCommaMarksRE.MatchString("•"))
+	// Multi-char never matches the marks class itself
+	require.False(t, missingCommaMarksRE.MatchString("Auto"))
+	require.False(t, missingCommaMarksRE.MatchString("und"))
+	// isSeparator still treats und/oder as separators via equals
+	require.True(t, isSeparatorMissingComma("und"))
+	require.True(t, isSeparatorMissingComma("oder"))
+	require.False(t, isSeparatorMissingComma("Auto"))
+}
