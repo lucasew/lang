@@ -101,8 +101,9 @@ func (r *MorfologikSpellerRule) SetMultiSpellers(s1, s2, s3 *MorfologikMultiSpel
 		if r.Speller == nil && len(s1.Spellers) > 0 {
 			r.Speller = s1.Spellers[0]
 		}
-		if r.SpellingCheckRule != nil && r.Speller != nil {
-			r.ConvertsCase = r.Speller.ConvertsCase()
+		// Java: setConvertsCase(speller1.convertsCase()) — Multi field from binary.
+		if r.SpellingCheckRule != nil {
+			r.ConvertsCase = s1.ConvertsCase()
 		}
 	}
 }

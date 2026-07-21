@@ -45,6 +45,26 @@ func TestOpenMultiSpellerFromClasspath_EN(t *testing.T) {
 	require.True(t, m.IsMisspelled("sdadsadasxyz"))
 	// frequency from binary
 	require.Greater(t, m.GetFrequency("the"), 0)
+	// Java: convertsCase = binary MorfologikSpeller.convertsCase() (en_US convert-case default true)
+	require.True(t, m.ConvertsCase())
+}
+
+func TestMultiSpeller_PlainFSA_Suggests(t *testing.T) {
+	// Plain runtime FSA (FSABuilder) should findRepl, not only membership.
+	m := OpenMultiSpellerFromClasspathWithUser(
+		"/xx/none.dict", // no binary — plain only
+		nil,
+		"",
+		1,
+		nil,
+		[]string{"receive", "recipe", "the", "cat"},
+	)
+	require.NotNil(t, m)
+	// user dict first when user words present
+	require.NotEmpty(t, m.UserDictSpellers)
+	// suggestions from user FSA
+	sugs := m.GetSuggestionsFromUserDicts("recieve")
+	require.Contains(t, sugs, "receive", "sugs=%v", sugs)
 }
 
 func TestMorfologikSpellerRule_MultiPlainText(t *testing.T) {

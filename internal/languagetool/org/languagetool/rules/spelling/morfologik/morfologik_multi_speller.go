@@ -20,13 +20,27 @@ type MorfologikMultiSpeller struct {
 	DefaultDictSpellers []*MorfologikSpeller
 	// BinaryDictPath is the primary .dict classpath (API parity with Java ctor).
 	BinaryDictPath string
+	// convertsCase ports Java field set from binary MorfologikSpeller.convertsCase().
+	convertsCase bool
 }
 
 func NewMorfologikMultiSpeller(spellers ...*MorfologikSpeller) *MorfologikMultiSpeller {
 	m := &MorfologikMultiSpeller{Spellers: append([]*MorfologikSpeller(nil), spellers...)}
 	// No user dict unless set via Open / WithUserDict — treat all as default.
 	m.DefaultDictSpellers = append([]*MorfologikSpeller(nil), m.Spellers...)
+	// Prefer binary-like first speller for convertsCase when constructed ad hoc.
+	for _, s := range m.Spellers {
+		if s != nil {
+			m.convertsCase = s.ConvertsCase()
+			break
+		}
+	}
 	return m
+}
+
+// ConvertsCase ports MorfologikMultiSpeller.convertsCase() (from binary dict only).
+func (m *MorfologikMultiSpeller) ConvertsCase() bool {
+	return m != nil && m.convertsCase
 }
 
 // NewMorfologikMultiSpellerFromPaths validates dict path conventions (Java ctor parity)
@@ -274,11 +288,13 @@ func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels
 		defaultDict = append(defaultDict, plain)
 		spellers = append(spellers, plain)
 	}
+	// Java: convertsCase = speller.convertsCase()  // binary only, before plain added
 	return &MorfologikMultiSpeller{
 		Spellers:            spellers,
 		UserDictSpellers:    userDictSpellers,
 		DefaultDictSpellers: defaultDict,
 		BinaryDictPath:      binaryClasspath,
+		convertsCase:        main != nil && main.ConvertsCase(),
 	}
 }
 
