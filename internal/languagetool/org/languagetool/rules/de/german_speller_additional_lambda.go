@@ -65,7 +65,8 @@ var additionalSugLambdas = []struct {
 }
 
 func lookupAdditionalSuggestionsLambda(word string) []string {
-	if word == "" || len(word) > additionalSugMaxMatchLen {
+	// Java String.length() (UTF-16) oversized-token gate
+	if word == "" || utf16LenDE(word) > additionalSugMaxMatchLen {
 		return nil
 	}
 	for _, e := range additionalSugLambdas {

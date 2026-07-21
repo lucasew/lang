@@ -868,7 +868,11 @@ func (r *GermanSpellerRule) AddProhibitedWords(words []string) {
 		r.ProhibitedEnds = map[string]struct{}{}
 	}
 	if len(words) == 1 && strings.HasSuffix(words[0], ".*") {
-		prefix := words[0][:len(words[0])-2]
+		// Java: words.get(0).substring(0, words.get(0).length()-2)
+		prefix := words[0]
+		if utf16LenDE(prefix) >= 2 {
+			prefix = substringByUTF16(prefix, 0, utf16LenDE(prefix)-2)
+		}
 		if prefix != "" {
 			r.ProhibitedStarts[prefix] = struct{}{}
 		}
@@ -877,7 +881,11 @@ func (r *GermanSpellerRule) AddProhibitedWords(words []string) {
 	if strings.HasPrefix(words[0], ".*") {
 		for _, w := range words {
 			if strings.HasPrefix(w, ".*") {
-				end := w[2:]
+				// Java: word.substring(2)
+				end := ""
+				if utf16LenDE(w) >= 2 {
+					end = substringByUTF16(w, 2, utf16LenDE(w))
+				}
 				if end != "" {
 					r.ProhibitedEnds[end] = struct{}{}
 				}
@@ -1034,8 +1042,8 @@ func (r *GermanSpellerRule) LoadIgnoreWordsFromFile(path string) error {
 		if strings.HasSuffix(origLine, "-*") {
 			// Java: wordsToBeIgnoredInCompounds.add(line.substring(0, line.length()-2))
 			base := line
-			if len(base) >= 2 {
-				base = base[:len(base)-2]
+			if utf16LenDE(base) >= 2 {
+				base = substringByUTF16(base, 0, utf16LenDE(base)-2)
 			}
 			r.AddIgnoredInCompounds(base)
 			continue

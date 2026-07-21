@@ -3,6 +3,9 @@ package de
 import (
 	"regexp"
 	"strings"
+	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Additional top suggestions (GermanSpellerRule.getAdditionalTopSuggestionsString)
@@ -149,6 +152,38 @@ func (r *GermanSpellerRule) AdditionalTopSuggestions(word string) []string {
 		return []string{"Zynismus"}
 	case "pieksen":
 		return []string{"piksen"}
+	case "piekst":
+		return []string{"pikst"}
+	case "gepiekst":
+		return []string{"gepikst"}
+	case "wiederspiegeln":
+		return []string{"widerspiegeln"}
+	case "ch":
+		return []string{"ich"}
+	}
+	// Java: equalsIgnoreCase("email")
+	if strings.EqualFold(word, "email") {
+		return []string{"E-Mail"}
+	}
+	// Java: word.length() > 9 && startsWith("Email") → E-Mail- + suggest(suffix)
+	if utf16LenDE(word) > 9 && strings.HasPrefix(word, "Email") {
+		suffix := substringByUTF16(word, 5, utf16LenDE(word)) // "Email".length()==5
+		if !dictAccepts(suffix) {
+			// hunspell.suggest(uppercaseFirstChar(suffix)) — first suggestion if any
+			up := tools.UppercaseFirstChar(suffix)
+			if sugs := FilterDictSuggest(up); len(sugs) > 0 {
+				suffix = sugs[0]
+			} else if sugs := FilterDictSuggest(suffix); len(sugs) > 0 {
+				suffix = sugs[0]
+			}
+		}
+		if utf16LenDE(suffix) == 0 {
+			return nil
+		}
+		// Java: "E-Mail-"+Character.toUpperCase(suffix.charAt(0))+suffix.substring(1)
+		first := javaCharAtDE(suffix, 0)
+		rest := substringByUTF16(suffix, 1, utf16LenDE(suffix))
+		return []string{"E-Mail-" + string(unicode.ToUpper(first)) + rest}
 	}
 	if strings.EqualFold(word, "zumindestens") {
 		return []string{strings.Replace(word, "ens", "", 1)}

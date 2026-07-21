@@ -194,9 +194,14 @@ func (r *GermanSpellerRule) IgnoreWordAt(words []string, idx int) bool {
 			if idx > 0 && words[idx-1] == "" &&
 				(strings.HasPrefix(word, "stel-") || strings.HasPrefix(word, "tel-")) {
 				// '100stel-Millimeter' / '5tel-Gramm'
+				// Java: everything after first '-' (UTF-16 index of '-')
 				after := word
-				if i := strings.Index(word, "-"); i >= 0 && i+1 < len(word) {
-					after = word[i+1:]
+				if i := strings.Index(word, "-"); i >= 0 {
+					// byte index of ASCII '-' equals UTF-16 unit for BMP prefix
+					hy := utf16LenDE(word[:i])
+					if hy+1 < utf16LenDE(word) {
+						after = substringByUTF16(word, hy+1, utf16LenDE(word))
+					}
 				}
 				return !r.IsMisspelled(after)
 			}

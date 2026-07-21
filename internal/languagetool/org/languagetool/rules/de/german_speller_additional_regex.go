@@ -680,7 +680,8 @@ func replaceFirst(re *regexp.Regexp, s, repl string) string {
 // put(regex, fixed), multi-list regex puts, and replace-style lambdas.
 // Approximate LinkedHashMap first-match order among these groups.
 func lookupAdditionalSuggestionsRegexp(word string) []string {
-	if word == "" || len(word) > additionalSugMaxMatchLen {
+	// Java String.length() gate (UTF-16) for oversized tokens
+	if word == "" || utf16LenDE(word) > additionalSugMaxMatchLen {
 		return nil
 	}
 	for _, e := range additionalSugRepls {

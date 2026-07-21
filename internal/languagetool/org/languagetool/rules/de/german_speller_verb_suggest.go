@@ -34,10 +34,11 @@ func (r *GermanSpellerRule) pastTenseVerbSuggestion(word string) []string {
 	if r == nil || !strings.HasSuffix(word, "e") || r.Synthesize == nil {
 		return nil
 	}
-	if len(word) < 2 {
+	// Java: word.substring(0, word.length()-1)
+	if utf16LenDE(word) < 2 {
 		return nil
 	}
-	stem := word[:len(word)-1]
+	stem := substringByUTF16(word, 0, utf16LenDE(word)-1)
 	lemma := r.baseForThirdPersonSingularVerb(stem)
 	if lemma == "" {
 		return nil
@@ -58,10 +59,11 @@ func (r *GermanSpellerRule) participleSuggestion(word string) []string {
 	if !strings.HasPrefix(word, "ge") || !strings.HasSuffix(word, "t") {
 		return nil
 	}
-	if len(word) < 4 {
+	// Java: word.substring(2, word.length()-1) + "en"
+	if utf16LenDE(word) < 4 {
 		return nil
 	}
-	baseform := word[2:len(word)-1] + "en"
+	baseform := substringByUTF16(word, 2, utf16LenDE(word)-1) + "en"
 	forms := r.Synthesize(baseform, `VER:PA2:.*`)
 	if len(forms) == 0 {
 		return nil
