@@ -34,6 +34,20 @@ func TestGetNormalizeKey(t *testing.T) {
 	require.Equal(t, "cafe latte", getNormalizeKey("Café-Latte"))
 }
 
+// Twin of MultitokenSpeller.WHITESPACE_AND_SEP = \p{Zs}+
+func TestCollapseWhitespace_ZsOnly(t *testing.T) {
+	// NBSP (\u00a0) is Zs → single space
+	require.Equal(t, "a b", collapseWhitespace("a\u00a0\u00a0b"))
+	// multiple ASCII spaces
+	require.Equal(t, "a b", collapseWhitespace("a  b"))
+	// leading/trailing Zs become single spaces (Java replaceAll, not trim)
+	require.Equal(t, " a b ", collapseWhitespace("  a  b  "))
+	// tab is NOT Zs — must remain (strings.Fields would remove it)
+	require.Equal(t, "a\tb", collapseWhitespace("a\tb"))
+	// newline is not Zs
+	require.Equal(t, "a\nb", collapseWhitespace("a\nb"))
+}
+
 // Twin of MultitokenSpeller.distancesPerWord + per-token max distance.
 func TestMultitokenSpeller_PerTokenDistance(t *testing.T) {
 	m := NewMultitokenSpeller()

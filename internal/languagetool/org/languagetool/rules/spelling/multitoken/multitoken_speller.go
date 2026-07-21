@@ -3,6 +3,7 @@ package multitoken
 import (
 	"bufio"
 	"io"
+	"regexp"
 	"strings"
 	"sync"
 	"unicode/utf16"
@@ -11,6 +12,10 @@ import (
 )
 
 const maxLengthDiff = 3
+
+// whitespaceAndSep ports MultitokenSpeller.WHITESPACE_AND_SEP = \p{Zs}+
+// (Unicode space separators only — not tabs/newlines; Java Pattern.compile).
+var whitespaceAndSep = regexp.MustCompile(`\p{Zs}+`)
 
 // WeightedSuggestion ports morfologik.WeightedSuggestion for multitoken merge path.
 type WeightedSuggestion struct {
@@ -407,8 +412,12 @@ func utf16Len(s string) int {
 	return len([]uint16(utf16.Encode([]rune(s))))
 }
 
+// collapseWhitespace ports getSuggestions:
+// WHITESPACE_AND_SEP.matcher(originalWord).replaceAll(" ")
+// Only \p{Zs}+ is collapsed to a single ASCII space — tabs/newlines stay
+// (unlike strings.Fields, which also trims and splits on all unicode whitespace).
 func collapseWhitespace(s string) string {
-	return strings.Join(strings.Fields(s), " ")
+	return whitespaceAndSep.ReplaceAllString(s, " ")
 }
 
 func addToMap(m map[string][]string, key, value string) {
