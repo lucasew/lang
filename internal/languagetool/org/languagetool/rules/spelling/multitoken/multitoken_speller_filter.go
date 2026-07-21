@@ -54,7 +54,10 @@ func (f *MultitokenSpellerFilter) AcceptRuleMatchFull(
 		return match
 	}
 	// Java: if (Arrays.stream(patternTokens).allMatch(x -> x.isIgnoredBySpeller())) return null;
-	if len(patternTokens) > 0 && allIgnoredBySpeller(patternTokens) {
+	// Stream.allMatch on empty stream is true → empty patternTokens drops the match.
+	// nil patternTokens is a Go convenience (AcceptRuleMatch without tokens) — skip the gate
+	// (Java always passes the matched array from the pattern engine; null would NPE).
+	if patternTokens != nil && allIgnoredBySpeller(patternTokens) {
 		return nil
 	}
 
@@ -140,10 +143,9 @@ func (f *MultitokenSpellerFilter) AcceptRuleMatchFull(
 	return match
 }
 
+// allIgnoredBySpeller ports Arrays.stream(patternTokens).allMatch(isIgnoredBySpeller).
+// Empty stream → true (Java Stream.allMatch vacuous truth).
 func allIgnoredBySpeller(tokens []*languagetool.AnalyzedTokenReadings) bool {
-	if len(tokens) == 0 {
-		return false
-	}
 	for _, t := range tokens {
 		if t == nil || !t.IsIgnoredBySpeller() {
 			return false

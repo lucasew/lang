@@ -111,7 +111,19 @@ func TestMultitokenSpellerFilter_AcceptedBySpellerGate(t *testing.T) {
 	require.Equal(t, 0, calls, "non-en/de/pt/nl must leave acceptedBySpeller=false without probing")
 }
 
-// Twin: all pattern tokens ignoredBySpeller → drop match.
+// Twin: Arrays.stream(empty).allMatch(...) is true → drop match.
+func TestMultitokenSpellerFilter_EmptyPatternTokensDrops(t *testing.T) {
+	sp := NewMultitokenSpeller()
+	require.NoError(t, sp.LoadWords(strings.NewReader("New York\n")))
+	f := &MultitokenSpellerFilter{Speller: sp}
+	m := rules.NewRuleMatch(rules.NewFakeRule("T"), languagetool.AnalyzePlain("New York"), 0, 8, "x")
+	// empty non-nil slice (Java empty array allMatch true)
+	require.Nil(t, f.AcceptRuleMatchFull(m, nil, 1, []*languagetool.AnalyzedTokenReadings{}, "New York"))
+	// nil tokens: Go convenience path keeps working
+	got := f.AcceptRuleMatchFull(m, nil, 1, nil, "New York")
+	require.Nil(t, got) // exact match stopSearching → no replacements → null
+}
+
 func TestMultitokenSpellerFilter_AllIgnoredBySpeller(t *testing.T) {
 	sp := NewMultitokenSpeller()
 	require.NoError(t, sp.LoadWords(strings.NewReader("New York\n")))

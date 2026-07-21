@@ -245,8 +245,9 @@ func (multitokenSpellerRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map
 	if match == nil {
 		return nil
 	}
-	// Java: all pattern tokens ignored by speller → drop.
-	if len(patternTokens) > 0 {
+	// Java: Arrays.stream(patternTokens).allMatch(isIgnoredBySpeller) → null.
+	// Empty stream allMatch is true; nil tokens means "not provided" (engine always passes array).
+	if patternTokens != nil {
 		allIgn := true
 		for _, t := range patternTokens {
 			if t == nil || !t.IsIgnoredBySpeller() {
@@ -274,16 +275,12 @@ func (multitokenSpellerRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map
 		Speller:         sp,
 		IsMisspelled:    isMiss,
 		CheckSpelling:   checkSpell,
+		PatternTokenPos: patternTokenPos,
 		AtSentenceStart: multitokenAtSentenceStart(match, patternTokenPos),
 	}
-	original := ""
-	if match.Sentence != nil {
-		text := match.Sentence.GetText()
-		if match.FromPos >= 0 && match.ToPos <= len(text) && match.FromPos < match.ToPos {
-			original = text[match.FromPos:match.ToPos]
-		}
-	}
-	return inner.AcceptRuleMatch(match, original)
+	// Leave originalError empty so AcceptRuleMatch uses OriginalErrorStr or UTF-16 span
+	// from FromPos/ToPos (Java RuleMatch positions are UTF-16 code units).
+	return inner.AcceptRuleMatchFull(match, nil, patternTokenPos, patternTokens, "")
 }
 
 // multitokenAtSentenceStart ports MultitokenSpellerFilter sentence-start detection
