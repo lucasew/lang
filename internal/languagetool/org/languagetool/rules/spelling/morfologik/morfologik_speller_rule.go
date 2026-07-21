@@ -58,6 +58,10 @@ type MorfologikSpellerRule struct {
 	// FullResults ports calcSpellerSuggestions(fullResults) — when true, always
 	// pulls speller2/3 even if speller1 already returned suggestions.
 	FullResults bool
+	// TokenizingPattern ports tokenizingPattern() (null by default).
+	// When set (e.g. BR/GA "-"), Match splits the clean word on pattern matches and
+	// runs getRuleMatches on each segment (Java match loop).
+	TokenizingPattern *regexp.Regexp
 }
 
 func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *MorfologikSpeller) *MorfologikSpellerRule {
@@ -208,17 +212,6 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 				continue
 			}
 		}
-		// Dictionary misspell (ignore set already handled by IgnoreToken/IgnoreWord).
-		if r.AcceptWord(w) {
-			// Java: getRuleMatches empty; still clear isFirstWord at end of loop body.
-			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
-			continue
-		}
-		// Java getRuleMatches: after isMisspelled, ignorePotentiallyMisspelledWord.
-		if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(w) {
-			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
-			continue
-		}
 		startPos := tok.GetStartPos()
 		// Java: previous match already covers this token (wrong-split span).
 		if len(out) > 0 && out[len(out)-1] != nil && out[len(out)-1].GetToPos() > startPos {
@@ -228,83 +221,175 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 
 		newRuleIdx := len(out)
 
-		// Java getRuleMatches wrong-split with previous / next word.
-		ruleMatch, beforeStr, early := r.tryWrongSplitPrev(sentence, &out, idx, tokens, w, startPos)
-		if early && ruleMatch != nil {
-			out = append(out, ruleMatch)
-			adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
-			capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
-			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
-			continue
-		}
-		if ruleMatch == nil {
-			var afterStr string
-			ruleMatch, afterStr, early = r.tryWrongSplitNext(sentence, &out, idx, tokens, w, startPos)
-			if early && ruleMatch != nil {
-				out = append(out, ruleMatch)
-				adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
-				capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
-				clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
-				continue
-			}
-			if ruleMatch != nil {
-				// wrong-split with correctly spelled neighbor: keep span, still append dict sugs
-				sug := r.collectSuggestions(w)
-				for _, s := range sug {
-					joined := strings.TrimSpace(beforeStr + s)
-					if afterStr != "" {
-						joined = strings.TrimSpace(beforeStr + s + afterStr)
+		// Java: Pattern pattern = tokenizingPattern(); split word and getRuleMatches each segment.
+		if r.TokenizingPattern != nil {
+			segs := tokenizingSegments(w, r.TokenizingPattern)
+			if len(segs) > 1 {
+				for _, seg := range segs {
+					if seg.word == "" {
+						continue
 					}
-					addSug(ruleMatch, joined)
+					// getRuleMatches per segment (includes isMisspelled / ignore gates).
+					r.appendGetRuleMatches(sentence, tokens, idx, tok, surface, w, seg.word, startPos+seg.utf16Off, &out)
 				}
-				out = append(out, ruleMatch)
 				adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 				capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 				clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 				continue
 			}
-		} else {
-			// prev wrong-split but prev not misspelled: keep span + dict sugs with beforeStr
-			sug := r.collectSuggestions(w)
-			for _, s := range sug {
-				addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
-			}
-			out = append(out, ruleMatch)
-			adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
-			capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
+		}
+
+		// No tokenizing pattern (or pattern not found): Java getRuleMatches(word, startPos).
+		// Dictionary misspell (ignore set already handled by IgnoreToken/IgnoreWord).
+		if r.AcceptWord(w) {
 			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
-
-		// Java getRuleMatches toPos often uses clean word.length(); then hiddenCharOffset
-		// extends to full surface. Using GetEndPos() is equivalent when startPos is set.
-		m := rules.NewRuleMatch(r, sentence, startPos, tok.GetEndPos(),
-			"Possible spelling mistake found")
-		m.SetType(rules.RuleMatchTypeUnknownWord)
-
-		// Java getRuleMatches: word starting with numbers or bullets
-		cleanWord, beforePrefix, preventFurther, spaceInsert := r.applyNumbersBulletsPrefix(w)
-		if spaceInsert != "" {
-			addSug(m, spaceInsert)
+		if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(w) {
+			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
+			continue
 		}
-		if !preventFurther {
-			// Java appendLazySuggestions(cleanWord, beforeSuggestionStr, afterSuggestionStr)
-			// afterStr is empty here (wrong-split paths already continued above).
-			sug := r.collectSuggestions(cleanWord)
-			for _, s := range sug {
-				joined := strings.TrimSpace(beforePrefix + s)
-				if joined != "" {
-					addSug(m, joined)
-				}
-			}
-		}
-		out = append(out, m)
+		r.appendGetRuleMatches(sentence, tokens, idx, tok, surface, w, w, startPos, &out)
 		adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
-		// Java: capitalize first-word lower-case replacements (not last token).
 		capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 		clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 	}
 	return out, nil
+}
+
+// tokSeg is one segment from tokenizingPattern split (Java match loop).
+type tokSeg struct {
+	word     string
+	utf16Off int // UTF-16 offset of segment start within parent word
+}
+
+// tokenizingSegments ports match's tokenizingPattern split of word.
+// Pattern null / no match → single whole-word segment.
+func tokenizingSegments(word string, pat *regexp.Regexp) []tokSeg {
+	if pat == nil || word == "" {
+		return []tokSeg{{word: word, utf16Off: 0}}
+	}
+	matches := pat.FindAllStringIndex(word, -1)
+	if len(matches) == 0 {
+		// Java: index == 0 after loop → whole word
+		return []tokSeg{{word: word, utf16Off: 0}}
+	}
+	var segs []tokSeg
+	index := 0 // byte index in word
+	for _, m := range matches {
+		// Java: word.subSequence(index, m.start())
+		if m[0] > index {
+			part := word[index:m[0]]
+			segs = append(segs, tokSeg{word: part, utf16Off: byteIndexToUTF16(word, index)})
+		}
+		index = m[1]
+	}
+	// Java: remainder from index to end
+	if index < len(word) {
+		segs = append(segs, tokSeg{word: word[index:], utf16Off: byteIndexToUTF16(word, index)})
+	}
+	if len(segs) == 0 {
+		return []tokSeg{{word: word, utf16Off: 0}}
+	}
+	return segs
+}
+
+// byteIndexToUTF16 converts a UTF-8 byte index into a Java String UTF-16 length prefix.
+func byteIndexToUTF16(s string, byteIdx int) int {
+	if byteIdx <= 0 {
+		return 0
+	}
+	if byteIdx >= len(s) {
+		return utf16LenMF(s)
+	}
+	return utf16LenMF(s[:byteIdx])
+}
+
+// appendGetRuleMatches ports getRuleMatches for one word/segment at startPos.
+// wholeWord is the token clean surface (for hidden-char / multi-token gates);
+// word is the segment under check; startPos is absolute UTF-16 start of the segment.
+func (r *MorfologikSpellerRule) appendGetRuleMatches(
+	sentence *languagetool.AnalyzedSentence,
+	tokens []*languagetool.AnalyzedTokenReadings,
+	idx int,
+	tok *languagetool.AnalyzedTokenReadings,
+	surface, wholeWord, word string,
+	startPos int,
+	out *[]*rules.RuleMatch,
+) {
+	if r == nil || word == "" || out == nil {
+		return
+	}
+	// Java getRuleMatches: if (!isMisspelled && !isProhibited) return
+	if !r.isMisspelledWord(word) && !r.IsProhibited(word) {
+		return
+	}
+	if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(word) {
+		return
+	}
+	// Covered by previous match (wrong-split / longer span)
+	if len(*out) > 0 && (*out)[len(*out)-1] != nil && (*out)[len(*out)-1].GetToPos() > startPos {
+		return
+	}
+
+	// Wrong-split uses neighboring sentence tokens; only meaningful for full-token word.
+	// Java still runs it on segments; neighbor checks use token index (same for all segs).
+	ruleMatch, beforeStr, early := r.tryWrongSplitPrev(sentence, out, idx, tokens, word, startPos)
+	if early && ruleMatch != nil {
+		*out = append(*out, ruleMatch)
+		return
+	}
+	if ruleMatch == nil {
+		var afterStr string
+		ruleMatch, afterStr, early = r.tryWrongSplitNext(sentence, out, idx, tokens, word, startPos)
+		if early && ruleMatch != nil {
+			*out = append(*out, ruleMatch)
+			return
+		}
+		if ruleMatch != nil {
+			sug := r.collectSuggestions(word)
+			for _, s := range sug {
+				joined := strings.TrimSpace(beforeStr + s)
+				if afterStr != "" {
+					joined = strings.TrimSpace(beforeStr + s + afterStr)
+				}
+				addSug(ruleMatch, joined)
+			}
+			*out = append(*out, ruleMatch)
+			return
+		}
+	} else {
+		sug := r.collectSuggestions(word)
+		for _, s := range sug {
+			addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
+		}
+		*out = append(*out, ruleMatch)
+		return
+	}
+
+	// Span: startPos .. startPos+utf16Len(word). For full-token matches without
+	// tokenizing, prefer tok.GetEndPos() when word equals wholeWord (surface end).
+	toPos := startPos + utf16LenMF(word)
+	if word == wholeWord && tok != nil && tok.GetEndPos() > toPos {
+		toPos = tok.GetEndPos()
+	}
+	m := rules.NewRuleMatch(r, sentence, startPos, toPos, "Possible spelling mistake found")
+	m.SetType(rules.RuleMatchTypeUnknownWord)
+
+	cleanWord, beforePrefix, preventFurther, spaceInsert := r.applyNumbersBulletsPrefix(word)
+	if spaceInsert != "" {
+		addSug(m, spaceInsert)
+	}
+	if !preventFurther {
+		sug := r.collectSuggestions(cleanWord)
+		for _, s := range sug {
+			joined := strings.TrimSpace(beforePrefix + s)
+			if joined != "" {
+				addSug(m, joined)
+			}
+		}
+	}
+	*out = append(*out, m)
 }
 
 // spellCheckWord ports match's word = token.getAnalyzedToken(0).getToken() intent:
