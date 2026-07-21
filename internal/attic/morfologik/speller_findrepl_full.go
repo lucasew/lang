@@ -3,7 +3,6 @@ package morfologik
 import (
 	"sort"
 	"strings"
-	"unicode"
 )
 
 const (
@@ -57,8 +56,9 @@ func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfW
 			if d.Contains(wordChecked) {
 				raw = append(raw, fsaSp.MakeCandidateData(wordChecked, 0))
 			} else {
-				low := strings.ToLower(wordChecked)
-				up := strings.ToUpper(wordChecked)
+				// Java: toLowerCase/toUpperCase(dictionaryMetadata.getLocale())
+				low := d.ToLower(wordChecked)
+				up := d.ToUpper(wordChecked)
 				if d.Contains(low) {
 					raw = append(raw, fsaSp.MakeCandidateData(low, 0))
 				}
@@ -66,7 +66,8 @@ func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfW
 					raw = append(raw, fsaSp.MakeCandidateData(up, 0))
 				}
 				if len(low) > 1 {
-					firstUp := uppercaseFirstASCII(low)
+					// Java: Character.toUpperCase(lowerWord.charAt(0)) + lowerWord.substring(1)
+					firstUp := d.initialUppercase(low)
 					if d.Contains(firstUp) {
 						raw = append(raw, fsaSp.MakeCandidateData(firstUp, 0))
 					}
@@ -109,15 +110,6 @@ func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfW
 		out = append(out, fsaSp.MakeCandidateData(replaced, cd.OrigDistance))
 	}
 	return out
-}
-
-func uppercaseFirstASCII(s string) string {
-	r := []rune(s)
-	if len(r) == 0 {
-		return s
-	}
-	r[0] = unicode.ToUpper(r[0])
-	return string(r)
 }
 
 // getAllReplacements ports Speller.getAllReplacements (theRest only).

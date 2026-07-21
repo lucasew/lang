@@ -1,7 +1,6 @@
 package morfologik
 
 import (
-	"strings"
 	"unicode"
 )
 
@@ -37,12 +36,12 @@ func (d *Dictionary) IsMisspelled(word string) bool {
 	}
 	// convertCase arm: accept lower / initial-upper of non-mixed-case words
 	if d.ConvertCase && !isMixedCase(wordToCheck) {
-		low := strings.ToLower(wordToCheck)
+		low := d.ToLower(wordToCheck)
 		if d.Contains(low) {
 			return false
 		}
 		if isAllUppercase(wordToCheck) {
-			iu := initialUppercase(wordToCheck)
+			iu := d.initialUppercase(wordToCheck)
 			if iu != wordToCheck && d.Contains(iu) {
 				return false
 			}
@@ -128,15 +127,30 @@ func isCamelCase(str string) bool {
 	return isNotAllLowercase(str)
 }
 
-// initialUppercase ports Speller.initialUppercase (first upper, rest lower).
-func initialUppercase(wordToCheck string) string {
-	r := []rune(wordToCheck)
-	if len(r) == 0 {
+// initialUppercase ports Speller.initialUppercase with dictionary locale.
+func (d *Dictionary) initialUppercase(wordToCheck string) string {
+	if wordToCheck == "" {
 		return wordToCheck
 	}
-	r[0] = unicode.ToUpper(r[0])
-	for i := 1; i < len(r); i++ {
-		r[i] = unicode.ToLower(r[i])
+	// Java: substring(0,1) + substring(1).toLowerCase(locale)
+	// Use rune-aware first character for non-BMP safety; EN dicts are BMP.
+	r := []rune(wordToCheck)
+	first := string(r[0])
+	rest := ""
+	if len(r) > 1 {
+		rest = d.ToLower(string(r[1:]))
 	}
-	return string(r)
+	// first char: Character.toUpperCase on char — use locale upper of first then take first rune
+	up := d.ToUpper(first)
+	ur := []rune(up)
+	if len(ur) == 0 {
+		return wordToCheck
+	}
+	return string(ur[0]) + rest
+}
+
+// initialUppercase is a package helper for tests without Dictionary (locale Und).
+func initialUppercase(wordToCheck string) string {
+	d := &Dictionary{}
+	return d.initialUppercase(wordToCheck)
 }

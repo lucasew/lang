@@ -7,9 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/text/cases"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
 	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/language"
 )
 
 // Dictionary is FSA + metadata (.dict + .info).
@@ -20,18 +22,21 @@ type Dictionary struct {
 	Encoding          string
 	frequencyIncluded bool // fsa.dict.frequency-included
 	// Speller metadata from .info (Java DictionaryMetadata / Speller fields).
-	IgnoreDiacritics    bool
-	ConvertCase         bool
-	IgnoreNumbers       bool // default true in many LT dicts
-	IgnorePunctuation   bool
-	IgnoreCamelCase     bool
-	IgnoreAllUppercase  bool
-	SupportRunOnWords   bool
-	EquivalentChars     map[rune][]rune
-	InputConversion     [][2]string // ordered LinkedHashMap pairs
-	OutputConversion    [][2]string
-	ReplacementShort    []ReplPair  // target len 1–2 → anyToOne/anyToTwo
-	ReplacementTheRest  *OrderedStringListMap
+	IgnoreDiacritics   bool
+	ConvertCase        bool
+	IgnoreNumbers      bool // default true in many LT dicts
+	IgnorePunctuation  bool
+	IgnoreCamelCase    bool
+	IgnoreAllUppercase bool
+	SupportRunOnWords  bool
+	// Locale is fsa.dict.speller.locale (e.g. "en_US"); used for toLowerCase/toUpperCase.
+	Locale string
+	langTag language.Tag
+	EquivalentChars    map[rune][]rune
+	InputConversion    [][2]string // ordered LinkedHashMap pairs
+	OutputConversion   [][2]string
+	ReplacementShort   []ReplPair // target len 1–2 → anyToOne/anyToTwo
+	ReplacementTheRest *OrderedStringListMap
 }
 
 // ReplPair is one fsa.dict.speller.replacement-pairs entry (from=misspelled, to=dict form).
@@ -107,6 +112,9 @@ func (d *Dictionary) applySpellerInfo(meta map[string]string) {
 	}
 	if v, ok := meta["fsa.dict.speller.runon-words"]; ok {
 		d.SupportRunOnWords = parseInfoBool(v, d.SupportRunOnWords)
+	}
+	if v, ok := meta["fsa.dict.speller.locale"]; ok {
+		d.setLocale(v)
 	}
 	if v, ok := meta["fsa.dict.speller.equivalent-chars"]; ok {
 		d.EquivalentChars = parseEquivalentCharsInfo(v)
@@ -224,23 +232,92 @@ func (d *Dictionary) Lookup(word string) ([]WordForm, error) {
 	return out, nil
 }
 
-// Contains reports whether word is in the dictionary (speller dicts often encode word+freq only).
+// Contains is the public alias for IsInDictionary (Java Speller.isInDictionary).
 func (d *Dictionary) Contains(word string) bool {
-	forms, err := d.Lookup(word)
-	if err != nil {
+	return d.IsInDictionary(word)
+}
+
+// IsInDictionary ports morfologik.speller.Speller.isInDictionary (2.2.0).
+// Speller dicts: SEQUENCE_IS_A_PREFIX + separator arc. POS/exact: EXACT_MATCH without separators.
+// Note: Java mutates Speller.containsSeparators on EXACT_MATCH; we use a per-call local so
+// a cached Dictionary stays safe under concurrent use (LT often recreates Speller anyway).
+func (d *Dictionary) IsInDictionary(word string) bool {
+	if d == nil || d.FSA == nil || word == "" {
 		return false
 	}
-	if len(forms) > 0 {
+	seq, err := d.encodeBytes(word)
+	if err != nil || len(seq) == 0 {
+		return false
+	}
+	kind, _, node := d.FSA.Match(seq, d.FSA.RootNode())
+	// Java Speller.containsSeparators defaults true
+	containsSeparators := true
+	if containsSeparators && kind == ExactMatch {
+		// Make sure the word doesn't contain a separator if there is an exact match
+		containsSeparators = false
+		sep := rune(d.Separator)
+		for _, r := range word {
+			if r == sep {
+				containsSeparators = true
+				break
+			}
+		}
+	}
+	if kind == ExactMatch && !containsSeparators {
 		return true
 	}
-	// Speller dictionaries: word may be exact final path without stem encoding like POS dicts.
-	// Try exact match of word itself as full sequence.
-	seq, err := d.encodeBytes(word)
-	if err != nil {
-		return false
+	// Java: remaining() > 0 after encoding ⇒ non-empty sequence (we use len(seq) > 0)
+	if containsSeparators && kind == SequenceIsAPrefix {
+		arc := d.FSA.getArc(node, d.Separator)
+		return arc != 0
 	}
-	kind, _, _ := d.FSA.Match(seq, d.FSA.RootNode())
-	return kind == ExactMatch
+	return false
+}
+
+// SetLocale ports DictionaryAttribute.LOCALE (e.g. "en_US" → language tag).
+func (d *Dictionary) SetLocale(raw string) {
+	d.setLocale(raw)
+}
+
+func (d *Dictionary) setLocale(raw string) {
+	if d == nil {
+		return
+	}
+	raw = strings.TrimSpace(raw)
+	d.Locale = raw
+	if raw == "" {
+		d.langTag = language.Und
+		return
+	}
+	// Java Locale: language_COUNTRY; BCP-47 uses language-REGION
+	tag, err := language.Parse(strings.ReplaceAll(raw, "_", "-"))
+	if err != nil {
+		d.langTag = language.Und
+		return
+	}
+	d.langTag = tag
+}
+
+// ToLower ports word.toLowerCase(dictionaryMetadata.getLocale()).
+func (d *Dictionary) ToLower(s string) string {
+	if s == "" {
+		return s
+	}
+	if d == nil || d.langTag == language.Und {
+		return strings.ToLower(s)
+	}
+	return cases.Lower(d.langTag).String(s)
+}
+
+// ToUpper ports word.toUpperCase(dictionaryMetadata.getLocale()).
+func (d *Dictionary) ToUpper(s string) string {
+	if s == "" {
+		return s
+	}
+	if d == nil || d.langTag == language.Und {
+		return strings.ToUpper(s)
+	}
+	return cases.Upper(d.langTag).String(s)
 }
 
 // encodeBytes converts a UTF-8 Go string to the dictionary's byte encoding.

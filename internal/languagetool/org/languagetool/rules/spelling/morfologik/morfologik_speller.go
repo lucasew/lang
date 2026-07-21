@@ -6,6 +6,8 @@ import (
 	"unicode/utf16"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // MorfologikSpeller ports org.languagetool.rules.spelling.morfologik.MorfologikSpeller
@@ -24,7 +26,7 @@ type MorfologikSpeller struct {
 	// Frequencies ports dictionary frequency tags (optional inject; default 1 for known words).
 	// Java MorfologikSpeller.getFrequency; used by wrong-split frequency gates.
 	Frequencies map[string]int
-	// ConversionLocale lowercases via strings.ToLower when set.
+	// ConversionLocale is fsa.dict.speller.locale (e.g. "en_US") for toLowerCase/toUpperCase.
 	ConversionLocale string
 
 	// Speller dictionary metadata (morfologik DictionaryMetadata / .info).
@@ -198,6 +200,9 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 		d.IgnoreCamelCase = s.IgnoreCamelCase
 		d.IgnoreAllUppercase = s.IgnoreAllUppercase
 		d.SupportRunOnWords = s.SupportRunOnWords
+		if s.ConversionLocale != "" {
+			d.SetLocale(s.ConversionLocale)
+		}
 		if len(s.InputConversionPairs) > 0 {
 			d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
 		}
@@ -224,17 +229,69 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 		return false
 	}
 	if s.ConvertCase && !isMixedCaseWord(wordToCheck) {
-		low := strings.ToLower(wordToCheck)
+		low := s.toLower(wordToCheck)
 		if s.inDictionary(low) {
 			return false
 		}
 		if isAllUppercaseWord(wordToCheck) {
-			if iu := initialUppercaseWord(wordToCheck); iu != wordToCheck && s.inDictionary(iu) {
+			if iu := s.initialUppercase(wordToCheck); iu != wordToCheck && s.inDictionary(iu) {
 				return false
 			}
 		}
 	}
 	return true
+}
+
+// toLower ports word.toLowerCase(dictionaryMetadata.getLocale()).
+func (s *MorfologikSpeller) toLower(word string) string {
+	if word == "" {
+		return word
+	}
+	tag := s.localeTag()
+	if tag == language.Und {
+		return strings.ToLower(word)
+	}
+	return cases.Lower(tag).String(word)
+}
+
+func (s *MorfologikSpeller) toUpper(word string) string {
+	if word == "" {
+		return word
+	}
+	tag := s.localeTag()
+	if tag == language.Und {
+		return strings.ToUpper(word)
+	}
+	return cases.Upper(tag).String(word)
+}
+
+func (s *MorfologikSpeller) localeTag() language.Tag {
+	if s == nil || s.ConversionLocale == "" {
+		return language.Und
+	}
+	tag, err := language.Parse(strings.ReplaceAll(s.ConversionLocale, "_", "-"))
+	if err != nil {
+		return language.Und
+	}
+	return tag
+}
+
+// initialUppercase ports Speller.initialUppercase with ConversionLocale.
+func (s *MorfologikSpeller) initialUppercase(wordToCheck string) string {
+	r := []rune(wordToCheck)
+	if len(r) == 0 {
+		return wordToCheck
+	}
+	first := s.toUpper(string(r[0]))
+	fr := []rune(first)
+	if len(fr) == 0 {
+		return wordToCheck
+	}
+	rest := ""
+	if len(r) > 1 {
+		rest = s.toLower(string(r[1:]))
+	}
+	return string(fr[0]) + rest
 }
 
 func (s *MorfologikSpeller) applyInputConversion(word string) string {
@@ -344,6 +401,7 @@ func isCamelCaseWord(s string) bool {
 	return isNotAllLowercaseWord(s)
 }
 
+// initialUppercaseWord is map-path helper without locale (tests / applyCase).
 func initialUppercaseWord(s string) string {
 	r := []rune(s)
 	if len(r) == 0 {
@@ -441,7 +499,8 @@ func (s *MorfologikSpeller) ReplaceRunOnWordCandidates(original string) []Weight
 		// suffix accepted: exact OR capitalized with lowercase form in dict
 		suffixOK := s.isInDictionaryExact(suffix)
 		if !suffixOK && !isNotCapitalizedWord(suffix) {
-			suffixOK = s.isInDictionaryExact(strings.ToLower(suffix))
+			// Java: suffix.toLowerCase(locale)
+			suffixOK = s.isInDictionaryExact(s.toLower(suffix))
 		}
 		if !suffixOK {
 			continue
@@ -450,7 +509,7 @@ func (s *MorfologikSpeller) ReplaceRunOnWordCandidates(original string) []Weight
 			candidates = append(candidates, s.runOnCandidate(prefix+" "+suffix))
 		} else if len(prefix) > 0 {
 			pr := []rune(prefix)
-			if unicode.IsUpper(pr[0]) && s.isInDictionaryExact(strings.ToLower(prefix)) {
+			if unicode.IsUpper(pr[0]) && s.isInDictionaryExact(s.toLower(prefix)) {
 				// sentence-start capitalization only on prefix
 				candidates = append(candidates, s.runOnCandidate(prefix+" "+suffix))
 			}

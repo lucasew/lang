@@ -75,3 +75,52 @@ func TestDictionary_IsMisspelled_EN(t *testing.T) {
 		t.Fatal("garbage misspelled")
 	}
 }
+
+func TestDictionary_Locale_EN(t *testing.T) {
+	root := freqRepoRoot(t)
+	p := filepath.Join(root, "third_party/english-pos-dict/org/languagetool/resource/en/hunspell/en_US.dict")
+	d, err := OpenDictionary(p)
+	if err != nil {
+		t.Skip(err)
+	}
+	if d.Locale != "en_US" {
+		t.Fatalf("locale=%q want en_US", d.Locale)
+	}
+	if d.ToLower("WATER") != "water" {
+		t.Fatalf("ToLower WATER → %q", d.ToLower("WATER"))
+	}
+	if d.ToUpper("water") != "WATER" {
+		t.Fatalf("ToUpper water → %q", d.ToUpper("water"))
+	}
+}
+
+func TestToLower_TurkishLocale(t *testing.T) {
+	// Java Locale("tr") : I → ı (dotless)
+	d := &Dictionary{}
+	d.setLocale("tr_TR")
+	got := d.ToLower("I")
+	if got != "ı" {
+		t.Fatalf("Turkish ToLower(I)=%q want ı", got)
+	}
+}
+
+func TestIsInDictionary_EN(t *testing.T) {
+	root := freqRepoRoot(t)
+	p := filepath.Join(root, "third_party/english-pos-dict/org/languagetool/resource/en/hunspell/en_US.dict")
+	d, err := OpenDictionary(p)
+	if err != nil {
+		t.Skip(err)
+	}
+	if !d.IsInDictionary("house") {
+		t.Fatal("house in dict")
+	}
+	if !d.IsInDictionary("software") {
+		t.Fatal("software")
+	}
+	if d.IsInDictionary("xyzzyqqqnotaword") {
+		t.Fatal("garbage not in dict")
+	}
+	if d.IsInDictionary("") {
+		t.Fatal("empty")
+	}
+}

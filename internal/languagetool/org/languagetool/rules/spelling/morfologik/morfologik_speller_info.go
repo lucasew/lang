@@ -25,6 +25,7 @@ const (
 	infoOutputConversion  = "fsa.dict.output-conversion"
 	infoReplacementPairs  = "fsa.dict.speller.replacement-pairs"
 	infoEquivalentChars   = "fsa.dict.speller.equivalent-chars"
+	infoLocale            = "fsa.dict.speller.locale"
 )
 
 // binaryDictCache caches OpenDictionary by absolute path (FSA is thread-safe).
@@ -73,6 +74,9 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 		rest, short := partitionReplacementPairs(ParseReplacementPairs(v))
 		s.ReplacementTheRest = rest
 		s.ReplacementShort = short
+	}
+	if v, ok := meta[infoLocale]; ok {
+		s.ConversionLocale = strings.TrimSpace(v)
 	}
 }
 
