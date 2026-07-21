@@ -82,6 +82,14 @@ func TryRegisterBinarySpeller(lt *languagetool.JLanguageTool, ruleID, classpathO
 	}
 	meta := spelling.NewSpellingCheckRule(ruleID, "Possible spelling mistake", langCode)
 	spelling.ApplyDefaultSpellingWordLists(meta)
+	// MorfologikSpeller with binary FSA + .info flags (Java Speller.isMisspelled gates).
+	msp := NewMorfologikSpeller(classpathOrPath, 1)
+	if !msp.AttachBinaryDictionary(dictPath) {
+		// Open already succeeded above; Attach should use same path.
+		msp.InDictionaryFn = d.Contains
+		msp.BinaryDictPath = dictPath
+		msp.LoadInfoBesideDict(dictPath)
+	}
 	isKnown := func(w string) bool {
 		if meta.IsProhibited(w) {
 			return false
@@ -89,14 +97,8 @@ func TryRegisterBinarySpeller(lt *languagetool.JLanguageTool, ruleID, classpathO
 		if _, ok := meta.IgnoreWords[w]; ok {
 			return true
 		}
-		if d.Contains(w) {
-			return true
-		}
-		low := strings.ToLower(w)
-		if low != w && d.Contains(low) {
-			return true
-		}
-		return false
+		// Java: !speller.isMisspelled(word)
+		return !msp.IsMisspelled(w)
 	}
 	suggestFn := func(w string) []string {
 		raw := d.SuggestEdits(w, 8)

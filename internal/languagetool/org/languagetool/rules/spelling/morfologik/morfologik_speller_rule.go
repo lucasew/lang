@@ -197,8 +197,8 @@ func (r *MorfologikSpellerRule) isMisspelledWord(word string) bool {
 	if r == nil || word == "" {
 		return false
 	}
-	// Fail-closed empty dict (same as prior IsMisspelled hook).
-	if r.Speller == nil || len(r.Speller.Words) == 0 {
+	// Fail-closed empty dict (map inject empty and no binary FSA).
+	if r.Speller == nil || !r.Speller.HasDictionary() {
 		return false
 	}
 	if !r.Speller.IsMisspelled(word) {

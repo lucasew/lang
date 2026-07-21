@@ -39,7 +39,10 @@ type MorfologikVariantSpellerRule struct {
 }
 
 func newVariantSpeller(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string) *MorfologikVariantSpellerRule {
-	base := NewAbstractEnglishSpellerRule(id, variantCode, morfologik.NewMorfologikSpeller(dictPath, 1))
+	sp := morfologik.NewMorfologikSpeller(dictPath, 1)
+	// Java MorfologikSpeller loads FSA + .info from getFileName() when resource exists.
+	_ = sp.TryAttachBinaryFromClasspath(dictPath)
+	base := NewAbstractEnglishSpellerRule(id, variantCode, sp)
 	base.FileName = dictPath
 	// Java Morfologik*SpellerRule.getLanguageVariantSpellingFileName → plain-text accept list.
 	// ApplyDefaultSpellingWordLists used LanguageShortCode "en" only; load variant file here.

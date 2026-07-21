@@ -32,6 +32,12 @@ type MorfologikSpeller struct {
 	IgnoreCamelCase    bool // default true; en_US.info sets false
 	IgnoreAllUppercase bool // default true; en_US.info sets false
 	ConvertCase        bool // default true — lowercase / title probe
+
+	// InDictionaryFn ports binary FSA membership (Dictionary.Contains / Speller.isInDictionary).
+	// When set, HasDictionary is true even if Words is empty.
+	InDictionaryFn func(word string) bool
+	// BinaryDictPath is the absolute .dict path when AttachBinaryDictionary succeeded.
+	BinaryDictPath string
 }
 
 func NewMorfologikSpeller(fileInClassPath string, maxEditDistance int) *MorfologikSpeller {
@@ -51,12 +57,25 @@ func NewMorfologikSpeller(fileInClassPath string, maxEditDistance int) *Morfolog
 		IgnoreAllUppercase: true,
 		ConvertCase:        true,
 	}
-	// en_US / en_GB hunspell .info override camel/all-upper to false (keep ignore-numbers).
-	if isEnglishHunspellDict(fileInClassPath) {
+	// Prefer real sibling .info when the Java resource is on disk; else EN hunspell twin.
+	if !s.LoadInfoFromClasspath(fileInClassPath) && isEnglishHunspellDict(fileInClassPath) {
+		// en_US.info twin when file not found (CI without third_party dicts).
 		s.IgnoreCamelCase = false
 		s.IgnoreAllUppercase = false
 	}
 	return s
+}
+
+// HasDictionary reports map inject and/or binary FSA membership available.
+// Java MorfologikSpeller always has a Dictionary; empty map without binary is fail-closed.
+func (s *MorfologikSpeller) HasDictionary() bool {
+	if s == nil {
+		return false
+	}
+	if s.InDictionaryFn != nil {
+		return true
+	}
+	return len(s.Words) > 0
 }
 
 func isEnglishHunspellDict(path string) bool {
@@ -87,7 +106,8 @@ func (s *MorfologikSpeller) SetFrequency(word string, freq int) {
 }
 
 // GetFrequency ports MorfologikSpeller.getFrequency (exact then lowercase).
-// Unknown words → 0. Known map words without explicit freq → 1 (low, below MAX_FREQUENCY_FOR_SPLITTING).
+// Unknown words → 0. Known map/binary words without explicit freq → 1 (low, below MAX_FREQUENCY_FOR_SPLITTING).
+// Binary FSA frequency tags not yet decoded — same provisional 1 as map inject.
 func (s *MorfologikSpeller) GetFrequency(word string) int {
 	if s == nil || word == "" {
 		return 0
@@ -97,7 +117,7 @@ func (s *MorfologikSpeller) GetFrequency(word string) int {
 			return f
 		}
 	}
-	if _, ok := s.Words[word]; ok {
+	if s.inDictionary(word) {
 		return 1
 	}
 	low := strings.ToLower(word)
@@ -107,7 +127,7 @@ func (s *MorfologikSpeller) GetFrequency(word string) int {
 				return f
 			}
 		}
-		if _, ok := s.Words[low]; ok {
+		if s.inDictionary(low) {
 			return 1
 		}
 	}
@@ -163,8 +183,13 @@ func (s *MorfologikSpeller) inDictionary(word string) bool {
 	if s == nil || word == "" {
 		return false
 	}
-	_, ok := s.Words[word]
-	return ok
+	if _, ok := s.Words[word]; ok {
+		return true
+	}
+	if s.InDictionaryFn != nil && s.InDictionaryFn(word) {
+		return true
+	}
+	return false
 }
 
 // ConvertsCase reports case-folding acceptance (Java MorfologikSpeller.convertsCase).
