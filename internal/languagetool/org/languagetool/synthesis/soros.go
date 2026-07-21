@@ -3,6 +3,8 @@ package synthesis
 import (
 	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Soros ports org.languagetool.synthesis.Soros (numbertext interpreter).
@@ -43,12 +45,15 @@ func NewSoros(raw, lang string) *Soros {
 			`"`+"\uE00A"+`(.*)`+"\uE00A"+`(.+)`+"\uE00A"+`(.*)" \1\2\3;`+
 			`"`+"\uE00A"+`.*`+"\uE00A\uE00A"+`.*"`)
 
-	lineRE := regexp.MustCompile(`^\s*("[^"]*"|[^\s]*)\s*(.*[^\s])?\s*$`)
+	// Java Soros: Pattern.compile("^\\s*(\"[^\"]*\"|[^\\s]*)\\s*(.*[^\\s])?\\s*$")
+	// without UNICODE_CHARACTER_CLASS — ASCII \\s only.
+	lineRE := regexp.MustCompile(`^[ \t\n\v\f\r]*("[^"]*"|[^ \t\n\v\f\r]*)[ \t\n\v\f\r]*(.*[^ \t\n\v\f\r])?[ \t\n\v\f\r]*$`)
 	macroRE := regexp.MustCompile(`== *(.*[^ ]?) ==`)
 	prefix := ""
 	s := &Soros{}
 	for _, part := range strings.Split(source, ";") {
-		part = strings.TrimSpace(part)
+		// Java: part.trim()
+		part = tools.JavaStringTrim(part)
 		if part == "" {
 			continue
 		}
@@ -89,8 +94,9 @@ func NewSoros(raw, lang string) *Soros {
 		pat = strings.ReplaceAll(pat, "\uE000", `\\`)
 
 		repl := ""
-		if len(sp) > 2 && strings.TrimSpace(sp[2]) != "" {
-			repl = strings.TrimSpace(sp[2])
+		// Java: if (sp.group(2) != null) s2 = group(2) with quote strip (pattern already ate \\s*).
+		if len(sp) > 2 && sp[2] != "" {
+			repl = sp[2]
 			if len(repl) >= 2 && repl[0] == '"' && repl[len(repl)-1] == '"' {
 				repl = repl[1 : len(repl)-1]
 			}
@@ -183,7 +189,8 @@ func translateDelim(s, chars, chars2, delim string) string {
 }
 
 func unquoteRule(s string) string {
-	s = strings.TrimSpace(s)
+	// Java: replaceFirst("^\"", "").replaceFirst("\"$","") after pattern capture (no Unicode TrimSpace).
+	s = tools.JavaStringTrim(s)
 	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
 		return s[1 : len(s)-1]
 	}

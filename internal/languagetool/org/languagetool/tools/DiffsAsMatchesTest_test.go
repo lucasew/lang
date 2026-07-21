@@ -9,6 +9,18 @@ import (
 
 // Port of org.languagetool.tools.DiffsAsMatchesTest.
 
+// Java-diff-utils SPLIT_BY_WORD_PATTERN uses Pattern \\s without UNICODE_CHARACTER_CLASS.
+func TestDiffsAsMatches_NBSPNotWordSplit(t *testing.T) {
+	d := NewDiffsAsMatches()
+	// NBSP between words is not a delimiter in Java \\s; keep as one token for split.
+	// Deleting "a" in "x\u00a0a" still produces a match; positions must stay UTF-16.
+	matches := d.GetPseudoMatches("x\u00a0a y", "x\u00a0a z")
+	require.NotEmpty(t, matches)
+	// "y" → "z" at end; FromPos/ToPos UTF-16: "x\u00a0a " = 4 units, "y" at 4..5
+	require.Equal(t, 4, matches[0].GetFromPos())
+	require.Equal(t, 5, matches[0].GetToPos())
+}
+
 func TestDiffsAsMatches_DiffsAsMatches(t *testing.T) {
 	d := NewDiffsAsMatches()
 

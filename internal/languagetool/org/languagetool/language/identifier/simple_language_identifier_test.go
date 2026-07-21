@@ -31,3 +31,18 @@ func TestSimpleLanguageIdentifier(t *testing.T) {
 	// may be nil if both score poorly
 	_ = d
 }
+
+// Java Pattern.compile("\\s+") does not split on NBSP — "the\u00a0cat" is one word.
+func TestSimpleLanguageIdentifier_NBSPNotSplit(t *testing.T) {
+	s := NewSimpleLanguageIdentifier(1000)
+	s.RegisterSpeller("en", func(w string) bool {
+		// only the fused NBSP form is correct
+		return w != "the\u00a0cat"
+	})
+	s.RegisterSpeller("de", func(w string) bool {
+		return true // always misspelled
+	})
+	d := s.Detect("the\u00a0cat", nil, nil)
+	require.NotNil(t, d)
+	require.Equal(t, "en", d.GetDetectedLanguageCode())
+}

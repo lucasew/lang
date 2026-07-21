@@ -3,7 +3,6 @@ package identifier
 import (
 	"math"
 	"regexp"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier/detector"
@@ -12,7 +11,9 @@ import (
 // SpellerFunc reports whether a word is misspelled for a language (Java SpellingCheckRule.isMisspelled).
 type SpellerFunc func(word string) bool
 
-var simpleWhitespace = regexp.MustCompile(`\s+`)
+// simpleWhitespace ports SimpleLanguageIdentifier.WHITESPACE = Pattern.compile("\\s+")
+// without UNICODE_CHARACTER_CLASS (ASCII only; not Go RE2 \\s / NBSP).
+var simpleWhitespace = regexp.MustCompile(`[ \t\n\v\f\r]+`)
 
 // SimpleLanguageIdentifier ports
 // org.languagetool.language.identifier.SimpleLanguageIdentifier.
@@ -90,12 +91,13 @@ func (s *SimpleLanguageIdentifier) Detect(cleanText string, noopLangs, preferred
 	additionalLangs := parsed.AdditionalLangs
 	preferred := parsed.PreferredLangs
 
-	if strings.TrimSpace(cleanText) == "" {
-		return nil
+	// Java: String[] words = WHITESPACE.split(cleanText); (no pre-trim)
+	words := simpleWhitespace.Split(cleanText, -1)
+	// Pattern.split discards trailing empties; drop pure trailing empties; keep leading empty.
+	for len(words) > 0 && words[len(words)-1] == "" {
+		words = words[:len(words)-1]
 	}
-	words := simpleWhitespace.Split(strings.TrimSpace(cleanText), -1)
-	// Java split can yield empty leading element for leading whitespace — TrimSpace first
-	if len(words) == 1 && words[0] == "" {
+	if len(words) == 0 || (len(words) == 1 && words[0] == "") {
 		return nil
 	}
 

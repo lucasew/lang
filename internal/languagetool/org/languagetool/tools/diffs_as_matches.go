@@ -20,8 +20,10 @@ const (
 	insertLookbackMax     = 2
 )
 
-// java-diff-utils DiffRowGenerator.SPLIT_BY_WORD_PATTERN
-var splitByWordPattern = regexp.MustCompile(`\s+|[,.\[\](){}/\\*+\-#]`)
+// java-diff-utils DiffRowGenerator.SPLIT_BY_WORD_PATTERN =
+// Pattern.compile("\\s+|[,.\\[\\](){}/\\\\*+\\-#]") without UNICODE_CHARACTER_CLASS.
+// Go RE2 \\s is Unicode; use ASCII [ \t\n\v\f\r] like Java.
+var splitByWordPattern = regexp.MustCompile(`[ \t\n\v\f\r]+|[,.\[\](){}/\\*+\-#]`)
 
 type deltaType int
 
