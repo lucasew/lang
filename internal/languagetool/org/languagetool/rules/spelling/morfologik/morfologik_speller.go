@@ -6,6 +6,7 @@ import (
 	"unicode/utf16"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -642,18 +643,22 @@ func (s *MorfologikSpeller) suggestionWeightDist(sug string, dist int) int {
 }
 
 // applyCaseToWeighted ports MorfologikSpeller.getSuggestions all-upper / capitalize arms.
+// Java uses StringTools (not Speller case helpers) and String.toUpperCase() default locale.
 func applyCaseToWeighted(s *MorfologikSpeller, word string, suggestions []WeightedSuggestion) []WeightedSuggestion {
 	if s == nil || !s.ConvertCase || len(suggestions) == 0 {
 		return suggestions
 	}
-	if isAllUppercaseWord(word) {
+	// Java: dictionary.metadata.isConvertingCase() && StringTools.isAllUppercase(word)
+	if tools.IsAllUppercase(word) {
 		for i := 0; i < len(suggestions); i++ {
 			sugg := suggestions[i]
+			// Java: sugg.getWord().toUpperCase() — default locale; ASCII-equivalent of strings.ToUpper
 			allUpper := strings.ToUpper(sugg.Word)
-			if allUpper == word || isMixedCaseWord(sugg.Word) {
+			// do not use capitalized word if it matches the original word or it's mixed case
+			if allUpper == word || tools.IsMixedCase(sugg.Word) {
 				allUpper = sugg.Word
 			}
-			// remove duplicates of allUpper
+			// remove duplicates
 			aux := weightedIndex(suggestions, allUpper)
 			if aux > i {
 				suggestions = append(suggestions[:aux], suggestions[aux+1:]...)
@@ -667,11 +672,13 @@ func applyCaseToWeighted(s *MorfologikSpeller, word string, suggestions []Weight
 		}
 		return suggestions
 	}
-	if startsWithUppercase(word) {
+	// Java: else if ... StringTools.startsWithUppercase(word)
+	if tools.StartsWithUppercase(word) {
 		for i := 0; i < len(suggestions); i++ {
 			sugg := suggestions[i]
-			upFirst := uppercaseFirstChar(sugg.Word)
-			if upFirst == word || isMixedCaseWord(sugg.Word) {
+			// Java: StringTools.uppercaseFirstChar(sugg.getWord())
+			upFirst := tools.UppercaseFirstChar(sugg.Word)
+			if upFirst == word || tools.IsMixedCase(sugg.Word) {
 				upFirst = sugg.Word
 			}
 			aux := weightedIndex(suggestions, upFirst)
@@ -696,20 +703,6 @@ func weightedIndex(suggestions []WeightedSuggestion, word string) int {
 		}
 	}
 	return -1
-}
-
-func startsWithUppercase(s string) bool {
-	r := []rune(s)
-	return len(r) > 0 && unicode.IsUpper(r[0])
-}
-
-func uppercaseFirstChar(s string) string {
-	r := []rune(s)
-	if len(r) == 0 {
-		return s
-	}
-	r[0] = unicode.ToUpper(r[0])
-	return string(r)
 }
 
 // FindReplacements returns suggestions for word.

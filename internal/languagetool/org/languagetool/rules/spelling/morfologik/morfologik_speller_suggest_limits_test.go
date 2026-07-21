@@ -46,3 +46,30 @@ func TestApplyCaseToWeighted_AllUpper(t *testing.T) {
 	out := applyCaseToWeighted(sp, "RECIEVE", in)
 	require.Equal(t, "RECEIVE", out[0].Word)
 }
+
+func TestApplyCaseToWeighted_TitleCase(t *testing.T) {
+	sp := NewMorfologikSpeller("/xx.dict", 1)
+	sp.ConvertCase = true
+	in := []WeightedSuggestion{NewWeightedSuggestion("receive", 10)}
+	out := applyCaseToWeighted(sp, "Recieve", in)
+	require.Equal(t, "Receive", out[0].Word)
+}
+
+// StringTools.uppercaseFirstChar skips leading non-letter/digit (quotes/parens).
+func TestApplyCaseToWeighted_LeadingQuote(t *testing.T) {
+	sp := NewMorfologikSpeller("/xx.dict", 1)
+	sp.ConvertCase = true
+	in := []WeightedSuggestion{NewWeightedSuggestion("\"hello\"", 10)}
+	out := applyCaseToWeighted(sp, "Xyz", in) // title arm
+	// changeFirstCharCase: pos after ", uppercases h → "Hello"
+	require.Equal(t, "\"Hello\"", out[0].Word)
+}
+
+func TestApplyCaseToWeighted_MixedCaseSuggestionUnchanged(t *testing.T) {
+	sp := NewMorfologikSpeller("/xx.dict", 1)
+	sp.ConvertCase = true
+	// mixedCase suggestion must stay when input is title case (Java StringTools.isMixedCase)
+	in := []WeightedSuggestion{NewWeightedSuggestion("iPhone", 10)}
+	out := applyCaseToWeighted(sp, "Iphone", in)
+	require.Equal(t, "iPhone", out[0].Word)
+}
