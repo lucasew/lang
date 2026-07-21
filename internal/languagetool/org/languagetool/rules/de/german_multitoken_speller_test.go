@@ -13,6 +13,10 @@ func TestGermanMultitokenSpeller_IsException(t *testing.T) {
 	require.True(t, s.IsException("foo-", "foo"))
 	require.False(t, s.IsException("Haus", "Häuser"))
 	require.False(t, s.IsException("Auto", "Autos"))
+	// Java UTF-16 length-1: multi-byte prefix + trailing s (byte-slice would break)
+	require.True(t, s.IsException("Müßigs", "Müßig"))
+	// trailing non-s/- is not exception
+	require.False(t, s.IsException("Müßige", "Müßig"))
 }
 
 func TestGermanMultitokenSpeller_IsExceptionStopsSuggestions(t *testing.T) {

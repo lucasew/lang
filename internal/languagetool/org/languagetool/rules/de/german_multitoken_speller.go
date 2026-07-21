@@ -3,6 +3,7 @@ package de
 import (
 	"os"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
 )
@@ -68,16 +69,24 @@ func PrepareLineForSpeller(line string) []string {
 var GermanMultitokenSpellerInstance = NewGermanMultitokenSpeller()
 
 // IsException ports GermanMultitokenSpeller.isException:
-// original without final 's' or '-' equals candidate.
+// original without final UTF-16 unit 's' or '-' equals candidate
+// (Java String.substring(0, length-1) / endsWith — UTF-16 indices).
 func (g *GermanMultitokenSpeller) IsException(original, candidate string) bool {
 	if original == "" || candidate == "" {
 		return false
 	}
-	if len(original) == len(candidate)+1 && original[:len(original)-1] == candidate {
-		last := original[len(original)-1]
-		return last == 's' || last == '-'
+	u := utf16.Encode([]rune(original))
+	if len(u) < 1 {
+		return false
 	}
-	return false
+	// Java: original.substring(0, original.length()-1).equals(candidate)
+	prefix := string(utf16.Decode(u[:len(u)-1]))
+	if prefix != candidate {
+		return false
+	}
+	// Java: original.endsWith("s") || original.endsWith("-")
+	last := u[len(u)-1]
+	return last == 's' || last == '-'
 }
 
 // LoadGermanMultitokenSpeller loads official resource files in Java constructor order.
