@@ -23,6 +23,15 @@ var reGenderGapChar = regexp.MustCompile(`^[\*:_/]$`)
 // afterAsterisk: in(nen)?|r|e
 var reAfterAsterisk = regexp.MustCompile(`^(?:in(?:nen)?|r|e)$`)
 
+// innenPattern1: in(nen)-[A-ZÖÄÜ][a-zöäüß-]+  e.g. innen-Zielgruppe
+var reInnenPattern1 = regexp.MustCompile(`^in(?:nen)?-[A-ZÖÄÜ][a-zöäüß-]+$`)
+
+// anythingDash: .*-  strip through last dash for Pattern1 last part
+var reAnythingDash = regexp.MustCompile(`.*-`)
+
+// innenPattern2: innen[a-zöäüß-]+  e.g. innenzielgruppe
+var reInnenPattern2 = regexp.MustCompile(`^innen[a-zöäüß-]+$`)
+
 // allAdjGruTags ports GermanTagger.allAdjGruTags (NOM/AKK/GEN/DAT × PLU/SIN × MAS/FEM/NEU × DEF/IND/SOL).
 var allAdjGruTags []string
 
@@ -170,7 +179,8 @@ func (t *GermanTagger) tagMitarbeitenden(word string) []*languagetool.AnalyzedTo
 	return readings
 }
 
-// genderGapTaggerTokens ports gender star token merging (jede*r etc.).
+// genderGapTaggerTokens ports gender star / :innen token merging
+// (jede*r, Werkstudent:innen-Zielgruppe, Werkstudent:innenzielgruppe).
 func (t *GermanTagger) genderGapTaggerTokens(sentenceTokens []string, idxPos int, word string) []tagging.TaggedWord {
 	if t == nil || idxPos+2 >= len(sentenceTokens) {
 		return nil
@@ -186,6 +196,23 @@ func (t *GermanTagger) genderGapTaggerTokens(sentenceTokens []string, idxPos int
 		out = append(out, t.TagWordExact(word)...)
 		out = append(out, t.TagWordExact(word+after)...)
 		return out
+	}
+	if reInnenPattern1.MatchString(after) {
+		// e.g. Werkstudent:innen-Zielgruppe → tags of 'Zielgruppe'
+		// Java: anythingDash.matcher(after).replaceFirst("")
+		lastPart := reAnythingDash.ReplaceAllString(after, "")
+		return append([]tagging.TaggedWord(nil), t.TagWordExact(lastPart)...)
+	}
+	if reInnenPattern2.MatchString(after) {
+		// e.g. Werkstudent:innenzielgruppe → uppercaseFirst(substring after last "innen")
+		idx := strings.LastIndex(after, "innen")
+		if idx < 0 {
+			return nil
+		}
+		// Java: substring(idx + "innen".length()) — "innen" is ASCII (5 UTF-16 units)
+		rest := after[idx+len("innen"):]
+		lastPart := tools.UppercaseFirstChar(rest)
+		return append([]tagging.TaggedWord(nil), t.TagWordExact(lastPart)...)
 	}
 	return nil
 }

@@ -137,7 +137,7 @@ func TestImperativeForm_WithoutRemovalStillTags(t *testing.T) {
 // Java Lookup: tag(singleton, ignoreCase=false); null POS → null return.
 func TestLookup_IgnoreCaseFalseAndNullOnUnknown(t *testing.T) {
 	wt := tagging.MapWordTagger{
-		"das": {tagging.NewTaggedWord("das", "ART:DEF:NOM:SIN:NEU")},
+		"das":  {tagging.NewTaggedWord("das", "ART:DEF:NOM:SIN:NEU")},
 		"Haus": {tagging.NewTaggedWord("Haus", "SUB:NOM:SIN:NEU")},
 	}
 	tagger := NewGermanTagger(wt)
@@ -154,4 +154,29 @@ func TestLookup_IgnoreCaseFalseAndNullOnUnknown(t *testing.T) {
 
 func stringsHasPrefix(s, p string) bool {
 	return len(s) >= len(p) && s[:len(p)] == p
+}
+
+// Twin: Werkstudent : innen-Zielgruppe → tags of Zielgruppe
+func TestGenderGap_InnenPattern1(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"Werkstudent": {tagging.NewTaggedWord("Werkstudent", "SUB:NOM:SIN:MAS")},
+		"Zielgruppe":  {tagging.NewTaggedWord("Zielgruppe", "SUB:NOM:SIN:FEM")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Werkstudent", ":", "innen-Zielgruppe"})
+	tags := posTagsOf(got[0])
+	require.Contains(t, tags, "SUB:NOM:SIN:FEM")
+	// also keeps word alone if tagged; pattern replaces taggerTokens entirely with lastPart tags
+	require.NotContains(t, tags, "SUB:NOM:SIN:MAS")
+}
+
+// Twin: Werkstudent : innenzielgruppe → UppercaseFirst after last "innen"
+func TestGenderGap_InnenPattern2(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"Zielgruppe": {tagging.NewTaggedWord("Zielgruppe", "SUB:NOM:SIN:FEM")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Werkstudent", ":", "innenzielgruppe"})
+	tags := posTagsOf(got[0])
+	require.Contains(t, tags, "SUB:NOM:SIN:FEM")
 }
