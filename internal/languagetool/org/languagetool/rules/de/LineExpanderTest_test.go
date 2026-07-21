@@ -19,10 +19,19 @@ func TestLineExpander_Expansion(t *testing.T) {
 	// multi-flag NSE
 	got = e.ExpandLine("x/NSE")
 	require.ElementsMatch(t, []string{"x", "xn", "xs", "xe"}, got)
+	// Java: x/NA
+	got = e.ExpandLine("x/NA")
+	require.ElementsMatch(t, []string{"x", "xn", "xe", "xer", "xes", "xen", "xem"}, got)
+	// Java: adjective ending in -e drops base duplicate from /A forms
+	got = e.ExpandLine("viertjüngste/A")
+	require.ElementsMatch(t, []string{"viertjüngste", "viertjüngster", "viertjüngstes", "viertjüngsten", "viertjüngstem"}, got)
 	require.Equal(t, []string{"Das"}, e.ExpandLine("Das  #foo"))
 	require.Equal(t, []string{"Tisch", "Tische"}, e.ExpandLine("Tisch/E  #bla #foo"))
 	require.ElementsMatch(t, []string{"Goethestraße", "Goethestr."}, e.ExpandLine("Goethestraße/T"))
 	require.ElementsMatch(t, []string{"Goethestrasse", "Goethestr."}, e.ExpandLine("Goethestrasse/T"))
+	// Java: multi-word street + ß/ss → Str.
+	require.ElementsMatch(t, []string{"Zwingenberger Straße", "Zwingenberger Str."}, e.ExpandLine("Zwingenberger Straße/T"))
+	require.ElementsMatch(t, []string{"Zwingenberger Strasse", "Zwingenberger Str."}, e.ExpandLine("Zwingenberger Strasse/T"))
 	// escaped slash is not a flag
 	require.Equal(t, []string{"Escape/N"}, e.ExpandLine(`Escape\/N`))
 	// gender gap
