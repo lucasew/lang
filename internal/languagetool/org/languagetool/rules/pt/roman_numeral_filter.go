@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // RomanNumeralFilter ports org.languagetool.rules.pt.RomanNumeralFilter.
@@ -39,7 +40,7 @@ func (f *RomanNumeralFilter) Suggest(arabicSource string) string {
 // ToRoman converts a decimal integer string to uppercase Roman numerals.
 // Supports 1..3999; out of range returns "" (Java Soros uses overlines above that).
 func ToRoman(arabic string) string {
-	arabic = strings.TrimSpace(arabic)
+	arabic = tools.JavaStringTrim(arabic)
 	n, err := strconv.Atoi(arabic)
 	if err != nil || n <= 0 || n > 3999 {
 		return ""

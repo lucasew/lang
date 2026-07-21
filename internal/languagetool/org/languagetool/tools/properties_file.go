@@ -15,6 +15,7 @@ import (
 //   - key=value and key:value (first unescaped = or :)
 //   - line continuation via trailing \ (Java Properties)
 //   - \uXXXX unicode escapes and common \\, \n, \t, \r, \f in values
+//
 // Does not invent keys; incomplete features (ISO-8859-1 default encoding path)
 // are explicit — LT ships UTF-8 bundles.
 func LoadJavaProperties(r io.Reader) (map[string]string, error) {
@@ -60,16 +61,16 @@ func LoadJavaProperties(r io.Reader) (map[string]string, error) {
 		key, val, ok := splitPropertiesKeyValue(line)
 		if !ok {
 			// key with empty value (no separator)
-			key = unescapeJavaProperties(strings.TrimSpace(line))
+			key = unescapeJavaProperties(JavaStringTrim(line))
 			if key == "" {
 				return nil, fmt.Errorf("line %d: empty key", lineNo)
 			}
 			out[key] = ""
 			continue
 		}
-		key = unescapeJavaProperties(strings.TrimSpace(key))
+		key = unescapeJavaProperties(JavaStringTrim(key))
 		// Java keeps value leading space after separator unless escaped; LT files use TrimSpace-friendly values
-		val = unescapeJavaProperties(strings.TrimSpace(val))
+		val = unescapeJavaProperties(JavaStringTrim(val))
 		if key == "" {
 			return nil, fmt.Errorf("line %d: empty key", lineNo)
 		}
@@ -80,13 +81,13 @@ func LoadJavaProperties(r io.Reader) (map[string]string, error) {
 		line := logical.String()
 		key, val, ok := splitPropertiesKeyValue(line)
 		if !ok {
-			key = unescapeJavaProperties(strings.TrimSpace(line))
+			key = unescapeJavaProperties(JavaStringTrim(line))
 			if key != "" {
 				out[key] = ""
 			}
 		} else {
-			key = unescapeJavaProperties(strings.TrimSpace(key))
-			val = unescapeJavaProperties(strings.TrimSpace(val))
+			key = unescapeJavaProperties(JavaStringTrim(key))
+			val = unescapeJavaProperties(JavaStringTrim(val))
 			if key != "" {
 				out[key] = val
 			}
@@ -187,7 +188,7 @@ func ValidateTranslationKeys(englishKeys, langProps map[string]string) []string 
 func ValidateTranslationsNotEmpty(props map[string]string) []string {
 	var empty []string
 	for k, v := range props {
-		if strings.TrimSpace(v) == "" {
+		if JavaStringTrim(v) == "" {
 			empty = append(empty, k)
 		}
 	}

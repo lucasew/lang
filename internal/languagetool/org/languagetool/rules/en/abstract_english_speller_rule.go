@@ -247,7 +247,7 @@ func (r *AbstractEnglishSpellerRule) GetAdditionalSpellingFileNames() []string {
 
 // IsDoNotSuggest reports whether the word is blocked from suggestions.
 func IsDoNotSuggest(word string) bool {
-	_, ok := EnglishDoNotSuggestWords[strings.ToLower(strings.TrimSpace(word))]
+	_, ok := EnglishDoNotSuggestWords[strings.ToLower(tools.JavaStringTrim(word))]
 	return ok
 }
 

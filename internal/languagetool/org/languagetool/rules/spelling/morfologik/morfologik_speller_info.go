@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // morfologik DictionaryAttribute property names (fsa.dict.speller.*).
@@ -76,7 +77,7 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 		s.ReplacementShort = short
 	}
 	if v, ok := meta[infoLocale]; ok {
-		s.ConversionLocale = strings.TrimSpace(v)
+		s.ConversionLocale = tools.JavaStringTrim(v)
 	}
 }
 
@@ -312,7 +313,7 @@ func readSpellerInfoFile(path string) (map[string]string, error) {
 	m := map[string]string{}
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -320,13 +321,13 @@ func readSpellerInfoFile(path string) (map[string]string, error) {
 		if eq <= 0 {
 			continue
 		}
-		m[strings.TrimSpace(line[:eq])] = strings.TrimSpace(line[eq+1:])
+		m[tools.JavaStringTrim(line[:eq])] = tools.JavaStringTrim(line[eq+1:])
 	}
 	return m, sc.Err()
 }
 
 func parseInfoBool(s string, def bool) bool {
-	s = strings.TrimSpace(strings.ToLower(s))
+	s = tools.JavaStringTrim(strings.ToLower(s))
 	if s == "" {
 		return def
 	}

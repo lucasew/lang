@@ -1,7 +1,7 @@
 package detector
 
 import (
-	"strings"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"unicode"
 	"unicode/utf16"
 )
@@ -105,7 +105,7 @@ func (d *NGramDetector) TopLanguage(text string) string {
 }
 
 func isDigitsOnlyText(text string) bool {
-	s := strings.TrimSpace(text)
+	s := tools.JavaStringTrim(text)
 	if s == "" {
 		return false
 	}

@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -150,7 +151,7 @@ func resolveSystemEntityIncludes(s, baseDir string) string {
 // readEntRelative resolves systemId relative to baseDir (grammar file directory).
 // Also tries RuleEntityResolver-style path under .../resource/ when relative fails.
 func readEntRelative(baseDir, systemId string) (string, error) {
-	systemId = strings.TrimSpace(systemId)
+	systemId = tools.JavaStringTrim(systemId)
 	if systemId == "" {
 		return "", os.ErrNotExist
 	}

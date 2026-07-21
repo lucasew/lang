@@ -113,7 +113,7 @@ func LoadWrongWordInContext(r io.Reader) ([]ContextWords, error) {
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
 		line := sc.Text()
-		if strings.TrimSpace(line) == "" || line[0] == '#' {
+		if tools.JavaStringTrim(line) == "" || line[0] == '#' {
 			continue
 		}
 		column := strings.Split(line, "\t")

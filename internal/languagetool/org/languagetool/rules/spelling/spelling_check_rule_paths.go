@@ -1,6 +1,10 @@
 package spelling
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
 
 // Path constants matching SpellingCheckRule private static finals
 // (prefix is language short code; GLOBAL_SPELLING_FILE has no lang prefix).
@@ -131,7 +135,7 @@ func (r *SpellingCheckRule) CollectExistingPlainTextSpellingFileNames() []string
 	}
 	var out []string
 	for _, name := range names {
-		name = strings.TrimSpace(name)
+		name = tools.JavaStringTrim(name)
 		if name == "" {
 			continue
 		}

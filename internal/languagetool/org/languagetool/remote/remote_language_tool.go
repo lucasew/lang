@@ -3,6 +3,7 @@ package remote
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"io"
 	"net/http"
 	"net/url"
@@ -158,14 +159,14 @@ func (r *RemoteLanguageTool) checkParams(params url.Values) (*RemoteResult, erro
 // apiJSON mirrors the public /v2/check response subset.
 type apiJSON struct {
 	Language struct {
-		Name string `json:"name"`
-		Code string `json:"code"`
+		Name             string `json:"name"`
+		Code             string `json:"code"`
 		DetectedLanguage *struct {
 			Name string `json:"name"`
 			Code string `json:"code"`
 		} `json:"detectedLanguage"`
 	} `json:"language"`
-	Matches []apiMatch `json:"matches"`
+	Matches  []apiMatch `json:"matches"`
 	Software struct {
 		Name      string `json:"name"`
 		Version   string `json:"version"`
@@ -443,7 +444,7 @@ func (r *RemoteLanguageTool) GetMaxTextLength() (int, error) {
 		return 0, fmt.Errorf("maxtextlength HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
 	}
 	var n int
-	if _, err := fmt.Sscanf(strings.TrimSpace(string(body)), "%d", &n); err != nil {
+	if _, err := fmt.Sscanf(tools.JavaStringTrim(string(body)), "%d", &n); err != nil {
 		return 0, err
 	}
 	return n, nil

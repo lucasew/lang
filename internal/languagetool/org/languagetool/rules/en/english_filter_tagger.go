@@ -1,13 +1,13 @@
 package en
 
 import (
-	"strings"
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	entok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/en"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // english_filter_tagger wires official english.dict into FindSuggestionsFilter
@@ -21,7 +21,7 @@ var (
 // WireEnglishFilterTagger opens CFSA2 english.dict for filter POS probes
 // (Java EnglishTagger.INSTANCE: dict + manual added/removed).
 func WireEnglishFilterTagger(dictPath string) bool {
-	if strings.TrimSpace(dictPath) == "" {
+	if tools.JavaStringTrim(dictPath) == "" {
 		return false
 	}
 	d, err := atticmorfo.OpenDictionary(dictPath)

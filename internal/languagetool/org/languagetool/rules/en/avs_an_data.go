@@ -3,6 +3,7 @@ package en
 import (
 	"bufio"
 	"embed"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"strings"
 	"sync"
 )
@@ -11,8 +12,8 @@ import (
 var avsAnFS embed.FS
 
 var (
-	avsAnOnce     sync.Once
-	wordsRequireA map[string]bool
+	avsAnOnce      sync.Once
+	wordsRequireA  map[string]bool
 	wordsRequireAn map[string]bool
 )
 
@@ -32,7 +33,7 @@ func loadDetWords(path string) map[string]bool {
 	set := make(map[string]bool)
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || line[0] == '#' {
 			continue
 		}

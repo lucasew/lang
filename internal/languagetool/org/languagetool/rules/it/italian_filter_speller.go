@@ -1,10 +1,10 @@
 package it
 
 import (
-	"strings"
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // italian_filter_speller wires the official Italian Morfologik speller dict into
@@ -19,7 +19,7 @@ var (
 // WireItalianFilterSpeller opens a CFSA2/FSA speller dictionary for filter/speller hooks.
 // Returns false if path cannot be opened (speller stays fail-closed).
 func WireItalianFilterSpeller(dictPath string) bool {
-	if strings.TrimSpace(dictPath) == "" {
+	if tools.JavaStringTrim(dictPath) == "" {
 		return false
 	}
 	d, err := atticmorfo.OpenDictionary(dictPath)

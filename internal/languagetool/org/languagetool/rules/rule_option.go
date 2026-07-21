@@ -118,7 +118,7 @@ func StringToObjects(s string) ([]any, error) {
 	parts := strings.Split(s, ";")
 	out := make([]any, len(parts))
 	for i, p := range parts {
-		o, err := StringToObject(strings.TrimSpace(p))
+		o, err := StringToObject(p)
 		if err != nil {
 			return nil, err
 		}

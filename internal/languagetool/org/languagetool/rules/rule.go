@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Rule is the minimal interface for sentence-level language rules
@@ -132,7 +133,7 @@ func (r *BaseRule) AddTags(tagNames []string) {
 		return
 	}
 	for _, name := range tagNames {
-		name = strings.TrimSpace(name)
+		name = tools.JavaStringTrim(name)
 		if name == "" {
 			continue
 		}

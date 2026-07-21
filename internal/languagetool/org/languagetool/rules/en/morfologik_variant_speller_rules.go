@@ -6,6 +6,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Variant speller rule IDs and dictionary paths (Morfologik*SpellerRule ports).
@@ -194,7 +195,7 @@ func NewMorfologikSouthAfricanSpellerRuleWithUser(userConfig *languagetool.UserC
 func LoadOtherVariantMap(lines []string, column int) map[string]string {
 	m := map[string]string{}
 	for _, line := range lines {
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -206,7 +207,7 @@ func LoadOtherVariantMap(lines []string, column int) map[string]string {
 		} else {
 			continue
 		}
-		a, b = strings.TrimSpace(a), strings.TrimSpace(b)
+		a, b = tools.JavaStringTrim(a), tools.JavaStringTrim(b)
 		if column == 1 {
 			a, b = b, a
 		}

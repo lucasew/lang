@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // english_variant_wordlist ports AbstractEnglishSpellerRule.loadWordlist for en/en-US-GB.txt.
@@ -44,7 +45,7 @@ func LoadUSGBVariantMap(column int) map[string]string {
 		return m
 	}
 	for _, line := range lines {
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}
@@ -53,13 +54,13 @@ func LoadUSGBVariantMap(column int) map[string]string {
 			// Java throws; skip malformed lines (fail-closed partial)
 			continue
 		}
-		a, b := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+		a, b := tools.JavaStringTrim(parts[0]), tools.JavaStringTrim(parts[1])
 		if a == "" || b == "" {
 			continue
 		}
 		// Java: words.put(parts[column].toLowerCase(), parts[column == 1 ? 0 : 1]);
 		key := strings.ToLower(parts[column])
-		val := strings.TrimSpace(parts[1-column])
+		val := tools.JavaStringTrim(parts[1-column])
 		m[key] = val
 	}
 	usGbMaps[column] = m

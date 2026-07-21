@@ -86,12 +86,12 @@ func (r *AbstractSimpleReplaceRule2) LoadSimpleReplaceRule2Data(reader io.Reader
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || line[0] == '#' {
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line == "" {
 			continue
@@ -99,9 +99,9 @@ func (r *AbstractSimpleReplaceRule2) LoadSimpleReplaceRule2Data(reader io.Reader
 		if r.CheckingCase {
 			parts := strings.SplitN(line, "=", 2)
 			if len(parts) >= 1 {
-				line = strings.ToLower(strings.TrimSpace(parts[0])) + "=" + strings.TrimSpace(parts[0])
+				line = strings.ToLower(tools.JavaStringTrim(parts[0])) + "=" + tools.JavaStringTrim(parts[0])
 				if len(parts) == 2 {
-					line = line + "\t" + strings.TrimSpace(parts[1])
+					line = line + "\t" + tools.JavaStringTrim(parts[1])
 				}
 			}
 		}

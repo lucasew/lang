@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // PortugueseUnitConversionRule ports org.languagetool.rules.pt.PortugueseUnitConversionRule.
@@ -138,7 +139,7 @@ func (r *PortugueseUnitConversionRule) Match(sentence *languagetool.AnalyzedSent
 
 // parsePTUnitNumber: Java Locale.GERMANY thousands '.' and decimal ','.
 func parsePTUnitNumber(s string) (float64, error) {
-	s = strings.TrimSpace(s)
+	s = tools.JavaStringTrim(s)
 	if strings.Contains(s, ",") && strings.Contains(s, ".") {
 		s = strings.ReplaceAll(s, ".", "")
 		s = strings.ReplaceAll(s, ",", ".")

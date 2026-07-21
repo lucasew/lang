@@ -1,10 +1,9 @@
 package patterns
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // RegisterFalseFriendsFile loads official false-friend pattern rules for textLang/motherLang
@@ -23,7 +22,7 @@ func RegisterFalseFriendsFile(lt *languagetool.JLanguageTool, path, textLang, mo
 
 // RegisterFalseFriendsXML registers false-friend rules from an XML string.
 func RegisterFalseFriendsXML(lt *languagetool.JLanguageTool, xmlStr, textLang, motherLang string) (int, error) {
-	if lt == nil || strings.TrimSpace(xmlStr) == "" || motherLang == "" {
+	if lt == nil || tools.JavaStringTrim(xmlStr) == "" || motherLang == "" {
 		return 0, nil
 	}
 	if textLang == "" {

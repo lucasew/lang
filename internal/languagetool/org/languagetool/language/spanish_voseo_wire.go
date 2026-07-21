@@ -3,16 +3,16 @@ package language
 import (
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // WireSpanishVoseoWordTagger opens a Morfologik POS dictionary for
 // Spanish.filterRuleMatches voseo POS checks (Java getTagger().tag).
 // Returns false if path empty or open fails — leave empty MapWordTagger (fail-closed).
 func WireSpanishVoseoWordTagger(dictPath string) bool {
-	if strings.TrimSpace(dictPath) == "" {
+	if tools.JavaStringTrim(dictPath) == "" {
 		return false
 	}
 	mt := tagging.OpenMorfologikTagger(dictPath)

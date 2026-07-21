@@ -2,6 +2,7 @@ package translation
 
 import (
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"strings"
 )
 
@@ -18,8 +19,8 @@ func NewDataSource(licenseURL, sourceName, sourceURL string) DataSource {
 
 // TranslationEntry ports org.languagetool.rules.translation.TranslationEntry.
 type TranslationEntry struct {
-	L1       []string
-	L2       []string
+	L1        []string
+	L2        []string
 	ItemCount int
 }
 
@@ -31,8 +32,8 @@ func NewTranslationEntry(l1, l2 []string, itemCount int) TranslationEntry {
 	}
 }
 
-func (e TranslationEntry) GetL1() []string  { return append([]string(nil), e.L1...) }
-func (e TranslationEntry) GetL2() []string  { return append([]string(nil), e.L2...) }
+func (e TranslationEntry) GetL1() []string   { return append([]string(nil), e.L1...) }
+func (e TranslationEntry) GetL2() []string   { return append([]string(nil), e.L2...) }
 func (e TranslationEntry) GetItemCount() int { return e.ItemCount }
 
 func (e TranslationEntry) String() string {
@@ -116,17 +117,17 @@ func (m *MapTranslator) GetMessage() string {
 
 func (m *MapTranslator) CleanTranslationForReplace(s, _ string) string {
 	// strip trailing parenthetical notes: "foo (bar)" → "foo"
-	s = strings.TrimSpace(s)
+	s = tools.JavaStringTrim(s)
 	if i := strings.Index(s, " ("); i > 0 && strings.HasSuffix(s, ")") {
-		return strings.TrimSpace(s[:i])
+		return tools.JavaStringTrim(s[:i])
 	}
 	return s
 }
 
 func (m *MapTranslator) GetTranslationSuffix(s string) string {
-	s = strings.TrimSpace(s)
+	s = tools.JavaStringTrim(s)
 	if i := strings.Index(s, " ("); i > 0 && strings.HasSuffix(s, ")") {
-		return strings.TrimSpace(s[i:])
+		return tools.JavaStringTrim(s[i:])
 	}
 	return ""
 }

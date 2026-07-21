@@ -1,11 +1,11 @@
 package identifier
 
 import (
-	"strings"
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier/detector"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DefaultLanguageIdentifier ports
@@ -66,7 +66,7 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 	if d == nil {
 		return nil
 	}
-	text := strings.TrimSpace(cleanText)
+	text := tools.JavaStringTrim(cleanText)
 	if text == "" {
 		return nil
 	}

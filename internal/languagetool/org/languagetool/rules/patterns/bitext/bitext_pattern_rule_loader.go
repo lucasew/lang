@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // BitextPatternRuleLoader ports patterns.bitext.BitextPatternRuleLoader for a simplified XML.
@@ -53,7 +54,7 @@ func patternRuleFrom(id, name string, p bprPattern, message string) *patterns.Pa
 	}
 	var tokens []*patterns.PatternToken
 	for _, t := range p.Tokens {
-		content := strings.TrimSpace(t.Content)
+		content := tools.JavaStringTrim(t.Content)
 		re := strings.EqualFold(t.Regexp, "yes")
 		tokens = append(tokens, patterns.NewPatternToken(content, false, re, false))
 	}

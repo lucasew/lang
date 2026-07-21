@@ -3,6 +3,7 @@ package pt
 import (
 	"bufio"
 	"embed"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"strings"
 	"sync"
 )
@@ -45,7 +46,7 @@ func LoadBrazilianToponymMap() *BrazilianToponymMap {
 			var list []string
 			sc := bufio.NewScanner(f)
 			for sc.Scan() {
-				line := strings.TrimSpace(sc.Text())
+				line := tools.JavaStringTrim(sc.Text())
 				if line == "" {
 					continue
 				}

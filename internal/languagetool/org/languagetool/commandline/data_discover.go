@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // WalkUpFind walks from start (or cwd) toward root looking for relPath.
@@ -620,7 +621,7 @@ func DiscoverLanguagePatternRuleFiles(opts *CommandLineOptions, lang string) []s
 
 // languageVariantCode returns the full short code with country when present (e.g. en-US).
 func languageVariantCode(lang string) string {
-	lang = strings.TrimSpace(lang)
+	lang = tools.JavaStringTrim(lang)
 	if lang == "" {
 		return ""
 	}

@@ -147,7 +147,7 @@ func (r *TopoReplaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rule
 			replacements := strings.Split(crtMatch, "|")
 			clean := make([]string, 0, len(replacements))
 			for _, rep := range replacements {
-				rep = strings.TrimSpace(rep)
+				rep = tools.JavaStringTrim(rep)
 				if rep != "" {
 					clean = append(clean, rep)
 				}

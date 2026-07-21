@@ -51,7 +51,7 @@ func NewMorfologikMultiSpellerFromPaths(binaryDict string, plainTextDicts []stri
 		return nil, err
 	}
 	for _, p := range plainTextDicts {
-		if strings.TrimSpace(p) == "" {
+		if tools.JavaStringTrim(p) == "" {
 			return nil, fmt.Errorf("empty plain-text dictionary path")
 		}
 	}
@@ -61,7 +61,7 @@ func NewMorfologikMultiSpellerFromPaths(binaryDict string, plainTextDicts []stri
 
 // ValidateMultiSpellerDictPath rejects non-.dict names (e.g. .dict.README) and empty paths.
 func ValidateMultiSpellerDictPath(path string) error {
-	if strings.TrimSpace(path) == "" {
+	if tools.JavaStringTrim(path) == "" {
 		return fmt.Errorf("dictionary path is empty")
 	}
 	if strings.HasSuffix(path, ".README") || strings.Contains(path, ".dict.README") {

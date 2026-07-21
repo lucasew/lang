@@ -1,6 +1,7 @@
 package translation
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"regexp"
 	"strings"
 )
@@ -26,7 +27,7 @@ func SplitAtSemicolon(s string) []string {
 	var merged []string
 	merging := false
 	for _, item := range parts {
-		item = strings.TrimSpace(item)
+		item = tools.JavaStringTrim(item)
 		openPos := strings.IndexByte(item, '{')
 		closePos := strings.IndexByte(item, '}')
 		if merging {
@@ -70,7 +71,7 @@ func CleanTranslationForReplace(s, prevWord string) string {
 	clean = strings.ReplaceAll(clean, "<> ", "")
 	clean = reAngle.ReplaceAllString(clean, "")
 	clean = reSpaces.ReplaceAllString(clean, " ")
-	clean = strings.TrimSpace(clean)
+	clean = tools.JavaStringTrim(clean)
 	if prevWord == "to" && strings.HasPrefix(clean, "to ") {
 		return clean[3:]
 	}
@@ -219,5 +220,5 @@ func GetTranslationSuffix(s string) string {
 			sb.WriteByte(c)
 		}
 	}
-	return strings.TrimSpace(sb.String())
+	return tools.JavaStringTrim(sb.String())
 }

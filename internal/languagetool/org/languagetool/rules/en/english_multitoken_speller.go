@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // EnglishMultitokenSpeller ports org.languagetool.rules.en.EnglishMultitokenSpeller.
@@ -32,9 +33,9 @@ func PrepareLineForSpeller(line string) []string {
 		return []string{""}
 	}
 	formTag := strings.Split(parts[0], "\t")
-	form := strings.TrimSpace(formTag[0])
+	form := tools.JavaStringTrim(formTag[0])
 	if len(formTag) > 1 {
-		tag := strings.TrimSpace(formTag[1])
+		tag := tools.JavaStringTrim(formTag[1])
 		if strings.HasPrefix(tag, "NN") || strings.HasPrefix(tag, "JJ") {
 			return []string{form}
 		}
@@ -48,7 +49,7 @@ func PrepareLineForSpeller(line string) []string {
 func LoadEnglishMultitokenSpeller(multiwordsPath, spellingGlobalPath string) (*EnglishMultitokenSpeller, error) {
 	s := NewEnglishMultitokenSpeller()
 	for _, p := range []string{multiwordsPath, spellingGlobalPath} {
-		if strings.TrimSpace(p) == "" {
+		if tools.JavaStringTrim(p) == "" {
 			continue
 		}
 		f, err := os.Open(p)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // PunctuationMarkAtParagraphEnd ports org.languagetool.rules.PunctuationMarkAtParagraphEnd.
@@ -113,7 +114,7 @@ func isParaWord(tk *languagetool.AnalyzedTokenReadings) bool {
 }
 
 func isParaNumeric(s string) bool {
-	return paraEndNumericRE.MatchString(strings.TrimSpace(s))
+	return paraEndNumericRE.MatchString(tools.JavaStringTrim(s))
 }
 
 // MatchList ports match(List<AnalyzedSentence>) bug-for-bug with Java control flow.

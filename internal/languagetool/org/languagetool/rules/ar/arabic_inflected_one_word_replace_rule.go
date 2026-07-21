@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/inflected_one_word.txt
@@ -31,12 +32,12 @@ func parseARInflectedMap() map[string]rules.SuggestionWithMessage {
 	}
 	out := map[string]rules.SuggestionWithMessage{}
 	for _, line := range strings.Split(string(b), "\n") {
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line == "" {
 			continue
@@ -50,8 +51,8 @@ func parseARInflectedMap() map[string]rules.SuggestionWithMessage {
 		if len(kv) < 2 {
 			continue
 		}
-		wrong := strings.TrimSpace(kv[0])
-		sug := strings.TrimSpace(kv[1])
+		wrong := tools.JavaStringTrim(kv[0])
+		sug := tools.JavaStringTrim(kv[1])
 		out[wrong] = rules.SuggestionWithMessage{Suggestion: sug, Message: msg}
 	}
 	return out
@@ -147,7 +148,7 @@ func (r *ArabicInflectedOneWordReplaceRule) Match(sentence *languagetool.Analyze
 			sugMsg := swm.Message
 			var forms []string
 			for _, prop := range propositions {
-				prop = strings.TrimSpace(prop)
+				prop = tools.JavaStringTrim(prop)
 				if prop == "" {
 					continue
 				}

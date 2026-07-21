@@ -3,6 +3,7 @@ package gui
 import (
 	"bufio"
 	"fmt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"os"
 	"path/filepath"
 	"sort"
@@ -123,7 +124,7 @@ func loadAllSections(path string) (map[string]*sectionData, error) {
 	sc := bufio.NewScanner(f)
 	var cur string
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -186,7 +187,7 @@ func splitCSV(s string) []string {
 	parts := strings.Split(s, ",")
 	var out []string
 	for _, p := range parts {
-		p = strings.TrimSpace(p)
+		p = tools.JavaStringTrim(p)
 		if p != "" {
 			out = append(out, p)
 		}

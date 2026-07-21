@@ -2,11 +2,11 @@ package pt
 
 import (
 	"os"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // PortugueseMultitokenSpeller ports org.languagetool.rules.pt.PortugueseMultitokenSpeller.
@@ -37,7 +37,7 @@ var PortugueseMultitokenSpellerInstance = NewPortugueseMultitokenSpeller()
 func LoadPortugueseMultitokenSpeller(paths ...string) (*PortugueseMultitokenSpeller, error) {
 	s := NewPortugueseMultitokenSpeller()
 	for _, p := range paths {
-		if strings.TrimSpace(p) == "" {
+		if tools.JavaStringTrim(p) == "" {
 			continue
 		}
 		f, err := os.Open(p)

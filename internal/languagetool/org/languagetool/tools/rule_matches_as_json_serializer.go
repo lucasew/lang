@@ -78,7 +78,7 @@ type ReplacementJSON struct {
 }
 
 type RuleJSON struct {
-	ID          string        `json:"id"`
+	ID string `json:"id"`
 	// SubID ports Rule.getSubId (Java writeRule when non-null).
 	SubID string `json:"subId,omitempty"`
 	// SourceFile ports Rule.getSourceFile basename (Java writeRule when non-null and not compact).
@@ -232,7 +232,7 @@ func cleanSuggestion(s string) string {
 // sourceFileBasename ports Java ANYTHING_SLASH_PATTERN.matcher(path).replaceFirst("")
 // (strip directories; keep last path segment).
 func sourceFileBasename(path string) string {
-	path = strings.TrimSpace(path)
+	path = JavaStringTrim(path)
 	if path == "" {
 		return ""
 	}

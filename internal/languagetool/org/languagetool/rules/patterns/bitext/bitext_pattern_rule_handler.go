@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // BitextPatternRuleHandler ports
@@ -95,7 +96,7 @@ func tokensToPatternRule(id, name, lang string, tokens []bphToken, message strin
 	}
 	var pts []*patterns.PatternToken
 	for _, t := range tokens {
-		pts = append(pts, patterns.NewPatternToken(strings.TrimSpace(t.Content), false, strings.EqualFold(t.Regexp, "yes"), false))
+		pts = append(pts, patterns.NewPatternToken(tools.JavaStringTrim(t.Content), false, strings.EqualFold(t.Regexp, "yes"), false))
 	}
 	if message == "" {
 		message = name

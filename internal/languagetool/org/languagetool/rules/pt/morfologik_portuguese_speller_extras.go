@@ -42,13 +42,13 @@ func loadWordSetLower(rel string) map[string]struct{} {
 	defer f.Close()
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		line = strings.TrimPrefix(line, "\ufeff")
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line != "" {
 			out[strings.ToLower(line)] = struct{}{}
@@ -80,7 +80,7 @@ func getAbbreviations() map[string]struct{} {
 		defer f.Close()
 		sc := bufio.NewScanner(f)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
+			line := tools.JavaStringTrim(sc.Text())
 			line = strings.TrimPrefix(line, "\ufeff")
 			if line == "" || strings.HasPrefix(line, "#") {
 				continue
@@ -117,7 +117,7 @@ func loadDialectAlternationMapping(variantCode string) map[string]string {
 	out := map[string]string{}
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := tools.JavaStringTrim(sc.Text())
 		line = strings.TrimPrefix(line, "\ufeff")
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
@@ -126,7 +126,7 @@ func loadDialectAlternationMapping(variantCode string) map[string]string {
 		if len(parts) != 2 {
 			continue
 		}
-		a, b := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+		a, b := tools.JavaStringTrim(parts[0]), tools.JavaStringTrim(parts[1])
 		if col == 1 {
 			out[strings.ToLower(b)] = a
 		} else {
@@ -202,7 +202,6 @@ func matchSurface(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) strin
 	// Java RuleMatch FromPos/ToPos are UTF-16 code units (String.substring).
 	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
-
 
 func (r *MorfologikPortugueseSpellerRule) dialectAlternativeSurface(word string) string {
 	if r == nil || r.dialectMap == nil {

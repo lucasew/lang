@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/bitext"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // GetBitextRules ports Tools.getBitextRules(source, target, externalFile).
@@ -23,7 +24,7 @@ func GetBitextRules(sourceLang, targetLang string, bitextXML, falseFriendsXML, e
 	var out []bitext.BitextRule
 
 	// 1) target bitext.xml
-	if strings.TrimSpace(bitextXML) != "" {
+	if tools.JavaStringTrim(bitextXML) != "" {
 		loader := NewBitextPatternRuleLoader()
 		rules, err := loader.GetRules(strings.NewReader(bitextXML), targetLang+"/bitext.xml")
 		if err != nil {
@@ -37,7 +38,7 @@ func GetBitextRules(sourceLang, targetLang string, bitextXML, falseFriendsXML, e
 	}
 
 	// 2) external bitext file
-	if strings.TrimSpace(externalBitext) != "" {
+	if tools.JavaStringTrim(externalBitext) != "" {
 		loader := NewBitextPatternRuleLoader()
 		rules, err := loader.GetRules(strings.NewReader(externalBitext), "external-bitext.xml")
 		if err != nil {
@@ -51,7 +52,7 @@ func GetBitextRules(sourceLang, targetLang string, bitextXML, falseFriendsXML, e
 	}
 
 	// 3) false friends as bitext
-	if strings.TrimSpace(falseFriendsXML) != "" {
+	if tools.JavaStringTrim(falseFriendsXML) != "" {
 		ff := NewFalseFriendsAsBitextLoader()
 		rules, err := ff.GetFalseFriendsAsBitext(
 			strings.NewReader(falseFriendsXML),
@@ -101,4 +102,3 @@ func LoadGetBitextRulesFromPaths(sourceLang, targetLang, bitextXMLPath, falseFri
 	}
 	return GetBitextRules(sourceLang, targetLang, bitextXML, ff, ext)
 }
-

@@ -85,7 +85,7 @@ func rewriteMatchTags(msg string, ruleSuppressMisspelled bool) (string, []*Match
 			body = msg[loc[4]:loc[5]]
 		}
 		attrs := parseXMLAttrs(attrsStr)
-		no := strings.TrimSpace(attrs["no"])
+		no := tools.JavaStringTrim(attrs["no"])
 		if no == "" {
 			continue // leave unparseable tag as-is by not consuming
 		}
@@ -93,7 +93,7 @@ func rewriteMatchTags(msg string, ruleSuppressMisspelled bool) (string, []*Match
 		if n, err := strconv.Atoi(no); err == nil {
 			m.SetTokenRef(n)
 		}
-		if body = strings.TrimSpace(body); body != "" {
+		if body = tools.JavaStringTrim(body); body != "" {
 			m.SetLemmaString(body)
 		}
 		inSug := isInsideSuggestion(msg, fullStart)
@@ -545,5 +545,3 @@ func combineLists(input [][]string, output []string, r int, langCode string) []s
 	}
 	return out
 }
-
-
