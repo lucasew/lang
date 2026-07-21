@@ -62,6 +62,23 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 				readings = append(readings, taggedToToken(word, tw))
 			}
 		}
+		// Java: walkin'/doin' → walking/doing style (endsWith "in'")
+		if len(readings) == 0 && strings.HasSuffix(lower, "in'") {
+			corrected := w
+			if isAllUpper {
+				corrected = w[:len(w)-1] + "G"
+			} else {
+				corrected = w[:len(w)-1] + "g"
+			}
+			for _, tw := range t.TagWord(corrected) {
+				readings = append(readings, taggedToToken(word, tw))
+			}
+			if !isLower && !isMixed {
+				for _, tw := range t.TagWord(strings.ToLower(corrected)) {
+					readings = append(readings, taggedToToken(word, tw))
+				}
+			}
+		}
 		if len(readings) == 0 {
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
