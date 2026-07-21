@@ -207,6 +207,14 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 		fsaSp := atticmorfo.NewSpellerFSA(d, maxEdit)
 		fsaSp.IgnoreDiacritics = s.IgnoreDiacritics
 		fsaSp.EquivalentChars = s.EquivalentChars
+		// Load short replacement pairs into HMatrix anyToOne/anyToTwo maps
+		if len(s.ReplacementShort) > 0 {
+			pairs := make([]struct{ From, To string }, len(s.ReplacementShort))
+			for i, p := range s.ReplacementShort {
+				pairs[i].From, pairs[i].To = p.From, p.To
+			}
+			fsaSp.LoadReplacementPairs(pairs)
+		}
 		for _, e := range fsaSp.FindReplacementCandidates(wordChecked) {
 			w := s.applyOutputConversion(e.Word)
 			if w == "" || w == word {

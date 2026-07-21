@@ -12,8 +12,14 @@ type CandidateData struct {
 	Distance     int // distance*FREQ_RANGES + FREQ_RANGES - freq - 1
 }
 
+// replPattern ports Speller.Pattern (source chars on the misspelled word side).
+type replPattern struct {
+	chars        []rune
+	startAnchor  bool
+	endAnchor    bool
+}
+
 // SpellerFSA ports Speller.findReplacementCandidates FSA walk over a Dictionary.
-// General Oflazer path first; anyToOne/anyToTwo replacement maps optional later.
 type SpellerFSA struct {
 	*SpellerED
 	Dict *Dictionary
@@ -21,6 +27,10 @@ type SpellerFSA struct {
 	containsSeparators bool
 	// candidate buffer (Java char[] candidate)
 	candBuf []rune
+	// anyToOne: dict 1-char target → patterns matching misspelled multi-char source
+	anyToOne map[rune][]replPattern
+	// anyToTwo: dict 2-char target string → patterns matching misspelled source
+	anyToTwo map[string][]replPattern
 }
 
 // NewSpellerFSA builds a Speller-like FSA walker for dict with max edit distance.
@@ -33,6 +43,44 @@ func NewSpellerFSA(dict *Dictionary, editDistance int) *SpellerFSA {
 		Dict:               dict,
 		containsSeparators: true,
 		candBuf:            make([]rune, MaxWordLength),
+		anyToOne:           map[rune][]replPattern{},
+		anyToTwo:           map[string][]replPattern{},
+	}
+}
+
+// LoadReplacementPairs ports Speller.createReplacementsMaps for anyToOne/anyToTwo.
+// pairs are (from=misspelled side, to=dictionary side) as in fsa.dict.speller.replacement-pairs.
+// from may carry ^ / $ anchors.
+func (s *SpellerFSA) LoadReplacementPairs(pairs []struct{ From, To string }) {
+	if s == nil {
+		return
+	}
+	s.anyToOne = map[rune][]replPattern{}
+	s.anyToTwo = map[string][]replPattern{}
+	for _, p := range pairs {
+		rawKey := p.From
+		target := p.To
+		if rawKey == "" || target == "" {
+			continue
+		}
+		startA := len(rawKey) > 0 && rawKey[0] == '^'
+		endA := len(rawKey) > 0 && rawKey[len(rawKey)-1] == '$'
+		stripped := rawKey
+		if startA {
+			stripped = stripped[1:]
+		}
+		if endA && len(stripped) > 0 {
+			stripped = stripped[:len(stripped)-1]
+		}
+		pat := replPattern{chars: []rune(stripped), startAnchor: startA, endAnchor: endA}
+		tr := []rune(target)
+		if len(tr) == 1 {
+			s.anyToOne[tr[0]] = append(s.anyToOne[tr[0]], pat)
+		} else if len(tr) == 2 {
+			key := string(tr)
+			s.anyToTwo[key] = append(s.anyToTwo[key], pat)
+		}
+		// longer targets handled by getAllReplacements outside FSA walk
 	}
 }
 
@@ -64,7 +112,7 @@ func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
 	s.candLen = MaxWordLength
 
 	var candidates []CandidateData
-	s.findRepl(&candidates, 0, s.Dict.FSA.RootNode(), nil, 0, 0)
+	s.findRepl(&candidates, 0, s.Dict.FSA.RootNode(), nil, 0, 0, -1, "", 0)
 
 	// sort by weighted distance, dedupe words (Java Collections.sort + first occurrence)
 	sort.SliceStable(candidates, func(i, j int) bool {
@@ -85,9 +133,17 @@ func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
 	return out
 }
 
-// findRepl ports Speller.findRepl general branch (no anyToOne/anyToTwo yet).
+// findRepl ports Speller.findRepl (anyToTwo, anyToOne, general).
 // Multi-byte labels: accumulate prevBytes until a complete UTF-8 rune decodes.
-func (s *SpellerFSA) findRepl(candidates *[]CandidateData, depth, node int, prevBytes []byte, wordIndex, candIndex int) {
+func (s *SpellerFSA) findRepl(
+	candidates *[]CandidateData,
+	depth, node int,
+	prevBytes []byte,
+	wordIndex, candIndex int,
+	minLookbackWordIndex int,
+	lastAnyToOneSource string,
+	lastAnyToOneTarget rune,
+) {
 	if s == nil || s.Dict == nil || s.Dict.FSA == nil {
 		return
 	}
@@ -104,14 +160,61 @@ func (s *SpellerFSA) findRepl(candidates *[]CandidateData, depth, node int, prev
 		if !complete {
 			// incomplete multi-byte sequence: descend without advancing depth/wordIndex
 			if !fsa.isArcTerminal(arc) {
-				s.findRepl(candidates, depth, fsa.endNode(arc), buf, wordIndex, candIndex)
+				s.findRepl(candidates, depth, fsa.endNode(arc), buf, wordIndex, candIndex,
+					minLookbackWordIndex, lastAnyToOneSource, lastAnyToOneTarget)
 			}
 			continue
 		}
 		// decoded one character into candidate[candIndex]
 		s.candBuf[candIndex] = ch
 
-		// general Oflazer path
+		// --- anyToTwo ---
+		if lengthRepl := s.matchAnyToTwo(wordIndex, candIndex, minLookbackWordIndex, lastAnyToOneSource, lastAnyToOneTarget); lengthRepl > 0 {
+			if s.isEndOfCandidate(arc, wordIndex) {
+				dist := s.hMatrix.Get(depth-1, depth-1)
+				if dist <= s.effectEditDistance {
+					if extra := absInt(s.wordLen - 1 - (wordIndex + lengthRepl - 2)); extra > 0 {
+						dist = dist + extra
+					}
+					if dist <= s.effectEditDistance {
+						w := string(s.candBuf[:candIndex+1])
+						*candidates = append(*candidates, s.makeCandidate(w, dist))
+					}
+				}
+			}
+			if s.isArcNotTerminal(arc, candIndex) {
+				x := s.hMatrix.Get(depth, depth)
+				s.hMatrix.Set(depth, depth, s.hMatrix.Get(depth-1, depth-1))
+				s.findRepl(candidates, max0(depth), fsa.endNode(arc), nil,
+					wordIndex+lengthRepl-1, candIndex+1,
+					minLookbackWordIndex, lastAnyToOneSource, lastAnyToOneTarget)
+				s.hMatrix.Set(depth, depth, x)
+			}
+		}
+
+		// --- anyToOne ---
+		if lengthRepl := s.matchAnyToOne(wordIndex, candIndex); lengthRepl > 0 {
+			if s.isEndOfCandidate(arc, wordIndex) {
+				dist := s.hMatrix.Get(depth, depth)
+				if dist <= s.effectEditDistance {
+					if extra := absInt(s.wordLen - 1 - (wordIndex + lengthRepl - 1)); extra > 0 {
+						dist = dist + extra
+					}
+					if dist <= s.effectEditDistance {
+						w := string(s.candBuf[:candIndex+1])
+						*candidates = append(*candidates, s.makeCandidate(w, dist))
+					}
+				}
+			}
+			if s.isArcNotTerminal(arc, candIndex) {
+				newSrc := string(s.wordProcessed[wordIndex : wordIndex+lengthRepl])
+				s.findRepl(candidates, depth, fsa.endNode(arc), nil,
+					wordIndex+lengthRepl, candIndex+1,
+					wordIndex+lengthRepl, newSrc, s.candBuf[candIndex])
+			}
+		}
+
+		// --- general Oflazer path ---
 		if s.Cuted(depth, wordIndex, candIndex) <= s.effectEditDistance {
 			if s.isEndOfCandidate(arc, wordIndex) {
 				dist := s.Ed(s.wordLen-1-(wordIndex-depth), depth, s.wordLen-1, candIndex)
@@ -121,10 +224,88 @@ func (s *SpellerFSA) findRepl(candidates *[]CandidateData, depth, node int, prev
 				}
 			}
 			if s.isArcNotTerminal(arc, candIndex) {
-				s.findRepl(candidates, depth+1, fsa.endNode(arc), nil, wordIndex+1, candIndex+1)
+				s.findRepl(candidates, depth+1, fsa.endNode(arc), nil,
+					wordIndex+1, candIndex+1,
+					minLookbackWordIndex, lastAnyToOneSource, lastAnyToOneTarget)
 			}
 		}
 	}
+}
+
+// matchAnyToOne ports Speller.matchAnyToOne — last candidate char matches multi-char word source.
+func (s *SpellerFSA) matchAnyToOne(wordIndex, candIndex int) int {
+	if s == nil || len(s.anyToOne) == 0 || candIndex < 0 {
+		return 0
+	}
+	pats, ok := s.anyToOne[s.candBuf[candIndex]]
+	if !ok {
+		return 0
+	}
+	for _, p := range pats {
+		if p.startAnchor && wordIndex != 0 {
+			continue
+		}
+		i := 0
+		for i < len(p.chars) && (wordIndex+i) < s.wordLen && p.chars[i] == s.wordProcessed[wordIndex+i] {
+			i++
+		}
+		if i == len(p.chars) {
+			if p.endAnchor && wordIndex+i != s.wordLen {
+				continue
+			}
+			return i
+		}
+	}
+	return 0
+}
+
+// matchAnyToTwo ports Speller.matchAnyToTwo — last two candidate chars match word source.
+func (s *SpellerFSA) matchAnyToTwo(wordIndex, candIndex, minLookbackWordIndex int, lastAnyToOneSource string, lastAnyToOneTarget rune) int {
+	if s == nil || len(s.anyToTwo) == 0 || candIndex < 1 || wordIndex < 1 {
+		return 0
+	}
+	if candIndex >= len(s.candBuf) {
+		return 0
+	}
+	two := string([]rune{s.candBuf[candIndex-1], s.candBuf[candIndex]})
+	pats, ok := s.anyToTwo[two]
+	if !ok {
+		return 0
+	}
+	for _, p := range pats {
+		if p.startAnchor && wordIndex-1 != 0 {
+			continue
+		}
+		// unnecessary replacements when candidate already equals word slice
+		if len(p.chars) == 2 && wordIndex < s.wordLen &&
+			s.candBuf[candIndex-1] == s.wordProcessed[wordIndex-1] &&
+			s.candBuf[candIndex] == s.wordProcessed[wordIndex] {
+			return 0
+		}
+		i := 0
+		for i < len(p.chars) && (wordIndex-1+i) < s.wordLen && p.chars[i] == s.wordProcessed[wordIndex-1+i] {
+			i++
+		}
+		if i == len(p.chars) {
+			if p.endAnchor && wordIndex-1+i != s.wordLen {
+				continue
+			}
+			// Reject reverse of previous anyToOne at overlapping position
+			if wordIndex-1 < minLookbackWordIndex && lastAnyToOneSource != "" &&
+				len(p.chars) == 1 && p.chars[0] == lastAnyToOneTarget && two == lastAnyToOneSource {
+				continue
+			}
+			return i
+		}
+	}
+	return 0
+}
+
+func max0(d int) int {
+	if d < 0 {
+		return 0
+	}
+	return d
 }
 
 func (s *SpellerFSA) isArcNotTerminal(arc, candIndex int) bool {

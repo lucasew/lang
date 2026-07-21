@@ -107,3 +107,42 @@ func TestSpellerFSA_HMatrixReset(t *testing.T) {
 		t.Fatalf("reuse diverged: %v vs %v", a, b)
 	}
 }
+
+// Twin of Speller anyToOne/anyToTwo: f→ph and kw→qu via HMatrix path inside findRepl.
+func TestSpellerFSA_AnyToOneTwo_EN(t *testing.T) {
+	path := enUSDictPath(t)
+	d, err := OpenDictionary(path)
+	if err != nil {
+		t.Skip(err)
+	}
+	sp := NewSpellerFSA(d, 1)
+	// en_US.info style short pairs: f ph, ph f, kw qu
+	sp.LoadReplacementPairs([]struct{ From, To string }{
+		{"f", "ph"},
+		{"ph", "f"},
+		{"kw", "qu"},
+		{"qu", "kw"},
+	})
+	// fone → phone (f in word matches pattern for dict "ph" via anyToTwo, or f→ph)
+	cands := sp.FindReplacementCandidates("fone")
+	foundPhone := false
+	for _, c := range cands {
+		if c.Word == "phone" {
+			foundPhone = true
+		}
+	}
+	if !foundPhone {
+		t.Fatalf("expected phone for fone; got %v", cands)
+	}
+	// kwality → quality
+	cands2 := sp.FindReplacementCandidates("kwality")
+	foundQ := false
+	for _, c := range cands2 {
+		if c.Word == "quality" {
+			foundQ = true
+		}
+	}
+	if !foundQ {
+		t.Fatalf("expected quality for kwality; got %v", cands2)
+	}
+}
