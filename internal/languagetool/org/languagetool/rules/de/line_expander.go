@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"sync"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -71,11 +70,13 @@ func (e *LineExpander) ExpandLine(line string) []string {
 }
 
 func isLineWithFlag(line string) bool {
+	// Java: indexOf('/') then charAt(idx-1) — '/' and '\\' are BMP/ASCII
 	idx := strings.IndexByte(line, '/')
 	return !strings.HasPrefix(line, "#") && idx > 0 && line[idx-1] != '\\'
 }
 
 func isLineWithVerbPrefix(line string) bool {
+	// Java: indexOf('_') then charAt(idx-1)
 	idx := strings.IndexByte(line, '_')
 	return !strings.HasPrefix(line, "#") && idx > 0 && line[idx-1] != '\\'
 }
@@ -110,44 +111,29 @@ func (e *LineExpander) handleLineWithPrefix(line string) []string {
 		seen[w] = struct{}{}
 		result = append(result, w)
 	}
-	// Verb forms from synthesizer when available
-	var forms []string
-	if e != nil && e.VerbForms != nil {
-		forms = e.VerbForms(parts[1])
+	// Java: verbFormCache.getUnchecked(parts[1]); if forms.length == 0 throw
+	// (always has GermanSynthesizer — never soft-joins without forms)
+	if e == nil || e.VerbForms == nil {
+		panic(fmt.Sprintf("Could not expand '%s' from line '%s', no forms found", parts[1], line))
 	}
-	if len(forms) == 0 && e != nil && e.VerbForms != nil {
-		// Java throws if synthesizer returns empty
+	forms := e.VerbForms(parts[1])
+	if len(forms) == 0 {
 		panic(fmt.Sprintf("Could not expand '%s' from line '%s', no forms found", parts[1], line))
 	}
 	for _, form := range forms {
-		if form == "" {
+		// Java: !form.contains("ß") && form.length() > 0 && Character.isLowerCase(form.charAt(0))
+		if form == "" || strings.Contains(form, "ß") {
 			continue
 		}
-		// skip ß forms and non-lowercase starts (old spellings risk)
-		if strings.Contains(form, "ß") {
-			continue
-		}
-		r, _ := utf8DecodeFirst(form)
-		if !unicode.IsLower(r) {
+		if utf16LenDE(form) == 0 || !tools.StartsWithLowercase(form) {
 			continue
 		}
 		add(parts[0] + form)
 	}
-	// Always: zu-verb and genitive (Java adds even after synth forms)
+	// Java: "zu"+verb and Genitiv always added after non-empty forms
 	add(parts[0] + "zu" + parts[1])
 	add(tools.UppercaseFirstChar(parts[0]) + parts[1] + "s")
-	// Without synthesizer, also emit plain join so callers still get a usable form
-	if len(forms) == 0 {
-		add(parts[0] + parts[1])
-	}
 	return result
-}
-
-func utf8DecodeFirst(s string) (rune, int) {
-	for _, r := range s {
-		return r, 1
-	}
-	return 0, 0
 }
 
 func handleLineWithFlags(line string) []string {
@@ -166,7 +152,10 @@ func handleLineWithFlags(line string) []string {
 		}
 		result = append(result, w)
 	}
-	for _, c := range suffix {
+	// Java: for (int i = 0; i < suffix.length(); i++) { char c = suffix.charAt(i); ... }
+	// Flag letters are ASCII; iterate by UTF-16 unit via range (BMP).
+	for i := 0; i < utf16LenDE(suffix); i++ {
+		c := javaCharAtDE(suffix, i)
 		switch c {
 		case 'S':
 			add(word)
@@ -213,9 +202,7 @@ func handleLineWithFlags(line string) []string {
 			panic(fmt.Sprintf("Unknown suffix: %s in line: %s", suffix, line))
 		}
 	}
-	if len(result) == 0 {
-		return []string{word}
-	}
+	// Java always returns result list (may be empty only if suffix empty — not for valid flags)
 	return result
 }
 

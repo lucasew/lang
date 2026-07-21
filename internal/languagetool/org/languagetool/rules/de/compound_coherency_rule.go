@@ -109,24 +109,24 @@ func compoundCoherencyLemma(atr *languagetool.AnalyzedTokenReadings) string {
 	}
 	lemmaOrNull := *first
 	token := atr.GetToken()
-	// Java charAt indices; use runes for DE letters (äöüß) so indices stay aligned with graphemes.
+	// Java: charAt / length are UTF-16 units (BMP German letters = one unit each).
 	if !strings.Contains(lemmaOrNull, "-") && strings.Contains(token, "-") {
 		var b strings.Builder
-		lemmaRunes := []rune(lemmaOrNull)
-		tokenRunes := []rune(token)
-		for lemmaPos, tokenPos := 0, 0; lemmaPos < len(lemmaRunes); lemmaPos, tokenPos = lemmaPos+1, tokenPos+1 {
-			if tokenPos >= len(tokenRunes) {
+		lemmaLen := utf16LenDE(lemmaOrNull)
+		tokenLen := utf16LenDE(token)
+		for lemmaPos, tokenPos := 0, 0; lemmaPos < lemmaLen; lemmaPos, tokenPos = lemmaPos+1, tokenPos+1 {
+			if tokenPos >= tokenLen {
 				break
 			}
-			lemmaChar := lemmaRunes[lemmaPos]
-			tokenChar := tokenRunes[tokenPos]
+			lemmaChar := javaCharAtDE(lemmaOrNull, lemmaPos)
+			tokenChar := javaCharAtDE(token, tokenPos)
 			if lemmaChar == tokenChar {
 				b.WriteRune(lemmaChar)
 			} else if tokenChar == '-' {
 				tokenPos++ // skip hyphen; for-loop still increments tokenPos (Java twin)
 				b.WriteByte('-')
-				// Java: lemmaPos + 1 < token.length() && isUpperCase(token.charAt(tokenPos))
-				if lemmaPos+1 < len(tokenRunes) && tokenPos < len(tokenRunes) && unicode.IsUpper(tokenRunes[tokenPos]) {
+				// Java: lemmaPos + 1 < token.length() && Character.isUpperCase(token.charAt(tokenPos))
+				if lemmaPos+1 < tokenLen && tokenPos < tokenLen && unicode.IsUpper(javaCharAtDE(token, tokenPos)) {
 					b.WriteRune(unicode.ToUpper(lemmaChar))
 				} else {
 					b.WriteRune(lemmaChar)

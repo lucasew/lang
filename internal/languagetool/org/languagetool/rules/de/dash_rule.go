@@ -2,10 +2,10 @@ package de
 
 import (
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DashRule ports org.languagetool.rules.de.DashRule.
@@ -96,13 +96,10 @@ func (r *DashRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleM
 			prevToken != "-" &&
 			!strings.Contains(prevToken, "--") &&
 			!strings.Contains(prevToken, "–-") {
-			if token == "" {
-				prevToken = token
-				continue
-			}
-			first, _ := firstRune(token)
-			if unicode.IsUpper(first) {
-				// Java: StringUtils.equalsAny(token, "UND", "ODER", "BZW") — exact surface, not case-fold invent.
+			// Java: char firstChar = token.charAt(0); Character.isUpperCase(firstChar)
+			// (empty token would throw in Java; StartsWithUppercase is false for "")
+			if tools.StartsWithUppercase(token) {
+				// Java: StringUtils.equalsAny(token, "UND", "ODER", "BZW") — exact surface
 				if token != "UND" && token != "ODER" && token != "BZW" {
 					msg := "Möglicherweise fehlt ein 'und' oder ein Komma, oder es wurde nach dem Wort " +
 						"ein überflüssiges Leerzeichen eingefügt. Eventuell haben Sie auch versehentlich einen Bindestrich statt eines Punktes eingefügt."
@@ -112,7 +109,7 @@ func (r *DashRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleM
 					rm := rules.NewRuleMatch(r, sentence, fromPos, toPos, msg)
 					rm.ShortMessage = shortMsg
 					joined := tokens[i-1].GetToken() + tokens[i].GetToken()
-					// Java: first add joined, then optionally comma form when hyphen count ≤ 1.
+					// Java: addSuggestedReplacement(joined); then comma form if hyphen count ≤ 1
 					hyphens := strings.Count(tokens[i-1].GetToken(), "-") + strings.Count(tokens[i].GetToken(), "-")
 					if hyphens <= 1 {
 						rm.SetSuggestedReplacements([]string{
@@ -129,11 +126,4 @@ func (r *DashRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleM
 		prevToken = token
 	}
 	return ruleMatches
-}
-
-func firstRune(s string) (rune, int) {
-	for _, r := range s {
-		return r, 1
-	}
-	return 0, 0
 }

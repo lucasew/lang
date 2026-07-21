@@ -29,13 +29,29 @@ func TestLineExpander_Expansion(t *testing.T) {
 	require.ElementsMatch(t, []string{
 		"Lehrer_in", "Lehrer_innen", "Lehrer*in", "Lehrer*innen", "Lehrer:in", "Lehrer:innen",
 	}, e.ExpandLine("Lehrer_in"))
-	// verb prefix without synth: join + zu + genitive
+	// verb prefix: Java always has synthesizer; nil/empty VerbForms panic (no soft join)
+	require.Panics(t, func() { e.ExpandLine("rüber_machen") })
+	e.VerbForms = func(lemma string) []string {
+		if lemma == "machen" {
+			return []string{"machen", "machst"}
+		}
+		return nil
+	}
 	got = e.ExpandLine("rüber_machen")
 	require.Contains(t, got, "rübermachen")
+	require.Contains(t, got, "rübermachst")
 	require.Contains(t, got, "rüberzumachen")
 	require.Contains(t, got, "Rübermachens")
+	// Character.isLowerCase(charAt(0)): skip non-lower forms
+	e.VerbForms = func(string) []string { return []string{"Mach", "machen"} }
+	got = e.ExpandLine("rüber_machen")
+	require.NotContains(t, got, "rüberMach")
+	require.Contains(t, got, "rübermachen")
 	// escaped underscore is plain
 	require.Equal(t, []string{"escape_machen"}, e.ExpandLine(`escape\_machen`))
 	// unknown flag panics (Java RuntimeException)
 	require.Panics(t, func() { e.ExpandLine("rüber/invalidword") })
+	// empty synth forms panic
+	e.VerbForms = func(string) []string { return nil }
+	require.Panics(t, func() { e.ExpandLine("rüber_machen") })
 }
