@@ -95,13 +95,15 @@ func (s *LanguageIdentifierService) GetDefaultLanguageIdentifierFull(
 			maxLength = DefaultMaxLength
 		}
 		d := NewDefaultLanguageIdentifier(maxLength)
-		_ = d.EnableNgramsFromPath(ngramLangIdentData)
-		// Java enableFasttext throws RuntimeException on IO failure — surface error by leaving disabled only if paths empty.
+		// Java enableNgrams: RuntimeException on IOException
+		if err := d.EnableNgramsFromPath(ngramLangIdentData); err != nil {
+			panic("Could not load ngram data language identification from " + ngramLangIdentData + ": " + err.Error())
+		}
+		// Java enableFasttext: RuntimeException on IOException when both paths set
 		if fasttextBinary != "" && fasttextModel != "" {
 			if err := d.EnableFastTextFromPaths(fasttextBinary, fasttextModel); err != nil {
-				// Match Java: fail construction (propagate via panic not ideal); store nil FastTextScore.
-				// Tests without real binary: leave disabled.
-				_ = err
+				panic("Could not start fasttext process for language identification @ " +
+					fasttextBinary + " with model @ " + fasttextModel + ": " + err.Error())
 			}
 		}
 		s.defaultIdentifier = d

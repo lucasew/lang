@@ -474,3 +474,32 @@ func TestHTTPServerConfig_SetFasttextPaths(t *testing.T) {
 	require.NoError(t, cfg.SetNgramLangIdentData(zipPath))
 	require.Equal(t, zipPath, cfg.NgramLangIdentData)
 }
+
+// Java property keys fasttextModel/fasttextBinary/ngramLangIdentData.
+func TestHTTPServerConfig_ApplyProperties_FasttextNgram(t *testing.T) {
+	dir := t.TempDir()
+	model := filepath.Join(dir, "lid.bin")
+	bin := filepath.Join(dir, "fasttext")
+	require.NoError(t, os.WriteFile(model, []byte("m"), 0o644))
+	require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\n"), 0o755))
+	zipPath := filepath.Join(dir, "ngrams.zip")
+	require.NoError(t, os.WriteFile(zipPath, []byte("z"), 0o644))
+
+	cfg := NewHTTPServerConfig()
+	cfg.ApplyProperties(map[string]string{
+		"fasttextModel":      model,
+		"fasttextBinary":     bin,
+		"ngramLangIdentData": zipPath,
+		"languageModel":      dir,
+	})
+	require.Equal(t, model, cfg.FasttextModel)
+	require.Equal(t, bin, cfg.FasttextBinary)
+	require.Equal(t, zipPath, cfg.NgramLangIdentData)
+	require.Equal(t, dir, cfg.LanguageModelDir)
+
+	// only one of fasttext keys → do not set (Java requires both)
+	cfg2 := NewHTTPServerConfig()
+	cfg2.ApplyProperties(map[string]string{"fasttextModel": model})
+	require.Empty(t, cfg2.FasttextModel)
+	require.Empty(t, cfg2.FasttextBinary)
+}

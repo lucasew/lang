@@ -241,6 +241,24 @@ func (c *HTTPServerConfig) ApplyProperties(props map[string]string) {
 		// Java: Arrays.asList(...split(",\\s*")) — comma + optional ASCII \s*
 		c.DisabledRuleIDs = splitCommaOptionalASCIIWS(v)
 	}
+	// Java: if (fasttextBinary != null && fasttextModel != null) setFasttextPaths(...)
+	// setFasttextPaths throws RuntimeException on invalid paths.
+	ftModel := props["fasttextModel"]
+	ftBin := props["fasttextBinary"]
+	if ftModel != "" && ftBin != "" {
+		if err := c.SetFasttextPaths(ftModel, ftBin); err != nil {
+			panic(err.Error())
+		}
+	}
+	// Java: ngramLangIdentData must exist and not be a directory → IllegalArgumentException
+	if v, ok := props["ngramLangIdentData"]; ok && v != "" {
+		if err := c.SetNgramLangIdentData(v); err != nil {
+			panic(err.Error())
+		}
+	}
+	if v, ok := props["languageModel"]; ok && v != "" {
+		c.LanguageModelDir = v
+	}
 }
 
 func (c *HTTPServerConfig) IsPipelineCachingEnabled() bool {

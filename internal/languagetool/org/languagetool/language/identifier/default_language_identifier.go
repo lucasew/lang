@@ -17,8 +17,8 @@ type DefaultLanguageIdentifier struct {
 	ProfileScore func(cleanText string, preferred []string) map[string]float64
 	// FastTextScore optional fastText stand-in.
 	FastTextScore func(cleanText string) map[string]float64
-	// NGram optional character n-gram detector.
-	NGram *detector.CharNGramDetector
+	// NGram ports Java NGramDetector (ZIP model or char-ngram test fallback).
+	NGram *detector.NGramDetector
 	// Unicode optional unicode script detector (Java UNICODE_BASED_LANG_IDENTIFIER).
 	Unicode *detector.UnicodeBasedDetector
 	// CommonWords optional common-words detector.
@@ -91,16 +91,17 @@ func (d *DefaultLanguageIdentifier) EnableFastTextFromPaths(binaryPath, modelPat
 	return nil
 }
 
-// EnableNgramsFromPath ports enableNgrams(File) for ZIP/dir ngram data when loader is available.
-// Currently installs a no-op when path empty; when NGram is already set, keeps it.
-// Callers may set d.NGram directly (tests).
+// EnableNgramsFromPath ports enableNgrams(File) — loads NGramDetector from ZIP (maxLength 50).
+// Empty path leaves ngram disabled. Load failure returns error (Java RuntimeException).
 func (d *DefaultLanguageIdentifier) EnableNgramsFromPath(ngramPath string) error {
 	if d == nil || ngramPath == "" {
 		return nil
 	}
-	// Full NGramDetector(zip) load is path-specific; keep hook for service wiring.
-	// If a prebuilt CharNGramDetector is not installed, leave NGram nil (Java would load ZIP).
-	_ = ngramPath
+	ng, err := detector.NewNGramDetectorFromZip(ngramPath, 50)
+	if err != nil {
+		return err
+	}
+	d.NGram = ng
 	return nil
 }
 
@@ -135,7 +136,6 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 	}
 	preferred := append([]string(nil), parsed.PreferredLangs...)
 	additional := parsed.AdditionalLangs
-	_ = additional
 
 	// Java DefaultLanguageIdentifier: text.length() <= CONSIDER_ONLY_PREFERRED_THRESHOLD
 	// (UTF-16 units). Forces preferred-lang filter when short.
@@ -153,9 +153,10 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 		}
 		src = "fasttext"
 	}
-	// Char n-gram for short text when Java would use ngram over fasttext
+	// NGram for short text when Java would use ngram over fasttext
+	// Java: ngram.detectLanguages(text.trim(), additionalLangs)
 	if d.NGram != nil && (len(scores) == 0 || javaStringLen(text) <= ShortAlgoThreshold) {
-		for k, v := range d.NGram.DetectLanguages(text) {
+		for k, v := range d.NGram.DetectLanguagesAdditional(text, additional) {
 			if cur, ok := scores[k]; !ok || v > cur {
 				scores[k] = v
 			}

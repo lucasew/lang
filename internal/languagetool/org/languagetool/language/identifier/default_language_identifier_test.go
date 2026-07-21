@@ -24,8 +24,8 @@ func TestDefaultLanguageIdentifier(t *testing.T) {
 	require.NotNil(t, got2)
 	require.Equal(t, "de", got2.DetectedLanguageCode)
 
-	// with ngram
-	ng := detector.NewCharNGramDetector(3)
+	// with ngram (char fallback under NGramDetector)
+	ng := detector.NewNGramDetector(500)
 	ng.TrainFromText("en", "hello world hello world hello")
 	ng.TrainFromText("fr", "bonjour le monde bonjour le monde")
 	d2 := NewDefaultLanguageIdentifier(500)
