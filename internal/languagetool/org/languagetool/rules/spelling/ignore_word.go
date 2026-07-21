@@ -4,6 +4,7 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -12,11 +13,13 @@ import (
 // IgnoreWord ports SpellingCheckRule.ignoreWord(String).
 // Tokens with no letters, oversize tokens, ignore set (optional case-fold),
 // and ignoreWordsWithLength are accepted without dictionary lookup.
+// All length checks use Java String.length() (UTF-16 code units).
 func (r *SpellingCheckRule) IgnoreWord(word string) bool {
 	if r == nil {
 		return false
 	}
-	if len(word) > MaxTokenLength {
+	// Java: word.length() > MAX_TOKEN_LENGTH
+	if javaStringLenSpell(word) > MaxTokenLength {
 		return true
 	}
 	// Java considerIgnoreWords default true; when false, skip ignore-set path entirely.
@@ -34,8 +37,9 @@ func (r *SpellingCheckRule) IgnoreWord(word string) bool {
 		return true
 	}
 	// Trailing period (e.g. sentence-end token) — check form without '.'
+	// Java: word.substring(0, word.length()-1) when ends with '.'
 	if strings.HasSuffix(word, ".") && !r.IsInIgnoredSet(word) {
-		return r.IsIgnoredNoCase(word[:len(word)-1])
+		return r.IsIgnoredNoCase(javaSubstringSpell(word, 0, javaStringLenSpell(word)-1))
 	}
 	return r.IsIgnoredNoCase(word)
 }
@@ -61,8 +65,8 @@ func (r *SpellingCheckRule) IsIgnoredNoCase(word string) bool {
 	if r.ConvertsCase && !tools.IsMixedCase(word) && r.IsInIgnoredSet(strings.ToLower(word)) {
 		return true
 	}
-	// Java word.length() (UTF-16 units; for BMP same as rune count for letters we care about).
-	if r.IgnoreWordsWithLength > 0 && len(word) <= r.IgnoreWordsWithLength {
+	// Java: ignoreWordsWithLength > 0 && word.length() <= ignoreWordsWithLength
+	if r.IgnoreWordsWithLength > 0 && javaStringLenSpell(word) <= r.IgnoreWordsWithLength {
 		return true
 	}
 	return false
@@ -93,8 +97,9 @@ func (r *SpellingCheckRule) IgnorePotentiallyMisspelledWord(word string) bool {
 
 // StartsWithIgnoredWord ports startsWithIgnoredWord (longest ignored-word prefix length).
 // Returns 0 when word length < 4 or no ignored prefix matches.
+// Return value and comparisons use Java String.length() (UTF-16).
 func (r *SpellingCheckRule) StartsWithIgnoredWord(word string, caseSensitive bool) int {
-	if r == nil || len(word) < 4 || len(r.IgnoreWords) == 0 {
+	if r == nil || javaStringLenSpell(word) < 4 || len(r.IgnoreWords) == 0 {
 		return 0
 	}
 	arr := r.sortedIgnoreArray(caseSensitive)
@@ -110,22 +115,23 @@ func (r *SpellingCheckRule) StartsWithIgnoredWord(word string, caseSensitive boo
 			return strings.ToLower(arr[i]) >= strings.ToLower(w)
 		})
 		if i < len(arr) && equalIgnore(arr[i], w, caseSensitive) {
-			return len(w)
+			return javaStringLenSpell(w)
 		}
 		// Java: prev = -result - 2 after binarySearch miss
 		prev := i - 1
 		if prev < 0 {
 			return 0
 		}
-		common := commonPrefixLen(w, arr[prev], caseSensitive)
-		if common >= len(w) {
+		common := commonPrefixLenUTF16(w, arr[prev], caseSensitive)
+		if common >= javaStringLenSpell(w) {
 			// should not happen if not equal
 			return 0
 		}
 		if common == 0 {
 			return 0
 		}
-		w = w[:common]
+		// Java: word = caseSensitive ? commonPrefix : word.substring(0, commonPrefix.length())
+		w = javaSubstringSpell(w, 0, common)
 	}
 	return 0
 }
@@ -176,19 +182,45 @@ func equalIgnore(a, b string, caseSensitive bool) bool {
 	return strings.EqualFold(a, b)
 }
 
-func commonPrefixLen(a, b string, caseSensitive bool) int {
+// commonPrefixLenUTF16 ports Guava Strings.commonPrefix length on Java Strings (UTF-16 units).
+func commonPrefixLenUTF16(a, b string, caseSensitive bool) int {
+	ua, ub := javaCharsSpell(a), javaCharsSpell(b)
 	if !caseSensitive {
-		a, b = strings.ToLower(a), strings.ToLower(b)
+		// Compare lowercased UTF-16 sequences (Java Locale.ROOT toLowerCase on full string then prefix).
+		ua = javaCharsSpell(strings.ToLower(a))
+		ub = javaCharsSpell(strings.ToLower(b))
 	}
-	n := len(a)
-	if len(b) < n {
-		n = len(b)
+	n := len(ua)
+	if len(ub) < n {
+		n = len(ub)
 	}
 	i := 0
-	for i < n && a[i] == b[i] {
+	for i < n && ua[i] == ub[i] {
 		i++
 	}
 	return i
+}
+
+func javaStringLenSpell(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
+func javaCharsSpell(s string) []uint16 {
+	return utf16.Encode([]rune(s))
+}
+
+func javaSubstringSpell(s string, from, to int) string {
+	u := javaCharsSpell(s)
+	if from < 0 {
+		from = 0
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	return string(utf16.Decode(u[from:to]))
 }
 
 func wordHasLetter(s string) bool {

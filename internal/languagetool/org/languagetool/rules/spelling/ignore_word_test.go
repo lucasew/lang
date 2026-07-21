@@ -67,12 +67,35 @@ func TestStartsWithIgnoredWord(t *testing.T) {
 	// length < 4 → 0
 	require.Equal(t, 0, r.StartsWithIgnoredWord("foo", true))
 	// exact long word
-	require.Equal(t, len("LanguageTool"), r.StartsWithIgnoredWord("LanguageTool", true))
+	require.Equal(t, javaStringLenSpell("LanguageTool"), r.StartsWithIgnoredWord("LanguageTool", true))
 	// prefix: LanguageToolish starts with LanguageTool
 	n := r.StartsWithIgnoredWord("LanguageToolish", true)
-	require.Equal(t, len("LanguageTool"), n)
+	require.Equal(t, javaStringLenSpell("LanguageTool"), n)
 	// no match
 	require.Equal(t, 0, r.StartsWithIgnoredWord("xyzzytool", true))
+}
+
+// Java word.length / commonPrefix are UTF-16; é vs è diverge after first unit of the accented char.
+func TestStartsWithIgnoredWord_AccentedUTF16(t *testing.T) {
+	r := NewSpellingCheckRule("HUNSPELL_RULE", "spell", "fr")
+	r.AddIgnoreWords("caféteria")
+	// exact
+	require.Equal(t, javaStringLenSpell("caféteria"), r.StartsWithIgnoredWord("caféteria", true))
+	// longer word with ignored prefix
+	require.Equal(t, javaStringLenSpell("caféteria"), r.StartsWithIgnoredWord("caféteriaxyz", true))
+	// short gate: length 3 UTF-16
+	require.Equal(t, 0, r.StartsWithIgnoredWord("caf", true))
+}
+
+func TestIgnoreWordsWithLength_UTF16(t *testing.T) {
+	r := NewSpellingCheckRule("HUNSPELL_RULE", "spell", "en")
+	r.IgnoreWordsWithLength = 1
+	// Java: word.length() <= 1 — single BMP letter
+	require.True(t, r.IsIgnoredNoCase("a"))
+	// emoji is 2 UTF-16 units → not ignored by length-1
+	require.False(t, r.IsIgnoredNoCase("😀"))
+	r.IgnoreWordsWithLength = 2
+	require.True(t, r.IsIgnoredNoCase("😀"))
 }
 
 func TestIgnoreToken(t *testing.T) {
