@@ -54,3 +54,33 @@ func TestSpellingCheckRule_PathGetters_ES_CA(t *testing.T) {
 	caAdd := ca.GetAdditionalSpellingFileNames()
 	require.Equal(t, []string{"/ca//hunspell/spelling_custom.txt", "spelling_global.txt", "/ca/multiwords.txt", "/ca/spelling-special.txt"}, caAdd)
 }
+
+// Twin of MorfologikSpellerRule.initSpeller plainTextDicts composition for EN
+// (getSpellingFileName + AbstractEnglishSpellerRule.getAdditionalSpellingFileNames).
+func TestSpellingCheckRule_PlainTextSpellingFileNames_EN(t *testing.T) {
+	r := NewSpellingCheckRule("MORFOLOGIK_RULE_EN_US", "d", "en-US")
+	// EN override like AbstractEnglishSpellerRule
+	r.GetAdditionalSpellingFileNamesFn = func() []string {
+		return []string{"en/hunspell/spelling_custom.txt", GlobalSpellingFile, "/en/multiwords.txt"}
+	}
+	plain := r.PlainTextSpellingFileNames()
+	// Java order: spelling.txt then custom, global, multiwords
+	require.Equal(t, []string{
+		"en/hunspell/spelling.txt",
+		"en/hunspell/spelling_custom.txt",
+		"spelling_global.txt",
+		"/en/multiwords.txt",
+	}, plain)
+	// Must not invent bare "spelling.txt" (old Go bug)
+	require.NotContains(t, plain, "spelling.txt")
+
+	// resourceExists filter: only files present under discovery roots
+	existing := r.CollectExistingPlainTextSpellingFileNames()
+	require.Contains(t, existing, "en/hunspell/spelling.txt")
+	require.Contains(t, existing, "spelling_global.txt")
+	require.Contains(t, existing, "/en/multiwords.txt")
+	// custom may or may not be empty on disk; when present must appear
+	if DiscoverSpellingResource("en/hunspell/spelling_custom.txt") != "" {
+		require.Contains(t, existing, "en/hunspell/spelling_custom.txt")
+	}
+}

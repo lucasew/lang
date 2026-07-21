@@ -89,7 +89,10 @@ func (r *SpellingCheckRule) GetAdditionalSpellingFileNames() []string {
 }
 
 // GetLanguageVariantSpellingFileName ports getLanguageVariantSpellingFileName.
-// Base Java returns null; EN/DE variants return spelling_en-US.txt etc.
+// Base Java returns null (SPELLING_FILE_VARIANT); EN/DE variants override via Fn.
+// When Fn is unset, LanguageVariantSpellingClasspath maps known EN/DE-AT/CH codes
+// (same paths Java subclasses return) so bare SpellingCheckRule{LanguageCode: "en-US"}
+// still discovers the variant accept list; empty LanguageCode → empty (Java null).
 func (r *SpellingCheckRule) GetLanguageVariantSpellingFileName() string {
 	if r != nil && r.GetLanguageVariantSpellingFileNameFn != nil {
 		return r.GetLanguageVariantSpellingFileNameFn()
@@ -98,6 +101,46 @@ func (r *SpellingCheckRule) GetLanguageVariantSpellingFileName() string {
 		return ""
 	}
 	return LanguageVariantSpellingClasspath(r.LanguageCode)
+}
+
+// PlainTextSpellingFileNames ports MorfologikSpellerRule.initSpeller plainTextDicts
+// path composition before resourceExists:
+//
+//	if getSpellingFileName() != null → add
+//	for getAdditionalSpellingFileNames() → add
+//
+// Language-variant file is separate (languageVariantPlainTextDict).
+func (r *SpellingCheckRule) PlainTextSpellingFileNames() []string {
+	if r == nil {
+		return nil
+	}
+	var out []string
+	if name := r.GetSpellingFileName(); name != "" {
+		out = append(out, name)
+	}
+	out = append(out, r.GetAdditionalSpellingFileNames()...)
+	return out
+}
+
+// CollectExistingPlainTextSpellingFileNames ports initSpeller resourceExists filter
+// over PlainTextSpellingFileNames. Missing resources are omitted (fail-closed).
+func (r *SpellingCheckRule) CollectExistingPlainTextSpellingFileNames() []string {
+	names := r.PlainTextSpellingFileNames()
+	if len(names) == 0 {
+		return nil
+	}
+	var out []string
+	for _, name := range names {
+		name = strings.TrimSpace(name)
+		if name == "" {
+			continue
+		}
+		if DiscoverSpellingResource(strings.TrimPrefix(name, "/")) == "" {
+			continue
+		}
+		out = append(out, name)
+	}
+	return out
 }
 
 // GetProhibitFileName ports getProhibitFileName:

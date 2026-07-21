@@ -39,52 +39,39 @@ type MorfologikVariantSpellerRule struct {
 	LanguageVariantSpellingFile string
 }
 
-// englishPlainSpellingRels ports getSpellingFileName + getAdditionalSpellingFileNames.
-var englishPlainSpellingRels = []string{
-	"en/hunspell/spelling.txt",
-	"spelling.txt", // EnglishGlobalSpellingFile
-	"en/multiwords.txt",
-}
-
 func newVariantSpeller(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string) *MorfologikVariantSpellerRule {
 	return newVariantSpellerWithUser(id, variantCode, dictPath, variantSpellingFile, otherName, other, nil)
 }
 
 // newVariantSpellerWithUser ports Morfologik*SpellerRule(..., UserConfig).
+// Java initSpeller plainTextDicts = getSpellingFileName + getAdditionalSpellingFileNames
+// (spelling.txt, spelling_custom.txt, spelling_global.txt, /en/multiwords.txt) plus
+// languageVariantPlainTextDict (spelling_en-XX.txt).
 func newVariantSpellerWithUser(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string, userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	// Build rule first so path getters (EN additional + variant) exist for initSpeller.
+	sp := morfologik.NewMorfologikSpeller(dictPath, 1)
+	_ = sp.TryAttachBinaryFromClasspath(dictPath)
+	base := NewAbstractEnglishSpellerRule(id, variantCode, sp)
+	base.FileName = dictPath
+	// Explicit LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT (same path Java Morfologik*SpellerRule returns).
+	if base.SpellingCheckRule != nil && variantSpellingFile != "" {
+		base.GetLanguageVariantSpellingFileNameFn = func() string { return variantSpellingFile }
+	}
 	// Java MorfologikSpellerRule.initSpeller: three Multis at maxEditDistance 1, 2, 3.
 	// User dict FSA only when premiumUid + accepted words (Java getUserDictSpellerOrNull).
 	var userWords []string
-	var premium *int64
 	var accepted []string
 	if userConfig != nil {
 		accepted = userConfig.GetAcceptedWords()
-		premium = userConfig.GetPremiumUid()
+		premium := userConfig.GetPremiumUid()
 		userWords = morfologik.UserDictWordsForMulti(accepted, premium)
 	}
-	plainRels := append([]string(nil), englishPlainSpellingRels...)
-	s1 := morfologik.OpenMultiSpellerFromClasspathWithUser(dictPath, plainRels, variantSpellingFile, 1, PrepareLineForSpeller, userWords)
-	s2 := morfologik.OpenMultiSpellerFromClasspathWithUser(dictPath, plainRels, variantSpellingFile, 2, PrepareLineForSpeller, userWords)
-	s3 := morfologik.OpenMultiSpellerFromClasspathWithUser(dictPath, plainRels, variantSpellingFile, 3, PrepareLineForSpeller, userWords)
-	var sp *morfologik.MorfologikSpeller
-	if s1 != nil && len(s1.DefaultDictSpellers) > 0 {
-		sp = s1.DefaultDictSpellers[0]
-	} else if s1 != nil && len(s1.Spellers) > 0 {
-		sp = s1.Spellers[0]
-	} else {
-		sp = morfologik.NewMorfologikSpeller(dictPath, 1)
-		_ = sp.TryAttachBinaryFromClasspath(dictPath)
-	}
-	base := NewAbstractEnglishSpellerRule(id, variantCode, sp)
-	base.FileName = dictPath
-	base.SetMultiSpellers(s1, s2, s3)
-	// Java Morfologik*SpellerRule.getLanguageVariantSpellingFileName → plain-text accept list.
-	// ApplyDefaultSpellingWordLists used LanguageShortCode "en" only; load variant file here.
+	base.InitSpellersFromGetters(PrepareLineForSpeller, userWords)
+	// Java Morfologik*SpellerRule / AbstractEnglishSpellerRule: variant ignore file + user words.
 	if base.SpellingCheckRule != nil {
-		// Prefer full variant (en-US) for LanguageVariantSpellingClasspath inside ApplyDefault.
 		base.SpellingCheckRule.LanguageCode = variantCode
 		spelling.ApplyDefaultSpellingWordLists(base.SpellingCheckRule)
-		// Explicit variant path (same as Java LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT constant).
+		// languageSpecificIgnoreFile twin (same path as LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT).
 		spelling.ApplyVariantSpellingFile(base.SpellingCheckRule, variantSpellingFile)
 		// Java SpellingCheckRule: wordsToBeIgnored.addAll(userConfig.getAcceptedWords()) always.
 		base.SpellingCheckRule.ApplyUserAcceptedWords(accepted)

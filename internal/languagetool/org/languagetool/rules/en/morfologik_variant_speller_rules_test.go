@@ -12,6 +12,20 @@ func TestMorfologikVariantSpellers(t *testing.T) {
 	require.Equal(t, AmericanSpellerDict, us.GetFileName())
 	require.Equal(t, AmericanVariantSpellingFile, us.GetLanguageVariantSpellingFileName())
 
+	// Java MorfologikSpellerRule.initSpeller plainTextDicts composition (EN).
+	plain := us.SpellingCheckRule.PlainTextSpellingFileNames()
+	require.Equal(t, []string{
+		"en/hunspell/spelling.txt",
+		"en/hunspell/spelling_custom.txt",
+		"spelling_global.txt",
+		"/en/multiwords.txt",
+	}, plain)
+	require.NotContains(t, plain, "spelling.txt") // must not invent bare spelling.txt
+	// Multis built via InitSpellersFromGetters (speller1 at least when dict present).
+	if us.Speller1 != nil {
+		require.False(t, us.Speller1.IsMisspelled("software"))
+	}
+
 	us.OtherVariant = map[string]string{"colour": "color"}
 	us.OtherVariantName = "British English"
 	// American map: British form → American? Java uses BRITISH_ENGLISH map word→british form

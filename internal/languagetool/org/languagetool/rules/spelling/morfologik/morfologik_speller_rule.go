@@ -96,6 +96,39 @@ func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *Morfol
 
 func (r *MorfologikSpellerRule) GetFileName() string { return r.FileName }
 
+// InitSpellersFromGetters ports MorfologikSpellerRule.initSpeller:
+// plainTextDicts = getSpellingFileName + getAdditionalSpellingFileNames (resourceExists);
+// languageVariantPlainTextDict = getLanguageVariantSpellingFileName when present;
+// then speller1/2/3 at edit distance 1/2/3 with optional user dict words.
+// prepareLine is Language.prepareLineForSpeller (nil → raw lines).
+//
+// No-op when FileName is empty or the binary dict cannot be discovered — Java throws
+// RuntimeException when the binary is missing; we fail-closed without wiring an empty
+// Multi (empty Multi would treat every word as misspelled via Speller.IsMisspelled).
+func (r *MorfologikSpellerRule) InitSpellersFromGetters(prepareLine PrepareLineFn, userWords []string) {
+	if r == nil || r.FileName == "" {
+		return
+	}
+	if DiscoverLanguageDict(r.FileName) == "" {
+		return
+	}
+	var plain []string
+	var variant string
+	if r.SpellingCheckRule != nil {
+		plain = r.SpellingCheckRule.CollectExistingPlainTextSpellingFileNames()
+		variant = r.SpellingCheckRule.GetLanguageVariantSpellingFileName()
+		if variant != "" {
+			if spelling.DiscoverSpellingResource(strings.TrimPrefix(variant, "/")) == "" {
+				variant = ""
+			}
+		}
+	}
+	s1 := OpenMultiSpellerFromClasspathWithUser(r.FileName, plain, variant, 1, prepareLine, userWords)
+	s2 := OpenMultiSpellerFromClasspathWithUser(r.FileName, plain, variant, 2, prepareLine, userWords)
+	s3 := OpenMultiSpellerFromClasspathWithUser(r.FileName, plain, variant, 3, prepareLine, userWords)
+	r.SetMultiSpellers(s1, s2, s3)
+}
+
 // SetMultiSpellers ports initSpeller assignment of speller1/speller2/speller3.
 // Multi and Speller are wired to speller1 (binary primary) for isMisspelled.
 // Pass nil Multis to clear (map-inject tests).

@@ -31,8 +31,15 @@ func TestOpenMultiSpellerFromClasspath_EN(t *testing.T) {
 		}
 		return []string{line}
 	}
+	// Java MorfologikSpellerRule.initSpeller plainTextDicts for EN:
+	// getSpellingFileName + getAdditionalSpellingFileNames (custom, global, multiwords).
 	m := OpenMultiSpellerFromClasspath("/en/hunspell/en_US.dict",
-		[]string{"en/hunspell/spelling.txt", "spelling.txt", "en/multiwords.txt"},
+		[]string{
+			"en/hunspell/spelling.txt",
+			"en/hunspell/spelling_custom.txt",
+			"spelling_global.txt",
+			"/en/multiwords.txt",
+		},
 		"en/hunspell/spelling_en-US.txt", 1, prep)
 	require.NotNil(t, m)
 	require.GreaterOrEqual(t, len(m.Spellers), 1)
