@@ -73,13 +73,14 @@ func lemmaIn(set map[string]struct{}, lemma string) bool {
 // for prefix+stem forms (e.g. erstickt, erstickter).
 func (t *GermanTagger) addPartizip2FromLastPart(
 	wordOrig, firstPart, lastPart string,
-	idxPos int,
+	sentenceTokens []string,
 	readings []*languagetool.AnalyzedToken,
 ) []*languagetool.AnalyzedToken {
 	if t == nil || lastPart == "" {
 		return readings
 	}
-	atStartOrLower := idxPos == 0 || wordOrig == strings.ToLower(wordOrig)
+	// Java: word.equals(toLowerCase()) || sentenceTokens.indexOf(word) == 0
+	atStartOrLower := wordOrig == strings.ToLower(wordOrig) || indexOfToken(sentenceTokens, wordOrig) == 0
 	if !atStartOrLower {
 		return readings
 	}
@@ -105,7 +106,8 @@ func (t *GermanTagger) addPartizip2FromLastPart(
 			if !ok {
 				continue
 			}
-			if fpLow != "un" {
+			// Java: !firstPart.equals("un") — case-sensitive
+			if firstPart != "un" {
 				fl := pos
 				if len(fl) >= 3 {
 					fl = fl[len(fl)-3:]

@@ -263,7 +263,7 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 		}
 	}
 	// PA2 derivation for non-separable prefixes (erstickt, erstickter, …)
-	readings = t.addPartizip2FromLastPart(wordOrig, firstPart, lastPart, idxPos, readings)
+	readings = t.addPartizip2FromLastPart(wordOrig, firstPart, lastPart, sentenceTokens, readings)
 	return readings
 }
 

@@ -19,6 +19,19 @@ func TestPartizip2_NonSepPraes(t *testing.T) {
 	require.Contains(t, tags, "PA2:PRD:GRU:VER")
 }
 
+// Twin: indexOf(word)==0 allows PA2 even when current idxPos > 0 (duplicate surface).
+func TestPartizip2_IndexOfZeroNotIdxPos(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"stickt": {tagging.NewTaggedWord("sticken", "VER:3:SIN:PRÄ:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	// first "erstickt" at index 0; second should still get PA2 via indexOf==0
+	got := tagger.Tag([]string{"erstickt", "und", "erstickt"})
+	tags := posTagsOf(got[2])
+	require.Contains(t, tags, "VER:PA2:SFT")
+	require.Contains(t, tags, "PA2:PRD:GRU:VER")
+}
+
 func TestPartizip2_Declined(t *testing.T) {
 	// erstickter = er + stickt + er
 	wt := tagging.MapWordTagger{
