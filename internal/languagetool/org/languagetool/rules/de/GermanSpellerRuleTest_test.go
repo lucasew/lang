@@ -178,11 +178,21 @@ func TestGermanSpellerRule_IgnoreWord(t *testing.T) {
 
 func TestGermanSpellerRule_StartsWithIgnoredWord(t *testing.T) {
 	r := NewGermanSpellerRule(nil)
-	require.Equal(t, 0, r.StartsWithIgnoredWord("abc", true)) // < 4
+	require.Equal(t, 0, r.StartsWithIgnoredWord("abc", true)) // Java length < 4
 	r.AddIgnoreWords("Feynman", "Feyn")
-	// longest prefix
-	require.Equal(t, len([]rune("Feynman")), r.StartsWithIgnoredWord("Feynmandiagramm", true))
+	// Java binarySearch + commonPrefix → UTF-16 length of "Feynman"
+	require.Equal(t, utf16LenDE("Feynman"), r.StartsWithIgnoredWord("Feynmandiagramm", true))
 	require.Equal(t, 0, r.StartsWithIgnoredWord("Diagramm", true))
+	// exact ignore word
+	require.Equal(t, utf16LenDE("Feynman"), r.StartsWithIgnoredWord("Feynman", true))
+}
+
+func TestGermanSpellerRule_IgnoreWord_TrailingPeriodUTF16(t *testing.T) {
+	r := NewGermanSpellerRule(nil)
+	r.AddIgnoreWords("café")
+	// trailing period strip is UTF-16 substring(0, length-1)
+	require.True(t, r.IgnoreWord("café."))
+	require.False(t, r.IgnoreWord("cafex."))
 }
 
 func TestIsNeedingFugenS(t *testing.T) {

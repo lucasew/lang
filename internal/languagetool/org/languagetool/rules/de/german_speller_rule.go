@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -259,13 +261,14 @@ func (r *GermanSpellerRule) Match(sentence *languagetool.AnalyzedSentence) []*ru
 		}
 		cleanWord := word
 		if strings.HasSuffix(word, ".") {
-			cleanWord = word[:len(word)-1]
+			// Java: word without trailing '.' for span/suggestions (UTF-16 length-1)
+			cleanWord = substringByUTF16(word, 0, utf16LenDE(word)-1)
 		}
 		dashCorr := 0
 		if strings.HasPrefix(word, "-") {
 			rest := cleanWord
-			if len(rest) > 0 {
-				rest = rest[1:]
+			if utf16LenDE(rest) > 0 {
+				rest = substringByUTF16(rest, 1, utf16LenDE(rest))
 			}
 			if !r.IsMisspelled(rest) {
 				prevWord = word
@@ -522,7 +525,8 @@ func (r *GermanSpellerRule) IgnoreWord(word string) bool {
 		return true
 	}
 	if strings.HasSuffix(word, ".") && !r.isInIgnoredSet(word) {
-		return r.isIgnoredNoCase(word[:len(word)-1])
+		// Java: word.substring(0, word.length()-1) — UTF-16 units
+		return r.isIgnoredNoCase(substringByUTF16(word, 0, utf16LenDE(word)-1))
 	}
 	return r.isIgnoredNoCase(word)
 }
@@ -536,31 +540,71 @@ func (r *GermanSpellerRule) isInIgnoredSet(word string) bool {
 }
 
 // StartsWithIgnoredWord ports SpellingCheckRule.startsWithIgnoredWord:
-// longest prefix of word that is in wordsToBeIgnored; word must be ≥ 4 runes; 0 if none.
-// caseSensitive=true uses exact forms (German compound path).
+// binary-search + Guava commonPrefix loop; returns Java String.length() of match (UTF-16).
+// word.length() < 4 → 0. caseSensitive=true uses natural order (German compound path).
 func (r *GermanSpellerRule) StartsWithIgnoredWord(word string, caseSensitive bool) int {
-	if r == nil || len(r.IgnoreWords) == 0 {
+	if r == nil || utf16LenDE(word) < 4 || len(r.IgnoreWords) == 0 {
 		return 0
 	}
-	runes := []rune(word)
-	if len(runes) < 4 {
-		return 0
+	arr := make([]string, 0, len(r.IgnoreWords))
+	for k := range r.IgnoreWords {
+		arr = append(arr, k)
 	}
-	best := 0
-	for ign := range r.IgnoreWords {
-		ir := []rune(ign)
-		if len(ir) < 1 || len(ir) > len(runes) || len(ir) <= best {
-			continue
-		}
-		if caseSensitive {
-			if strings.HasPrefix(word, ign) {
-				best = len(ir)
+	if caseSensitive {
+		sort.Strings(arr)
+	} else {
+		sort.Slice(arr, func(i, j int) bool {
+			return strings.ToLower(arr[i]) < strings.ToLower(arr[j])
+		})
+	}
+	w := word
+	for w != "" {
+		i := sort.Search(len(arr), func(i int) bool {
+			if caseSensitive {
+				return arr[i] >= w
 			}
-		} else if strings.HasPrefix(strings.ToLower(word), strings.ToLower(ign)) {
-			best = len(ir)
+			return strings.ToLower(arr[i]) >= strings.ToLower(w)
+		})
+		// found exact
+		if i < len(arr) {
+			if caseSensitive && arr[i] == w {
+				break
+			}
+			if !caseSensitive && strings.EqualFold(arr[i], w) {
+				break
+			}
 		}
+		// Java: prev = -result - 2 after binarySearch miss
+		prev := i - 1
+		if prev < 0 {
+			return 0
+		}
+		common := germanCommonPrefixLenUTF16(w, arr[prev], caseSensitive)
+		if common == 0 || common >= utf16LenDE(w) {
+			return 0
+		}
+		// Java: word = caseSensitive ? commonPrefix : word.substring(0, commonPrefix.length())
+		w = substringByUTF16(w, 0, common)
 	}
-	return best
+	return utf16LenDE(w)
+}
+
+// germanCommonPrefixLenUTF16 ports Guava Strings.commonPrefix length (UTF-16 units).
+func germanCommonPrefixLenUTF16(a, b string, caseSensitive bool) int {
+	ua, ub := utf16.Encode([]rune(a)), utf16.Encode([]rune(b))
+	if !caseSensitive {
+		ua = utf16.Encode([]rune(strings.ToLower(a)))
+		ub = utf16.Encode([]rune(strings.ToLower(b)))
+	}
+	n := len(ua)
+	if len(ub) < n {
+		n = len(ub)
+	}
+	i := 0
+	for i < n && ua[i] == ub[i] {
+		i++
+	}
+	return i
 }
 
 // reDirection ports GermanSpellerRule.DIRECTION (full match nord|ost|süd|west).
@@ -701,15 +745,14 @@ func (r *GermanSpellerRule) ignoreCompoundNonHyphenated(word string) bool {
 			return false
 		}
 	}
-	// work in runes for correct UTF-8 slicing of ignoredWord/partialWord
-	runes := []rune(word)
-	if end > len(runes) {
+	// Java: ignoredWord = word.substring(0, end); partialWord = word.substring(end)
+	if end > utf16LenDE(word) {
 		return false
 	}
-	ignoredWord := string(runes[:end])
-	partialWord := string(runes[end:])
+	ignoredWord := substringByUTF16(word, 0, end)
+	partialWord := substringByUTF16(word, end, utf16LenDE(word))
 	if strings.HasSuffix(partialWord, ".") {
-		partialWord = partialWord[:len(partialWord)-1]
+		partialWord = substringByUTF16(partialWord, 0, utf16LenDE(partialWord)-1)
 	}
 	isN := r.isNoun(partialWord)
 	isUppercaseNoun := false
@@ -728,7 +771,8 @@ func (r *GermanSpellerRule) ignoreCompoundNonHyphenated(word string) bool {
 	needFugenS := isNeedingFugenS(ignoredWord)
 	if needFugenS {
 		if strings.HasPrefix(partialWord, "s") {
-			partialWord = partialWord[1:]
+			// Java: partialWord.substring(1)
+			partialWord = substringByUTF16(partialWord, 1, utf16LenDE(partialWord))
 		}
 	}
 	return spellerDictAccepts(partialWord) || spellerDictAccepts(uppercaseFirstChar(partialWord))
@@ -754,10 +798,12 @@ func (r *GermanSpellerRule) IgnoreCompoundWithIgnoredWord(word string) bool {
 		return r.ignoreCompoundNonHyphenated(word)
 	}
 	// hyphenated compound
+	// Java: stripFirst = word.substring(words[0].length()+1)
+	//       stripLast  = word.substring(0, word.length()-words[last].length()-1)
 	hasIgnoredWord := false
 	var toSpellCheck []string
-	stripFirst := word[len(parts[0])+1:] // after first "-"
-	stripLast := word[:len(word)-len(parts[len(parts)-1])-1]
+	stripFirst := substringByUTF16(word, utf16LenDE(parts[0])+1, utf16LenDE(word))
+	stripLast := substringByUTF16(word, 0, utf16LenDE(word)-utf16LenDE(parts[len(parts)-1])-1)
 
 	if r.IgnoreWord(stripFirst) || r.IsIgnoredInCompounds(stripFirst) {
 		hasIgnoredWord = true
