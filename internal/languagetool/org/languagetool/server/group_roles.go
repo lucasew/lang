@@ -24,16 +24,21 @@ func EncodeGroupRoles(roles []GroupRole) string {
 }
 
 func DecodeGroupRoles(value string) []GroupRole {
+	// Java GroupRoles.decode: value.split(SEPARATOR) then valueOf — no trim.
+	// Empty value: split(",") on "" yields {""} in Java → valueOf("") throws;
+	// Go fail-closed: nil for empty storage string.
 	if value == "" {
 		return nil
 	}
 	parts := strings.Split(value, GroupRoleSeparator)
 	out := make([]GroupRole, 0, len(parts))
 	for _, p := range parts {
-		p = strings.TrimSpace(p)
-		if p != "" {
-			out = append(out, GroupRole(p))
+		// Keep empty segments? Java valueOf("") throws IllegalArgumentException.
+		// Fail-closed skip empty rather than invent a role.
+		if p == "" {
+			continue
 		}
+		out = append(out, GroupRole(p))
 	}
 	return out
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // CheckMode ports JLanguageTool.Mode for check queries.
@@ -212,7 +214,8 @@ func ValidatePreferredVariants(variants []string, isKnown func(code string) bool
 }
 
 func validateLangCodeShape(code string) error {
-	if strings.TrimSpace(code) == "" {
+	// Java language code checks use isEmpty / shape, not Unicode TrimSpace.
+	if tools.JavaStringTrimIsEmpty(code) {
 		return fmt.Errorf("empty language code")
 	}
 	// Allow plain short codes and BCP47-like variants (en-US, de-DE, pt-BR).
@@ -258,6 +261,8 @@ func ParseCheckQueryParams(parameters map[string]string) (CheckQueryParams, erro
 	return p, nil
 }
 
+// commaSeparated ports TextChecker.getCommaSeparatedStrings:
+// Arrays.asList(disabledParam.split(",")) — no per-item trim; empty slots kept out only when "".
 func commaSeparated(s string) []string {
 	if s == "" {
 		return nil
@@ -265,7 +270,7 @@ func commaSeparated(s string) []string {
 	parts := strings.Split(s, ",")
 	out := make([]string, 0, len(parts))
 	for _, p := range parts {
-		p = strings.TrimSpace(p)
+		// Java keeps " STYLE" with leading space; do not TrimSpace.
 		if p != "" {
 			out = append(out, p)
 		}

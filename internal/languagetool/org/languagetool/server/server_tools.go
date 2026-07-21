@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // GetHTTPRequestIp ports ServerTools.getHTTPRequestIp-like extraction.
@@ -15,10 +17,11 @@ func GetHTTPRequestIP(r *http.Request, trustXForwardedFor bool) string {
 	if trustXForwardedFor {
 		if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
 			parts := strings.Split(xff, ",")
-			return strings.TrimSpace(parts[0])
+			// Typical Java XFF first hop trim (String.trim).
+			return tools.JavaStringTrim(parts[0])
 		}
 		if xri := r.Header.Get("X-Real-IP"); xri != "" {
-			return strings.TrimSpace(xri)
+			return tools.JavaStringTrim(xri)
 		}
 	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -34,7 +37,7 @@ func CleanUserQuery(q string, max int) string {
 		max = 200
 	}
 	q = strings.ReplaceAll(q, "\n", " ")
-	q = strings.TrimSpace(q)
+	q = tools.JavaStringTrim(q)
 	if len(q) > max {
 		return q[:max] + "…"
 	}

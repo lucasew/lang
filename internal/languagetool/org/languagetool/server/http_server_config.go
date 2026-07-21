@@ -4,6 +4,8 @@ import (
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // HTTPServerConfig ports the core surface of org.languagetool.server.HTTPServerConfig.
@@ -207,7 +209,8 @@ func (c *HTTPServerConfig) ApplyProperties(props map[string]string) {
 		}
 	}
 	if v, ok := props["pipelineCaching"]; ok {
-		c.PipelineCaching = strings.EqualFold(strings.TrimSpace(v), "true")
+		// Java: Boolean.parseBoolean(...trim()) — String.trim
+		c.PipelineCaching = strings.EqualFold(tools.JavaStringTrim(v), "true")
 	}
 	if v, ok := props["maxPipelinePoolSize"]; ok {
 		if n, err := strconv.Atoi(v); err == nil {
@@ -220,21 +223,14 @@ func (c *HTTPServerConfig) ApplyProperties(props map[string]string) {
 		}
 	}
 	if v, ok := props["trustXForwardForHeader"]; ok {
-		c.TrustXForwardedForHeader = strings.EqualFold(strings.TrimSpace(v), "true")
+		c.TrustXForwardedForHeader = strings.EqualFold(tools.JavaStringTrim(v), "true")
 	}
 	if v, ok := props["premiumAlways"]; ok {
-		c.PremiumAlways = strings.EqualFold(strings.TrimSpace(v), "true")
+		c.PremiumAlways = strings.EqualFold(tools.JavaStringTrim(v), "true")
 	}
 	if v, ok := props["disabledRuleIds"]; ok && v != "" {
-		parts := strings.Split(v, ",")
-		out := make([]string, 0, len(parts))
-		for _, p := range parts {
-			p = strings.TrimSpace(p)
-			if p != "" {
-				out = append(out, p)
-			}
-		}
-		c.DisabledRuleIDs = out
+		// Java: Arrays.asList(...split(",\\s*")) — comma + optional ASCII \s*
+		c.DisabledRuleIDs = splitCommaOptionalASCIIWS(v)
 	}
 }
 
@@ -272,7 +268,7 @@ func (c *HTTPServerConfig) IsBlockedReferrer(referer string) bool {
 		return false
 	}
 	for _, b := range c.BlockedReferrers {
-		b = strings.TrimSpace(b)
+		// Loaded via split(",\\s*") already; do not Unicode-trim entries.
 		if b == "" {
 			continue
 		}
@@ -281,4 +277,37 @@ func (c *HTTPServerConfig) IsBlockedReferrer(referer string) bool {
 		}
 	}
 	return false
+}
+
+// splitCommaOptionalASCIIWS ports Java String.split(",\\s*") without UNICODE_CHARACTER_CLASS
+// (HTTPServerConfig disabledRuleIds / blockedReferrers / whitelist users).
+func splitCommaOptionalASCIIWS(s string) []string {
+	if s == "" {
+		return nil
+	}
+	// Manual scan: split on ',' then skip following ASCII whitespace.
+	var out []string
+	start := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] != ',' {
+			continue
+		}
+		out = append(out, s[start:i])
+		j := i + 1
+		for j < len(s) {
+			c := s[j]
+			if c != ' ' && c != '\t' && c != '\n' && c != '\v' && c != '\f' && c != '\r' {
+				break
+			}
+			j++
+		}
+		start = j
+		i = j - 1
+	}
+	out = append(out, s[start:])
+	// Java limit 0 drops trailing empties
+	for len(out) > 0 && out[len(out)-1] == "" {
+		out = out[:len(out)-1]
+	}
+	return out
 }

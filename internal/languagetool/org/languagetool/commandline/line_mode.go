@@ -27,18 +27,18 @@ func SplitParagraphs(text string, singleLineBreakMarksParagraph bool) []string {
 	if singleLineBreakMarksParagraph {
 		var out []string
 		for _, line := range strings.Split(text, "\n") {
-			if strings.TrimSpace(line) == "" {
+			// Java Main.isBreakPoint: "".equals(line) — exact empty only, not TrimSpace.
+			if line == "" {
 				continue
 			}
 			out = append(out, line)
 		}
 		return out
 	}
-	// double newline paragraphs
+	// double newline paragraphs — keep content; only drop exact-empty segments
 	parts := strings.Split(text, "\n\n")
 	var out []string
 	for _, p := range parts {
-		p = strings.TrimSpace(p)
 		if p != "" {
 			out = append(out, p)
 		}
@@ -54,7 +54,9 @@ func CheckLineByLine(w io.Writer, text string, check LineChecker) (int, error) {
 	}
 	total := 0
 	for i, line := range SplitLines(text) {
-		if strings.TrimSpace(line) == "" {
+		// Java line-by-line: empty line is breakpoint only when "".equals(line);
+		// whitespace-only lines are still content (not skipped via TrimSpace).
+		if line == "" {
 			continue
 		}
 		matches, err := check(line)

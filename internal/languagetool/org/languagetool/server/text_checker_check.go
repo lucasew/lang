@@ -100,7 +100,7 @@ func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) (pl *Pipel
 	}
 	p := NewPipeline(settings)
 	for _, id := range opts.Disabled {
-		id = strings.TrimSpace(id)
+		// Java getCommaSeparatedStrings: split(",") with no per-id trim.
 		if id != "" {
 			_ = p.DisableRuleID(id)
 		}
@@ -163,29 +163,33 @@ func filterLocalsByCategories(ms []languagetool.LocalMatch, opts CheckOptions) [
 	return languagetool.FilterMatchesByCategories(ms, opts.DisabledCategories, opts.EnabledCategories, opts.UseEnabledOnly)
 }
 
-// ParseRuleValues parses "RULE_ID:value,OTHER:2" into a map (soft; last wins).
+// ParseRuleValues ports TextChecker.getRuleValues for string maps used by applyRuleValues.
+// Java: parameterString.split(","); pair.split(":"); put(ruleAndValue[0], …) — no trim.
+// Accepts either a single comma-joined blob or a pre-split []string of pairs.
 func ParseRuleValues(items []string) map[string]string {
 	if len(items) == 0 {
 		return nil
 	}
 	out := map[string]string{}
 	for _, item := range items {
-		item = strings.TrimSpace(item)
 		if item == "" {
 			continue
 		}
-		// also allow comma-joined blob
+		// also allow comma-joined blob (one element holding many pairs)
 		for _, part := range strings.Split(item, ",") {
-			part = strings.TrimSpace(part)
 			if part == "" {
 				continue
 			}
+			// Java pair.split(":") — first colon only needed for id/value (limit not set → all colons)
 			i := strings.IndexByte(part, ':')
-			if i <= 0 || i == len(part)-1 {
+			if i < 0 || i == len(part)-1 {
+				// Java would throw ArrayIndexOutOfBounds on missing [1]; fail-closed skip
 				continue
 			}
-			id := strings.TrimSpace(part[:i])
-			val := strings.TrimSpace(part[i+1:])
+			id := part[:i]
+			val := part[i+1:]
+			// Java uses ruleAndValue[0] as key without ToUpper; applyRuleValues may fold later.
+			// Keep historical ToUpper for map lookup consistency with existing Go consumers.
 			if id != "" && val != "" {
 				out[strings.ToUpper(id)] = val
 			}
