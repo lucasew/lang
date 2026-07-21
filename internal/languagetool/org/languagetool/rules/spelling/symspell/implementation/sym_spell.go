@@ -2,7 +2,6 @@ package implementation
 
 import (
 	"sort"
-	"unicode/utf8"
 )
 
 // Verbosity controls Lookup result quantity/closeness.
@@ -252,10 +251,9 @@ func (s *SymSpell) LookupMax(input string, verbosity Verbosity, maxEditDistance 
 					}
 					consideredSuggestions[suggestion] = struct{}{}
 				} else if suggestionLen == 1 {
-					r, _ := utf8.DecodeRuneInString(suggestion)
-					if r == utf8.RuneError {
-						distance = inputLen
-					} else if indexByte(input, suggestion[0]) < 0 {
+					// Java: input.indexOf(suggestion.charAt(0))
+					ch := javaChars(suggestion)[0]
+					if javaIndexOfChar(input, ch) < 0 {
 						distance = inputLen
 					} else {
 						distance = inputLen - 1

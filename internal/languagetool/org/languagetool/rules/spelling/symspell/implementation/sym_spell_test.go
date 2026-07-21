@@ -45,3 +45,22 @@ func TestSymSpellBelowThreshold(t *testing.T) {
 	require.True(t, s.CreateDictionaryEntry("rare", 1, nil)) // reaches 3
 	require.Equal(t, 1, s.WordCount())
 }
+
+// Java String.length for "café" is 4 (UTF-16), not 5 UTF-8 bytes.
+// Dictionary/edits/prefix must use UTF-16 so multi-byte BMP terms work.
+func TestSymSpellAccentedUTF16(t *testing.T) {
+	s := DefaultSymSpell()
+	require.True(t, s.CreateDictionaryEntry("café", 10, nil))
+	// exact
+	got := s.Lookup("café", VerbosityTop)
+	require.Len(t, got, 1)
+	require.Equal(t, "café", got[0].Term)
+	require.Equal(t, 0, got[0].Distance)
+	// single edit: missing accent é→e path or last-char delete
+	got = s.Lookup("cafe", VerbosityClosest)
+	require.NotEmpty(t, got)
+	require.Equal(t, "café", got[0].Term)
+	require.LessOrEqual(t, got[0].Distance, 2)
+	// maxLength tracks UTF-16 units (4), not UTF-8 (5)
+	require.Equal(t, 4, s.maxLength)
+}
