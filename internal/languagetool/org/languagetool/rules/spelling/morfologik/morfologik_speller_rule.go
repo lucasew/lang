@@ -14,6 +14,14 @@ import (
 // defaultCompoundRegex ports MorfologikSpellerRule.compoundRegex default "-".
 var defaultCompoundRegex = regexp.MustCompile(`-`)
 
+// pStartsWithNumbersBullets ports MorfologikSpellerRule.pStartsWithNumbersBullets:
+// "^(\\d[\\.,\\d]*|\\P{L}+)(.*)$" — leading number (with .,) or non-letters + rest.
+var pStartsWithNumbersBullets = regexp.MustCompile(`^(\d[\.,\d]*|\P{L}+)(.*)$`)
+
+// pStartsWithNumbersBulletsExceptions ports pStartsWithNumbersBulletsExceptions:
+// "^([\\p{C}\\-\\$%&]+)(.*)$" — control/other marks, $, %, & (do not strip).
+var pStartsWithNumbersBulletsExceptions = regexp.MustCompile(`^([\p{C}\-\$%&]+)(.*)$`)
+
 // MorfologikSpellerRule ports org.languagetool.rules.spelling.morfologik.MorfologikSpellerRule
 // (map/dict-backed; binary morfologik deferred).
 type MorfologikSpellerRule struct {
@@ -239,13 +247,86 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 		m := rules.NewRuleMatch(r, sentence, startPos, tok.GetEndPos(),
 			"Possible spelling mistake found")
 		m.SetType(rules.RuleMatchTypeUnknownWord)
-		sug := r.collectSuggestions(w)
-		if len(sug) > 0 {
-			m.SetSuggestedReplacements(sug)
+
+		// Java getRuleMatches: word starting with numbers or bullets
+		cleanWord, beforePrefix, preventFurther, spaceInsert := r.applyNumbersBulletsPrefix(w)
+		if spaceInsert != "" {
+			addSug(m, spaceInsert)
+		}
+		if !preventFurther {
+			// Java appendLazySuggestions(cleanWord, beforeSuggestionStr, afterSuggestionStr)
+			// afterStr is empty here (wrong-split paths already continued above).
+			sug := r.collectSuggestions(cleanWord)
+			for _, s := range sug {
+				joined := strings.TrimSpace(beforePrefix + s)
+				if joined != "" {
+					addSug(m, joined)
+				}
+			}
 		}
 		out = append(out, m)
 	}
 	return out, nil
+}
+
+// applyNumbersBulletsPrefix ports getRuleMatches numbers/bullets block.
+// Returns cleanWord (may strip leading digits/bullets), beforePrefix for suggestions
+// ("firstPart "), preventFurther (true when firstPart+" "+secondPart is already added),
+// and spaceInsert suggestion (firstPart+" "+secondPart) when the second part is OK.
+func (r *MorfologikSpellerRule) applyNumbersBulletsPrefix(word string) (cleanWord, beforePrefix string, preventFurther bool, spaceInsert string) {
+	cleanWord = word
+	if word == "" || r == nil {
+		return word, "", false, ""
+	}
+	m := pStartsWithNumbersBullets.FindStringSubmatch(word)
+	if m == nil {
+		return word, "", false, ""
+	}
+	// Java: if exception matches, skip the whole numbers/bullets arm
+	if pStartsWithNumbersBulletsExceptions.MatchString(word) {
+		return word, "", false, ""
+	}
+	firstPart, secondPart := m[1], m[2]
+	if secondPart == "" {
+		// Nothing to split; keep original word for speller suggestions
+		return word, "", false, ""
+	}
+
+	// Java: language.getWordTokenizer().tokenize(secondPart)
+	lang := "en"
+	if r.SpellingCheckRule != nil && r.SpellingCheckRule.LanguageCode != "" {
+		lang = r.SpellingCheckRule.LanguageCode
+	}
+	multitokenMisspelled := false
+	if wt := languagetool.WordTokenizerForLanguage(lang); wt != nil {
+		for _, t := range wt.Tokenize(secondPart) {
+			t = strings.TrimSpace(t)
+			if t == "" {
+				continue
+			}
+			// Java: anyMatch(str -> isMisspelled(speller1, str))
+			if r.isMisspelledWord(t) {
+				multitokenMisspelled = true
+				break
+			}
+		}
+	} else if r.isMisspelledWord(secondPart) {
+		multitokenMisspelled = true
+	}
+
+	ignored := false
+	if r.SpellingCheckRule != nil {
+		ignored = r.SpellingCheckRule.IsIgnoredNoCase(secondPart)
+	}
+	prohibited := r.IsProhibited(secondPart)
+
+	// Java: (!multitokenIsMisspeled || isIgnoredNoCase(secondPart)) && !isProhibited(secondPart)
+	if (!multitokenMisspelled || ignored) && !prohibited {
+		// Suggest inserting a space after the leading numbers/bullets
+		return word, "", true, firstPart + " " + secondPart
+	}
+	// Otherwise spell-check the second part only; prefix suggestions with firstPart+" "
+	return secondPart, firstPart + " ", false, ""
 }
 
 // SetCheckCompound ports setCheckCompound (EN enables true).
