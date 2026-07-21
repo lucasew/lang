@@ -1,6 +1,10 @@
 package ngrams
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+)
 
 // GetContextForTerm ports LanguageModelUtils.getContext(token, tokens, term, toLeft, toRight).
 func GetContextForTerm(pos int, tokens []GoogleToken, term string, toLeft, toRight int) []string {
@@ -19,6 +23,34 @@ func Get3gramProbabilityFor(lm LanguageModel, pos int, tokens []GoogleToken, ter
 	}
 	newTokens := GetGoogleTokens(term, false, tokenize)
 	return get3gramProbabilityForTokens(lm, pos, tokens, newTokens)
+}
+
+// Get3gramProbabilityForSentence ports
+// LanguageModelUtils.get3gramProbabilityFor(Language, LanguageModel, int, AnalyzedSentence, String).
+// Finds the GoogleToken with StartPos == position (excluding _START_) and scores the candidate.
+// tokenize is the language Google-style word tokenizer (may be nil → candidate as one token).
+func Get3gramProbabilityForSentence(lm LanguageModel, position int, sentence *languagetool.AnalyzedSentence, candidate string, tokenize TokenizerFunc) float64 {
+	if lm == nil || sentence == nil {
+		return 0
+	}
+	if tokenize == nil {
+		// Without tokenizer we cannot rebuild Google tokens from sentence text reliably.
+		// Java always has language.getWordTokenizer(); fail-closed.
+		return 0
+	}
+	tokens := GetGoogleTokensFromSentence(sentence, true, tokenize)
+	pos := -1
+	for i := range tokens {
+		if tokens[i].StartPos == position && tokens[i].Token != GoogleSentenceStart {
+			pos = i
+			break
+		}
+	}
+	if pos < 0 {
+		// Java logs a warning and returns 0.0
+		return 0
+	}
+	return Get3gramProbabilityFor(lm, pos, tokens, candidate, tokenize)
 }
 
 func get3gramProbabilityForTokens(lm LanguageModel, pos int, tokens, newTokens []GoogleToken) float64 {

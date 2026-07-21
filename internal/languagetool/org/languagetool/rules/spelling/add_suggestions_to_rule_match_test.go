@@ -65,6 +65,7 @@ func TestAddSuggestionsToRuleMatch_FeatureExtractorPanicsOnUser(t *testing.T) {
 	fe := suggestions.NewSuggestionsOrdererFeatureExtractor(nil)
 	// Force ML available by setting a dummy LM
 	fe.LM = &mockLM{}
+	fe.Score = "noop"
 	require.Panics(t, func() {
 		AddSuggestionsToRuleMatch("teh",
 			rules.ConvertSuggestions([]string{"u"}),
@@ -73,15 +74,17 @@ func TestAddSuggestionsToRuleMatch_FeatureExtractorPanicsOnUser(t *testing.T) {
 	})
 }
 
-// FeatureExtractor without user sets features map.
+// FeatureExtractor without user sets features map (Java candidateCount + per-sug features).
 func TestAddSuggestionsToRuleMatch_FeatureExtractor(t *testing.T) {
 	sent := languagetool.AnalyzePlain("teh")
 	m := rules.NewRuleMatch(rules.NewFakeRule("SPELL"), sent, 0, 3, "misspell")
 	fe := suggestions.NewSuggestionsOrdererFeatureExtractor(&mockLM{})
+	fe.Score = "noop" // avoid unknown-score panic when no experiment
 	AddSuggestionsToRuleMatch("teh", nil, rules.ConvertSuggestions([]string{"the", "tea"}), fe, m)
 	require.NotEmpty(t, m.GetSuggestedReplacements())
-	// features may be empty or populated depending on ComputeFeatures implementation
-	_ = m.GetFeatures()
+	feats := m.GetFeatures()
+	require.Equal(t, float32(2), feats["candidateCount"])
+	require.Contains(t, m.GetSuggestedReplacementObjects()[0].GetFeatures(), "levensthein")
 }
 
 // mockRanker implements SuggestionsRanker with ML available.
