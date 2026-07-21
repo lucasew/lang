@@ -381,8 +381,19 @@ func numberOfCorrectChars(s1, s2 string) int {
 }
 
 func splitBySpace(s string) []string {
-	// Java StringUtils.split(s, ' ') — omit empty
-	return strings.Fields(s)
+	// Java StringUtils.split(s, ' ') — only ASCII space, omit empty segments.
+	// (Not strings.Fields — that also splits on tabs/newlines/other unicode spaces.)
+	if s == "" {
+		return nil
+	}
+	raw := strings.Split(s, " ")
+	out := make([]string, 0, len(raw))
+	for _, p := range raw {
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 func getNormalizeKey(word string) string {
