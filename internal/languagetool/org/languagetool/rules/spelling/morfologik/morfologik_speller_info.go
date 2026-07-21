@@ -239,55 +239,6 @@ func (s *MorfologikSpeller) binarySuggestWithRunOn(d *atticmorfo.Dictionary, wor
 	return out
 }
 
-// suggestOpts builds attic morfologik.SuggestOpts from .info flags.
-func (s *MorfologikSpeller) suggestOpts() atticmorfo.SuggestOpts {
-	if s == nil {
-		return atticmorfo.SuggestOpts{}
-	}
-	return atticmorfo.SuggestOpts{
-		IgnoreDiacritics:    s.IgnoreDiacritics,
-		ConvertCase:         s.ConvertCase,
-		EquivalentChars:     s.EquivalentChars,
-		SymmetricEquivalent: true, // invent edit-gen path only
-	}
-}
-
-// binaryCascadeWeighted ports calcSpellerSuggestions distance cascade at the binary layer
-// (used when a single Speller stands in for speller1+2+3 without Multis).
-// Uses Dictionary.FindReplacementCandidates (Java Speller), not invent edit-candidate gen.
-func binaryCascadeWeighted(d *atticmorfo.Dictionary, word string, max int) []WeightedSuggestion {
-	if d == nil || word == "" {
-		return nil
-	}
-	w1 := d.WeightedEditSuggestions(word, max, 1)
-	sugs := toWeighted(w1)
-	onlyCase := len(sugs) > 0 && strings.EqualFold(word, sugs[0].Word)
-	if len(word) >= 3 && (onlyCase || len(sugs) == 0) {
-		w2 := d.WeightedEditSuggestions(word, max, 2)
-		sugs = mergeWeightedUnique(sugs, toWeighted(w2))
-		if len(word) >= 5 && len(sugs) == 0 {
-			// Java: speller3 only when defaultSuggestions empty after speller2
-			w3 := d.WeightedEditSuggestions(word, max, 3)
-			sugs = mergeWeightedUnique(sugs, toWeighted(w3))
-		}
-	}
-	if len(sugs) > max {
-		sugs = sugs[:max]
-	}
-	return sugs
-}
-
-func toWeighted(w []struct {
-	Word   string
-	Weight int
-}) []WeightedSuggestion {
-	out := make([]WeightedSuggestion, 0, len(w))
-	for _, x := range w {
-		out = append(out, NewWeightedSuggestion(x.Word, x.Weight))
-	}
-	return out
-}
-
 func mergeWeightedUnique(a, b []WeightedSuggestion) []WeightedSuggestion {
 	seen := map[string]struct{}{}
 	var out []WeightedSuggestion
@@ -303,61 +254,6 @@ func mergeWeightedUnique(a, b []WeightedSuggestion) []WeightedSuggestion {
 			continue
 		}
 		seen[s.Word] = struct{}{}
-		out = append(out, s)
-	}
-	return out
-}
-
-// binaryCascadeSuggestions ports MorfologikSpellerRule.calcSpellerSuggestions distance cascade:
-// edit-1 first; if empty (or only case-differs) and len>=3 use edit-2; if still empty and len>=5 use edit-3.
-func binaryCascadeSuggestions(d *atticmorfo.Dictionary, word string, max int) []string {
-	if d == nil || word == "" {
-		return nil
-	}
-	// Weighted sort by distance+frequency (Java WeightedSuggestion)
-	w1 := d.WeightedEditSuggestions(word, max, 1)
-	sugs := weightedWords(w1)
-	onlyCase := len(sugs) > 0 && strings.EqualFold(word, sugs[0])
-	if len(word) >= 3 && (onlyCase || len(sugs) == 0) {
-		w2 := d.WeightedEditSuggestions(word, max, 2)
-		sugs = mergeUnique(sugs, weightedWords(w2))
-		if len(word) >= 5 && len(sugs) == 0 {
-			w3 := d.WeightedEditSuggestions(word, max, 3)
-			sugs = mergeUnique(sugs, weightedWords(w3))
-		}
-	}
-	if len(sugs) > max {
-		sugs = sugs[:max]
-	}
-	return sugs
-}
-
-func weightedWords(w []struct {
-	Word   string
-	Weight int
-}) []string {
-	out := make([]string, 0, len(w))
-	for _, x := range w {
-		out = append(out, x.Word)
-	}
-	return out
-}
-
-func mergeUnique(a, b []string) []string {
-	seen := map[string]struct{}{}
-	var out []string
-	for _, s := range a {
-		if _, ok := seen[s]; ok {
-			continue
-		}
-		seen[s] = struct{}{}
-		out = append(out, s)
-	}
-	for _, s := range b {
-		if _, ok := seen[s]; ok {
-			continue
-		}
-		seen[s] = struct{}{}
 		out = append(out, s)
 	}
 	return out

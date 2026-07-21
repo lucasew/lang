@@ -86,6 +86,8 @@ func TestMorfologikSpellerRule_WrongSplit(t *testing.T) {
 	require.NotNil(t, firstWithSuggestion(ms, "offers spell"), summary(ms))
 }
 
+// Java MorfologikSpeller.getFrequency: exact Speller.getFrequency then
+// word.toLowerCase() (default Locale) when freq==0.
 func TestMorfologikSpeller_GetFrequency(t *testing.T) {
 	sp := NewMorfologikSpeller("/x.dict", 1)
 	require.Equal(t, 0, sp.GetFrequency("unknown"))

@@ -139,60 +139,47 @@ func (s *MorfologikSpeller) SetFrequency(word string, freq int) {
 	s.Frequencies[word] = freq
 }
 
-// GetFrequency ports MorfologikSpeller.getFrequency (exact then lowercase).
-// Java: int freq = speller.getFrequency(word); if (freq == 0 && !word.equals(word.toLowerCase())) ...
-// Uses ConversionLocale when set (dict locale); else strings.ToLower like default Locale path.
-// Do not invent 1 for known map words (weights: dist*26+26-freq-1 → wordone/51 with freq 0).
+// GetFrequency ports MorfologikSpeller.getFrequency:
+//
+//	int freq = speller.getFrequency(word);
+//	if (freq == 0 && !word.equals(word.toLowerCase())) {
+//	  freq = speller.getFrequency(word.toLowerCase());
+//	}
+//
+// Java uses String.toLowerCase() with the default Locale (not dictionary locale).
+// Speller.getFrequency returns 0 when frequency-included is false or word unknown.
+// Do not invent 1 for known map words (weights: dist*26+26-0-1 → wordone/51).
 func (s *MorfologikSpeller) GetFrequency(word string) int {
 	if s == nil || word == "" {
 		return 0
 	}
-	if f, ok := s.lookupFrequency(word); ok {
-		// Java returns speller freq even when 0 for exact hit path only if... actually
-		// Java always tries lowercase when freq==0, even for known words with tag 0.
-		if f > 0 {
-			return f
+	freq := s.spellerGetFrequency(word)
+	if freq == 0 {
+		// Java: word.toLowerCase() — default Locale, not dictionaryMetadata.getLocale()
+		low := strings.ToLower(word)
+		if low != word {
+			freq = s.spellerGetFrequency(low)
 		}
 	}
-	// Java: if (freq == 0 && !word.equals(word.toLowerCase()))
-	low := s.toLower(word)
-	if low != word {
-		if f, ok := s.lookupFrequency(low); ok {
-			return f
-		}
-	}
-	// exact was known with freq 0
-	if f, ok := s.lookupFrequency(word); ok {
-		return f
-	}
-	return 0
+	return freq
 }
 
-// lookupFrequency returns (freq, true) when word is known to this speller's freq sources.
-// true with 0 is valid (rare word / no frequency tags).
-func (s *MorfologikSpeller) lookupFrequency(word string) (int, bool) {
+// spellerGetFrequency ports morfologik Speller.getFrequency for this MorfologikSpeller.
+func (s *MorfologikSpeller) spellerGetFrequency(word string) int {
+	if s == nil || word == "" {
+		return 0
+	}
+	// Test inject map (Java frequency tags on runtime dict forms)
 	if s.Frequencies != nil {
 		if f, ok := s.Frequencies[word]; ok {
-			return f, true
+			return f
 		}
 	}
 	if s.GetFrequencyFn != nil {
-		// Binary path: Speller.getFrequency; 0 when unknown OR known with tag 0.
-		// Distinguish via inDictionary when FrequencyIncluded.
-		f := s.GetFrequencyFn(word)
-		if f > 0 {
-			return f, true
-		}
-		if s.inDictionary(word) {
-			return f, true // may be 0
-		}
-		return 0, false
+		return s.GetFrequencyFn(word)
 	}
-	// Map inject without explicit Frequencies: Java test.dict without frequency → 0
-	if s.inDictionary(word) {
-		return 0, true
-	}
-	return 0, false
+	// No frequency-included tags (map inject without Frequencies) → 0
+	return 0
 }
 
 // IsMisspelled ports morfologik.speller.Speller.isMisspelled metadata gates + dictionary probe.
