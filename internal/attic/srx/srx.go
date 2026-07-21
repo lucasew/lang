@@ -228,21 +228,26 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 			if rule.Before == nil {
 				continue
 			}
-			idxs := rule.Before.FindAllStringIndex(text, -1)
-			for _, loc := range idxs {
-				pos := len([]rune(text[:loc[1]]))
-				if pos <= 0 || pos >= rn {
-					continue
+			// Overlapping matches (loomchild/Java): advance one byte after each
+			// match start so "d. h." gets no-break on both single-letter dots.
+			// FindAllStringIndex is non-overlapping and would skip the second.
+			for bstart := 0; bstart < len(text); {
+				loc := rule.Before.FindStringIndex(text[bstart:])
+				if loc == nil {
+					break
 				}
-				if decided[pos] {
-					continue
+				abs0 := bstart + loc[0]
+				abs1 := bstart + loc[1]
+				pos := len([]rune(text[:abs1]))
+				if pos > 0 && pos < rn && !decided[pos] {
+					after := string(runes[pos:])
+					if matchAfter(rule.After, after) {
+						breakAt[pos] = rule.Break
+						decided[pos] = true
+					}
 				}
-				after := string(runes[pos:])
-				if !matchAfter(rule.After, after) {
-					continue
-				}
-				breakAt[pos] = rule.Break
-				decided[pos] = true
+				// next search starts one past this match's start (overlap)
+				bstart = abs0 + 1
 			}
 		}
 	}
