@@ -483,23 +483,44 @@ func (s *MorfologikSpeller) ReplaceRunOnWordCandidates(original string) []Weight
 	if s == nil || original == "" || !s.SupportRunOnWords {
 		return nil
 	}
+	// Binary FSA: Dictionary.ReplaceRunOnWordCandidates (Java Speller twin).
+	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
+		d.SupportRunOnWords = s.SupportRunOnWords
+		if s.ConversionLocale != "" {
+			d.SetLocale(s.ConversionLocale)
+		}
+		if len(s.InputConversionPairs) > 0 {
+			d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
+		}
+		if len(s.OutputConversionPairs) > 0 {
+			d.OutputConversion = append([][2]string(nil), s.OutputConversionPairs...)
+		}
+		cds := d.ReplaceRunOnWordCandidates(original)
+		if len(cds) == 0 {
+			return nil
+		}
+		out := make([]WeightedSuggestion, 0, len(cds))
+		for _, c := range cds {
+			out = append(out, NewWeightedSuggestion(c.Word, c.Distance))
+		}
+		return out
+	}
+	// Map-inject path (tests / no FSA)
 	wordToCheck := s.applyInputConversion(original)
 	if s.isInDictionaryExact(wordToCheck) {
 		return nil
 	}
-	// Java: for (i = 1; i < wordToCheck.length(); i++)  — UTF-16 length / code units ≈ runes for BMP
-	r := []rune(wordToCheck)
-	if len(r) < 2 {
+	// Java: for (i = 1; i < wordToCheck.length(); i++) UTF-16
+	u := utf16.Encode([]rune(wordToCheck))
+	if len(u) < 2 {
 		return nil
 	}
 	var candidates []WeightedSuggestion
-	for i := 1; i < len(r); i++ {
-		prefix := string(r[:i])
-		suffix := string(r[i:])
-		// suffix accepted: exact OR capitalized with lowercase form in dict
+	for i := 1; i < len(u); i++ {
+		prefix := string(utf16.Decode(u[:i]))
+		suffix := string(utf16.Decode(u[i:]))
 		suffixOK := s.isInDictionaryExact(suffix)
 		if !suffixOK && !isNotCapitalizedWord(suffix) {
-			// Java: suffix.toLowerCase(locale)
 			suffixOK = s.isInDictionaryExact(s.toLower(suffix))
 		}
 		if !suffixOK {
@@ -507,10 +528,9 @@ func (s *MorfologikSpeller) ReplaceRunOnWordCandidates(original string) []Weight
 		}
 		if s.isInDictionaryExact(prefix) {
 			candidates = append(candidates, s.runOnCandidate(prefix+" "+suffix))
-		} else if len(prefix) > 0 {
+		} else if prefix != "" {
 			pr := []rune(prefix)
-			if unicode.IsUpper(pr[0]) && s.isInDictionaryExact(s.toLower(prefix)) {
-				// sentence-start capitalization only on prefix
+			if len(pr) > 0 && unicode.IsUpper(pr[0]) && s.isInDictionaryExact(s.toLower(prefix)) {
 				candidates = append(candidates, s.runOnCandidate(prefix+" "+suffix))
 			}
 		}
