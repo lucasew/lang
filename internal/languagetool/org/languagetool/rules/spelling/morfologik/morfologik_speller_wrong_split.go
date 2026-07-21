@@ -7,6 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // maxFrequencyForSplitting ports MorfologikSpellerRule.MAX_FREQUENCY_FOR_SPLITTING (0..21).
@@ -94,7 +95,8 @@ func (r *MorfologikSpellerRule) tryWrongSplitPrev(
 					beforeStr = prevWord + " "
 				}
 			} else {
-				addSug(ruleMatch, strings.TrimSpace(sugg2a+" "+sugg2b))
+				// Java: (sugg2a + " " + sugg2b).trim()
+				addSug(ruleMatch, tools.JavaStringTrim(sugg2a+" "+sugg2b))
 			}
 		}
 	}
@@ -167,7 +169,8 @@ func (r *MorfologikSpellerRule) tryWrongSplitNext(
 					afterStr = " " + nextWord
 				}
 			} else {
-				addSug(ruleMatch, strings.TrimSpace(sugg2a+" "+sugg2b))
+				// Java: (sugg2a + " " + sugg2b).trim()
+				addSug(ruleMatch, tools.JavaStringTrim(sugg2a+" "+sugg2b))
 			}
 		}
 	}

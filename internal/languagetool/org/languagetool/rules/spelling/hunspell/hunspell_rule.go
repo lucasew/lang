@@ -185,8 +185,12 @@ func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 			continue
 		}
 		// Java getSentenceTextWithoutUrlsAndImmunizedTokens: stringForSpeller
+		// (no String.trim on token; split path yields non-empty segments).
+		// After emoji→space replacement, ASCII spaces may pad the surface —
+		// Java nonWordPattern split drops them; JavaStringTrim matches that for
+		// pure ASCII padding without invent Unicode TrimSpace.
 		check := tools.StringForSpeller(w)
-		check = strings.TrimSpace(check)
+		check = tools.JavaStringTrim(check)
 		if check == "" || !hasLetter(check) {
 			prevTok = tok
 			continue
@@ -228,7 +232,7 @@ func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 		// Java wrong-split: may ADD matches (does not skip the per-word match below).
 		if prevTok != nil {
 			prevWord := tools.StringForSpeller(prevTok.GetToken())
-			prevWord = strings.TrimSpace(prevWord)
+			prevWord = tools.JavaStringTrim(prevWord)
 			if prevWord != "" && !r.ignoreWrongSplit(prevWord, check) {
 				r.addWrongSplits(sentence, &out, prevWord, prevTok.GetStartPos(), check, tok.GetStartPos(), cleanWord)
 			}
@@ -341,7 +345,8 @@ func (r *HunspellRule) addWrongSplits(
 	if pu := utf16.Encode([]rune(prevWord)); len(pu) >= 1 {
 		sugg1a := string(utf16.Decode(pu[:len(pu)-1]))
 		sugg1b := cutOffDotHun(string(utf16.Decode(pu[len(pu)-1:])) + word)
-		joined := strings.TrimSpace(sugg1a + " " + sugg1b)
+		// Java: acceptSuggestion(sugg1a + " " + sugg1b) — no trim
+		joined := sugg1a + " " + sugg1b
 		if sugg1a != "" && sugg1b != "" &&
 			!r.IsMisspelledWord(sugg1a) && !r.IsMisspelledWord(sugg1b) &&
 			r.acceptSuggestion(joined) {
@@ -354,7 +359,8 @@ func (r *HunspellRule) addWrongSplits(
 	if wu := utf16.Encode([]rune(word)); len(wu) > 1 {
 		sugg2a := prevWord + string(utf16.Decode(wu[:1]))
 		sugg2b := cutOffDotHun(string(utf16.Decode(wu[1:])))
-		joined := strings.TrimSpace(sugg2a + " " + sugg2b)
+		// Java: acceptSuggestion(sugg2a + " " + sugg2b) — no trim
+		joined := sugg2a + " " + sugg2b
 		if sugg2a != "" && sugg2b != "" &&
 			!r.IsMisspelledWord(sugg2a) && !r.IsMisspelledWord(sugg2b) &&
 			r.acceptSuggestion(joined) {

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // SymbolType for unpaired brackets stack.
@@ -210,7 +211,8 @@ func (r *GenericUnpairedBracketsRule) MatchList(sentences []*languagetool.Analyz
 }
 
 func endsLikeRealSentence(r string) bool {
-	s := strings.TrimSpace(r)
+	// Java: r.trim() then endsWith . ? !
+	s := tools.JavaStringTrim(r)
 	return strings.HasSuffix(s, ".") || strings.HasSuffix(s, "?") || strings.HasSuffix(s, "!")
 }
 

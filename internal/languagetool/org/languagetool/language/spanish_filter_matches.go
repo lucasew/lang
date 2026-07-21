@@ -1,11 +1,15 @@
 package language
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
+
+// esJavaTrailingWS ports Java replaceAll("\\s+$", "") (ASCII whitespace only).
+var esJavaTrailingWS = regexp.MustCompile(`[ \t\n\v\f\r]+$`)
 
 // Spanish AI_ES_GGEC obsolete-diacritic suggestions (Spanish.suggestionsToAvoid).
 // Java: Arrays.asList(...).contains(suggestion.toLowerCase()).
@@ -75,12 +79,17 @@ func FilterSpanishRuleMatches(matches []languagetool.LocalMatch) []languagetool.
 }
 
 // spanishDropTrailingPeriod ports AI_ES_GGEC_MISSING_PUNCTUATION period-at-end skip.
+// Java: getText().replaceAll("\\s+$", "") — Pattern \s without UNICODE_CHARACTER_CLASS
+// is [ \t\n\x0B\f\r] (not NBSP).
 func spanishDropTrailingPeriod(m languagetool.LocalMatch, sug string) bool {
 	sent := m.SentenceText
 	if sent == "" {
 		return false
 	}
-	trimmed := strings.TrimRight(sent, " \t\n\r\f\v\u00a0")
+	trimmed := esJavaTrailingWS.ReplaceAllString(sent, "")
+	if len(sug) == 0 {
+		return false
+	}
 	prefix := sug[:len(sug)-1]
 	return strings.HasSuffix(trimmed, prefix)
 }
@@ -92,7 +101,7 @@ func spanishDropLowercaseSentenceStart(m languagetool.LocalMatch, sug string) bo
 	if sent == "" {
 		return false
 	}
-	trimmed := strings.TrimSpace(sent)
+	trimmed := tools.JavaStringTrim(sent)
 	up := tools.UppercaseFirstChar(sug)
 	return strings.HasPrefix(trimmed, up)
 }

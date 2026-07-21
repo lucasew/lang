@@ -52,6 +52,32 @@ func TestFilterSpanishRuleMatches_DropLowercaseSentenceStart(t *testing.T) {
 	require.Empty(t, out)
 }
 
+// Java String.trim keeps NBSP; TrimSpace would strip and false-match startsWith.
+func TestFilterSpanishRuleMatches_LowercaseStart_NBSPNotTrimmed(t *testing.T) {
+	// Leading NBSP means trim() does not expose "Hola" at start → do not drop.
+	in := []languagetool.LocalMatch{
+		{
+			RuleID: "AI_ES_GGEC_X", Suggestions: []string{"hola"},
+			SentenceText: "\u00a0Hola mundo",
+		},
+	}
+	out := FilterSpanishRuleMatches(in)
+	require.Len(t, out, 1, "NBSP must not be stripped by Java trim()")
+}
+
+// Java replaceAll("\\s+$") does not strip trailing NBSP.
+func TestFilterSpanishRuleMatches_TrailingPeriod_NBSPNotStripped(t *testing.T) {
+	// "Hola" + NBSP — replaceAll \\s+$ leaves NBSP, so endsWith("Hola") is false → keep match.
+	in := []languagetool.LocalMatch{
+		{
+			RuleID: "AI_ES_GGEC_MISSING_PUNCTUATION", Suggestions: []string{"Hola."},
+			SentenceText: "Hola\u00a0",
+		},
+	}
+	out := FilterSpanishRuleMatches(in)
+	require.Len(t, out, 1)
+}
+
 func TestFilterSpanishRuleMatches_CasingRewrite(t *testing.T) {
 	in := []languagetool.LocalMatch{
 		{

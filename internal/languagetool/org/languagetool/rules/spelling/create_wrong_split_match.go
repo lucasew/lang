@@ -1,10 +1,9 @@
 package spelling
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Message keys from MessagesBundle.properties (ResourceBundle.getString).
@@ -44,7 +43,8 @@ func CreateWrongSplitMatch(
 	}
 	to := pos + javaStringLenSpell(coveredWord)
 	m := NewSpellingRuleMatch(rule, sentence, prevPos, to)
-	m.SetSuggestedReplacements([]string{strings.TrimSpace(suggestion1 + " " + suggestion2)})
+	// Java: (suggestion1 + " " + suggestion2).trim() — String.trim, not Unicode TrimSpace.
+	m.SetSuggestedReplacements([]string{tools.JavaStringTrim(suggestion1 + " " + suggestion2)})
 	return m
 }
 
