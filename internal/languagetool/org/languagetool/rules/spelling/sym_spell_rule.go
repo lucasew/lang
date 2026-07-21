@@ -8,7 +8,6 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/suggestions"
 	symimpl "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/symspell/implementation"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // SymSpellRuleID ports SymSpellRule.getId.
@@ -222,6 +221,14 @@ func (r *SymSpellRule) filterCandidates(candidates []string) []string {
 }
 
 // Match ports SymSpellRule.match.
+//
+//	for token : sentence.getTokensWithoutWhitespace():
+//	  skip sentenceStart | immunized | ignoredBySpeller | nonWord
+//	  skip ignoredWords.contains(word)   // ignore.txt set only — not full ignoreWord()
+//	  candidates = filterCandidates(getSpellerMatches(default))
+//	  userCandidates = getSpellerMatches(user)   // NOT filtered (Java)
+//	  if both empty → "Misspelling or unknown word!"
+//	  else if first candidate != word (and user first != word) → "Misspelling!" + suggestions
 func (r *SymSpellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if sentence == nil || r == nil {
 		return nil, nil
@@ -236,23 +243,21 @@ func (r *SymSpellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 			continue
 		}
 		w := tok.GetToken()
-		if w == "" || tokenizers.UTF16Len(w) > MaxTokenLength {
+		if w == "" {
 			continue
 		}
-		// Java ignoredWords.contains(word)
-		if r.SpellingCheckRule != nil && r.IgnoreWord(w) {
+		// Java: ignoredWords.contains(word) — exact set membership (ignore.txt), not ignoreWord().
+		if r.SpellingCheckRule != nil && r.IsInIgnoredSet(w) {
 			continue
 		}
+		// Java: filterCandidates only on default dict candidates
 		candidates := r.filterCandidates(r.getSpellerMatches(w, false))
-		userCandidates := r.filterCandidates(r.getSpellerMatches(w, true))
+		// Java: user candidates are not passed through filterCandidates
+		userCandidates := r.getSpellerMatches(w, true)
 
 		var m *rules.RuleMatch
 		if len(candidates) == 0 && len(userCandidates) == 0 {
-			// unknown — flag (Java always creates match when both empty)
-			// Skip if AcceptWord (map dict exact / ignore)
-			if r.AcceptWord(w) {
-				continue
-			}
+			// Java always creates match when both empty (no AcceptWord gate)
 			m = rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
 				"Misspelling or unknown word!")
 			m.SetType(rules.RuleMatchTypeUnknownWord)
