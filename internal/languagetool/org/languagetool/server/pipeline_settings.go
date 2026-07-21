@@ -1,25 +1,36 @@
 package server
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-// QueryParams is a lightweight stand-in for TextChecker.QueryParams.
-// AltLanguages ports QueryParams.altLanguages (list of language codes from
-// altLanguages= CSV with COMMA_WHITESPACE_PATTERN).
+// QueryParams ports TextChecker.QueryParams fields that participate in
+// equals/hashCode for PipelineSettings pooling (Java QueryParams).
+// Note: toneTags are NOT in Java equals/hashCode — omitted here on purpose.
+// AltLanguages ports QueryParams.altLanguages (COMMA_WHITESPACE_PATTERN CSV).
 type QueryParams struct {
-	EnabledRules       []string
-	DisabledRules      []string
-	EnabledCategories  []string
-	DisabledCategories []string
+	EnabledRules           []string
+	DisabledRules          []string
+	EnabledCategories      []string
+	DisabledCategories     []string
 	// AltLanguages ports TextChecker.QueryParams.altLanguages (codes like "de-DE").
 	// Passed into Pipeline → JLanguageTool like Java Pipeline(lang, altLanguages, …).
-	AltLanguages       []string
-	UseEnabledOnly     bool
-	EnableTempOffRules bool
-	Premium            bool
-	UseQuerySettings   bool
-	EnableHiddenRules  bool
-	LanguageCode       string
-	MotherTongueCode   string
+	AltLanguages           []string
+	UseEnabledOnly         bool
+	EnableTempOffRules     bool
+	RegressionTestMode     bool // Java: same as enableTempOffRules
+	Premium                bool
+	UseQuerySettings       bool
+	AllowIncompleteResults bool
+	EnableHiddenRules      bool
+	Mode                   CheckMode
+	Level                  CheckLevel
+	Callback               string
+	InputLogging           bool
+	// LanguageCode is a Go-only carrier for check mode when Mode is empty (legacy).
+	LanguageCode     string
+	MotherTongueCode string
 }
 
 // PipelineSettings ports org.languagetool.server.PipelineSettings as a pool key.
@@ -33,6 +44,7 @@ type PipelineSettings struct {
 	GlobalConfigKey string
 	// Level is the check level (DEFAULT / PICKY). Empty means DEFAULT.
 	// Java JLanguageTool.Level filters Tag.picky rules (false friends, long sentence, …).
+	// Also mirrored on Query.Level for Java QueryParams equality.
 	Level CheckLevel
 }
 
@@ -40,6 +52,11 @@ func NewPipelineSettings(langCode string, userKey string) PipelineSettings {
 	return PipelineSettings{
 		LangCode:      langCode,
 		UserConfigKey: userKey,
+		Query: QueryParams{
+			Mode:         CheckModeAll,
+			Level:        CheckLevelDefault,
+			InputLogging: true,
+		},
 	}
 }
 
@@ -50,26 +67,37 @@ func NewPipelineSettingsFull(lang, mother string, q QueryParams, globalKey, user
 		Query:            q,
 		GlobalConfigKey:  globalKey,
 		UserConfigKey:    userKey,
+		Level:            q.Level,
 	}
 }
 
+// joinCSV joins slices without invent trim (Java list equality is order-sensitive).
+func joinCSV(parts []string) string {
+	return strings.Join(parts, ",")
+}
+
 // Key returns a stable map key for pooling.
-// Includes altLanguages so pools with different alt sets are not shared
-// (Java PipelineSettings equality includes QueryParams which holds altLanguages).
+// Mirrors Java PipelineSettings/QueryParams equals fields (not toneTags).
 func (s PipelineSettings) Key() string {
-	alts := ""
-	if len(s.Query.AltLanguages) > 0 {
-		// join without invent trim — codes already parsed via ,\s*
-		for i, a := range s.Query.AltLanguages {
-			if i > 0 {
-				alts += ","
-			}
-			alts += a
-		}
+	q := s.Query
+	mode := string(q.Mode)
+	if mode == "" {
+		mode = q.LanguageCode // legacy mode carrier
 	}
-	return fmt.Sprintf("%s|%s|%s|%s|en=%v|prem=%v|alt=%s",
+	level := string(q.Level)
+	if level == "" {
+		level = string(s.Level)
+	}
+	return fmt.Sprintf(
+		"%s|%s|%s|%s|alt=%s|er=%s|dr=%s|ec=%s|dc=%s|eo=%v|uqs=%v|air=%v|ehr=%v|prem=%v|etor=%v|rtm=%v|mode=%s|level=%s|cb=%s|il=%v",
 		s.LangCode, s.MotherTongueCode, s.UserConfigKey, s.GlobalConfigKey,
-		s.Query.UseEnabledOnly, s.Query.Premium, alts)
+		joinCSV(q.AltLanguages),
+		joinCSV(q.EnabledRules), joinCSV(q.DisabledRules),
+		joinCSV(q.EnabledCategories), joinCSV(q.DisabledCategories),
+		q.UseEnabledOnly, q.UseQuerySettings, q.AllowIncompleteResults, q.EnableHiddenRules,
+		q.Premium, q.EnableTempOffRules, q.RegressionTestMode,
+		mode, level, q.Callback, q.InputLogging,
+	)
 }
 
 func (s PipelineSettings) Equal(o PipelineSettings) bool {

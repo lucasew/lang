@@ -142,13 +142,12 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if err := a.TextChecker.ValidateTextLength(text, limits); err != nil {
 			return HandleResult{}, err
 		}
-		lang := parameters["language"]
-		if lang == "" {
-			lang = "auto"
+		langParam := parameters["language"]
+		if langParam == "" {
+			langParam = "auto"
 		}
-		autoDetected := false
 		// Java V2TextChecker: preferredVariants / noopLanguages only with language=auto;
-		// detectLanguageOfString applies preferred or default language variant.
+		// detectLanguageOfString always runs for nested language.detectedLanguage.
 		if err := ValidateNoopLanguages(parameters); err != nil {
 			return HandleResult{}, err
 		}
@@ -156,20 +155,22 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if err != nil {
 			return HandleResult{}, err
 		}
-		// Java V2: getLanguageAutoDetect → "auto".equals(language) case-sensitive
-		if lang == "auto" {
-			autoDetected = true
-			if err := ValidatePreferredVariants(preferred, nil); err != nil {
-				return HandleResult{}, err
-			}
-			lang, err = DetectLanguageOfStringErr(text, preferred, nil)
-			if err != nil {
-				return HandleResult{}, err
-			}
-			if lang == "" {
-				lang = "en"
-			}
+		if err := ValidatePreferredVariants(preferred, nil); err != nil {
+			return HandleResult{}, err
 		}
+		// Java V2 getLanguage: always detectLanguageOfString; given = detected when auto else parseLanguage(langParam)
+		det, err := DetectLanguageOfStringResult(text, preferred, nil)
+		if err != nil {
+			return HandleResult{}, err
+		}
+		if det.Code == "" {
+			det.Code = "en"
+		}
+		givenCode := langParam
+		if langParam == "auto" {
+			givenCode = det.Code
+		}
+		lang := givenCode
 		ignoreWords := commaSeparated(parameters["ignoreWords"])
 		// Merge in-memory user dictionary for username (or anon) — Java premium DB path.
 		if a.UserDict != nil {
@@ -213,12 +214,12 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			var matches []RemoteRuleMatch
 			matches, ignoreRanges, incompleteReason = a.TextChecker.CheckAnnotatedWithOptionsAndIgnore(annotated, lang, opts)
 			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
-			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, incompleteReason, ignoreRanges, time.Since(checkStart).Milliseconds())
+			body, err = a.TextChecker.BuildResponseExDetected(annotated.GetTextWithMarkup(), lang, langName, matches, det, incompleteReason, ignoreRanges, time.Since(checkStart).Milliseconds())
 		} else {
 			var matches []RemoteRuleMatch
 			matches, ignoreRanges, incompleteReason = a.TextChecker.CheckWithOptionsAndIgnore(text, lang, opts)
 			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
-			body, err = a.TextChecker.BuildResponseExFull(text, lang, langName, matches, autoDetected, incompleteReason, ignoreRanges, time.Since(checkStart).Milliseconds())
+			body, err = a.TextChecker.BuildResponseExDetected(text, lang, langName, matches, det, incompleteReason, ignoreRanges, time.Since(checkStart).Milliseconds())
 		}
 		if err != nil {
 			return HandleResult{}, err

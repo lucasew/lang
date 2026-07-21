@@ -14,14 +14,14 @@ type CheckParams struct {
 }
 
 // CheckResponse is a minimal /v2/check JSON shape.
+// Java RuleMatchesAsJsonSerializer: software, warnings, language (with nested
+// detectedLanguage), matches, ignoreRanges, sentenceRanges — no top-level detectedLanguage.
 type CheckResponse struct {
-	Software         SoftwareInfo        `json:"software"`
-	Language         LanguageInfo        `json:"language"`
-	Matches          []MatchInfo         `json:"matches"`
-	// DetectedLanguage is set when language=auto (soft; same as Language when fixed).
-	DetectedLanguage *LanguageInfo       `json:"detectedLanguage,omitempty"`
+	Software SoftwareInfo `json:"software"`
+	Language LanguageInfo `json:"language"`
+	Matches  []MatchInfo  `json:"matches"`
 	// SentenceRanges lists plain-text sentence spans (offset/length).
-	SentenceRanges   []SentenceRangeInfo `json:"sentenceRanges,omitempty"`
+	SentenceRanges []SentenceRangeInfo `json:"sentenceRanges,omitempty"`
 	// IgnoreRanges is multi-language foreign-span output from CheckResults.
 	IgnoreRanges []IgnoreRangeInfo `json:"ignoreRanges"`
 	// Warnings ports RuleMatchesAsJsonSerializer.writeWarningsSection:
@@ -56,14 +56,28 @@ type SoftwareInfo struct {
 	APIVersion int    `json:"apiVersion,omitempty"`
 }
 
-// LanguageInfo describes detected/used language.
+// LanguageInfo describes used language (and optional nested detection).
+// Ports RuleMatchesAsJsonSerializer.writeLanguageSection outer object:
+// name, code, [spellCheckOnly], detectedLanguage{name,code,confidence,[spellCheckOnly],source}.
 type LanguageInfo struct {
-	Name                 string  `json:"name"`
-	Code                 string  `json:"code"`
-	// LongCode is the language+country/variant code (e.g. en-US) when known.
-	LongCode             string  `json:"longCode,omitempty"`
-	DetectedLanguage     string  `json:"detectedLanguage,omitempty"`
-	Confidence           float64 `json:"confidence,omitempty"`
+	Name string `json:"name"`
+	Code string `json:"code"`
+	// LongCode is used by /languages list (not writeLanguageSection).
+	LongCode string `json:"longCode,omitempty"`
+	// SpellCheckOnly ports Language.isSpellcheckOnlyLanguage when true.
+	SpellCheckOnly bool `json:"spellCheckOnly,omitempty"`
+	// DetectedLanguage nested object (Java always writes for /v2/check).
+	DetectedLanguage *DetectedLanguageInfo `json:"detectedLanguage,omitempty"`
+}
+
+// DetectedLanguageInfo ports the nested language.detectedLanguage JSON object.
+type DetectedLanguageInfo struct {
+	Name               string  `json:"name"`
+	Code               string  `json:"code"`
+	Confidence         float64 `json:"confidence"`
+	SpellCheckOnly     bool    `json:"spellCheckOnly,omitempty"`
+	// Source is always serialized (null when unknown) like Java writeStringField("source", …).
+	Source *string `json:"source"`
 }
 
 // MatchInfo is one public API match.

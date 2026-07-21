@@ -39,7 +39,8 @@ func (v *V2TextChecker) BuildResponse(text, langCode, langName string, matches [
 	return v.BuildResponseEx(text, langCode, langName, matches, false)
 }
 
-// BuildResponseEx builds a check response; when autoDetected is true, sets detectedLanguage.
+// BuildResponseEx builds a check response; nested language.detectedLanguage always written
+// (Java writeLanguageSection) using given==detected when no separate detection result.
 func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool) (string, error) {
 	return v.BuildResponseExFull(text, langCode, langName, matches, autoDetected, "", nil, 0)
 }
@@ -53,23 +54,50 @@ func (v *V2TextChecker) BuildResponseExWithIncomplete(text, langCode, langName s
 // incompleteReason ports incompleteResultsReason (Java writeWarningsSection):
 // when non-empty → warnings.incompleteResults=true + incompleteResultsReason.
 // checkMs is wall-clock check duration for metrics (milliseconds).
+//
+// Language section ports RuleMatchesAsJsonSerializer.writeLanguageSection:
+// language.{name,code,detectedLanguage:{name,code,confidence,source}} — no invent 0.5 confidence.
 func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, incompleteReason string, ignore []IgnoreRangeInfo, checkMs int64) (string, error) {
-	if langName == "" || langName == langCode {
-		if n := LanguageNameForCode(langCode); n != "" {
-			langName = n
+	return v.BuildResponseExDetected(text, langCode, langName, matches, DetectLanguageResult{Code: langCode, Confidence: 0}, incompleteReason, ignore, checkMs)
+}
+
+// BuildResponseExDetected builds /v2/check JSON with given language + detection result
+// (Java DetectedLanguage given/detected/confidence/source).
+func (v *V2TextChecker) BuildResponseExDetected(
+	text, givenCode, givenName string,
+	matches []RemoteRuleMatch,
+	detected DetectLanguageResult,
+	incompleteReason string,
+	ignore []IgnoreRangeInfo,
+	checkMs int64,
+) (string, error) {
+	if givenName == "" || givenName == givenCode {
+		if n := LanguageNameForCode(givenCode); n != "" {
+			givenName = n
 		}
 	}
-	lang := LanguageInfo{Name: langName, Code: langCode, LongCode: langCode}
-	if autoDetected {
-		lang.Confidence = 0.5 // soft heuristic confidence
+	detCode := detected.Code
+	if detCode == "" {
+		detCode = givenCode
+	}
+	detName := LanguageNameForCode(detCode)
+	if detName == "" {
+		detName = detCode
+	}
+	lang := LanguageInfo{
+		Name: givenName,
+		Code: givenCode,
+		// Nested detectedLanguage always present (Java writeLanguageSection).
+		DetectedLanguage: &DetectedLanguageInfo{
+			Name:       detName,
+			Code:       detCode,
+			Confidence: float64(detected.Confidence),
+			Source:     detected.Source,
+		},
 	}
 	resp := CheckResponse{
 		Software: NewSoftwareInfo("dev"),
 		Language: lang,
-	}
-	if autoDetected {
-		dl := lang
-		resp.DetectedLanguage = &dl
 	}
 	// Java always writes warnings object when not compactMode; include when incomplete.
 	if incompleteReason != "" {
@@ -86,8 +114,8 @@ func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, mat
 	if resp.Matches == nil {
 		resp.Matches = []MatchInfo{}
 	}
-	// soft sentence ranges for clients that want sentence boundaries
-	for _, sr := range languagetool.PlainSentenceRanges(text, langCode) {
+	// sentence ranges (Java writeSentenceRanges from CheckResults; plain ranges interim)
+	for _, sr := range languagetool.PlainSentenceRanges(text, givenCode) {
 		if sr.ToPos < sr.FromPos {
 			continue
 		}
@@ -106,9 +134,9 @@ func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, mat
 		return "", err
 	}
 	if v != nil && v.Metrics != nil {
-		v.Metrics.LogCheck(langCode, checkMs, len(text), len(matches), string(CheckModeAll))
+		v.Metrics.LogCheck(givenCode, checkMs, len(text), len(matches), string(CheckModeAll))
 	} else {
-		Metrics().LogCheck(langCode, checkMs, len(text), len(matches), string(CheckModeAll))
+		Metrics().LogCheck(givenCode, checkMs, len(text), len(matches), string(CheckModeAll))
 	}
 	return string(b), nil
 }

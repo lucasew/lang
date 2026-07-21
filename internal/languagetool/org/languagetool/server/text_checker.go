@@ -78,19 +78,25 @@ func (p CheckQueryParams) Validate() error {
 	return nil
 }
 
-// ToPipelineQuery maps check params into the lighter pool key QueryParams.
+// ToPipelineQuery maps check params into pool-key QueryParams (Java QueryParams equals fields).
 func (p CheckQueryParams) ToPipelineQuery() QueryParams {
 	return QueryParams{
-		EnabledRules:       p.EnabledRules,
-		DisabledRules:      p.DisabledRules,
-		EnabledCategories:  p.EnabledCategories,
-		DisabledCategories: p.DisabledCategories,
-		AltLanguages:       append([]string(nil), p.AltLanguages...),
-		UseEnabledOnly:     p.UseEnabledOnly,
-		EnableTempOffRules: p.EnableTempOffRules,
-		Premium:            p.Premium,
-		UseQuerySettings:   p.UseQuerySettings,
-		EnableHiddenRules:  p.EnableHiddenRules,
+		EnabledRules:           append([]string(nil), p.EnabledRules...),
+		DisabledRules:          append([]string(nil), p.DisabledRules...),
+		EnabledCategories:      append([]string(nil), p.EnabledCategories...),
+		DisabledCategories:     append([]string(nil), p.DisabledCategories...),
+		AltLanguages:           append([]string(nil), p.AltLanguages...),
+		UseEnabledOnly:         p.UseEnabledOnly,
+		EnableTempOffRules:     p.EnableTempOffRules,
+		RegressionTestMode:     p.RegressionTestMode,
+		Premium:                p.Premium,
+		UseQuerySettings:       p.UseQuerySettings,
+		AllowIncompleteResults: p.AllowIncompleteResults,
+		EnableHiddenRules:      p.EnableHiddenRules,
+		Mode:                   p.Mode,
+		Level:                  p.Level,
+		Callback:               p.Callback,
+		InputLogging:           p.InputLogging,
 	}
 }
 

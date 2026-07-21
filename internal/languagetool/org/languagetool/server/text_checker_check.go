@@ -50,6 +50,7 @@ func (t *TextChecker) Check(text, lang string, disabled []string) []RemoteRuleMa
 }
 
 // pipelineSettingsFor builds pool key settings for a check.
+// Query fields mirror Java TextChecker.QueryParams used in PipelineSettings equality.
 func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	if lang == "" {
 		lang = "en"
@@ -60,47 +61,27 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	}
 	if opts.Level != "" {
 		settings.Level = opts.Level
+		settings.Query.Level = opts.Level
+	}
+	if opts.Mode != "" {
+		settings.Query.Mode = opts.Mode
+		// Legacy carrier still set for Pipeline.Check readers of LanguageCode.
+		settings.Query.LanguageCode = string(opts.Mode)
 	}
 	settings.Query.DisabledRules = append([]string(nil), opts.Disabled...)
 	settings.Query.EnabledRules = append([]string(nil), opts.Enabled...)
+	settings.Query.DisabledCategories = append([]string(nil), opts.DisabledCategories...)
+	settings.Query.EnabledCategories = append([]string(nil), opts.EnabledCategories...)
 	settings.Query.AltLanguages = append([]string(nil), opts.AltLanguages...)
 	settings.Query.UseEnabledOnly = opts.UseEnabledOnly
-	settings.Query.UseQuerySettings = len(opts.Disabled) > 0 || len(opts.Enabled) > 0 || opts.UseEnabledOnly
-	// include filters in pool key (Key() does not hash full rule lists)
-	var keyParts []string
-	if opts.Level != "" {
-		keyParts = append(keyParts, "level:"+string(opts.Level))
-	}
-	if opts.Mode != "" {
-		// Query.LanguageCode carries check mode for Pipeline.Check (TEXTLEVEL_ONLY, …).
-		settings.Query.LanguageCode = string(opts.Mode)
-		keyParts = append(keyParts, "mode:"+string(opts.Mode))
-	}
-	if opts.MotherTongue != "" {
-		keyParts = append(keyParts, "mt:"+opts.MotherTongue)
-	}
-	if opts.UseEnabledOnly {
-		keyParts = append(keyParts, "eo:"+strings.Join(opts.Enabled, ","))
-	} else if len(opts.Enabled) > 0 {
-		keyParts = append(keyParts, "en:"+strings.Join(opts.Enabled, ","))
-	}
-	if len(opts.Disabled) > 0 {
-		keyParts = append(keyParts, "dis:"+strings.Join(opts.Disabled, ","))
-	}
-	if len(opts.DisabledCategories) > 0 {
-		keyParts = append(keyParts, "dcat:"+strings.Join(opts.DisabledCategories, ","))
-	}
-	if len(opts.EnabledCategories) > 0 {
-		keyParts = append(keyParts, "ecat:"+strings.Join(opts.EnabledCategories, ","))
-	}
+	// Java useQuerySettings: rules/categories non-empty || enableTempOffRules (not useEnabledOnly alone)
+	settings.Query.UseQuerySettings = len(opts.Disabled) > 0 || len(opts.Enabled) > 0 ||
+		len(opts.DisabledCategories) > 0 || len(opts.EnabledCategories) > 0
+	settings.Query.AllowIncompleteResults = opts.AllowIncompleteResults
+	// Rule values are not on Java QueryParams equals — keep as GlobalConfigKey extra for filter identity
 	if len(opts.RuleValues) > 0 {
-		keyParts = append(keyParts, "rv:"+strings.Join(opts.RuleValues, ","))
+		settings.GlobalConfigKey = "rv:" + strings.Join(opts.RuleValues, ",")
 	}
-	// altLanguages also in Key() via Query.AltLanguages
-	if len(opts.AltLanguages) > 0 {
-		keyParts = append(keyParts, "alt:"+strings.Join(opts.AltLanguages, ","))
-	}
-	settings.GlobalConfigKey = strings.Join(keyParts, "|")
 	return settings
 }
 

@@ -2,9 +2,11 @@ package server
 
 // Twin of languagetool-server/src/test/java/org/languagetool/server/TextCheckerTest.java
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -83,10 +85,11 @@ func TestTextChecker_DetectLanguageOfString(t *testing.T) {
 	require.Equal(t, "uk", DetectLanguageOfString("Це українська мова з ї.", nil, nil))
 
 	// preferred non-empty that does not match detected short code: keep fallback/detect, no default variant
-	// Java: detected null → en; preferred only de-AT → stays en (not en-US)
-	code, err := DetectLanguageOfStringWithFallback("", "", []string{"de-AT"}, func(string) string { return "" }, nil)
+	// Java: detected null → en; preferred only de-AT → stays en (not en-US); conf 0
+	res, err := DetectLanguageOfStringWithFallback("", "", []string{"de-AT"}, func(string) string { return "" }, nil)
 	require.NoError(t, err)
-	require.Equal(t, "en", code)
+	require.Equal(t, "en", res.Code)
+	require.Equal(t, float32(0), res.Confidence)
 
 	// case-sensitive preferred base: "EN-GB" does not match short "en" (Java String.equals)
 	require.Equal(t, "en", DetectLanguageOfString("X", []string{"EN-GB"}, func(string) string { return "en" }))
@@ -266,4 +269,73 @@ func TestGetLanguageAutoDetect_CaseSensitive(t *testing.T) {
 	require.True(t, tc.GetLanguageAutoDetect(map[string]string{"language": "auto"}))
 	require.False(t, tc.GetLanguageAutoDetect(map[string]string{"language": "AUTO"}))
 	require.False(t, tc.GetLanguageAutoDetect(map[string]string{"language": "Auto"}))
+}
+
+// Ports RuleMatchesAsJsonSerializer.writeLanguageSection — nested detectedLanguage, real confidence.
+func TestBuildResponse_LanguageSectionNested(t *testing.T) {
+	v := NewV2TextChecker(nil, false, nil)
+	src := "ngram"
+	body, err := v.BuildResponseExDetected("hi", "en-US", "English (US)", nil,
+		DetectLanguageResult{Code: "en-GB", Confidence: 0.91, Source: &src},
+		"", nil, 0)
+	require.NoError(t, err)
+	var resp CheckResponse
+	require.NoError(t, json.Unmarshal([]byte(body), &resp))
+	require.Equal(t, "en-US", resp.Language.Code)
+	require.NotNil(t, resp.Language.DetectedLanguage)
+	require.Equal(t, "en-GB", resp.Language.DetectedLanguage.Code)
+	require.InDelta(t, 0.91, resp.Language.DetectedLanguage.Confidence, 1e-6)
+	require.NotNil(t, resp.Language.DetectedLanguage.Source)
+	require.Equal(t, "ngram", *resp.Language.DetectedLanguage.Source)
+	// No invent top-level detectedLanguage / flat confidence 0.5
+	require.NotContains(t, body, `"confidence":0.5`)
+	// null source when unknown
+	body2, err := v.BuildResponseExDetected("hi", "de", "German", nil,
+		DetectLanguageResult{Code: "de-DE", Confidence: 0},
+		"", nil, 0)
+	require.NoError(t, err)
+	require.Contains(t, body2, `"source":null`)
+	require.Contains(t, body2, `"confidence":0`)
+}
+
+func TestPipelineSettings_KeyIncludesModeLevelInputLogging(t *testing.T) {
+	// Java QueryParams equals includes mode, level, inputLogging (not toneTags).
+	a := NewPipelineSettingsFull("en", "", QueryParams{
+		Mode: CheckModeAll, Level: CheckLevelDefault, InputLogging: true,
+	}, "", "u")
+	b := NewPipelineSettingsFull("en", "", QueryParams{
+		Mode: CheckModeTextLevelOnly, Level: CheckLevelDefault, InputLogging: true,
+	}, "", "u")
+	c := NewPipelineSettingsFull("en", "", QueryParams{
+		Mode: CheckModeAll, Level: CheckLevelPicky, InputLogging: true,
+	}, "", "u")
+	d := NewPipelineSettingsFull("en", "", QueryParams{
+		Mode: CheckModeAll, Level: CheckLevelDefault, InputLogging: false,
+	}, "", "u")
+	require.NotEqual(t, a.Key(), b.Key())
+	require.NotEqual(t, a.Key(), c.Key())
+	require.NotEqual(t, a.Key(), d.Key())
+
+	// enableTempOffRules affects useQuerySettings path / equals
+	e := NewPipelineSettingsFull("en", "", QueryParams{
+		Mode: CheckModeAll, Level: CheckLevelDefault, InputLogging: true, EnableTempOffRules: true, RegressionTestMode: true,
+	}, "", "u")
+	require.NotEqual(t, a.Key(), e.Key())
+}
+
+func TestDetectLanguageOfStringFromDetected_PreservesConfidence(t *testing.T) {
+	src := "fasttext"
+	det := languagetool.NewDetectedLanguageFull("", "en", 0.87, &src)
+	r, err := DetectLanguageOfStringFromDetected(&det, "", nil, nil)
+	require.NoError(t, err)
+	require.Equal(t, "en-US", r.Code) // default variant
+	require.InDelta(t, 0.87, float64(r.Confidence), 1e-6)
+	require.NotNil(t, r.Source)
+	require.Equal(t, "fasttext", *r.Source)
+
+	// null detect → en, conf 0
+	r2, err := DetectLanguageOfStringFromDetected(nil, "", nil, nil)
+	require.NoError(t, err)
+	require.Equal(t, "en-US", r2.Code) // fallback en → default variant
+	require.Equal(t, float32(0), r2.Confidence)
 }

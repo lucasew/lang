@@ -4,9 +4,19 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/commandline"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 )
+
+// DetectLanguageResult ports TextChecker.detectLanguageOfString return surface:
+// resolved language code + detection confidence/source from the identifier.
+// Java: new DetectedLanguage(null, lang, detected != null ? conf : 0f, source).
+type DetectLanguageResult struct {
+	Code       string
+	Confidence float32
+	Source     *string
+}
 
 // DetectLanguageOfString ports TextChecker.detectLanguageOfString variant resolution
 // after languageIdentifier.detectLanguage (injectable via detect).
@@ -29,6 +39,12 @@ func DetectLanguageOfString(text string, preferredVariants []string, detect func
 
 // DetectLanguageOfStringErr is DetectLanguageOfString with BadRequestError on invalid preferredVariants.
 func DetectLanguageOfStringErr(text string, preferredVariants []string, detect func(string) string) (string, error) {
+	r, err := DetectLanguageOfStringWithFallback(text, "", preferredVariants, detect, nil)
+	return r.Code, err
+}
+
+// DetectLanguageOfStringResult is DetectLanguageOfStringErr with confidence/source.
+func DetectLanguageOfStringResult(text string, preferredVariants []string, detect func(string) string) (DetectLanguageResult, error) {
 	return DetectLanguageOfStringWithFallback(text, "", preferredVariants, detect, nil)
 }
 
@@ -36,24 +52,38 @@ func DetectLanguageOfStringErr(text string, preferredVariants []string, detect f
 // fallbackLanguage empty → "en" when detect yields empty (Java null fallback).
 // isKnown optional: when non-nil and preferred matches short code, unknown codes → BadRequestError
 // (Java parseLanguage / Languages.getLanguageForShortCode).
+//
+// Confidence: Java uses detected.getDetectionConfidence() when identifier returns non-null,
+// else 0f. String inject without conf → 0 when empty detect, else 0 (no invent 0.5).
+// Prefer DetectLanguageOfStringFromDetected when identifier.DetectedLanguage is available.
 func DetectLanguageOfStringWithFallback(
 	text, fallbackLanguage string,
 	preferredVariants []string,
 	detect func(string) string,
 	isKnown func(code string) bool,
-) (string, error) {
+) (DetectLanguageResult, error) {
 	fn := detect
 	if fn == nil {
 		fn = commandline.DetectLanguageHeuristic
 	}
-	code := fn(text)
+	raw := fn(text)
+	// Java: detected == null → conf 0f; else keep identifier confidence (unknown for string inject → 0)
+	var conf float32
+	var src *string
+	hadDetect := raw != ""
+	code := raw
 	if code == "" {
 		if fallbackLanguage != "" {
 			code = fallbackLanguage
 		} else {
 			code = "en"
 		}
+		conf = 0
+	} else {
+		// String-only inject has no identifier confidence — do not invent 0.5.
+		conf = 0
 	}
+	_ = hadDetect
 
 	if len(preferredVariants) > 0 {
 		short := languageShortCode(code)
@@ -63,7 +93,7 @@ func DetectLanguageOfStringWithFallback(
 			}
 			// Java: preferredVariant.contains("-")
 			if !strings.Contains(preferredVariant, "-") {
-				return "", NewBadRequestError(
+				return DetectLanguageResult{}, NewBadRequestError(
 					"Invalid format for 'preferredVariants', expected a dash as in 'en-GB': '" + preferredVariant + "'")
 			}
 			// Java: preferredVariant.split("-")[0] — case-sensitive equals lang.getShortCode()
@@ -74,17 +104,68 @@ func DetectLanguageOfStringWithFallback(
 			if preferredVariantLang == short {
 				// Java: lang = parseLanguage(preferredVariant)
 				if isKnown != nil && !isKnown(preferredVariant) {
-					return "", NewBadRequestError(
+					return DetectLanguageResult{}, NewBadRequestError(
 						"Invalid 'preferredVariants', no such language/variant found: '" + preferredVariant + "'")
 				}
 				code = canonicalizePreferredVariant(preferredVariant)
 			}
 		}
-		return code, nil
+		return DetectLanguageResult{Code: code, Confidence: conf, Source: src}, nil
 	}
 
 	// Java: preferred empty → getDefaultLanguageVariant() when non-null (Language default returns this).
-	return applyDefaultLanguageVariant(code), nil
+	return DetectLanguageResult{Code: applyDefaultLanguageVariant(code), Confidence: conf, Source: src}, nil
+}
+
+// DetectLanguageOfStringFromDetected applies preferred/default variant resolution to an
+// identifier DetectedLanguage (preserves confidence/source). nil detected → fallback "en", conf 0.
+func DetectLanguageOfStringFromDetected(
+	detected *languagetool.DetectedLanguage,
+	fallbackLanguage string,
+	preferredVariants []string,
+	isKnown func(code string) bool,
+) (DetectLanguageResult, error) {
+	var code string
+	var conf float32
+	var src *string
+	if detected == nil {
+		if fallbackLanguage != "" {
+			code = fallbackLanguage
+		} else {
+			code = "en"
+		}
+		conf = 0
+	} else {
+		code = detected.GetDetectedLanguageCode()
+		conf = detected.GetDetectionConfidence()
+		src = detected.GetDetectionSource()
+	}
+
+	if len(preferredVariants) > 0 {
+		short := languageShortCode(code)
+		for _, preferredVariant := range preferredVariants {
+			if preferredVariant == "" {
+				continue
+			}
+			if !strings.Contains(preferredVariant, "-") {
+				return DetectLanguageResult{}, NewBadRequestError(
+					"Invalid format for 'preferredVariants', expected a dash as in 'en-GB': '" + preferredVariant + "'")
+			}
+			preferredVariantLang := preferredVariant
+			if i := strings.IndexByte(preferredVariant, '-'); i >= 0 {
+				preferredVariantLang = preferredVariant[:i]
+			}
+			if preferredVariantLang == short {
+				if isKnown != nil && !isKnown(preferredVariant) {
+					return DetectLanguageResult{}, NewBadRequestError(
+						"Invalid 'preferredVariants', no such language/variant found: '" + preferredVariant + "'")
+				}
+				code = canonicalizePreferredVariant(preferredVariant)
+			}
+		}
+		return DetectLanguageResult{Code: code, Confidence: conf, Source: src}, nil
+	}
+	return DetectLanguageResult{Code: applyDefaultLanguageVariant(code), Confidence: conf, Source: src}, nil
 }
 
 // languageShortCode ports Language.getShortCode() for a shortCodeWithCountryAndVariant string.
