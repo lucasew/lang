@@ -46,3 +46,14 @@ func TestWiederVsWiderRule_Rule(t *testing.T) {
 	bad("Immer", "wieder", "spiegelt", "das", "die", "Situation", "wieder", ".")
 	bad("Immer", "wieder", "spiegelte", "das", "die", "Situation", "wieder", ".")
 }
+
+func TestWiederVsWiderRule_Meta(t *testing.T) {
+	r := NewWiederVsWiderRule(nil)
+	require.Equal(t, "DE_WIEDER_VS_WIDER", r.GetID())
+	require.Contains(t, r.GetDescription(), "spiegeln")
+	require.Equal(t, 0, r.EstimateContextForSureMatch())
+	require.NotEmpty(t, r.GetIncorrectExamples())
+	require.NotNil(t, r.GetCategory())
+	// untagged must not invent (lemma spiegeln required)
+	require.Equal(t, 0, len(r.Match(languagetool.AnalyzePlain("Das spiegelt die Situation gut wieder."))))
+}
