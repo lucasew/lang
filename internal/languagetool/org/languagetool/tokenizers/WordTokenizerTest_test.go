@@ -104,4 +104,33 @@ func TestWordTokenizer_IncompleteUrlTokenize(t *testing.T) {
 	require.Equal(t, "http|:|/", tokenizePipe("http:/"))
 	require.Equal(t, "http://", tokenizePipe("http://"))
 	require.Equal(t, "http://a", tokenizePipe("http://a"))
+	require.Equal(t, "foo| |http| |bar", tokenizePipe("foo http bar"))
+	require.Equal(t, "foo| |http|:| |bar", tokenizePipe("foo http: bar"))
+	require.Equal(t, "foo| |http|:|/| |bar", tokenizePipe("foo http:/ bar"))
+	require.Equal(t, "foo| |http://| |bar", tokenizePipe("foo http:// bar"))
+	require.Equal(t, "foo| |http://a| |bar", tokenizePipe("foo http://a bar"))
+	require.Equal(t, "foo| |http://|?| |bar", tokenizePipe("foo http://? bar"))
+}
+
+// Twin of WordTokenizerTest.testCheckCurrencyExpression
+func TestWordTokenizer_CheckCurrencyExpression(t *testing.T) {
+	require.True(t, IsCurrencyExpression("US$45"))
+	require.True(t, IsCurrencyExpression("5,000€"))
+	require.True(t, IsCurrencyExpression("£1.50"))
+	require.True(t, IsCurrencyExpression("R$1.999.99"))
+	require.False(t, IsCurrencyExpression("US$"))
+	require.False(t, IsCurrencyExpression("X€"))
+	require.False(t, IsCurrencyExpression(".50£"))
+	require.False(t, IsCurrencyExpression("5R$5"))
+}
+
+// Twin of WordTokenizerTest.testSplitCurrencyExpression
+func TestWordTokenizer_SplitCurrencyExpression(t *testing.T) {
+	require.Equal(t, []string{"US$", "45"}, SplitCurrencyExpression("US$45"))
+	require.Equal(t, []string{"5,000", "€"}, SplitCurrencyExpression("5,000€"))
+	require.Equal(t, []string{"£", "1.50"}, SplitCurrencyExpression("£1.50"))
+	require.Equal(t, []string{"R$", "1.999.99"}, SplitCurrencyExpression("R$1.999.99"))
+	// not currency expr — return original token only
+	require.Equal(t, []string{"US$X"}, SplitCurrencyExpression("US$X"))
+	require.Equal(t, []string{"foobar"}, SplitCurrencyExpression("foobar"))
 }

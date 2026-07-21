@@ -211,9 +211,16 @@ func (c *MultiWordChunker) fillMaps() {
 	}
 }
 
+// GetTokenLettercaseVariants ports MultiWordChunker.getTokenLettercaseVariants.
+func (c *MultiWordChunker) GetTokenLettercaseVariants(original string, tokenMap map[string]*languagetool.AnalyzedToken) []string {
+	return c.tokenLettercaseVariants(original, tokenMap)
+}
+
+// tokenLettercaseVariants ports MultiWordChunker.getTokenLettercaseVariants bug-for-bug.
 func (c *MultiWordChunker) tokenLettercaseVariants(original string, tokenMap map[string]*languagetool.AnalyzedToken) []string {
 	var newTokens []string
-	if c.settings.AllowAllUppercase && !isCamelCase(original) {
+	// Java: settings.allowAllUppercase && !StringTools.isCamelCase(originalToken)
+	if c.settings.AllowAllUppercase && !tools.IsCamelCase(original) {
 		allUp := strings.ToUpper(original)
 		if _, ok := tokenMap[allUp]; !ok && original != allUp {
 			newTokens = append(newTokens, allUp)
@@ -224,49 +231,39 @@ func (c *MultiWordChunker) tokenLettercaseVariants(original string, tokenMap map
 		if _, ok := tokenMap[firstCap]; !ok && original != firstCap {
 			newTokens = append(newTokens, firstCap)
 		}
-		if c.settings.AllowTitlecase && strings.Contains(original, " ") && allStartWithLowercase(original) {
-			naive := titleCaseWords(original)
+		// Titlecasing: multi-token, entirely lowercase, only with first-letter capitalisation
+		// Java: originalToken.split(" ").length > 1 && StringTools.allStartWithLowercase(originalToken)
+		if c.settings.AllowTitlecase && len(strings.Split(original, " ")) > 1 && tools.AllStartWithLowercase(original) {
+			// WordUtils.capitalize — first letter of each whitespace-separated word
+			naive := wordUtilsCapitalize(original)
+			// Java: no tokenMap check for titlecase variants
 			if naive != firstCap && original != naive {
-				if _, ok := tokenMap[naive]; !ok {
-					newTokens = append(newTokens, naive)
-				}
+				newTokens = append(newTokens, naive)
+			}
+			// StringTools.titlecaseGlobal — exception list for of/and/de/…
+			smart := tools.TitlecaseGlobal(original)
+			if smart != firstCap && smart != naive && original != smart {
+				newTokens = append(newTokens, smart)
 			}
 		}
 	}
 	return newTokens
 }
 
-func isCamelCase(s string) bool {
-	// crude: lower then upper mid-string (iPad)
-	hasLower, hasUpperMid := false, false
-	for i, r := range s {
-		if unicode.IsLower(r) {
-			hasLower = true
-		}
-		if i > 0 && unicode.IsUpper(r) && hasLower {
-			hasUpperMid = true
-		}
-	}
-	return hasLower && hasUpperMid
-}
-
-func allStartWithLowercase(s string) bool {
-	for _, w := range strings.Split(s, " ") {
-		if w == "" {
-			continue
-		}
-		r, _ := utf8.DecodeRuneInString(w)
-		if !unicode.IsLower(r) {
-			return false
-		}
-	}
-	return true
-}
-
-func titleCaseWords(s string) string {
+// wordUtilsCapitalize ports Apache WordUtils.capitalize(str):
+// capitalizes first character of each whitespace-separated word; rest unchanged.
+func wordUtilsCapitalize(s string) string {
 	parts := strings.Split(s, " ")
 	for i, p := range parts {
-		parts[i] = tools.UppercaseFirstChar(p)
+		if p == "" {
+			continue
+		}
+		// WordUtils.capitalize: Character.toTitleCase on first char, rest as-is
+		r, size := utf8.DecodeRuneInString(p)
+		if r == utf8.RuneError && size == 0 {
+			continue
+		}
+		parts[i] = string(unicode.ToTitle(r)) + p[size:]
 	}
 	return strings.Join(parts, " ")
 }

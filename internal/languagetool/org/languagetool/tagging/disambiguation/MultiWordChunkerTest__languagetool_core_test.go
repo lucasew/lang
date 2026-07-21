@@ -82,3 +82,31 @@ func TestMultiWordChunker_languagetool_core_Disambiguate2RemoveOtherReadings(t *
 	out := c.Disambiguate(languagetool.NewAnalyzedSentence(toks))
 	require.True(t, hasPOS(out, "<B-NP>") || hasPOS(out, "B-NP"))
 }
+
+// Twin of MultiWordChunkerTest.testLettercaseVariants
+// getInstance(..., true, true, true) → allowFirstCapitalized, allowAllUppercase, allowTitlecase
+func TestMultiWordChunker_languagetool_core_LettercaseVariants(t *testing.T) {
+	c := NewMultiWordChunker(nil, MultiWordChunkerSettings{
+		AllowFirstCapitalized: true,
+		AllowAllUppercase:     true,
+		AllowTitlecase:        true,
+	})
+	posRnB := "NCMS000_"
+	lemmaRnB := "rhythm and blues"
+	posVenus := "NCFSS00_"
+	lemmaVenus := "Vênus de Milo"
+	m := map[string]*languagetool.AnalyzedToken{
+		"rhythm and blues": languagetool.NewAnalyzedToken("rhythm and blues", &posRnB, &lemmaRnB),
+		"Vênus de Milo":    languagetool.NewAnalyzedToken("Vênus de Milo", &posVenus, &lemmaVenus),
+	}
+	rnb := c.GetTokenLettercaseVariants("rhythm and blues", m)
+	require.Contains(t, rnb, "Rhythm and blues") // first-word upcase
+	require.Contains(t, rnb, "Rhythm And Blues") // naïve titlecase
+	require.Contains(t, rnb, "Rhythm and Blues") // smart titlecase (and exception)
+	require.Contains(t, rnb, "RHYTHM AND BLUES") // all caps
+
+	venus := c.GetTokenLettercaseVariants("Vênus de Milo", m)
+	require.NotContains(t, venus, "Vênus De Milo") // naïve titlecase blocked (not all-lowercase)
+	require.NotContains(t, venus, "vênus de milo") // downcased never generated
+	require.Contains(t, venus, "VÊNUS DE MILO")    // all caps
+}

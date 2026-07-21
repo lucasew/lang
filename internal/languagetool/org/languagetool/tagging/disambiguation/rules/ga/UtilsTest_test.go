@@ -54,4 +54,35 @@ func TestUtils_UnPonc(t *testing.T) {
 func TestUtils_Simplify(t *testing.T) {
 	boldUpper := "\U0001D412\U0001D404\U0001D400\U0001D40D\U0001D400\U0001D413\U0001D407\U0001D400\U0001D408\U0001D411"
 	require.Equal(t, "SEANATHAIR", tagga.SimplifyMathematical(boldUpper))
+	boldLower := "\U0001D42C\U0001D41E\U0001D41A\U0001D427\U0001D41A\U0001D42D\U0001D421\U0001D41A\U0001D422\U0001D42B"
+	require.Equal(t, "seanathair", tagga.SimplifyMathematical(boldLower))
+}
+
+// Twin: Utils.greekToLatin("ΒΟΤΤΟΜ") → "BOTTOM"
+func TestUtils_GreekToLatin(t *testing.T) {
+	require.Equal(t, "BOTTOM", tagga.GreekToLatin("ΒΟΤΤΟΜ"))
+}
+
+// Twin: Utils.hasMixedGreekAndLatin("Nοt") — Latin N + Greek ο + Latin t
+func TestUtils_HasMixedGreekAndLatin(t *testing.T) {
+	require.True(t, tagga.HasMixedGreekAndLatin("Nοt"))
+	require.False(t, tagga.HasMixedGreekAndLatin("Not"))
+	require.False(t, tagga.HasMixedGreekAndLatin("Νοτ")) // all Greek lookalikes
+}
+
+func TestUtils_IsAllMathsChars(t *testing.T) {
+	boldUpper := "\U0001D412\U0001D404\U0001D400\U0001D40D\U0001D400\U0001D413\U0001D407\U0001D400\U0001D408\U0001D411"
+	require.False(t, tagga.IsAllMathsChars("foo"))
+	require.False(t, tagga.IsAllMathsChars("f\U0001D412"))
+	require.True(t, tagga.IsAllMathsChars(boldUpper))
+}
+
+func TestUtils_IsAllHalfWidthChars(t *testing.T) {
+	torrach := "ｔｏｒｒａｃｈ"
+	require.True(t, tagga.IsAllHalfWidthChars(torrach))
+	require.False(t, tagga.IsAllHalfWidthChars(torrach+"a"))
+}
+
+func TestUtils_HalfwidthLatinToLatin(t *testing.T) {
+	require.Equal(t, "torrach", tagga.HalfwidthLatinToLatin("ｔｏｒｒａｃｈ"))
 }

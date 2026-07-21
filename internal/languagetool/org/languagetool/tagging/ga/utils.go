@@ -1,9 +1,11 @@
 package ga
 
 import (
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
 // Utils ports org.languagetool.tagging.ga.Utils (mutation helpers + suffix fixes).
@@ -384,3 +386,100 @@ func HalfwidthLatinToLatin(s string) string {
 	}
 	return b.String()
 }
+
+// greekLookalikes ports Utils.greekLookalikes (switch on Greek lookalike letters).
+func greekLookalikes(c rune) rune {
+	switch c {
+	case 'Α':
+		return 'A'
+	case 'Β':
+		return 'B'
+	case 'Ε':
+		return 'E'
+	case 'Ζ':
+		return 'Z'
+	case 'Η':
+		return 'H'
+	case 'Ι':
+		return 'I'
+	case 'Κ':
+		return 'K'
+	case 'Μ':
+		return 'M'
+	case 'Ν':
+		return 'N'
+	case 'Ο':
+		return 'O'
+	case 'Ρ':
+		return 'P'
+	case 'Τ':
+		return 'T'
+	case 'Υ':
+		return 'Y'
+	case 'Χ':
+		return 'X'
+	case 'α':
+		return 'a'
+	case 'β':
+		return 'B'
+	case 'γ':
+		return 'y'
+	case 'δ':
+		return 'd'
+	case 'ε':
+		return 'e'
+	case 'η':
+		return 'n'
+	case 'ι':
+		return 'i'
+	case 'κ':
+		return 'K'
+	case 'ν':
+		return 'v'
+	case 'ο':
+		return 'o'
+	case 'ρ':
+		return 'p'
+	case 'τ':
+		return 'T'
+	case 'χ':
+		return 'x'
+	case 'ω':
+		return 'w'
+	default:
+		return c
+	}
+}
+
+// GreekToLatin ports Utils.greekToLatin — map Greek lookalikes to Latin.
+// Java iterates toCharArray (UTF-16 units); Greek lookalikes are BMP so rune walk matches.
+func GreekToLatin(s string) string {
+	var b strings.Builder
+	b.Grow(len(s))
+	for _, c := range s {
+		b.WriteRune(greekLookalikes(c))
+	}
+	return b.String()
+}
+
+// HasMixedGreekAndLatin ports Utils.hasMixedGreekAndLatin:
+// s.matches(".*[A-Za-z].*") && s.matches(".*\\p{InGREEK}.*")
+func HasMixedGreekAndLatin(s string) bool {
+	return reHasASCIILetter.MatchString(s) && reHasGreek.MatchString(s)
+}
+
+// HasMixedGreekAndCyrillic ports Utils.hasMixedGreekAndCyrillic:
+// s.matches(".*[A-Za-z].*") && s.matches(".*\\p{InCYRILLIC}.*")
+// (Java uses Latin class for first arm — twin that quirk.)
+func HasMixedGreekAndCyrillic(s string) bool {
+	return reHasASCIILetter.MatchString(s) && reHasCyrillic.MatchString(s)
+}
+
+var (
+	// Java Pattern.matches anchors full string; .*[A-Za-z].* on full match
+	reHasASCIILetter = regexp.MustCompile(`(?s).*[A-Za-z].*`)
+	// \p{InGREEK} ≈ Unicode Greek and Coptic block U+0370–U+03FF
+	reHasGreek = regexp.MustCompile(`(?s).*\p{Greek}.*`)
+	// \p{InCYRILLIC} ≈ Cyrillic blocks
+	reHasCyrillic = regexp.MustCompile(`(?s).*\p{Cyrillic}.*`)
+)
