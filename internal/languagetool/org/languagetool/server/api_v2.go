@@ -147,14 +147,24 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			lang = "auto"
 		}
 		autoDetected := false
-		// Soft language-id: heuristic when auto; otherwise use requested code.
+		// Java V2TextChecker: preferredVariants / noopLanguages only with language=auto;
+		// detectLanguageOfString applies preferred or default language variant.
+		if err := ValidateNoopLanguages(parameters); err != nil {
+			return HandleResult{}, err
+		}
+		preferred, err := ParsePreferredVariants(parameters)
+		if err != nil {
+			return HandleResult{}, err
+		}
 		if strings.EqualFold(lang, "auto") {
 			autoDetected = true
-			preferred := commaSeparated(parameters["preferredVariants"])
 			if err := ValidatePreferredVariants(preferred, nil); err != nil {
 				return HandleResult{}, err
 			}
-			lang = DetectLanguageOfString(text, preferred, nil)
+			lang, err = DetectLanguageOfStringErr(text, preferred, nil)
+			if err != nil {
+				return HandleResult{}, err
+			}
 			if lang == "" {
 				lang = "en"
 			}

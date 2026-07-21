@@ -93,8 +93,11 @@ func (d *FastTextDetector) initProcess() error {
 }
 
 // RunFasttext returns language→probability for text.
+// Java: text.replace('\n', ' ').toLowerCase(Locale.ROOT) + System.lineSeparator().
+// Go strings.ToLower is Unicode default case mapping (= Locale.ROOT, not Turkish locale).
 func (d *FastTextDetector) RunFasttext(text string, additionalLanguageCodes []string) (map[string]float64, error) {
-	joined := strings.ToLower(strings.ReplaceAll(text, "\n", " "))
+	// twin: String.join prep — newline→space then Locale.ROOT lower
+	joined := javaLocaleRootToLower(strings.ReplaceAll(text, "\n", " "))
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	var buf string
@@ -105,6 +108,7 @@ func (d *FastTextDetector) RunFasttext(text string, additionalLanguageCodes []st
 			return nil, err
 		}
 	} else if d.stdin != nil && d.stdout != nil {
+		// Java Writer uses System.lineSeparator(); Linux/mac → "\n"
 		if _, err := io.WriteString(d.stdin, joined+"\n"); err != nil {
 			return nil, err
 		}
@@ -186,6 +190,13 @@ func (d *FastTextDetector) Destroy() {
 		_, _ = d.cmd.Process.Wait()
 	}
 	d.cmd = nil
+}
+
+// javaLocaleRootToLower ports String.toLowerCase(Locale.ROOT).
+// Go unicode.ToLower / strings.ToLower use the Unicode default mapping (same as Locale.ROOT),
+// not a Turkish/Azeri locale ("I" → "i", never "ı").
+func javaLocaleRootToLower(s string) string {
+	return strings.ToLower(s)
 }
 
 // javaFastTextWhitespaceSplit ports Pattern.compile("\\s+").split without UNICODE_CHARACTER_CLASS.

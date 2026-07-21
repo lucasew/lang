@@ -1,6 +1,7 @@
 package detector
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -61,4 +62,12 @@ func TestJavaFastTextWhitespaceSplit(t *testing.T) {
 	require.Equal(t, []string{""}, javaFastTextWhitespaceSplit(""))
 	// NBSP not delimiter
 	require.Equal(t, []string{"a\u00a0b"}, javaFastTextWhitespaceSplit("a\u00a0b"))
+}
+
+// Twin: toLowerCase(Locale.ROOT) — never Turkish dotted/dotless I mapping.
+func TestJavaLocaleRootToLower(t *testing.T) {
+	require.Equal(t, "i", javaLocaleRootToLower("I"))
+	require.Equal(t, "café", javaLocaleRootToLower("CAFÉ"))
+	// dotted capital I (U+0130) lowercases to i + combining dot under Unicode default
+	require.Equal(t, strings.ToLower("İ"), javaLocaleRootToLower("İ"))
 }

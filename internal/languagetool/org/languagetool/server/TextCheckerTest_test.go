@@ -55,8 +55,9 @@ func TestTextChecker_InvalidAltLanguages(t *testing.T) {
 }
 
 // Port of TextCheckerTest.testDetectLanguageOfString — inject heuristic (full FastText deferred).
+// Expectations match Java TextCheckerTest (default variants, preferred short-code equals).
 func TestTextChecker_DetectLanguageOfString(t *testing.T) {
-	// empty text + preferred → preferred[0]
+	// empty text + preferred → fallback "en" then preferred en-GB
 	require.Equal(t, "en-GB", DetectLanguageOfString("", []string{"en-GB"}, func(string) string { return "" }))
 
 	// detect en + preferred en-GB → promote variant
@@ -66,19 +67,39 @@ func TestTextChecker_DetectLanguageOfString(t *testing.T) {
 	english := "This is a longer English sample for detection."
 	require.Equal(t, "en-ZA", DetectLanguageOfString(english, []string{"de-AT", "en-ZA"}, func(string) string { return "en" }))
 
+	// English + empty preferred → default variant en-US (Java AmericanEnglish)
+	require.Equal(t, "en-US", DetectLanguageOfString(english, nil, func(string) string { return "en" }))
+	require.Equal(t, "en-US", DetectLanguageOfString(english, []string{}, func(string) string { return "en" }))
+
 	// German sample + de-AT preferred
 	german := "Das ist ein deutscher Text mit Größe."
 	require.Equal(t, "de-AT", DetectLanguageOfString(german, []string{"de-AT", "en-ZA"}, nil))
 
-	// no preferred: heuristic alone
-	require.Equal(t, "de", DetectLanguageOfString(german, nil, nil))
+	// Java: de-at lowercase region → parseLanguage canonical de-AT
+	require.Equal(t, "de-AT", DetectLanguageOfString(german, []string{"de-at", "en-ZA"}, nil))
+
+	// no preferred: default language variant (German → de-DE, Ukrainian base → uk)
+	require.Equal(t, "de-DE", DetectLanguageOfString(german, nil, nil))
 	require.Equal(t, "uk", DetectLanguageOfString("Це українська мова з ї.", nil, nil))
+
+	// preferred non-empty that does not match detected short code: keep fallback/detect, no default variant
+	// Java: detected null → en; preferred only de-AT → stays en (not en-US)
+	code, err := DetectLanguageOfStringWithFallback("", "", []string{"de-AT"}, func(string) string { return "" }, nil)
+	require.NoError(t, err)
+	require.Equal(t, "en", code)
+
+	// case-sensitive preferred base: "EN-GB" does not match short "en" (Java String.equals)
+	require.Equal(t, "en", DetectLanguageOfString("X", []string{"EN-GB"}, func(string) string { return "en" }))
 }
 
 // Port of TextCheckerTest.testInvalidPreferredVariant
 func TestTextChecker_InvalidPreferredVariant(t *testing.T) {
-	// "en" is not a variant (needs dash)
-	err := ValidatePreferredVariants([]string{"en"}, nil)
+	// "en" is not a variant (needs dash) — thrown from detectLanguageOfString itself
+	_, err := DetectLanguageOfStringErr("This is English.", []string{"en"}, func(string) string { return "en" })
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "preferredVariants")
+
+	err = ValidatePreferredVariants([]string{"en"}, nil)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "preferredVariants")
 }
@@ -90,4 +111,63 @@ func TestTextChecker_InvalidPreferredVariant2(t *testing.T) {
 	})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "en-YY")
+
+	_, err = DetectLanguageOfStringWithFallback("English text.", "", []string{"en-YY"},
+		func(string) string { return "en" },
+		func(string) bool { return false })
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "en-YY")
+}
+
+func TestParsePreferredVariants_RequiresAuto(t *testing.T) {
+	_, err := ParsePreferredVariants(map[string]string{
+		"language":          "en",
+		"preferredVariants": "en-GB",
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "language=auto")
+
+	// COMMA_WHITESPACE like altLanguages
+	p, err := ParsePreferredVariants(map[string]string{
+		"language":          "auto",
+		"preferredVariants": "en-GB, de-AT",
+	})
+	require.NoError(t, err)
+	require.Equal(t, []string{"en-GB", "de-AT"}, p)
+
+	// multilingual allows preferred without auto
+	p, err = ParsePreferredVariants(map[string]string{
+		"language":          "en",
+		"multilingual":      "true",
+		"preferredVariants": "en-GB",
+	})
+	require.NoError(t, err)
+	require.Equal(t, []string{"en-GB"}, p)
+}
+
+func TestValidateNoopLanguages(t *testing.T) {
+	require.Error(t, ValidateNoopLanguages(map[string]string{
+		"language":      "en",
+		"noopLanguages": "cs,sk",
+	}))
+	require.NoError(t, ValidateNoopLanguages(map[string]string{
+		"language":      "auto",
+		"noopLanguages": "cs,sk",
+	}))
+}
+
+func TestV2TextChecker_CheckParamsRenamed(t *testing.T) {
+	tc := NewV2TextChecker(nil, false, nil)
+	require.Error(t, tc.CheckParams(map[string]string{
+		"language": "en", "text": "x", "preferredvariants": "en-GB",
+	}))
+	require.Error(t, tc.CheckParams(map[string]string{
+		"language": "en", "text": "x", "autodetect": "true",
+	}))
+	require.Error(t, tc.CheckParams(map[string]string{
+		"language": "en", "text": "x", "enabled": "FOO",
+	}))
+	require.NoError(t, tc.CheckParams(map[string]string{
+		"language": "en", "text": "x",
+	}))
 }

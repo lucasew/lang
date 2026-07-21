@@ -110,10 +110,32 @@ func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, mat
 	return string(b), nil
 }
 
-// CheckParams adds V2-specific validation on top of TextChecker.
+// CheckParams adds V2-specific validation on top of TextChecker
+// (ports V2TextChecker.checkParams renamed-parameter guards).
 func (v *V2TextChecker) CheckParams(parameters map[string]string) error {
 	if err := v.TextChecker.CheckParams(parameters); err != nil {
 		return err
 	}
+	if parameters == nil {
+		return nil
+	}
+	// Java V2TextChecker.checkParams
+	if parameters["enabled"] != "" {
+		return NewBadRequestError("You specified 'enabled' but the parameter is now called 'enabledRules' in v2 of the API")
+	}
+	if parameters["disabled"] != "" {
+		return NewBadRequestError("You specified 'disabled' but the parameter is now called 'disabledRules' in v2 of the API")
+	}
+	if parameters["preferredvariants"] != "" {
+		return NewBadRequestError("You specified 'preferredvariants' but the parameter is now called 'preferredVariants' (uppercase 'V') in v2 of the API")
+	}
+	if parameters["autodetect"] != "" {
+		return NewBadRequestError("You specified 'autodetect' but automatic language detection is now activated with 'language=auto' in v2 of the API")
+	}
 	return nil
+}
+
+// GetPreferredVariants ports V2TextChecker.getPreferredVariants.
+func (v *V2TextChecker) GetPreferredVariants(parameters map[string]string) ([]string, error) {
+	return ParsePreferredVariants(parameters)
 }
