@@ -70,6 +70,7 @@ func (p CheckQueryParams) ToPipelineQuery() QueryParams {
 		DisabledRules:      p.DisabledRules,
 		EnabledCategories:  p.EnabledCategories,
 		DisabledCategories: p.DisabledCategories,
+		AltLanguages:       append([]string(nil), p.AltLanguages...),
 		UseEnabledOnly:     p.UseEnabledOnly,
 		EnableTempOffRules: p.EnableTempOffRules,
 		Premium:            p.Premium,
@@ -263,6 +264,8 @@ func ParseCheckQueryParams(parameters map[string]string) (CheckQueryParams, erro
 	p.DisabledRules = commaSeparated(parameters["disabledRules"])
 	p.EnabledCategories = commaSeparated(parameters["enabledCategories"])
 	p.DisabledCategories = commaSeparated(parameters["disabledCategories"])
+	// Java: COMMA_WHITESPACE_PATTERN.split(params.get("altLanguages"))
+	p.AltLanguages = ParseAltLanguages(parameters["altLanguages"])
 	p.UseEnabledOnly = strings.EqualFold(parameters["enabledOnly"], "true")
 	p.AllowIncompleteResults = strings.EqualFold(parameters["allowIncompleteResults"], "true")
 	p.EnableHiddenRules = strings.EqualFold(parameters["enableHiddenRules"], "true")
@@ -279,6 +282,12 @@ func ParseCheckQueryParams(parameters map[string]string) (CheckQueryParams, erro
 		len(p.EnabledCategories) > 0 || len(p.DisabledCategories) > 0 || p.UseEnabledOnly
 	if err := p.Validate(); err != nil {
 		return p, err
+	}
+	// Alt language validation is separate (needs BadRequest for bare multi-variant bases).
+	if parameters["altLanguages"] != "" {
+		if err := ValidateAltLanguages(parameters["altLanguages"]); err != nil {
+			return p, err
+		}
 	}
 	return p, nil
 }

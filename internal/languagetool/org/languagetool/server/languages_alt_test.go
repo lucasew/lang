@@ -79,3 +79,37 @@ func TestRangesToIgnoreRangeInfo(t *testing.T) {
 	// empty stays nil/empty for JSON
 	require.Empty(t, RangesToIgnoreRangeInfo(nil))
 }
+
+func TestParseCheckQueryParams_AltLanguages(t *testing.T) {
+	p, err := ParseCheckQueryParams(map[string]string{
+		"altLanguages": "ru-RU, de-DE",
+		"language":     "en",
+		"text":         "hi",
+	})
+	require.NoError(t, err)
+	require.Equal(t, []string{"ru-RU", "de-DE"}, p.AltLanguages)
+
+	// Bare multi-variant rejected at parse
+	_, err = ParseCheckQueryParams(map[string]string{
+		"altLanguages": "en",
+		"language":     "en",
+		"text":         "hi",
+	})
+	require.Error(t, err)
+}
+
+func TestPipelineSettings_AltLanguagesInKey(t *testing.T) {
+	a := pipelineSettingsFor("en", CheckOptions{AltLanguages: []string{"de-DE"}})
+	b := pipelineSettingsFor("en", CheckOptions{AltLanguages: []string{"ru-RU"}})
+	c := pipelineSettingsFor("en", CheckOptions{})
+	require.Equal(t, []string{"de-DE"}, a.Query.AltLanguages)
+	require.NotEqual(t, a.Key(), b.Key(), "different alt sets must not share pool key")
+	require.NotEqual(t, a.Key(), c.Key())
+}
+
+func TestPipeline_ConfiguredLT_AltLanguages(t *testing.T) {
+	settings := pipelineSettingsFor("en", CheckOptions{AltLanguages: []string{"de-DE", "ru-RU"}})
+	p := NewPipeline(settings)
+	lt := p.configuredLT()
+	require.Equal(t, []string{"de-DE", "ru-RU"}, lt.AltLanguageCodes)
+}

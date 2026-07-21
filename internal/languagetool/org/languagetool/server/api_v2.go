@@ -175,6 +175,9 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			DisabledCategories: qp.DisabledCategories,
 			EnabledCategories:  qp.EnabledCategories,
 			RuleValues:         commaSeparated(parameters["ruleValues"]),
+			// Java: QueryParams.altLanguages → Pipeline(lang, altLanguages, …)
+			// Already validated in ParseCheckQueryParams when present.
+			AltLanguages: append([]string(nil), qp.AltLanguages...),
 		}
 		if v := parameters["mode"]; v != "" {
 			opts.Mode = CheckMode(strings.ToUpper(v))
@@ -194,23 +197,14 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if qp.AllowIncompleteResults && len(text) > 100_000 {
 			warnings = append(warnings, "allowIncompleteResults: text exceeds soft size threshold; results may be incomplete")
 		}
-		// Multi-language: validate altLanguages (COMMA_WHITESPACE_PATTERN).
-		// Java ignoreRanges come from CheckResults (RuleMatch.getNewLanguageMatches),
-		// not invent foreign-script span heuristics.
-		altCSV := parameters["altLanguages"]
-		if altCSV != "" {
-			if err := ValidateAltLanguages(altCSV); err != nil {
-				return HandleResult{}, err
-			}
-			// Parsed with ,\s* like Java; wire into query for future Pipeline altLanguages.
-			_ = ParseAltLanguages(altCSV)
-		}
+		// Multi-language: ignoreRanges from CheckResults (NewLanguageMatches), not invent script spans.
 		var ignoreRanges []IgnoreRangeInfo
 		var body string
 		checkStart := time.Now()
 		if annotated != nil {
-			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
-			// Annotated path does not yet collect NewLanguageMatches ignore ranges (Java does via check2).
+			var matches []RemoteRuleMatch
+			matches, ignoreRanges = a.TextChecker.CheckAnnotatedWithOptionsAndIgnore(annotated, lang, opts)
+			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
 			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings, ignoreRanges, time.Since(checkStart).Milliseconds())
 		} else {
 			var matches []RemoteRuleMatch

@@ -329,6 +329,11 @@ type JLanguageTool struct {
 	// MaxErrorsPerWordRate ports JLanguageTool.maxErrorsPerWordRate (0 = disabled).
 	// TextCheckCallable throws ErrorRateTooHighException when exceeded after >25 words.
 	MaxErrorsPerWordRate float64
+	// AltLanguageCodes ports JLanguageTool.altLanguages (short/long codes).
+	// Java: words accepted if in an alternative language and not similar to main lang;
+	// also part of InputSentence cache key and getRelevantRules(…, altLanguages).
+	// Empty/nil is valid (Java requireNonNull but empty list OK).
+	AltLanguageCodes []string
 	// LanguageName used in ErrorRateTooHighException message (Java language.getName()).
 	LanguageName string
 	// ParaMode ports ParagraphHandling passed into TextCheckCallable / checkAnalyzedSentence.

@@ -25,6 +25,9 @@ type CheckOptions struct {
 	EnabledCategories  []string
 	// RuleValues configurable rule options (e.g. "TOO_LONG_SENTENCE:10").
 	RuleValues []string
+	// AltLanguages ports QueryParams.altLanguages (e.g. "de-DE", "ru-RU").
+	// Java: Pipeline(lang, altLanguages, …) → JLanguageTool.altLanguages.
+	AltLanguages []string
 }
 
 // Check runs core rules for language on text and returns RemoteRuleMatch results.
@@ -47,6 +50,7 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	}
 	settings.Query.DisabledRules = append([]string(nil), opts.Disabled...)
 	settings.Query.EnabledRules = append([]string(nil), opts.Enabled...)
+	settings.Query.AltLanguages = append([]string(nil), opts.AltLanguages...)
 	settings.Query.UseEnabledOnly = opts.UseEnabledOnly
 	settings.Query.UseQuerySettings = len(opts.Disabled) > 0 || len(opts.Enabled) > 0 || opts.UseEnabledOnly
 	// include filters in pool key (Key() does not hash full rule lists)
@@ -78,6 +82,10 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	}
 	if len(opts.RuleValues) > 0 {
 		keyParts = append(keyParts, "rv:"+strings.Join(opts.RuleValues, ","))
+	}
+	// altLanguages also in Key() via Query.AltLanguages
+	if len(opts.AltLanguages) > 0 {
+		keyParts = append(keyParts, "alt:"+strings.Join(opts.AltLanguages, ","))
 	}
 	settings.GlobalConfigKey = strings.Join(keyParts, "|")
 	return settings
@@ -159,12 +167,20 @@ func RangesToIgnoreRangeInfo(ranges []languagetool.Range) []IgnoreRangeInfo {
 
 // CheckAnnotatedWithOptions checks annotated markup text; match offsets are in original markup space.
 func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang string, opts CheckOptions) []RemoteRuleMatch {
+	ms, _ := t.CheckAnnotatedWithOptionsAndIgnore(at, lang, opts)
+	return ms
+}
+
+// CheckAnnotatedWithOptionsAndIgnore is the annotated twin of CheckWithOptionsAndIgnore
+// (Java check2 on AnnotatedText → matches + ignoreRanges).
+func (t *TextChecker) CheckAnnotatedWithOptionsAndIgnore(at *markup.AnnotatedText, lang string, opts CheckOptions) ([]RemoteRuleMatch, []IgnoreRangeInfo) {
 	if at == nil {
-		return nil
+		return nil, nil
 	}
 	p, settings, fromPool := t.preparePipeline(lang, opts)
 	defer t.releasePipeline(settings, p, fromPool)
-	locals := p.CheckAnnotated(at)
+	cr, _ := p.CheckAnnotatedWithResults(at)
+	locals := languagetool.LocalMatchesFromCheckResults(cr)
 	plain := at.GetPlainText()
 	// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
 	locals = applyRuleValues(lang, plain, locals, opts.RuleValues)
@@ -176,7 +192,11 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
 	}
-	return LocalMatchesToRemote(orig, locals, ctxSize, lang)
+	var ignore []IgnoreRangeInfo
+	if cr != nil {
+		ignore = RangesToIgnoreRangeInfo(cr.GetIgnoredRanges())
+	}
+	return LocalMatchesToRemote(orig, locals, ctxSize, lang), ignore
 }
 
 func filterLocalsByIgnoreWords(text string, ms []languagetool.LocalMatch, ignore []string) []languagetool.LocalMatch {

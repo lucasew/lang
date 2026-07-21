@@ -175,7 +175,49 @@ func (p *Pipeline) CheckWithResults(text string) (*languagetool.CheckResults, er
 	if p == nil {
 		return languagetool.NewCheckResults(nil, nil), nil
 	}
+	lt := p.configuredLT()
+	return lt.CheckWithResults(text)
+}
+
+// CheckAnnotated runs Check on annotated plain text and projects offsets onto the original markup.
+func (p *Pipeline) CheckAnnotated(at *markup.AnnotatedText) []languagetool.LocalMatch {
+	cr, _ := p.CheckAnnotatedWithResults(at)
+	return languagetool.LocalMatchesFromCheckResults(cr)
+}
+
+// CheckAnnotatedWithResults ports check2 on annotated text: matches projected to
+// original markup offsets + ignore ranges from NewLanguageMatches on plain text.
+func (p *Pipeline) CheckAnnotatedWithResults(at *markup.AnnotatedText) (*languagetool.CheckResults, error) {
+	if p == nil || at == nil {
+		return languagetool.NewCheckResults(nil, nil), nil
+	}
+	lt := p.configuredLT()
+	// Java check2 analyzes plain text; we check annotated plain then project matches.
+	plain := at.GetPlainText()
+	cr, err := lt.CheckWithResults(plain)
+	if err != nil {
+		return cr, err
+	}
+	if cr == nil {
+		return languagetool.NewCheckResults(nil, nil), nil
+	}
+	// Project match spans to original markup space (Java AnnotatedText positions).
+	locals := languagetool.LocalMatchesFromCheckResults(cr)
+	projected := languagetool.ProjectMatchesToOriginal(at, locals)
+	anyMatches := make([]any, len(projected))
+	for i := range projected {
+		anyMatches[i] = projected[i]
+	}
+	// Ignore ranges stay on plain-text/sentence UTF-16 offsets (Java Range from sentence).
+	return languagetool.NewCheckResultsFull(anyMatches, cr.GetIgnoredRanges(), cr.GetExtendedSentenceRanges()), nil
+}
+
+// configuredLT builds JLanguageTool for this pipeline (level, overlaps, altLanguages).
+func (p *Pipeline) configuredLT() *languagetool.JLanguageTool {
 	lt := p.newConfiguredLT()
+	if p == nil {
+		return lt
+	}
 	// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends, …).
 	if strings.EqualFold(string(p.settings.Level), string(CheckLevelPicky)) {
 		lt.Level = languagetool.LevelPicky
@@ -187,23 +229,11 @@ func (p *Pipeline) CheckWithResults(text string) (*languagetool.CheckResults, er
 	if p.maxErrRate > 0 {
 		lt.MaxErrorsPerWordRate = p.maxErrRate
 	}
-	return lt.CheckWithResults(text)
-}
-
-// CheckAnnotated runs Check on annotated plain text and projects offsets onto the original markup.
-func (p *Pipeline) CheckAnnotated(at *markup.AnnotatedText) []languagetool.LocalMatch {
-	if p == nil || at == nil {
-		return nil
+	// Java: new Pipeline(lang, params.altLanguages, …) → this.altLanguages
+	if len(p.settings.Query.AltLanguages) > 0 {
+		lt.AltLanguageCodes = append([]string(nil), p.settings.Query.AltLanguages...)
 	}
-	lt := p.newConfiguredLT()
-	if strings.EqualFold(string(p.settings.Level), string(CheckLevelPicky)) {
-		lt.Level = languagetool.LevelPicky
-	}
-	if p != nil && !p.cleanOverlaps {
-		lt.DisableCleanOverlapping()
-	}
-	matches := lt.CheckAnnotated(at)
-	return languagetool.ProjectMatchesToOriginal(at, matches)
+	return lt
 }
 
 // DisableRuleID records a rule to skip (before SetupFinished).
