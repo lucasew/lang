@@ -191,6 +191,10 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		opts.AllowIncompleteResults = qp.AllowIncompleteResults
 		// Java: future.get(limits.getMaxCheckTimeMillis(), …); -1 = unlimited
 		opts.MaxCheckTimeMillis = limits.MaxCheckTimeMillis
+		// Java PipelinePool: lt.setMaxErrorsPerWordRate(config.getMaxErrorsPerWordRate())
+		if a.Config != nil && a.Config.MaxErrorsPerWordRate > 0 {
+			opts.MaxErrorsPerWordRate = a.Config.MaxErrorsPerWordRate
+		}
 		// Multi-language: ignoreRanges from CheckResults (NewLanguageMatches).
 		var ignoreRanges []IgnoreRangeInfo
 		var incompleteReason string

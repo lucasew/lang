@@ -16,7 +16,10 @@ var NonLatinCharsLanguages = []string{
 const (
 	ScoreThreshold                 = 0.85
 	ConsiderOnlyPreferredThreshold = 50
-	DefaultMaxLength               = 1000
+	// ShortAlgoThreshold ports DefaultLanguageIdentifier.SHORT_ALGO_THRESHOLD —
+	// short text prefers ngram over fastText when both are available.
+	ShortAlgoThreshold = 50
+	DefaultMaxLength   = 1000
 )
 
 var (

@@ -1,7 +1,7 @@
 package identifier
 
 import (
-	"unicode"
+	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier/detector"
@@ -19,7 +19,7 @@ type DefaultLanguageIdentifier struct {
 	FastTextScore func(cleanText string) map[string]float64
 	// NGram optional character n-gram detector.
 	NGram *detector.CharNGramDetector
-	// Unicode optional unicode script detector.
+	// Unicode optional unicode script detector (Java UNICODE_BASED_LANG_IDENTIFIER).
 	Unicode *detector.UnicodeBasedDetector
 	// CommonWords optional common-words detector.
 	CommonWords *detector.CommonWordsDetector
@@ -66,11 +66,35 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 	if d == nil {
 		return nil
 	}
+	// Java requireNonNull lists
+	if noopLangs == nil {
+		noopLangs = []string{}
+	}
+	if preferredLangs == nil {
+		preferredLangs = []string{}
+	}
 	text := tools.JavaStringTrim(cleanText)
 	if text == "" {
 		return nil
 	}
-	preferred := append([]string(nil), preferredLangs...)
+
+	// Java: prepareDetectLanguage first (nb→no, dominant unicode expand preferred, th/he/ko → null)
+	var unicodeFn func(string) []string
+	if d.Unicode != nil {
+		unicodeFn = d.Unicode.GetDominantLangCodes
+	}
+	parsed := PrepareDetectLanguage(text, noopLangs, preferredLangs, unicodeFn)
+	if parsed == nil {
+		// Java: return singleton NoopLanguage when prepareDetect returns null
+		src := "noop"
+		return []languagetool.DetectedLanguage{
+			languagetool.NewDetectedLanguageFull("", "zz", 1.0, &src),
+		}
+	}
+	preferred := append([]string(nil), parsed.PreferredLangs...)
+	additional := parsed.AdditionalLangs
+	_ = additional
+
 	// Java DefaultLanguageIdentifier: text.length() <= CONSIDER_ONLY_PREFERRED_THRESHOLD
 	// (UTF-16 units). Forces preferred-lang filter when short.
 	if javaStringLen(text) <= ConsiderOnlyPreferredThreshold && len(preferred) > 0 {
@@ -80,14 +104,25 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 	scores := map[string]float64{}
 	src := "profile"
 
-	// Prefer fastText when available
-	if d.FastTextScore != nil {
+	// Prefer fastText when available (Java: longer text → fasttext, short → ngram)
+	if d.FastTextScore != nil && (javaStringLen(text) > ShortAlgoThreshold || d.NGram == nil) {
 		for k, v := range d.FastTextScore(text) {
 			scores[k] = v
 		}
 		src = "fasttext"
 	}
-	// Merge profile scores if empty or low confidence
+	// Char n-gram for short text when Java would use ngram over fasttext
+	if d.NGram != nil && (len(scores) == 0 || javaStringLen(text) <= ShortAlgoThreshold) {
+		for k, v := range d.NGram.DetectLanguages(text) {
+			if cur, ok := scores[k]; !ok || v > cur {
+				scores[k] = v
+			}
+		}
+		if src != "fasttext" || javaStringLen(text) <= ShortAlgoThreshold {
+			src = "ngram"
+		}
+	}
+	// Merge profile scores if empty or low confidence (Java optimaize fallback ~0.85)
 	maxScore := maxMap(scores)
 	if d.ProfileScore != nil && (len(scores) == 0 || maxScore < 0.85) {
 		for k, v := range d.ProfileScore(text, preferred) {
@@ -97,41 +132,25 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 		}
 		if src == "fasttext" && maxScore < 0.85 {
 			src = "profile"
+		} else if src == "" || len(scores) == 0 {
+			src = "profile"
 		}
 	}
-	// Char n-gram detector
-	if d.NGram != nil && len(scores) == 0 {
-		for k, v := range d.NGram.DetectLanguages(text) {
-			scores[k] = v
-		}
-		src = "ngram"
-	}
-	// Unicode fallback for non-latin
-	if d.Unicode != nil && (len(scores) == 0 || hasNonLatin(text)) {
-		for _, code := range d.Unicode.GetDominantLangCodes(text) {
-			if _, ok := scores[code]; !ok {
-				scores[code] = 0.6
-			} else if scores[code] < 0.6 {
-				scores[code] = 0.6
-			}
-		}
-	}
-	// Common words boost
-	if d.CommonWords != nil {
+	// Common words boost when low confidence / zz (Java FASTTEXT_CONFIDENCE_THRESHOLD path)
+	maxScore = maxMap(scores)
+	topCode, _ := GetHighestScoringResult(scores)
+	if d.CommonWords != nil && (maxScore < 0.85 || topCode == "zz" || len(scores) == 0) {
 		counts := d.CommonWords.GetKnownWordsPerLanguage(text)
-		var total int
-		for _, c := range counts {
-			total += c
+		// Java: scores.put(langCode, scores.get + count) then re-normalize later via ordering
+		for k, c := range counts {
+			scores[k] = scores[k] + float64(c)
 		}
-		if total > 0 {
-			for k, c := range counts {
-				v := float64(c) / float64(total)
-				scores[k] = scores[k]*0.5 + v*0.5
-			}
+		if src != "" && !strings.Contains(src, "commonwords") {
+			src = src + "+commonwords"
 		}
 	}
 
-	// Filter ignore / preferred / noop
+	// Filter ignore / preferred
 	type pair struct {
 		code  string
 		score float64
@@ -144,7 +163,6 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 		if limitOnPreferred && len(preferred) > 0 && !containsStr(preferred, k) {
 			continue
 		}
-		// strip country variants for pairing preferred en-US → en
 		pairs = append(pairs, pair{k, v})
 	}
 	// sort desc
@@ -161,7 +179,6 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 	var out []languagetool.DetectedLanguage
 	for i := 0; i < len(pairs) && i < count; i++ {
 		code := pairs[i].code
-		// noop langs still reported but could be tagged — surface keeps code
 		_ = noopLangs
 		s := src
 		out = append(out, languagetool.NewDetectedLanguageFull(
@@ -186,20 +203,6 @@ func maxMap(m map[string]float64) float64 {
 		}
 	}
 	return max
-}
-
-func hasNonLatin(text string) bool {
-	for _, r := range text {
-		if r > unicode.MaxASCII && !unicode.IsSpace(r) && !unicode.IsPunct(r) {
-			// rough: non-latin letter
-			if unicode.Is(unicode.Han, r) || unicode.Is(unicode.Cyrillic, r) ||
-				unicode.Is(unicode.Arabic, r) || unicode.Is(unicode.Hiragana, r) ||
-				unicode.Is(unicode.Katakana, r) || unicode.Is(unicode.Greek, r) {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 var _ LanguageIdentifier = (*DefaultLanguageIdentifier)(nil)

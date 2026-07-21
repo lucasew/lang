@@ -34,3 +34,33 @@ func TestDefaultLanguageIdentifier(t *testing.T) {
 	require.NotNil(t, got3)
 	require.Equal(t, "en", got3.DetectedLanguageCode)
 }
+
+func TestDefaultLanguageIdentifier_PrepareDetectUnsupported(t *testing.T) {
+	// Java prepareDetectLanguage: dominant "th" → null → NoopLanguage (zz)
+	d := NewDefaultLanguageIdentifier(1000)
+	d.Unicode = detector.NewUnicodeBasedDetector()
+	// Thai-heavy text
+	thai := "ภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทย"
+	scores := d.Scores(thai, []string{}, []string{"en"}, false, 3)
+	require.NotEmpty(t, scores)
+	require.Equal(t, "zz", scores[0].DetectedLanguageCode)
+}
+
+func TestDefaultLanguageIdentifier_NoInventHasNonLatin(t *testing.T) {
+	// Invent hasNonLatin score boost removed — Cyrillic still detected via PrepareDetect
+	// expanding preferred/additional, not invent 0.6 score injection.
+	d := NewDefaultLanguageIdentifier(1000)
+	d.ProfileScore = func(text string, preferred []string) map[string]float64 {
+		// Prefer list may include "ru" from dominant codes
+		out := map[string]float64{"en": 0.5}
+		if containsStr(preferred, "ru") {
+			out["ru"] = 0.95
+		}
+		return out
+	}
+	got := d.Detect("Привет мир это русский текст для теста", nil, []string{"en"})
+	require.NotNil(t, got)
+	// With preferred en only originally, PrepareDetect adds ru from unicode dominant
+	// so profile can score ru highly.
+	require.Equal(t, "ru", got.DetectedLanguageCode)
+}
