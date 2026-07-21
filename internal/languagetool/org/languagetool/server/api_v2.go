@@ -194,30 +194,27 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if qp.AllowIncompleteResults && len(text) > 100_000 {
 			warnings = append(warnings, "allowIncompleteResults: text exceeds soft size threshold; results may be incomplete")
 		}
-		// Multi-language: validate altLanguages and map foreign-script spans to ignoreRanges.
+		// Multi-language: validate altLanguages (COMMA_WHITESPACE_PATTERN).
+		// Java ignoreRanges come from CheckResults (RuleMatch.getNewLanguageMatches),
+		// not invent foreign-script span heuristics.
 		altCSV := parameters["altLanguages"]
 		if altCSV != "" {
 			if err := ValidateAltLanguages(altCSV); err != nil {
 				return HandleResult{}, err
 			}
+			// Parsed with ,\s* like Java; wire into query for future Pipeline altLanguages.
+			_ = ParseAltLanguages(altCSV)
 		}
-		alts := commaSeparated(altCSV)
 		var ignoreRanges []IgnoreRangeInfo
-		if len(alts) > 0 {
-			plainForRanges := text
-			if annotated != nil {
-				plainForRanges = annotated.GetPlainText()
-			}
-			ignoreRanges = ForeignScriptIgnoreRanges(plainForRanges, lang, alts)
-		}
 		var body string
 		checkStart := time.Now()
 		if annotated != nil {
 			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
-			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
+			// Annotated path does not yet collect NewLanguageMatches ignore ranges (Java does via check2).
 			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings, ignoreRanges, time.Since(checkStart).Milliseconds())
 		} else {
-			matches := a.TextChecker.CheckWithOptions(text, lang, opts)
+			var matches []RemoteRuleMatch
+			matches, ignoreRanges = a.TextChecker.CheckWithOptionsAndIgnore(text, lang, opts)
 			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
 			body, err = a.TextChecker.BuildResponseExFull(text, lang, langName, matches, autoDetected, warnings, ignoreRanges, time.Since(checkStart).Milliseconds())
 		}

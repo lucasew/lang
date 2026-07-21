@@ -118,9 +118,17 @@ func (t *TextChecker) releasePipeline(settings PipelineSettings, pl *Pipeline, f
 
 // CheckWithOptions is Check with enabled-only, mode, and level support.
 func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []RemoteRuleMatch {
+	ms, _ := t.CheckWithOptionsAndIgnore(text, lang, opts)
+	return ms
+}
+
+// CheckWithOptionsAndIgnore ports check2 → matches + ignoreRanges from
+// CheckResults (NewLanguageMatches), not invent ForeignScriptIgnoreRanges.
+func (t *TextChecker) CheckWithOptionsAndIgnore(text, lang string, opts CheckOptions) ([]RemoteRuleMatch, []IgnoreRangeInfo) {
 	p, settings, fromPool := t.preparePipeline(lang, opts)
 	defer t.releasePipeline(settings, p, fromPool)
-	locals := p.Check(text)
+	cr, _ := p.CheckWithResults(text)
+	locals := languagetool.LocalMatchesFromCheckResults(cr)
 	// Tag.picky rules are gated by Pipeline → lt.Level (Java setLevel), not invent re-check.
 	locals = applyRuleValues(lang, text, locals, opts.RuleValues)
 	locals = filterLocalsByIgnoreWords(text, locals, opts.IgnoreWords)
@@ -129,7 +137,24 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
 	}
-	return LocalMatchesToRemote(text, locals, ctxSize, lang)
+	var ignore []IgnoreRangeInfo
+	if cr != nil {
+		ignore = RangesToIgnoreRangeInfo(cr.GetIgnoredRanges())
+	}
+	return LocalMatchesToRemote(text, locals, ctxSize, lang), ignore
+}
+
+// RangesToIgnoreRangeInfo maps languagetool.Range (UTF-16 spans from Java Range)
+// to API IgnoreRangeInfo for /v2/check JSON.
+func RangesToIgnoreRangeInfo(ranges []languagetool.Range) []IgnoreRangeInfo {
+	if len(ranges) == 0 {
+		return nil
+	}
+	out := make([]IgnoreRangeInfo, 0, len(ranges))
+	for _, r := range ranges {
+		out = append(out, IgnoreRangeInfo{From: r.FromPos, To: r.ToPos, Lang: r.Lang})
+	}
+	return out
 }
 
 // CheckAnnotatedWithOptions checks annotated markup text; match offsets are in original markup space.

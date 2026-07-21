@@ -159,10 +159,32 @@ var multiVariantLangBases = map[string]struct{}{
 	"it": {}, "ru": {}, "uk": {}, "gl": {}, "el": {}, "da": {}, "sv": {}, "sk": {},
 }
 
+// splitCommaWhitespace ports TextChecker.COMMA_WHITESPACE_PATTERN = ",\\s*".
+// Used for altLanguages only (Java); other params use plain split(",").
+func splitCommaWhitespace(s string) []string {
+	if s == "" {
+		return nil
+	}
+	// Java Pattern.split: ",\\s*" — comma plus optional ASCII whitespace after.
+	parts := regexp.MustCompile(`,\s*`).Split(s, -1)
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+// ParseAltLanguages ports TextChecker altLanguages split (COMMA_WHITESPACE_PATTERN).
+func ParseAltLanguages(altCSV string) []string {
+	return splitCommaWhitespace(altCSV)
+}
+
 // ValidateAltLanguages ports TextChecker altLanguages parsing/validation.
 // Unknown codes and bare multi-variant bases (e.g. "en") return BadRequestError.
 func ValidateAltLanguages(altCSV string) error {
-	codes := commaSeparated(altCSV)
+	codes := ParseAltLanguages(altCSV)
 	for _, code := range codes {
 		low := strings.ToLower(code)
 		if low == "xy" || low == "zz-xx" {

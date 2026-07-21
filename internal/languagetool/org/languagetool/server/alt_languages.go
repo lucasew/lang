@@ -3,19 +3,27 @@ package server
 import (
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// ForeignScriptIgnoreRanges maps non-Latin script runs to matching altLanguages codes.
-// Incomplete vs Java multi-language check (altLanguages on Pipeline); ignore-range
-// heuristic only — does not invent language IDs outside the provided alt list.
+// ForeignScriptIgnoreRanges is retained only as an incomplete diagnostic helper.
+// Java ignoreRanges are produced from RuleMatch.getNewLanguageMatches via
+// CheckResults (see TextChecker.CheckWithOptionsAndIgnore), not from script
+// heuristics. Do not use this for /v2/check production responses.
+//
+// When called, maps non-Latin script runs to matching altLanguages codes only
+// (no invent language IDs outside the provided alt list).
 func ForeignScriptIgnoreRanges(text, primaryLang string, altLangs []string) []IgnoreRangeInfo {
 	if text == "" || len(altLangs) == 0 {
 		return nil
 	}
-	primary := baseLangCode(primaryLang)
-	_ = primary
+	_ = primaryLang
 
-	type span struct{ from, to int; kind string }
+	type span struct {
+		from, to int
+		kind     string
+	}
 	var spans []span
 	i := 0
 	for i < len(text) {
@@ -34,17 +42,19 @@ func ForeignScriptIgnoreRanges(text, primaryLang string, altLangs []string) []Ig
 		for j < len(text) {
 			r2, sz := utf8.DecodeRuneInString(text[j:])
 			k2 := scriptKind(r2)
-			if k2 != kind && !(unicode.IsSpace(r2) || unicode.IsPunct(r2) || unicode.IsDigit(r2)) {
+			// Character.isWhitespace for "soft" separators inside a foreign span —
+			// not Go unicode.IsSpace alone (NBSP differs from isWhitespace, but
+			// here we allow Zs separators inside spans via IsSpaceChar as well).
+			isSep := tools.CharacterIsWhitespace(r2) || tools.CharacterIsSpaceChar(r2) ||
+				unicode.IsPunct(r2) || unicode.IsDigit(r2)
+			if k2 != kind && !isSep {
 				break
 			}
 			if k2 == kind {
 				j += sz
 				continue
 			}
-			// allow space/punct inside span only if more of same script follows
-			// simplify: end span at non-kind non-space
-			if unicode.IsSpace(r2) || unicode.IsPunct(r2) || unicode.IsDigit(r2) {
-				// peek ahead
+			if isSep {
 				k := j + sz
 				found := false
 				for k < len(text) {
@@ -57,7 +67,9 @@ func ForeignScriptIgnoreRanges(text, primaryLang string, altLangs []string) []Ig
 					if k3 != "" && k3 != kind {
 						break
 					}
-					if !unicode.IsSpace(r3) && !unicode.IsPunct(r3) && !unicode.IsDigit(r3) {
+					isSep3 := tools.CharacterIsWhitespace(r3) || tools.CharacterIsSpaceChar(r3) ||
+						unicode.IsPunct(r3) || unicode.IsDigit(r3)
+					if !isSep3 {
 						break
 					}
 					k += sz3
@@ -70,18 +82,17 @@ func ForeignScriptIgnoreRanges(text, primaryLang string, altLangs []string) []Ig
 			}
 			break
 		}
-		// trim trailing space from span
+		// trim trailing whitespace (Character.isWhitespace / isSpaceChar)
 		end := j
 		for end > start {
 			r3, sz3 := utf8.DecodeLastRuneInString(text[start:end])
-			if unicode.IsSpace(r3) {
+			if tools.CharacterIsWhitespace(r3) || tools.CharacterIsSpaceChar(r3) {
 				end -= sz3
 				continue
 			}
 			break
 		}
 		if end > start {
-			// require at least one letter of that script
 			hasLetter := false
 			for p := start; p < end; {
 				r3, sz3 := utf8.DecodeRuneInString(text[p:end])
@@ -158,6 +169,7 @@ func baseLangCode(code string) string {
 }
 
 // filterRemoteByIgnoreRanges drops matches whose span is fully inside any ignore range.
+// Java applies ignore ranges from CheckResults when serializing / filtering multi-lang noise.
 func filterRemoteByIgnoreRanges(ms []RemoteRuleMatch, ranges []IgnoreRangeInfo) []RemoteRuleMatch {
 	if len(ms) == 0 || len(ranges) == 0 {
 		return ms

@@ -164,8 +164,16 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 // no invent multi-sentence period-count heuristic for threading.
 // Overlap cleaning is Java CleanOverlappingFilter via lt.Check (PriorityForId).
 func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
+	cr, _ := p.CheckWithResults(text)
+	return languagetool.LocalMatchesFromCheckResults(cr)
+}
+
+// CheckWithResults ports Pipeline/JLanguageTool check2 surface for plain text:
+// matches + ignored ranges from RuleMatch.getNewLanguageMatches (not invent
+// foreign-script heuristics).
+func (p *Pipeline) CheckWithResults(text string) (*languagetool.CheckResults, error) {
 	if p == nil {
-		return nil
+		return languagetool.NewCheckResults(nil, nil), nil
 	}
 	lt := p.newConfiguredLT()
 	// Java JLanguageTool.setLevel: DEFAULT filters Tag.picky (false friends, …).
@@ -173,10 +181,13 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 		lt.Level = languagetool.LevelPicky
 	}
 	// Pipeline cleanOverlaps=false → JLanguageTool.setCleanOverlappingMatches(false).
-	if p != nil && !p.cleanOverlaps {
+	if !p.cleanOverlaps {
 		lt.DisableCleanOverlapping()
 	}
-	return lt.Check(text)
+	if p.maxErrRate > 0 {
+		lt.MaxErrorsPerWordRate = p.maxErrRate
+	}
+	return lt.CheckWithResults(text)
 }
 
 // CheckAnnotated runs Check on annotated plain text and projects offsets onto the original markup.

@@ -46,17 +46,20 @@ func AdaptTextLevelLocalMatch(
 // match.getNewLanguageMatches() → Range(startOffset, startOffset+text.length(), lang).
 // Uses the first map entry's key as language (Java iterator().next().getKey()).
 // sentenceFrom/To are document UTF-16 offsets for the whole sentence span.
+//
+// Java LinkedHashMap preserves insertion order. Go maps do not; when multiple
+// keys exist we pick the lexicographically smallest key for determinism.
+// Callers that need insertion order should pass a single-entry map (Java
+// speller typically sets one preferred foreign language).
 func IgnoreRangesFromLanguageMatches(sentenceFrom, sentenceTo int, rates map[string]float32) (Range, bool) {
 	if len(rates) == 0 {
 		return Range{}, false
 	}
-	// LinkedHashMap iteration order — Go map is random; pick any stable first by walking.
-	// Java uses entrySet().iterator().next() — first inserted. Callers should pass a
-	// single-entry map or accept non-deterministic first key when multiple.
-	var lang string
+	lang := ""
 	for k := range rates {
-		lang = k
-		break
+		if lang == "" || k < lang {
+			lang = k
+		}
 	}
 	if lang == "" {
 		return Range{}, false
