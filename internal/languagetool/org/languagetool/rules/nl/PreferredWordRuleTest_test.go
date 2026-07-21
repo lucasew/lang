@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPreferredWordRule_Rule(t *testing.T) {
+func TestPreferredWordRule_Test(t *testing.T) {
 	rule := NewPreferredWordRule(nil)
 	matches := rule.Match(languagetool.AnalyzePlain("rijwiel"))
 	require.Equal(t, 1, len(matches))

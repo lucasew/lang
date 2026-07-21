@@ -95,3 +95,70 @@ func TestLanguages_GetLanguageForLocale(t *testing.T) {
 	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
 	require.Equal(t, "en-US", L.GetLanguageForShortCode("en-US").Code)
 }
+
+// Twin of LanguagesTest.testIsVariant
+func TestLanguages_IsVariant(t *testing.T) {
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English", Code: "en", DefaultVariantCode: "en-US"})
+	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
+	L.Register(LanguageMeta{Name: "German", Code: "de", DefaultVariantCode: "de-DE"})
+	L.Register(LanguageMeta{Name: "German (Switzerland)", Code: "de-CH"})
+	require.True(t, L.GetLanguageForShortCode("en-US").IsVariant())
+	require.True(t, L.GetLanguageForShortCode("de-CH").IsVariant())
+	require.False(t, L.GetLanguageForShortCode("en").IsVariant())
+	require.False(t, L.GetLanguageForShortCode("de").IsVariant())
+}
+
+// Twin of LanguagesTest.testHasPremium
+func TestLanguages_HasPremium(t *testing.T) {
+	L := &Languages{}
+	require.True(t, L.HasPremium("org.languagetool.language.Portuguese"))
+	require.True(t, L.HasPremium("org.languagetool.language.GermanyGerman"))
+	require.True(t, L.HasPremium("org.languagetool.language.AmericanEnglish"))
+	require.False(t, L.HasPremium("org.languagetool.language.Danish"))
+}
+
+// Twin of LanguagesTest.testHasVariant
+func TestLanguages_HasVariant(t *testing.T) {
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English", Code: "en", DefaultVariantCode: "en-US"})
+	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
+	L.Register(LanguageMeta{Name: "German", Code: "de", DefaultVariantCode: "de-DE"})
+	L.Register(LanguageMeta{Name: "German (Switzerland)", Code: "de-CH"})
+	L.Register(LanguageMeta{Name: "Asturian", Code: "ast"})
+	L.Register(LanguageMeta{Name: "Polish", Code: "pl"})
+	require.True(t, L.HasVariant(L.GetLanguageForShortCode("en")))
+	require.True(t, L.HasVariant(L.GetLanguageForShortCode("de")))
+	require.False(t, L.HasVariant(L.GetLanguageForShortCode("en-US")))
+	require.False(t, L.HasVariant(L.GetLanguageForShortCode("de-CH")))
+	require.False(t, L.HasVariant(L.GetLanguageForShortCode("ast")))
+	require.False(t, L.HasVariant(L.GetLanguageForShortCode("pl")))
+}
+
+// Twin of LanguagesTest.isHiddenFromGui
+func TestLanguages_IsHiddenFromGui(t *testing.T) {
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English", Code: "en", DefaultVariantCode: "en-US"})
+	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
+	L.Register(LanguageMeta{Name: "German", Code: "de", DefaultVariantCode: "de-DE"})
+	L.Register(LanguageMeta{Name: "German (Switzerland)", Code: "de-CH"})
+	L.Register(LanguageMeta{Name: "German (Germany)", Code: "de-DE"})
+	L.Register(LanguageMeta{Name: "Portuguese", Code: "pt", DefaultVariantCode: "pt-PT"})
+	L.Register(LanguageMeta{Name: "Portuguese (Portugal)", Code: "pt-PT"})
+	L.Register(LanguageMeta{Name: "Asturian", Code: "ast"})
+	L.Register(LanguageMeta{Name: "Polish", Code: "pl"})
+	L.Register(LanguageMeta{Name: "Catalan (Spain)", Code: "ca-ES"})
+	L.Register(LanguageMeta{Name: "Catalan (Valencia)", Code: "ca-ES-valencia"})
+	L.Register(LanguageMeta{Name: "Simple German", Code: "de-DE-x-simple-language"})
+	require.True(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("en")))
+	require.True(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("de")))
+	require.True(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("pt")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("en-US")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("de-CH")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("ast")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("pl")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("ca-ES")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("ca-ES-valencia")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("de-DE-x-simple-language")))
+	require.False(t, L.IsHiddenFromGui(L.GetLanguageForShortCode("de-DE")))
+}

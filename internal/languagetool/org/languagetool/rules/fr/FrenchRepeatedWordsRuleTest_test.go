@@ -32,7 +32,7 @@ func frSent(toks ...*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedS
 	return languagetool.NewAnalyzedSentence(toks)
 }
 
-func TestFrenchRepeatedWordsRule(t *testing.T) {
+func TestFrenchRepeatedWordsRule_Rule(t *testing.T) {
 	rule := NewFrenchRepeatedWordsRule(nil)
 	// synonyms: maintenant/A=… — lemma + POS tag matching A
 	ss := languagetool.SentenceStartTagName

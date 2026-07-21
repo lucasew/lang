@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestQuestionMarkRule_Rule(t *testing.T) {
+func TestQuestionMarkRule_Test(t *testing.T) {
 	rule := NewQuestionMarkRule(nil)
 	assertN := func(s string, n int, sugg string) {
 		t.Helper()

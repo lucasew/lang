@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPortugueseColourHyphenationRule(t *testing.T) {
+func TestPortugueseColourHyphenationRule_Test(t *testing.T) {
 	rule := NewPortugueseColourHyphenationRule(nil)
 	require.Equal(t, "PT_COLOUR_HYPHENATION", rule.GetID())
 	// "amarelo claro" should suggest hyphenated form (data uses * = hyphen only).

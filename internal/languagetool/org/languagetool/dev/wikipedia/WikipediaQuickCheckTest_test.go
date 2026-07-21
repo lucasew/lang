@@ -98,3 +98,21 @@ func TestWikipediaQuickCheck_CheckPlainText(t *testing.T) {
 	require.Equal(t, "en", res.GetLanguageCode())
 	require.Empty(t, res.GetRuleMatches())
 }
+
+// Twin of WikipediaQuickCheckTest.testRemoveInterLanguageLinks (Java calls removeWikipediaLinks).
+func TestWikipediaQuickCheck_RemoveInterLanguageLinks(t *testing.T) {
+	require.Equal(t, "foo  bar", RemoveWikipediaLinks("foo [[pt:Some Article]] bar"))
+	require.Equal(t, "foo [[some link]] bar", RemoveWikipediaLinks("foo [[some link]] bar"))
+	require.Equal(t, "foo [[Some Link]] bar ", RemoveWikipediaLinks("foo [[Some Link]] bar [[pt:Some Article]]"))
+	// known limitation
+	require.Equal(t, "foo [[zh-min-nan:Linux]] bar", RemoveWikipediaLinks("foo [[zh-min-nan:Linux]] bar"))
+	require.Equal(t, "[[Scultura bronzea di Gaudí mentre osserva il suo ''[[Il Capriccio|Capriccio]]'']]",
+		RemoveWikipediaLinks("[[File:Gaudì-capriccio.JPG|thumb|left|Scultura bronzea di Gaudí mentre osserva il suo ''[[Il Capriccio|Capriccio]]'']]"))
+	require.Equal(t, "[[[[Palau de la Música Catalana]], entrada]]",
+		RemoveWikipediaLinks("[[Fitxer:Palau_de_musica_2.JPG|thumb|[[Palau de la Música Catalana]], entrada]]"))
+	require.Equal(t, "foo  bar", RemoveWikipediaLinks("foo [[Kategorie:Kurgebäude]] bar"))
+	require.Equal(t, "foo [[''Kursaal Palace'' in San Sebastián]] bar",
+		RemoveWikipediaLinks("foo [[Datei:FestivalSS.jpg|miniatur|''Kursaal Palace'' in San Sebastián]] bar"))
+	require.Equal(t, "[[Yupana, emprat pels [[Inques]].]]",
+		RemoveWikipediaLinks("[[Fitxer:Yupana 1.GIF|thumb|Yupana, emprat pels [[Inques]].]]"))
+}

@@ -32,7 +32,7 @@ func esSent(toks ...*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedS
 	return languagetool.NewAnalyzedSentence(toks)
 }
 
-func TestSpanishRepeatedWordsRule(t *testing.T) {
+func TestSpanishRepeatedWordsRule_Rule(t *testing.T) {
 	rule := NewSpanishRepeatedWordsRule(nil)
 	// Java: real lemmas (synonyms key "sugerir")
 	ss := languagetool.SentenceStartTagName

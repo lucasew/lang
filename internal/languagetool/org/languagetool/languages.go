@@ -12,6 +12,10 @@ type LanguageMeta struct {
 	Name     string
 	Code     string // short code with optional variant
 	DictPath string // optional dynamic dict path
+	// DefaultVariantCode ports Language.getDefaultLanguageVariant().
+	// Empty means default is self (Java Language default). When set to another
+	// code (e.g. "en-US" on "en"), this entry is not the default variant.
+	DefaultVariantCode string
 }
 
 func (l LanguageMeta) GetName() string { return l.Name }
@@ -244,6 +248,50 @@ func HasPremiumClass(className string) bool {
 		}
 	}
 	return false
+}
+
+// HasPremium is the Languages.hasPremium alias used by LanguagesTest.
+func (L *Languages) HasPremium(className string) bool {
+	return HasPremiumClass(className)
+}
+
+// IsVariant ports Language.isVariant for registry metas:
+// true when code has a country/variant suffix (Java: subclass of another language).
+func (l LanguageMeta) IsVariant() bool {
+	return strings.Contains(l.Code, "-")
+}
+
+// IsTheDefaultVariant ports Language.isTheDefaultVariant.
+func (l LanguageMeta) IsTheDefaultVariant() bool {
+	if l.DefaultVariantCode == "" {
+		return true // Java default: getDefaultLanguageVariant() returns this
+	}
+	return strings.EqualFold(l.Code, l.DefaultVariantCode)
+}
+
+// HasVariant ports Language.hasVariant: another registered language shares short code.
+// Java uses class assignability; registry approx: sibling with same GetShortCode().
+func (L *Languages) HasVariant(l LanguageMeta) bool {
+	sc := l.GetShortCode()
+	for _, o := range L.Get() {
+		if strings.EqualFold(o.Code, l.Code) {
+			continue
+		}
+		if o.GetShortCode() == sc {
+			// Base language (no hyphen) has variants when a country code exists.
+			// Variant languages (en-US) do not "have" further variants in Java.
+			if !l.IsVariant() {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// IsHiddenFromGui ports Language.isHiddenFromGui:
+// hasVariant && !isVariant && !isTheDefaultVariant.
+func (L *Languages) IsHiddenFromGui(l LanguageMeta) bool {
+	return L.HasVariant(l) && !l.IsVariant() && !l.IsTheDefaultVariant()
 }
 
 // GetOrAddLanguageByClassName ports getOrAddLanguageByClassName for registered metas.

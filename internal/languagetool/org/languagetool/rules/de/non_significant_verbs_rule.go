@@ -1,8 +1,8 @@
 package de
 
 import (
+	"regexp"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -17,14 +17,19 @@ type NonSignificantVerbsRule struct {
 
 var nonSignificantLemmas = []string{"haben", "sein", "machen", "tun"}
 
+// Java DEFAULT_MIN_PER_MILL
 const nonSignificantDefaultMinPerMill = 8
 
+// Java isUnknownWord: matches("^[A-Za-zÄÖÜäöüß]+$") — not full Unicode letters.
+var nonSignificantUnknownWordRE = regexp.MustCompile(`^[A-Za-zÄÖÜäöüß]+$`)
+
 func NewNonSignificantVerbsRule(messages map[string]string) *NonSignificantVerbsRule {
+	// Java: super(..., DEFAULT_MIN_PER_MILL)
 	r := &NonSignificantVerbsRule{
 		AbstractStatisticStyleRule: &rules.AbstractStatisticStyleRule{
 			ID:                  "NON_SIGNIFICANT_VERB_DE",
 			Description:         "Statistische Stilanalyse: Verben mit wenig Aussagekraft",
-			MinPercent:          0, // twin tests show all; Java default 8‰
+			MinPercent:          nonSignificantDefaultMinPerMill,
 			Denominator:         1000,
 			ExcludeDirectSpeech: true,
 		},
@@ -43,10 +48,17 @@ func NewNonSignificantVerbsRule(messages map[string]string) *NonSignificantVerbs
 	return r
 }
 
-func NewNonSignificantVerbsRuleWithDefaultLimit(messages map[string]string) *NonSignificantVerbsRule {
+// NewNonSignificantVerbsRuleWithMinPercent ports constructing with an explicit limit
+// (Java UserConfig override path / tests that force show-all with 0).
+func NewNonSignificantVerbsRuleWithMinPercent(messages map[string]string, minPerMill int) *NonSignificantVerbsRule {
 	r := NewNonSignificantVerbsRule(messages)
-	r.MinPercent = nonSignificantDefaultMinPerMill
+	r.MinPercent = minPerMill
 	return r
+}
+
+// NewNonSignificantVerbsRuleWithDefaultLimit is an alias of the Java constructor default (8‰).
+func NewNonSignificantVerbsRuleWithDefaultLimit(messages map[string]string) *NonSignificantVerbsRule {
+	return NewNonSignificantVerbsRule(messages)
 }
 
 func (r *NonSignificantVerbsRule) GetID() string {
@@ -83,54 +95,52 @@ func isNonSignificantException(tokens []*languagetool.AnalyzedTokenReadings, num
 	if tokens[num] == nil {
 		return true
 	}
+	// Java isException control flow: if sein* / else if machen / else { haben|sein PA2… }
 	surface := tokens[num].GetToken()
 	if strings.HasPrefix(surface, "sein") || strings.HasPrefix(surface, "Sein") {
 		return true
-	}
-	if tokens[num].HasAnyLemma("machen") {
+	} else if tokens[num].HasAnyLemma("machen") {
 		for i := 1; i < len(tokens); i++ {
 			if tokens[i] == nil {
 				continue
 			}
 			s := tokens[i].GetToken()
-			switch s {
-			case "Angst", "Weg", "frisch", "bemerkbar", "aufmerksam":
+			if s == "Angst" || s == "Weg" || s == "frisch" || s == "bemerkbar" || s == "aufmerksam" {
 				return true
 			}
 		}
-		return false
-	}
-	isHaben := tokens[num].HasAnyLemma("haben")
-	if isHaben {
-		for i := 1; i < len(tokens); i++ {
-			if tokens[i] == nil {
-				continue
-			}
-			s := tokens[i].GetToken()
-			if s == "Glück" || s == "Angst" || s == "Mühe" || s == "Recht" || s == "recht" {
-				return true
+	} else {
+		isHaben := tokens[num].HasAnyLemma("haben")
+		if isHaben {
+			for i := 1; i < len(tokens); i++ {
+				if tokens[i] == nil {
+					continue
+				}
+				s := tokens[i].GetToken()
+				if s == "Glück" || s == "Angst" || s == "Mühe" || s == "Recht" || s == "recht" {
+					return true
+				}
 			}
 		}
-	}
-	if isHaben || tokens[num].HasAnyLemma("sein") {
-		for i := 1; i < len(tokens); i++ {
-			if tokens[i] == nil {
-				continue
-			}
-			if tokens[i].HasPosTagStartingWith("PA2") || tokens[i].HasPosTagStartingWith("VER:PA2") ||
-				tokens[i].GetToken() == "Flucht" || isUnknownWordNS(tokens[i]) {
-				return true
+		if isHaben || tokens[num].HasAnyLemma("sein") {
+			for i := 1; i < len(tokens); i++ {
+				if tokens[i] == nil {
+					continue
+				}
+				if tokens[i].HasPosTagStartingWith("PA2") || tokens[i].HasPosTagStartingWith("VER:PA2") ||
+					tokens[i].GetToken() == "Flucht" || isUnknownWordNS(tokens[i]) {
+					return true
+				}
 			}
 		}
 	}
 	return false
 }
 
-// isUnknownWordNS ports NonSignificantVerbsRule.isUnknownWord.
-// Java: isPosTagUnknown() && len>2 && letters only.
-// isPosTagUnknown = single reading with null POS (Go: !IsTagged()).
+// isUnknownWordNS ports NonSignificantVerbsRule.isUnknownWord:
+// isPosTagUnknown() && length()>2 && matches("^[A-Za-zÄÖÜäöüß]+$").
 func isUnknownWordNS(token *languagetool.AnalyzedTokenReadings) bool {
-	if token == nil || token.IsTagged() {
+	if token == nil || !token.IsPosTagUnknown() {
 		return false
 	}
 	s := token.GetToken()
@@ -138,12 +148,7 @@ func isUnknownWordNS(token *languagetool.AnalyzedTokenReadings) bool {
 	if utf16LenDE(s) <= 2 {
 		return false
 	}
-	for _, r := range s {
-		if !unicode.IsLetter(r) {
-			return false
-		}
-	}
-	return true
+	return nonSignificantUnknownWordRE.MatchString(s)
 }
 
 // Match single-sentence convenience (Java text-level MatchList).
