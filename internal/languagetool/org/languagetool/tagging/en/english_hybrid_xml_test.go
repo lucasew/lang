@@ -59,7 +59,6 @@ func TestAnalyzeEnglishSentence_QuranAnNNP(t *testing.T) {
 		}
 	}
 	require.True(t, anIgnored, "an in Qur'an multiword ignore-spelling")
-	// QUARAN rule may fire depending on token order; multiword tags may replace
-	// Prefer soft: at least ignore path works; NNP is bonus if XML applies after multiword
-	_ = anNNP
+	// Multiword chunker / QUARAN assign NNP to an (Java example an[a/NNP])
+	require.True(t, anNNP, "an should have NNP from multiword/QUARAN")
 }
