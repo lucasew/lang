@@ -51,7 +51,8 @@ type GenericUnpairedBracketsRule struct {
 }
 
 // defaultNumerals is Java GenericUnpairedBracketsRule.NUMERALS_EN.
-var defaultNumerals = regexp.MustCompile(`(?i)^\d{1,2}?[a-z']*|M*(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$`)
+// Java Pattern used with Matcher.matches() (full string); Go anchors both alternatives.
+var defaultNumerals = regexp.MustCompile(`(?i)^(\d{1,2}?[a-z']*|M*(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX]))$`)
 
 func NewGenericUnpairedBracketsRule(messages map[string]string, start, end []string) *GenericUnpairedBracketsRule {
 	return NewGenericUnpairedBracketsRuleWithNumerals(messages, start, end, nil)
@@ -230,7 +231,11 @@ func (r *GenericUnpairedBracketsRule) fillSymbolStack(startPosBase int, tokens [
 		})
 		return true
 	} else if noException && (isSpecialCase || tokens[i].IsSentenceEnd()) && token == r.EndSymbols[j] {
-		// skip enumeration a) special cases for ) - keep simple for guillemets
+		// Java: skip numeral enumeration closers like "1)", "1a)", "iv)", "1.)"
+		// when not pairing an open "(".
+		if r.isNumeralEnumerationCloser(tokens, i, j, symbolStack) {
+			return false
+		}
 		if symbolStack.Empty() {
 			symbolStack.Push(SymbolLocator{
 				Symbol: BracketSymbol{Symbol: r.EndSymbols[j], Type: SymbolClosing},
@@ -256,6 +261,31 @@ func (r *GenericUnpairedBracketsRule) fillSymbolStack(startPosBase int, tokens [
 			})
 			return true
 		}
+	}
+	return false
+}
+
+// isNumeralEnumerationCloser ports the empty-body skip in Java fillSymbolStack for
+// endSymbols ")" after numerals (Chapter 1). / section 1a). / XII.)).
+func (r *GenericUnpairedBracketsRule) isNumeralEnumerationCloser(tokens []*languagetool.AnalyzedTokenReadings, i, j int, symbolStack *UnsyncStack[SymbolLocator]) bool {
+	if r == nil || r.EndSymbols[j] != ")" || r.numerals == nil {
+		return false
+	}
+	// open paren on stack → this ) is a real closer, not an enum label
+	if !symbolStack.Empty() && symbolStack.Peek().Symbol.Symbol == "(" {
+		return false
+	}
+	// form: <numeral> . )  e.g. "1.)" / "XII.)"
+	if i > 2 && tokens[i-1] != nil && tokens[i-2] != nil && tokens[i-3] != nil {
+		if tokens[i-1].GetToken() == "." &&
+			r.numerals.MatchString(tokens[i-2].GetToken()) &&
+			(tokens[i-3].IsSentenceStart() || tokens[i-2].IsWhitespaceBefore()) {
+			return true
+		}
+	}
+	// form: <numeral> )  e.g. "1)", "1a)", "iv)"
+	if i > 1 && tokens[i-1] != nil && r.numerals.MatchString(tokens[i-1].GetToken()) {
+		return true
 	}
 	return false
 }
