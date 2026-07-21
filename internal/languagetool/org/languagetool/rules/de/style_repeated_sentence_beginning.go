@@ -15,17 +15,26 @@ type StyleRepeatedSentenceBeginning struct {
 	Category    *rules.Category
 	IssueType   rules.ITSIssueType
 	DefaultOff  bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewStyleRepeatedSentenceBeginning(messages map[string]string) *StyleRepeatedSentenceBeginning {
 	// Java: CREATIVE_WRITING category + setDefaultOff() + ITS Style.
-	return &StyleRepeatedSentenceBeginning{
+	r := &StyleRepeatedSentenceBeginning{
 		Messages:    messages,
 		MinRepeated: 3,
 		Category:    rules.CreativeWritingCategory(messages),
 		IssueType:   rules.ITSStyle,
 		DefaultOff:  true,
 	}
+	// Java: multi-marker ART:DEF:NOM subject starts
+	r.AddExamplePair(
+		rules.Wrong("<marker>Das Auto</marker> kam näher. <marker>Der Hund</marker> lief langsam über die Straße. <marker>Die Reifen</marker> quietschten."),
+		rules.Fixed("Das Auto kam näher. Langsam lief der Hund über die Straße. Die Reifen quietschten."),
+	)
+	return r
 }
 
 func (r *StyleRepeatedSentenceBeginning) GetID() string {
@@ -51,6 +60,37 @@ func (r *StyleRepeatedSentenceBeginning) GetLocQualityIssueType() rules.ITSIssue
 }
 
 func (r *StyleRepeatedSentenceBeginning) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *StyleRepeatedSentenceBeginning) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *StyleRepeatedSentenceBeginning) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *StyleRepeatedSentenceBeginning) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 
 // MinToCheckParagraph ports minToCheckParagraph (Java returns MIN_REPEATED).
 func (r *StyleRepeatedSentenceBeginning) MinToCheckParagraph() int {
