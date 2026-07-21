@@ -61,6 +61,24 @@ func TestEnLevenshtein(t *testing.T) {
 	require.True(t, enLevenshtein("abc", "xyz") > 2)
 }
 
+// Twin: covered = sentenceText.substring(from,to) with UTF-16 positions.
+func TestFilterNERMatches_CoveredUTF16Span(t *testing.T) {
+	// "café" is 4 UTF-16 units; byte length 5. Positions [0,4) must yield "café".
+	lm := mapCounts{} // zero counts → filter when NER covers
+	m := rules.NewRuleMatch(nil, languagetool.AnalyzePlain("café here"), 0, 4, "msg")
+	m.SetSuggestedReplacements([]string{"caf e"}) // 2 tokens, 0 counts
+	out := filterNERMatches([]*rules.RuleMatch{m}, "café here", []ner.Span{ner.NewSpan(0, 4)}, lm)
+	// Uppercase required for NER path; café starts lower → not filtered (continue)
+	require.Len(t, out, 1)
+
+	// Title case multi-byte: "Café" UTF-16 len 4
+	lm2 := mapCounts{}
+	m2 := rules.NewRuleMatch(nil, languagetool.AnalyzePlain("Café said"), 0, 4, "msg")
+	m2.SetSuggestedReplacements([]string{"Ca fe"})
+	out2 := filterNERMatches([]*rules.RuleMatch{m2}, "Café said", []ner.Span{ner.NewSpan(0, 4)}, lm2)
+	require.Empty(t, out2, "title-case covered with zero-count multi-token sugs should drop")
+}
+
 func TestEnVariantBlogURL_Colour(t *testing.T) {
 	u := enVariantBlogURL("colour")
 	require.Contains(t, u, "our-or")

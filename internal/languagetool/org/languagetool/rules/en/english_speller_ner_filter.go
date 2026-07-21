@@ -2,6 +2,7 @@ package en
 
 import (
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/languagemodel"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -32,7 +33,8 @@ func filterNERMatches(matches []*rules.RuleMatch, sentenceText string, namedEnti
 			if neSpan.GetStart() > match.GetFromPos() || neSpan.GetEnd() < match.GetToPos() {
 				continue
 			}
-			covered := safeByteSlice(sentenceText, match.GetFromPos(), match.GetToPos())
+			// Java: sentenceText.substring(match.getFromPos(), match.getToPos()) — UTF-16 units.
+			covered := rules.UTF16Substring(sentenceText, match.GetFromPos(), match.GetToPos())
 			if !tools.StartsWithUppercase(covered) {
 				continue
 			}
@@ -56,10 +58,9 @@ func filterNERMatches(matches []*rules.RuleMatch, sentenceText string, namedEnti
 				if repl.GetType() == rules.SuggestionTypeTranslation {
 					translations++
 				}
-				replList := strings.Fields(repl.GetReplacement())
-				if len(replList) == 0 {
-					// empty — skip count
-				} else if len(replList) <= 3 {
+				// Java: Arrays.asList(repl.getReplacement().split(" ")) — ASCII space only.
+				replList := splitASCIISpaceKeepNonEmpty(repl.GetReplacement())
+				if len(replList) <= 3 {
 					// hard-coding 3grams is not good, but a base LM doesn't know about ngrams...
 					replCount := lm.GetCount(replList)
 					if replCount > 0 {
@@ -114,27 +115,29 @@ func AsCountProvider(v any) CountProvider {
 	return nil
 }
 
-func safeByteSlice(s string, from, to int) string {
-	if from < 0 {
-		from = 0
+// splitASCIISpaceKeepNonEmpty ports replacement.split(" ") for LM n-grams (ASCII space only).
+func splitASCIISpaceKeepNonEmpty(s string) []string {
+	if s == "" {
+		return nil
 	}
-	if to > len(s) {
-		to = len(s)
+	raw := strings.Split(s, " ")
+	out := make([]string, 0, len(raw))
+	for _, p := range raw {
+		if p != "" {
+			out = append(out, p)
+		}
 	}
-	if from >= to {
-		return ""
-	}
-	return s[from:to]
+	return out
 }
 
-// enLevenshtein ports Apache Commons LevenshteinDistance.apply (rune-level).
+// enLevenshtein ports Apache Commons LevenshteinDistance.apply(CharSequence):
+// charAt indices → UTF-16 code units (Java String), not Unicode code points.
 func enLevenshtein(a, b string) int {
 	if a == b {
 		return 0
 	}
-	ra := []rune(a)
-	rb := []rune(b)
-	la, lb := len(ra), len(rb)
+	ua, ub := utf16.Encode([]rune(a)), utf16.Encode([]rune(b))
+	la, lb := len(ua), len(ub)
 	if la == 0 {
 		return lb
 	}
@@ -150,7 +153,7 @@ func enLevenshtein(a, b string) int {
 		cur[0] = i
 		for j := 1; j <= lb; j++ {
 			cost := 1
-			if ra[i-1] == rb[j-1] {
+			if ua[i-1] == ub[j-1] {
 				cost = 0
 			}
 			ins := cur[j-1] + 1
