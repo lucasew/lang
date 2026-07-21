@@ -152,6 +152,7 @@ func (r *MorfologikSpellerRule) ApplyUserConfig(acceptedWords []string, premiumU
 }
 
 // Match flags misspelled tokens.
+// Ports MorfologikSpellerRule.match including isFirstWord capitalization of suggestions.
 func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if sentence == nil || r == nil {
 		return nil, nil
@@ -166,44 +167,59 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 	}
 	tokens := work.GetTokensWithoutWhitespace()
 	var out []*rules.RuleMatch
+	// Java: boolean isFirstWord = true; capitalize lower-case sugs on first real word.
+	isFirstWord := true
 	for idx, tok := range tokens {
-		// Java canBeIgnored: SENT_START, immunized, ignore-spelling, URL, email.
+		// Java canBeIgnored continue arm also clears isFirstWord when idx>0 and non-punct.
 		if spelling.CanBeIgnoredToken(tok) {
+			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
 		// Java language getRuleMatches early exit (e.g. _english_ignore_).
 		if r.SkipTokenFn != nil && r.SkipTokenFn(tok) {
+			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
 		// Java canBeIgnored: ignoreToken(tokens, idx) → ignoreWord.
 		if r.SpellingCheckRule != nil && r.IgnoreToken(tokens, idx) {
+			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
 		w := tok.GetToken()
 		if w == "" || !hasLetter(w) {
+			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
 		// Java MorfologikSpellerRule.ignoreWord: super.ignoreWord || StringTools.isEmoji
 		if tools.IsEmoji(w) {
+			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
 		if r.IgnoreTaggedWords && tok.IsTagged() {
 			// Java: ignoreTaggedWords && isTagged && !isProhibited
 			if r.SpellingCheckRule == nil || !r.IsProhibited(w) {
+				maybeClearIsFirstWord(&isFirstWord, idx, tok)
 				continue
 			}
 		}
 		// Dictionary misspell (ignore set already handled by IgnoreToken/IgnoreWord).
 		if r.AcceptWord(w) {
+			// Java: getRuleMatches empty; still clear isFirstWord at end of loop body.
+			if isFirstWord && idx < len(tokens)-1 {
+				// no matches to capitalize
+			}
+			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
 		// Java getRuleMatches: after isMisspelled, ignorePotentiallyMisspelledWord.
 		if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(w) {
+			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
 		startPos := tok.GetStartPos()
 		// Java: previous match already covers this token (wrong-split span).
 		if len(out) > 0 && out[len(out)-1] != nil && out[len(out)-1].GetToPos() > startPos {
+			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
 
@@ -211,6 +227,8 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 		ruleMatch, beforeStr, early := r.tryWrongSplitPrev(sentence, &out, idx, tokens, w, startPos)
 		if early && ruleMatch != nil {
 			out = append(out, ruleMatch)
+			capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
+			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
 		if ruleMatch == nil {
@@ -218,9 +236,10 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			ruleMatch, afterStr, early = r.tryWrongSplitNext(sentence, &out, idx, tokens, w, startPos)
 			if early && ruleMatch != nil {
 				out = append(out, ruleMatch)
+				capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
+				clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 				continue
 			}
-			_ = afterStr
 			if ruleMatch != nil {
 				// wrong-split with correctly spelled neighbor: keep span, still append dict sugs
 				sug := r.collectSuggestions(w)
@@ -232,6 +251,8 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 					addSug(ruleMatch, joined)
 				}
 				out = append(out, ruleMatch)
+				capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
+				clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 				continue
 			}
 		} else {
@@ -241,6 +262,8 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 				addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
 			}
 			out = append(out, ruleMatch)
+			capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
+			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
 
@@ -265,8 +288,62 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			}
 		}
 		out = append(out, m)
+		// Java: capitalize first-word lower-case replacements (not last token).
+		capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
+		clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 	}
 	return out, nil
+}
+
+// maybeClearIsFirstWord ports canBeIgnored branch:
+// if (idx > 0 && isFirstWord && !StringTools.isPunctuationMark(token.getToken())) isFirstWord=false.
+func maybeClearIsFirstWord(isFirstWord *bool, idx int, tok *languagetool.AnalyzedTokenReadings) {
+	if isFirstWord == nil || !*isFirstWord {
+		return
+	}
+	if idx > 0 && tok != nil && !tools.IsPunctuationMark(tok.GetToken()) {
+		*isFirstWord = false
+	}
+}
+
+// clearIsFirstWordAfterToken ports end-of-loop body isFirstWord clear (non-ignored tokens).
+func clearIsFirstWordAfterToken(isFirstWord *bool, idx int, tok *languagetool.AnalyzedTokenReadings) {
+	maybeClearIsFirstWord(isFirstWord, idx, tok)
+}
+
+// capitalizeFirstWordSuggestions ports match's first-word capitalization of suggestions:
+// if isFirstWord && ruleMatches.nonEmpty && idx < tokens.length-1, uppercaseFirstChar
+// each all-lower replacement on ruleMatches.get(0).
+func capitalizeFirstWordSuggestions(isFirstWord bool, idx int, tokens []*languagetool.AnalyzedTokenReadings, out []*rules.RuleMatch) {
+	if !isFirstWord || len(out) == 0 || idx >= len(tokens)-1 {
+		return
+	}
+	// Java: RuleMatch ruleMatch = ruleMatches.get(0);
+	m := out[0]
+	if m == nil {
+		return
+	}
+	sugs := m.GetSuggestedReplacements()
+	if len(sugs) == 0 {
+		return
+	}
+	var newSugs []string
+	seen := map[string]struct{}{}
+	for _, replacement := range sugs {
+		// only if the replacement is all lower case
+		var next string
+		if replacement == strings.ToLower(replacement) {
+			next = tools.UppercaseFirstChar(replacement)
+		} else {
+			next = replacement
+		}
+		if _, ok := seen[next]; ok {
+			continue
+		}
+		seen[next] = struct{}{}
+		newSugs = append(newSugs, next)
+	}
+	m.SetSuggestedReplacements(newSugs)
 }
 
 // applyNumbersBulletsPrefix ports getRuleMatches numbers/bullets block.
