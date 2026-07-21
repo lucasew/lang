@@ -51,38 +51,29 @@ func init() {
 // getImperativeForm ports GermanTagger.getImperativeForm:
 // short form "Geh" by tagging "gehe" for VER:IMP:SIN when at sentence start
 // or after ich/er/es/sie/bitte/aber/nun/jetzt/„.
-func (t *GermanTagger) getImperativeForm(word string, sentenceTokens []string, pos int) []*languagetool.AnalyzedToken {
+// charPos is Java's running `pos` (UTF-16 start offset of this token) — NOT token index.
+func (t *GermanTagger) getImperativeForm(word string, sentenceTokens []string, charPos int) []*languagetool.AnalyzedToken {
 	if t == nil || word == "" {
 		return nil
 	}
-	// previous non-whitespace token
-	idx := -1
-	for i, tok := range sentenceTokens {
-		if tok == word {
-			// use first occurrence matching index if multiple — prefer pos if tokens are unique path
-			idx = i
-			// if multiple same word, match by walking with pos... use first for simplicity
-			break
-		}
-	}
-	// Prefer index == pos when sentenceTokens[pos]==word
-	if pos >= 0 && pos < len(sentenceTokens) && sentenceTokens[pos] == word {
-		idx = pos
-	}
+	// Java: int idx = sentenceTokens.indexOf(word); then walk back for previous non-ws
+	idx := indexOfToken(sentenceTokens, word)
 	prevWord := ""
 	for j := idx - 1; j >= 0; j-- {
-		if strings.TrimSpace(sentenceTokens[j]) != "" {
+		// Java: !StringUtils.isWhitespace(previousWord)
+		if !isJavaWhitespaceToken(sentenceTokens[j]) {
 			prevWord = sentenceTokens[j]
 			break
 		}
 	}
-	atStart := pos == 0 && len(sentenceTokens) > 1
+	// Java: pos == 0 && sentenceTokens.size() > 1  (char offset, not token index)
+	atStart := charPos == 0 && len(sentenceTokens) > 1
 	prevOK := equalsAnyIgnoreCase(prevWord, "ich", "er", "es", "sie", "bitte", "aber", "nun", "jetzt", "„")
 	if !atStart && !prevOK {
 		return nil
 	}
 	w := word
-	if pos == 0 || prevWord == "„" {
+	if charPos == 0 || prevWord == "„" {
 		w = strings.ToLower(word)
 	}
 	// tag w+"e" for VER:IMP:SIN
@@ -107,6 +98,19 @@ func (t *GermanTagger) getImperativeForm(word string, sentenceTokens []string, p
 		return []*languagetool.AnalyzedToken{toToken(word, tagged)}
 	}
 	return nil
+}
+
+// isJavaWhitespaceToken ports StringUtils.isWhitespace (all chars whitespace, or empty).
+func isJavaWhitespaceToken(s string) bool {
+	if s == "" {
+		return true
+	}
+	for _, r := range s {
+		if !unicode.IsSpace(r) {
+			return false
+		}
+	}
+	return true
 }
 
 // getSubstantivatedForms ports GermanTagger.getSubstantivatedForms (…er → SUB:…:ADJ / 2019er ADJ).

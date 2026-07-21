@@ -29,6 +29,30 @@ func TestImperativeForm_NotInMiddle(t *testing.T) {
 	require.Nil(t, got[0].GetReadings()[0].GetPOSTag())
 }
 
+// Twin: Java getImperativeForm uses char offset pos, not token index.
+// After "Bitte " (charPos of "geh" ≠ 0), only lowercasing is skipped; "bitte" is
+// an allowed previous word. Java examples: "Bitte geh!", not "Bitte Geh!".
+func TestImperativeForm_AfterBitteUsesCharPosNotTokenIndex(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"gehe": {tagging.NewTaggedWord("gehen", "VER:IMP:SIN:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Bitte", " ", "geh", "!"})
+	require.NotNil(t, got[2].GetReadings()[0].GetPOSTag())
+	require.True(t, stringsHasPrefix(*got[2].GetReadings()[0].GetPOSTag(), "VER:IMP:SIN"))
+}
+
+// Twin: mid-sentence short IMP without allowed previous → no invent
+func TestImperativeForm_MidSentenceBlocked(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"gehe": {tagging.NewTaggedWord("gehen", "VER:IMP:SIN:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Sie", "sagte", "geh", "nicht"})
+	// "geh" after "sagte" — not allowed prev; charPos≠0 → untagged
+	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
+}
+
 func TestSubstantivatedForms(t *testing.T) {
 	wt := tagging.MapWordTagger{
 		"Verletzte": {tagging.NewTaggedWord("Verletzte", "SUB:NOM:SIN:FEM:ADJ")},

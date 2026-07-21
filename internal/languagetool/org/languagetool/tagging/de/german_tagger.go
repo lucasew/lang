@@ -163,7 +163,8 @@ func (t *GermanTagger) tagOneInSentenceWithFirst(word string, sentenceTokens []s
 		}
 	}
 	if len(readings) == 0 && sentenceTokens != nil {
-		if imp := t.getImperativeForm(word, sentenceTokens, idxPos); len(imp) > 0 {
+		// Java passes running char pos (UTF-16), not token index
+		if imp := t.getImperativeForm(word, sentenceTokens, charPos); len(imp) > 0 {
 			readings = imp
 		}
 	}
