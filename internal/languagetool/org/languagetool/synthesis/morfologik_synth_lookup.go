@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // MorfologikSynthLookup returns forms for lemma+posTag via a synth .dict
@@ -64,7 +65,8 @@ func LoadPossibleTagsFile(path string) ([]string, error) {
 	seen := map[string]struct{}{}
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java SynthesizerTools.loadWords: nextLine().trim() (String.trim).
+		line := tools.JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}

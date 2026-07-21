@@ -1,13 +1,17 @@
 package multiLang
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
 
 // MultiLangCorpora ports org.languagetool.remote.multiLang.MultiLangCorpora.
 type MultiLangCorpora struct {
-	Language         string
-	text             strings.Builder
+	Language          string
+	text              strings.Builder
 	InjectedSentences []InjectedSentence
-	SentencesInText  int
+	SentencesInText   int
 }
 
 func NewMultiLangCorpora(language string) *MultiLangCorpora {
@@ -16,11 +20,12 @@ func NewMultiLangCorpora(language string) *MultiLangCorpora {
 
 func (c *MultiLangCorpora) GetLanguage() string { return c.Language }
 
+// GetText ports MultiLangCorpora.getText(): return text.trim() (String.trim).
 func (c *MultiLangCorpora) GetText() string {
 	if c == nil {
 		return ""
 	}
-	return strings.TrimSpace(c.text.String())
+	return tools.JavaStringTrim(c.text.String())
 }
 
 func (c *MultiLangCorpora) GetInjectedSentences() []InjectedSentence {

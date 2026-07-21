@@ -34,8 +34,10 @@ func (l *ConfidenceMapLoader) Load(filePattern string, langCodes []string) (map[
 		}
 		sc := bufio.NewScanner(f)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
-			if line == "" || strings.HasPrefix(line, "#") {
+			// Java ConfidenceMapLoader: only skip startsWith("#"); no trim on line or fields.
+			// parts = line.split(","); parseFloat(parts[1]); key = parts[0] as-is.
+			line := sc.Text()
+			if strings.HasPrefix(line, "#") {
 				continue
 			}
 			parts := strings.Split(line, ",")
@@ -43,12 +45,12 @@ func (l *ConfidenceMapLoader) Load(filePattern string, langCodes []string) (map[
 				_ = f.Close()
 				return nil, fmt.Errorf("invalid line in %s, expected 'RULE_ID,float_value[,...]': %s", fileName, line)
 			}
-			conf, err := strconv.ParseFloat(strings.TrimSpace(parts[1]), 32)
+			conf, err := strconv.ParseFloat(parts[1], 32)
 			if err != nil {
 				_ = f.Close()
 				return nil, fmt.Errorf("invalid confidence float value in %s: %s", fileName, line)
 			}
-			key := tools.NewConfidenceKey(lang, strings.TrimSpace(parts[0]))
+			key := tools.NewConfidenceKey(lang, parts[0])
 			confMap[key] = float32(conf)
 		}
 		_ = f.Close()

@@ -3,6 +3,8 @@ package server
 import (
 	"encoding/base64"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // BasicAuthentication ports org.languagetool.server.BasicAuthentication.
@@ -21,7 +23,8 @@ func ParseBasicAuthentication(authHeader string) (*BasicAuthentication, error) {
 		return nil, NewAuthError("Expected Basic Authentication")
 	}
 	parts := strings.SplitN(string(raw), ":", 2)
-	if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" || strings.TrimSpace(parts[1]) == "" {
+	// Java: authParts[0].trim().isEmpty() || authParts[1].trim().isEmpty() — String.trim.
+	if len(parts) != 2 || tools.JavaStringTrimIsEmpty(parts[0]) || tools.JavaStringTrimIsEmpty(parts[1]) {
 		return nil, NewAuthError("Expected Basic Authentication")
 	}
 	return &BasicAuthentication{User: parts[0], Password: parts[1]}, nil

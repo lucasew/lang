@@ -3,6 +3,7 @@ package tools
 import (
 	"bufio"
 	"io"
+	"regexp"
 	"strings"
 )
 
@@ -12,37 +13,31 @@ type MultiKeyProperties struct {
 	properties map[string][]string
 }
 
+// multiKeyEqSplit ports MultiKeyProperties: line.split("\\s*=\\s*") without UNICODE_CHARACTER_CLASS.
+var multiKeyEqSplit = regexp.MustCompile(`[ \t\n\v\f\r]*=[ \t\n\v\f\r]*`)
+
 // LoadMultiKeyProperties parses property-style lines "key = value" (# comments, no multiline).
+// Java: line = scanner.nextLine().trim(); line.split("\\s*=\\s*"); require length 2.
 func LoadMultiKeyProperties(r io.Reader) *MultiKeyProperties {
 	p := &MultiKeyProperties{properties: map[string][]string{}}
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := JavaStringTrim(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		// split on first = with optional spaces (Java: \\s*=\\s*)
-		parts := splitProp(line)
+		parts := multiKeyEqSplit.Split(line, -1)
+		// Java String.split limit 0 drops trailing empties; require exactly 2 parts.
 		if len(parts) != 2 {
 			continue
 		}
 		key, value := parts[0], parts[1]
+		if key == "" {
+			continue
+		}
 		p.properties[key] = append(p.properties[key], value)
 	}
 	return p
-}
-
-func splitProp(line string) []string {
-	i := strings.Index(line, "=")
-	if i < 0 {
-		return nil
-	}
-	key := strings.TrimSpace(line[:i])
-	val := strings.TrimSpace(line[i+1:])
-	if key == "" {
-		return nil
-	}
-	return []string{key, val}
 }
 
 // GetProperty returns values for key, or nil if absent.

@@ -848,7 +848,8 @@ func (w morfologikPOSWordTagger) Tag(word string) []tagging.TaggedWord {
 			continue
 		}
 		for _, part := range parts {
-			part = strings.TrimSpace(part)
+			// Tags from Morfologik rarely have spaces; avoid Unicode TrimSpace invent.
+			part = tools.JavaStringTrim(part)
 			if part == "" {
 				continue
 			}

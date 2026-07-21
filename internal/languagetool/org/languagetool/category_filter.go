@@ -45,7 +45,8 @@ func foldSet(items []string) map[string]struct{} {
 	}
 	m := make(map[string]struct{}, len(items))
 	for _, s := range items {
-		s = strings.TrimSpace(s)
+		// Java CommandLineParser / API: categories.split(",") — no per-item trim.
+		// Keep surface as-is (case-fold only); skip pure empty CSV slots.
 		if s == "" {
 			continue
 		}

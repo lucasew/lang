@@ -3,6 +3,8 @@ package server
 import (
 	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // AbTestService ports org.languagetool.server.AbTestService.
@@ -44,9 +46,10 @@ func (s *LocalAbTestService) GetActiveAbTestForClient(params map[string]string, 
 	if cfg != nil {
 		// config can carry ab tests via DisabledRuleIDs-like list; use Allowed primarily
 	}
+	// Java LocalAbTestService: paramActivatedAbTest.trim().split(",") then abParam.trim().
 	var out []string
-	for _, p := range strings.Split(paramActivated, ",") {
-		p = strings.TrimSpace(p)
+	for _, p := range strings.Split(tools.JavaStringTrim(paramActivated), ",") {
+		p = tools.JavaStringTrim(p)
 		if p == "" {
 			continue
 		}

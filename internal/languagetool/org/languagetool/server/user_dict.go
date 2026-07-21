@@ -4,6 +4,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UserDictionary is an in-process stand-in for the premium DB-backed word list
@@ -19,7 +21,8 @@ func NewUserDictionary() *UserDictionary {
 }
 
 func (d *UserDictionary) key(username string) string {
-	u := strings.TrimSpace(username)
+	// Java DB path: username.trim().isEmpty() → reject; in-memory stand-in maps empty→anon.
+	u := tools.JavaStringTrim(username)
 	if u == "" {
 		return "anon"
 	}
@@ -57,7 +60,8 @@ func (d *UserDictionary) Add(username, word string) bool {
 	if d == nil {
 		return false
 	}
-	word = strings.TrimSpace(word)
+	// Java: word == null || word.trim().isEmpty()
+	word = tools.JavaStringTrim(word)
 	if word == "" {
 		return false
 	}
@@ -79,7 +83,7 @@ func (d *UserDictionary) Delete(username, word string) bool {
 	if d == nil {
 		return false
 	}
-	word = strings.TrimSpace(word)
+	word = tools.JavaStringTrim(word)
 	if word == "" {
 		return false
 	}

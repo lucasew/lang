@@ -2,7 +2,8 @@ package remote
 
 import (
 	"fmt"
-	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // InjectedSentence ports org.languagetool.remote.multiLang.InjectedSentence.
@@ -12,11 +13,14 @@ type InjectedSentence struct {
 }
 
 func NewInjectedSentence(language, text string) InjectedSentence {
+	// Java stores raw text; only getText() trims.
 	return InjectedSentence{Language: language, Text: text}
 }
 
 func (s InjectedSentence) GetLanguage() string { return s.Language }
-func (s InjectedSentence) GetText() string     { return strings.TrimSpace(s.Text) }
+
+// GetText ports getText(): return text.trim() (String.trim, not Unicode TrimSpace).
+func (s InjectedSentence) GetText() string { return tools.JavaStringTrim(s.Text) }
 
 func (s InjectedSentence) String() string {
 	// Java toString uses the raw text field (not getText() / trim).
