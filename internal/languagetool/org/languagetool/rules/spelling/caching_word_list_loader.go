@@ -5,6 +5,8 @@ import (
 	"io"
 	"strings"
 	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // CachingWordListLoader ports org.languagetool.rules.spelling.CachingWordListLoader.
@@ -20,6 +22,7 @@ func NewCachingWordListLoader() *CachingWordListLoader {
 }
 
 // ParseWordListLines parses classpath-style word list content (skip #/empty, strip trailing comments).
+// Java: StringUtils.substringBefore(line.trim(), "#").trim() — String.trim, not Unicode TrimSpace.
 func ParseWordListLines(r io.Reader) ([]string, error) {
 	var result []string
 	sc := bufio.NewScanner(r)
@@ -28,10 +31,12 @@ func ParseWordListLines(r io.Reader) ([]string, error) {
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		line = strings.TrimSpace(line)
+		// Apache StringUtils.substringBefore(line.trim(), "#").trim()
+		line = tools.JavaStringTrim(line)
 		if i := strings.Index(line, "#"); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = line[:i]
 		}
+		line = tools.JavaStringTrim(line)
 		if line != "" {
 			result = append(result, line)
 		}

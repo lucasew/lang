@@ -5,6 +5,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Constants from org.languagetool.rules.spelling.SpellingCheckRule.
@@ -254,16 +255,25 @@ func (r *SpellingCheckRule) tokenizeIgnoreLine(line string) []string {
 // DefaultTokenizeIgnoreLine ports Java language.getWordTokenizer().tokenize for
 // SpellingCheckRule.addIgnoreWords multi-token lines. Uses WordTokenizerForLanguage
 // (same as JLanguageTool.Analyze) and drops empty/whitespace tokens.
+// Java: if (token.trim().isEmpty()) continue; — String.trim, not Unicode TrimSpace.
 func DefaultTokenizeIgnoreLine(langCode, line string) []string {
 	wt := languagetool.WordTokenizerForLanguage(langCode)
 	if wt == nil {
 		// Should not happen; WordTokenizerForLanguage falls back to WordTokenizer.
-		return strings.Fields(line)
+		// Java always uses language tokenizer; ASCII space split is last-resort only.
+		raw := strings.Split(line, " ")
+		out := make([]string, 0, len(raw))
+		for _, t := range raw {
+			if tools.JavaStringTrim(t) != "" {
+				out = append(out, t)
+			}
+		}
+		return out
 	}
 	raw := wt.Tokenize(line)
 	out := make([]string, 0, len(raw))
 	for _, t := range raw {
-		if strings.TrimSpace(t) != "" {
+		if tools.JavaStringTrim(t) != "" {
 			out = append(out, t)
 		}
 	}

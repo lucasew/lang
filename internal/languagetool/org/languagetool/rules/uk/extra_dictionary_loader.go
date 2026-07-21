@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"io"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // ExtraDictionaryLoader ports org.languagetool.rules.uk.ExtraDictionaryLoader.
@@ -25,6 +27,7 @@ func LoadSet(r io.Reader) (map[string]struct{}, error) {
 }
 
 // LoadMap loads lines as "key value..." maps (first space-separated field → rest or "").
+// Java: str.trim().split(" ") then x[0] → x.length > 1 ? x[1] : "".
 func LoadMap(r io.Reader) (map[string]string, error) {
 	set, err := LoadSet(r)
 	if err != nil {
@@ -32,7 +35,7 @@ func LoadMap(r io.Reader) (map[string]string, error) {
 	}
 	m := make(map[string]string, len(set))
 	for line := range set {
-		line = strings.TrimSpace(line)
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}
@@ -47,17 +50,19 @@ func LoadMap(r io.Reader) (map[string]string, error) {
 }
 
 // LoadSpacedLists loads "key a b|c" → key → [a,b,c] (space or | separators after key).
+// Java: !line.trim().isEmpty(); line.replaceFirst("#.*", "").trim(); split(" |\\|").
 func LoadSpacedLists(r io.Reader) (map[string][]string, error) {
 	result := map[string][]string{}
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		line := sc.Text()
-		if strings.HasPrefix(line, "#") || strings.TrimSpace(line) == "" {
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
 			continue
 		}
 		if i := strings.Index(line, "#"); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = line[:i]
 		}
+		line = tools.JavaStringTrim(line)
 		// split on space or |
 		fields := splitSpaceOrPipe(line)
 		if len(fields) == 0 {
@@ -73,12 +78,13 @@ func LoadSpacedLists(r io.Reader) (map[string][]string, error) {
 }
 
 // LoadLists loads "key = a|b|c" (or key=a|b) from a rules-dir style stream.
+// Java: !line.trim().isEmpty(); line.split(" *= *|\\|").
 func LoadLists(r io.Reader) (map[string][]string, error) {
 	result := map[string][]string{}
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		line := sc.Text()
-		if strings.HasPrefix(line, "#") || strings.TrimSpace(line) == "" {
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
 			continue
 		}
 		// split on " *= *" or "|"
@@ -96,23 +102,21 @@ func LoadLists(r io.Reader) (map[string][]string, error) {
 }
 
 func splitSpaceOrPipe(line string) []string {
-	// Java: line.split(" |\\|")
+	// Java: line.split(" |\\|") with default limit 0 (trailing empties dropped; mid empties kept).
 	var out []string
 	var b strings.Builder
-	flush := func() {
-		if b.Len() > 0 {
-			out = append(out, b.String())
-			b.Reset()
-		}
-	}
 	for _, r := range line {
 		if r == ' ' || r == '|' {
-			flush()
+			out = append(out, b.String())
+			b.Reset()
 			continue
 		}
 		b.WriteRune(r)
 	}
-	flush()
+	out = append(out, b.String())
+	for len(out) > 0 && out[len(out)-1] == "" {
+		out = out[:len(out)-1]
+	}
 	return out
 }
 

@@ -43,8 +43,10 @@ func (s *SymSpell) LoadDictionary(r io.Reader, termIndex, countIndex int) bool {
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
 		line := sc.Text()
-		// Java: line.split("\\s") — any whitespace
-		lineParts := strings.Fields(line)
+		// Java: line.split("\\s") — Pattern \s without UNICODE_CHARACTER_CLASS
+		// (ASCII WS only; keeps empty mid-fields; drops trailing empties).
+		// Not strings.Fields (Unicode WS + collapses consecutive).
+		lineParts := javaSplitASCIIWhitespaceSingle(line)
 		if len(lineParts) < 2 {
 			continue
 		}
@@ -69,6 +71,25 @@ func (s *SymSpell) LoadDictionary(r io.Reader, termIndex, countIndex int) bool {
 	// ensure capacity-ish: Java new HashMap<>(staging.deleteCount()) when deletes null
 	s.CommitStaged(staging)
 	return true
+}
+
+// javaSplitASCIIWhitespaceSingle ports Java String.split("\\s") without UNICODE_CHARACTER_CLASS:
+// delimiter is one of [ \t\n\x0B\f\r]; empty mid-fields kept; trailing empties dropped (limit 0).
+func javaSplitASCIIWhitespaceSingle(s string) []string {
+	parts := make([]string, 0, 4)
+	start := 0
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r' {
+			parts = append(parts, s[start:i])
+			start = i + 1
+		}
+	}
+	parts = append(parts, s[start:])
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
+	}
+	return parts
 }
 
 // CreateDictionaryFile ports createDictionary(String corpus): plain text file,

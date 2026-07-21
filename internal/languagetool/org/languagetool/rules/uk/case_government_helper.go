@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/case_government.txt
@@ -41,8 +42,17 @@ func LoadCaseGovernmentHelper() *CaseGovernmentHelper {
 		buf := make([]byte, 0, 64*1024)
 		sc.Buffer(buf, 1024*1024)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
-			if line == "" || strings.HasPrefix(line, "#") {
+			// Java CaseGovernmentHelper: line.split(" ") after reading resource lines
+			// (no Unicode TrimSpace; skip # comments and blank-after-trim).
+			line := sc.Text()
+			if strings.HasPrefix(line, "#") {
+				continue
+			}
+			// Keep Java-like ASCII trim of line ends only for blank skip; keys untrimmed
+			// in Java load from getFromResourceDirAsLines without trim — file is clean.
+			// Use JavaStringTrim only for empty check + split fidelity with spaced lines.
+			line = tools.JavaStringTrim(line)
+			if line == "" {
 				continue
 			}
 			parts := strings.Split(line, " ")

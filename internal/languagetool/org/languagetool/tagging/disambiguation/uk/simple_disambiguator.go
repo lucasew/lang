@@ -11,6 +11,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	rulesuk "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/disambig_remove.txt data/disambig_dups.txt
@@ -18,6 +19,9 @@ var disambigFS embed.FS
 
 // particle suffix pattern for -то/-бо etc. (Java SimpleDisambiguator.PATTERN)
 var reParticleSuffix = regexp.MustCompile(`.*-(то|от|таки|бо|но)$`)
+
+// disambigLineCommentStrip ports Java replaceFirst(" *#.*", "") on disambig_* loaders.
+var disambigLineCommentStrip = regexp.MustCompile(` *#.*`)
 
 // MatcherEntry is one lemma+pos pair to remove (Java MatcherEntry: full POS regex match).
 type MatcherEntry struct {
@@ -147,17 +151,18 @@ func loadDisambigRemoveFromFS() map[string]*TokenMatcher {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
+		line := sc.Text()
+		// Java: line.startsWith("#") || line.trim().isEmpty()
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
 			continue
 		}
-		if i := strings.Index(line, "#"); i >= 0 {
-			// strip trailing comment after space-hash (Java: replaceFirst(" *#.*", ""))
-			line = strings.TrimSpace(line[:i])
-		}
+		// Java: line.replaceFirst(" *#.*", "")
+		line = disambigLineCommentStrip.ReplaceAllString(line, "")
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}
+		// Java: line.trim().split(" ", 2)
 		parts := strings.SplitN(line, " ", 2)
 		if len(parts) < 2 {
 			continue
@@ -165,10 +170,7 @@ func loadDisambigRemoveFromFS() map[string]*TokenMatcher {
 		key := parts[0]
 		var entries []MatcherEntry
 		for _, matcher := range strings.Split(parts[1], "|") {
-			matcher = strings.TrimSpace(matcher)
-			if matcher == "" {
-				continue
-			}
+			// Java: string.split(" ") — no trim of matcher segments
 			mp := strings.SplitN(matcher, " ", 2)
 			if len(mp) < 2 {
 				continue
@@ -200,18 +202,18 @@ func loadDisambigDupsFromFS() map[string][]string {
 	defer f.Close()
 	out := map[string][]string{}
 	sc := bufio.NewScanner(f)
+	// Java loadMapDups: replaceFirst(" *#.*",""); line.trim().split(" ")
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
+		line := sc.Text()
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
 			continue
 		}
-		if i := strings.Index(line, "#"); i >= 0 {
-			line = strings.TrimSpace(line[:i])
-		}
+		line = disambigLineCommentStrip.ReplaceAllString(line, "")
+		line = tools.JavaStringTrim(line)
 		if line == "" {
 			continue
 		}
-		parts := strings.Fields(line)
+		parts := strings.Split(line, " ")
 		if len(parts) < 2 {
 			continue
 		}

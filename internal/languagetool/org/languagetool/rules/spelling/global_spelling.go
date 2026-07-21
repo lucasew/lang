@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Prohibited global-spelling entries (GlobalSpellingTest.avoidSomeWords).
@@ -21,7 +23,8 @@ func ValidateGlobalSpellingLines(lines []string) error {
 		if len(parts) == 0 {
 			continue
 		}
-		entry := strings.TrimSpace(parts[0])
+		// Java String.trim / typical word-list load — not Unicode TrimSpace.
+		entry := tools.JavaStringTrim(parts[0])
 		if entry == "" {
 			continue
 		}
@@ -30,7 +33,11 @@ func ValidateGlobalSpellingLines(lines []string) error {
 				return fmt.Errorf("Do not use '%s' in global_spelling.txt. It is not a valid spelling for all languages.", entry)
 			}
 		}
-		for _, token := range strings.Fields(entry) {
+		// Split on single ASCII space like phrase tokens in spelling files.
+		for _, token := range strings.Split(entry, " ") {
+			if token == "" {
+				continue
+			}
 			for _, p := range prohibitedGlobalTokens {
 				if token == p {
 					return fmt.Errorf("Do not use '%s' in global_spelling.txt. It is not a valid spelling for all languages.", token)

@@ -43,15 +43,16 @@ func loadDashPrefixesSpeller() map[string]struct{} {
 			return
 		}
 		for _, line := range strings.Split(string(data), "\n") {
-			line = strings.TrimSpace(line)
-			if line == "" || line[0] == '#' {
+			// Java ExtraDictionaryLoader.loadMap + removeIf filters.
+			if strings.HasPrefix(line, "#") {
 				continue
 			}
-			if i := strings.IndexByte(line, '#'); i >= 0 {
-				line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line)
+			if line == "" {
+				continue
 			}
-			parts := strings.Fields(line)
-			if len(parts) == 0 {
+			parts := strings.Split(line, " ")
+			if len(parts) == 0 || parts[0] == "" {
 				continue
 			}
 			key := strings.ToLower(parts[0])

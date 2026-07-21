@@ -206,12 +206,11 @@ func forwardConjFind(tokens []*languagetool.AnalyzedTokenReadings, pos, depth in
 }
 
 func checkTextInSent(tokens []*languagetool.AnalyzedTokenReadings, pos int, text string) bool {
-	words := strings.Fields(text)
-	if len(words) == 0 || pos+len(words) > len(tokens) {
-		return false
-	}
-	for i, w := range words {
-		if tokens[i+pos] == nil || !strings.EqualFold(tokens[i+pos].GetToken(), w) {
+	// Java: text.split(" "); for (i < words.length && i+pos < tokens.length)
+	// returns true if every compared pair matches (including when words outrun tokens).
+	words := strings.Split(text, " ")
+	for i := 0; i < len(words) && i+pos < len(tokens); i++ {
+		if tokens[i+pos] == nil || !strings.EqualFold(tokens[i+pos].GetToken(), words[i]) {
 			return false
 		}
 	}

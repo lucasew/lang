@@ -899,7 +899,8 @@ func DoAddPronounReflexiveEn(pronounsStr, verbStr, firstVerbPersonaNumber string
 }
 
 func containsAnyReflexivePronoun(pronounsStr string) bool {
-	normalized := strings.Fields(Transform(strings.ToLower(pronounsStr), PronounNormalized))
+	// Java: transform(...).split(" ") — not Unicode Fields.
+	normalized := strings.Split(Transform(strings.ToLower(pronounsStr), PronounNormalized), " ")
 	for _, p := range normalized {
 		if _, ok := LReflexivePronouns[p]; ok {
 			return true

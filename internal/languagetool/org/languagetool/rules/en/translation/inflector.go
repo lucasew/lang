@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Inflector ports org.languagetool.rules.en.translation.Inflector.
@@ -20,7 +21,8 @@ func NewInflector(synth synthesis.Synthesizer) *Inflector {
 
 // Inflect applies dePosTag-driven inflection to the last word of enToken.
 func (inf *Inflector) Inflect(enToken, dePosTag string) []string {
-	parts := strings.Fields(strings.Replace(enToken, "to ", "", 1))
+	// Java: StringUtils.replaceOnce(enToken, "to ", "").split(" ")
+	parts := strings.Split(strings.Replace(enToken, "to ", "", 1), " ")
 	if len(parts) == 0 {
 		return nil
 	}
@@ -32,7 +34,8 @@ func (inf *Inflector) Inflect(enToken, dePosTag string) []string {
 	var result []string
 	for _, last := range lastForms {
 		if start != "" {
-			result = append(result, strings.TrimSpace(start+" "+last))
+			// Java: (startParts + " " + lastPartForm).trim()
+			result = append(result, tools.JavaStringTrim(start+" "+last))
 		} else {
 			result = append(result, last)
 		}

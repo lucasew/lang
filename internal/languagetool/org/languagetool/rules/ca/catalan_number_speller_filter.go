@@ -74,10 +74,11 @@ func (f *CatalanNumberSpellerFilter) Suggest(numberToSpell, gender string, sente
 	if spelled == "" {
 		return ""
 	}
-	// count words after normalising hyphenated CA forms
+	// Java: spelledNumber.replace("-i-", " ").replace("-", " ").split(" ").length < 4
+	// split(" ") keeps empty mid-fields (double spaces); Fields would collapse them.
 	norm := strings.ReplaceAll(spelled, "-i-", " ")
 	norm = strings.ReplaceAll(norm, "-", " ")
-	parts := strings.Fields(norm)
+	parts := strings.Split(norm, " ")
 	if len(parts) >= 4 {
 		return ""
 	}

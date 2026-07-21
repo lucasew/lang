@@ -101,9 +101,11 @@ type SearchMatch struct {
 }
 
 // NewSearchMatch builds a matcher for space-separated target tokens (Java tokenLine).
+// Java: WHITESPACE = Pattern.compile("\\s"); Stream.of(WHITESPACE.split(...))
+// — single ASCII WS split (empty mid-fields kept; trailing empties dropped). Not Fields.
 func NewSearchMatch(tokenLine string) *SearchMatch {
 	line := strings.ReplaceAll(tokenLine, ",", " ,")
-	parts := strings.Fields(line)
+	parts := javaSearchWhitespaceSplit(line)
 	conds := make([]SearchCondition, 0, len(parts))
 	for _, p := range parts {
 		conds = append(conds, ConditionToken(p))
@@ -114,6 +116,24 @@ func NewSearchMatch(tokenLine string) *SearchMatch {
 		Limit:        -1,
 		IgnoreQuotes: true,
 	}
+}
+
+// javaSearchWhitespaceSplit ports SearchHelper.Match.WHITESPACE.split (Pattern "\\s", limit 0).
+func javaSearchWhitespaceSplit(s string) []string {
+	parts := make([]string, 0, 4)
+	start := 0
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r' {
+			parts = append(parts, s[start:i])
+			start = i + 1
+		}
+	}
+	parts = append(parts, s[start:])
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
+	}
+	return parts
 }
 
 // WithLimit sets the max logical steps (Java limit).

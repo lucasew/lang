@@ -11,6 +11,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/dash_prefixes.txt
@@ -34,15 +35,18 @@ func loadDashPrefixes() map[string]string {
 		m := map[string]string{}
 		sc := bufio.NewScanner(f)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
-			if line == "" || line[0] == '#' {
+			// Java ExtraDictionaryLoader.loadMap: skip lines starting with #;
+			// str.trim().split(" ") → key=parts[0], value=parts[1] or "".
+			line := sc.Text()
+			if strings.HasPrefix(line, "#") {
 				continue
 			}
-			if i := strings.IndexByte(line, '#'); i >= 0 {
-				line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line)
+			if line == "" {
+				continue
 			}
-			parts := strings.Fields(line)
-			if len(parts) == 0 {
+			parts := strings.Split(line, " ")
+			if len(parts) == 0 || parts[0] == "" {
 				continue
 			}
 			key := parts[0]

@@ -9,6 +9,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Twin: word count uses split(" ") after hyphen normalize — empty mid-fields count.
+func TestCatalanNumberSpellerFilter_SplitSpaceWordCount(t *testing.T) {
+	// "a  b  c" → 5 parts with split(" ") → length >= 4 → suppress
+	f := NewCatalanNumberSpellerFilter(func(s string) string { return "a  b  c" })
+	require.Equal(t, "", f.Suggest("1", "", false))
+	// three ASCII-space tokens: ok
+	f2 := NewCatalanNumberSpellerFilter(func(s string) string { return "a b c" })
+	require.Equal(t, "a b c", f2.Suggest("1", "", false))
+}
+
 func TestCatalanNumberSpellerFilter(t *testing.T) {
 	f := NewCatalanNumberSpellerFilter(func(s string) string {
 		if s == "feminine 2" {

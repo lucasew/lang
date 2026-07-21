@@ -21,6 +21,25 @@ func TestLoadDictionary(t *testing.T) {
 	require.Equal(t, "hello", got[0].Term)
 }
 
+// Twin: Java line.split("\\s") keeps empty mid-fields; NBSP is not a delimiter.
+func TestJavaSplitASCIIWhitespaceSingle(t *testing.T) {
+	// "a  b" → ["a", "", "b"] (not Fields collapse)
+	require.Equal(t, []string{"a", "", "b"}, javaSplitASCIIWhitespaceSingle("a  b"))
+	// tab delimiter
+	require.Equal(t, []string{"word", "42"}, javaSplitASCIIWhitespaceSingle("word\t42"))
+	// trailing empty dropped (Java limit 0)
+	require.Equal(t, []string{"a", "b"}, javaSplitASCIIWhitespaceSingle("a b "))
+	// NBSP not \s without UNICODE_CHARACTER_CLASS
+	require.Equal(t, []string{"a\u00a0b", "1"}, javaSplitASCIIWhitespaceSingle("a\u00a0b 1"))
+}
+
+func TestLoadDictionary_DoubleSpaceEmptyMidField(t *testing.T) {
+	s := DefaultSymSpell()
+	// termIndex 0, countIndex 2: "word  99" → ["word", "", "99"]
+	require.True(t, s.LoadDictionary(strings.NewReader("word  99\n"), 0, 2))
+	require.Equal(t, 1, s.WordCount())
+}
+
 // Twin: termIndex/countIndex column positions.
 func TestLoadDictionary_ColumnIndex(t *testing.T) {
 	s := DefaultSymSpell()

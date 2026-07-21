@@ -8,6 +8,8 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	brtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/br"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/topo.txt
@@ -27,27 +29,29 @@ func loadTopoWords() []map[string]string {
 		}
 		defer f.Close()
 		var list []map[string]string
+		// Java: Tokenizer wordTokenizer = new Breton().getWordTokenizer();
+		wt := brtok.NewBretonWordTokenizer()
 		sc := bufio.NewScanner(f)
 		// Raise scanner buffer for long lines if needed
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
+			// Java: line = line.trim(); empty / # comments skipped
+			line := tools.JavaStringTrim(sc.Text())
 			if line == "" || strings.HasPrefix(line, "#") {
 				continue
 			}
-			parts := strings.SplitN(line, "=", 2)
+			// Java: line.split("=") requires exactly 2 parts (not SplitN limit-2)
+			parts := strings.Split(line, "=")
 			if len(parts) != 2 {
+				// Java throws IOException; fail-closed skip (no invent partial key)
 				continue
 			}
 			wrongForms := strings.Split(parts[0], "|")
-			sug := strings.TrimSpace(parts[1])
+			sug := parts[1] // Java puts parts[1] as-is (no extra trim)
 			for _, wrongForm := range wrongForms {
-				wrongForm = strings.TrimSpace(wrongForm)
-				if wrongForm == "" {
-					continue
-				}
+				// Java does not trim wrongForm; count non-whitespace tokenizer tokens
 				wordCount := 0
-				for _, f := range strings.Fields(wrongForm) {
-					if f != "" {
+				for _, tok := range wt.Tokenize(wrongForm) {
+					if !tools.IsWhitespace(tok) {
 						wordCount++
 					}
 				}
