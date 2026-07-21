@@ -17,9 +17,12 @@ func TestProhibitedCompoundRule_Rule(t *testing.T) {
 }
 
 func TestProhibitedCompoundRule_RemoveHyphensAndAdaptCase(t *testing.T) {
+	// Twin of ProhibitedCompoundRuleTest.testRemoveHyphensAndAdaptCase
 	require.Equal(t, "", removeHyphensAndAdaptCase("Marathonläuse"))
 	require.Equal(t, "Marathonläuse", removeHyphensAndAdaptCase("Marathon-Läuse"))
 	require.Equal(t, "Marathonläusetest", removeHyphensAndAdaptCase("Marathon-Läuse-Test"))
+	require.Equal(t, "Marathonläusetest", removeHyphensAndAdaptCase("Marathon-läuse-test"))
+	require.Equal(t, "vieleläusetest", removeHyphensAndAdaptCase("viele-Läuse-Test"))
 	require.Equal(t, "", removeHyphensAndAdaptCase("S-Bahn"))
 }
 
@@ -44,10 +47,20 @@ func TestProhibitedCompoundRule_WithFrequency(t *testing.T) {
 		}
 		return !ok[w]
 	}
-	assertM := func(text, sugg string) {
+	// Java assertMatches(input, expectedMarkedText, expectedSuggestions)
+	assertM := func(text, marked, sugg string) {
 		t.Helper()
 		ms := rule.Match(languagetool.AnalyzePlain(text))
 		require.Equal(t, 1, len(ms), "text %q", text)
+		// positions are BMP code units (= runes for these ASCII/umlaut surfaces)
+		got := string([]rune(text)[ms[0].GetFromPos():ms[0].GetToPos()])
+		// prefer exact byte slice when no multi-byte between 0 and from
+		if ms[0].GetFromPos() < len(text) && ms[0].GetToPos() <= len(text) {
+			if b := text[ms[0].GetFromPos():ms[0].GetToPos()]; b == marked {
+				got = b
+			}
+		}
+		require.Equal(t, marked, got, "marked text for %q from=%d to=%d", text, ms[0].GetFromPos(), ms[0].GetToPos())
 		require.Equal(t, sugg, ms[0].GetSuggestedReplacements()[0], "text %q", text)
 	}
 	assert0 := func(text string) {
@@ -55,30 +68,30 @@ func TestProhibitedCompoundRule_WithFrequency(t *testing.T) {
 		require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(text))), "text %q", text)
 	}
 
-	assertM("Er ist Uhrberliner.", "Urberliner")
-	assertM("Er ist Uhr-Berliner.", "Urberliner")
-	assertM("Das ist ein Mitauto.", "Mietauto")
-	assertM("Das ist ein Mit-Auto.", "Mietauto")
+	assertM("Er ist Uhrberliner.", "Uhrberliner", "Urberliner")
+	assertM("Er ist Uhr-Berliner.", "Uhr-Berliner", "Urberliner")
+	assertM("Das ist ein Mitauto.", "Mitauto", "Mietauto")
+	assertM("Das ist ein Mit-Auto.", "Mit-Auto", "Mietauto")
 	assert0("Das ist Herr Mitauto.")
-	assertM("Hier leben die Uhreinwohner.", "Ureinwohner")
-	assertM("Hier leben die Uhr-Einwohner.", "Ureinwohner")
+	assertM("Hier leben die Uhreinwohner.", "Uhreinwohner", "Ureinwohner")
+	assertM("Hier leben die Uhr-Einwohner.", "Uhr-Einwohner", "Ureinwohner")
 	assert0("Eine Leerzeile einfügen.")
 	assert0("Eine Leer-Zeile einfügen.")
-	assertM("Eine Lehrzeile einfügen.", "Leerzeile")
-	assertM("Eine Lehr-Zeile einfügen.", "Leerzeile")
+	assertM("Eine Lehrzeile einfügen.", "Lehrzeile", "Leerzeile")
+	assertM("Eine Lehr-Zeile einfügen.", "Lehr-Zeile", "Leerzeile")
 	assert0("Viel Wohnungsleerstand.")
 	assert0("Viel Wohnungs-Leerstand.")
-	assertM("Viel Wohnungslehrstand.", "Wohnungsleerstand")
-	assertM("Viel Wohnungs-Lehrstand.", "Wohnungsleerstand")
+	assertM("Viel Wohnungslehrstand.", "Wohnungslehrstand", "Wohnungsleerstand")
+	assertM("Viel Wohnungs-Lehrstand.", "Wohnungs-Lehrstand", "Wohnungsleerstand")
 	assert0("Viel Xliseihfleerstand.")
 	assert0("Viel Xliseihflehrstand.") // no correct spelling → not suggested
 	assert0("Ein kosmografischer Test")
 	assert0("Ein Elektrokardiograph")
 	assert0("Die Elektrokardiographen")
-	assertM("Den Lehrzeile-Test einfügen.", "Leerzeile")
-	assertM("Die Test-Lehrzeile einfügen.", "Leerzeile")
-	assertM("Die Versuchs-Test-Lehrzeile einfügen.", "Leerzeile")
-	assertM("Den Versuchs-Lehrzeile-Test einfügen.", "Leerzeile")
+	assertM("Den Lehrzeile-Test einfügen.", "Lehrzeile", "Leerzeile")
+	assertM("Die Test-Lehrzeile einfügen.", "Lehrzeile", "Leerzeile")
+	assertM("Die Versuchs-Test-Lehrzeile einfügen.", "Lehrzeile", "Leerzeile")
+	assertM("Den Versuchs-Lehrzeile-Test einfügen.", "Lehrzeile", "Leerzeile")
 
 	// Java SpecificIdRule: match.rule.getId() is toId(DE_PROHIBITED_COMPOUNDS_part1_part2)
 	ms := rule.Match(languagetool.AnalyzePlain("Eine Lehrzeile einfügen."))
