@@ -303,6 +303,13 @@ func handleWordEndPunctuation(punct, word string, noSplit *[]string, morfo *morf
 	}
 }
 
+// TokenizeTextNonAlphabetic ports HunspellRule.tokenizeText with NON_ALPHABETIC default
+// (Java nonWordPattern default "[^\\p{L}]") for callers outside this package
+// (e.g. GermanSpellerRule.getCorrectWords / getFilteredSuggestions).
+func TokenizeTextNonAlphabetic(sentence string) []string {
+	return tokenizeTextHun(sentence)
+}
+
 // tokenizeTextHun ports HunspellRule.tokenizeText with NON_ALPHABETIC default:
 // split on non-letters (Java nonWordPattern default "[^\\p{L}]").
 func tokenizeTextHun(sentence string) []string {

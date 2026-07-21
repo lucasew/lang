@@ -146,7 +146,8 @@ func compoundPhraseValid(tagger *detag.GermanTagger, phrase string) bool {
 	if tagger == nil || phrase == "" {
 		return false
 	}
-	parts := strings.Fields(phrase)
+	// Java: StringUtils.split / space-separated open compounds (ASCII space only).
+	parts := splitASCIISpaceOmitEmptyDE(phrase)
 	if len(parts) == 0 {
 		return false
 	}
@@ -225,7 +226,7 @@ func compoundLastWordIsNoun(tagger *detag.GermanTagger, phrase string) bool {
 	if tagger == nil || phrase == "" {
 		return false
 	}
-	parts := strings.Fields(phrase)
+	parts := splitASCIISpaceOmitEmptyDE(phrase)
 	if len(parts) == 0 {
 		return false
 	}

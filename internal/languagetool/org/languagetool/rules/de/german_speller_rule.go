@@ -358,12 +358,14 @@ func (r *GermanSpellerRule) AddIgnoreWords(words ...string) {
 		r.IgnoreWords = map[string]struct{}{}
 	}
 	for _, w := range words {
-		w = strings.TrimSpace(w)
+		// Java addIgnoreWords uses word tokenizer; for ASCII space multiwords
+		// StringUtils.split-equivalent (not Unicode Fields).
+		w = tools.JavaStringTrim(w)
 		if w == "" {
 			continue
 		}
 		if strings.Contains(w, " ") {
-			parts := strings.Fields(w)
+			parts := splitASCIISpaceOmitEmptyDE(w)
 			if len(parts) > 1 {
 				r.AddIgnorePhrase(parts...)
 			} else if len(parts) == 1 {

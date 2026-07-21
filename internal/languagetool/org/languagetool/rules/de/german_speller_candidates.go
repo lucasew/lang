@@ -3,6 +3,8 @@ package de
 import (
 	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/hunspell"
 )
 
 // Patterns from GermanSpellerRule for candidate / language filters.
@@ -182,19 +184,26 @@ func (r *GermanSpellerRule) getCandidatesFromParts(parts []string) []string {
 }
 
 // getCorrectWords ports CompoundAwareHunspellRule.getCorrectWords:
-// keep phrases where every whitespace token is spelled correctly.
+// Java: tokenizeText(wordOrPhrase) (nonWordPattern / NON_ALPHABETIC), then spell each.
 func (r *GermanSpellerRule) getCorrectWords(wordsOrPhrases []string) []string {
 	if r == nil {
 		return nil
 	}
 	var result []string
 	for _, wordOrPhrase := range wordsOrPhrases {
-		words := strings.Fields(wordOrPhrase)
+		// Java tokenizeText — not strings.Fields (would invent Unicode whitespace splits).
+		words := hunspell.TokenizeTextNonAlphabetic(wordOrPhrase)
 		if len(words) == 0 {
-			words = []string{wordOrPhrase}
+			// empty after split → treat whole as one token (edge)
+			if wordOrPhrase != "" {
+				words = []string{wordOrPhrase}
+			}
 		}
 		ok := true
 		for _, w := range words {
+			if w == "" {
+				continue
+			}
 			if r.IsMisspelled(w) {
 				ok = false
 				break
@@ -208,6 +217,7 @@ func (r *GermanSpellerRule) getCorrectWords(wordsOrPhrases []string) []string {
 }
 
 // GetFilteredSuggestions ports GermanSpellerRule.getFilteredSuggestions.
+// Java: tokenizeText(wordOrPhrase) then POS filters.
 // Fail-closed POS: without TagPOS, phrase filters that need POS are skipped
 // (phrase kept — same as Java default when tagger would accept; we only drop
 // when TagPOS confirms the bad patterns).
@@ -217,8 +227,8 @@ func (r *GermanSpellerRule) GetFilteredSuggestions(wordsOrPhrases []string) []st
 	}
 	var result []string
 	for _, wordOrPhrase := range wordsOrPhrases {
-		words := strings.Fields(wordOrPhrase)
-		if len(words) == 0 {
+		words := hunspell.TokenizeTextNonAlphabetic(wordOrPhrase)
+		if len(words) == 0 && wordOrPhrase != "" {
 			words = []string{wordOrPhrase}
 		}
 		drop := false
@@ -318,9 +328,12 @@ func (r *GermanSpellerRule) FilterForLanguage(suggestions []string) []string {
 		if r.LanguageVariant == "CH" {
 			s = strings.ReplaceAll(s, "ß", "ss")
 		}
-		// Remove suggestions like "Mafiosi s" and "Mafiosi s."
+		// Java: Arrays.stream(s.split(" ")).anyMatch(WORD_WITH_PUNCT) — single ASCII space.
 		drop := false
-		for _, k := range strings.Fields(s) {
+		for _, k := range strings.Split(s, " ") {
+			if k == "" {
+				continue
+			}
 			if reWordWithPunct.MatchString(k) {
 				drop = true
 				break

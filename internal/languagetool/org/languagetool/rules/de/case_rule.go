@@ -827,7 +827,8 @@ func caseExceptionPatterns() [][]*patterns.StringMatcher {
 		ex := CaseRuleExceptions()
 		caseExcPatterns = make([][]*patterns.StringMatcher, 0, len(ex))
 		for phrase := range ex {
-			parts := strings.Fields(phrase)
+			// Java: StringUtils.split(phrase, ' ') — only U+0020, adjacent spaces collapsed.
+			parts := splitASCIISpaceOmitEmptyDE(phrase)
 			if len(parts) == 0 {
 				continue
 			}
@@ -938,4 +939,19 @@ var caseDeterminers = map[string]struct{}{
 func isDet(w string) bool {
 	_, ok := caseDeterminers[strings.ToLower(w)]
 	return ok
+}
+
+// splitASCIISpaceOmitEmptyDE ports org.apache.commons.lang3.StringUtils.split(s, ' ').
+func splitASCIISpaceOmitEmptyDE(s string) []string {
+	if s == "" {
+		return nil
+	}
+	raw := strings.Split(s, " ")
+	out := make([]string, 0, len(raw))
+	for _, p := range raw {
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }

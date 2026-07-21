@@ -17,11 +17,9 @@ func (r *SpellingCheckRule) AcceptPhrases(phrases []string) {
 		return
 	}
 	for _, phrase := range phrases {
-		phrase = strings.TrimSpace(phrase)
-		if phrase == "" {
-			continue
-		}
-		// Java: phrase.split(" ") — drop empty mid segments from double spaces.
+		// Java does not pre-trim phrase; empty phrase → split yields {""} → one empty PatternToken path.
+		// Skip empty after split for practical antipatterns (no empty token rule).
+		// Java: phrase.split(" ") — keep non-empty segments (double spaces → empty mid discarded for tokens).
 		raw := strings.Split(phrase, " ")
 		parts := make([]string, 0, len(raw))
 		for _, p := range raw {
