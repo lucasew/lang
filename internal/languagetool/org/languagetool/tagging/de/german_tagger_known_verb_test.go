@@ -79,3 +79,34 @@ func TestNonSeparablePrefix_Verzeih(t *testing.T) {
 	require.Contains(t, tags, "VER:IMP:SIN:SFT")
 	require.Contains(t, tags, "VER:1:SIN:PRÄ:SFT")
 }
+
+func TestIsTitleOrLower_UTF16(t *testing.T) {
+	require.True(t, isTitleOrLower("übernehmen"))
+	require.True(t, isTitleOrLower("Übernehmen"))
+	require.False(t, isTitleOrLower("ÜBERNEHMEN"))
+	require.False(t, isTitleOrLower("ÜberNehmen"))
+	// first-char lower rest mixed is NOT title-or-lower unless all lower
+	require.False(t, isTitleOrLower("mAChe"))
+}
+
+func TestIsFirstCharLowerRestUnchanged(t *testing.T) {
+	require.True(t, isFirstCharLowerRestUnchanged("mache"))
+	require.True(t, isFirstCharLowerRestUnchanged("mAChe")) // first lower, rest as-is
+	require.False(t, isFirstCharLowerRestUnchanged("Mache"))
+	require.True(t, isFirstCharLowerRestUnchanged("über"))
+	require.False(t, isFirstCharLowerRestUnchanged("Über"))
+}
+
+// Mid-sentence mixed case fails isTitleOrLower, so no mutual (Java same).
+func TestImpPraesSFT_Mutual_MixedCaseBlocked(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"mache": {tagging.NewTaggedWord("machen", "VER:IMP:SIN:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	out := tagger.addImpPraesSFTMutual("mAChe", []string{"x", "mAChe"}, 1, nil)
+	for _, r := range out {
+		if r != nil && r.GetPOSTag() != nil {
+			require.NotEqual(t, "VER:1:SIN:PRÄ:SFT", *r.GetPOSTag())
+		}
+	}
+}

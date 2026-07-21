@@ -212,7 +212,7 @@ func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, id
 				pos := tw.PosTag
 				if len(parts) >= 2 && isExactSeparablePrefix(strings.ToLower(parts[0])) {
 					if (strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3")) &&
-						(idxPos == 0 || word == strings.ToLower(word) || isTitleCaseWord(word)) {
+						(idxPos == 0 || isFirstCharLowerRestUnchanged(word)) {
 						if !strings.HasSuffix(pos, ":NEB") {
 							pos = pos + ":NEB"
 						}

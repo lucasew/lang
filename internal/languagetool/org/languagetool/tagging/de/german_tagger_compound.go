@@ -3,6 +3,7 @@ package de
 import (
 	"strings"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -62,7 +63,7 @@ func addStem(analyzed []tagging.TaggedWord, stem string) []tagging.TaggedWord {
 	out := make([]tagging.TaggedWord, 0, len(analyzed))
 	for _, tw := range analyzed {
 		lemma := tw.Lemma
-		if len(stem) > 0 && stem[len(stem)-1] != '-' && strings.HasPrefix(tw.PosTag, "SUB") {
+		if tagging.UTF16Len(stem) > 0 && javaLastUTF16RuneDE(stem) != '-' && strings.HasPrefix(tw.PosTag, "SUB") {
 			lemma = strings.ToLower(lemma)
 		}
 		out = append(out, tagging.NewTaggedWord(stem+lemma, tw.PosTag))
@@ -76,18 +77,16 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 	if t == nil || word == "" || strings.Contains(word, " ") {
 		return nil
 	}
-	for _, r0 := range word {
-		if unicode.IsDigit(r0) {
-			return nil
-		}
-		break
+	// Java: !Character.isDigit(word.charAt(0))
+	if tagging.UTF16Len(word) > 0 && unicode.IsDigit(javaFirstUTF16RuneDE(word)) {
+		return nil
 	}
 	var readings []*languagetool.AnalyzedToken
 	wordOrig := word
 	sanitized := t.sanitizeWord(word)
 	wordStem := ""
-	if len(sanitized) < len(wordOrig) && strings.HasSuffix(wordOrig, sanitized) {
-		wordStem = wordOrig[:len(wordOrig)-len(sanitized)]
+	if tagging.UTF16Len(sanitized) < tagging.UTF16Len(wordOrig) && strings.HasSuffix(wordOrig, sanitized) {
+		wordStem = javaUTF16Prefix(wordOrig, tagging.UTF16Len(wordOrig)-tagging.UTF16Len(sanitized))
 	} else if sanitized != wordOrig && strings.Contains(wordOrig, "-") {
 		// stem is everything before last dash part used as sanitized
 		if i := strings.LastIndex(wordOrig, sanitized); i > 0 {
@@ -132,13 +131,13 @@ func (t *GermanTagger) tagUnknownDashAndPrefix(word string, sentenceTokens []str
 		return readings
 	}
 	lastPart, firstPart := stripLongestPrefix(low, prefixesVerbsLongestList)
-	if len(lastPart) <= 2 {
+	// Java: lastPart.length() > 2
+	if tagging.UTF16Len(lastPart) <= 2 {
 		return readings
 	}
-	// recover firstPart casing from original surface
-	if len(wordOrig) >= len(firstPart) {
-		// firstPart is lower; map length
-		firstPart = wordOrig[:len(firstPart)]
+	// recover firstPart casing: Java prefix length is String.length of lower prefix
+	if tagging.UTF16Len(wordOrig) >= tagging.UTF16Len(firstPart) {
+		firstPart = javaUTF16Prefix(wordOrig, tagging.UTF16Len(firstPart))
 	}
 	// zu + infinitive → EIZ
 	if strings.HasPrefix(lastPart, "zu") {
@@ -235,17 +234,12 @@ func stripLongestPrefix(wordLower string, prefixes []string) (last, first string
 	return wordLower, ""
 }
 
+// isTitleCaseWord ports word.equals(substring(0,1).toUpperCase()+substring(1).toLowerCase()) UTF-16.
 func isTitleCaseWord(word string) bool {
-	rs := []rune(word)
-	if len(rs) == 0 || !unicode.IsUpper(rs[0]) {
+	if word == "" {
 		return false
 	}
-	for _, r := range rs[1:] {
-		if unicode.IsLetter(r) && !unicode.IsLower(r) {
-			return false
-		}
-	}
-	return true
+	return word == utf16FirstUpperRestLower(word)
 }
 
 // isDomainLikeSequence ports GermanTagger domain skip: word . com|net|org|…
@@ -258,4 +252,23 @@ func isDomainLikeSequence(sentenceTokens []string, idxPos int) bool {
 	}
 	_, ok := domainTLDs[strings.ToLower(sentenceTokens[idxPos+2])]
 	return ok
+}
+
+func javaLastUTF16RuneDE(s string) rune {
+	u := utf16.Encode([]rune(s))
+	if len(u) == 0 {
+		return 0
+	}
+	return rune(u[len(u)-1])
+}
+
+func javaUTF16Prefix(s string, n int) string {
+	u := utf16.Encode([]rune(s))
+	if n <= 0 {
+		return ""
+	}
+	if n > len(u) {
+		n = len(u)
+	}
+	return string(utf16.Decode(u[:n]))
 }
