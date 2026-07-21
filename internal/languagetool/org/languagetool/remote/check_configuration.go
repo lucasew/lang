@@ -16,6 +16,50 @@ type CheckConfiguration struct {
 	APIKey               string
 }
 
+// NewCheckConfiguration ports the package-private Java constructor (via tests).
+// Panics on invalid lang/guess pairs (IllegalArgumentException) and treats nil
+// rule-id/value slices as empty (Objects.requireNonNull → empty lists allowed via builder).
+func NewCheckConfiguration(
+	langCode, motherTongueLangCode string,
+	guessLanguage bool,
+	enabledRuleIDs []string,
+	enabledOnly bool,
+	disabledRuleIDs []string,
+	mode, level string,
+	ruleValues []string,
+	textSessionID, username, apiKey string,
+) *CheckConfiguration {
+	if langCode == "" && !guessLanguage {
+		panic("No language was set but language guessing was not activated either")
+	}
+	if langCode != "" && guessLanguage {
+		panic("Language was set but language guessing was also activated")
+	}
+	if enabledRuleIDs == nil {
+		enabledRuleIDs = []string{}
+	}
+	if disabledRuleIDs == nil {
+		disabledRuleIDs = []string{}
+	}
+	if ruleValues == nil {
+		ruleValues = []string{}
+	}
+	return &CheckConfiguration{
+		LangCode:             langCode,
+		MotherTongueLangCode: motherTongueLangCode,
+		GuessLanguage:        guessLanguage,
+		EnabledRuleIDs:       append([]string(nil), enabledRuleIDs...),
+		EnabledOnly:          enabledOnly,
+		DisabledRuleIDs:      append([]string(nil), disabledRuleIDs...),
+		Mode:                 mode,
+		Level:                level,
+		RuleValues:           append([]string(nil), ruleValues...),
+		TextSessionID:        textSessionID,
+		Username:             username,
+		APIKey:               apiKey,
+	}
+}
+
 func (c *CheckConfiguration) GetLangCode() (string, bool) {
 	if c == nil || c.LangCode == "" {
 		return "", false
