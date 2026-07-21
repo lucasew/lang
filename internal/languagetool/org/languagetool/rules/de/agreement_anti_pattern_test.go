@@ -14,16 +14,54 @@ func sentStartATR() *languagetool.AnalyzedTokenReadings {
 	return languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &tag, nil), 0)
 }
 
+// isMorphTestPunct is true for tokens that Java typically attaches without a
+// preceding space (comma, period, …). Used only by withPositions for morph tests.
+func isMorphTestPunct(token string) bool {
+	if token == "" {
+		return false
+	}
+	// Common DE punctuation / marks seen in rule morph fixtures.
+	switch token {
+	case ",", ".", ";", ":", "!", "?", "…", ")", "]", "}", "»", "«", "“", "”", "„", "'", "\"", "’", "‘":
+		return true
+	}
+	return false
+}
+
 func withPositions(toks ...*languagetool.AnalyzedTokenReadings) []*languagetool.AnalyzedTokenReadings {
+	// Java AnalyzedTokenReadings positions use String.length() (UTF-16).
+	// Spacing: no space before punctuation ("Auto,"), space after punct before
+	// words (", das"), spaces between words ("Auto das").
 	pos := 0
-	for _, t := range toks {
+	for i, t := range toks {
 		if t == nil {
 			continue
 		}
 		t.SetStartPos(pos)
-		if n := len(t.GetToken()); n > 0 {
-			pos += n + 1
+		n := utf16LenDE(t.GetToken())
+		if n == 0 {
+			continue
 		}
+		pos += n
+		// Decide whitespace after this token before the next non-empty token.
+		var next *languagetool.AnalyzedTokenReadings
+		for j := i + 1; j < len(toks); j++ {
+			if toks[j] != nil && utf16LenDE(toks[j].GetToken()) > 0 {
+				next = toks[j]
+				break
+			}
+		}
+		if next == nil {
+			continue
+		}
+		thisPunct := isMorphTestPunct(t.GetToken())
+		nextPunct := isMorphTestPunct(next.GetToken())
+		if !thisPunct && nextPunct {
+			// "Auto," — no space before punctuation
+			continue
+		}
+		// word→word, punct→word (", das"): one space
+		pos++
 	}
 	return toks
 }
