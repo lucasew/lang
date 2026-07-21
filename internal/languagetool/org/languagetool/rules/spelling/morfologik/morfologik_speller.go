@@ -36,8 +36,17 @@ type MorfologikSpeller struct {
 	// InDictionaryFn ports binary FSA membership (Dictionary.Contains / Speller.isInDictionary).
 	// When set, HasDictionary is true even if Words is empty.
 	InDictionaryFn func(word string) bool
+	// SuggestFn ports binary Speller.findReplacements (optional; map Suggestions still preferred).
+	SuggestFn func(word string) []string
+	// GetFrequencyFn ports binary Speller.getFrequency (optional; Frequencies map preferred).
+	GetFrequencyFn func(word string) int
 	// BinaryDictPath is the absolute .dict path when AttachBinaryDictionary succeeded.
 	BinaryDictPath string
+	// FrequencyIncluded ports fsa.dict.frequency-included (from .info / binary dict).
+	FrequencyIncluded bool
+	// binaryDict is the attached FSA (typed as any to avoid exporting attic in all call sites).
+	// Set only via AttachBinaryDictionary; used for identity/debug.
+	binaryDict any
 }
 
 func NewMorfologikSpeller(fileInClassPath string, maxEditDistance int) *MorfologikSpeller {
@@ -106,8 +115,7 @@ func (s *MorfologikSpeller) SetFrequency(word string, freq int) {
 }
 
 // GetFrequency ports MorfologikSpeller.getFrequency (exact then lowercase).
-// Unknown words → 0. Known map/binary words without explicit freq → 1 (low, below MAX_FREQUENCY_FOR_SPLITTING).
-// Binary FSA frequency tags not yet decoded — same provisional 1 as map inject.
+// Order: inject Frequencies map → binary GetFrequencyFn → known map/binary membership → 1 → 0.
 func (s *MorfologikSpeller) GetFrequency(word string) int {
 	if s == nil || word == "" {
 		return 0
@@ -117,8 +125,20 @@ func (s *MorfologikSpeller) GetFrequency(word string) int {
 			return f
 		}
 	}
+	// Java MorfologikSpeller.getFrequency: speller.getFrequency then lowercase
+	if s.GetFrequencyFn != nil {
+		if f := s.GetFrequencyFn(word); f > 0 {
+			return f
+		}
+		low := strings.ToLower(word)
+		if low != word {
+			if f := s.GetFrequencyFn(low); f > 0 {
+				return f
+			}
+		}
+	}
 	if s.inDictionary(word) {
-		return 1
+		return 1 // map inject without explicit freq (or binary with freq 0)
 	}
 	low := strings.ToLower(word)
 	if low != word {
@@ -302,13 +322,20 @@ func (s *MorfologikSpeller) GetSuggestions(word string) []string {
 	return s.FindReplacements(word)
 }
 
-// FindReplacements returns suggestions for word (map first, then trivial edit-distance peers).
+// FindReplacements returns suggestions for word.
+// Order: inject Suggestions map → binary SuggestFn → small-map edit-distance peers.
 func (s *MorfologikSpeller) FindReplacements(word string) []string {
 	if s == nil {
 		return nil
 	}
 	if sug, ok := s.Suggestions[word]; ok {
 		return append([]string(nil), sug...)
+	}
+	// Binary FSA (Java Speller.findReplacements / SuggestEdits Contains probe)
+	if s.SuggestFn != nil {
+		if out := s.SuggestFn(word); len(out) > 0 {
+			return out
+		}
 	}
 	// limited: collect dictionary words within MaxEditDistance (small dicts only)
 	if len(s.Words) == 0 || len(s.Words) > 5000 {

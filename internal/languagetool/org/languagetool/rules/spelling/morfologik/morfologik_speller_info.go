@@ -19,6 +19,7 @@ const (
 	infoIgnoreAllUpper    = "fsa.dict.speller.ignore-all-uppercase"
 	infoIgnoreDiacritics  = "fsa.dict.speller.ignore-diacritics"
 	infoConvertCase       = "fsa.dict.speller.convert-case"
+	infoFrequencyIncluded = "fsa.dict.frequency-included"
 )
 
 // binaryDictCache caches OpenDictionary by absolute path (FSA is thread-safe).
@@ -44,6 +45,9 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 	}
 	if v, ok := meta[infoConvertCase]; ok {
 		s.ConvertCase = parseInfoBool(v, s.ConvertCase)
+	}
+	if v, ok := meta[infoFrequencyIncluded]; ok {
+		s.FrequencyIncluded = parseInfoBool(v, s.FrequencyIncluded)
 	}
 	// ignore-diacritics affects suggestion search, not isMisspelled gates — stored when needed later.
 	_ = meta[infoIgnoreDiacritics]
@@ -77,6 +81,16 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	s.LoadInfoBesideDict(dictPath)
 	s.InDictionaryFn = d.Contains
 	s.BinaryDictPath = dictPath
+	s.binaryDict = d
+	s.FrequencyIncluded = d.FrequencyIncluded()
+	// Binary suggest: Java Speller.findReplacements / findReplacementCandidates (edit-1 Contains probe).
+	s.SuggestFn = func(word string) []string {
+		return d.SuggestEdits(word, 8)
+	}
+	// Binary frequency: Java Speller.getFrequency last payload byte.
+	s.GetFrequencyFn = func(word string) int {
+		return d.GetFrequency(word)
+	}
 	return true
 }
 

@@ -14,10 +14,11 @@ import (
 
 // Dictionary is FSA + metadata (.dict + .info).
 type Dictionary struct {
-	FSA       *FSA
-	Separator byte
-	Encoder   string // SUFFIX, PREFIX, INFIX, NONE
-	Encoding  string
+	FSA               *FSA
+	Separator         byte
+	Encoder           string // SUFFIX, PREFIX, INFIX, NONE
+	Encoding          string
+	frequencyIncluded bool // fsa.dict.frequency-included
 }
 
 // WordForm is one stem+tag analysis.
@@ -46,11 +47,13 @@ func OpenDictionary(dictPath string) (*Dictionary, error) {
 	if enc == "" {
 		enc = "SUFFIX"
 	}
+	freqInc := strings.EqualFold(meta["fsa.dict.frequency-included"], "true")
 	return &Dictionary{
-		FSA:       fsa,
-		Separator: sep,
-		Encoder:   strings.ToUpper(enc),
-		Encoding:  meta["fsa.dict.encoding"],
+		FSA:               fsa,
+		Separator:         sep,
+		Encoder:           strings.ToUpper(enc),
+		Encoding:          meta["fsa.dict.encoding"],
+		frequencyIncluded: freqInc,
 	}, nil
 }
 
@@ -368,4 +371,60 @@ func EnsureDictPath(path string) error {
 		return fmt.Errorf("dictionary not found: %s (run scripts/fetch-english-dicts.sh)", path)
 	}
 	return nil
+}
+
+// FIRST_RANGE_CODE ports morfologik Speller.FIRST_RANGE_CODE ('A').
+// Frequency byte is last payload byte after separator: freq = byte - 'A' (0..25).
+const firstRangeCode = 'A'
+
+// FrequencyIncluded is set from fsa.dict.frequency-included in .info.
+func (d *Dictionary) SetFrequencyIncluded(v bool) {
+	if d != nil {
+		d.frequencyIncluded = v
+	}
+}
+
+// FrequencyIncluded reports whether the dict encodes frequency tags.
+func (d *Dictionary) FrequencyIncluded() bool {
+	return d != nil && d.frequencyIncluded
+}
+
+// GetFrequency ports morfologik Speller.getFrequency for speller dictionaries.
+// Returns 0 when frequency not included or word unknown.
+func (d *Dictionary) GetFrequency(word string) int {
+	if d == nil || word == "" || !d.frequencyIncluded {
+		return 0
+	}
+	seq, err := d.encodeBytes(word)
+	if err != nil || len(seq) == 0 {
+		return 0
+	}
+	for _, b := range seq {
+		if b == d.Separator {
+			return 0
+		}
+	}
+	kind, _, node := d.FSA.Match(seq, d.FSA.RootNode())
+	if kind != SequenceIsAPrefix {
+		return 0
+	}
+	// Java: arc = fsa.getArc(match.node, separator); arc != 0 && !isArcFinal(arc)
+	arc := d.FSA.getArc(node, d.Separator)
+	if arc == 0 || d.FSA.isArcFinal(arc) {
+		return 0
+	}
+	if d.FSA.isArcTerminal(arc) {
+		return 0
+	}
+	start := d.FSA.endNode(arc)
+	seqs := d.FSA.CollectFinalSequences(start)
+	if len(seqs) == 0 {
+		return 0
+	}
+	ba := seqs[0]
+	if len(ba) == 0 {
+		return 0
+	}
+	// last byte contains the frequency after a separator (Java)
+	return int(ba[len(ba)-1]) - firstRangeCode
 }
