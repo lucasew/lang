@@ -286,6 +286,15 @@ func (r *GenericUnpairedBracketsRule) getSpecialCase(tokens []*languagetool.Anal
 
 func (r *GenericUnpairedBracketsRule) isNoException(token string, tokens []*languagetool.AnalyzedTokenReadings, i, j int, precSpace, follSpace bool) bool {
 	tokenStr := tokens[i].GetToken()
+	// Java: URL token containing '(' — brackets inside/after URL are not unpaired
+	// (tokens[i-1].matches("https?://.+") && contains("(")).
+	if i > 0 {
+		prev := tokens[i-1].GetToken()
+		if (strings.HasPrefix(prev, "http://") || strings.HasPrefix(prev, "https://")) &&
+			strings.Contains(prev, "(") {
+			return false
+		}
+	}
 	if i >= 2 {
 		prevPrev := tokens[i-2].GetToken()
 		prev := tokens[i-1].GetToken()
