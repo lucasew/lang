@@ -396,17 +396,18 @@ func (r *GermanSpellerRule) Suggest(word string) []string {
 	if sugs := r.suggestHyphenatedCompound(word); len(sugs) > 0 {
 		return r.finalizeSuggestions(word, sugs)
 	}
-	if !FilterDictAvailable() {
+	if r.MorfoSpeller == nil && !FilterDictAvailable() {
 		return nil
 	}
 	// CompoundAwareHunspellRule.getSuggestions mix:
 	// simple = getCorrectWords(getCandidates) → getFilteredSuggestions
-	// noSplit = morfo (FilterDictSuggest) + uppercase-of-lowercase
+	// noSplit = morfoSpeller.getSuggestions + uppercase-of-lowercase
+	// Java uses getSpeller multi (plain-text spelling lists); FilterDict is fall-over.
 	simple := r.GetFilteredSuggestions(r.getCorrectWords(r.GetCandidates(word)))
-	noSplit := FilterDictSuggest(word)
+	noSplit := r.morfoSuggest(word)
 	var noSplitLower []string
 	if startsWithUppercase(word) && !isAllUpperCase(word) {
-		for _, s := range FilterDictSuggest(strings.ToLower(word)) {
+		for _, s := range r.morfoSuggest(strings.ToLower(word)) {
 			noSplitLower = append(noSplitLower, uppercaseFirstChar(s))
 		}
 	}
@@ -414,7 +415,7 @@ func (r *GermanSpellerRule) Suggest(word string) []string {
 	for _, punct := range []string{"...", "."} {
 		if strings.HasSuffix(word, punct) {
 			base := strings.TrimSuffix(word, punct)
-			for _, s := range FilterDictSuggest(base) {
+			for _, s := range r.morfoSuggest(base) {
 				noSplit = append(noSplit, s+punct)
 			}
 		}

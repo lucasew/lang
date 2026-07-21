@@ -60,3 +60,25 @@ func TestGetSpeller_MissingBinary(t *testing.T) {
 	// invent country code with no dict
 	require.Nil(t, GetSpeller("XX", "", nil))
 }
+
+// InitFromDiscoveredResources wires GetSpeller into GermanSpellerRule.MorfoSpeller
+// (Java memoized supplier from ctor → getSpeller).
+func TestInitFromDiscoveredResources_WiresMorfoSpeller(t *testing.T) {
+	if morfologik.DiscoverLanguageDict("/de/hunspell/de_DE.dict") == "" {
+		t.Skip("de_DE.dict not in tree")
+	}
+	r := NewGermanSpellerRule(nil)
+	require.NoError(t, r.InitFromDiscoveredResources())
+	require.NotNil(t, r.MorfoSpeller, "getSpeller should wire when de_DE.dict present")
+	// plain-text path should accept forms from spelling lists / multi when in multi
+	require.False(t, r.MorfoSpeller.IsMisspelled("Haus"))
+	// Suggest uses morfoSuggest → MorfoSpeller (not only FilterDict)
+	sugs := r.Suggest("sdadsadasxyz")
+	// nonsense may still get empty or unrelated; ensure no panic and path works
+	_ = sugs
+	// known typo path: FilterDict/morfo should yield something for close edits when available
+	if sugs2 := r.Suggest("Huas"); len(sugs2) > 0 {
+		// Haus is a likely suggestion
+		require.Contains(t, sugs2, "Haus")
+	}
+}

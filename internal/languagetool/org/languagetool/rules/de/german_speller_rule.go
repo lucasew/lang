@@ -11,6 +11,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -78,6 +79,11 @@ type GermanSpellerRule struct {
 	// CompoundTokenizeAll optional jWordSplitter.getAllSplits stand-in: every
 	// dictionary partition of word. Nil → GetCandidates uses single Tokenize only.
 	CompoundTokenizeAll func(word string) [][]string
+	// MorfoSpeller ports CompoundAwareHunspellRule.morfoSpeller from
+	// GermanSpellerRule.getSpeller (memoized supplier in Java). Wired by
+	// InitFromDiscoveredResources when de_*.dict is present; used for
+	// getSuggestions / getCandidates(parts) instead of bare FilterDictSuggest.
+	MorfoSpeller *morfologik.MorfologikMultiSpeller
 }
 
 // GermanSpellingFile is Java SpellingCheckRule.getSpellingFileName for de:

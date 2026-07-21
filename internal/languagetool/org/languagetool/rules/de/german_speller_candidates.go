@@ -90,10 +90,26 @@ func (r *GermanSpellerRule) GetCandidates(word string) []string {
 	return candidates
 }
 
+// morfoSuggest ports CompoundAwareHunspellRule.morfoSpeller.getSuggestions.
+// Prefer wired GetSpeller multi-speller (plain-text + variant); fall back to
+// FilterDictSuggest (binary-only stand-in) when MorfoSpeller is nil.
+func (r *GermanSpellerRule) morfoSuggest(word string) []string {
+	if r == nil || word == "" {
+		return nil
+	}
+	if r.MorfoSpeller != nil {
+		return r.MorfoSpeller.GetSuggestions(word)
+	}
+	return FilterDictSuggest(word)
+}
+
 // getCandidatesFromParts ports CompoundAwareHunspellRule.getCandidates(List parts).
-// Uses FilterDictSuggest as the Morfologik multi-speller stand-in.
+// Uses morfoSpeller.getSuggestions (Java); FilterDictSuggest only as fail-over.
 func (r *GermanSpellerRule) getCandidatesFromParts(parts []string) []string {
-	if r == nil || len(parts) == 0 || !FilterDictAvailable() {
+	if r == nil || len(parts) == 0 {
+		return nil
+	}
+	if r.MorfoSpeller == nil && !FilterDictAvailable() {
 		return nil
 	}
 	var candidates []string
@@ -106,19 +122,19 @@ func (r *GermanSpellerRule) getCandidatesFromParts(parts []string) []string {
 		if doUpperCase {
 			probe = uppercaseFirstChar(part)
 		}
-		suggestions := FilterDictSuggest(probe)
+		suggestions := r.morfoSuggest(probe)
 		if len(suggestions) == 0 {
 			if doUpperCase {
-				suggestions = FilterDictSuggest(lowercaseFirstChar(part))
+				suggestions = r.morfoSuggest(lowercaseFirstChar(part))
 			} else {
-				suggestions = FilterDictSuggest(part)
+				suggestions = r.morfoSuggest(part)
 			}
 		}
 		appendS := false
 		if doUpperCase && strings.HasSuffix(part, "s") {
 			// maybe infix-s
 			base := strings.TrimSuffix(part, "s")
-			suggestions = append(suggestions, FilterDictSuggest(base)...)
+			suggestions = append(suggestions, r.morfoSuggest(base)...)
 			appendS = true
 		}
 		for _, suggestion := range suggestions {

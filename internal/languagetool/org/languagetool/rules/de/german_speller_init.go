@@ -266,21 +266,37 @@ func (r *GermanSpellerRule) InitFromDiscoveredResources() error {
 
 	// Dict path by variant (Java default DE; AT/CH have their own .dict)
 	dictName := "de_DE.dict"
+	country := "DE"
 	switch r.LanguageVariant {
 	case "AT":
 		dictName = "de_AT.dict"
+		country = "AT"
 	case "CH":
 		dictName = "de_CH.dict"
+		country = "CH"
 	}
 	dict := filepath.Join(hun, dictName)
 	if st, err := os.Stat(dict); err == nil && st.Mode().IsRegular() {
 		_ = WireGermanFilterSpeller(dict)
 	} else if dictName != "de_DE.dict" {
-		// fall back to de_DE if variant dict missing
+		// FilterDict membership: fall back to de_DE when variant dict missing
+		// (Go convenience for IsMisspelled; Java hunspell uses language-specific dic).
 		if p := filepath.Join(hun, "de_DE.dict"); fileExists(p) {
 			_ = WireGermanFilterSpeller(p)
 		}
 	}
+	// Java GermanSpellerRule ctor: () -> getSpeller(language, userConfig, languageSpecificPlainTextDict).
+	// getSpeller binary is de_{country}.dict; returns null when resource missing (no invent DE fallback).
+	variantPlain := r.LanguageSpecific
+	if variantPlain == "" {
+		switch r.LanguageVariant {
+		case "AT":
+			variantPlain = AustrianGermanSpellingDict
+		case "CH":
+			variantPlain = SwissGermanSpellingDict
+		}
+	}
+	r.MorfoSpeller = GetSpeller(country, variantPlain, nil)
 
 	// SpellingCheckRule.init order-ish: ignore, spelling, additional spelling, prohibit, additional prohibit
 	if p := filepath.Join(hun, "ignore.txt"); fileExists(p) {
