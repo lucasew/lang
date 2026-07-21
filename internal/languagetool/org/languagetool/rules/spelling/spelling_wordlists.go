@@ -127,7 +127,14 @@ func ApplySpellingResourcePaths(r *SpellingCheckRule, ignoreRel, spellingRel, pr
 		if err != nil {
 			return
 		}
-		r.AddProhibitedWords(words...)
+		// Java init: addProhibitedWords(expandLine(line))
+		for _, line := range words {
+			expanded := r.ExpandLine(line)
+			if len(expanded) == 0 {
+				continue
+			}
+			r.AddProhibitedWords(expanded...)
+		}
 	}
 	loadIgnore(ignoreRel)
 	loadIgnore(spellingRel)
@@ -194,8 +201,10 @@ func discoverResourceRel(rel string) string {
 	return ""
 }
 
-// LoadSpellingWordListFile loads a Java wordListLoader-style file: skip # comments
-// and empty lines; strip Hunspell flags after '/'.
+// LoadSpellingWordListFile ports CachingWordListLoader.loadWords for a filesystem path:
+// skip empty lines and lines starting with #; strip trailing # comments
+// (StringUtils.substringBefore(line.trim(), "#").trim()).
+// Does NOT strip Hunspell flags after '/' — Java keeps "word/S" for expandLine.
 func LoadSpellingWordListFile(path string) ([]string, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -204,21 +213,18 @@ func LoadSpellingWordListFile(path string) ([]string, error) {
 	defer f.Close()
 	var out []string
 	sc := bufio.NewScanner(f)
+	// Large prohibit/spelling files (e.g. de/hunspell/prohibit.txt).
+	buf := make([]byte, 0, 64*1024)
+	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		line := sc.Text()
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		if i := strings.IndexByte(line, '#'); i >= 0 {
+		line = strings.TrimSpace(line)
+		if i := strings.Index(line, "#"); i >= 0 {
 			line = strings.TrimSpace(line[:i])
 		}
-		if line == "" {
-			continue
-		}
-		if i := strings.IndexByte(line, '/'); i >= 0 {
-			line = line[:i]
-		}
-		line = strings.TrimSpace(line)
 		if line != "" {
 			out = append(out, line)
 		}
@@ -264,7 +270,14 @@ func ApplyDefaultSpellingWordLists(r *SpellingCheckRule) {
 			if err != nil {
 				continue
 			}
-			r.AddProhibitedWords(words...)
+			// Java: addProhibitedWords(expandLine(prohibitedWord)) per line.
+			for _, line := range words {
+				expanded := r.ExpandLine(line)
+				if len(expanded) == 0 {
+					continue
+				}
+				r.AddProhibitedWords(expanded...)
+			}
 		}
 	}
 	// Java getAdditionalSpellingFileNames → GLOBAL_SPELLING_FILE (all languages).

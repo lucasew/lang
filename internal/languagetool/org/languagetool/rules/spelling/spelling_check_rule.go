@@ -75,9 +75,21 @@ type SpellingCheckRule struct {
 	// Called only after the dictionary already considers the word incorrect
 	// (Java SpellingCheckRule default returns false; NL/DE override).
 	IgnorePotentiallyMisspelledWordFn func(word string) bool
+	// ExpandLineFn ports SpellingCheckRule.expandLine (default: singleton of the line).
+	// Used when loading prohibit.txt / prohibit_custom.txt (Java init).
+	// DE GermanSpellerRule overrides to LineExpander (/S /N /A /E /F, .*prefix, …).
+	ExpandLineFn func(line string) []string
 	// Cached sorted ignore lists for startsWithIgnoredWord (invalidated on AddIgnoreWords).
 	ignoreDictSorted     []string
 	ignoreDictSortedFold []string
+}
+
+// ExpandLine ports SpellingCheckRule.expandLine — default returns the line as-is.
+func (r *SpellingCheckRule) ExpandLine(line string) []string {
+	if r != nil && r.ExpandLineFn != nil {
+		return r.ExpandLineFn(line)
+	}
+	return []string{line}
 }
 
 func NewSpellingCheckRule(id, description, languageCode string) *SpellingCheckRule {

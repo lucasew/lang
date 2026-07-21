@@ -1,10 +1,55 @@
 package spelling
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
+
+// Twin of CachingWordListLoader: keep Hunspell flags after '/' for expandLine.
+func TestLoadSpellingWordListFile_KeepsFlags(t *testing.T) {
+	dir := t.TempDir()
+	p := filepath.Join(dir, "prohibit.txt")
+	content := "# comment\n" +
+		"plain\n" +
+		"Abbaustädte/N  # trailing comment\n" +
+		".*artigel/NS\n" +
+		"DD/MM/YYYY\n"
+	require.NoError(t, os.WriteFile(p, []byte(content), 0o644))
+	words, err := LoadSpellingWordListFile(p)
+	require.NoError(t, err)
+	require.Equal(t, []string{"plain", "Abbaustädte/N", ".*artigel/NS", "DD/MM/YYYY"}, words)
+}
+
+// Java SpellingCheckRule.init: addProhibitedWords(expandLine(line)).
+func TestApplyDefault_ProhibitExpandLine(t *testing.T) {
+	// Simulate a language with ExpandLineFn (identity is default; custom expands /S).
+	r := NewSpellingCheckRule("TEST", "spell", "xx")
+	r.IsMisspelled = func(string) bool { return false } // dict would accept
+	r.ExpandLineFn = func(line string) []string {
+		if line == "foo/S" {
+			return []string{"foo", "foos"}
+		}
+		return []string{line}
+	}
+	// Inject via AddProhibitedWords after ExpandLine (same as ApplyDefault loop).
+	for _, line := range []string{"foo/S", "bar"} {
+		r.AddProhibitedWords(r.ExpandLine(line)...)
+	}
+	require.True(t, r.IsProhibited("foo"))
+	require.True(t, r.IsProhibited("foos"))
+	require.True(t, r.IsProhibited("bar"))
+	require.False(t, r.IsProhibited("foo/S")) // expanded, not raw flag form
+}
+
+// ExpandLine default is singleton (Java SpellingCheckRule.expandLine).
+func TestExpandLine_DefaultIdentity(t *testing.T) {
+	r := NewSpellingCheckRule("TEST", "spell", "en")
+	require.Equal(t, []string{"word/S"}, r.ExpandLine("word/S"))
+	require.Equal(t, []string{"plain"}, r.ExpandLine("plain"))
+}
 
 func TestDiscoverLangHunspellWordList_DanishIgnore(t *testing.T) {
 	p := DiscoverLangHunspellWordList("da", "ignore.txt")
