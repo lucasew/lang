@@ -11,8 +11,12 @@ import (
 // LanguageMeta is a lightweight registered language entry for the Languages registry.
 type LanguageMeta struct {
 	Name     string
-	Code     string // short code with optional variant
+	Code     string // getShortCode() — base language code (en, de, …) or full private-use tag
 	DictPath string // optional dynamic dict path
+	// Countries ports Language.getCountries() (ISO region codes; may be empty or multi).
+	Countries []string
+	// Variant ports Language.getVariant() (e.g. "valencia", "balear"); empty if none.
+	Variant string
 	// DefaultVariantCode ports Language.getDefaultLanguageVariant().
 	// Empty means default is self (Java Language default). When set to another
 	// code (e.g. "en-US" on "en"), this entry is not the default variant.
@@ -21,22 +25,38 @@ type LanguageMeta struct {
 
 func (l LanguageMeta) GetName() string { return l.Name }
 
+// GetShortCode ports Language.getShortCode().
+// For private-use tags (de-DE-x-simple-language) Java returns the full code as shortCode.
 func (l LanguageMeta) GetShortCode() string {
-	// Prefer full code match for private-use tags; short code is still the language part.
 	code := l.Code
-	if i := strings.Index(code, "-x-"); i >= 0 {
-		// e.g. de-DE-x-simple-language → language short code before first hyphen of primary
-		if j := strings.IndexByte(code, '-'); j >= 0 {
-			return code[:j]
-		}
+	if strings.Contains(code, "-x-") {
+		// SimpleGerman: getShortCode() returns "de-DE-x-simple-language"
+		return code
 	}
+	// When Code stores long form by mistake (legacy), strip region.
 	if i := strings.IndexByte(code, '-'); i >= 0 {
 		return code[:i]
 	}
 	return code
 }
 
-func (l LanguageMeta) GetShortCodeWithCountryAndVariant() string { return l.Code }
+// GetCountries ports Language.getCountries().
+func (l LanguageMeta) GetCountries() []string {
+	return append([]string(nil), l.Countries...)
+}
+
+// GetShortCodeWithCountryAndVariant ports Language.getShortCodeWithCountryAndVariant().
+// Java: only append country when countries.length == 1 and short code has no "-x-".
+func (l LanguageMeta) GetShortCodeWithCountryAndVariant() string {
+	name := l.GetShortCode()
+	if len(l.Countries) == 1 && !strings.Contains(name, "-x-") {
+		name += "-" + l.Countries[0]
+		if l.Variant != "" {
+			name += "-" + l.Variant
+		}
+	}
+	return name
+}
 
 // Languages is a process-level registry (ports org.languagetool.Languages surface).
 type Languages struct {
@@ -54,22 +74,80 @@ const NoopLanguageCode = "zz"
 // NoopLanguageMeta is a stand-in for Languages.NOOP_LANGUAGE.
 var NoopLanguageMeta = LanguageMeta{Name: "NoopLanguage", Code: NoopLanguageCode}
 
-// builtInLanguageShortCodes mirrors languages discovered from Java
-// META-INF/org/languagetool/language-module.properties modules (short codes only).
-// Used so canLanguageBeDetected works without classpath module scanning.
-var builtInLanguageShortCodes = []struct {
-	Name string
-	Code string
-}{
-	{"Arabic", "ar"}, {"Asturian", "ast"}, {"Belarusian", "be"}, {"Breton", "br"},
-	{"Catalan", "ca"}, {"Crimean Tatar", "crh"}, {"Danish", "da"}, {"German", "de"},
-	{"Greek", "el"}, {"English", "en"}, {"Esperanto", "eo"}, {"Spanish", "es"},
-	{"Persian", "fa"}, {"French", "fr"}, {"Irish", "ga"}, {"Galician", "gl"},
-	{"Icelandic", "is"}, {"Italian", "it"}, {"Japanese", "ja"}, {"Khmer", "km"},
-	{"Lithuanian", "lt"}, {"Malayalam", "ml"}, {"Dutch", "nl"}, {"Norwegian", "no"},
-	{"Polish", "pl"}, {"Portuguese", "pt"}, {"Romanian", "ro"}, {"Russian", "ru"},
-	{"Slovak", "sk"}, {"Slovenian", "sl"}, {"Serbian", "sr"}, {"Swedish", "sv"},
-	{"Tamil", "ta"}, {"Tagalog", "tl"}, {"Ukrainian", "uk"}, {"Chinese", "zh"},
+// builtInLanguages ports language classes from META-INF language-module.properties
+// (name, getShortCode, getCountries, variant). longCode is derived via
+// GetShortCodeWithCountryAndVariant (single-country only).
+var builtInLanguages = []LanguageMeta{
+	// English module
+	{Name: "English", Code: "en"},
+	{Name: "English (US)", Code: "en", Countries: []string{"US"}},
+	{Name: "English (GB)", Code: "en", Countries: []string{"GB"}},
+	{Name: "English (Australian)", Code: "en", Countries: []string{"AU"}},
+	{Name: "English (Canadian)", Code: "en", Countries: []string{"CA"}},
+	{Name: "English (New Zealand)", Code: "en", Countries: []string{"NZ"}},
+	{Name: "English (South African)", Code: "en", Countries: []string{"ZA"}},
+	// German module
+	{Name: "German", Code: "de", Countries: []string{"LU", "LI", "BE"}},
+	{Name: "German (Germany)", Code: "de", Countries: []string{"DE"}},
+	{Name: "German (Austria)", Code: "de", Countries: []string{"AT"}},
+	{Name: "German (Swiss)", Code: "de", Countries: []string{"CH"}},
+	// French
+	{Name: "French", Code: "fr", Countries: []string{"FR", "LU", "MC", "CM", "CI", "HT", "ML", "SN", "CD", "MA", "RE"}},
+	{Name: "French (Canada)", Code: "fr", Countries: []string{"CA"}},
+	{Name: "French (Switzerland)", Code: "fr", Countries: []string{"CH"}},
+	{Name: "French (Belgium)", Code: "fr", Countries: []string{"BE"}},
+	// Spanish
+	{Name: "Spanish", Code: "es", Countries: []string{"ES", "MX", "GT", "CR", "PA", "DO", "VE", "PE", "AR", "EC", "CL", "UY", "PY", "BO", "SV", "HN", "NI", "PR", "US", "CU"}},
+	{Name: "Spanish (voseo)", Code: "es", Countries: []string{"AR", "PA", "UY", "CR"}},
+	// Portuguese
+	{Name: "Portuguese", Code: "pt", Countries: []string{"CV", "GW", "MO", "ST", "TL"}},
+	{Name: "Portuguese (Portugal)", Code: "pt", Countries: []string{"PT"}},
+	{Name: "Portuguese (Brazil)", Code: "pt", Countries: []string{"BR"}},
+	{Name: "Portuguese (Angola preAO)", Code: "pt", Countries: []string{"AO"}},
+	{Name: "Portuguese (Moçambique preAO)", Code: "pt", Countries: []string{"MZ"}},
+	// Dutch
+	{Name: "Dutch", Code: "nl", Countries: []string{"NL", "BE"}},
+	{Name: "Dutch (Belgium)", Code: "nl", Countries: []string{"BE"}},
+	// Catalan
+	{Name: "Catalan", Code: "ca", Countries: []string{"ES"}},
+	{Name: "Catalan (Valencian)", Code: "ca", Countries: []string{"ES"}, Variant: "valencia"},
+	{Name: "Catalan (Balearic)", Code: "ca", Countries: []string{"ES"}, Variant: "balear"},
+	// Serbian
+	{Name: "Serbian", Code: "sr"},
+	{Name: "Serbian (Serbia)", Code: "sr", Countries: []string{"RS"}},
+	{Name: "Serbian (Bosnia and Herzegovina)", Code: "sr", Countries: []string{"BA"}},
+	{Name: "Serbian (Croatia)", Code: "sr", Countries: []string{"HR"}},
+	{Name: "Serbian (Montenegro)", Code: "sr", Countries: []string{"ME"}},
+	// Single-country / simple modules
+	{Name: "Arabic", Code: "ar", Countries: []string{"SA", "DZ", "BH", "EG", "IQ", "JO", "KW", "LB", "LY", "MA", "OM", "QA", "SD", "SY", "TN", "AE", "YE"}},
+	{Name: "Asturian", Code: "ast", Countries: []string{"ES"}},
+	{Name: "Belarusian", Code: "be", Countries: []string{"BY"}},
+	{Name: "Breton", Code: "br", Countries: []string{"FR"}},
+	{Name: "Crimean Tatar", Code: "crh", Countries: []string{"UA"}},
+	{Name: "Danish", Code: "da", Countries: []string{"DK"}},
+	{Name: "Greek", Code: "el", Countries: []string{"GR"}},
+	{Name: "Esperanto", Code: "eo"},
+	{Name: "Persian", Code: "fa", Countries: []string{"IR", "AF"}},
+	{Name: "Irish", Code: "ga", Countries: []string{"IE"}},
+	{Name: "Galician", Code: "gl", Countries: []string{"ES"}},
+	{Name: "Icelandic", Code: "is", Countries: []string{"IS"}},
+	{Name: "Italian", Code: "it", Countries: []string{"IT", "CH"}},
+	{Name: "Japanese", Code: "ja", Countries: []string{"JP"}},
+	{Name: "Khmer", Code: "km", Countries: []string{"KH"}},
+	{Name: "Lithuanian", Code: "lt", Countries: []string{"LT"}},
+	{Name: "Malayalam", Code: "ml", Countries: []string{"IN"}},
+	{Name: "Polish", Code: "pl", Countries: []string{"PL"}},
+	{Name: "Romanian", Code: "ro", Countries: []string{"RO"}},
+	{Name: "Russian", Code: "ru", Countries: []string{"RU"}},
+	{Name: "Slovak", Code: "sk", Countries: []string{"SK"}},
+	{Name: "Slovenian", Code: "sl", Countries: []string{"SI"}},
+	{Name: "Swedish", Code: "sv", Countries: []string{"SE", "FI"}},
+	{Name: "Tamil", Code: "ta", Countries: []string{"IN"}},
+	{Name: "Tagalog", Code: "tl", Countries: []string{"PH"}},
+	{Name: "Ukrainian", Code: "uk", Countries: []string{"UA"}},
+	{Name: "Chinese", Code: "zh", Countries: []string{"CN"}},
+	// Simple German private-use tag (getShortCode is full tag)
+	{Name: "Simple German", Code: "de-DE-x-simple-language"},
 }
 
 var builtInLangsOnce sync.Once
@@ -79,22 +157,67 @@ var builtInLangsOnce sync.Once
 // Safe to call repeatedly (sync.Once).
 func EnsureBuiltInLanguagesRegistered() {
 	builtInLangsOnce.Do(func() {
-		for _, m := range builtInLanguageShortCodes {
-			// Register without IsLanguageSupported (avoids recursive Ensure)
-			GlobalLanguages.Register(LanguageMeta{Name: m.Name, Code: m.Code})
+		for _, m := range builtInLanguages {
+			GlobalLanguages.Register(m)
 		}
 		// Do not register NoopLanguage "zz" here — Java Languages.get() excludes zz/xx;
 		// canLanguageBeDetected("zz") is true only via additionalLanguageCodes (noop list).
 	})
 }
 
+// GetLongCodeToLangMapping ports Languages.getLongCodeToLangMapping.
+// Maps "fr-FR" → French (short fr, countries[0]=FR) for LibreOffice 7.4.
+func (L *Languages) GetLongCodeToLangMapping() map[string]LanguageMeta {
+	L.mu.RLock()
+	defer L.mu.RUnlock()
+	m := map[string]LanguageMeta{}
+	all := append(append([]LanguageMeta{}, L.static...), L.dynamic...)
+	for _, lang := range all {
+		sc := lang.GetShortCode()
+		if sc == "xx" || sc == "zz" {
+			continue
+		}
+		cs := lang.Countries
+		if len(cs) > 0 && cs[0] != "" {
+			m[sc+"-"+cs[0]] = lang
+		}
+	}
+	return m
+}
+
+// normalizeLanguageMeta accepts legacy Code="en-US" (full long code, empty Countries)
+// and expands it to Code=short + Countries like Java Language objects.
+func normalizeLanguageMeta(lang LanguageMeta) LanguageMeta {
+	if len(lang.Countries) > 0 {
+		return lang
+	}
+	code := lang.Code
+	if code == "" || strings.Contains(code, "-x-") {
+		return lang
+	}
+	parts := strings.Split(code, "-")
+	if len(parts) == 2 && len(parts[0]) >= 2 && len(parts[1]) == 2 {
+		lang.Code = parts[0]
+		lang.Countries = []string{strings.ToUpper(parts[1])}
+	} else if len(parts) == 3 && len(parts[1]) == 2 {
+		// ca-ES-valencia
+		lang.Code = parts[0]
+		lang.Countries = []string{strings.ToUpper(parts[1])}
+		lang.Variant = parts[2]
+	}
+	return lang
+}
+
 // Register adds a static language definition.
 func (L *Languages) Register(lang LanguageMeta) {
 	L.mu.Lock()
 	defer L.mu.Unlock()
-	// skip exact duplicate codes (idempotent for EnsureBuiltIn + tests)
+	lang = normalizeLanguageMeta(lang)
+	// Idempotent on full identity (short+country+variant), not bare short code —
+	// Java registers AmericanEnglish, BritishEnglish, … as distinct Language objects.
+	want := lang.GetShortCodeWithCountryAndVariant()
 	for _, existing := range L.static {
-		if strings.EqualFold(existing.Code, lang.Code) {
+		if strings.EqualFold(existing.GetShortCodeWithCountryAndVariant(), want) {
 			return
 		}
 	}
@@ -195,11 +318,18 @@ func (L *Languages) findLanguage(code string) (LanguageMeta, bool) {
 	L.mu.RLock()
 	defer L.mu.RUnlock()
 	want := strings.ToLower(code)
-	for _, l := range append(append([]LanguageMeta{}, L.static...), L.dynamic...) {
-		if strings.EqualFold(l.Code, code) || strings.EqualFold(l.GetShortCode(), code) {
+	all := append(append([]LanguageMeta{}, L.static...), L.dynamic...)
+	// Prefer exact long-code match (en-US → AmericanEnglish)
+	for _, l := range all {
+		if strings.EqualFold(l.GetShortCodeWithCountryAndVariant(), code) {
 			return l, true
 		}
-		// also match en-us style against registered en-US
+	}
+	// Bare short code (en → first English-family match, typically base English)
+	for _, l := range all {
+		if strings.EqualFold(l.GetShortCode(), code) {
+			return l, true
+		}
 		if strings.ToLower(l.Code) == want {
 			return l, true
 		}
@@ -297,9 +427,9 @@ func (L *Languages) HasPremium(className string) bool {
 }
 
 // IsVariant ports Language.isVariant for registry metas:
-// true when code has a country/variant suffix (Java: subclass of another language).
+// true when shortCodeWithCountryAndVariant differs from shortCode (country/variant present).
 func (l LanguageMeta) IsVariant() bool {
-	return strings.Contains(l.Code, "-")
+	return l.GetShortCodeWithCountryAndVariant() != l.GetShortCode()
 }
 
 // IsTheDefaultVariant ports Language.isTheDefaultVariant.
@@ -307,19 +437,20 @@ func (l LanguageMeta) IsTheDefaultVariant() bool {
 	if l.DefaultVariantCode == "" {
 		return true // Java default: getDefaultLanguageVariant() returns this
 	}
-	return strings.EqualFold(l.Code, l.DefaultVariantCode)
+	return strings.EqualFold(l.GetShortCodeWithCountryAndVariant(), l.DefaultVariantCode)
 }
 
 // HasVariant ports Language.hasVariant: another registered language shares short code.
-// Java uses class assignability; registry approx: sibling with same GetShortCode().
+// Java uses class assignability; registry: sibling with same GetShortCode().
 func (L *Languages) HasVariant(l LanguageMeta) bool {
 	sc := l.GetShortCode()
+	selfLong := l.GetShortCodeWithCountryAndVariant()
 	for _, o := range L.Get() {
-		if strings.EqualFold(o.Code, l.Code) {
+		if strings.EqualFold(o.GetShortCodeWithCountryAndVariant(), selfLong) {
 			continue
 		}
 		if o.GetShortCode() == sc {
-			// Base language (no hyphen) has variants when a country code exists.
+			// Base language (no country) has variants when a country code sibling exists.
 			// Variant languages (en-US) do not "have" further variants in Java.
 			if !l.IsVariant() {
 				return true

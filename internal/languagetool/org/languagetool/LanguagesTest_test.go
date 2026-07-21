@@ -93,7 +93,7 @@ func TestLanguages_GetLanguageForLocale(t *testing.T) {
 	// Locale mapping is a thin short-code lookup for now.
 	L := &Languages{}
 	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
-	require.Equal(t, "en-US", L.GetLanguageForShortCode("en-US").Code)
+	require.Equal(t, "en-US", L.GetLanguageForShortCode("en-US").GetShortCodeWithCountryAndVariant())
 }
 
 // Twin of LanguagesTest.testIsVariant

@@ -24,8 +24,20 @@ func TestLanguages_Registry(t *testing.T) {
 func TestEnsureBuiltInLanguagesRegistered(t *testing.T) {
 	EnsureBuiltInLanguagesRegistered()
 	require.True(t, GlobalLanguages.IsLanguageSupported("en"))
-	require.True(t, GlobalLanguages.IsLanguageSupported("de"))
+	require.True(t, GlobalLanguages.IsLanguageSupported("en-US"))
+	require.True(t, GlobalLanguages.IsLanguageSupported("de-DE"))
 	require.True(t, GlobalLanguages.IsLanguageSupported("fr"))
+	// multi-country Spanish → longCode is bare "es"
+	es := GlobalLanguages.GetLanguageForShortCode("es")
+	require.Equal(t, "es", es.GetShortCodeWithCountryAndVariant())
+	// single-country AmericanEnglish
+	enUS := GlobalLanguages.GetLanguageForShortCode("en-US")
+	require.Equal(t, "English (US)", enUS.GetName())
+	require.Equal(t, "en", enUS.GetShortCode())
+	require.Equal(t, "en-US", enUS.GetShortCodeWithCountryAndVariant())
+	// long-code mapping for LibreOffice (fr-FR → French)
+	m := GlobalLanguages.GetLongCodeToLangMapping()
+	require.Equal(t, "fr", m["fr-FR"].GetShortCode())
 	// zz/xx not registered as normal modules
 	require.False(t, GlobalLanguages.IsLanguageSupported("xx"))
 	// idempotent

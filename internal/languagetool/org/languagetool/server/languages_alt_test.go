@@ -8,20 +8,36 @@ import (
 )
 
 func TestDefaultCoreLanguages_LongCode(t *testing.T) {
+	// ApiV2.getLanguages: Languages.get() + getLongCodeToLangMapping extras (no soft invent table).
 	langs := DefaultCoreLanguages()
 	require.NotEmpty(t, langs)
-	var hasEnUS, hasDeDE bool
+	var hasEnUS, hasDeDE, hasFrFRMap, hasEsBare bool
 	for _, l := range langs {
+		require.NotEmpty(t, l.Name)
+		require.NotEmpty(t, l.Code)
+		require.NotEmpty(t, l.LongCode)
 		if l.LongCode == "en-US" {
 			hasEnUS = true
 			require.Equal(t, "en", l.Code)
+			require.Equal(t, "English (US)", l.Name)
 		}
 		if l.LongCode == "de-DE" {
 			hasDeDE = true
+			require.Equal(t, "de", l.Code)
+		}
+		// LibreOffice mapping from getLongCodeToLangMapping (French multi-country → fr-FR key)
+		if l.Code == "fr" && l.LongCode == "fr-FR" {
+			hasFrFRMap = true
+		}
+		// Spanish multi-country: getShortCodeWithCountryAndVariant is bare "es"
+		if l.Code == "es" && l.LongCode == "es" {
+			hasEsBare = true
 		}
 	}
 	require.True(t, hasEnUS)
 	require.True(t, hasDeDE)
+	require.True(t, hasFrFRMap)
+	require.True(t, hasEsBare)
 
 	api := NewApiV2(nil, nil)
 	r, err := api.Handle("languages", nil)
