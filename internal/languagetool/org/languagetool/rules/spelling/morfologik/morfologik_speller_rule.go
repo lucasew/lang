@@ -185,13 +185,19 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
-		w := tok.GetToken()
+		// Java: word = token.getAnalyzedToken(0).getToken() — without ignored chars
+		// (soft hyphen etc.). ATR.GetToken() keeps orig surface; GetCleanToken is clean.
+		// When cleanToken metadata is set (replaceSoftHyphens), use it so the speller
+		// does not choke on U+00AD. Fallback GetCleanToken() == GetToken() when unset.
+		surface := tok.GetToken()
+		w := spellCheckWord(tok)
 		if w == "" || !hasLetter(w) {
 			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
 		// Java MorfologikSpellerRule.ignoreWord: super.ignoreWord || StringTools.isEmoji
-		if tools.IsEmoji(w) {
+		// Emoji check uses surface token (Java ignoreWord(String word) on rule path).
+		if tools.IsEmoji(w) || tools.IsEmoji(surface) {
 			maybeClearIsFirstWord(&isFirstWord, idx, tok)
 			continue
 		}
@@ -205,9 +211,6 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 		// Dictionary misspell (ignore set already handled by IgnoreToken/IgnoreWord).
 		if r.AcceptWord(w) {
 			// Java: getRuleMatches empty; still clear isFirstWord at end of loop body.
-			if isFirstWord && idx < len(tokens)-1 {
-				// no matches to capitalize
-			}
 			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
@@ -223,10 +226,13 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			continue
 		}
 
+		newRuleIdx := len(out)
+
 		// Java getRuleMatches wrong-split with previous / next word.
 		ruleMatch, beforeStr, early := r.tryWrongSplitPrev(sentence, &out, idx, tokens, w, startPos)
 		if early && ruleMatch != nil {
 			out = append(out, ruleMatch)
+			adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 			capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
@@ -236,6 +242,7 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			ruleMatch, afterStr, early = r.tryWrongSplitNext(sentence, &out, idx, tokens, w, startPos)
 			if early && ruleMatch != nil {
 				out = append(out, ruleMatch)
+				adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 				capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 				clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 				continue
@@ -251,6 +258,7 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 					addSug(ruleMatch, joined)
 				}
 				out = append(out, ruleMatch)
+				adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 				capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 				clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 				continue
@@ -262,11 +270,14 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 				addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
 			}
 			out = append(out, ruleMatch)
+			adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 			capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 			clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 			continue
 		}
 
+		// Java getRuleMatches toPos often uses clean word.length(); then hiddenCharOffset
+		// extends to full surface. Using GetEndPos() is equivalent when startPos is set.
 		m := rules.NewRuleMatch(r, sentence, startPos, tok.GetEndPos(),
 			"Possible spelling mistake found")
 		m.SetType(rules.RuleMatchTypeUnknownWord)
@@ -288,11 +299,72 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			}
 		}
 		out = append(out, m)
+		adjustHiddenCharOffsets(tok, surface, w, out, newRuleIdx)
 		// Java: capitalize first-word lower-case replacements (not last token).
 		capitalizeFirstWordSuggestions(isFirstWord, idx, tokens, out)
 		clearIsFirstWordAfterToken(&isFirstWord, idx, tok)
 	}
 	return out, nil
+}
+
+// spellCheckWord ports match's word = token.getAnalyzedToken(0).getToken() intent:
+// surface without ignored characters so the speller does not choke (soft hyphen).
+// Prefers GetCleanToken when set by replaceSoftHyphens; else ATR surface / AT0.
+func spellCheckWord(tok *languagetool.AnalyzedTokenReadings) string {
+	if tok == nil {
+		return ""
+	}
+	// Clean token from soft-hyphen metadata (always preferred when present).
+	if c := tok.GetCleanToken(); c != "" && c != tok.GetToken() {
+		return c
+	}
+	// Java getAnalyzedToken(0).getToken() when readings keep the cleaned form.
+	if n := len(tok.GetReadings()); n > 0 {
+		if at := tok.GetAnalyzedToken(0); at != nil {
+			if t := at.GetToken(); t != "" {
+				// Prefer reading shorter than dirty surface (clean form left as AT0
+				// when POS readings were kept and dirty was only added via addReading).
+				if utf16LenMF(t) < utf16LenMF(tok.GetToken()) {
+					return t
+				}
+			}
+		}
+	}
+	return tok.GetToken()
+}
+
+// adjustHiddenCharOffsets ports match's hiddenCharOffset adjustment:
+// token.getToken().length() - word.length() added to toPos when the match
+// does not already extend past the token (multi-token wrong-split).
+func adjustHiddenCharOffsets(tok *languagetool.AnalyzedTokenReadings, surface, word string, out []*rules.RuleMatch, newRuleIdx int) {
+	if tok == nil || len(out) == 0 {
+		return
+	}
+	// Java String.length() = UTF-16 units
+	offset := utf16LenMF(surface) - utf16LenMF(word)
+	if offset <= 0 {
+		return
+	}
+	endPos := tok.GetEndPos()
+	for i := newRuleIdx; i < len(out); i++ {
+		m := out[i]
+		if m == nil {
+			continue
+		}
+		// Java: if (token.getEndPos() < ruleMatch.getToPos()) multi-token — skip
+		if endPos < m.GetToPos() {
+			continue
+		}
+		// setOffsetPosition(from, to+hiddenCharOffset)
+		// When match was built with GetEndPos already, to already covers surface —
+		// only extend when to was based on clean word length (to < endPos).
+		if m.GetToPos() < endPos {
+			// Prefer clamping to token end rather than overshooting.
+			// Java adds offset to clean-based toPos → equals surface end when
+			// toPos was start+cleanLen and endPos is start+surfaceLen.
+			m.SetOffsetPosition(m.GetFromPos(), m.GetToPos()+offset)
+		}
+	}
 }
 
 // maybeClearIsFirstWord ports canBeIgnored branch:
