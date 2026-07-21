@@ -1,9 +1,15 @@
 package morfologik
 
 import (
+	"regexp"
 	"strings"
 	"unicode/utf16"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
+
+// spacePlusRE ports Java stringPair.split(" +") — one or more ASCII spaces only.
+var spacePlusRE = regexp.MustCompile(` +`)
 
 // MAX_RECURSION_LEVEL ports morfologik Speller.MAX_RECURSION_LEVEL for getAllReplacements.
 const maxReplacementRecursion = 6
@@ -120,26 +126,45 @@ func splitCommaPairs(value string) []string {
 }
 
 func splitSpacePair(p string) (string, string, bool) {
-	// Java: stringPair.split(" +") — one or more spaces
-	p = strings.TrimSpace(p)
-	fields := strings.Fields(p)
-	if len(fields) < 2 {
+	// Java: stringPair.split(" +") — one or more ASCII spaces (not Unicode Fields).
+	p = tools.JavaStringTrim(p)
+	if p == "" {
 		return "", "", false
 	}
-	// join rest as value? Java uses twoStrings[0] and twoStrings[1] only
-	return fields[0], fields[1], true
+	fields := spacePlusRE.Split(p, -1)
+	// drop empties from leading/trailing
+	out := make([]string, 0, len(fields))
+	for _, f := range fields {
+		if f != "" {
+			out = append(out, f)
+		}
+	}
+	if len(out) < 2 {
+		return "", "", false
+	}
+	// Java uses twoStrings[0] and twoStrings[1] only
+	return out[0], out[1], true
 }
 
 // ParseEquivalentChars ports DictionaryAttribute.EQUIVALENT_CHARS fromString.
 // Format: "x ź, l ł, u ó" → map[x]=[ź], map[l]=[ł], ...
 func ParseEquivalentChars(value string) map[rune][]rune {
-	value = strings.TrimSpace(value)
+	value = tools.JavaStringTrim(value)
 	if value == "" {
 		return nil
 	}
 	out := map[rune][]rune{}
 	for _, part := range splitCommaPairs(value) {
-		fields := strings.Fields(part)
+		// Java: part split on spaces for "x ź" pairs — ASCII space+ only.
+		fields := spacePlusRE.Split(tools.JavaStringTrim(part), -1)
+		// drop empties
+		clean := fields[:0]
+		for _, f := range fields {
+			if f != "" {
+				clean = append(clean, f)
+			}
+		}
+		fields = clean
 		if len(fields) != 2 {
 			continue
 		}

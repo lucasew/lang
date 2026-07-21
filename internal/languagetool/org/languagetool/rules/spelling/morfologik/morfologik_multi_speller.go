@@ -6,6 +6,7 @@ import (
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // MorfologikMultiSpeller ports org.languagetool.rules.spelling.morfologik.MorfologikMultiSpeller
@@ -207,7 +208,9 @@ func UserDictWordsForMulti(acceptedWords []string, premiumUID *int64) []string {
 	}
 	out := make([]string, 0, len(acceptedWords))
 	for _, w := range acceptedWords {
-		w = strings.TrimSpace(w)
+		// User dict surfaces are exact; Java does not Unicode-trim accepted words.
+		// Use String.trim twin for leading/trailing ASCII controls only.
+		w = tools.JavaStringTrim(w)
 		if w != "" {
 			out = append(out, w)
 		}
@@ -245,7 +248,7 @@ func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels
 	}
 	var plainWords []string
 	for _, rel := range rels {
-		rel = strings.TrimPrefix(strings.TrimSpace(rel), "/")
+		rel = strings.TrimPrefix(tools.JavaStringTrim(rel), "/")
 		if rel == "" {
 			continue
 		}
@@ -271,7 +274,7 @@ func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels
 		user := NewMorfologikSpeller(binaryClasspath+"#user", maxEditDistance)
 		cleaned := make([]string, 0, len(userWords))
 		for _, w := range userWords {
-			w = strings.TrimSpace(w)
+			w = tools.JavaStringTrim(w)
 			if w != "" {
 				cleaned = append(cleaned, w)
 			}

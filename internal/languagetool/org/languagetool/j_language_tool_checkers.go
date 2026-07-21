@@ -189,9 +189,10 @@ func PreserveCase(matched, suggestion string) string {
 	if hasLetter && allUpper {
 		return strings.ToUpper(suggestion)
 	}
-	// leading capital (sentence/title start) — only when suggestion covers the span
-	mWords := len(strings.Fields(matched))
-	sWords := len(strings.Fields(suggestion))
+	// leading capital (sentence/title start) — only when suggestion covers the span.
+	// Word counts use ASCII space split (not Unicode Fields) to avoid invent splits on NBSP.
+	mWords := len(splitASCIISpaceWords(matched))
+	sWords := len(splitASCIISpaceWords(suggestion))
 	if mWords > 1 && sWords < mWords {
 		return suggestion
 	}
@@ -376,6 +377,21 @@ func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, 
 			"MORFOLOGIK_RULE_EN_US", isKnown, spellSuggestions, nil, nil,
 		))
 	}
+}
+
+// splitASCIISpaceWords counts tokens on single ASCII spaces (not Unicode Fields).
+func splitASCIISpaceWords(s string) []string {
+	if s == "" {
+		return nil
+	}
+	raw := strings.Split(s, " ")
+	out := make([]string, 0, len(raw))
+	for _, p := range raw {
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 // utf16Units is 1 for BMP, 2 for supplementary (Java String.length() code units).

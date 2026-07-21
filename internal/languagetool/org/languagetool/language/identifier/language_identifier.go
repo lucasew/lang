@@ -174,7 +174,9 @@ func (s *SimpleSpellScoreIdentifier) Detect(cleanText string, noopLangs, preferr
 }
 
 func (s *SimpleSpellScoreIdentifier) Scores(cleanText string, _ []string, preferredLangs []string, _ bool, count int) []languagetool.DetectedLanguage {
-	words := strings.Fields(cleanText)
+	// Java LanguageIdentifier / SimpleLanguageIdentifier: Pattern.compile("\\s+").split
+	// without UNICODE_CHARACTER_CLASS (ASCII only; not Go Fields).
+	words := splitASCIIWhitespaceWords(cleanText)
 	if len(words) == 0 {
 		return nil
 	}
@@ -306,6 +308,22 @@ func GetOrderedScores(scores map[string]float64, count int) map[string]float64 {
 	out := map[string]float64{}
 	for i := 0; i < len(entries) && i < count; i++ {
 		out[entries[i].k] = entries[i].v
+	}
+	return out
+}
+
+// splitASCIIWhitespaceWords ports Pattern.compile("\\s+").split without UNICODE_CHARACTER_CLASS
+// (used by SimpleLanguageIdentifier / spell-score paths). Drops empties.
+func splitASCIIWhitespaceWords(s string) []string {
+	if s == "" {
+		return nil
+	}
+	parts := simpleWhitespace.Split(s, -1)
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if p != "" {
+			out = append(out, p)
+		}
 	}
 	return out
 }

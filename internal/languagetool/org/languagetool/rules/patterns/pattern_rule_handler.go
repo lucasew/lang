@@ -284,16 +284,16 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 	return nil
 }
 
-// parseToneTagsAttr ports PatternRuleHandler tone_tags="a b c" split + ToneTag.valueOf.
-// Java valueOf is case-sensitive (clarity vs NO_TONE_RULE). Unknown names are
-// skipped fail-closed (do not invent tone ids); Java would throw on load.
+// parseToneTagsAttr ports PatternRuleHandler tone_tags="a b c":
+// Arrays.asList(attrs.getValue("tone_tags").split(" ")).
+// Java String.split(" ") is single ASCII space (not Unicode Fields).
+// Java valueOf is case-sensitive. Unknown names skipped fail-closed.
 func parseToneTagsAttr(s string) []languagetool.ToneTag {
-	s = strings.TrimSpace(s)
 	if s == "" {
 		return nil
 	}
 	var out []languagetool.ToneTag
-	for _, p := range strings.Fields(s) {
+	for _, p := range strings.Split(s, " ") {
 		if p == "" {
 			continue
 		}
@@ -304,15 +304,15 @@ func parseToneTagsAttr(s string) []languagetool.ToneTag {
 	return out
 }
 
-// parseRuleTagsAttr ports tags="picky …" → []rules.Tag (Java Tag.valueOf).
+// parseRuleTagsAttr ports tags="picky …" → []rules.Tag:
+// Arrays.asList(attrs.getValue("tags").split(" ")).
 // XML uses lowercase enum names; unknown names skipped (no invent).
 func parseRuleTagsAttr(s string) []rules.Tag {
-	s = strings.TrimSpace(s)
 	if s == "" {
 		return nil
 	}
 	var out []rules.Tag
-	for _, p := range strings.Fields(s) {
+	for _, p := range strings.Split(s, " ") {
 		if p == "" {
 			continue
 		}

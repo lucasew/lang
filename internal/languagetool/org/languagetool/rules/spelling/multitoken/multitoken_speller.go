@@ -63,10 +63,11 @@ func (m *MultitokenSpeller) LoadWords(r io.Reader) error {
 		if lineOriginal == "" || lineOriginal[0] == '#' {
 			continue
 		}
-		lineOriginal = strings.TrimSpace(lineOriginal)
+		// Java: StringUtils.substringBefore(lineOriginal, "#").trim()
 		if i := strings.Index(lineOriginal, "#"); i >= 0 {
-			lineOriginal = strings.TrimSpace(lineOriginal[:i])
+			lineOriginal = lineOriginal[:i]
 		}
+		lineOriginal = tools.JavaStringTrim(lineOriginal)
 		if lineOriginal == "" {
 			continue
 		}

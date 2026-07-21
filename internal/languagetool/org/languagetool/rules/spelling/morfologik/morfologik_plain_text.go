@@ -10,6 +10,7 @@ import (
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // plainTextAcceptCache caches loaded accept words by absolute file path.
@@ -61,7 +62,7 @@ func (s *MorfologikSpeller) AttachWordsAsBinaryFSA(words []string, infoBesideDic
 	// Also keep Words for HasDictionary / any map fallback.
 	uniq := make([]string, 0, len(words))
 	for _, w := range words {
-		w = strings.TrimSpace(w)
+		w = tools.JavaStringTrim(w)
 		if w == "" {
 			continue
 		}
@@ -157,14 +158,12 @@ func loadPlainTextAcceptFile(path string, prepareLine PrepareLineFn) []string {
 			lines = []string{original}
 		}
 		for _, line := range lines {
-			line = strings.TrimSpace(line)
-			if line == "" || strings.HasPrefix(line, "#") {
-				continue
-			}
+			// Java: line.split("#")[0].trim()
 			if i := strings.IndexByte(line, '#'); i >= 0 {
-				line = strings.TrimSpace(line[:i])
+				line = line[:i]
 			}
-			if line == "" {
+			line = tools.JavaStringTrim(line)
+			if line == "" || strings.HasPrefix(line, "#") {
 				continue
 			}
 			out = append(out, line)
