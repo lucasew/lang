@@ -2,6 +2,7 @@ package morfologik
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -119,9 +120,12 @@ func (s *MorfologikSpeller) LoadPlainTextAcceptClasspaths(relPaths []string, pre
 }
 
 func loadPlainTextAcceptCached(path string, prepareLine PrepareLineFn) []string {
+	// Java MorfologikMultiSpeller.getLines uses Language.prepareLineForSpeller —
+	// EN vs ES filters on the same spelling_global.txt yield different word sets.
+	// Cache key must include prepare identity (function pointer), not a shared "|prep".
 	key := path
 	if prepareLine != nil {
-		key = path + "|prep"
+		key = fmt.Sprintf("%s|prep:%p", path, prepareLine)
 	}
 	if v, ok := plainTextAcceptCache.Load(key); ok {
 		if ws, ok := v.([]string); ok {
