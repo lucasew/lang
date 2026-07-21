@@ -2,6 +2,7 @@ package de
 
 import (
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -96,11 +97,17 @@ func firstCharToLowerPhrase(tokens []*languagetool.AnalyzedTokenReadings, nToken
 		return ""
 	}
 	token := tokens[nToken].GetToken()
-	// Java: nToken != 1 → unchanged; sentence index 1 lower first char
-	if nToken != 1 || len(token) < 2 {
+	// Java UnnecessaryPhraseRule.firstCharToLower:
+	// (nToken != 1 || token.length() < 2) ? token
+	//   : token.substring(0, 1).toLowerCase() + token.substring(1)
+	// length/substring are UTF-16 units — not Go UTF-8 bytes (breaks Ä/Ö/Ü).
+	if nToken != 1 || utf16LenDE(token) < 2 {
 		return token
 	}
-	return strings.ToLower(token[:1]) + token[1:]
+	u := utf16.Encode([]rune(token))
+	first := string(utf16.Decode(u[:1]))
+	rest := string(utf16.Decode(u[1:]))
+	return strings.ToLower(first) + rest
 }
 
 func isUnnecessaryPhraseException(tokens []*languagetool.AnalyzedTokenReadings, phrase []string) bool {
