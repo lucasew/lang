@@ -162,10 +162,12 @@ func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rule
 		if ignoreOldSpellingMatch(hit, text) {
 			continue
 		}
+		// Java: always add hit.begin to startPositions after addMatch, even when
+		// addMatch returns early (de-AT Geschoß skip) without appending a match.
 		if m := r.addOldSpellingMatch(sentence, hit); m != nil {
 			matches = append(matches, m)
-			startPositions[hit.begin] = struct{}{}
 		}
+		startPositions[hit.begin] = struct{}{}
 	}
 	// Sentence-start trie: only hit.begin == 0
 	sentHits := findOldSpellingHits(text, oldSpellingSentKeys, oldSpellingSentMap)

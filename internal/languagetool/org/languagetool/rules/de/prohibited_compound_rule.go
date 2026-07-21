@@ -167,17 +167,14 @@ func (r *ProhibitedCompoundRule) Match(sentence *languagetool.AnalyzedSentence) 
 			continue
 		}
 		tmpWord := readings.GetToken()
+		// Java: continue without updating prevReadings on name / title skips.
 		if prev != nil && prev.HasPartialPosTag("EIG:") && tools.StartsWithUppercase(tmpWord) &&
 			(readings.HasPartialPosTag("EIG:") || !readings.IsTagged()) {
-			// assume name (e.g. Bianca Baalhorn); isPosTagUnknown → !IsTagged for plain
-			// With AnalyzePlain IsTagged false always — skip only when prev EIG (morph).
-			if prev.HasPartialPosTag("EIG:") {
-				prev = readings
-				continue
-			}
+			// assume name, e.g. "Bianca Baalhorn" (avoid: Baalhorn => Ballhorn)
+			continue
 		}
 		if prev != nil && herrnFrauRE.MatchString(prev.GetToken()) {
-			prev = readings
+			// assume name, e.g. "Herr Eiswert" (avoid: Eiswert -> Eiswelt)
 			continue
 		}
 		wordsParts := strings.Split(tmpWord, "-")
@@ -239,11 +236,12 @@ func (r *ProhibitedCompoundRule) getMatches(
 			variants = append(variants, prohibitedPair{uc1, pair.desc1, uc2, pair.desc2})
 		}
 		for _, p := range variants {
+			// Java: wordPart.replaceFirst(pair.part1, pair.part2) — regex first match.
 			var variant string
 			if strings.Contains(wordPart, p.part1) {
-				variant = strings.Replace(wordPart, p.part1, p.part2, 1)
+				variant = replaceFirstRegex(wordPart, p.part1, p.part2)
 			} else if strings.Contains(wordPart, p.part2) {
-				variant = strings.Replace(wordPart, p.part2, p.part1, 1)
+				variant = replaceFirstRegex(wordPart, p.part2, p.part1)
 			} else {
 				continue
 			}
@@ -316,4 +314,18 @@ func (r *ProhibitedCompoundRule) isBlacklistedWord(wordPart string) bool {
 		return true
 	}
 	return false
+}
+
+// replaceFirstRegex ports String.replaceFirst(regex, replacement) for one match.
+// Pair stems are plain letters; invalid patterns leave the string unchanged.
+func replaceFirstRegex(s, pattern, repl string) string {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return s
+	}
+	loc := re.FindStringIndex(s)
+	if loc == nil {
+		return s
+	}
+	return s[:loc[0]] + repl + s[loc[1]:]
 }
