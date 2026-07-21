@@ -37,6 +37,15 @@ func TestDashRule_Rule(t *testing.T) {
 	assertBad("Die große Diäten- Erhöhungs-Manie kam dann doch.")
 	assertBad("MAZEDONIEN- SKOPJE Str.")
 
+	// error morph: message + span covers "Diäten- Erhöhung" style fragment
+	ms := rule.Match(languagetool.AnalyzePlain("Die große Diäten- Erhöhung kam dann doch."))
+	require.Equal(t, 1, len(ms))
+	require.Greater(t, ms[0].GetToPos(), ms[0].GetFromPos())
+	// suggestion typically joins without space
+	if reps := ms[0].GetSuggestedReplacements(); len(reps) > 0 {
+		require.NotContains(t, reps[0], "Diäten- ")
+	}
+
 	// Java: equalsAny exact "UND"|"ODER"|"BZW" only — lowercase "und" is skipped via isUpperCase gate.
 	require.Equal(t, "Keine Leerzeichen in Bindestrich-Komposita (wie z.B. in 'Diäten- Erhöhung')", rule.GetDescription())
 	require.NotEmpty(t, rule.GetURL())
