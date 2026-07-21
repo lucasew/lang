@@ -50,6 +50,11 @@ type HunspellRule struct {
 	// so Match/calcSuggestions dispatch to compound-aware logic — Go embedding does not
 	// virtualize Suggest like Java overrides).
 	SuggestFn func(word string) []string
+	// NonWordSplitter ports HunspellRule.nonWordPattern (from .aff WORDCHARS or NON_ALPHABETIC).
+	// Used by TokenizeText / getCorrectWords. Zero value → letters-only (default).
+	NonWordSplitter NonWordSplitter
+	// IsQuotedCompoundFn ports isQuotedCompound override (German). Base returns false.
+	IsQuotedCompoundFn func(sentence *languagetool.AnalyzedSentence, idx int, token string) bool
 }
 
 func NewHunspellRule(languageCode string, dict HunspellDictionary) *HunspellRule {

@@ -210,7 +210,13 @@ func (r *CompoundAwareHunspellRule) getCorrectWords(wordsOrPhrases []string) []s
 	}
 	var result []string
 	for _, wordOrPhrase := range wordsOrPhrases {
-		words := tokenizeTextHun(wordOrPhrase)
+		// Java: tokenizeText(wordOrPhrase) uses nonWordPattern
+		var words []string
+		if r.HunspellRule != nil {
+			words = r.HunspellRule.TokenizeText(wordOrPhrase)
+		} else {
+			words = tokenizeTextHun(wordOrPhrase)
+		}
 		ok := true
 		for _, w := range words {
 			if w == "" {
