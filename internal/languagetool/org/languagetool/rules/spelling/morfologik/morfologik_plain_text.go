@@ -87,11 +87,12 @@ func (s *MorfologikSpeller) AttachWordsAsBinaryFSA(words []string, infoBesideDic
 	s.GetFrequencyFn = func(word string) int {
 		return d.GetFrequency(word)
 	}
+	// Full candidate list (Java getSuggestions has no 8-cap); GetWeightedSuggestions prefers binaryDict path.
 	s.WeightedSuggestFn = func(word string) []WeightedSuggestion {
-		return s.binaryFindReplacementCandidates(d, word, 8)
+		return s.binaryFindReplacementCandidates(d, word, 0)
 	}
 	s.SuggestFn = func(word string) []string {
-		return wordsFromWeighted(s.binaryFindReplacementCandidates(d, word, 8))
+		return wordsFromWeighted(s.binaryFindReplacementCandidates(d, word, 0))
 	}
 	return len(uniq)
 }

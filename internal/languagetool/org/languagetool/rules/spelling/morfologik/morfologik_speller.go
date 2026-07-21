@@ -438,7 +438,10 @@ const stringMatcherMaxMatchLength = 250
 const morfologikFindReplMaxLen = 50
 
 // GetWeightedSuggestions ports MorfologikSpeller.getSuggestions (WeightedSuggestion list):
-// findReplacementCandidates (if len < 50) + replaceRunOnWordCandidates, then case fold.
+//
+//	Speller speller = new Speller(dictionary, maxEditDistance); // fresh every call
+//	if (word.length() < 50) findReplacementCandidates; replaceRunOnWordCandidates; case fold.
+//
 // Weights match morfologik CandidateData: edit*FREQ_RANGES + FREQ_RANGES - freq - 1.
 func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSuggestion {
 	if s == nil || word == "" {
@@ -464,8 +467,19 @@ func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSugges
 		return applyCaseToWeighted(s, word, out)
 	}
 
+	// Prefer Dictionary path: Java always has Dictionary; one Speller for findRepl+run-on.
+	s.ensureWordsAsDictionary()
+	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
+		out := s.binarySuggestWithRunOn(d, word)
+		if len(out) == 0 {
+			return nil
+		}
+		SortByWeight(out)
+		return applyCaseToWeighted(s, word, out)
+	}
+
+	// Fallback: WeightedSuggestFn/SuggestFn hooks (non-Dictionary inject).
 	var out []WeightedSuggestion
-	// Java: if (word.length() < 50) { findReplacementCandidates... }
 	if UTF16Len(word) < morfologikFindReplMaxLen {
 		if s.WeightedSuggestFn != nil {
 			out = append(out, s.WeightedSuggestFn(word)...)
@@ -476,19 +490,44 @@ func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSugges
 				}
 				out = append(out, NewWeightedSuggestion(w, s.suggestionWeight(word, w)))
 			}
-		} else if len(s.Words) > 0 {
-			// Plain-text / user-dict map path: Java builds runtime FSA + Speller.findRepl.
-			// Without CFSA2 builder, score map peers with SpellerED (Oflazer/Damerau twin).
-			out = append(out, s.mapWordsSuggestWeighted(word)...)
 		}
 	}
-	// Java MorfologikSpeller.getSuggestions: always add replaceRunOnWordCandidates
 	out = mergeWeightedUnique(out, s.ReplaceRunOnWordCandidates(word))
 	if len(out) == 0 {
 		return nil
 	}
 	SortByWeight(out)
 	return applyCaseToWeighted(s, word, out)
+}
+
+// ensureWordsAsDictionary ports Java runtime FSA for plain/user word lists:
+// when tests/callers only AddWord to the map (no binary .dict), build
+// FSABuilder → CFSA2Serializer → Dictionary like MultiSpeller.getDictionary.
+func (s *MorfologikSpeller) ensureWordsAsDictionary() {
+	if s == nil {
+		return
+	}
+	if _, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && s.binaryDict != nil {
+		return
+	}
+	if len(s.Words) == 0 {
+		return
+	}
+	words := make([]string, 0, len(s.Words))
+	for w := range s.Words {
+		if w != "" {
+			words = append(words, w)
+		}
+	}
+	if len(words) == 0 {
+		return
+	}
+	// infoBeside: FileInClassPath may be a classpath-like string; empty info OK (defaults).
+	infoPath := s.BinaryDictPath
+	if infoPath == "" {
+		infoPath = s.FileInClassPath
+	}
+	_ = s.AttachWordsAsBinaryFSA(words, infoPath)
 }
 
 // ReplaceRunOnWordCandidates ports morfologik.speller.Speller.replaceRunOnWordCandidates.
@@ -687,49 +726,18 @@ func (s *MorfologikSpeller) FindReplacements(word string) []string {
 	return nil
 }
 
-// mapWordsSuggestWeighted scores Words map peers with SpellerED (Oflazer/Damerau).
-// Stand-in for Java runtime FSA + Speller.findReplacementCandidates over plain-text lines.
-// Caps at 8 results (same as prior map path). Skips when map is huge (>50k) for latency.
+// mapWordsSuggestWeighted builds runtime CFSA2 Dictionary from Words (Java MultiSpeller
+// plain/user path) then Speller.findReplacementCandidates. Kept for call sites that
+// want findRepl-only without run-on; GetWeightedSuggestions uses ensureWordsAsDictionary.
 func (s *MorfologikSpeller) mapWordsSuggestWeighted(word string) []WeightedSuggestion {
 	if s == nil || word == "" || len(s.Words) == 0 {
 		return nil
 	}
-	if len(s.Words) > 50000 {
-		return nil
+	s.ensureWordsAsDictionary()
+	if d, ok := s.binaryDict.(*atticmorfo.Dictionary); ok && d != nil {
+		return s.binaryFindReplacementCandidates(d, word, 0)
 	}
-	maxEdit := s.MaxEditDistance
-	if maxEdit < 1 {
-		maxEdit = 1
-	}
-	ed := atticmorfo.NewSpellerED(maxEdit)
-	ed.IgnoreDiacritics = s.IgnoreDiacritics
-	ed.ConvertCase = s.ConvertCase
-	ed.EquivalentChars = s.EquivalentChars
-
-	wordU16 := UTF16Len(word)
-	var out []WeightedSuggestion
-	for w := range s.Words {
-		if w == "" || w == word {
-			continue
-		}
-		// length gate (UTF-16): |len(w)-len(word)| > maxEdit cannot be within maxEdit
-		dw := UTF16Len(w) - wordU16
-		if dw < 0 {
-			dw = -dw
-		}
-		if dw > maxEdit {
-			continue
-		}
-		d := ed.GetEditDistance(word, w)
-		if d > 0 && d <= maxEdit {
-			out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
-		}
-	}
-	SortByWeight(out)
-	if len(out) > 8 {
-		out = out[:8]
-	}
-	return out
+	return nil
 }
 
 // editDistance is SpellerED distance (used by suggestionWeight for inject path).

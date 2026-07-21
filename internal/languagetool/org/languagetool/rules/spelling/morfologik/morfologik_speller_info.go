@@ -118,11 +118,13 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	s.FrequencyIncluded = d.FrequencyIncluded()
 	// Binary suggest: Java findReplacementCandidates at MaxEditDistance + replacement-pairs.
 	// Rule-level cascade (speller1/2/3) lives in MorfologikSpellerRule.collectSuggestions.
+	// Suggest hooks unused by GetWeightedSuggestions when binaryDict is set (direct Speller path).
+	// Kept for callers that invoke SuggestFn/WeightedSuggestFn alone — full candidate list (no invent 8-cap).
 	s.SuggestFn = func(word string) []string {
-		return wordsFromWeighted(s.binaryFindReplacementCandidates(d, word, 8))
+		return wordsFromWeighted(s.binaryFindReplacementCandidates(d, word, 0))
 	}
 	s.WeightedSuggestFn = func(word string) []WeightedSuggestion {
-		return s.binaryFindReplacementCandidates(d, word, 8)
+		return s.binaryFindReplacementCandidates(d, word, 0)
 	}
 	// Binary frequency: Java Speller.getFrequency last payload byte.
 	s.GetFrequencyFn = func(word string) int {
@@ -169,27 +171,38 @@ func (s *MorfologikSpeller) syncDictSpellerMeta(d *atticmorfo.Dictionary) {
 	}
 }
 
-// binaryFindReplacementCandidates ports MorfologikSpeller → Speller.findReplacementCandidates.
-// Reuses binarySpeller (sticky containsSeparators) when present; else ephemeral Speller on d.
-func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictionary, word string, maxResults int) []WeightedSuggestion {
-	if s == nil || d == nil || word == "" {
+// newSuggestSpeller ports Java MorfologikSpeller.getSuggestions:
+//
+//	Speller speller = new Speller(dictionary, maxEditDistance);
+//
+// Fresh Speller each call (HMatrix / containsSeparators not reused across getSuggestions).
+// binarySpeller remains for isMisspelled sticky membership (Java this.speller).
+func (s *MorfologikSpeller) newSuggestSpeller(d *atticmorfo.Dictionary) *atticmorfo.Speller {
+	if s == nil || d == nil {
 		return nil
 	}
 	maxEdit := s.MaxEditDistance
 	if maxEdit < 1 {
 		maxEdit = 1
 	}
-	// Prefer LT-loaded replacement/conversion maps when present (same .info as Dictionary).
 	s.syncDictSpellerMeta(d)
+	sp := atticmorfo.NewSpeller(d, maxEdit)
+	sp.SyncFromDict()
+	return sp
+}
 
-	var cds []atticmorfo.CandidateData
-	if s.binarySpeller != nil && s.binarySpeller.Dict == d {
-		// Java Speller is constructed once with fixed editDistance (AttachBinaryDictionary).
-		s.binarySpeller.SyncFromDict()
-		cds = s.binarySpeller.FindReplacementCandidatesFull(word, false)
-	} else {
-		cds = d.FindReplacementCandidates(word, maxEdit)
+// binaryFindReplacementCandidates ports Speller.findReplacementCandidates for a single call.
+// Always uses a fresh Speller (Java getSuggestions constructs Speller per invocation).
+// maxResults <= 0 → no cap (Java returns full candidate list).
+func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictionary, word string, maxResults int) []WeightedSuggestion {
+	if s == nil || d == nil || word == "" {
+		return nil
 	}
+	sp := s.newSuggestSpeller(d)
+	if sp == nil {
+		return nil
+	}
+	cds := sp.FindReplacementCandidatesFull(word, false)
 	if len(cds) == 0 {
 		return nil
 	}
@@ -199,6 +212,29 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 		if maxResults > 0 && len(out) >= maxResults {
 			break
 		}
+	}
+	return out
+}
+
+// binarySuggestWithRunOn ports getSuggestions core: one Speller for findRepl + run-on.
+func (s *MorfologikSpeller) binarySuggestWithRunOn(d *atticmorfo.Dictionary, word string) []WeightedSuggestion {
+	if s == nil || d == nil || word == "" {
+		return nil
+	}
+	sp := s.newSuggestSpeller(d)
+	if sp == nil {
+		return nil
+	}
+	var out []WeightedSuggestion
+	// Java: if (word.length() < 50) findReplacementCandidates
+	if UTF16Len(word) < morfologikFindReplMaxLen {
+		for _, cd := range sp.FindReplacementCandidatesFull(word, false) {
+			out = append(out, NewWeightedSuggestion(cd.Word, cd.Distance))
+		}
+	}
+	// same Speller instance (sticky containsSeparators within this getSuggestions)
+	for _, cd := range sp.ReplaceRunOnWordCandidates(word) {
+		out = append(out, NewWeightedSuggestion(cd.Word, cd.Distance))
 	}
 	return out
 }
