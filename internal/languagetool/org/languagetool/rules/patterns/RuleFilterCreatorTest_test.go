@@ -8,18 +8,32 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type noopFilter2 struct{}
+// MockFilter ports the Java test helper MockFilter (no-arg ctor RuleFilter).
+type MockFilter struct{}
 
-func (noopFilter2) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, patternTokenPos int,
-	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
+func (MockFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
 	return match
 }
 
-func TestRuleFilterCreator_TestInvalidClassName(t *testing.T) {
-	// invalid / unregistered class name panics (Java ClassNotFound-like)
-	c := NewRuleFilterCreator()
-	require.Panics(t, func() { c.GetFilter("org.languagetool.rules.DoesNotExist") })
-	// valid registration works
-	c.Register("org.example.Noop", func() RuleFilter { return noopFilter2{} })
-	require.NotNil(t, c.GetFilter("org.example.Noop"))
+func init() {
+	// Register under Java FQCN so getFilter(MockFilter.class.getName()) twin works.
+	GlobalRuleFilterCreator.Register("org.languagetool.rules.patterns.MockFilter", func() RuleFilter {
+		return MockFilter{}
+	})
+}
+
+// Twin of RuleFilterCreatorTest.testMockFilter
+func TestRuleFilterCreator_MockFilter(t *testing.T) {
+	// Java: RuleFilterCreator.getInstance().getFilter(MockFilter.class.getName())
+	filter := GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.patterns.MockFilter")
+	require.NotNil(t, filter)
+}
+
+// Twin of RuleFilterCreatorTest.testInvalidClassName
+func TestRuleFilterCreator_InvalidClassName(t *testing.T) {
+	// Java: getFilter("MyInvalidClassName") → RuntimeException
+	require.Panics(t, func() {
+		GlobalRuleFilterCreator.GetFilter("MyInvalidClassName")
+	})
 }

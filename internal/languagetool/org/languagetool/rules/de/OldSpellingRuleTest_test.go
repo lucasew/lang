@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestOldSpellingRule(t *testing.T) {
+func TestOldSpellingRule_Test(t *testing.T) {
 	rule := NewOldSpellingRule(nil)
 	m, _ := loadOldSpelling()
 
