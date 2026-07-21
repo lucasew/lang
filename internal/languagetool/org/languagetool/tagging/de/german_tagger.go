@@ -162,96 +162,45 @@ func (t *GermanTagger) tagOneInSentenceWithFirst(word string, sentenceTokens []s
 			readings = m
 		}
 	}
-	if len(readings) == 0 && sentenceTokens != nil {
-		// Java passes running char pos (UTF-16), not token index
-		if imp := t.getImperativeForm(word, sentenceTokens, charPos); len(imp) > 0 {
-			readings = imp
-		}
-	}
-	if len(readings) == 0 && sentenceTokens != nil {
-		if sub := t.getSubstantivatedForms(word, sentenceTokens); len(sub) > 0 {
-			readings = sub
-		}
-	}
-	// elative intensifier compounds (supergut, uralt…)
-	if len(readings) == 0 {
-		if el := t.tagElativeUnknown(word); len(el) > 0 {
-			readings = el
-		}
-	}
-	// dash-linked sanitizeWord + separable prefix verbs (:NEB / EIZ)
-	if len(readings) == 0 {
-		if d := t.tagUnknownDashAndPrefix(word, sentenceTokens, idxPos); len(d) > 0 {
-			readings = d
-		}
-	}
-
-	// compound split fallback — ports GermanTagger compoundParts branch (~643–672)
-	// skip domain-like sequences: example . com
-	if len(readings) == 0 && t.SplitCompound != nil && !isDomainLikeSequence(sentenceTokens, idxPos) {
-		parts := t.SplitCompound(w)
-		if len(parts) > 1 {
-			last := parts[len(parts)-1]
-			// Java: uppercase last part when word starts upper (except *freie*)
-			if tools.StartsWithUppercase(w) && !strings.Contains(last, "freie") &&
-				!strings.Contains(last, "freier") && !strings.Contains(last, "freien") &&
-				!strings.Contains(last, "freies") && !strings.Contains(last, "freiem") {
-				last = tools.UppercaseFirstChar(last)
+	// Unknown-word body ports Java after expansions/mitarbeitend:
+	// compoundParts = tokenize(word); if size<=1 → imp / sub / (elative + dash);
+	// else multi-part last-part path (domain skip).
+	if len(readings) == 0 && strings.TrimSpace(word) != "" {
+		parts := []string{w}
+		multi := false
+		if t.SplitCompound != nil {
+			if cp := t.SplitCompound(w); len(cp) > 1 {
+				parts = cp
+				multi = true
 			}
-			lastTags := t.TagWordExact(last)
-			if len(lastTags) == 0 && t.AdjExpansion != nil {
-				lastTags = t.AdjExpansion.Tag(last)
+		}
+		if multi {
+			if !isDomainLikeSequence(sentenceTokens, idxPos) {
+				readings = t.tagCompoundParts(word, parts, sentenceTokens, idxPos)
 			}
-			if len(lastTags) == 0 {
-				// Java: getNoInfoToken — fall through to empty → no-info below
-			} else {
-				firstPart := parts[0]
-				// Java: prfxs.contains(firstPart) — exact, case-sensitive
-				if isExactSeparablePrefix(firstPart) {
-					// prefix compound: lemma = firstPart + tag.lemma (not full stem rebuild)
-					atStartOrFirstLower := indexOfToken(sentenceTokens, word) == 0 || isFirstCharLowerRestUnchanged(word)
-					for _, tw := range lastTags {
-						pos := tw.PosTag
-						lem := tw.Lemma
-						if lem == "" {
-							lem = last
-						}
-						lemma := firstPart + lem
-						if (strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3")) &&
-							atStartOrFirstLower {
-							if strings.HasSuffix(pos, "NEB") {
-								readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos)))
-							} else {
-								readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos+":NEB")))
-							}
-						} else if !strings.HasPrefix(pos, "VER:IMP") {
-							readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos)))
-						}
-					}
+		} else {
+			// size <= 1: imperative, else substantivated, else elative THEN dash (not exclusive)
+			if sentenceTokens != nil {
+				if imp := t.getImperativeForm(word, sentenceTokens, charPos); len(imp) > 0 {
+					readings = imp
+				} else if sub := t.getSubstantivatedForms(word, sentenceTokens); len(sub) > 0 {
+					readings = sub
 				} else {
-					// non-prefix compound: getAnalyzedTokens stem rebuild; drop any VER-containing tag
-					stem := ""
-					for i, p := range parts[:len(parts)-1] {
-						if i == 0 {
-							stem += p
-						} else {
-							stem += tools.LowercaseFirstChar(p)
-						}
+					// Java: elative may add; dash/prefix always runs afterward in this branch
+					if el := t.tagElativeUnknown(word); len(el) > 0 {
+						readings = append(readings, el...)
 					}
-					for _, tw := range lastTags {
-						if tw.PosTag != "" && strings.Contains(tw.PosTag, "VER") {
-							continue
-						}
-						if strings.HasPrefix(tw.PosTag, "VER:IMP") {
-							continue
-						}
-						lem := tw.Lemma
-						if lem == "" {
-							lem = last
-						}
-						lem = tools.LowercaseFirstChar(lem)
-						readings = append(readings, toToken(word, tagging.NewTaggedWord(stem+lem, tw.PosTag)))
+					if d := t.tagUnknownDashAndPrefix(word, sentenceTokens, idxPos); len(d) > 0 {
+						readings = append(readings, d...)
 					}
+				}
+			} else {
+				// Lookup / no sentence context: still elative + dash (no imp/sub)
+				if el := t.tagElativeUnknown(word); len(el) > 0 {
+					readings = append(readings, el...)
+				}
+				if d := t.tagUnknownDashAndPrefix(word, nil, 0); len(d) > 0 {
+					readings = append(readings, d...)
 				}
 			}
 		}
@@ -260,6 +209,76 @@ func (t *GermanTagger) tagOneInSentenceWithFirst(word string, sentenceTokens []s
 		readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 	}
 	return readings, nextFirst
+}
+
+// tagCompoundParts ports GermanTagger multi-part compoundParts branch (~643–672).
+func (t *GermanTagger) tagCompoundParts(word string, parts []string, sentenceTokens []string, idxPos int) []*languagetool.AnalyzedToken {
+	if len(parts) <= 1 {
+		return nil
+	}
+	last := parts[len(parts)-1]
+	// Java: uppercase last part when word starts upper (except *freie*)
+	if tools.StartsWithUppercase(word) && !strings.Contains(last, "freie") &&
+		!strings.Contains(last, "freier") && !strings.Contains(last, "freien") &&
+		!strings.Contains(last, "freies") && !strings.Contains(last, "freiem") {
+		last = tools.UppercaseFirstChar(last)
+	}
+	lastTags := t.TagWordExact(last)
+	if len(lastTags) == 0 && t.AdjExpansion != nil {
+		lastTags = t.AdjExpansion.Tag(last)
+	}
+	if len(lastTags) == 0 {
+		return nil
+	}
+	var readings []*languagetool.AnalyzedToken
+	firstPart := parts[0]
+	// Java: prfxs.contains(firstPart) — exact, case-sensitive
+	if isExactSeparablePrefix(firstPart) {
+		atStartOrFirstLower := indexOfToken(sentenceTokens, word) == 0 || isFirstCharLowerRestUnchanged(word)
+		for _, tw := range lastTags {
+			pos := tw.PosTag
+			lem := tw.Lemma
+			if lem == "" {
+				lem = last
+			}
+			lemma := firstPart + lem
+			if (strings.HasPrefix(pos, "VER:1") || strings.HasPrefix(pos, "VER:2") || strings.HasPrefix(pos, "VER:3")) &&
+				atStartOrFirstLower {
+				if strings.HasSuffix(pos, "NEB") {
+					readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos)))
+				} else {
+					readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos+":NEB")))
+				}
+			} else if !strings.HasPrefix(pos, "VER:IMP") {
+				readings = append(readings, toToken(word, tagging.NewTaggedWord(lemma, pos)))
+			}
+		}
+		return readings
+	}
+	// non-prefix compound: getAnalyzedTokens stem rebuild; drop any VER-containing tag
+	stem := ""
+	for i, p := range parts[:len(parts)-1] {
+		if i == 0 {
+			stem += p
+		} else {
+			stem += tools.LowercaseFirstChar(p)
+		}
+	}
+	for _, tw := range lastTags {
+		if tw.PosTag != "" && strings.Contains(tw.PosTag, "VER") {
+			continue
+		}
+		if strings.HasPrefix(tw.PosTag, "VER:IMP") {
+			continue
+		}
+		lem := tw.Lemma
+		if lem == "" {
+			lem = last
+		}
+		lem = tools.LowercaseFirstChar(lem)
+		readings = append(readings, toToken(word, tagging.NewTaggedWord(stem+lem, tw.PosTag)))
+	}
+	return readings
 }
 
 // nounTagExpansionExceptions ports GermanTagger.nounTagExpansionExceptions

@@ -53,6 +53,16 @@ func TestImperativeForm_MidSentenceBlocked(t *testing.T) {
 	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
 
+// Twin: after "Bitte", Java does not lowercase — "Geh" looks up "Gehe", not "gehe".
+func TestImperativeForm_AfterBitteNoLowercaseInvent(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"gehe": {tagging.NewTaggedWord("gehen", "VER:IMP:SIN:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Bitte", "Geh", "!"})
+	require.Nil(t, got[1].GetReadings()[0].GetPOSTag())
+}
+
 func TestSubstantivatedForms(t *testing.T) {
 	wt := tagging.MapWordTagger{
 		"Verletzte": {tagging.NewTaggedWord("Verletzte", "SUB:NOM:SIN:FEM:ADJ")},
