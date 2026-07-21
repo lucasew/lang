@@ -21,6 +21,9 @@ type UpperCaseNgramRule struct {
 	PseudoProbability func(trigram []string) float64
 	// DefaultTempOff mirrors Java setDefaultTempOff.
 	DefaultTempOff bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 const upperCaseNgramThreshold = 50.0
@@ -31,12 +34,18 @@ var upperCaseNgramRelevant = map[string]struct{}{
 }
 
 func NewUpperCaseNgramRule(messages map[string]string) *UpperCaseNgramRule {
-	return &UpperCaseNgramRule{
+	r := &UpperCaseNgramRule{
 		Messages:       messages,
 		Category:       rules.CatCasing.GetCategory(messages),
 		IssueType:      rules.ITSMisspelling,
 		DefaultTempOff: true,
 	}
+	// Java: addExamplePair (tagen → Tagen)
+	r.AddExamplePair(
+		rules.Wrong("Die Suche endete nach 15 <marker>tagen</marker>."),
+		rules.Fixed("Die Suche endete nach 15 <marker>Tagen</marker>."),
+	)
+	return r
 }
 
 // NewUpperCaseNgramRuleWithLM ports the Java constructor that requires LanguageModel.
@@ -65,6 +74,37 @@ func (r *UpperCaseNgramRule) GetLocQualityIssueType() rules.ITSIssueType {
 		return rules.ITSMisspelling
 	}
 	return r.IssueType
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *UpperCaseNgramRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *UpperCaseNgramRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *UpperCaseNgramRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *UpperCaseNgramRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

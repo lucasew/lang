@@ -205,14 +205,15 @@ func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence)
 			pos += sentence.GetCorrectedTextLength()
 			continue
 		}
+		// Java: fromPosToken / toPosToken / indexOfQuote are outside the outer
+		// segment loop — not reset at ":" / ";" / newline. A match after a colon
+		// therefore still spans from the first counted word of the sentence.
 		i := 0
 		var fromPos, toPos []int
 		var fromPosToken, toPosToken *languagetool.AnalyzedTokenReadings
 		indexOfQuote := -1
 		for i < len(tokens) {
 			numWords := 0
-			fromPosToken = nil
-			toPosToken = nil
 			for i < len(tokens) && tokens[i].GetToken() != ":" && tokens[i].GetToken() != ";" &&
 				tokens[i].GetToken() != "\n" && tokens[i].GetToken() != "\r\n" && tokens[i].GetToken() != "\n\r" {
 				token := tokens[i].GetToken()
