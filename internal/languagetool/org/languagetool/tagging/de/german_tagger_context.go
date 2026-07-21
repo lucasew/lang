@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -124,16 +125,16 @@ func (t *GermanTagger) getSubstantivatedForms(word string, sentenceTokens []stri
 		if strings.TrimSpace(next) == "" {
 			continue
 		}
-		if next != "" {
-			r0 := []rune(next)[0]
-			if unicode.IsUpper(r0) || next == "als" {
+		// Java: nextWord.length() > 0 && (Character.isUpperCase(nextWord.charAt(0)) || "als")
+		if tagging.UTF16Len(next) > 0 {
+			if unicode.IsUpper(javaFirstUTF16RuneDE(next)) || next == "als" {
 				return nil
 			}
 		}
 		break
 	}
-	// female form = drop final "r" → …e ; need SUB:NOM:SIN:FEM:ADJ
-	female := word[:len(word)-1]
+	// Java: word.substring(0, word.length()-1) — drop last UTF-16 unit ("…er" → "…e")
+	female := javaDropLastUTF16(word)
 	isSub := false
 	for _, tw := range t.TagWordExact(female) {
 		if tw.PosTag == "SUB:NOM:SIN:FEM:ADJ" {
@@ -205,4 +206,20 @@ func indexOfToken(tokens []string, word string) int {
 		}
 	}
 	return -1
+}
+
+func javaFirstUTF16RuneDE(s string) rune {
+	u := utf16.Encode([]rune(s))
+	if len(u) == 0 {
+		return 0
+	}
+	return rune(u[0])
+}
+
+func javaDropLastUTF16(s string) string {
+	u := utf16.Encode([]rune(s))
+	if len(u) == 0 {
+		return s
+	}
+	return string(utf16.Decode(u[:len(u)-1]))
 }
