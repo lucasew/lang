@@ -57,6 +57,8 @@ func NewMorfologikRussianSpellerRule() *MorfologikRussianSpellerRule {
 		r.FilterNoSuggestWordsFn = r.filterNoSuggestWords
 	}
 	r.IgnoreTokenFn = r.ruIgnoreToken
+	// Java MorfologikSpellerRule.initSpeller: binary + spelling.txt + custom + global.
+	r.InitSpellersFromGetters(nil, nil)
 	// Java: каждя → каждая
 	r.AddExamplePair(
 		rules.Wrong("Все счастливые семьи похожи друг на друга, <marker>каждя</marker> несчастливая семья несчастлива по-своему."),

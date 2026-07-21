@@ -29,5 +29,7 @@ func NewMorfologikBretonSpellerRule() *MorfologikBretonSpellerRule {
 	r.IgnoreTaggedWords = true
 	// Java tokenizingPattern(): Pattern.compile("-") — base Match splits getRuleMatches per segment.
 	r.TokenizingPattern = bretonTokenizingPattern
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
 	return r
 }

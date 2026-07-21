@@ -93,6 +93,7 @@ func TestMatch_LatinNotFlagged(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(RussianSpellerDict, 1)
 	sp.AddWord("мир")
 	r := NewMorfologikRussianSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	m, err := r.Match(languagetool.AnalyzePlain("hello"))
@@ -105,6 +106,7 @@ func TestMatch_FiltersNoSuggest(t *testing.T) {
 	sp.AddWord("привет")
 	sp.Suggestions["привт"] = []string{"привет", "блоггер", "дрочим"}
 	r := NewMorfologikRussianSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	m, err := r.Match(languagetool.AnalyzePlain("привт"))

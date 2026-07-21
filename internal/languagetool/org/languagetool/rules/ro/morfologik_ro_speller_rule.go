@@ -10,7 +10,10 @@ const (
 type MorfologikRomanianSpellerRule struct { *morfologik.MorfologikSpellerRule }
 
 func NewMorfologikRomanianSpellerRule() *MorfologikRomanianSpellerRule {
-	return &MorfologikRomanianSpellerRule{
+	r := &MorfologikRomanianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(MorfologikRomanianSpellerRuleID, "ro", RomanianSpellerDict, nil),
 	}
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
+	return r
 }

@@ -58,6 +58,8 @@ func NewMorfologikPolishSpellerRule() *MorfologikPolishSpellerRule {
 	}
 	// Java tokenizingPattern(): (?:[Qq]uasi|[Nn]iby)- — base Match splits segments.
 	r.TokenizingPattern = polishTokenizingPattern
+	// Java MorfologikSpellerRule.initSpeller: binary + getSpellingFileName + additional (custom, global).
+	r.InitSpellersFromGetters(nil, nil)
 	// Java: bledem → błędem (wrong example omits trailing period, same as upstream)
 	r.AddExamplePair(
 		rules.Wrong("To jest zdanie z <marker>bledem</marker>"),

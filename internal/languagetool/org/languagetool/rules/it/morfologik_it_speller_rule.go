@@ -24,10 +24,13 @@ type MorfologikItalianSpellerRule struct {
 }
 
 func NewMorfologikItalianSpellerRule() *MorfologikItalianSpellerRule {
-	return &MorfologikItalianSpellerRule{
+	r := &MorfologikItalianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikItalianSpellerRuleID, "it", ItalianSpellerDict, nil),
 	}
+	// Java MorfologikSpellerRule.initSpeller: binary + spelling.txt + custom + global.
+	r.InitSpellersFromGetters(nil, nil)
+	return r
 }
 
 // Match ports parent Match + orderSuggestions (capitalized-dup drop).

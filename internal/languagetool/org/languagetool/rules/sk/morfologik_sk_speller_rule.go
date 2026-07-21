@@ -10,7 +10,10 @@ const (
 type MorfologikSlovakSpellerRule struct { *morfologik.MorfologikSpellerRule }
 
 func NewMorfologikSlovakSpellerRule() *MorfologikSlovakSpellerRule {
-	return &MorfologikSlovakSpellerRule{
+	r := &MorfologikSlovakSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(MorfologikSlovakSpellerRuleID, "sk", SlovakSpellerDict, nil),
 	}
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
+	return r
 }

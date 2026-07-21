@@ -38,6 +38,8 @@ func NewMorfologikEkavianSpellerRule() *MorfologikEkavianSpellerRule {
 		r.GetAdditionalSpellingFileNamesFn = func() []string { return []string{spelling.GlobalSpellingFile} }
 		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
+	// Java MorfologikSpellerRule.initSpeller (path getters already set).
+	r.InitSpellersFromGetters(nil, nil)
 	// Java: бткие → битке
 	r.AddExamplePair(
 		rules.Wrong("Изгубила све сам <marker>бткие</marker>, ал' још водим рат."),

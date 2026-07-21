@@ -33,6 +33,8 @@ func NewMorfologikJekavianSpellerRule() *MorfologikJekavianSpellerRule {
 		r.GetAdditionalSpellingFileNamesFn = func() []string { return []string{spelling.GlobalSpellingFile} }
 		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
+	// Java MorfologikSpellerRule.initSpeller (path getters already set).
+	r.InitSpellersFromGetters(nil, nil)
 	return r
 }
 

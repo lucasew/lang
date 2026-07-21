@@ -19,8 +19,11 @@ type MorfologikSlovenianSpellerRule struct {
 }
 
 func NewMorfologikSlovenianSpellerRule() *MorfologikSlovenianSpellerRule {
-	return &MorfologikSlovenianSpellerRule{
+	r := &MorfologikSlovenianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikSlovenianSpellerRuleID, "sl", SlovenianSpellerDict, nil),
 	}
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
+	return r
 }

@@ -17,8 +17,11 @@ type MorfologikTagalogSpellerRule struct {
 }
 
 func NewMorfologikTagalogSpellerRule() *MorfologikTagalogSpellerRule {
-	return &MorfologikTagalogSpellerRule{
+	r := &MorfologikTagalogSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikTagalogSpellerRuleID, "tl", TagalogSpellerDict, nil),
 	}
+	// Java MorfologikSpellerRule.initSpeller when binary present.
+	r.InitSpellersFromGetters(nil, nil)
+	return r
 }

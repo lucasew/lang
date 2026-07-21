@@ -18,6 +18,8 @@ func TestMorfologikRussianYOSpellerRule_MorfologikSpeller(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(RussianYOSpellerDict, 1)
 	sp.AddWord("ёлка")
 	sp.AddWord("елка") // YO dict often has both forms
+	// Map-inject unit path: clear initSpeller Multis so Speller map is used.
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 

@@ -38,6 +38,8 @@ func NewMorfologikRussianYOSpellerRule() *MorfologikRussianYOSpellerRule {
 		base.FilterNoSuggestWordsFn = base.filterNoSuggestWords
 	}
 	base.IgnoreTokenFn = base.ruIgnoreToken
+	// Java MorfologikSpellerRule.initSpeller for YO binary dict.
+	base.InitSpellersFromGetters(nil, nil)
 	// Java YO ctor: same demos as base speller (каждя → каждая)
 	base.AddExamplePair(
 		rules.Wrong("Все счастливые семьи похожи друг на друга, <marker>каждя</marker> несчастливая семья несчастлива по-своему."),

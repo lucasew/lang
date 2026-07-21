@@ -21,6 +21,8 @@ func TestMorfologikRussianSpellerRule_MorfologikSpeller(t *testing.T) {
 		sp.AddWord(w)
 	}
 	sp.Suggestions["привт"] = []string{"привет"}
+	// Map-inject unit path: clear initSpeller Multis so Speller map is used.
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 
