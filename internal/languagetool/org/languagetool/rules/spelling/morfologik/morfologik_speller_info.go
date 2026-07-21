@@ -21,6 +21,9 @@ const (
 	infoConvertCase       = "fsa.dict.speller.convert-case"
 	infoFrequencyIncluded = "fsa.dict.frequency-included"
 	infoRunOnWords        = "fsa.dict.speller.runon-words"
+	infoInputConversion   = "fsa.dict.input-conversion"
+	infoOutputConversion  = "fsa.dict.output-conversion"
+	infoReplacementPairs  = "fsa.dict.speller.replacement-pairs"
 )
 
 // binaryDictCache caches OpenDictionary by absolute path (FSA is thread-safe).
@@ -52,6 +55,15 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 	}
 	if v, ok := meta[infoRunOnWords]; ok {
 		s.SupportRunOnWords = parseInfoBool(v, s.SupportRunOnWords)
+	}
+	if v, ok := meta[infoInputConversion]; ok {
+		s.InputConversionPairs = ParseConversionPairs(v)
+	}
+	if v, ok := meta[infoOutputConversion]; ok {
+		s.OutputConversionPairs = ParseConversionPairs(v)
+	}
+	if v, ok := meta[infoReplacementPairs]; ok {
+		s.ReplacementTheRest = partitionReplacementPairs(ParseReplacementPairs(v))
 	}
 	// ignore-diacritics affects suggestion search, not isMisspelled gates — stored when needed later.
 	_ = meta[infoIgnoreDiacritics]
@@ -87,13 +99,13 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	s.BinaryDictPath = dictPath
 	s.binaryDict = d
 	s.FrequencyIncluded = d.FrequencyIncluded()
-	// Binary suggest: Java MorfologikSpeller(Dictionary, maxEditDistance) — only this distance.
+	// Binary suggest: Java findReplacementCandidates at MaxEditDistance + replacement-pairs.
 	// Rule-level cascade (speller1/2/3) lives in MorfologikSpellerRule.collectSuggestions.
 	s.SuggestFn = func(word string) []string {
-		return binarySuggestionsAtDistance(d, word, 8, s.MaxEditDistance)
+		return wordsFromWeighted(s.binaryFindReplacementCandidates(d, word, 8))
 	}
 	s.WeightedSuggestFn = func(word string) []WeightedSuggestion {
-		return binaryWeightedAtDistance(d, word, 8, s.MaxEditDistance)
+		return s.binaryFindReplacementCandidates(d, word, 8)
 	}
 	// Binary frequency: Java Speller.getFrequency last payload byte.
 	s.GetFrequencyFn = func(word string) int {
@@ -102,30 +114,94 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	return true
 }
 
-// binarySuggestionsAtDistance ports Speller.findReplacements for a fixed maxEditDistance.
-func binarySuggestionsAtDistance(d *atticmorfo.Dictionary, word string, maxResults, maxEdit int) []string {
-	return weightedWords(binaryWeightedRaw(d, word, maxResults, maxEdit))
-}
-
-// binaryWeightedAtDistance ports findReplacementCandidates weights for fixed maxEditDistance.
-func binaryWeightedAtDistance(d *atticmorfo.Dictionary, word string, maxResults, maxEdit int) []WeightedSuggestion {
-	return toWeighted(binaryWeightedRaw(d, word, maxResults, maxEdit))
-}
-
-func binaryWeightedRaw(d *atticmorfo.Dictionary, word string, maxResults, maxEdit int) []struct {
-	Word   string
-	Weight int
-} {
-	if d == nil || word == "" {
+// binaryFindReplacementCandidates ports Speller.findReplacementCandidates for one maxEdit:
+// input conversion → getAllReplacements variants → distance-0 dict hits + edit search per variant
+// → output conversion → sort/dedupe.
+func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictionary, word string, maxResults int) []WeightedSuggestion {
+	if s == nil || d == nil || word == "" {
 		return nil
 	}
+	maxEdit := s.MaxEditDistance
 	if maxEdit < 1 {
 		maxEdit = 1
 	}
 	if maxEdit > 3 {
 		maxEdit = 3
 	}
-	return d.WeightedEditSuggestions(word, maxResults, maxEdit)
+	word = s.applyInputConversion(word)
+	// evenIfWordInDictionary=false: empty when already known (caller usually only for misspellings)
+	if d.Contains(word) {
+		return nil
+	}
+	variants := GetAllReplacements(word, s.ReplacementTheRest, 0, 0)
+	if len(variants) == 0 {
+		variants = []string{word}
+	}
+	var candidates []WeightedSuggestion
+	seen := map[string]struct{}{}
+	addCand := func(w string, dist int) {
+		w = s.applyOutputConversion(w)
+		if w == "" || w == word {
+			return
+		}
+		if _, ok := seen[w]; ok {
+			return
+		}
+		seen[w] = struct{}{}
+		candidates = append(candidates, NewWeightedSuggestion(w, s.suggestionWeightDist(w, dist)))
+	}
+	// Java: for each replacement variant — if in dict, distance 0; always queue for edit search
+	i := 0
+	for _, wordChecked := range variants {
+		i++
+		if i > upperSearchLimit {
+			break
+		}
+		if d.Contains(wordChecked) {
+			addCand(wordChecked, 0)
+		} else {
+			low := strings.ToLower(wordChecked)
+			up := strings.ToUpper(wordChecked)
+			if d.Contains(low) {
+				addCand(low, 0)
+			}
+			if d.Contains(up) {
+				addCand(up, 0)
+			}
+			if len(low) > 1 {
+				firstUp := uppercaseFirstChar(low)
+				if d.Contains(firstUp) {
+					addCand(firstUp, 0)
+				}
+			}
+		}
+		// edit-distance search on this variant (Java findRepl / our WeightedEditSuggestions)
+		// skip very short after first (Java MIN_WORD_LENGTH=4 && i>2)
+		if len([]rune(wordChecked)) < 4 && i > 2 {
+			continue
+		}
+		for _, e := range d.WeightedEditSuggestions(wordChecked, maxResults, maxEdit) {
+			w := s.applyOutputConversion(e.Word)
+			if w == "" || w == word {
+				continue
+			}
+			if _, ok := seen[w]; ok {
+				continue
+			}
+			seen[w] = struct{}{}
+			wt := e.Weight
+			if w != e.Word {
+				// output conversion changed surface — recompute weight for new form
+				wt = s.suggestionWeightDist(w, 1)
+			}
+			candidates = append(candidates, NewWeightedSuggestion(w, wt))
+		}
+	}
+	SortByWeight(candidates)
+	if maxResults > 0 && len(candidates) > maxResults {
+		candidates = candidates[:maxResults]
+	}
+	return candidates
 }
 
 // binaryCascadeWeighted ports calcSpellerSuggestions distance cascade at the binary layer

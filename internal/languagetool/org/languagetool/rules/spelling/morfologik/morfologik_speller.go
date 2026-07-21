@@ -48,6 +48,12 @@ type MorfologikSpeller struct {
 	FrequencyIncluded bool
 	// SupportRunOnWords ports fsa.dict.speller.runon-words (default true).
 	SupportRunOnWords bool
+	// InputConversionPairs ports fsa.dict.input-conversion (ordered).
+	InputConversionPairs [][2]string
+	// OutputConversionPairs ports fsa.dict.output-conversion (ordered).
+	OutputConversionPairs [][2]string
+	// ReplacementTheRest ports Speller.replacementsTheRest (multi-char targets, len>=3).
+	ReplacementTheRest map[string][]string
 	// binaryDict is the attached FSA (typed as any to avoid exporting attic in all call sites).
 	// Set only via AttachBinaryDictionary; used for identity/debug.
 	binaryDict any
@@ -174,40 +180,56 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 	if word == "LanguageTool" || word == "LanguageTooler" {
 		return false
 	}
+	// Java: input conversion before all gates
+	wordToCheck := s.applyInputConversion(word)
 	// Java: isAlphabetic = word.length() != 1 || isAlphabetic(charAt(0))  (UTF-16 length/charAt)
-	u := utf16.Encode([]rune(word))
+	u := utf16.Encode([]rune(wordToCheck))
 	isAlpha := len(u) != 1 || isAlphabeticCodePoint(rune(u[0]))
 	// (!ignorePunctuation || isAlphabetic) — single non-letter ignored when ignorePunctuation
 	if s.IgnorePunctuation && !isAlpha {
 		return false
 	}
 	// (!ignoreNumbers || containsNoDigit)
-	if s.IgnoreNumbers && containsDigitUTF16(word) {
+	if s.IgnoreNumbers && containsDigitUTF16(wordToCheck) {
 		return false
 	}
-	if s.IgnoreCamelCase && isCamelCaseWord(word) {
+	if s.IgnoreCamelCase && isCamelCaseWord(wordToCheck) {
 		return false
 	}
-	if s.IgnoreAllUppercase && isAlpha && isAllUppercaseWord(word) {
+	if s.IgnoreAllUppercase && isAlpha && isAllUppercaseWord(wordToCheck) {
 		return false
 	}
-	if s.inDictionary(word) {
+	if s.inDictionary(wordToCheck) {
 		return false
 	}
 	// convertCase: accept lowercase / initial-upper forms of non-mixed-case words
-	if s.ConvertCase && !isMixedCaseWord(word) {
-		low := strings.ToLower(word)
+	if s.ConvertCase && !isMixedCaseWord(wordToCheck) {
+		low := strings.ToLower(wordToCheck)
 		if s.inDictionary(low) {
 			return false
 		}
-		if isAllUppercaseWord(word) {
+		if isAllUppercaseWord(wordToCheck) {
 			// initialUppercase: first upper, rest lower
-			if iu := initialUppercaseWord(word); iu != word && s.inDictionary(iu) {
+			if iu := initialUppercaseWord(wordToCheck); iu != wordToCheck && s.inDictionary(iu) {
 				return false
 			}
 		}
 	}
 	return true
+}
+
+func (s *MorfologikSpeller) applyInputConversion(word string) string {
+	if s == nil || len(s.InputConversionPairs) == 0 {
+		return word
+	}
+	return ApplyConversionPairs(word, s.InputConversionPairs)
+}
+
+func (s *MorfologikSpeller) applyOutputConversion(word string) string {
+	if s == nil || len(s.OutputConversionPairs) == 0 {
+		return word
+	}
+	return ApplyConversionPairs(word, s.OutputConversionPairs)
 }
 
 func (s *MorfologikSpeller) inDictionary(word string) bool {
@@ -397,8 +419,7 @@ func (s *MorfologikSpeller) ReplaceRunOnWordCandidates(original string) []Weight
 	if s == nil || original == "" || !s.SupportRunOnWords {
 		return nil
 	}
-	wordToCheck := original
-	// no input conversion pairs yet (Java DictionaryLookup.applyReplacements)
+	wordToCheck := s.applyInputConversion(original)
 	if s.isInDictionaryExact(wordToCheck) {
 		return nil
 	}
@@ -446,7 +467,8 @@ func (s *MorfologikSpeller) ReplaceRunOnWords(original string) []string {
 }
 
 func (s *MorfologikSpeller) runOnCandidate(replacement string) WeightedSuggestion {
-	// Java addReplacement → CandidateData(replacement, 1)
+	// Java addReplacement → output conversion then CandidateData(replacement, 1)
+	replacement = s.applyOutputConversion(replacement)
 	return NewWeightedSuggestion(replacement, s.suggestionWeightDist(replacement, 1))
 }
 
