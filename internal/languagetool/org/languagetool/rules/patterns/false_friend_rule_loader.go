@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // FalseFriendRuleLoader ports org.languagetool.rules.patterns.FalseFriendRuleLoader
@@ -189,7 +190,7 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		var motherTranslations []string
 		for _, tr := range xr.Translations {
 			if baseLang(tr.Lang) == motherLang {
-				motherTranslations = append(motherTranslations, strings.TrimSpace(tr.Content))
+				motherTranslations = append(motherTranslations, tools.JavaStringTrim(tr.Content))
 			}
 		}
 		if len(motherTranslations) > 0 {
@@ -204,7 +205,7 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		}
 		var tokens []*PatternToken
 		for _, xt := range xr.Pattern.Tokens {
-			content := strings.TrimSpace(xt.Content)
+			content := tools.JavaStringTrim(xt.Content)
 			// SENT_START and empty surface + postag-only tokens are valid Java
 			cs := strings.EqualFold(xt.CaseSensitive, "yes")
 			re := strings.EqualFold(xt.Regexp, "yes")
@@ -213,17 +214,17 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 			if strings.EqualFold(xt.Negate, "yes") {
 				pt.SetNegation(true)
 			}
-			if pos := strings.TrimSpace(xt.Postag); pos != "" {
+			if pos := tools.JavaStringTrim(xt.Postag); pos != "" {
 				pt.SetPosToken(PosToken{
 					PosTag: pos,
 					Regexp: strings.EqualFold(xt.PostagRegexp, "yes"),
 					Negate: false,
 				})
 			}
-			if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
+			if sb := tools.JavaStringTrim(xt.SpaceBefore); sb != "" {
 				pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 			}
-			if sk := strings.TrimSpace(xt.Skip); sk != "" {
+			if sk := tools.JavaStringTrim(xt.Skip); sk != "" {
 				if n, err := strconv.Atoi(sk); err == nil {
 					pt.SetSkipNext(n)
 				}
@@ -306,7 +307,7 @@ func englishLangName(code string) string {
 }
 
 func baseLang(code string) string {
-	code = strings.TrimSpace(code)
+	code = tools.JavaStringTrim(code)
 	if i := strings.IndexByte(code, '-'); i >= 0 {
 		return code[:i]
 	}
@@ -328,7 +329,7 @@ func tokensAsString(tokens []*PatternToken) string {
 func formatFFTranslations(trs []string) string {
 	parts := make([]string, 0, len(trs))
 	for _, t := range trs {
-		t = strings.TrimSpace(t)
+		t = tools.JavaStringTrim(t)
 		if t == "" {
 			continue
 		}

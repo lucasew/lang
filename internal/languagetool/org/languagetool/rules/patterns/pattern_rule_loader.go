@@ -9,6 +9,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // xmlUnmarshalSource holds the raw XML bytes for the active Unmarshal so
@@ -148,8 +149,8 @@ type xmlEquivalence struct {
 }
 
 type xmlCategory struct {
-	ID         string         `xml:"id,attr"`
-	Name       string         `xml:"name,attr"`
+	ID   string `xml:"id,attr"`
+	Name string `xml:"name,attr"`
 	// Default ports category default="off"|"on" (Java Category onByDefault).
 	Default string `xml:"default,attr"`
 	// Type ports category type="misspelling|style|…" → rule LocQualityIssueType when rule omits type.
@@ -157,18 +158,18 @@ type xmlCategory struct {
 	// Prio ports category prio="N" (Java prioCategoryAttribute; 0 = unset).
 	Prio string `xml:"prio,attr"`
 	// Premium ports category premium="yes|no" (Java premiumCategoryAttribute).
-	Premium string `xml:"premium,attr"`
-	Tags       string         `xml:"tags,attr"`
-	ToneTags   string         `xml:"tone_tags,attr"`
+	Premium  string `xml:"premium,attr"`
+	Tags     string `xml:"tags,attr"`
+	ToneTags string `xml:"tone_tags,attr"`
 	// GoalSpecific ports is_goal_specific on category (inherited when rule omits it).
-	GoalSpecific string        `xml:"is_goal_specific,attr"`
-	Rules        []xmlRule     `xml:"rule"`
+	GoalSpecific string         `xml:"is_goal_specific,attr"`
+	Rules        []xmlRule      `xml:"rule"`
 	RuleGroups   []xmlRuleGroup `xml:"rulegroup"`
 }
 
 type xmlRuleGroup struct {
-	ID    string    `xml:"id,attr"`
-	Name  string    `xml:"name,attr"`
+	ID   string `xml:"id,attr"`
+	Name string `xml:"name,attr"`
 	// Default ports rulegroup default="off"|"temp_off" (inherited by child rules).
 	Default string `xml:"default,attr"`
 	// Type ports rulegroup type="grammar|typographical|…" (Java ruleGroupIssueType).
@@ -181,9 +182,9 @@ type xmlRuleGroup struct {
 	MinPrevMatches string `xml:"min_prev_matches,attr"`
 	// DistanceTokens ports rulegroup distance_tokens (Java ruleGroupDistanceTokens).
 	DistanceTokens string `xml:"distance_tokens,attr"`
-	Tags  string    `xml:"tags,attr"`
-	ToneTags string `xml:"tone_tags,attr"`
-	GoalSpecific string `xml:"is_goal_specific,attr"`
+	Tags           string `xml:"tags,attr"`
+	ToneTags       string `xml:"tone_tags,attr"`
+	GoalSpecific   string `xml:"is_goal_specific,attr"`
 	// URL ports rulegroup <url> inherited when child omits url (Java urlForRuleGroup).
 	URL string `xml:"url"`
 	// AntiPatterns on the rulegroup apply to every child rule (Java PatternRuleHandler).
@@ -192,9 +193,9 @@ type xmlRuleGroup struct {
 }
 
 type xmlRule struct {
-	ID      string     `xml:"id,attr"`
-	Name    string     `xml:"name,attr"`
-	Default string     `xml:"default,attr"`
+	ID      string `xml:"id,attr"`
+	Name    string `xml:"name,attr"`
+	Default string `xml:"default,attr"`
 	// Type ports rule type="…" → LocQualityIssueType (overrides rulegroup/category).
 	Type string `xml:"type,attr"`
 	// Prio ports rule prio="N" (Java prioRuleAttribute; non-zero overrides group/category).
@@ -204,11 +205,11 @@ type xmlRule struct {
 	// MinPrevMatches ports rule min_prev_matches (inherits rulegroup when unset).
 	MinPrevMatches string `xml:"min_prev_matches,attr"`
 	// DistanceTokens ports rule distance_tokens (inherits rulegroup when unset).
-	DistanceTokens string `xml:"distance_tokens,attr"`
-	Tags    string     `xml:"tags,attr"`
-	ToneTags string    `xml:"tone_tags,attr"`
-	GoalSpecific string `xml:"is_goal_specific,attr"`
-	Pattern xmlPattern `xml:"pattern"`
+	DistanceTokens string     `xml:"distance_tokens,attr"`
+	Tags           string     `xml:"tags,attr"`
+	ToneTags       string     `xml:"tone_tags,attr"`
+	GoalSpecific   string     `xml:"is_goal_specific,attr"`
+	Pattern        xmlPattern `xml:"pattern"`
 	// Message keeps inner XML so <suggestion>…</suggestion> and soft \N backrefs survive.
 	Message xmlMessage `xml:"message"`
 	Short   string     `xml:"short"`
@@ -852,12 +853,12 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 	}
 	cfg := NewUnifierConfiguration()
 	for _, u := range root.Unifications {
-		feat := strings.TrimSpace(u.Feature)
+		feat := tools.JavaStringTrim(u.Feature)
 		if feat == "" {
 			continue
 		}
 		for _, eq := range u.Equivalences {
-			typ := strings.TrimSpace(eq.Type)
+			typ := tools.JavaStringTrim(eq.Type)
 			if typ == "" {
 				continue
 			}
@@ -874,7 +875,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 	// phraseMap: id → alternatives (each alternative is a token sequence).
 	phraseMap := buildPhraseMap(root.Phrases)
 	var out []*AbstractPatternRule
-	idPrefix := strings.TrimSpace(root.IdPrefix)
+	idPrefix := tools.JavaStringTrim(root.IdPrefix)
 	add := func(xr xmlRule, defaultID, catID, catName string, catTags, groupTags []rules.Tag, catTones, groupTones []languagetool.ToneTag, catGoal, groupGoal, groupDefault string, catDefaultOff bool, catType, groupType, groupURL, sourceFile string, catPrio, groupPrio int, filePremium, catPremium, groupPremium string, groupMinPrev, groupDistTok int) error {
 		id := xr.ID
 		if id == "" {
@@ -898,14 +899,14 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		// Unknown filter class → skip rule (fail-closed; never match without filter).
 		var resolvedFilter RuleFilter
 		var filterArgs string
-		if xr.Filter != nil && strings.TrimSpace(xr.Filter.Class) != "" {
-			class := strings.TrimSpace(xr.Filter.Class)
+		if xr.Filter != nil && tools.JavaStringTrim(xr.Filter.Class) != "" {
+			class := tools.JavaStringTrim(xr.Filter.Class)
 			f, ok := GlobalRuleFilterCreator.TryGetFilter(class)
 			if !ok {
 				return nil
 			}
 			resolvedFilter = f
-			filterArgs = strings.TrimSpace(xr.Filter.Args)
+			filterArgs = tools.JavaStringTrim(xr.Filter.Args)
 		}
 		// Java: pattern-level case_sensitive inherits to tokens/exceptions
 		// when the child does not set its own case_sensitive attribute.
@@ -916,11 +917,11 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 			return nil
 		}
 		antis := antiPatternsFromXML(id, languageCode, xr.AntiPatterns, cfg, phraseMap)
-		rawMsg := strings.TrimSpace(xr.Message.Inner)
+		rawMsg := tools.JavaStringTrim(xr.Message.Inner)
 		// Java isRuleSuppressMisspelled from <message suppress_misspelled="yes">
 		msgSuppress := strings.EqualFold(xr.Message.SuppressMisspelled, "yes")
 		msg, sugMatches := ProcessRuleMessageOpts(rawMsg, msgSuppress, true)
-		short := strings.TrimSpace(xr.Short)
+		short := tools.JavaStringTrim(xr.Short)
 		// Java suggestionsOutMsg: <suggestion> outside <message>
 		// isRuleSuppressMisspelled stays true for outer suggestions (not reset on </message>).
 		sugOutRaw := buildSuggestionsOutMsg(xr.Suggestions)
@@ -996,16 +997,16 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 		}
 		return nil
 	}
-	srcFile := strings.TrimSpace(filename)
-	filePremium := strings.TrimSpace(root.Premium)
+	srcFile := tools.JavaStringTrim(filename)
+	filePremium := tools.JavaStringTrim(root.Premium)
 	for _, cat := range root.Categories {
 		catTags := parseRuleTagsAttr(cat.Tags)
 		catTones := parseToneTagsAttr(cat.ToneTags)
 		// Java: onByDefault = !OFF.equals(attrs.getValue(DEFAULT))
-		catDefaultOff := strings.EqualFold(strings.TrimSpace(cat.Default), XMLOff)
-		catType := strings.TrimSpace(cat.Type)
+		catDefaultOff := strings.EqualFold(tools.JavaStringTrim(cat.Default), XMLOff)
+		catType := tools.JavaStringTrim(cat.Type)
 		catPrio := parsePrioAttr(cat.Prio)
-		catPremium := strings.TrimSpace(cat.Premium)
+		catPremium := tools.JavaStringTrim(cat.Premium)
 		for _, xr := range cat.Rules {
 			if err := add(xr, "", cat.ID, cat.Name, catTags, nil, catTones, nil, cat.GoalSpecific, "", "", catDefaultOff, catType, "", "", srcFile, catPrio, 0, filePremium, catPremium, "", 0, 0); err != nil {
 				return nil, err
@@ -1020,10 +1021,10 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 			groupAntis := antiPatternsFromXML(groupID, languageCode, g.AntiPatterns, cfg, phraseMap)
 			groupTags := parseRuleTagsAttr(g.Tags)
 			groupTones := parseToneTagsAttr(g.ToneTags)
-			groupType := strings.TrimSpace(g.Type)
-			groupURL := strings.TrimSpace(g.URL)
+			groupType := tools.JavaStringTrim(g.Type)
+			groupURL := tools.JavaStringTrim(g.URL)
 			groupPrio := parsePrioAttr(g.Prio)
-			groupPremium := strings.TrimSpace(g.Premium)
+			groupPremium := tools.JavaStringTrim(g.Premium)
 			groupMinPrev := parsePrioAttr(g.MinPrevMatches) // same int parse as prio
 			groupDistTok := parsePrioAttr(g.DistanceTokens)
 			for i, xr := range g.Rules {
@@ -1061,7 +1062,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename st
 
 // resolveIntAttr ports rule attr with inheritance: if ruleAttr set use it, else inherit.
 func resolveIntAttr(ruleAttr string, inherit int) int {
-	s := strings.TrimSpace(ruleAttr)
+	s := tools.JavaStringTrim(ruleAttr)
 	if s == "" {
 		return inherit
 	}
@@ -1072,7 +1073,7 @@ func resolveIntAttr(ruleAttr string, inherit int) int {
 // rule premium → rulegroup → category → file; yes/true → true; no/false → false; unset → false.
 func resolvePremium(rulePrem, groupPrem, catPrem, filePrem string) bool {
 	for _, a := range []string{rulePrem, groupPrem, catPrem, filePrem} {
-		a = strings.TrimSpace(a)
+		a = tools.JavaStringTrim(a)
 		if a == "" {
 			continue
 		}
@@ -1088,7 +1089,7 @@ func resolvePremium(rulePrem, groupPrem, catPrem, filePrem string) bool {
 
 // parsePrioAttr ports Integer.parseInt on XML prio= (invalid/empty → 0).
 func parsePrioAttr(s string) int {
-	s = strings.TrimSpace(s)
+	s = tools.JavaStringTrim(s)
 	if s == "" {
 		return 0
 	}
@@ -1121,7 +1122,7 @@ func resolvePriority(catPrio, groupPrio, rulePrio int) int {
 // (Java would throw IllegalArgumentException).
 func resolveIssueType(ruleType, groupType, catType string) string {
 	for _, t := range []string{ruleType, groupType, catType} {
-		t = strings.TrimSpace(t)
+		t = tools.JavaStringTrim(t)
 		if t == "" {
 			continue
 		}
@@ -1140,10 +1141,10 @@ func resolveIssueType(ruleType, groupType, catType string) string {
 
 // resolveRuleURL ports rule <url> else rulegroup <url>.
 func resolveRuleURL(ruleURL, groupURL string) string {
-	if u := strings.TrimSpace(ruleURL); u != "" {
+	if u := tools.JavaStringTrim(ruleURL); u != "" {
 		return u
 	}
-	return strings.TrimSpace(groupURL)
+	return tools.JavaStringTrim(groupURL)
 }
 
 // resolveRuleDefaultOff ports PatternRuleHandler default inheritance:
@@ -1151,14 +1152,14 @@ func resolveRuleURL(ruleURL, groupURL string) string {
 // otherwise the rule's own default= attribute is used.
 // temp_off implies defaultOff (Java setDefaultTempOff).
 func resolveRuleDefaultOff(ruleDefault, groupDefault string) (defaultOff, defaultTempOff bool) {
-	gdef := strings.ToLower(strings.TrimSpace(groupDefault))
+	gdef := strings.ToLower(tools.JavaStringTrim(groupDefault))
 	switch gdef {
 	case XMLOff:
 		return true, false
 	case XMLTempOff:
 		return true, true
 	}
-	rdef := strings.ToLower(strings.TrimSpace(ruleDefault))
+	rdef := strings.ToLower(tools.JavaStringTrim(ruleDefault))
 	switch rdef {
 	case XMLTempOff:
 		return true, true
@@ -1220,7 +1221,7 @@ func buildPhraseMap(block *xmlPhrasesBlock) map[string][][]*PatternToken {
 		return m
 	}
 	for _, def := range block.Phrases {
-		id := strings.TrimSpace(def.ID)
+		id := tools.JavaStringTrim(def.ID)
 		if id == "" {
 			continue
 		}
@@ -1402,13 +1403,13 @@ func matchFromTokenMatchXML(xm *xmlTokenMatch) *Match {
 		return nil
 	}
 	caseConv := CaseNone
-	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
+	if v := tools.JavaStringTrim(xm.CaseConversion); v != "" {
 		if c, ok := ParseCaseConversion(v); ok {
 			caseConv = c
 		}
 	}
 	include := IncludeNone
-	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
+	if v := tools.JavaStringTrim(xm.IncludeSkipped); v != "" {
 		if ir, ok := ParseIncludeRange(v); ok {
 			include = ir
 		}
@@ -1436,13 +1437,13 @@ func matchFromTokenMatchXML(xm *xmlTokenMatch) *Match {
 	m.RegexReplacePresent = xm.RegexpReplace != nil
 	m.PosTagReplacePresent = xm.PostagReplace != nil
 	// Java: TokenRef is the raw no= value (offset from firstMatchToken, not 1-based message index).
-	if no := strings.TrimSpace(xm.No); no != "" {
+	if no := tools.JavaStringTrim(xm.No); no != "" {
 		var n int
 		if _, err := fmt.Sscanf(no, "%d", &n); err == nil {
 			m.SetTokenRef(n)
 		}
 	}
-	if body := strings.TrimSpace(xm.Content); body != "" {
+	if body := tools.JavaStringTrim(xm.Content); body != "" {
 		m.SetLemmaString(body)
 	}
 	return m
@@ -1466,7 +1467,7 @@ func buildSuggestionsOutMsg(sugs []xmlMessage) string {
 	}
 	var b strings.Builder
 	for _, s := range sugs {
-		inner := strings.TrimSpace(s.Inner)
+		inner := tools.JavaStringTrim(s.Inner)
 		if inner == "" {
 			continue
 		}
@@ -1549,7 +1550,7 @@ func tokenFromXMLWithMarker(xt xmlToken, patternHasMarker bool) *PatternToken {
 }
 
 func tokenFromXML(xt xmlToken) *PatternToken {
-	content := strings.TrimSpace(xt.Content)
+	content := tools.JavaStringTrim(xt.Content)
 	cs := strings.EqualFold(xt.CaseSensitive, "yes")
 	re := strings.EqualFold(xt.Regexp, "yes")
 	inflected := strings.EqualFold(xt.Inflected, "yes")
@@ -1594,26 +1595,26 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 		// POS filled by setpos match at compile time; mark as regexp POS shell.
 		pt.SetPosToken(PosToken{Regexp: true})
 	}
-	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
+	if sb := tools.JavaStringTrim(xt.SpaceBefore); sb != "" {
 		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 	}
 	if xt.Match != nil {
 		pt.SetMatch(matchFromTokenMatchXML(xt.Match))
 	}
-	if ch := strings.TrimSpace(xt.ChunkRe); ch != "" {
+	if ch := tools.JavaStringTrim(xt.ChunkRe); ch != "" {
 		pt.SetChunkTag(ch, true)
-	} else if ch := strings.TrimSpace(xt.Chunk); ch != "" {
+	} else if ch := tools.JavaStringTrim(xt.Chunk); ch != "" {
 		pt.SetChunkTag(ch, false)
 	}
 	// Exceptions: Java PatternToken.setStringPosException → addException by scope.
 	// previous/next/current all multi-append (disjunction on isExceptionMatched*).
 	for _, ex := range xt.Exceptions {
-		exc := strings.TrimSpace(ex.Content)
-		posTag := strings.TrimSpace(ex.Postag)
+		exc := tools.JavaStringTrim(ex.Content)
+		posTag := tools.JavaStringTrim(ex.Postag)
 		if exc == "" && posTag == "" {
 			continue
 		}
-		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
+		scope := strings.ToLower(tools.JavaStringTrim(ex.Scope))
 		re := strings.EqualFold(ex.Regexp, "yes")
 		cs := strings.EqualFold(ex.CaseSensitive, "yes")
 		posRE := strings.EqualFold(ex.PostagRegexp, "yes")
@@ -1626,7 +1627,7 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 			exTok.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
 		}
 		// Java setExceptionSpaceBefore on last exception after addException.
-		if sb := strings.TrimSpace(ex.SpaceBefore); sb != "" && !strings.EqualFold(sb, "ignore") {
+		if sb := tools.JavaStringTrim(ex.SpaceBefore); sb != "" && !strings.EqualFold(sb, "ignore") {
 			exTok.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 		}
 		switch scope {

@@ -10,6 +10,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 const (
@@ -262,7 +263,7 @@ func (a *ApiV2) GetMetricsJSON() (string, error) {
 
 // GetConfigurationInfoJSON soft-ports /v2/configinfo for a language.
 func (a *ApiV2) GetConfigurationInfoJSON(lang string) (string, error) {
-	if strings.TrimSpace(lang) == "" {
+	if tools.JavaStringTrimIsEmpty(lang) {
 		return "", NewBadRequestError("'language' parameter missing")
 	}
 	lt := languagetool.NewJLanguageTool(lang)

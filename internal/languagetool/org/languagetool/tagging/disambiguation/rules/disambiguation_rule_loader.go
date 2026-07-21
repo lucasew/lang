@@ -10,6 +10,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DisambiguationRuleLoader ports
@@ -56,9 +57,9 @@ func (l *DisambiguationRuleLoader) GetRulesAndUnifierFromString(xmlStr, language
 }
 
 type disambigRoot struct {
-	XMLName       xml.Name              `xml:"rules"`
-	Unifications  []disambigUnification `xml:"unification"`
-	Rules         []disambigRule        `xml:"rule"`
+	XMLName      xml.Name              `xml:"rules"`
+	Unifications []disambigUnification `xml:"unification"`
+	Rules        []disambigRule        `xml:"rule"`
 	// RuleGroups: Java nests many rules under <rulegroup> (not visible as top-level <rule>).
 	RuleGroups []disambigRuleGroup `xml:"rulegroup"`
 }
@@ -533,10 +534,10 @@ type disambigToken struct {
 	Match   *disambigMatch `xml:"match"`
 	Content string         `xml:",chardata"`
 	// Unification fields set by decodeDisambigUnify (not XML attrs on <token>).
-	UniFeatures          map[string][]string
-	LastInUnification    bool
-	UnificationNeutral   bool
-	UniNegated           bool
+	UniFeatures        map[string][]string
+	LastInUnification  bool
+	UnificationNeutral bool
+	UniNegated         bool
 	// caseSensitiveSet is true when the token XML set case_sensitive= (for pattern inherit).
 	caseSensitiveSet bool
 }
@@ -552,11 +553,11 @@ type disambigException struct {
 	// Inflected ports inflected="yes" on exception (lemma match path).
 	Inflected string `xml:"inflected,attr"`
 	// SpaceBefore ports spacebefore="yes|no" on exception scope.
-	SpaceBefore string `xml:"spacebefore,attr"`
-	Scope       string `xml:"scope,attr"` // previous|next|empty=current
-	Postag      string `xml:"postag,attr"`
+	SpaceBefore  string `xml:"spacebefore,attr"`
+	Scope        string `xml:"scope,attr"` // previous|next|empty=current
+	Postag       string `xml:"postag,attr"`
 	PostagRegexp string `xml:"postag_regexp,attr"`
-	Content     string `xml:",chardata"`
+	Content      string `xml:",chardata"`
 }
 
 type disambigElem struct {
@@ -571,15 +572,15 @@ type disambigElem struct {
 
 // disambigMatch ports Match attributes under disambiguation <disambig>.
 type disambigMatch struct {
-	No              string `xml:"no,attr"`
-	Postag          string `xml:"postag,attr"`
-	PostagReplace   string `xml:"postag_replace,attr"`
-	PostagRegexp    string `xml:"postag_regexp,attr"`
-	RegexpMatch     string `xml:"regexp_match,attr"`
-	RegexpReplace   string `xml:"regexp_replace,attr"`
-	CaseConversion  string `xml:"case_conversion,attr"`
-	IncludeSkipped  string `xml:"include_skipped,attr"`
-	SetPos          string `xml:"setpos,attr"`
+	No                 string `xml:"no,attr"`
+	Postag             string `xml:"postag,attr"`
+	PostagReplace      string `xml:"postag_replace,attr"`
+	PostagRegexp       string `xml:"postag_regexp,attr"`
+	RegexpMatch        string `xml:"regexp_match,attr"`
+	RegexpReplace      string `xml:"regexp_replace,attr"`
+	CaseConversion     string `xml:"case_conversion,attr"`
+	IncludeSkipped     string `xml:"include_skipped,attr"`
+	SetPos             string `xml:"setpos,attr"`
 	SuppressMisspelled string `xml:"suppress_mispelled,attr"` // Java spelling of attr
 	// Content is lemma string body: <match no="1">рада</match>
 	Content string `xml:",chardata"`
@@ -599,12 +600,12 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 	}
 	cfg := patterns.NewUnifierConfiguration()
 	for _, u := range root.Unifications {
-		feat := strings.TrimSpace(u.Feature)
+		feat := tools.JavaStringTrim(u.Feature)
 		if feat == "" {
 			continue
 		}
 		for _, eq := range u.Equivalences {
-			typ := strings.TrimSpace(eq.Type)
+			typ := tools.JavaStringTrim(eq.Type)
 			if typ == "" {
 				continue
 			}
@@ -614,7 +615,7 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 			}
 		}
 	}
-// Flatten top-level rules + rulegroup nested rules (Java DisambiguationRuleHandler).
+	// Flatten top-level rules + rulegroup nested rules (Java DisambiguationRuleHandler).
 	// Rulegroup: inherit id/name when missing; share rulegroup-level antipatterns.
 	var out []*DisambiguationPatternRule
 	for _, xr := range root.Rules {
@@ -628,10 +629,10 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 		groupAPs := g.AntiPatterns
 		for i, xr := range g.Rules {
 			// Java: if inRuleGroup && id/name == null → use ruleGroupId/Name.
-			if strings.TrimSpace(xr.ID) == "" {
+			if tools.JavaStringTrim(xr.ID) == "" {
 				xr.ID = g.ID
 			}
-			if strings.TrimSpace(xr.Name) == "" {
+			if tools.JavaStringTrim(xr.Name) == "" {
 				xr.Name = g.Name
 			}
 			// subId is 1-based within the group (Java subId++ on each rule start).
@@ -671,10 +672,10 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	// Java XMLRuleHandler.setRuleFilter: both class and args non-null to attach.
 	// Unknown filter class → skip rule (fail-closed; never disambiguate without the filter gate).
 	// Same policy as PatternRuleLoader for unsupported filters.
-	if xr.Filter != nil && strings.TrimSpace(xr.Filter.Class) != "" {
-		if strings.TrimSpace(xr.Filter.Args) == "" {
+	if xr.Filter != nil && tools.JavaStringTrim(xr.Filter.Class) != "" {
+		if tools.JavaStringTrim(xr.Filter.Args) == "" {
 			// Java: filterArgs null → setRuleFilter no-op; still load rule without filter.
-		} else if !patterns.GlobalRuleFilterCreator.HasFilter(strings.TrimSpace(xr.Filter.Class)) {
+		} else if !patterns.GlobalRuleFilterCreator.HasFilter(tools.JavaStringTrim(xr.Filter.Class)) {
 			return nil
 		}
 	}
@@ -699,8 +700,8 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	}
 	// Java setRuleFilter(filterClassName, filterArgs, rule) for DisambiguationPatternRule.
 	if xr.Filter != nil {
-		class := strings.TrimSpace(xr.Filter.Class)
-		args := strings.TrimSpace(xr.Filter.Args)
+		class := tools.JavaStringTrim(xr.Filter.Class)
+		args := tools.JavaStringTrim(xr.Filter.Args)
 		if class != "" && args != "" {
 			if f, ok := patterns.GlobalRuleFilterCreator.TryGetFilter(class); ok {
 				rule.Filter = f
@@ -710,7 +711,7 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	}
 	if action == ActionUnify {
 		for _, f := range strings.Split(xr.Disambig.Features, ",") {
-			f = strings.TrimSpace(f)
+			f = tools.JavaStringTrim(f)
 			if f != "" {
 				rule.UnifyFeatures = append(rule.UnifyFeatures, f)
 			}
@@ -720,7 +721,7 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	if len(xr.Disambig.Wds) > 0 {
 		var readings []*languagetool.AnalyzedToken
 		for _, wd := range xr.Disambig.Wds {
-			surf := strings.TrimSpace(wd.Content)
+			surf := tools.JavaStringTrim(wd.Content)
 			var posPtr, lemmaPtr *string
 			if wd.Pos != "" {
 				p := wd.Pos
@@ -750,9 +751,9 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 		var disEx []DisambiguatedExample
 		var untouched []string
 		for _, ex := range xr.Examples {
-			body := strings.TrimSpace(ex.Inner)
+			body := tools.JavaStringTrim(ex.Inner)
 			// Normalize whitespace like typical SAX char accumulation (collapse pure indent).
-			switch strings.ToLower(strings.TrimSpace(ex.Type)) {
+			switch strings.ToLower(tools.JavaStringTrim(ex.Type)) {
 			case "untouched":
 				if body != "" {
 					untouched = append(untouched, body)
@@ -810,7 +811,7 @@ func matchFromDisambigXML(xm *disambigMatch) *patterns.Match {
 	if xm == nil {
 		return nil
 	}
-	noStr := strings.TrimSpace(xm.No)
+	noStr := tools.JavaStringTrim(xm.No)
 	if noStr == "" {
 		return nil
 	}
@@ -819,13 +820,13 @@ func matchFromDisambigXML(xm *disambigMatch) *patterns.Match {
 		return nil
 	}
 	caseConv := patterns.CaseNone
-	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
+	if v := tools.JavaStringTrim(xm.CaseConversion); v != "" {
 		if c, ok := patterns.ParseCaseConversion(v); ok {
 			caseConv = c
 		}
 	}
 	include := patterns.IncludeNone
-	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
+	if v := tools.JavaStringTrim(xm.IncludeSkipped); v != "" {
 		if ir, ok := patterns.ParseIncludeRange(v); ok {
 			include = ir
 		}
@@ -835,18 +836,18 @@ func matchFromDisambigXML(xm *disambigMatch) *patterns.Match {
 	// Java attribute is suppress_mispelled (one 's')
 	suppress := strings.EqualFold(xm.SuppressMisspelled, "yes")
 	m := patterns.NewMatch(
-		strings.TrimSpace(xm.Postag),
-		strings.TrimSpace(xm.PostagReplace),
+		tools.JavaStringTrim(xm.Postag),
+		tools.JavaStringTrim(xm.PostagReplace),
 		postagRE,
-		strings.TrimSpace(xm.RegexpMatch),
-		strings.TrimSpace(xm.RegexpReplace),
+		tools.JavaStringTrim(xm.RegexpMatch),
+		tools.JavaStringTrim(xm.RegexpReplace),
 		caseConv,
 		setPos,
 		suppress,
 		include,
 	)
 	m.SetTokenRef(ref)
-	if body := strings.TrimSpace(xm.Content); body != "" {
+	if body := tools.JavaStringTrim(xm.Content); body != "" {
 		// Java: posSelector.setLemmaString(match.toString()) on endElement MATCH
 		m.SetLemmaString(body)
 	}
@@ -854,7 +855,7 @@ func matchFromDisambigXML(xm *disambigMatch) *patterns.Match {
 }
 
 func disambigTokenFromXML(xt disambigToken, patternHasMarker bool, patternCaseSensitive bool) *patterns.PatternToken {
-	content := strings.TrimSpace(xt.Content)
+	content := tools.JavaStringTrim(xt.Content)
 	// Java: token case_sensitive attr, else pattern-level case_sensitive inherit.
 	cs := strings.EqualFold(xt.CaseSensitive, "yes")
 	if !xt.caseSensitiveSet && patternCaseSensitive {
@@ -892,12 +893,12 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool, patternCaseSe
 	} else {
 		pt.InsideMarker = true
 	}
-	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
+	if sb := tools.JavaStringTrim(xt.SpaceBefore); sb != "" {
 		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 	}
-	if ch := strings.TrimSpace(xt.ChunkRe); ch != "" {
+	if ch := tools.JavaStringTrim(xt.ChunkRe); ch != "" {
 		pt.SetChunkTag(ch, true)
-	} else if ch := strings.TrimSpace(xt.Chunk); ch != "" {
+	} else if ch := tools.JavaStringTrim(xt.Chunk); ch != "" {
 		pt.SetChunkTag(ch, false)
 	}
 	if xt.Min != "" {
@@ -920,19 +921,19 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool, patternCaseSe
 	}
 	// Java PatternToken exceptions: setStringPosException → addException by scope (multi).
 	for _, ex := range xt.Exceptions {
-		exc := strings.TrimSpace(ex.Content)
-		posTag := strings.TrimSpace(ex.Postag)
+		exc := tools.JavaStringTrim(ex.Content)
+		posTag := tools.JavaStringTrim(ex.Postag)
 		if exc == "" && posTag == "" {
 			continue
 		}
-		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
+		scope := strings.ToLower(tools.JavaStringTrim(ex.Scope))
 		re := strings.EqualFold(ex.Regexp, "yes")
 		cs := strings.EqualFold(ex.CaseSensitive, "yes")
 		posRE := strings.EqualFold(ex.PostagRegexp, "yes")
 		neg := strings.EqualFold(ex.Negate, "yes")
 		posNeg := strings.EqualFold(ex.NegatePos, "yes")
 		infl := strings.EqualFold(ex.Inflected, "yes")
-		if sb := strings.TrimSpace(ex.SpaceBefore); sb != "" && scope == "" {
+		if sb := tools.JavaStringTrim(ex.SpaceBefore); sb != "" && scope == "" {
 			// exception-level spacebefore applies to current exception token context
 			pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 		}
@@ -942,7 +943,7 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool, patternCaseSe
 			exTok.SetPosToken(patterns.PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
 		}
 		// Java setExceptionSpaceBefore → exception.setWhitespaceBefore
-		if sb := strings.TrimSpace(ex.SpaceBefore); sb != "" && !strings.EqualFold(sb, "ignore") {
+		if sb := tools.JavaStringTrim(ex.SpaceBefore); sb != "" && !strings.EqualFold(sb, "ignore") {
 			exTok.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 		}
 		switch scope {
@@ -977,13 +978,13 @@ func matchFromTokenMatchXML(xm *disambigMatch) *patterns.Match {
 		return nil
 	}
 	caseConv := patterns.CaseNone
-	if v := strings.TrimSpace(xm.CaseConversion); v != "" {
+	if v := tools.JavaStringTrim(xm.CaseConversion); v != "" {
 		if c, ok := patterns.ParseCaseConversion(v); ok {
 			caseConv = c
 		}
 	}
 	include := patterns.IncludeNone
-	if v := strings.TrimSpace(xm.IncludeSkipped); v != "" {
+	if v := tools.JavaStringTrim(xm.IncludeSkipped); v != "" {
 		if ir, ok := patterns.ParseIncludeRange(v); ok {
 			include = ir
 		}
@@ -992,22 +993,22 @@ func matchFromTokenMatchXML(xm *disambigMatch) *patterns.Match {
 	setPos := strings.EqualFold(xm.SetPos, "yes")
 	suppress := strings.EqualFold(xm.SuppressMisspelled, "yes")
 	m := patterns.NewMatch(
-		strings.TrimSpace(xm.Postag),
-		strings.TrimSpace(xm.PostagReplace),
+		tools.JavaStringTrim(xm.Postag),
+		tools.JavaStringTrim(xm.PostagReplace),
 		postagRE,
-		strings.TrimSpace(xm.RegexpMatch),
-		strings.TrimSpace(xm.RegexpReplace),
+		tools.JavaStringTrim(xm.RegexpMatch),
+		tools.JavaStringTrim(xm.RegexpReplace),
 		caseConv,
 		setPos,
 		suppress,
 		include,
 	)
-	if noStr := strings.TrimSpace(xm.No); noStr != "" {
+	if noStr := tools.JavaStringTrim(xm.No); noStr != "" {
 		if ref, err := strconv.Atoi(noStr); err == nil {
 			m.SetTokenRef(ref)
 		}
 	}
-	if body := strings.TrimSpace(xm.Content); body != "" {
+	if body := tools.JavaStringTrim(xm.Content); body != "" {
 		m.SetLemmaString(body)
 	}
 	return m

@@ -1,10 +1,14 @@
 package language
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
+
+// frJavaTrailingWS ports Java replaceAll("\\s+$", "") without UNICODE_CHARACTER_CLASS.
+var frJavaTrailingWS = regexp.MustCompile(`[ \t\n\v\f\r]+$`)
 
 func init() {
 	// Wire without rules/fr importing language (cycle via french_rules_smoke_test).
@@ -135,7 +139,8 @@ func frenchDropTrailingPeriodSuggestion(m languagetool.LocalMatch) bool {
 	if sent == "" {
 		return false // fail-closed
 	}
-	trimmed := strings.TrimRight(sent, " \t\n\r\f\v\u00a0")
+	// Java replaceAll("\\s+$", "") — ASCII \s only (not NBSP).
+	trimmed := frJavaTrailingWS.ReplaceAllString(sent, "")
 	prefix := sug[:len(sug)-1]
 	return strings.HasSuffix(trimmed, prefix)
 }

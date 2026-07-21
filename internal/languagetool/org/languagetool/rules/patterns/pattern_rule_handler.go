@@ -9,6 +9,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // PatternRuleHandler ports org.languagetool.rules.patterns.PatternRuleHandler
@@ -104,8 +105,8 @@ func (h *PatternRuleHandler) ParseString(xmlStr string) error {
 }
 
 type grammarRoot struct {
-	XMLName      xml.Name           `xml:"rules"`
-	Lang         string             `xml:"lang,attr"`
+	XMLName xml.Name `xml:"rules"`
+	Lang    string   `xml:"lang,attr"`
 	// Premium ports rules premium="yes|no" file-level default.
 	Premium      string             `xml:"premium,attr"`
 	Unifications []grammarUnifyFeat `xml:"unification"`
@@ -123,13 +124,13 @@ type grammarEquivalence struct {
 }
 
 type grammarCategory struct {
-	ID       string         `xml:"id,attr"`
-	Name     string         `xml:"name,attr"`
-	Type     string         `xml:"type,attr"`
+	ID   string `xml:"id,attr"`
+	Name string `xml:"name,attr"`
+	Type string `xml:"type,attr"`
 	// Default ports category default="off"|"on" (Java onByDefault).
-	Default  string         `xml:"default,attr"`
+	Default string `xml:"default,attr"`
 	// Prio ports category prio="N".
-	Prio     string         `xml:"prio,attr"`
+	Prio string `xml:"prio,attr"`
 	// Premium ports category premium="yes|no".
 	Premium  string         `xml:"premium,attr"`
 	Tags     string         `xml:"tags,attr"`      // space-separated Tag names (e.g. picky)
@@ -139,14 +140,14 @@ type grammarCategory struct {
 }
 
 type grammarGroup struct {
-	ID       string        `xml:"id,attr"`
-	Name     string        `xml:"name,attr"`
+	ID   string `xml:"id,attr"`
+	Name string `xml:"name,attr"`
 	// Default ports rulegroup default="off"|"temp_off" (Java ruleGroupDefaultOff/TempOff).
-	Default  string        `xml:"default,attr"`
+	Default string `xml:"default,attr"`
 	// Prio ports rulegroup prio="N".
-	Prio     string        `xml:"prio,attr"`
+	Prio string `xml:"prio,attr"`
 	// Type ports rulegroup type= (Java ruleGroupIssueType).
-	Type     string        `xml:"type,attr"`
+	Type string `xml:"type,attr"`
 	// Premium ports rulegroup premium="yes|no".
 	Premium  string        `xml:"premium,attr"`
 	Tags     string        `xml:"tags,attr"`
@@ -156,13 +157,13 @@ type grammarGroup struct {
 }
 
 type grammarRule struct {
-	ID           string          `xml:"id,attr"`
-	Name         string          `xml:"name,attr"`
-	Default      string          `xml:"default,attr"`
+	ID      string `xml:"id,attr"`
+	Name    string `xml:"name,attr"`
+	Default string `xml:"default,attr"`
 	// Type ports rule type= (overrides group/category).
-	Type         string          `xml:"type,attr"`
+	Type string `xml:"type,attr"`
 	// Prio ports rule prio="N".
-	Prio         string          `xml:"prio,attr"`
+	Prio string `xml:"prio,attr"`
 	// Premium ports rule premium="yes|no".
 	Premium      string          `xml:"premium,attr"`
 	Tags         string          `xml:"tags,attr"`
@@ -218,7 +219,7 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 	if root.Lang != "" && h.LanguageCode == "" {
 		h.LanguageCode = root.Lang
 	}
-	filePremium := strings.TrimSpace(root.Premium)
+	filePremium := tools.JavaStringTrim(root.Premium)
 	// unification
 	for _, u := range root.Unifications {
 		for _, eq := range u.Equivalences {
@@ -233,7 +234,7 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 	}
 	for _, cat := range root.Categories {
 		// Java: onByDefault = !OFF.equals(default); Category stores isDefaultOff.
-		onByDefault := !strings.EqualFold(strings.TrimSpace(cat.Default), XMLOff)
+		onByDefault := !strings.EqualFold(tools.JavaStringTrim(cat.Default), XMLOff)
 		if cat.ID != "" {
 			h.Categories[cat.ID] = rules.NewCategoryFull(
 				rules.NewCategoryId(cat.ID),
@@ -246,8 +247,8 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 		catTones := parseToneTagsAttr(cat.ToneTags)
 		catTags := parseRuleTagsAttr(cat.Tags)
 		catPrio := parsePrioAttr(cat.Prio)
-		catType := strings.TrimSpace(cat.Type)
-		catPremium := strings.TrimSpace(cat.Premium)
+		catType := tools.JavaStringTrim(cat.Type)
+		catPremium := tools.JavaStringTrim(cat.Premium)
 		for _, xr := range cat.Rules {
 			if err := h.addRule(xr, cat.ID, catTones, nil, catTags, nil, "", catPrio, 0, catType, "", filePremium, catPremium, ""); err != nil {
 				return err
@@ -257,9 +258,9 @@ func (h *PatternRuleHandler) parseXML(data []byte) error {
 			groupTones := parseToneTagsAttr(g.ToneTags)
 			groupTags := parseRuleTagsAttr(g.Tags)
 			groupPrio := parsePrioAttr(g.Prio)
-			groupType := strings.TrimSpace(g.Type)
-			groupURL := strings.TrimSpace(g.URL)
-			groupPremium := strings.TrimSpace(g.Premium)
+			groupType := tools.JavaStringTrim(g.Type)
+			groupURL := tools.JavaStringTrim(g.URL)
+			groupPremium := tools.JavaStringTrim(g.Premium)
 			for i, xr := range g.Rules {
 				if xr.ID == "" {
 					xr.ID = g.ID
@@ -365,7 +366,7 @@ func mergeRuleTags(parts ...[]rules.Tag) []rules.Tag {
 // TRUE/yes → true; FALSE/no → false; empty → fall through.
 func resolveGoalSpecific(ruleAttr, groupAttr, catAttr string) bool {
 	for _, a := range []string{ruleAttr, groupAttr, catAttr} {
-		a = strings.TrimSpace(a)
+		a = tools.JavaStringTrim(a)
 		if a == "" {
 			continue
 		}
@@ -393,9 +394,9 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	issueType := resolveIssueType(xr.Type, groupType, catType)
 	prio := resolvePriority(catPrio, groupPrio, parsePrioAttr(xr.Prio))
 	premium := resolvePremium(xr.Premium, groupPremium, catPremium, filePremium)
-	ruleURL := strings.TrimSpace(xr.URL)
+	ruleURL := tools.JavaStringTrim(xr.URL)
 	if xr.Regexp != nil {
-		content := strings.TrimSpace(xr.Regexp.Content)
+		content := tools.JavaStringTrim(xr.Regexp.Content)
 		re, err := regexp.Compile(content)
 		if err != nil {
 			return fmt.Errorf("rule %s regexp: %w", xr.ID, err)
@@ -404,7 +405,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 		if xr.Regexp.Mark != "" {
 			fmt.Sscanf(xr.Regexp.Mark, "%d", &mark)
 		}
-		rr := NewRegexPatternRule(xr.ID, xr.Name, strings.TrimSpace(xr.Message), strings.TrimSpace(xr.Short), "", lang, re, mark)
+		rr := NewRegexPatternRule(xr.ID, xr.Name, tools.JavaStringTrim(xr.Message), tools.JavaStringTrim(xr.Short), "", lang, re, mark)
 		if xr.Filter != nil {
 			rr.FilterArgs = xr.Filter.Args
 			if strings.Contains(xr.Filter.Class, "RegexAntiPatternFilter") || strings.Contains(xr.Filter.Args, "antipatterns:") {
@@ -450,7 +451,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 	for _, xt := range xr.Pattern.Tokens {
 		tokens = append(tokens, tokenFromGrammar(xt, caseSens))
 	}
-	pr := NewPatternRule(xr.ID, lang, tokens, xr.Name, strings.TrimSpace(xr.Message), strings.TrimSpace(xr.Short))
+	pr := NewPatternRule(xr.ID, lang, tokens, xr.Name, tools.JavaStringTrim(xr.Message), tools.JavaStringTrim(xr.Short))
 	pr.ToneTags = tones
 	pr.GoalSpecific = goalSpecific
 	pr.DefaultOff = defaultOff
@@ -482,7 +483,7 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string, category
 }
 
 func tokenFromGrammar(xt grammarToken, patternCaseSensitive bool) *PatternToken {
-	content := strings.TrimSpace(xt.Content)
+	content := tools.JavaStringTrim(xt.Content)
 	cs := patternCaseSensitive || strings.EqualFold(xt.CaseSensitive, "yes")
 	re := strings.EqualFold(xt.Regexp, "yes")
 	inf := strings.EqualFold(xt.Inflected, "yes")

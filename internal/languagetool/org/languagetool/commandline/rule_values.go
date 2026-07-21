@@ -6,26 +6,30 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// parseRuleValues parses RULE_ID:value pairs (comma-separated blobs allowed).
+// parseRuleValues ports TextChecker.getRuleValues / CLI --ruleValues:
+// split on "," and ":" without invent per-field TrimSpace (server twin).
 func parseRuleValues(items []string) map[string]string {
 	if len(items) == 0 {
 		return nil
 	}
 	out := map[string]string{}
 	for _, item := range items {
+		if item == "" {
+			continue
+		}
 		for _, part := range strings.Split(item, ",") {
-			part = strings.TrimSpace(part)
 			if part == "" {
 				continue
 			}
 			i := strings.IndexByte(part, ':')
-			if i <= 0 || i == len(part)-1 {
+			if i < 0 || i == len(part)-1 {
 				continue
 			}
-			id := strings.TrimSpace(part[:i])
-			val := strings.TrimSpace(part[i+1:])
+			id := part[:i]
+			val := part[i+1:]
 			if id != "" && val != "" {
 				out[strings.ToUpper(id)] = val
 			}
@@ -81,7 +85,8 @@ func applyCLIRuleValues(lang, text string, existing []*rules.RuleMatch, raw []st
 
 // severityRank maps SARIF levels for --fail-on comparisons (higher = worse).
 func severityRank(sev string) int {
-	switch strings.ToLower(strings.TrimSpace(sev)) {
+	// CLI flag surface: String.trim-like edge only (ASCII ≤U+0020).
+	switch strings.ToLower(tools.JavaStringTrim(sev)) {
 	case "error":
 		return 3
 	case "warning":

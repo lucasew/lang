@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Official /uk/entities.txt (Java CompoundTagger.numberedEntities).
@@ -36,13 +37,16 @@ func loadEntities() {
 		defer f.Close()
 		sc := bufio.NewScanner(f)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
-			if line == "" || strings.HasPrefix(line, "#") {
+			// Java ExtraDictionaryLoader.loadSpacedLists: !startsWith("#") && !trim().isEmpty();
+			// then replaceFirst("#.*","").trim(); split(" |\\|").
+			line := sc.Text()
+			if strings.HasPrefix(line, "#") || tools.JavaStringTrimIsEmpty(line) {
 				continue
 			}
 			if i := strings.Index(line, "#"); i >= 0 {
-				line = strings.TrimSpace(line[:i])
+				line = line[:i]
 			}
+			line = tools.JavaStringTrim(line)
 			if line == "" {
 				continue
 			}

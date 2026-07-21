@@ -1,10 +1,15 @@
 package language
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
+
+// deJavaTrailingWS ports Java replaceAll("\\s+$", "") without UNICODE_CHARACTER_CLASS.
+var deJavaTrailingWS = regexp.MustCompile(`[ \t\n\v\f\r]+$`)
 
 // FilterGermanRuleMatches ports German.filterRuleMatches (AI_DE_GGEC adjacent merge / overlap skip).
 //
@@ -93,14 +98,14 @@ func germanDropTrailingPeriodSuggestion(m languagetool.LocalMatch) bool {
 		// No sentence surface → keep (fail-closed; do not invent drop).
 		return false
 	}
-	// Java replaceAll("\\s+$", "") — trailing whitespace strip.
-	trimmed := strings.TrimRight(sent, " \t\n\r\f\v\u00a0")
+	// Java replaceAll("\\s+$", "") — Pattern \s without UNICODE_CHARACTER_CLASS (not NBSP).
+	trimmed := deJavaTrailingWS.ReplaceAllString(sent, "")
 	prefix := sug[:len(sug)-1]
 	return strings.HasSuffix(trimmed, prefix)
 }
 
 func isStyleIssue(it string) bool {
-	return strings.EqualFold(strings.TrimSpace(it), "style")
+	return strings.EqualFold(tools.JavaStringTrim(it), "style")
 }
 
 // isGermanGGECMergeID is true for live AI_DE_GGEC* rules and for AI_DE_MERGED_MATCH

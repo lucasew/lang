@@ -1,6 +1,10 @@
 package languagetool
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
 
 // RuleMeta is a fallback when LocalMatch has no CategoryID/IssueType.
 // It maps well-known Java rule ID families to Categories / ITS types used in LT
@@ -401,7 +405,7 @@ func RuleDescription(ruleID string) string {
 
 // SeverityFromIssueType maps ITS issue types to SARIF 2.1 result levels (SPEC §2.2).
 func SeverityFromIssueType(issueType string) string {
-	switch strings.ToLower(strings.TrimSpace(issueType)) {
+	switch strings.ToLower(tools.JavaStringTrim(issueType)) {
 	case "misspelling", "grammar", "non-conformance":
 		// Java confusion / non-conformance treated as error-level (with misspelling/grammar).
 		return "error"
@@ -440,7 +444,7 @@ func RuleURL(ruleID, lang string) string {
 // MORFOLOGIK_RULE_{lang}[_variant] (Java Morfologik*SpellerRule IDs),
 // and a small set of DE-only Java rule IDs without those markers — not invent.
 func RuleLangHint(ruleID string) string {
-	up := strings.ToUpper(strings.TrimSpace(ruleID))
+	up := strings.ToUpper(tools.JavaStringTrim(ruleID))
 	// DE-specific long prefixes used by German* rules (not lang-code_RULE).
 	if strings.HasPrefix(up, "GERMAN_") || strings.HasPrefix(up, "SWISS_") ||
 		strings.HasPrefix(up, "AUSTRIAN_") {
@@ -526,5 +530,3 @@ func knownLangCode(p string) string {
 		return ""
 	}
 }
-
-
