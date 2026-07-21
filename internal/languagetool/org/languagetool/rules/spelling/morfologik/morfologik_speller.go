@@ -478,17 +478,10 @@ func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSugges
 				}
 				out = append(out, NewWeightedSuggestion(w, s.suggestionWeight(word, w)))
 			}
-		} else if len(s.Words) > 0 && len(s.Words) <= 5000 {
-			// small map: peers within MaxEditDistance
-			for w := range s.Words {
-				d := editDistance(word, w)
-				if d > 0 && d <= s.MaxEditDistance {
-					out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
-					if len(out) >= 8 {
-						break
-					}
-				}
-			}
+		} else if len(s.Words) > 0 {
+			// Plain-text / user-dict map path: Java builds runtime FSA + Speller.findRepl.
+			// Without CFSA2 builder, score map peers with SpellerED (Oflazer/Damerau twin).
+			out = append(out, s.mapWordsSuggestWeighted(word)...)
 		}
 	}
 	// Java MorfologikSpeller.getSuggestions: always add replaceRunOnWordCandidates
@@ -678,7 +671,7 @@ func uppercaseFirstChar(s string) string {
 }
 
 // FindReplacements returns suggestions for word.
-// Order: inject Suggestions map → binary SuggestFn → small-map edit-distance peers.
+// Order: inject Suggestions map → binary SuggestFn → map SpellerED peers.
 func (s *MorfologikSpeller) FindReplacements(word string) []string {
 	// Prefer weighted path so order matches Java getSuggestions / multi merge.
 	if ws := s.GetWeightedSuggestions(word); len(ws) > 0 {
@@ -691,46 +684,63 @@ func (s *MorfologikSpeller) FindReplacements(word string) []string {
 	return nil
 }
 
-func editDistance(a, b string) int {
-	// simple Levenshtein on runes
-	ar, br := []rune(a), []rune(b)
-	if len(ar) == 0 {
-		return len(br)
+// mapWordsSuggestWeighted scores Words map peers with SpellerED (Oflazer/Damerau).
+// Stand-in for Java runtime FSA + Speller.findReplacementCandidates over plain-text lines.
+// Caps at 8 results (same as prior map path). Skips when map is huge (>50k) for latency.
+func (s *MorfologikSpeller) mapWordsSuggestWeighted(word string) []WeightedSuggestion {
+	if s == nil || word == "" || len(s.Words) == 0 {
+		return nil
 	}
-	if len(br) == 0 {
-		return len(ar)
+	if len(s.Words) > 50000 {
+		return nil
 	}
-	prev := make([]int, len(br)+1)
-	cur := make([]int, len(br)+1)
-	for j := range prev {
-		prev[j] = j
+	maxEdit := s.MaxEditDistance
+	if maxEdit < 1 {
+		maxEdit = 1
 	}
-	for i := 1; i <= len(ar); i++ {
-		cur[0] = i
-		for j := 1; j <= len(br); j++ {
-			cost := 1
-			if ar[i-1] == br[j-1] {
-				cost = 0
-			}
-			del := prev[j] + 1
-			ins := cur[j-1] + 1
-			sub := prev[j-1] + cost
-			cur[j] = min3(del, ins, sub)
+	ed := atticmorfo.NewSpellerED(maxEdit)
+	ed.IgnoreDiacritics = s.IgnoreDiacritics
+	ed.ConvertCase = s.ConvertCase
+	ed.EquivalentChars = s.EquivalentChars
+
+	wordU16 := UTF16Len(word)
+	var out []WeightedSuggestion
+	for w := range s.Words {
+		if w == "" || w == word {
+			continue
 		}
-		prev, cur = cur, prev
+		// length gate (UTF-16): |len(w)-len(word)| > maxEdit cannot be within maxEdit
+		dw := UTF16Len(w) - wordU16
+		if dw < 0 {
+			dw = -dw
+		}
+		if dw > maxEdit {
+			continue
+		}
+		d := ed.GetEditDistance(word, w)
+		if d > 0 && d <= maxEdit {
+			out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
+		}
 	}
-	return prev[len(br)]
+	SortByWeight(out)
+	if len(out) > 8 {
+		out = out[:8]
+	}
+	return out
 }
 
-func min3(a, b, c int) int {
-	if a < b {
-		if a < c {
-			return a
-		}
-		return c
+// editDistance is SpellerED distance (used by suggestionWeight for inject path).
+func editDistance(a, b string) int {
+	maxEdit := len([]rune(a))
+	if lb := len([]rune(b)); lb > maxEdit {
+		maxEdit = lb
 	}
-	if b < c {
-		return b
+	if maxEdit < 1 {
+		maxEdit = 1
 	}
-	return c
+	if maxEdit > 10 {
+		maxEdit = 10 // bound HMatrix for long inject pairs
+	}
+	ed := atticmorfo.NewSpellerED(maxEdit)
+	return ed.GetEditDistance(a, b)
 }
