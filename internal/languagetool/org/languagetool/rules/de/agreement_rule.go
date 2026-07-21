@@ -230,22 +230,27 @@ func (r *AgreementRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.
 		}
 		skippedStr := ""
 		if afterMod > i+1 && i+1 < len(tokens) && tokens[i+1] != nil {
-			// Java: substring of skipped modifiers between det and first non-modifier
+			// Java: sentence.getText().substring(tokens[i+1].start, tokens[afterMod-1].end)
+			// Full JLT analysis includes whitespace tokens so GetText has spaces and positions align.
+			// tokens here are without whitespace — join surfaces (single spaces) matches Java
+			// when modifiers are consecutive; if GetText substring equals that span, prefer it.
+			var parts []string
+			for j := i + 1; j < afterMod; j++ {
+				if tokens[j] != nil && tokens[j].GetToken() != "" {
+					parts = append(parts, tokens[j].GetToken())
+				}
+			}
+			joined := strings.Join(parts, " ")
+			skippedStr = joined
 			from := tokens[i+1].GetStartPos()
 			to := tokens[afterMod-1].GetEndPos()
 			if to > from {
-				skippedStr = sentence.GetText()
-				if from < len(skippedStr) && to <= len(skippedStr) {
-					skippedStr = skippedStr[from:to]
-				} else {
-					// fallback: join token surfaces
-					var parts []string
-					for j := i + 1; j < afterMod; j++ {
-						if tokens[j] != nil {
-							parts = append(parts, tokens[j].GetToken())
-						}
+				text := sentence.GetText()
+				if from >= 0 && to <= len(text) {
+					sub := text[from:to]
+					if sub == joined {
+						skippedStr = sub
 					}
-					skippedStr = strings.Join(parts, " ")
 				}
 			}
 		}
