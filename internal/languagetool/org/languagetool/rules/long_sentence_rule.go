@@ -181,11 +181,12 @@ func messageFormat0(tmpl string, n int) string {
 }
 
 func isWordCount(tokenText string) bool {
-	if len(tokenText) == 0 {
+	// Java: tokenText.length() > 0 then !isNotWordCharacter(substring(0,1))
+	// length/substring are UTF-16 code units (BMP letter = 1 unit).
+	if utf16Len(tokenText) == 0 {
 		return false
 	}
-	// first char as string for isNotWordCharacter
-	first := string([]rune(tokenText)[0])
+	first := utf16Substring(tokenText, 0, 1)
 	return !tools.IsNotWordCharacter(first)
 }
 

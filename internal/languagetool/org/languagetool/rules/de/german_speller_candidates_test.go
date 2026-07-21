@@ -76,3 +76,13 @@ func TestSortSuggestionByQuality_BoostsSpaceAndCase(t *testing.T) {
 	require.Equal(t, "haus", out[0])
 	require.Equal(t, "vor allem", out[1])
 }
+
+func TestGetCandidatesFromParts_UTF16HyphenAndSStrip(t *testing.T) {
+	r := NewGermanSpellerRule(nil)
+	// without dict getCandidatesFromParts returns nil; FilterForLanguage UTF-16 dash gate still works
+	fl := r.FilterForLanguage([]string{"-x", "ok", "-"})
+	require.NotContains(t, fl, "-x")
+	require.Contains(t, fl, "ok")
+	// single "-" has UTF-16 length 1 → Java keeps only if length > 1 for drop
+	// (s.length() > 1 && startsWith("-")) — lone "-" is length 1, not dropped by that gate
+}

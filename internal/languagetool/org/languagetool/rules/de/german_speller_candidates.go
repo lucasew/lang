@@ -77,9 +77,11 @@ func (r *GermanSpellerRule) GetCandidates(word string) []string {
 				// Einzahlungschein -> Einzahlungsschein
 				add(parts[0] + "s" + parts[1])
 			}
-			if strings.HasPrefix(parts[1], "s") && len(parts[1]) > 1 {
+			// Java: parts.get(1).startsWith("s") && parts.get(1).length() > 1 → substring(1)
+			if strings.HasPrefix(parts[1], "s") && utf16LenDE(parts[1]) > 1 {
 				// Ordnungshütter -> Ordnungshüter (split as Ordnung + shütter)
-				for _, c := range r.getCandidatesFromParts([]string{parts[0] + "s", parts[1][1:]}) {
+				rest := substringByUTF16(parts[1], 1, utf16LenDE(parts[1]))
+				for _, c := range r.getCandidatesFromParts([]string{parts[0] + "s", rest}) {
 					add(c)
 				}
 			}
@@ -127,16 +129,14 @@ func (r *GermanSpellerRule) getCandidatesFromParts(parts []string) []string {
 				sug = suggestion + "s"
 			}
 			partsCopy := append([]string(nil), parts...)
-			if partCount > 0 && strings.HasPrefix(parts[partCount], "-") && len(parts[partCount]) > 1 {
-				// "-" + uppercaseFirstChar(suggestion.substring(1))
-				rest := sug
-				if len(rest) > 0 {
-					rs := []rune(rest)
-					if len(rs) > 1 {
-						rest = string(rs[1:])
-					} else {
-						rest = ""
-					}
+			// Java: parts.get(partCount).startsWith("-") && length() > 1
+			// → "-" + uppercaseFirstChar(suggestion.substring(1))
+			if partCount > 0 && strings.HasPrefix(parts[partCount], "-") && utf16LenDE(parts[partCount]) > 1 {
+				rest := ""
+				if utf16LenDE(sug) > 1 {
+					rest = substringByUTF16(sug, 1, utf16LenDE(sug))
+				} else if utf16LenDE(sug) == 1 {
+					rest = ""
 				}
 				partsCopy[partCount] = "-" + uppercaseFirstChar(rest)
 			} else if partCount > 0 && !strings.HasSuffix(parts[partCount-1], "-") {
@@ -149,8 +149,11 @@ func (r *GermanSpellerRule) getCandidatesFromParts(parts []string) []string {
 				candidates = append(candidates, candidate)
 			}
 			// Arbeidszimmer -> Arbeitszimmer:
+			// Java: suggestion.substring(0, suggestion.length()-1) when ends with "-"
 			if partCount < len(parts)-1 && strings.HasSuffix(part, "s") && strings.HasSuffix(sug, "-") {
-				partsCopy[partCount] = sug[:len(sug)-1]
+				if utf16LenDE(sug) >= 1 {
+					partsCopy[partCount] = substringByUTF16(sug, 0, utf16LenDE(sug)-1)
+				}
 				infixCandidate := strings.Join(partsCopy, "")
 				if !r.IsMisspelled(infixCandidate) {
 					candidates = append(candidates, infixCandidate)
