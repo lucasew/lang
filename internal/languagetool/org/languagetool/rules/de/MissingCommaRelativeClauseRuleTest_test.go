@@ -75,6 +75,67 @@ func TestMissingCommaRelativeClauseRule_FrontMorphJava(t *testing.T) {
 		atrWithPOS(".", "PKT", "."),
 	))
 	require.Empty(t, rule.Match(good))
+
+	// "Die Frau die vor dem Auto steht hat schwarze Haare." → 4-12
+	frau := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Die", "ART:DEF:NOM:SIN:FEM", "die"),
+		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
+		atrWithPOS("die", "PRELS:NOM:SIN:FEM", "die"),
+		atrWithPOS("vor", "PRP:DAT", "vor"),
+		atrWithPOS("dem", "ART:DEF:DAT:SIN:NEU", "der"),
+		atrWithPOS("Auto", "SUB:DAT:SIN:NEU", "Auto"),
+		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
+		atrWithPOS("hat", "VER:3:SIN:PRS:SFT", "haben"),
+		atrWithPOS("schwarze", "ADJ:AKK:PLU:NEU:GRU:IND", "schwarz"),
+		atrWithPOS("Haare", "SUB:AKK:PLU:NEU", "Haar"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	msF := rule.Match(frau)
+	require.Equal(t, 1, len(msF))
+	require.Equal(t, 4, msF[0].GetFromPos())
+	require.Equal(t, 12, msF[0].GetToPos())
+
+	// "Das Auto in dem der Mann sitzt, parkt im Halteverbot." → 4-15
+	// dem refers to Auto → SIN:NEU (Java LT tags)
+	indem := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
+		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
+		atrWithPOS("in", "PRP:DAT", "in"),
+		atrWithPOS("dem", "PRELS:DAT:SIN:NEU", "der"),
+		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
+		atrWithPOS("Mann", "SUB:NOM:SIN:MAS", "Mann"),
+		atrWithPOS("sitzt", "VER:3:SIN:PRS:SFT", "sitzen"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("parkt", "VER:3:SIN:PRS:SFT", "parken"),
+		atrWithPOS("im", "APPRART:DAT:SIN:NEU", "in"),
+		atrWithPOS("Halteverbot", "SUB:DAT:SIN:NEU", "Halteverbot"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	msIn := rule.Match(indem)
+	require.Equal(t, 1, len(msIn))
+	require.Equal(t, 4, msIn[0].GetFromPos())
+	require.Equal(t, 15, msIn[0].GetToPos())
+
+	// "Alles was ich habe, ist ein Buch." → 0-9
+	// was often ungendered; Alles as PRO:DEM matches matchesGender empty-gender path
+	alles := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Alles", "PRO:DEM:NOM:SIN:NEU", "alles"),
+		atrWithPOS("was", "PRELS", "was"),
+		atrWithPOS("ich", "PPER:NOM:SIN:1", "ich"),
+		atrWithPOS("habe", "VER:1:SIN:PRS:SFT", "haben"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("ist", "VER:3:SIN:PRS:NON", "sein"),
+		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
+		atrWithPOS("Buch", "SUB:NOM:SIN:NEU", "Buch"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	msA := rule.Match(alles)
+	require.Equal(t, 1, len(msA))
+	require.Equal(t, 0, msA[0].GetFromPos())
+	require.Equal(t, 9, msA[0].GetToPos())
 }
 
 // Twin of MissingCommaRelativeClauseRuleTest behind (second constructor).
@@ -117,6 +178,45 @@ func TestMissingCommaRelativeClauseRule_BehindMorphJava(t *testing.T) {
 		atrWithPOS(".", "PKT", "."),
 	))
 	require.Empty(t, rule.Match(good))
+
+	// "Die Frau, die vor dem Auto steht hat schwarze Haare." → 27-36
+	frauB := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Die", "ART:DEF:NOM:SIN:FEM", "die"),
+		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("die", "PRELS:NOM:SIN:FEM", "die"),
+		atrWithPOS("vor", "PRP:DAT", "vor"),
+		atrWithPOS("dem", "ART:DEF:DAT:SIN:NEU", "der"),
+		atrWithPOS("Auto", "SUB:DAT:SIN:NEU", "Auto"),
+		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
+		atrWithPOS("hat", "VER:3:SIN:PRS:SFT", "haben"),
+		atrWithPOS("schwarze", "ADJ:AKK:PLU:NEU:GRU:IND", "schwarz"),
+		atrWithPOS("Haare", "SUB:AKK:PLU:NEU", "Haar"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	msFB := rule.Match(frauB)
+	require.Equal(t, 1, len(msFB))
+	require.Equal(t, 27, msFB[0].GetFromPos())
+	require.Equal(t, 36, msFB[0].GetToPos())
+
+	// "Alles, was ich habe ist ein Buch." → 15-23
+	allesB := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		atrWithPOS("Alles", "PRO:DEM:NOM:SIN:NEU", "alles"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("was", "PRELS", "was"),
+		atrWithPOS("ich", "PPER:NOM:SIN:1", "ich"),
+		atrWithPOS("habe", "VER:1:SIN:PRS:SFT", "haben"),
+		atrWithPOS("ist", "VER:3:SIN:PRS:NON", "sein"),
+		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
+		atrWithPOS("Buch", "SUB:NOM:SIN:NEU", "Buch"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	msAB := rule.Match(allesB)
+	require.Equal(t, 1, len(msAB))
+	require.Equal(t, 15, msAB[0].GetFromPos())
+	require.Equal(t, 23, msAB[0].GetToPos())
 }
 
 func TestWithPositions_UTF16AndPunctSpacing(t *testing.T) {
