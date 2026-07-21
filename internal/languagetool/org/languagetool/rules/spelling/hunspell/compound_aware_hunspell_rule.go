@@ -259,13 +259,31 @@ func (r *CompoundAwareHunspellRule) sortSuggestionByQuality(misspelling string, 
 	return result
 }
 
+// hasSingleLetterToken ports
+// Arrays.stream(StringUtils.split(suggestion, ' ')).anyMatch(k -> k.length() == 1)
+// — only ASCII space splits (not tabs/newlines); length is UTF-16.
 func hasSingleLetterToken(s string) bool {
-	for _, p := range strings.Fields(s) {
+	for _, p := range splitASCIISpaceOmitEmpty(s) {
 		if utf16LenHun(p) == 1 {
 			return true
 		}
 	}
 	return false
+}
+
+// splitASCIISpaceOmitEmpty ports org.apache.commons.lang3.StringUtils.split(s, ' ').
+func splitASCIISpaceOmitEmpty(s string) []string {
+	if s == "" {
+		return nil
+	}
+	raw := strings.Split(s, " ")
+	out := make([]string, 0, len(raw))
+	for _, p := range raw {
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 // handleWordEndPunctuation ports private handleWordEndPunctuation.

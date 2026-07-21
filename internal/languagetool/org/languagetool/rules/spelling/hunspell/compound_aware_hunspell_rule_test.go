@@ -36,6 +36,16 @@ func TestCompoundAware_SortSuggestionByQuality_RunOn(t *testing.T) {
 	require.Equal(t, []string{"a thank", "thank"}, got)
 }
 
+// Twin: StringUtils.split on ' ' only — tab is not a token boundary for single-letter check.
+func TestHasSingleLetterToken_ASCIISpaceOnly(t *testing.T) {
+	require.True(t, hasSingleLetterToken("a thank"))
+	require.False(t, hasSingleLetterToken("thank you"))
+	// tab-joined single letter is one token under StringUtils.split(' ')
+	require.False(t, hasSingleLetterToken("a\tthank"))
+	// UTF-16 length-1 for multi-byte letter still counts as single letter token
+	require.True(t, hasSingleLetterToken("é word"))
+}
+
 // Twin: interleave order noSplit, upper(lc), simple.
 func TestInterleaveThree(t *testing.T) {
 	got := interleaveThree(
