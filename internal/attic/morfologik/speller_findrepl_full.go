@@ -22,6 +22,43 @@ func (d *Dictionary) FindSimilarWordCandidates(word string, maxEdit int) []Candi
 	return d.findReplacementCandidates(word, maxEdit, true)
 }
 
+// FindReplacements ports Speller.findReplacements (words only, maxEdit default 1).
+func (d *Dictionary) FindReplacements(word string, maxEdit int) []string {
+	if maxEdit < 1 {
+		maxEdit = 1
+	}
+	cds := d.FindReplacementCandidates(word, maxEdit)
+	if len(cds) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(cds))
+	for _, c := range cds {
+		out = append(out, c.Word)
+	}
+	return out
+}
+
+// FindSimilarWords ports Speller.findSimilarWords.
+func (d *Dictionary) FindSimilarWords(word string, maxEdit int) []string {
+	if maxEdit < 1 {
+		maxEdit = 1
+	}
+	cds := d.FindSimilarWordCandidates(word, maxEdit)
+	if len(cds) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(cds))
+	for _, c := range cds {
+		out = append(out, c.Word)
+	}
+	return out
+}
+
+// ConvertsCase ports Speller.convertsCase / DictionaryMetadata.isConvertingCase.
+func (d *Dictionary) ConvertsCase() bool {
+	return d != nil && d.ConvertCase
+}
+
 func (d *Dictionary) findReplacementCandidates(word string, maxEdit int, evenIfWordInDictionary bool) []CandidateData {
 	if d == nil || d.FSA == nil || word == "" {
 		return nil
