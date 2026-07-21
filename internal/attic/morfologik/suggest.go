@@ -3,10 +3,23 @@ package morfologik
 import (
 	"strings"
 	"unicode"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // FREQ_RANGES ports morfologik Speller.FREQ_RANGES ('Z'-'A'+1 = 26).
 const FreqRanges = 26
+
+// SuggestOpts ports Speller.areEqual / edit-search options from DictionaryMetadata.
+type SuggestOpts struct {
+	// IgnoreDiacritics ports fsa.dict.speller.ignore-diacritics (EN true).
+	// Expand replace/insert alphabet with common Latin diacritic letters so
+	// cafe→café style hits are reachable without full HMatrix FSA walk.
+	IgnoreDiacritics bool
+	// EquivalentChars ports fsa.dict.speller.equivalent-chars (from → list of to).
+	// Each to is tried as a free replacement for from at edit generation.
+	EquivalentChars map[rune][]rune
+}
 
 // SuggestEdits returns dictionary words within one Damerau-Levenshtein edit of word
 // by generating candidates and testing Contains (works for large CFSA2 dicts).
@@ -16,9 +29,12 @@ func (d *Dictionary) SuggestEdits(word string, max int) []string {
 }
 
 // SuggestEditsMax ports Speller suggestions with maxEditDistance (1, 2, or 3).
-// Distance-1 uses full edit1 candidate set; distance 2/3 expands via successive edit1
-// on out-of-dict neighbors (bounded for large dictionaries).
 func (d *Dictionary) SuggestEditsMax(word string, maxResults, maxEdit int) []string {
+	return d.SuggestEditsMaxOpts(word, maxResults, maxEdit, SuggestOpts{})
+}
+
+// SuggestEditsMaxOpts is SuggestEditsMax with areEqual-related options.
+func (d *Dictionary) SuggestEditsMaxOpts(word string, maxResults, maxEdit int, opt SuggestOpts) []string {
 	if d == nil || word == "" {
 		return nil
 	}
@@ -57,7 +73,7 @@ func (d *Dictionary) SuggestEditsMax(word string, maxResults, maxEdit int) []str
 	}
 
 	// distance 1
-	cands1 := edit1Candidates(low)
+	cands1 := edit1CandidatesOpts(low, opt)
 	for _, c := range cands1 {
 		if addIfKnown(c) && len(out) >= maxResults {
 			return out
@@ -78,7 +94,7 @@ func (d *Dictionary) SuggestEditsMax(word string, maxResults, maxEdit int) []str
 		if n > maxNeighbors {
 			break
 		}
-		for _, c2 := range edit1Candidates(c) {
+		for _, c2 := range edit1CandidatesOpts(c, opt) {
 			if addIfKnown(c2) && len(out) >= maxResults {
 				return out
 			}
@@ -88,8 +104,7 @@ func (d *Dictionary) SuggestEditsMax(word string, maxResults, maxEdit int) []str
 		return out
 	}
 
-	// distance 3: one more expansion round on a smaller frontier of distance-2 misspellings
-	// Re-run limited edit1×2 style is expensive; use second hop from first batch of cands1 only.
+	// distance 3: one more expansion round on a smaller frontier
 	n = 0
 	for _, c := range cands1 {
 		if d.Contains(c) {
@@ -100,7 +115,7 @@ func (d *Dictionary) SuggestEditsMax(word string, maxResults, maxEdit int) []str
 			break
 		}
 		inner := 0
-		for _, c2 := range edit1Candidates(c) {
+		for _, c2 := range edit1CandidatesOpts(c, opt) {
 			if d.Contains(c2) {
 				continue
 			}
@@ -108,7 +123,7 @@ func (d *Dictionary) SuggestEditsMax(word string, maxResults, maxEdit int) []str
 			if inner > 30 {
 				break
 			}
-			for _, c3 := range edit1Candidates(c2) {
+			for _, c3 := range edit1CandidatesOpts(c2, opt) {
 				if addIfKnown(c3) && len(out) >= maxResults {
 					return out
 				}
@@ -124,14 +139,23 @@ func (d *Dictionary) WeightedEditSuggestions(word string, maxResults, maxEdit in
 	Word   string
 	Weight int
 } {
-	sugs := d.SuggestEditsMax(word, maxResults, maxEdit)
+	return d.WeightedEditSuggestionsOpts(word, maxResults, maxEdit, SuggestOpts{})
+}
+
+// WeightedEditSuggestionsOpts is WeightedEditSuggestions with Speller.areEqual options.
+func (d *Dictionary) WeightedEditSuggestionsOpts(word string, maxResults, maxEdit int, opt SuggestOpts) []struct {
+	Word   string
+	Weight int
+} {
+	sugs := d.SuggestEditsMaxOpts(word, maxResults, maxEdit, opt)
 	if len(sugs) == 0 {
 		return nil
 	}
 	// Approximate distance: 1 if edit1 of low, else 2 if within edit2, else 3
+	// Free diacritic/equivalent diffs count as distance 0 (Java areEqual).
 	low := strings.ToLower(word)
 	edit1set := map[string]struct{}{}
-	for _, c := range edit1Candidates(low) {
+	for _, c := range edit1CandidatesOpts(low, opt) {
 		edit1set[c] = struct{}{}
 	}
 	out := make([]struct {
@@ -141,12 +165,13 @@ func (d *Dictionary) WeightedEditSuggestions(word string, maxResults, maxEdit in
 	for _, s := range sugs {
 		sl := strings.ToLower(s)
 		dist := 2
-		if _, ok := edit1set[sl]; ok {
+		if freeEqualUnderOpts(low, sl, opt) {
+			dist = 0
+		} else if _, ok := edit1set[sl]; ok {
 			dist = 1
 		} else if maxEdit >= 3 {
-			// cheap: if any edit1 of s is edit1 of word → distance 2
 			dist = 3
-			for _, e := range edit1Candidates(sl) {
+			for _, e := range edit1CandidatesOpts(sl, opt) {
 				if _, ok := edit1set[e]; ok {
 					dist = 2
 					break
@@ -173,6 +198,64 @@ func (d *Dictionary) WeightedEditSuggestions(word string, maxResults, maxEdit in
 	}
 	return out
 }
+
+// freeEqualUnderOpts reports whether a and b match under areEqual (same length, free chars).
+func freeEqualUnderOpts(a, b string, opt SuggestOpts) bool {
+	ar, br := []rune(a), []rune(b)
+	if len(ar) != len(br) {
+		return false
+	}
+	for i := range ar {
+		if !runesEqualUnderOpts(ar[i], br[i], opt) {
+			return false
+		}
+	}
+	return true
+}
+
+// runesEqualUnderOpts ports Speller.areEqual for a single character pair.
+func runesEqualUnderOpts(x, y rune, opt SuggestOpts) bool {
+	if x == y {
+		return true
+	}
+	if opt.EquivalentChars != nil {
+		if list, ok := opt.EquivalentChars[x]; ok {
+			for _, c := range list {
+				if c == y {
+					return true
+				}
+			}
+		}
+		// also check reverse for generation symmetry
+		if list, ok := opt.EquivalentChars[y]; ok {
+			for _, c := range list {
+				if c == x {
+					return true
+				}
+			}
+		}
+	}
+	if opt.IgnoreDiacritics {
+		return stripDiacritic(x) == stripDiacritic(y)
+	}
+	return false
+}
+
+func stripDiacritic(r rune) rune {
+	// Ports Normalizer.normalize(Character.toString(x), NFD).charAt(0)
+	s := norm.NFD.String(string(r))
+	for _, c := range s {
+		if unicode.Is(unicode.Mn, c) {
+			continue
+		}
+		return c
+	}
+	return r
+}
+
+// latinDiacriticLetters are common accented Latin letters tried when IgnoreDiacritics
+// (so candidate-gen can reach café-style dictionary forms without FSA walk).
+const latinDiacriticLetters = "àáâãäåāăąèéêëēĕėęěìíîïĩīĭįòóôõöøōŏőùúûüũūŭůűýÿćĉċčďđĝğġģĥħĵķĺļľŀłńņňŋśŝşšţťŧŵŷźżžçñæœß"
 
 func isTitleCase(s string) bool {
 	r := []rune(s)
@@ -204,12 +287,39 @@ func titleCase(s string) string {
 	return string(r)
 }
 
-// edit1Candidates generates lowercase distance-1 candidates (insert/delete/replace/transpose).
+// edit1Candidates generates lowercase distance-1 candidates (ASCII letters + apostrophe).
 func edit1Candidates(word string) []string {
-	letters := "abcdefghijklmnopqrstuvwxyz'"
+	return edit1CandidatesOpts(word, SuggestOpts{})
+}
+
+// edit1CandidatesOpts expands the replace/insert alphabet for ignore-diacritics and
+// equivalent-chars (Java Speller.areEqual surface for candidate generation).
+func edit1CandidatesOpts(word string, opt SuggestOpts) []string {
+	letters := []rune("abcdefghijklmnopqrstuvwxyz'")
+	if opt.IgnoreDiacritics {
+		letters = append(letters, []rune(latinDiacriticLetters)...)
+	}
+	if opt.EquivalentChars != nil {
+		seen := map[rune]struct{}{}
+		for _, r := range letters {
+			seen[r] = struct{}{}
+		}
+		for from, tos := range opt.EquivalentChars {
+			if _, ok := seen[from]; !ok {
+				letters = append(letters, from)
+				seen[from] = struct{}{}
+			}
+			for _, t := range tos {
+				if _, ok := seen[t]; !ok {
+					letters = append(letters, t)
+					seen[t] = struct{}{}
+				}
+			}
+		}
+	}
 	w := []rune(word)
 	n := len(w)
-	out := make([]string, 0, n*27+n*26+n)
+	out := make([]string, 0, n*len(letters)*2+n)
 	// deletes
 	for i := 0; i < n; i++ {
 		out = append(out, string(append(append([]rune{}, w[:i]...), w[i+1:]...)))
@@ -229,6 +339,19 @@ func edit1Candidates(word string) []string {
 			rw := append([]rune{}, w...)
 			rw[i] = c
 			out = append(out, string(rw))
+		}
+		// equivalent-char free replacements for the char at i
+		if opt.EquivalentChars != nil {
+			if list, ok := opt.EquivalentChars[w[i]]; ok {
+				for _, c := range list {
+					if c == w[i] {
+						continue
+					}
+					rw := append([]rune{}, w...)
+					rw[i] = c
+					out = append(out, string(rw))
+				}
+			}
 		}
 	}
 	// inserts

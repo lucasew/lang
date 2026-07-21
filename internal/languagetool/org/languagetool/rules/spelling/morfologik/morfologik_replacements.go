@@ -126,6 +126,32 @@ func splitSpacePair(p string) (string, string, bool) {
 	return fields[0], fields[1], true
 }
 
+// ParseEquivalentChars ports DictionaryAttribute.EQUIVALENT_CHARS fromString.
+// Format: "x ź, l ł, u ó" → map[x]=[ź], map[l]=[ł], ...
+func ParseEquivalentChars(value string) map[rune][]rune {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return nil
+	}
+	out := map[rune][]rune{}
+	for _, part := range splitCommaPairs(value) {
+		fields := strings.Fields(part)
+		if len(fields) != 2 {
+			continue
+		}
+		fr := []rune(fields[0])
+		tr := []rune(fields[1])
+		if len(fr) != 1 || len(tr) != 1 {
+			continue
+		}
+		out[fr[0]] = append(out[fr[0]], tr[0])
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
 func isStartAnchored(key string) bool { return strings.HasPrefix(key, "^") }
 func isEndAnchored(key string) bool   { return strings.HasSuffix(key, "$") }
 

@@ -24,6 +24,7 @@ const (
 	infoInputConversion   = "fsa.dict.input-conversion"
 	infoOutputConversion  = "fsa.dict.output-conversion"
 	infoReplacementPairs  = "fsa.dict.speller.replacement-pairs"
+	infoEquivalentChars   = "fsa.dict.speller.equivalent-chars"
 )
 
 // binaryDictCache caches OpenDictionary by absolute path (FSA is thread-safe).
@@ -56,6 +57,12 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 	if v, ok := meta[infoRunOnWords]; ok {
 		s.SupportRunOnWords = parseInfoBool(v, s.SupportRunOnWords)
 	}
+	if v, ok := meta[infoIgnoreDiacritics]; ok {
+		s.IgnoreDiacritics = parseInfoBool(v, s.IgnoreDiacritics)
+	}
+	if v, ok := meta[infoEquivalentChars]; ok {
+		s.EquivalentChars = ParseEquivalentChars(v)
+	}
 	if v, ok := meta[infoInputConversion]; ok {
 		s.InputConversionPairs = ParseConversionPairs(v)
 	}
@@ -67,8 +74,6 @@ func (s *MorfologikSpeller) ApplyInfoProperties(meta map[string]string) {
 		s.ReplacementTheRest = rest
 		s.ReplacementShort = short
 	}
-	// ignore-diacritics affects suggestion search, not isMisspelled gates — stored when needed later.
-	_ = meta[infoIgnoreDiacritics]
 }
 
 // LoadInfoBesideDict reads path.dict's sibling .info and applies speller flags.
@@ -199,7 +204,8 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 		if len([]rune(wordChecked)) < 4 && i > 2 {
 			continue
 		}
-		for _, e := range d.WeightedEditSuggestions(wordChecked, maxResults, maxEdit) {
+		opt := s.suggestOpts()
+		for _, e := range d.WeightedEditSuggestionsOpts(wordChecked, maxResults, maxEdit, opt) {
 			w := s.applyOutputConversion(e.Word)
 			if w == "" || w == word {
 				continue
@@ -221,6 +227,17 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 		candidates = candidates[:maxResults]
 	}
 	return candidates
+}
+
+// suggestOpts builds attic morfologik.SuggestOpts from .info flags.
+func (s *MorfologikSpeller) suggestOpts() atticmorfo.SuggestOpts {
+	if s == nil {
+		return atticmorfo.SuggestOpts{}
+	}
+	return atticmorfo.SuggestOpts{
+		IgnoreDiacritics: s.IgnoreDiacritics,
+		EquivalentChars:  s.EquivalentChars,
+	}
 }
 
 // binaryCascadeWeighted ports calcSpellerSuggestions distance cascade at the binary layer

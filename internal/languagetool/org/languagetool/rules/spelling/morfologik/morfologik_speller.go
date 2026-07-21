@@ -48,6 +48,10 @@ type MorfologikSpeller struct {
 	FrequencyIncluded bool
 	// SupportRunOnWords ports fsa.dict.speller.runon-words (default true).
 	SupportRunOnWords bool
+	// IgnoreDiacritics ports fsa.dict.speller.ignore-diacritics (EN true).
+	IgnoreDiacritics bool
+	// EquivalentChars ports fsa.dict.speller.equivalent-chars (from → alternatives).
+	EquivalentChars map[rune][]rune
 	// InputConversionPairs ports fsa.dict.input-conversion (ordered).
 	InputConversionPairs [][2]string
 	// OutputConversionPairs ports fsa.dict.output-conversion (ordered).
