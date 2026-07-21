@@ -54,4 +54,18 @@ func TestGermanUnpairedQuotesRule_GermanRule(t *testing.T) {
 	ms := rule.MatchList([]*languagetool.AnalyzedSentence{deAnalyzeUQ("Die „Sätze zum Testen.")})
 	require.NotEmpty(t, ms)
 	require.Equal(t, rule, ms[0].GetRule())
+
+	// Java: soft-hyphen sentences that used to break position mapping — smoke (no panic).
+	// Full JLT check path maps soft hyphens via AnnotatedText; here MatchList must not panic.
+	for _, s := range []string{
+		"Im Kran\u00ADken\u00ADhaus. Auch)",
+		"Ein Kran\u00ADken\u00ADhaus. Auch)",
+		"Das Kran\u00ADken\u00ADhaus. Auch)",
+		"Kran\u00ADken\u00ADhaus. Auch)",
+		"Kran\u00ADken\u00ADhaus. (Auch",
+	} {
+		require.NotPanics(t, func() {
+			_ = rule.MatchList([]*languagetool.AnalyzedSentence{deAnalyzeUQ(s)})
+		}, s)
+	}
 }
