@@ -33,31 +33,22 @@ func TestCompoundSplit_PrefixVerbNEB(t *testing.T) {
 }
 
 // Non-prefix compound: VER tags filtered out (Java stream filter !contains VER).
+// firstPart must not be in prfxs ("Auto" is not a separable verb prefix).
 func TestCompoundSplit_NonPrefixDropsVER(t *testing.T) {
 	wt := tagging.MapWordTagger{
-		"Haus": {tagging.NewTaggedWord("Haus", "SUB:NOM:SIN:NEU")},
-		// also a VER reading on last part would be dropped when first is not prfx
-		"bau": {tagging.NewTaggedWord("bauen", "VER:INF:NON"), tagging.NewTaggedWord("Bau", "SUB:NOM:SIN:MAS")},
+		"bau": {
+			tagging.NewTaggedWord("bauen", "VER:INF:NON"),
+			tagging.NewTaggedWord("Bau", "SUB:NOM:SIN:MAS"),
+		},
 	}
 	tagger := NewGermanTagger(wt)
 	tagger.SplitCompound = func(word string) []string {
-		if word == "Hochbau" {
-			return []string{"Hoch", "bau"}
+		if word == "autobau" {
+			return []string{"auto", "bau"}
 		}
 		return nil
 	}
-	// Uppercase word → last part uppercased to Bau; TagWordExact("Bau") may miss — tag "bau" lower via no upper on non-start?
-	// Java: startsWithUppercase(word) → uppercaseFirstChar(lastPart) → "Bau"
-	// Our map has "bau" only for last after upper → "Bau" miss.
-	// Use all-lower surface so last stays "bau".
-	tagger2 := NewGermanTagger(wt)
-	tagger2.SplitCompound = func(word string) []string {
-		if word == "hochbau" {
-			return []string{"hoch", "bau"}
-		}
-		return nil
-	}
-	got := tagger2.Tag([]string{"hochbau"})
+	got := tagger.Tag([]string{"autobau"})
 	tags := posTagsOf(got[0])
 	for _, tg := range tags {
 		require.NotContains(t, tg, "VER", "non-prefix compound must drop VER tags")
