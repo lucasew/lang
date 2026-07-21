@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -43,4 +44,30 @@ func TestLoadSpellingWordList_Comments(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, words)
 	require.Contains(t, words, "abendäße")
+}
+
+// Twin of AustrianGermanSpellerRuleTest.testGetSuggestionsFromSpellingTxt
+func TestAustrianGermanSpellerRule_GetSuggestionsFromSpellingTxt(t *testing.T) {
+	ClearGermanFilterSpeller()
+	t.Cleanup(ClearGermanFilterSpeller)
+	r := NewAustrianGermanSpellerRule(nil)
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../../"))
+	// Base + AT extras (Java SpellingCheckRule + AustrianGermanSpellerRule.init)
+	base := filepath.Join(root, "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/hunspell/spelling.txt")
+	at := filepath.Join(root, "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/hunspell/spelling-de-AT.txt")
+	dict := filepath.Join(root, "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/hunspell/de_AT.dict")
+	if !WireGermanFilterSpeller(dict) {
+		t.Skipf("de_AT.dict not openable: %s", dict)
+	}
+	require.NoError(t, r.InitBaseSpellingIgnoreWords(base))
+	require.NoError(t, r.InitLanguageSpecificIgnoreWords(at))
+
+	// Shopbewertung / Wahlzuckerl from spelling lists → 0 matches
+	require.Empty(t, r.Match(languagetool.AnalyzePlain("Shopbewertung")))
+	require.Empty(t, r.Match(languagetool.AnalyzePlain("Wahlzuckerl")))
+	require.Empty(t, r.Match(languagetool.AnalyzePlain("Wahlzuckerls"))) // /NS expand
+	// nonsense → misspelled
+	ms := r.Match(languagetool.AnalyzePlain("aifhdlidflifs"))
+	require.Len(t, ms, 1)
 }
