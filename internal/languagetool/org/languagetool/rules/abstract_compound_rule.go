@@ -10,8 +10,10 @@ import (
 )
 
 var (
-	compoundDigitRE      = regexp.MustCompile(`\d+`)
-	compoundWhitespaceRE = regexp.MustCompile(`\s+`)
+	compoundDigitRE = regexp.MustCompile(`\d+`)
+	// Java WHITESPACE = Pattern.compile("\\s+") without UNICODE_CHARACTER_CLASS:
+	// [ \t\n\x0B\f\r]+ — not Go RE2 \s (NBSP / Unicode spaces).
+	compoundWhitespaceRE = regexp.MustCompile(`[ \t\n\v\f\r]+`)
 	compoundDashesRE     = regexp.MustCompile(`--+`)
 )
 
@@ -286,7 +288,8 @@ func (r *AbstractCompoundRule) getStringToTokenMap(prevTokens []*languagetool.An
 				stringToCheck = uncapitalize(stringToCheck)
 			}
 			stringsToCheck = append(stringsToCheck, stringToCheck)
-			origStringsToCheck = append(origStringsToCheck, strings.TrimSpace(sb.String()))
+			// Java: sb.toString().trim()
+			origStringsToCheck = append(origStringsToCheck, tools.JavaStringTrim(sb.String()))
 			if _, ok := stringToToken[stringToCheck]; !ok {
 				stringToToken[stringToCheck] = atr
 			}
@@ -295,8 +298,10 @@ func (r *AbstractCompoundRule) getStringToTokenMap(prevTokens []*languagetool.An
 	return stringsToCheck, origStringsToCheck, stringToToken
 }
 
+// normalizeCompound ports AbstractCompoundRule.normalize:
+// inStr.trim(); replace " - "/"-"; WHITESPACE.matcher(str).replaceAll(" ").
 func normalizeCompound(inStr string) string {
-	str := strings.TrimSpace(inStr)
+	str := tools.JavaStringTrim(inStr)
 	str = strings.ReplaceAll(str, " - ", " ")
 	str = strings.ReplaceAll(str, "-", " ")
 	str = compoundWhitespaceRE.ReplaceAllString(str, " ")

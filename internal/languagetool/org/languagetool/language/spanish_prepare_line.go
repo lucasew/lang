@@ -3,6 +3,8 @@ package language
 import (
 	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // SpanishPrepareLineForSpeller ports Spanish.prepareLineForSpeller.
@@ -14,8 +16,9 @@ func SpanishPrepareLineForSpeller(line string) []string {
 	}
 	formTag := regexp.MustCompile(`[\t;]`).Split(parts[0], -1)
 	if len(formTag) > 1 {
-		tag := strings.TrimSpace(formTag[1])
-		form := strings.TrimSpace(formTag[0])
+		// Java: formTag[i].trim()
+		tag := tools.JavaStringTrim(formTag[1])
+		form := tools.JavaStringTrim(formTag[0])
 		if strings.HasPrefix(tag, "N") || tag == "_Latin_" || tag == "LOC_ADV" {
 			return []string{form}
 		}

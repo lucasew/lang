@@ -44,6 +44,13 @@ func TestManualTagger_Tag(t *testing.T) {
 	require.Equal(t, 0, len(tagger.Tag("Drunter")))
 }
 
+func TestManualTagger_JavaTrimKeepsNBSPDetection(t *testing.T) {
+	// Java rejects lines containing NBSP after line.trim() (trim does not remove NBSP).
+	_, err := NewManualTagger(strings.NewReader("\u00a0foo\tbar\tNN\n"))
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "Non-breaking space")
+}
+
 func TestManualTagger_Inline(t *testing.T) {
 	tagger, err := NewManualTagger(strings.NewReader("foo\tbar\tNN\n"))
 	require.NoError(t, err)

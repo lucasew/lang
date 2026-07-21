@@ -77,7 +77,8 @@ func loadMultiWordLines(r io.Reader) ([]string, error) {
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java MultiWordChunker.loadWords: line.trim()
+		line := tools.JavaStringTrim(sc.Text())
 		if strings.HasPrefix(line, "#separatorRegExp=") {
 			// Keep marker for fillMaps (Java sets separator then skips the comment line).
 			lines = append(lines, line)
@@ -87,7 +88,8 @@ func loadMultiWordLines(r io.Reader) ([]string, error) {
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			// Java: StringUtils.substringBefore(line, "#").trim()
+			line = tools.JavaStringTrim(line[:i])
 		}
 		if line == "" {
 			continue
@@ -95,7 +97,7 @@ func loadMultiWordLines(r io.Reader) ([]string, error) {
 		// Java German special case: base + optional e/s/n endings from /[ESN]+ suffix.
 		if germanLineExpander.MatchString(line) {
 			parts := strings.SplitN(line, "/", 2)
-			base := strings.TrimSpace(parts[0])
+			base := tools.JavaStringTrim(parts[0])
 			if base == "" {
 				continue
 			}

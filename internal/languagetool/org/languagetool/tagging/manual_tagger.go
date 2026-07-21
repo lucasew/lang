@@ -29,7 +29,8 @@ func loadMapping(r io.Reader) (map[string][]TaggedWord, error) {
 	lineCount := 0
 	separator := "\t"
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// Java ManualTagger.loadMapping: line.trim() (String.trim, not Unicode TrimSpace).
+		line := tools.JavaStringTrim(sc.Text())
 		lineCount++
 		if strings.HasPrefix(line, "#separatorRegExp=") {
 			separator = strings.TrimPrefix(line, "#separatorRegExp=")
@@ -42,7 +43,7 @@ func loadMapping(r io.Reader) (map[string][]TaggedWord, error) {
 			return nil, fmt.Errorf("Non-breaking space found in line #%d: '%s', please remove it", lineCount, line)
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = strings.TrimSpace(line[:i])
+			line = tools.JavaStringTrim(line[:i])
 		}
 		parts := strings.Split(line, separator)
 		if len(parts) != 3 {
@@ -53,7 +54,8 @@ func loadMapping(r io.Reader) (map[string][]TaggedWord, error) {
 		if lemma == form {
 			lemma = form
 		}
-		tag := strings.TrimSpace(parts[2])
+		// Java: parts[2].trim() for POS (if present in stream)
+		tag := tools.JavaStringTrim(parts[2])
 		m[form] = append(m[form], NewTaggedWord(lemma, tag))
 	}
 	return m, sc.Err()

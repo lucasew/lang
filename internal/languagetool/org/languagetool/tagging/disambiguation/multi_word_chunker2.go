@@ -54,7 +54,8 @@ func (c *MultiWordChunker2) lazyInit() {
 	}
 	m := map[string][]multiWordEntry{}
 	for _, line := range c.lines {
-		line = strings.TrimSpace(line)
+		// Java MultiWordChunker2: line.trim()
+		line = tools.JavaStringTrim(line)
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}

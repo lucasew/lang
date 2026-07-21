@@ -3,6 +3,8 @@ package language
 import (
 	"regexp"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Portuguese rule priorities from org.languagetool.language.Portuguese (id2prio + getPriorityForId).
@@ -123,9 +125,10 @@ func PortuguesePrepareLineForSpeller(line string) []string {
 		return []string{line}
 	}
 	formTag := regexp.MustCompile(`[\t;]`).Split(parts[0], -1)
-	form := strings.TrimSpace(formTag[0])
+	// Java: formTag[i].trim()
+	form := tools.JavaStringTrim(formTag[0])
 	if len(formTag) > 1 {
-		tag := strings.TrimSpace(formTag[1])
+		tag := tools.JavaStringTrim(formTag[1])
 		if strings.HasPrefix(tag, "N") || tag == "_Latin_" {
 			return []string{form}
 		}

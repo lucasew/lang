@@ -1,6 +1,10 @@
 package language
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
 
 // EnglishPrepareLineForSpeller ports English.prepareLineForSpeller
 // (twin of rules/en.PrepareLineForSpeller for Language API surface).
@@ -15,9 +19,10 @@ func EnglishPrepareLineForSpeller(line string) []string {
 		return []string{""}
 	}
 	formTag := strings.Split(parts[0], "\t")
-	form := strings.TrimSpace(formTag[0])
+	// Java: formTag[i].trim()
+	form := tools.JavaStringTrim(formTag[0])
 	if len(formTag) > 1 {
-		tag := strings.TrimSpace(formTag[1])
+		tag := tools.JavaStringTrim(formTag[1])
 		if strings.HasPrefix(tag, "NN") || strings.HasPrefix(tag, "JJ") {
 			return []string{form}
 		}
