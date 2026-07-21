@@ -85,18 +85,19 @@ func TestFeatureExtractor_NgramsOrder(t *testing.T) {
 func TestFeatureExtractor_ExperimentParams(t *testing.T) {
 	ResetSuggestionsChanges()
 	t.Cleanup(ResetSuggestionsChanges)
-	InitSuggestionsChanges(&SuggestionChangesTestConfig{
-		Experiments: []SuggestionChangesExperiment{{
+	sc := InitSuggestionsChanges(&SuggestionChangesTestConfig{
+		ExperimentRuns: []SuggestionChangesExperimentRuns{{
 			Name: "test",
-			Parameters: map[string]any{
-				"topN":            2,
-				"score":           "noop",
-				"levenstheinProb": 0.5,
+			Parameters: map[string][]any{
+				"topN":            {2},
+				"score":           {"noop"},
+				"levenstheinProb": {0.5},
 			},
 		}},
 	})
-	s := GetSuggestionsChanges()
-	s.SetCurrentExperiment(&s.Config.Experiments[0])
+	exps := sc.GetExperiments()
+	require.Len(t, exps, 1)
+	sc.SetCurrentExperiment(exps[0])
 
 	e := NewSuggestionsOrdererFeatureExtractor(mapLM{"a": 0.1})
 	require.Equal(t, 2, e.TopN)
