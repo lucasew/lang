@@ -116,7 +116,7 @@ func TestPossessiusRedundantsFilter_AcceptPronounFoundDelete(t *testing.T) {
 	// posVerb = verbIndex - 1 = li index 1? Let's set patternTokenPos to verb index 2 in this sentence
 	// tokens: 0 SENT, 1 li, 2 trenca, 3 el, 4 seu, 5 braç
 	// patternTokenPos = 2 (trenca): posVerb=1, has no GV, posVerb becomes 2 (trenca). Good.
-	// pronoun before: posPronoun=1 (li) — PP3CSD00 matches person 3, number C with PX3... number S? number on PX is S; condition number.equals("C") || pronoun[4]==number → number S, pronoun number at 4 is C? PP3CSD00: indices 0P1P2=3 3C 4S? 
+	// pronoun before: posPronoun=1 (li) — PP3CSD00 matches person 3, number C with PX3... number S? number on PX is S; condition number.equals("C") || pronoun[4]==number → number S, pronoun number at 4 is C? PP3CSD00: indices 0P1P2=3 3C 4S?
 	// PP3CSD00: [0]=P [1]=P [2]=3 [3]=C [4]=S [5]=D...
 	// Wait PP3CSD00 length: P P 3 C S D 0 0
 	// substring(2,3)=3, substring(4,5)=S

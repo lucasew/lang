@@ -33,7 +33,6 @@ func init() {
 	registerPreventSuggestion(`.+ [a-zöäüßA-ZÖÄÜ]`)
 }
 
-
 func registerPreventSuggestion(pat string) {
 	re, err := regexp.Compile("^(?:" + pat + ")$")
 	if err != nil {
@@ -78,4 +77,3 @@ func (r *GermanSpellerRule) AcceptSuggestion(s string) bool {
 	}
 	return true
 }
-

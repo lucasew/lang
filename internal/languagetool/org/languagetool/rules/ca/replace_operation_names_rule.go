@@ -61,15 +61,15 @@ type ReplaceOperationNamesRule struct {
 
 func NewReplaceOperationNamesRule(messages map[string]string) *ReplaceOperationNamesRule {
 	base := &rules.AbstractSimpleReplaceRule{
-		Messages:      messages,
-		WrongWords:    loadOperationNames(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
-		ID:            "NOMS_OPERACIONS",
-		LanguageCode:         "ca",
-		SubRuleSpecificIDs:   true,
-		Description:   "S'ha d'evitar com a nom d'operació tècnica: $match",
-		ShortMsg:      "Forma preferible",
+		Messages:           messages,
+		WrongWords:         loadOperationNames(),
+		CaseSensitive:      false,
+		CheckLemmas:        false,
+		ID:                 "NOMS_OPERACIONS",
+		LanguageCode:       "ca",
+		SubRuleSpecificIDs: true,
+		Description:        "S'ha d'evitar com a nom d'operació tècnica: $match",
+		ShortMsg:           "Forma preferible",
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Si és el nom d'una operació tècnica, val més usar una altra forma."
 		},

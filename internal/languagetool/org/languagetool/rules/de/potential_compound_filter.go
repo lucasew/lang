@@ -3,7 +3,6 @@ package de
 import (
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -53,7 +52,7 @@ func (f *PotentialCompoundFilter) Suggestions(part1, part2 string) []string {
 	var out []string
 	if f.joinedValid(joined) {
 		// Java: if joinedWord.length() > 20 also suggest hyphenated first
-		if utf8.RuneCountInString(joined) > 20 {
+		if utf16LenDE(joined) > 20 {
 			out = append(out, hyphenated)
 		}
 		out = append(out, joined)

@@ -33,10 +33,10 @@ type AgreementSuggestor2 struct {
 
 // Java templates (AgreementSuggestor2).
 const (
-	detTemplate  = "ART:IND/DEF:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU"
-	adjTemplate  = "ADJ:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:GRU:IND/DEF"
-	pa1Template  = "PA1:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:GRU:IND/DEF:VER"
-	pa2Template  = "PA2:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:GRU:IND/DEF:VER"
+	detTemplate = "ART:IND/DEF:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU"
+	adjTemplate = "ADJ:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:GRU:IND/DEF"
+	pa1Template = "PA1:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:GRU:IND/DEF:VER"
+	pa2Template = "PA2:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:GRU:IND/DEF:VER"
 )
 
 var (
@@ -186,9 +186,9 @@ func grammaticalCaseName(c GrammaticalCase) string {
 
 // agreementSuggestion ports AgreementSuggestor2.Suggestion.
 type agreementSuggestion struct {
-	phrase            string
-	tokenLevelEdits   int
-	charLevelEdits    int
+	phrase          string
+	tokenLevelEdits int
+	charLevelEdits  int
 }
 
 // GetSuggestions ports getSuggestions(false).

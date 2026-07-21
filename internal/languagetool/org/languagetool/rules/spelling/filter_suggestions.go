@@ -23,7 +23,7 @@ func (r *SpellingCheckRule) FilterSuggestions(suggestions []string) []string {
 			withoutS := replacement[:len(replacement)-2]
 			if r.isProperNoun(withoutS) {
 				// Java inserts sugg2 (Name's) then sugg1 (Name) at front via add(0,...)
-				// Order after both add(0): first Name, then Name's (second add(0) pushes Name's to front... 
+				// Order after both add(0): first Name, then Name's (second add(0) pushes Name's to front...
 				// add(0, sugg1 Name); add(0, sugg2 Name's) → [Name's, Name, ...]
 				newSuggestions = append([]string{withoutS + "'s", withoutS}, newSuggestions...)
 				continue

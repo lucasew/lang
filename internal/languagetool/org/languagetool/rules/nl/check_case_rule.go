@@ -24,16 +24,16 @@ func loadCheckCase() *rules.AbstractSimpleReplaceRule2 {
 		}
 		defer f.Close()
 		base := &rules.AbstractSimpleReplaceRule2{
-			ID:                                "NL_CHECKCASE",
-			Description:                       "Controle op hoofd- en kleine letters: $match",
-			ShortMsg:                          "Schrijfwijze",
-			MessageTemplate:                   "Juiste schrijfwijze",
-			SuggestionsSeparator:              " of ",
-			CaseSens:                          rules.CaseInsensitive,
-			LanguageCode:                      "nl",
-			SubRuleSpecificIDs:                true,
-			CheckingCase:                      true,
-			MatchShortAllUpperInCheckCase:     true, // setIgnoreShortUppercaseWords(false)
+			ID:                            "NL_CHECKCASE",
+			Description:                   "Controle op hoofd- en kleine letters: $match",
+			ShortMsg:                      "Schrijfwijze",
+			MessageTemplate:               "Juiste schrijfwijze",
+			SuggestionsSeparator:          " of ",
+			CaseSens:                      rules.CaseInsensitive,
+			LanguageCode:                  "nl",
+			SubRuleSpecificIDs:            true,
+			CheckingCase:                  true,
+			MatchShortAllUpperInCheckCase: true, // setIgnoreShortUppercaseWords(false)
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/nl/check_case.txt"); err != nil {
 			panic(err)

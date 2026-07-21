@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
 	"sync"
@@ -16,8 +17,8 @@ import (
 
 const (
 	MorfologikUkrainianSpellerRuleID = "MORFOLOGIK_RULE_UK_UA"
-	UkrainianSpellerDict            = "/uk/hunspell/uk_UA.dict"
-	ukAbbreviationChar              = "."
+	UkrainianSpellerDict             = "/uk/hunspell/uk_UA.dict"
+	ukAbbreviationChar               = "."
 )
 
 var (
@@ -237,7 +238,7 @@ func additionalDashPrefixSuggestions(word string) []string {
 		if !strings.HasPrefix(w, key) {
 			continue
 		}
-		if utf8.RuneCountInString(w) <= utf8.RuneCountInString(key)+2 {
+		if tokenizers.UTF16Len(w) <= tokenizers.UTF16Len(key)+2 {
 			continue
 		}
 		rest := []rune(w)

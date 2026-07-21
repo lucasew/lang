@@ -1,10 +1,10 @@
 package uk
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -101,7 +101,7 @@ func (r *MixedAlphabetsRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 			msg := "Вжито кириличну літеру замість латинської"
 			ruleMatches = append(ruleMatches, r.createRuleMatch(tokenReadings, []string{"C"}, msg, sentence))
 		}
-		if utf8.RuneCountInString(tokenString) < 2 {
+		if tokenizers.UTF16Len(tokenString) < 2 {
 			if tokenString == "°" && i < len(tokens)-1 && tokens[i+1].GetToken() == "С" {
 				msg := "Вжито кириличну літеру замість латинської"
 				ruleMatches = append(ruleMatches, r.createRuleMatch(tokens[i+1], []string{"C"}, msg, sentence))
@@ -115,7 +115,7 @@ func (r *MixedAlphabetsRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 			if !latinOnly.MatchString(tokenString) && !likelyLatinNumber.MatchString(tokenString) {
 				replacements = append(replacements, toCyrillic(tokenString))
 			}
-			if (utf8.RuneCountInString(tokenString) > 2 && !cyrillicOnly.MatchString(tokenString)) ||
+			if (tokenizers.UTF16Len(tokenString) > 2 && !cyrillicOnly.MatchString(tokenString)) ||
 				likelyLatinNumber.MatchString(tokenString) {
 				converted := toLatinLeftOnly(tokenString)
 				converted = adjustForInvalidSuffix(converted)
@@ -212,7 +212,7 @@ func hasFnameNotAbbrPOS(atr *languagetool.AnalyzedTokenReadings) bool {
 		if strings.Contains(pos, ":abbr") {
 			continue
 		}
-		// full-string .*fname.* 
+		// full-string .*fname.*
 		if strings.Contains(pos, "fname") {
 			return true
 		}

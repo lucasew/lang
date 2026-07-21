@@ -110,4 +110,3 @@ func isCommonGermanWord(w string) bool {
 	_, ok := commonGermanWords[strings.ToLower(w)]
 	return ok
 }
-

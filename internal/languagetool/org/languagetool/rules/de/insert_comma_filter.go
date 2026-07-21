@@ -23,12 +23,12 @@ func NewInsertCommaFilter() *InsertCommaFilter {
 
 // Java: Pattern.compile("\\s"), [Ss]agt?, der|die|..., denke|..., bei|für|mit, [Di]ir|...
 var (
-	insertCommaWS     = regexp.MustCompile(`\s`)
-	insertCommaSagt   = regexp.MustCompile(`^[Ss]agt?$`)
-	insertCommaDenke  = regexp.MustCompile(`^(denke|dachte|glaube|schätze|vermute|behaupte)$`)
-	insertCommaDer    = regexp.MustCompile(`^(der|die|das|seine|ihre|deine|unsere|meine|folgender|dieser)$`)
-	insertCommaBei    = regexp.MustCompile(`^(bei|für|mit)$`)
-	insertCommaDir    = regexp.MustCompile(`^([Dd]ir|[Dd]ich|[Ee]uer|[Ee]uch)$`)
+	insertCommaWS    = regexp.MustCompile(`\s`)
+	insertCommaSagt  = regexp.MustCompile(`^[Ss]agt?$`)
+	insertCommaDenke = regexp.MustCompile(`^(denke|dachte|glaube|schätze|vermute|behaupte)$`)
+	insertCommaDer   = regexp.MustCompile(`^(der|die|das|seine|ihre|deine|unsere|meine|folgender|dieser)$`)
+	insertCommaBei   = regexp.MustCompile(`^(bei|für|mit)$`)
+	insertCommaDir   = regexp.MustCompile(`^([Dd]ir|[Dd]ich|[Ee]uer|[Ee]uch)$`)
 
 	insertCommaTagMu      sync.RWMutex
 	defaultInsertCommaTag func(string) []string

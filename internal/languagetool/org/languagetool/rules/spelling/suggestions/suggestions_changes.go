@@ -33,13 +33,13 @@ type SuggestionChangesTestConfig struct {
 // SuggestionsChanges ports org.languagetool.rules.spelling.suggestions.SuggestionsChanges
 // as a process-wide experiment tracker (nil when not configured).
 type SuggestionsChanges struct {
-	mu               sync.Mutex
-	Config           *SuggestionChangesTestConfig
+	mu                sync.Mutex
+	Config            *SuggestionChangesTestConfig
 	CurrentExperiment *SuggestionChangesExperiment
-	Correct          map[string]int
-	NotFound         map[string]int
-	PosSum           map[string]int
-	NumSamples       map[string]int
+	Correct           map[string]int
+	NotFound          map[string]int
+	PosSum            map[string]int
+	NumSamples        map[string]int
 }
 
 var (

@@ -2,7 +2,7 @@ package spelling
 
 // LanguageTool brand constants from SpellingCheckRule.
 const (
-	LanguageToolBrand  = "LanguageTool"
+	LanguageToolBrand   = "LanguageTool"
 	LanguageToolerBrand = "LanguageTooler"
 )
 

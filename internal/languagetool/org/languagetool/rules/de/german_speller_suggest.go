@@ -15,9 +15,9 @@ var (
 	// Java: .*[mM]a[jy]onn?[äe]se.*
 	reMayonnaise = regexp.MustCompile(`(?i).*ma[jy]onn?[äe]se.*`)
 	// Java: .*[rR]es(a|er)[vw]i[he]?rung(en)?
-	reReservierung = regexp.MustCompile(`(?i).*res(?:a|er)[vw]i[he]?rung(?:en)?.*`)
-	reReschaschier = regexp.MustCompile(`(?i)^reschaschier.+`)
-	reLaborants    = regexp.MustCompile(`(?i).*laborants$`)
+	reReservierung  = regexp.MustCompile(`(?i).*res(?:a|er)[vw]i[he]?rung(?:en)?.*`)
+	reReschaschier  = regexp.MustCompile(`(?i)^reschaschier.+`)
+	reLaborants     = regexp.MustCompile(`(?i).*laborants$`)
 	reProfessionell = regexp.MustCompile(`(?i)^proff?ess?ion[äe]h?ll?(?:e[mnrs]?)?$`)
 	reVerstandnis   = regexp.MustCompile(`(?i)^verstehendniss?(?:es?)?$`)
 )
@@ -412,8 +412,6 @@ func (r *GermanSpellerRule) finalizeSuggestions(word string, sugs []string) []st
 	}
 	return sugs
 }
-
-
 
 // abbreviationSuggestion ports getAbbreviationSuggestion: short ABK-tagged word → word+"."
 func (r *GermanSpellerRule) abbreviationSuggestion(word string) []string {

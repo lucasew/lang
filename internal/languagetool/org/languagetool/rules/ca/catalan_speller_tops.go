@@ -1,9 +1,9 @@
 package ca
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -61,7 +61,7 @@ func (r *MorfologikCatalanSpellerRule) additionalTopCatalanSuggestions(word stri
 		return nil
 	}
 	// camelCase split
-	if parts := splitCamelCaseCA(word); len(parts) > 1 && utf8.RuneCountInString(parts[0]) > 1 {
+	if parts := splitCamelCaseCA(word); len(parts) > 1 && tokenizers.UTF16Len(parts[0]) > 1 {
 		ok := true
 		for _, p := range parts {
 			if r.wordIsMisspelled(p) {
@@ -77,7 +77,7 @@ func (r *MorfologikCatalanSpellerRule) additionalTopCatalanSuggestions(word stri
 	if parts := splitDigitsAtEndCA(word); len(parts) == 2 {
 		p0 := parts[0]
 		_, shortOK := caSplitDigitsAtEnd[strings.ToLower(p0)]
-		if r.isTaggedCA(p0) && (utf8.RuneCountInString(p0) > 2 || shortOK) {
+		if r.isTaggedCA(p0) && (tokenizers.UTF16Len(p0) > 2 || shortOK) {
 			return []string{strings.Join(parts, " ")}
 		}
 	}

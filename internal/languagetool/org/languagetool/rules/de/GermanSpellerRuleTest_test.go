@@ -442,7 +442,7 @@ func TestGermanSpellerRule_IgnoreWordAt_MissingAdj_WithHooks(t *testing.T) {
 		return nil
 	}
 	// only assert true if isMisspelled(word) and !isMisspelled(Arbeit) and !isMisspelled(Arbeit+test)
-	if r.IsMisspelled("arbeitsartig") && !r.IsMisspelled("Arbeit") && !r.IsMisspelled("Arbeit"+ "test") {
+	if r.IsMisspelled("arbeitsartig") && !r.IsMisspelled("Arbeit") && !r.IsMisspelled("Arbeit"+"test") {
 		require.True(t, r.ignoreMissingAdjCompound("arbeitsartig"))
 		require.True(t, r.IgnoreWordAt([]string{"arbeitsartig"}, 0))
 	}

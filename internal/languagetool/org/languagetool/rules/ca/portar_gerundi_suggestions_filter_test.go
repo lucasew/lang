@@ -95,13 +95,13 @@ func TestPortarGerundiAccept_PronounAfter(t *testing.T) {
 	fent := atrPG("fent", "VMG0000", "fer", 6)
 	fent.SetWhitespaceBefore(true)
 	// clitic without whitespace after gerund - VerbSynthesizer counts pronouns after last verb
-	// For "fent-ho", last verb is fent at index, pronouns after on fent... 
+	// For "fent-ho", last verb is fent at index, pronouns after on fent...
 	// Java VerbSynthesizer starts at posWord (porto), expands multitoken GV, pronouns after last verb index
 	// Without GV chunks, iFirst=porto, iLast=porto only (gerund not multitoken verb unless GV)
 	// Actually isVerb for gerund: pNonParticiple is V.[^P].* which matches VMG...
 	// setIndexes from porto: finds porto as verb, enrere multitoken, avant multitoken while GV
 	// Without GV, only porto is the verb group. Pronouns after porto?
-	// For "porto fent-ho" the clitics are after gerund. Java uses VerbSynthesizer(tokens, posWord) 
+	// For "porto fent-ho" the clitics are after gerund. Java uses VerbSynthesizer(tokens, posWord)
 	// which only covers the portar group, not the gerund's clitics!
 	// Looking at Java again - verb synthesizer at posWord (portar). Pronouns after portar verb group?
 	// "porto fent-ho" - if "ho" is attached to fent, it's after gerund not portar.

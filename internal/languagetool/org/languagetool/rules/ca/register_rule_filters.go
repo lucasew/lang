@@ -95,17 +95,6 @@ func init() {
 	})
 }
 
-
-
-
-
-
-
-
-
-
-
-
 func caDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter {
 	h := NewDateFilterHelper()
 	return &rules.AbstractDateCheckWithSuggestionsFilter{
@@ -143,7 +132,6 @@ func caNewYearDateCore() *rules.NewYearDateFilterCore {
 		},
 	}
 }
-
 
 type diacriticsCheckRuleFilter struct {
 	inner *rules.ConfusionCheckFilter

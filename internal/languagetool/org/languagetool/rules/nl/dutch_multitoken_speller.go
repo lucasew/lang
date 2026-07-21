@@ -1,9 +1,9 @@
 package nl
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"os"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/multitoken"
@@ -39,7 +39,7 @@ func (d *DutchMultitokenSpeller) IsException(original, candidate string) bool {
 	if original == "" || candidate == "" {
 		return false
 	}
-	if utf8.RuneCountInString(original) <= 2 {
+	if tokenizers.UTF16Len(original) <= 2 {
 		return false
 	}
 	runes := []rune(original)

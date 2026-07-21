@@ -1,9 +1,9 @@
 package spelling
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -92,7 +92,7 @@ func (r *SymSpellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 			continue
 		}
 		w := tok.GetToken()
-		if w == "" || utf8.RuneCountInString(w) > MaxTokenLength {
+		if w == "" || tokenizers.UTF16Len(w) > MaxTokenLength {
 			continue
 		}
 		if r.AcceptWord(w) {

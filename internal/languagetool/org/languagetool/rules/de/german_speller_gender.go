@@ -13,9 +13,9 @@ var (
 	// Java: .*((?<=(\w))In|[\*:_]in|/-in).* — RE2 has no lookbehind.
 	reGender2Star2 = regexp.MustCompile(`(?:[0-9A-Za-zÄÖÜäöüß]In|[\*:_]in|/-in)`)
 	// POTENTIAL_BINNEN_I on a part window
-	rePotentialBinnenI = regexp.MustCompile(`[0-9A-Za-zÄÖÜäöüß]In`)
-	reGenderNeutralSin = regexp.MustCompile(`[\*:_/]in$`)
-	reGenderNeutralPlu = regexp.MustCompile(`[\*:_/]in.`)
+	rePotentialBinnenI         = regexp.MustCompile(`[0-9A-Za-zÄÖÜäöüß]In`)
+	reGenderNeutralSin         = regexp.MustCompile(`[\*:_/]in$`)
+	reGenderNeutralPlu         = regexp.MustCompile(`[\*:_/]in.`)
 	reGenderNeutralSlashHyphen = regexp.MustCompile(`/-in.`)
 	// replaceFirst helpers
 	reBinnenIReplace   = regexp.MustCompile(`([0-9A-Za-zÄÖÜäöüß])In`)

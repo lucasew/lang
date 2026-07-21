@@ -1,9 +1,9 @@
 package fr
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -63,7 +63,7 @@ func orderFrenchSuggestions(suggestions []string, word string) []string {
 			}
 		}
 		// single-letter first token unless a/à/y
-		if utf8.RuneCountInString(parts[0]) == 1 {
+		if tokenizers.UTF16Len(parts[0]) == 1 {
 			if parts[0] != "a" && parts[0] != "à" && parts[0] != "y" {
 				continue
 			}
@@ -83,7 +83,7 @@ func orderFrenchSuggestions(suggestions []string, word string) []string {
 
 		// TOKEN_AT_START split → near front
 		if len(parts) == 2 {
-			if _, ok := frenchTokenAtStart[parts[0]]; ok && utf8.RuneCountInString(parts[1]) > 1 {
+			if _, ok := frenchTokenAtStart[parts[0]]; ok && tokenizers.UTF16Len(parts[1]) > 1 {
 				out = insertAt(out, posNew, sug)
 				continue
 			}

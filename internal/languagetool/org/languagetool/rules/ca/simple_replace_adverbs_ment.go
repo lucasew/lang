@@ -39,15 +39,15 @@ type SimpleReplaceAdverbsMent struct {
 
 func NewSimpleReplaceAdverbsMent(messages map[string]string) *SimpleReplaceAdverbsMent {
 	base := &rules.AbstractSimpleReplaceRule{
-		Messages:      messages,
-		WrongWords:    loadAdverbsMent(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
-		ID:            "ADVERBIS_MENT",
-		LanguageCode:         "ca",
-		SubRuleSpecificIDs:   true,
-		Description:   "Alternatives a adverbis acabats en -ment: $match",
-		ShortMsg:      "Alternatives a adverbis acabats en -ment",
+		Messages:           messages,
+		WrongWords:         loadAdverbsMent(),
+		CaseSensitive:      false,
+		CheckLemmas:        false,
+		ID:                 "ADVERBIS_MENT",
+		LanguageCode:       "ca",
+		SubRuleSpecificIDs: true,
+		Description:        "Alternatives a adverbis acabats en -ment: $match",
+		ShortMsg:           "Alternatives a adverbis acabats en -ment",
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "A vegades s'abusa dels adverbis acabats en -ment en detriment de formes més àgils."
 		},

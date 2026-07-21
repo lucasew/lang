@@ -119,7 +119,6 @@ func (r *CatalanRepeatedWordsRule) MatchList(sentences []*languagetool.AnalyzedS
 // MinToCheckParagraph ports AbstractRepeatedWordsRule.minToCheckParagraph (Java returns 1).
 func (r *CatalanRepeatedWordsRule) MinToCheckParagraph() int { return 1 }
 
-
 func discoverCatalanSynthDict() string {
 	if p := os.Getenv("LANG_CATALAN_SYNTH_DICT"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {

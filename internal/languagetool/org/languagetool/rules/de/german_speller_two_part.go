@@ -11,7 +11,7 @@ var (
 	reInvalidCompPart1 = regexp.MustCompile(`^(?:adresse|ahmen|kamp|kontrolle|leuchte|norden|osten|perspektive|schule|sprache|stelle|suche|süden|westen)$`)
 	reInvalidCompPart2 = regexp.MustCompile(`^kamp$`)
 	// INFIX_S_SUFFIXES: heit|(s|[^c]t|x)ion|ität|keit|ling|ung|schaft|tum
-	reInfixSSuffixes = regexp.MustCompile(`(?:heit|(?:s|[^c]t|x)ion|ität|keit|ling|ung|schaft|tum)$`)
+	reInfixSSuffixes   = regexp.MustCompile(`(?:heit|(?:s|[^c]t|x)ion|ität|keit|ling|ung|schaft|tum)$`)
 	reCitiesExceptions = regexp.MustCompile(`^(?:bahnhof|flughafen|haupt)`)
 	reWechselInfix     = regexp.MustCompile(`^(?:arbeit|dienstag|donnerstag|freitag|montag|mittwoch|link|recht|samstag|sonntag|verband)s?$`)
 	reConfusedPrefixes = regexp.MustCompile(`^(?:bach|bade?|wi(?:e)?der)$`)

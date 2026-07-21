@@ -200,11 +200,11 @@ func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadingsRE(tok *languagetoo
 }
 
 var (
-	cgMatiPosRE = regexp.MustCompile(`^verb:imperf:(?:futr|past|pres).*`)
-	cgButiPosRE = regexp.MustCompile(`^verb:imperf:(?:futr|past:n|pres:s:3).*`)
-	cgImpersVInfRE = regexp.MustCompile(`^verb.*(?:pres:s:3|futr:s:3|past:n).*`)
-	cgNalezhytyInfRE = regexp.MustCompile(`^verb:imperf:inf.*`)
-	cgBilshMenshRE = regexp.MustCompile(`^(?:по)?більшати|(?:по)?меншати$`)
+	cgMatiPosRE       = regexp.MustCompile(`^verb:imperf:(?:futr|past|pres).*`)
+	cgButiPosRE       = regexp.MustCompile(`^verb:imperf:(?:futr|past:n|pres:s:3).*`)
+	cgImpersVInfRE    = regexp.MustCompile(`^verb.*(?:pres:s:3|futr:s:3|past:n).*`)
+	cgNalezhytyInfRE  = regexp.MustCompile(`^verb:imperf:inf.*`)
+	cgBilshMenshRE    = regexp.MustCompile(`^(?:по)?більшати|(?:по)?меншати$`)
 	cgBilshMenshPosRE = regexp.MustCompile(`^verb.*(?:inf|pres:s:3|futr:s:3|past:n).*`)
 )
 

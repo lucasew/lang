@@ -223,4 +223,3 @@ func (r *GermanSpellerRule) FilterProhibitedSuggestions(sugs []string) []string 
 	}
 	return out
 }
-

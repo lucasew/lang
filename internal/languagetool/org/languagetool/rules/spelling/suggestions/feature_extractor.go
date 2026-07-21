@@ -10,12 +10,12 @@ import (
 // FeatureVector holds per-candidate ranking features
 // (ports SuggestionsOrdererFeatureExtractor.Feature subset without LM).
 type FeatureVector struct {
-	Candidate          string
-	Levenshtein        int
-	JaroWinkler        float64
-	UnigramProb        float64
-	TrigramProb        float64
-	WordCount          int64
+	Candidate   string
+	Levenshtein int
+	JaroWinkler float64
+	UnigramProb float64
+	TrigramProb float64
+	WordCount   int64
 }
 
 // LanguageModelHook is optional; nil skips probability features.

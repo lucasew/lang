@@ -3,7 +3,6 @@ package de
 import (
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -186,7 +185,7 @@ func getLemmaCI(token *languagetool.AnalyzedTokenReadings) string {
 }
 
 func isPunctuationCI(word string) bool {
-	if word == "" || utf8.RuneCountInString(word) != 1 {
+	if word == "" || utf16LenDE(word) != 1 {
 		return false
 	}
 	switch word {

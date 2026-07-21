@@ -1065,4 +1065,3 @@ func (r *GermanSpellerRule) LoadProhibitWordsFromFile(path string) error {
 func (r *GermanSpellerRule) InitProhibitFile(fsPath string) error {
 	return r.LoadProhibitWordsFromFile(fsPath)
 }
-

@@ -3,7 +3,6 @@ package de
 import (
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -382,7 +381,7 @@ func isDetNounException(det, noun *languagetool.AnalyzedTokenReadings) bool {
 
 func (r *AgreementRule) checkDetAdjNoun(det, adj, noun *languagetool.AnalyzedTokenReadings, sentence *languagetool.AnalyzedSentence,
 	tokenPos int, repl ReplacementType, allowSuggestion bool, skippedStr string, origTokens []*languagetool.AnalyzedTokenReadings, maybePrep *languagetool.AnalyzedTokenReadings) *rules.RuleMatch {
-	if noun == nil || utf8.RuneCountInString(noun.GetToken()) < 2 {
+	if noun == nil || utf16LenDE(noun.GetToken()) < 2 {
 		return nil
 	}
 	if noun.IsImmunized() {

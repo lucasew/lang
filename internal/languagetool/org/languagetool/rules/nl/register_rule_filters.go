@@ -92,4 +92,3 @@ func (f newYearDateRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments
 	out.ShortMessage = match.ShortMessage
 	return out
 }
-

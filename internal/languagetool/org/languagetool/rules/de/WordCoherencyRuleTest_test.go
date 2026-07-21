@@ -253,7 +253,6 @@ func TestWordCoherencyRule_RuleCompleteTexts(t *testing.T) {
 	require.Equal(t, 1, check("Das ist das aufwändigste.\n\nAber hallo. Es ist wirklich aufwendig."))
 }
 
-
 func TestWordCoherencyRule_CategoryAndMinParagraph(t *testing.T) {
 	r := NewWordCoherencyRule(nil)
 	require.NotNil(t, r.GetCategory())

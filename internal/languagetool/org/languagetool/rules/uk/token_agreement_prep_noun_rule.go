@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"sort"
 	"strings"
@@ -245,7 +246,7 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 
 		// single uppercase Latin/Cyr letter after Cyrillic (гепатит В)
-		if i > 0 && utf8.RuneCountInString(clean) == 1 {
+		if i > 0 && tokenizers.UTF16Len(clean) == 1 {
 			r0, _ := utf8.DecodeRuneInString(clean)
 			if unicode.IsUpper(r0) && tok.IsWhitespaceBefore() && tokens[i-1] != nil {
 				prev := tokens[i-1].GetToken()

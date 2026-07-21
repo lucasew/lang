@@ -3,7 +3,6 @@ package el
 import (
 	"strings"
 	"unicode"
-	"unicode/utf8"
 )
 
 // GreekWordTokenizer ports tokenizers.el.GreekWordTokenizer (simplified).
@@ -36,7 +35,7 @@ func (t *GreekWordTokenizer) Tokenize(text string) []string {
 		}
 	}
 	flush()
-	if len(out) == 0 && utf8.RuneCountInString(text) > 0 {
+	if len(out) == 0 && text != "" {
 		return []string{text}
 	}
 	return out

@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 )
 
@@ -180,7 +181,7 @@ func whitespaceTokenizePos(d string) []charSpan {
 
 func utf16Len(s string) int {
 	// Java String.length(); for BMP-only English tokens equals rune count.
-	return utf8.RuneCountInString(s)
+	return len(utf16.Encode([]rune(s)))
 }
 
 // DiscoverOpenNLPTokenModel finds en-token.bin under third_party (walk-up).

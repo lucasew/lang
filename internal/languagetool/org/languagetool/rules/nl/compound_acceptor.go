@@ -2,6 +2,7 @@ package nl
 
 import (
 	"bufio"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"io"
 	"os"
 	"regexp"
@@ -17,6 +18,7 @@ import (
 // Tagger/speller probes (isNoun, spellingOk, …) are injectable. When unset:
 //   - TagPOS/IsNoun/IsExistingWord/IsGeographical: fail-closed (false)
 //   - SpellingOk: uses FilterDict when wired; otherwise fail-closed (false)
+//
 // KnownWords is not in Java; kept only as an optional full-word test whitelist.
 type CompoundAcceptor struct {
 	NoS               map[string]struct{}
@@ -28,7 +30,7 @@ type CompoundAcceptor struct {
 	Part2Exceptions   map[string]struct{}
 	AcronymExceptions map[string]struct{} // mixed case as in file
 	// KnownWords optional full-word whitelist (tests only; not in Java).
-	KnownWords map[string]struct{}
+	KnownWords  map[string]struct{}
 	MaxWordSize int
 
 	// IsNoun ports isNoun (POS starts with ZNW, not part2Exceptions).
@@ -54,8 +56,10 @@ func newDefaultCompoundAcceptor() *CompoundAcceptor {
 }
 
 // BindDefaultCompoundAcceptorFilters ports Java CompoundAcceptor fields:
-//   dutchTagger.getPostags → TagPOS (FilterGetPostags when dutch.dict wired)
-//   spellingOk speller → FilterDict when nl_NL.dict wired (via spellingOk default)
+//
+//	dutchTagger.getPostags → TagPOS (FilterGetPostags when dutch.dict wired)
+//	spellingOk speller → FilterDict when nl_NL.dict wired (via spellingOk default)
+//
 // Call after TryWireDutchFilterTagger / TryWireDutchFilterSpeller.
 // Does not invent POS when dicts are missing (hooks stay fail-closed).
 func BindDefaultCompoundAcceptorFilters() {
@@ -197,7 +201,7 @@ func (c *CompoundAcceptor) AcceptCompound(word string) bool {
 		return false
 	}
 	// Java word.length() (UTF-16); for Dutch BMP same as rune count.
-	if utf8.RuneCountInString(word) > c.MaxWordSize {
+	if tokenizers.UTF16Len(word) > c.MaxWordSize {
 		return false
 	}
 	if _, ok := c.KnownWords[strings.ToLower(word)]; ok {
@@ -220,7 +224,7 @@ func (c *CompoundAcceptor) GetParts(word string) []string {
 	if c == nil || word == "" {
 		return nil
 	}
-	if utf8.RuneCountInString(word) > c.MaxWordSize {
+	if tokenizers.UTF16Len(word) > c.MaxWordSize {
 		return nil
 	}
 	runes := []rune(word)

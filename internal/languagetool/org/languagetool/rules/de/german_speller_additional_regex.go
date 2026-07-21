@@ -21,8 +21,8 @@ type additionalSugFixedEntry struct {
 }
 
 var (
-	additionalSugRepls         []additionalSugRepl
-	additionalSugPatternFixed  []additionalSugFixedEntry
+	additionalSugRepls        []additionalSugRepl
+	additionalSugPatternFixed []additionalSugFixedEntry
 )
 
 func init() {
@@ -648,7 +648,6 @@ func init() {
 	registerAdditionalSugFixed(`[Nn]umber`, `Nummer`)
 }
 
-
 func registerAdditionalSugRepl(wordPat, findPat, repl string) {
 	w, err1 := regexp.Compile("^(?:" + wordPat + ")$")
 	f, err2 := regexp.Compile(findPat)
@@ -704,4 +703,3 @@ func lookupAdditionalSuggestionsRegexp(word string) []string {
 	}
 	return nil
 }
-

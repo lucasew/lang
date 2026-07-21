@@ -15,26 +15,26 @@ const (
 )
 
 const (
-	defaultMaxEditDistance  = 2
-	defaultPrefixLength     = 7
-	defaultCountThreshold   = 1
-	defaultInitialCapacity  = 16
-	defaultCompactLevel     = 5
+	defaultMaxEditDistance = 2
+	defaultPrefixLength    = 7
+	defaultCountThreshold  = 1
+	defaultInitialCapacity = 16
+	defaultCompactLevel    = 5
 )
 
 // SymSpell ports org.languagetool.rules.spelling.symspell.implementation.SymSpell.
 // Core surface: dictionary build + single-word lookup.
 type SymSpell struct {
-	initialCapacity          int
+	initialCapacity           int
 	maxDictionaryEditDistance int
-	prefixLength             int
-	countThreshold           int64
-	compactMask              int
-	distanceAlgorithm        DistanceAlgorithm
-	maxLength                int
-	deletes                  map[int][]string
-	words                    map[string]int64
-	belowThresholdWords      map[string]int64
+	prefixLength              int
+	countThreshold            int64
+	compactMask               int
+	distanceAlgorithm         DistanceAlgorithm
+	maxLength                 int
+	deletes                   map[int][]string
+	words                     map[string]int64
+	belowThresholdWords       map[string]int64
 }
 
 func NewSymSpell(initialCapacity, maxDictionaryEditDistance, prefixLength int, countThreshold int64) *SymSpell {

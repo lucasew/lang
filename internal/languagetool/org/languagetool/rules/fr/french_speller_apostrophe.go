@@ -1,9 +1,9 @@
 package fr
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -195,7 +195,7 @@ func (r *MorfologikFrenchSpellerRule) digitSplitTopSuggestion(word string) strin
 	if !r.isTagged(p0) {
 		return ""
 	}
-	if utf8.RuneCountInString(p0) > 2 {
+	if tokenizers.UTF16Len(p0) > 2 {
 		return strings.Join(parts, " ")
 	}
 	if _, ok := frenchSplitDigitsAtEnd[strings.ToLower(p0)]; ok {

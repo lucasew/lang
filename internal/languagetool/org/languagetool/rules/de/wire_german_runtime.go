@@ -12,6 +12,7 @@ import (
 //   - getDefaultSpellingRule → WireGermanFilterSpeller (de_DE/AT/CH.dict)
 //   - GermanMultitokenSpeller.INSTANCE → SetDefaultMultitokenSpeller
 //   - getSynthesizer → RegisterLanguageSynthesizer("de", GermanSynthesizer)
+//
 // Missing resources stay fail-closed (no invent).
 //
 // Pass lt to also wire createDefaultDisambiguator (GermanRuleDisambiguator).

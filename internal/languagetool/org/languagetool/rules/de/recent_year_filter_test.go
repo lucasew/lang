@@ -14,7 +14,7 @@ func TestRecentYearFilter(t *testing.T) {
 	f.ForceYear = &y
 	// Java: year < thisYear && year >= thisYear-maxYearsBack
 	require.True(t, f.Accept(2019, 5))
-	require.True(t, f.Accept(2015, 5))  // thisYear-5 inclusive
+	require.True(t, f.Accept(2015, 5)) // thisYear-5 inclusive
 	require.False(t, f.Accept(2014, 5))
 	require.False(t, f.Accept(2020, 5)) // current year excluded
 }

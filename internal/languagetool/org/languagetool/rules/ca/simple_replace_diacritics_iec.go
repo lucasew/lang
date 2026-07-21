@@ -40,15 +40,15 @@ type SimpleReplaceDiacriticsIEC struct {
 
 func NewSimpleReplaceDiacriticsIEC(messages map[string]string) *SimpleReplaceDiacriticsIEC {
 	base := &rules.AbstractSimpleReplaceRule{
-		Messages:      messages,
-		WrongWords:    loadDiacriticsIEC(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
-		ID:            "CA_SIMPLE_REPLACE_DIACRITICS_IEC",
-		LanguageCode:         "ca",
-		SubRuleSpecificIDs:   true,
-		Description:   "Accents diacrítics segons les normes noves (2017): $match",
-		ShortMsg:      "Hi sobra l'accent.",
+		Messages:           messages,
+		WrongWords:         loadDiacriticsIEC(),
+		CaseSensitive:      false,
+		CheckLemmas:        false,
+		ID:                 "CA_SIMPLE_REPLACE_DIACRITICS_IEC",
+		LanguageCode:       "ca",
+		SubRuleSpecificIDs: true,
+		Description:        "Accents diacrítics segons les normes noves (2017): $match",
+		ShortMsg:           "Hi sobra l'accent.",
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Hi sobra l'accent diacrític (segons les normes noves)."
 		},

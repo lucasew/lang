@@ -42,12 +42,12 @@ type SimpleReplaceDNVSecondaryRule struct {
 
 func NewSimpleReplaceDNVSecondaryRule(messages map[string]string) *SimpleReplaceDNVSecondaryRule {
 	base := &AbstractSimpleReplaceLemmasRule{
-		ID:          "CA_SIMPLE_REPLACE_DNV_SECONDARY",
-		LanguageCode:         "ca",
-		SubRuleSpecificIDs:   true,
-		Description: "Recomana paraules o formes preferents.",
-		ShortMsg:    "Forma secundària",
-		WrongLemmas: loadDNVSecondary(),
+		ID:                 "CA_SIMPLE_REPLACE_DNV_SECONDARY",
+		LanguageCode:       "ca",
+		SubRuleSpecificIDs: true,
+		Description:        "Recomana paraules o formes preferents.",
+		ShortMsg:           "Forma secundària",
+		WrongLemmas:        loadDNVSecondary(),
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Paraula o forma secundària."
 		},

@@ -1,8 +1,6 @@
 package de
 
 import (
-	"unicode/utf8"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -148,7 +146,7 @@ func (r *SimilarNameRule) similarName(nameHere string, namesSoFar map[string]str
 		if nameEndsWithS || otherEndsWithS || nameEndsWithN || otherEndsWithN {
 			continue
 		}
-		lenDiff := absIntSimilar(utf8.RuneCountInString(name) - utf8.RuneCountInString(nameHere))
+		lenDiff := absIntSimilar(utf16LenDE(name) - utf16LenDE(nameHere))
 		if lenDiff <= similarNameMaxDiff && levenshteinSimilar(name, nameHere) <= similarNameMaxDiff {
 			return name
 		}
@@ -165,7 +163,7 @@ func isMaybeName(token *languagetool.AnalyzedTokenReadings) bool {
 		return false
 	}
 	word := token.GetToken()
-	if utf8.RuneCountInString(word) < similarNameMinLen {
+	if utf16LenDE(word) < similarNameMinLen {
 		return false
 	}
 	if _, ok := similarNameExclude[word]; ok {

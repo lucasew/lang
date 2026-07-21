@@ -6,7 +6,6 @@ import (
 	"strings"
 	"sync"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -518,7 +517,7 @@ func (r *VerbAgreementRule) ruleMatchWrongVerbSubject(subject, verb *languagetoo
 		for _, vs := range r.getVerbSuggestions(verb, expectedVerbPOS, false) {
 			suggestions = append(suggestions, subject.GetToken()+" "+vs)
 		}
-		toUpper := utf8.RuneCountInString(subject.GetToken()) > 0 && unicode.IsUpper([]rune(subject.GetToken())[0])
+		toUpper := utf16LenDE(subject.GetToken()) > 0 && unicode.IsUpper([]rune(subject.GetToken())[0])
 		for _, ps := range getPronounSuggestions(verb, toUpper) {
 			suggestions = append(suggestions, ps+" "+verb.GetToken())
 		}
@@ -529,7 +528,7 @@ func (r *VerbAgreementRule) ruleMatchWrongVerbSubject(subject, verb *languagetoo
 		return rm
 	}
 	rm := rules.NewRuleMatch(r, sentence, pos+verb.GetStartPos(), pos+subject.GetEndPos(), msg)
-	toUpper := utf8.RuneCountInString(verb.GetToken()) > 0 && unicode.IsUpper([]rune(verb.GetToken())[0])
+	toUpper := utf16LenDE(verb.GetToken()) > 0 && unicode.IsUpper([]rune(verb.GetToken())[0])
 	for _, vs := range r.getVerbSuggestions(verb, expectedVerbPOS, toUpper) {
 		suggestions = append(suggestions, vs+" "+subject.GetToken())
 	}

@@ -2,8 +2,8 @@ package ca
 
 import (
 	"embed"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -56,7 +56,7 @@ func anglicismTokenException(atr *languagetool.AnalyzedTokenReadings) bool {
 		return true
 	}
 	// Java: hasPosTagStartingWith("NP") && getToken().length()>1
-	if atr.HasPosTagStartingWith("NP") && utf8.RuneCountInString(atr.GetToken()) > 1 {
+	if atr.HasPosTagStartingWith("NP") && tokenizers.UTF16Len(atr.GetToken()) > 1 {
 		return true
 	}
 	return false

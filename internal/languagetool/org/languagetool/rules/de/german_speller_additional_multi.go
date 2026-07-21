@@ -5,7 +5,7 @@ import "regexp"
 // Multi-replacement regex ADDITIONAL_SUGGESTIONS (put + Arrays.asList of fixed strings).
 
 type additionalSugMultiEntry struct {
-	word *regexp.Regexp
+	word  *regexp.Regexp
 	repls []string
 }
 
@@ -19,7 +19,6 @@ func init() {
 	registerAdditionalSugMulti(`[wW]elan`, []string{`WLAN`, `W-LAN`})
 }
 
-
 func registerAdditionalSugMulti(wordPat string, repls []string) {
 	w, err := regexp.Compile("^(?:" + wordPat + ")$")
 	if err != nil {
@@ -27,4 +26,3 @@ func registerAdditionalSugMulti(wordPat string, repls []string) {
 	}
 	additionalSugMulti = append(additionalSugMulti, additionalSugMultiEntry{word: w, repls: repls})
 }
-

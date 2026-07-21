@@ -1,9 +1,9 @@
 package pl
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -194,7 +194,7 @@ func (r *MorfologikPolishSpellerRule) isNotCompound(word string) bool {
 		second := string(runes[i:])
 		// prefix path: prefix in set, second not misspelled, second longer than first
 		if _, ok := polishPrefixes[strings.ToLower(first)]; ok {
-			if !r.wordIsMisspelled(second) && utf8.RuneCountInString(second) > utf8.RuneCountInString(first) {
+			if !r.wordIsMisspelled(second) && tokenizers.UTF16Len(second) > tokenizers.UTF16Len(first) {
 				return false
 			}
 		}

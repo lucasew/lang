@@ -3,7 +3,6 @@ package de
 import (
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -140,7 +139,7 @@ func removeHyphensAndAdaptCase(word string) string {
 	}
 	parts := strings.Split(word, "-")
 	for _, p := range parts {
-		if utf8.RuneCountInString(p) <= 1 {
+		if utf16LenDE(p) <= 1 {
 			return ""
 		}
 	}
@@ -188,7 +187,7 @@ func (r *ProhibitedCompoundRule) Match(sentence *languagetool.AnalyzedSentence) 
 		}
 		noHyphens := removeHyphensAndAdaptCase(tmpWord)
 		if noHyphens != "" {
-			r.getMatches(sentence, &ruleMatches, readings, 0, noHyphens, utf8.RuneCountInString(tmpWord)-utf8.RuneCountInString(noHyphens))
+			r.getMatches(sentence, &ruleMatches, readings, 0, noHyphens, utf16LenDE(tmpWord)-utf16LenDE(noHyphens))
 		}
 		prev = readings
 	}
@@ -214,13 +213,13 @@ func (r *ProhibitedCompoundRule) getMatches(
 ) int {
 	// Java: tagged non-SUB (except EIG) skip; length <= 6 skip
 	if readings.IsTagged() && !readings.HasPartialPosTag("SUB") && !readings.HasPosTagStartingWith("EIG:") ||
-		utf8.RuneCountInString(wordPart) <= 6 {
+		utf16LenDE(wordPart) <= 6 {
 		// AnalyzePlain: IsTagged false → don't skip by POS
 		if readings.IsTagged() && !readings.HasPartialPosTag("SUB") && !readings.HasPosTagStartingWith("EIG:") {
-			return partsStartPos + utf8.RuneCountInString(wordPart) + 1
+			return partsStartPos + utf16LenDE(wordPart) + 1
 		}
-		if utf8.RuneCountInString(wordPart) <= 6 {
-			return partsStartPos + utf8.RuneCountInString(wordPart) + 1
+		if utf16LenDE(wordPart) <= 6 {
+			return partsStartPos + utf16LenDE(wordPart) + 1
 		}
 	}
 
@@ -280,7 +279,7 @@ func (r *ProhibitedCompoundRule) getMatches(
 				", " + tools.UppercaseFirstChar(best.pair.part2) + ": " + best.pair.desc2
 		}
 		fromPos := readings.GetStartPos() + partsStartPos
-		toPos := fromPos + utf8.RuneCountInString(wordPart) + toPosCorrection
+		toPos := fromPos + utf16LenDE(wordPart) + toPosCorrection
 		// clamp to token end for hyphenated partials
 		if toPos > readings.GetEndPos() {
 			toPos = readings.GetEndPos()
@@ -304,7 +303,7 @@ func (r *ProhibitedCompoundRule) getMatches(
 		rm.SetSuggestedReplacement(best.variant)
 		*ruleMatches = append(*ruleMatches, rm)
 	}
-	return partsStartPos + utf8.RuneCountInString(wordPart) + 1
+	return partsStartPos + utf16LenDE(wordPart) + 1
 }
 
 func (r *ProhibitedCompoundRule) isBlacklistedWord(wordPart string) bool {

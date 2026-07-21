@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -469,7 +468,7 @@ func (r *CaseRule) potentiallyAddUppercaseMatch(ruleMatches *[]*rules.RuleMatch,
 	isUpperFirst := unicode.IsUpper([]rune(token)[0])
 	lcWord := tools.LowercaseFirstChar(tokens[i].GetToken())
 	if !(isUpperFirst &&
-		utf8.RuneCountInString(token) > 1 &&
+		utf16LenDE(token) > 1 &&
 		!tokens[i].IsIgnoredBySpeller() &&
 		!tokens[i].IsImmunized() &&
 		!isInSet(tokens[i-1].GetToken(), caseSentenceStartExceptions) &&
