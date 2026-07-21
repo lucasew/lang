@@ -330,6 +330,16 @@ func utf16LenDE(s string) int {
 	return n
 }
 
+// javaCharAtDE ports String.charAt(i) as the i-th UTF-16 code unit (as rune).
+// Used for Character.isUpperCase/isLowerCase(charAt) gates (surrogate units → false).
+func javaCharAtDE(s string, i int) rune {
+	u := utf16EncodeDE(s)
+	if i < 0 || i >= len(u) {
+		return 0
+	}
+	return rune(u[i])
+}
+
 // AddIgnoreWords ports SpellingCheckRule.addIgnoreWords for single-token lines.
 // Multi-token strings (spaces) are routed to AddIgnorePhrase (Java tokenize → antipattern).
 func (r *GermanSpellerRule) AddIgnoreWords(words ...string) {

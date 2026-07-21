@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -305,7 +304,8 @@ func (r *CaseRule) matchMorph(tokens []*languagetool.AnalyzedTokenReadings, sent
 			}
 		} else if analyzedToken.HasPosTagStartingWith("SUB:") &&
 			i < len(tokens)-1 && tokens[i+1] != nil &&
-			len(tokens[i+1].GetToken()) > 0 && unicode.IsLower([]rune(tokens[i+1].GetToken())[0]) &&
+			// Java: Character.isLowerCase(tokens[i+1].getToken().charAt(0))
+			tools.StartsWithLowercase(tokens[i+1].GetToken()) &&
 			tokens[i+1].MatchesPosTagRegex(`(VER:[123]:|PA2).+`) {
 			continue
 		}
@@ -450,9 +450,10 @@ func (r *CaseRule) hasNounReading(readings *languagetool.AnalyzedTokenReadings) 
 }
 
 func (r *CaseRule) potentiallyAddLowercaseMatch(ruleMatches *[]*rules.RuleMatch, tokenReadings *languagetool.AnalyzedTokenReadings, prevTokenIsDas bool, token string, nextTokenIsPersonalOrReflexivePronoun bool, sentence *languagetool.AnalyzedSentence) {
+	// Java: Character.isLowerCase(token.charAt(0))
 	if prevTokenIsDas &&
 		!nextTokenIsPersonalOrReflexivePronoun &&
-		token != "" && unicode.IsLower([]rune(token)[0]) &&
+		tools.StartsWithLowercase(token) &&
 		!isInSet(token, caseRuleSubstVerbenExceptions) &&
 		tokenReadings.HasPosTagStartingWith("VER:INF") &&
 		!tokenReadings.IsIgnoredBySpeller() &&
@@ -465,7 +466,8 @@ func (r *CaseRule) potentiallyAddUppercaseMatch(ruleMatches *[]*rules.RuleMatch,
 	if token == "" {
 		return
 	}
-	isUpperFirst := unicode.IsUpper([]rune(token)[0])
+	// Java: Character.isUpperCase(token.charAt(0)); token.length() > 1 (UTF-16)
+	isUpperFirst := tools.StartsWithUppercase(token)
 	lcWord := tools.LowercaseFirstChar(tokens[i].GetToken())
 	if !(isUpperFirst &&
 		utf16LenDE(token) > 1 &&
@@ -535,11 +537,12 @@ func isNounWithVerbReading(i int, tokens []*languagetool.AnalyzedTokenReadings) 
 }
 
 func isInvisibleSeparator(i int, tokens []*languagetool.AnalyzedTokenReadings) bool {
+	// Java: length() > 0 && charAt(0) == '\u2063'
 	if i < 0 || i >= len(tokens) || tokens[i] == nil {
 		return false
 	}
 	t := tokens[i].GetToken()
-	return t != "" && []rune(t)[0] == '\u2063'
+	return utf16LenDE(t) > 0 && javaCharAtDE(t, 0) == '\u2063'
 }
 
 func isVerbFollowing(i int, tokens []*languagetool.AnalyzedTokenReadings, lowercaseReadings *languagetool.AnalyzedTokenReadings) bool {

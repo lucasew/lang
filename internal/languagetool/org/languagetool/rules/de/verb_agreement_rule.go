@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strings"
 	"sync"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -253,7 +252,7 @@ func (r *VerbAgreementRule) matchMorph(sentence *languagetool.AnalyzedSentence, 
 		if tok == "" {
 			continue
 		}
-		firstUpper := unicode.IsUpper([]rune(tok)[0])
+		firstUpper := tools.StartsWithUppercase(tok)
 		// Java: lowercase verb, or first content word, or after quotation
 		okCase := !firstUpper || i == 1 || (i > 0 && isVerbAgreementQuotation(tokens[i-1]))
 		if tokens[i].HasPartialPosTag("VER") && okCase {
@@ -423,7 +422,7 @@ func hasUnambiguouslyPersonAndNumber(tokenReadings *languagetool.AnalyzedTokenRe
 		return false
 	}
 	tok := tokenReadings.GetToken()
-	if unicode.IsUpper([]rune(tok)[0]) && tokenReadings.GetStartPos() != 0 {
+	if tools.StartsWithUppercase(tok) && tokenReadings.GetStartPos() != 0 {
 		return false
 	}
 	if !tokenReadings.HasPosTagStartingWith("VER") {
@@ -450,7 +449,7 @@ func isFiniteVerb(token *languagetool.AnalyzedTokenReadings) bool {
 		return false
 	}
 	tok := token.GetToken()
-	if unicode.IsUpper([]rune(tok)[0]) && token.GetStartPos() != 0 {
+	if tools.StartsWithUppercase(tok) && token.GetStartPos() != 0 {
 		return false
 	}
 	if !token.HasPosTagStartingWith("VER") {
@@ -517,7 +516,7 @@ func (r *VerbAgreementRule) ruleMatchWrongVerbSubject(subject, verb *languagetoo
 		for _, vs := range r.getVerbSuggestions(verb, expectedVerbPOS, false) {
 			suggestions = append(suggestions, subject.GetToken()+" "+vs)
 		}
-		toUpper := utf16LenDE(subject.GetToken()) > 0 && unicode.IsUpper([]rune(subject.GetToken())[0])
+		toUpper := tools.StartsWithUppercase(subject.GetToken())
 		for _, ps := range getPronounSuggestions(verb, toUpper) {
 			suggestions = append(suggestions, ps+" "+verb.GetToken())
 		}
@@ -528,7 +527,7 @@ func (r *VerbAgreementRule) ruleMatchWrongVerbSubject(subject, verb *languagetoo
 		return rm
 	}
 	rm := rules.NewRuleMatch(r, sentence, pos+verb.GetStartPos(), pos+subject.GetEndPos(), msg)
-	toUpper := utf16LenDE(verb.GetToken()) > 0 && unicode.IsUpper([]rune(verb.GetToken())[0])
+	toUpper := tools.StartsWithUppercase(verb.GetToken())
 	for _, vs := range r.getVerbSuggestions(verb, expectedVerbPOS, toUpper) {
 		suggestions = append(suggestions, vs+" "+subject.GetToken())
 	}
