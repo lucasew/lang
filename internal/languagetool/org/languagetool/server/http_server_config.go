@@ -457,9 +457,59 @@ func ParseJavaProperties(data string) map[string]string {
 		if key == "" {
 			continue
 		}
-		out[key] = val
+		// Java Properties.loadConvert on key and value
+		out[javaPropertiesLoadConvert(key)] = javaPropertiesLoadConvert(val)
 	}
 	return out
+}
+
+// javaPropertiesLoadConvert ports Properties.loadConvert:
+// \t \n \r \f \\ and \uXXXX (4 hex digits, case-insensitive).
+func javaPropertiesLoadConvert(s string) string {
+	if !strings.Contains(s, `\`) {
+		return s
+	}
+	var b strings.Builder
+	b.Grow(len(s))
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c != '\\' {
+			b.WriteByte(c)
+			continue
+		}
+		i++
+		if i >= len(s) {
+			break
+		}
+		switch s[i] {
+		case 't':
+			b.WriteByte('\t')
+		case 'n':
+			b.WriteByte('\n')
+		case 'r':
+			b.WriteByte('\r')
+		case 'f':
+			b.WriteByte('\f')
+		case '\\':
+			b.WriteByte('\\')
+		case 'u':
+			// \uXXXX — need 4 hex digits
+			if i+4 < len(s) {
+				hex := s[i+1 : i+5]
+				if v, err := strconv.ParseUint(hex, 16, 16); err == nil {
+					b.WriteRune(rune(v))
+					i += 4
+					continue
+				}
+			}
+			// malformed: keep as-is
+			b.WriteByte('u')
+		default:
+			// Java: other escapes just yield the char (e.g. \= → =)
+			b.WriteByte(s[i])
+		}
+	}
+	return b.String()
 }
 
 // LoadPropertiesFile reads a Java .properties file into a map.

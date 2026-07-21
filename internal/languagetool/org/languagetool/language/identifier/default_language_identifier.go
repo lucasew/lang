@@ -251,24 +251,18 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 		}
 	}
 
-	// Java: if (fastTextDetector == null && ngram == null || fasttextFailed) → fallback profile
-	if (!hasFTOrNGram || fasttextFailed) || (len(scores) == 0 && d.ProfileScore != nil) {
-		if fasttextFailed || !hasFTOrNGram {
-			src += "+fallback"
-		}
-		// Merge profile scores if empty or low confidence (optimaize stand-in)
-		maxScore := maxMap(scores)
-		if d.ProfileScore != nil && (len(scores) == 0 || maxScore < ScoreThreshold || fasttextFailed) {
-			for k, v := range d.ProfileScore(text, preferred) {
-				if cur, ok := scores[k]; !ok || v > cur {
-					scores[k] = v
-				}
-			}
-			if src == "" || strings.HasSuffix(src, "+fallback") || len(scores) > 0 {
-				if !strings.Contains(src, "profile") && !strings.Contains(src, "fasttext") && !strings.Contains(src, "ngram") {
-					src += "profile"
-				}
-			}
+	// Java: if (fastTextDetector == null && ngram == null || fasttextFailed) {
+	//   text = textObjectFactory.forText(text).toString();
+	//   source += "+fallback";
+	//   localResult = detectLanguageCode(text, preferredLangs, limitOnPreferredLangs);
+	//   scores.put(localResult);
+	// }
+	// ProfileScore is the optimaize languageDetector stand-in — only on this path.
+	if !hasFTOrNGram || fasttextFailed {
+		src += "+fallback"
+		factoryText := ApplyTextObjectFactoryFilters(text)
+		if code, prob, ok := d.detectLanguageCode(factoryText, preferred, limitOnPreferred); ok {
+			scores[code] = prob
 		}
 	}
 	// Common words boost for profile-only path when still low
@@ -359,6 +353,56 @@ func boolStr(b bool) string {
 		return "true"
 	}
 	return "false"
+}
+
+// detectLanguageCode ports DefaultLanguageIdentifier.detectLanguageCode.
+// Uses ProfileScore as LanguageDetector.getProbabilities stand-in; returns top hit
+// after optional preferred-language filter (limitOnPreferredLangs).
+func (d *DefaultLanguageIdentifier) detectLanguageCode(text string, preferred []string, limitOnPreferred bool) (code string, prob float64, ok bool) {
+	if d == nil || d.ProfileScore == nil {
+		return "", 0, false
+	}
+	// Optimaize getProbabilities → list of (locale, probability); we get a score map.
+	raw := d.ProfileScore(text, preferred)
+	type hit struct {
+		code string
+		prob float64
+	}
+	var list []hit
+	for k, v := range raw {
+		list = append(list, hit{k, v})
+	}
+	// Java: if limitOnPreferredLangs && preferred non-empty → remove non-preferred
+	if limitOnPreferred && len(preferred) > 0 {
+		filtered := list[:0]
+		for _, h := range list {
+			// Java: preferredLangs.contains(l.getLocale().getLanguage()) — short language code
+			lang := h.code
+			if i := strings.IndexByte(lang, '-'); i >= 0 {
+				lang = lang[:i]
+			}
+			if containsStr(preferred, lang) || containsStr(preferred, h.code) {
+				filtered = append(filtered, h)
+			}
+		}
+		list = filtered
+	}
+	if len(list) == 0 {
+		return "", 0, false
+	}
+	// highest probability first
+	best := list[0]
+	for _, h := range list[1:] {
+		if h.prob > best.prob {
+			best = h
+		}
+	}
+	// Java: code = lang.get(0).getLocale().getLanguage() — ISO language short code
+	code = best.code
+	if i := strings.IndexByte(code, '-'); i >= 0 {
+		code = code[:i]
+	}
+	return code, best.prob, true
 }
 
 // DetectLanguage is the Java-style entry that cleans text first.

@@ -54,6 +54,49 @@ func TestDefaultLanguageIdentifier_PrepareDetectUnsupported(t *testing.T) {
 	require.Equal(t, "zz", scores[0].DetectedLanguageCode)
 }
 
+// Ports detectLanguageCode + textObjectFactory fallback when no fasttext/ngram.
+func TestDefaultLanguageIdentifier_DetectLanguageCodeFallback(t *testing.T) {
+	for _, c := range []string{"en", "de"} {
+		if !languagetool.GlobalLanguages.IsLanguageSupported(c) {
+			languagetool.GlobalLanguages.Register(languagetool.LanguageMeta{Name: c, Code: c})
+		}
+	}
+	d := NewDefaultLanguageIdentifier(1000)
+	// No fastText / ngram → always +fallback + detectLanguageCode (ProfileScore)
+	d.ProfileScore = func(text string, preferred []string) map[string]float64 {
+		// Minority Cyrillic mixed into Latin should be stripped by textObjectFactory
+		// before ProfileScore sees text (Latin-dominant).
+		if strings.Contains(text, "привет") {
+			return map[string]float64{"ru": 0.99}
+		}
+		return map[string]float64{"en": 0.9, "de": 0.1}
+	}
+	got := d.Detect("This is clearly English text for detection purposes.", nil, nil)
+	require.NotNil(t, got)
+	require.Equal(t, "en", got.DetectedLanguageCode)
+	require.NotNil(t, got.GetDetectionSource())
+	require.Contains(t, *got.GetDetectionSource(), "fallback")
+
+	// limitOnPreferredLangs filters optimaize list to preferred only
+	got2 := d.DetectLimit("This is English.", nil, []string{"de"}, true)
+	require.NotNil(t, got2)
+	require.Equal(t, "de", got2.DetectedLanguageCode)
+
+	// Mixed Latin + minority Cyrillic: minority scripts removed → not russian
+	mixed := "Hello world " + strings.Repeat("x", 20) + " привет"
+	got3 := d.Detect(mixed, nil, nil)
+	require.NotNil(t, got3)
+	require.Equal(t, "en", got3.DetectedLanguageCode)
+}
+
+func TestApplyTextObjectFactoryFilters_MinorityScripts(t *testing.T) {
+	// Mostly Latin with a few Cyrillic letters → Cyrillic minority removed
+	in := "Hello world and some latin text а" // one Cyrillic letter
+	out := ApplyTextObjectFactoryFilters(in)
+	require.NotContains(t, out, "а")
+	require.Contains(t, out, "Hello")
+}
+
 // Ports reinitFasttextAfterFailure when RunFasttext returns FastTextException(disabled).
 func TestDefaultLanguageIdentifier_FastTextFailureFallback(t *testing.T) {
 	for _, c := range []string{"en", "de"} {

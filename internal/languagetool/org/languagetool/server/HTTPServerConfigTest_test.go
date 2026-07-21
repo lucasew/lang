@@ -60,12 +60,19 @@ maxTextLength = 500
 requestLimit: 10
 pipelineCaching true
 emptyKey=
+path=C:\\temp\\file
+name=caf\u00e9
+tab=\t
 `)
 	require.Equal(t, "8082", p["port"])
 	require.Equal(t, "500", p["maxTextLength"])
 	require.Equal(t, "10", p["requestLimit"])
 	require.Equal(t, "true", p["pipelineCaching"])
 	require.Equal(t, "", p["emptyKey"])
+	// loadConvert: \\ → \, \u00e9 → é, \t → tab
+	require.Equal(t, `C:\temp\file`, p["path"])
+	require.Equal(t, "café", p["name"])
+	require.Equal(t, "\t", p["tab"])
 }
 
 // Ports HTTPServerConfig.parseConfigFile open-source subset + getOptionalProperty defaults.
