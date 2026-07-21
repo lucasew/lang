@@ -46,6 +46,10 @@ type HunspellRule struct {
 	GetAdditionalTopSuggestionsFn func(existing []string, word string) []string
 	// AcceptSuggestionFn ports acceptSuggestion (default true).
 	AcceptSuggestionFn func(suggestion string) bool
+	// SuggestFn optional override for getSuggestions (CompoundAwareHunspellRule wires this
+	// so Match/calcSuggestions dispatch to compound-aware logic — Go embedding does not
+	// virtualize Suggest like Java overrides).
+	SuggestFn func(word string) []string
 }
 
 func NewHunspellRule(languageCode string, dict HunspellDictionary) *HunspellRule {
@@ -99,9 +103,16 @@ func (r *HunspellRule) IsMisspelledWord(word string) bool {
 	return !r.Dict.Spell(word)
 }
 
-// Suggest ports dictionary suggestions (empty if dict has none).
+// Suggest ports HunspellRule.getSuggestions (dictionary only).
+// When SuggestFn is set (e.g. CompoundAware), that override is used.
 func (r *HunspellRule) Suggest(word string) []string {
-	if r == nil || r.Dict == nil {
+	if r == nil {
+		return nil
+	}
+	if r.SuggestFn != nil {
+		return r.SuggestFn(word)
+	}
+	if r.Dict == nil {
 		return nil
 	}
 	return r.Dict.Suggest(word)
