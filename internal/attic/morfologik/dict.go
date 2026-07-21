@@ -19,6 +19,25 @@ type Dictionary struct {
 	Encoder           string // SUFFIX, PREFIX, INFIX, NONE
 	Encoding          string
 	frequencyIncluded bool // fsa.dict.frequency-included
+	// Speller metadata from .info (Java DictionaryMetadata / Speller fields).
+	IgnoreDiacritics    bool
+	ConvertCase         bool
+	IgnoreNumbers       bool // default true in many LT dicts
+	IgnorePunctuation   bool
+	IgnoreCamelCase     bool
+	IgnoreAllUppercase  bool
+	SupportRunOnWords   bool
+	EquivalentChars     map[rune][]rune
+	InputConversion     [][2]string // ordered LinkedHashMap pairs
+	OutputConversion    [][2]string
+	ReplacementShort    []ReplPair  // target len 1–2 → anyToOne/anyToTwo
+	ReplacementTheRest  *OrderedStringListMap
+}
+
+// ReplPair is one fsa.dict.speller.replacement-pairs entry (from=misspelled, to=dict form).
+type ReplPair struct {
+	From string
+	To   string
 }
 
 // WordForm is one stem+tag analysis.
@@ -48,13 +67,73 @@ func OpenDictionary(dictPath string) (*Dictionary, error) {
 		enc = "SUFFIX"
 	}
 	freqInc := strings.EqualFold(meta["fsa.dict.frequency-included"], "true")
-	return &Dictionary{
+	d := &Dictionary{
 		FSA:               fsa,
 		Separator:         sep,
 		Encoder:           strings.ToUpper(enc),
 		Encoding:          meta["fsa.dict.encoding"],
 		frequencyIncluded: freqInc,
-	}, nil
+		// Java DictionaryMetadata defaults (common LT .info override)
+		ConvertCase:       true,
+		IgnoreNumbers:     true,
+		SupportRunOnWords: true,
+	}
+	d.applySpellerInfo(meta)
+	return d, nil
+}
+
+// applySpellerInfo ports DictionaryMetadata.fromMap speller-related keys.
+func (d *Dictionary) applySpellerInfo(meta map[string]string) {
+	if d == nil || meta == nil {
+		return
+	}
+	if v, ok := meta["fsa.dict.speller.ignore-diacritics"]; ok {
+		d.IgnoreDiacritics = parseInfoBool(v, d.IgnoreDiacritics)
+	}
+	if v, ok := meta["fsa.dict.speller.convert-case"]; ok {
+		d.ConvertCase = parseInfoBool(v, d.ConvertCase)
+	}
+	if v, ok := meta["fsa.dict.speller.ignore-numbers"]; ok {
+		d.IgnoreNumbers = parseInfoBool(v, d.IgnoreNumbers)
+	}
+	if v, ok := meta["fsa.dict.speller.ignore-punctuation"]; ok {
+		d.IgnorePunctuation = parseInfoBool(v, d.IgnorePunctuation)
+	}
+	if v, ok := meta["fsa.dict.speller.ignore-camel-case"]; ok {
+		d.IgnoreCamelCase = parseInfoBool(v, d.IgnoreCamelCase)
+	}
+	if v, ok := meta["fsa.dict.speller.ignore-all-uppercase"]; ok {
+		d.IgnoreAllUppercase = parseInfoBool(v, d.IgnoreAllUppercase)
+	}
+	if v, ok := meta["fsa.dict.speller.runon-words"]; ok {
+		d.SupportRunOnWords = parseInfoBool(v, d.SupportRunOnWords)
+	}
+	if v, ok := meta["fsa.dict.speller.equivalent-chars"]; ok {
+		d.EquivalentChars = parseEquivalentCharsInfo(v)
+	}
+	if v, ok := meta["fsa.dict.input-conversion"]; ok {
+		d.InputConversion = parseConversionPairsInfo(v)
+	}
+	if v, ok := meta["fsa.dict.output-conversion"]; ok {
+		d.OutputConversion = parseConversionPairsInfo(v)
+	}
+	if v, ok := meta["fsa.dict.speller.replacement-pairs"]; ok {
+		d.ReplacementShort, d.ReplacementTheRest = partitionReplPairsInfo(parseReplacementPairsInfo(v))
+	}
+}
+
+func parseInfoBool(s string, def bool) bool {
+	s = strings.TrimSpace(strings.ToLower(s))
+	if s == "" {
+		return def
+	}
+	if s == "true" || s == "1" || s == "yes" {
+		return true
+	}
+	if s == "false" || s == "0" || s == "no" {
+		return false
+	}
+	return def
 }
 
 func readInfo(path string) (map[string]string, error) {

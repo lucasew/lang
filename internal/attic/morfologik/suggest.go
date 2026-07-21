@@ -24,20 +24,22 @@ type SuggestOpts struct {
 	SymmetricEquivalent bool
 }
 
-// SuggestEdits returns dictionary words within one Damerau-Levenshtein edit of word
-// by generating candidates and testing Contains (works for large CFSA2 dicts).
-// max caps the result size (0 → 8).
+// SuggestEdits ports Speller.findReplacements (maxEdit=1) word list.
+// max caps the result size (0 → 8). Case fold is MorfologikSpeller layer, not Speller.
 func (d *Dictionary) SuggestEdits(word string, max int) []string {
 	return d.SuggestEditsMax(word, max, 1)
 }
 
-// SuggestEditsMax ports Speller suggestions with maxEditDistance (1, 2, or 3).
+// SuggestEditsMax ports Speller.findReplacements with maxEditDistance.
 func (d *Dictionary) SuggestEditsMax(word string, maxResults, maxEdit int) []string {
 	return d.SuggestEditsMaxOpts(word, maxResults, maxEdit, SuggestOpts{})
 }
 
-// SuggestEditsMaxOpts is SuggestEditsMax with areEqual-related options.
+// SuggestEditsMaxOpts returns findReplacementCandidates words.
+// opt is ignored for production path — Java Speller uses DictionaryMetadata only
+// (loaded from .info). Kept for API compatibility with older call sites.
 func (d *Dictionary) SuggestEditsMaxOpts(word string, maxResults, maxEdit int, opt SuggestOpts) []string {
+	_ = opt
 	if d == nil || word == "" {
 		return nil
 	}
@@ -47,97 +49,24 @@ func (d *Dictionary) SuggestEditsMaxOpts(word string, maxResults, maxEdit int, o
 	if maxEdit < 1 {
 		maxEdit = 1
 	}
-	if maxEdit > 3 {
-		maxEdit = 3
+	cds := d.FindReplacementCandidates(word, maxEdit)
+	if len(cds) == 0 {
+		return nil
 	}
-	low := strings.ToLower(word)
-	seen := map[string]struct{}{}
-	var out []string
-
-	addIfKnown := func(c string) bool {
-		if c == "" || c == low {
-			return false
-		}
-		if _, ok := seen[c]; ok {
-			return false
-		}
-		if !d.Contains(c) {
-			return false
-		}
-		seen[c] = struct{}{}
-		sug := c
-		if isTitleCase(word) {
-			sug = titleCase(c)
-		} else if isAllUpper(word) {
-			sug = strings.ToUpper(c)
-		}
-		out = append(out, sug)
-		return true
-	}
-
-	// distance 1
-	cands1 := edit1CandidatesOpts(low, opt)
-	for _, c := range cands1 {
-		if addIfKnown(c) && len(out) >= maxResults {
-			return out
-		}
-	}
-	if maxEdit < 2 || len(out) >= maxResults {
-		return out
-	}
-
-	// distance 2: edit1 of misspelled edit1 neighbors (capped)
-	const maxNeighbors = 200
-	n := 0
-	for _, c := range cands1 {
-		if d.Contains(c) {
+	out := make([]string, 0, len(cds))
+	for _, c := range cds {
+		if c.Word == "" {
 			continue
 		}
-		n++
-		if n > maxNeighbors {
+		out = append(out, c.Word)
+		if len(out) >= maxResults {
 			break
-		}
-		for _, c2 := range edit1CandidatesOpts(c, opt) {
-			if addIfKnown(c2) && len(out) >= maxResults {
-				return out
-			}
-		}
-	}
-	if maxEdit < 3 || len(out) >= maxResults {
-		return out
-	}
-
-	// distance 3: one more expansion round on a smaller frontier
-	n = 0
-	for _, c := range cands1 {
-		if d.Contains(c) {
-			continue
-		}
-		n++
-		if n > 40 {
-			break
-		}
-		inner := 0
-		for _, c2 := range edit1CandidatesOpts(c, opt) {
-			if d.Contains(c2) {
-				continue
-			}
-			inner++
-			if inner > 30 {
-				break
-			}
-			for _, c3 := range edit1CandidatesOpts(c2, opt) {
-				if addIfKnown(c3) && len(out) >= maxResults {
-					return out
-				}
-			}
 		}
 	}
 	return out
 }
 
-// WeightedEditSuggestions returns suggestions with Java-like weights:
-// distance*FREQ_RANGES + FREQ_RANGES - frequency - 1 (lower is better).
+// WeightedEditSuggestions returns CandidateData distances (Java WeightedSuggestion weights).
 func (d *Dictionary) WeightedEditSuggestions(word string, maxResults, maxEdit int) []struct {
 	Word   string
 	Weight int
@@ -145,53 +74,40 @@ func (d *Dictionary) WeightedEditSuggestions(word string, maxResults, maxEdit in
 	return d.WeightedEditSuggestionsOpts(word, maxResults, maxEdit, SuggestOpts{})
 }
 
-// WeightedEditSuggestionsOpts is WeightedEditSuggestions with Speller.areEqual options.
+// WeightedEditSuggestionsOpts ports Speller.findReplacementCandidates → weighted list.
+// opt ignored (DictionaryMetadata from .info is king).
 func (d *Dictionary) WeightedEditSuggestionsOpts(word string, maxResults, maxEdit int, opt SuggestOpts) []struct {
 	Word   string
 	Weight int
 } {
-	sugs := d.SuggestEditsMaxOpts(word, maxResults, maxEdit, opt)
-	if len(sugs) == 0 {
+	_ = opt
+	if d == nil || word == "" {
 		return nil
 	}
-	// Approximate distance: 1 if edit1 of low, else 2 if within edit2, else 3
-	// Free diacritic/equivalent diffs count as distance 0 (Java areEqual).
-	low := strings.ToLower(word)
-	edit1set := map[string]struct{}{}
-	for _, c := range edit1CandidatesOpts(low, opt) {
-		edit1set[c] = struct{}{}
+	if maxResults <= 0 {
+		maxResults = 8
+	}
+	if maxEdit < 1 {
+		maxEdit = 1
+	}
+	cds := d.FindReplacementCandidates(word, maxEdit)
+	if len(cds) == 0 {
+		return nil
+	}
+	if maxResults > 0 && len(cds) > maxResults {
+		cds = cds[:maxResults]
 	}
 	out := make([]struct {
 		Word   string
 		Weight int
-	}, 0, len(sugs))
-	for _, s := range sugs {
-		sl := strings.ToLower(s)
-		dist := 2
-		if freeEqualUnderOpts(low, sl, opt) {
-			dist = 0
-		} else if _, ok := edit1set[sl]; ok {
-			dist = 1
-		} else if maxEdit >= 3 {
-			dist = 3
-			for _, e := range edit1CandidatesOpts(sl, opt) {
-				if _, ok := edit1set[e]; ok {
-					dist = 2
-					break
-				}
-			}
-		}
-		freq := d.GetFrequency(sl)
-		if freq < 0 {
-			freq = 0
-		}
-		w := dist*FreqRanges + FreqRanges - freq - 1
+	}, 0, len(cds))
+	for _, c := range cds {
 		out = append(out, struct {
 			Word   string
 			Weight int
-		}{Word: s, Weight: w})
+		}{Word: c.Word, Weight: c.Distance})
 	}
-	// sort by weight ascending
+	// already sorted by FindReplacementCandidates; ensure stable non-decreasing
 	for i := 0; i < len(out); i++ {
 		for j := i + 1; j < len(out); j++ {
 			if out[j].Weight < out[i].Weight {

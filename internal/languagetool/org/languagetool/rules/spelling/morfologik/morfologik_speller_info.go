@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -122,14 +121,8 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	return true
 }
 
-// minWordLengthFindRepl ports Speller.MIN_WORD_LENGTH (skip short variants after first few).
-const minWordLengthFindRepl = 4
-
-// binaryFindReplacementCandidates ports morfologik Speller.findReplacementCandidates (2.2.0):
-// input conversion → (optional) getAllReplacements theRest variants → dist-0 dict hits
-// → one HMatrix + findRepl per variant (anyToOne/anyToTwo short pairs inside FSA walk)
-// → sort → output conversion + first-occurrence dedupe.
-// Short pairs are NOT surface-rewritten outside findRepl.
+// binaryFindReplacementCandidates ports MorfologikSpeller → Speller.findReplacementCandidates.
+// Dictionary (OpenDictionary .info) owns Speller metadata; LT MaxEditDistance selects Speller distance.
 func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictionary, word string, maxResults int) []WeightedSuggestion {
 	if s == nil || d == nil || word == "" {
 		return nil
@@ -138,94 +131,44 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 	if maxEdit < 1 {
 		maxEdit = 1
 	}
-	word = s.applyInputConversion(word)
-	// evenIfWordInDictionary=false
-	if len(word) == 0 || len(word) >= atticmorfo.MaxWordLength || d.Contains(word) {
-		return nil
-	}
-
-	// One Speller for CandidateData weights + findRepl (Java single Speller instance).
-	fsaSp := atticmorfo.NewSpellerFSA(d, maxEdit)
-	fsaSp.IgnoreDiacritics = s.IgnoreDiacritics
-	fsaSp.ConvertCase = s.ConvertCase
-	fsaSp.EquivalentChars = s.EquivalentChars
-	if len(s.ReplacementShort) > 0 {
-		pairs := make([]struct{ From, To string }, len(s.ReplacementShort))
-		for i, p := range s.ReplacementShort {
-			pairs[i].From, pairs[i].To = p.From, p.To
+	// Prefer LT-loaded replacement/conversion maps when present (same .info as Dictionary).
+	// Sync dict speller meta from MorfologikSpeller so AttachBinaryDictionary path is authoritative.
+	if len(s.ReplacementShort) > 0 || (s.ReplacementTheRest != nil && s.ReplacementTheRest.Len() > 0) {
+		d.ReplacementShort = make([]atticmorfo.ReplPair, 0, len(s.ReplacementShort))
+		for _, p := range s.ReplacementShort {
+			d.ReplacementShort = append(d.ReplacementShort, atticmorfo.ReplPair{From: p.From, To: p.To})
 		}
-		fsaSp.LoadReplacementPairs(pairs)
-	}
-
-	// Java: if (replacementsTheRest != null && word.length() > 1) getAllReplacements else [word]
-	var wordsToCheck []string
-	var raw []atticmorfo.CandidateData
-	if s.ReplacementTheRest != nil && s.ReplacementTheRest.Len() > 0 && len(word) > 1 {
-		for _, wordChecked := range GetAllReplacements(word, s.ReplacementTheRest, 0, 0) {
-			if d.Contains(wordChecked) {
-				raw = append(raw, fsaSp.MakeCandidateData(wordChecked, 0))
-			} else {
-				low := strings.ToLower(wordChecked)
-				up := strings.ToUpper(wordChecked)
-				if d.Contains(low) {
-					raw = append(raw, fsaSp.MakeCandidateData(low, 0))
-				}
-				if d.Contains(up) {
-					raw = append(raw, fsaSp.MakeCandidateData(up, 0))
-				}
-				if len(low) > 1 {
-					firstUp := uppercaseFirstChar(low)
-					if d.Contains(firstUp) {
-						raw = append(raw, fsaSp.MakeCandidateData(firstUp, 0))
-					}
+		if s.ReplacementTheRest != nil {
+			d.ReplacementTheRest = &atticmorfo.OrderedStringListMap{}
+			for _, k := range s.ReplacementTheRest.Keys {
+				for _, v := range s.ReplacementTheRest.Get(k) {
+					d.ReplacementTheRest.Add(k, v)
 				}
 			}
-			wordsToCheck = append(wordsToCheck, wordChecked)
 		}
-	} else {
-		wordsToCheck = []string{word}
 	}
+	if len(s.InputConversionPairs) > 0 {
+		d.InputConversion = append([][2]string(nil), s.InputConversionPairs...)
+	}
+	if len(s.OutputConversionPairs) > 0 {
+		d.OutputConversion = append([][2]string(nil), s.OutputConversionPairs...)
+	}
+	d.IgnoreDiacritics = s.IgnoreDiacritics
+	d.ConvertCase = s.ConvertCase
+	d.EquivalentChars = s.EquivalentChars
 
-	// Java: hMatrix.reset() once, then findRepl for each variant (shared dirty matrix).
-	fsaSp.ResetHMatrix()
-	// Java: int i = 1; for (...) { i++; if (i > UPPER_SEARCH_LIMIT) break;
-	// if (wordLen < MIN_WORD_LENGTH && i > 2) break; findRepl(...) }
-	i := 1
-	for _, wordChecked := range wordsToCheck {
-		i++
-		if i > upperSearchLimit {
+	cds := d.FindReplacementCandidates(word, maxEdit)
+	if len(cds) == 0 {
+		return nil
+	}
+	out := make([]WeightedSuggestion, 0, len(cds))
+	for _, cd := range cds {
+		out = append(out, NewWeightedSuggestion(cd.Word, cd.Distance))
+		if maxResults > 0 && len(out) >= maxResults {
 			break
 		}
-		// Java uses UTF-16 char length; BMP EN matches runes for ASCII.
-		if len([]rune(wordChecked)) < minWordLengthFindRepl && i > 2 {
-			break
-		}
-		fsaSp.AppendFindRepl(&raw, wordChecked)
 	}
-
-	// Collections.sort(candidates) by weighted distance
-	sort.SliceStable(raw, func(a, b int) bool {
-		return raw[a].Distance < raw[b].Distance
-	})
-	// output conversion + first occurrence; Java: new CandidateData(replaced, origDistance)
-	seen := map[string]struct{}{}
-	var candidates []WeightedSuggestion
-	for _, cd := range raw {
-		replaced := s.applyOutputConversion(cd.Word)
-		if replaced == "" || replaced == word {
-			continue
-		}
-		if _, ok := seen[replaced]; ok {
-			continue
-		}
-		seen[replaced] = struct{}{}
-		wt := s.suggestionWeightDist(replaced, cd.OrigDistance)
-		candidates = append(candidates, NewWeightedSuggestion(replaced, wt))
-	}
-	if maxResults > 0 && len(candidates) > maxResults {
-		candidates = candidates[:maxResults]
-	}
-	return candidates
+	return out
 }
 
 // suggestOpts builds attic morfologik.SuggestOpts from .info flags.
@@ -243,6 +186,7 @@ func (s *MorfologikSpeller) suggestOpts() atticmorfo.SuggestOpts {
 
 // binaryCascadeWeighted ports calcSpellerSuggestions distance cascade at the binary layer
 // (used when a single Speller stands in for speller1+2+3 without Multis).
+// Uses Dictionary.FindReplacementCandidates (Java Speller), not invent edit-candidate gen.
 func binaryCascadeWeighted(d *atticmorfo.Dictionary, word string, max int) []WeightedSuggestion {
 	if d == nil || word == "" {
 		return nil
@@ -253,13 +197,10 @@ func binaryCascadeWeighted(d *atticmorfo.Dictionary, word string, max int) []Wei
 	if len(word) >= 3 && (onlyCase || len(sugs) == 0) {
 		w2 := d.WeightedEditSuggestions(word, max, 2)
 		sugs = mergeWeightedUnique(sugs, toWeighted(w2))
-		if len(word) >= 5 && (len(sugs) == 0 || onlyCase) {
-			// Java: speller3 only when fullResults || defaultSuggestions.isEmpty() after speller2.
-			// onlyCase may leave non-empty list — then speller3 is skipped unless empty.
-			if len(sugs) == 0 {
-				w3 := d.WeightedEditSuggestions(word, max, 3)
-				sugs = mergeWeightedUnique(sugs, toWeighted(w3))
-			}
+		if len(word) >= 5 && len(sugs) == 0 {
+			// Java: speller3 only when defaultSuggestions empty after speller2
+			w3 := d.WeightedEditSuggestions(word, max, 3)
+			sugs = mergeWeightedUnique(sugs, toWeighted(w3))
 		}
 	}
 	if len(sugs) > max {
