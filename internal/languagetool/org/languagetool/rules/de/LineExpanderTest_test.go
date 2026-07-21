@@ -56,6 +56,44 @@ func TestLineExpander_Expansion(t *testing.T) {
 	got = e.ExpandLine("rüber_machen")
 	require.NotContains(t, got, "rüberMach")
 	require.Contains(t, got, "rübermachen")
+	// Java: rüber_machen  #bla #foo with full synth form list
+	e.VerbForms = func(lemma string) []string {
+		if lemma != "machen" {
+			return nil
+		}
+		return []string{
+			"mach", "gemacht", "machest", "machst", "mache", "machen", "machet",
+			"machte", "machend", "machten", "macht", "machtest", "machtet",
+		}
+	}
+	got = e.ExpandLine("rüber_machen  #bla #foo")
+	for _, want := range []string{
+		"rübermach", "rübergemacht", "rübermachest", "rübermachst", "rübermache",
+		"rübermachen", "rübermachet", "rübermachte", "rübermachend", "rübermachten",
+		"rübermacht", "rübermachtest", "rübermachtet", "rüberzumachen", "Rübermachens",
+	} {
+		require.Contains(t, got, want, "missing %s in %v", want, got)
+	}
+	// Java: rüber_verschicken with synth forms
+	e.VerbForms = func(lemma string) []string {
+		if lemma != "verschicken" {
+			return nil
+		}
+		return []string{
+			"verschickend", "verschickst", "verschick", "verschickest", "verschicktest",
+			"verschicke", "verschicket", "verschickte", "verschicktet", "verschickten",
+			"verschicken", "verschickt",
+		}
+	}
+	got = e.ExpandLine("rüber_verschicken")
+	for _, want := range []string{
+		"rüberverschickend", "rüberverschickst", "rüberverschick", "rüberverschickest",
+		"rüberverschicktest", "rüberverschicke", "rüberverschicket", "rüberverschickte",
+		"rüberverschicktet", "rüberverschickten", "rüberverschicken", "rüberverschickt",
+		"rüberzuverschicken", "Rüberverschickens",
+	} {
+		require.Contains(t, got, want, "missing %s", want)
+	}
 	// escaped underscore is plain
 	require.Equal(t, []string{"escape_machen"}, e.ExpandLine(`escape\_machen`))
 	// unknown flag panics (Java RuntimeException)
