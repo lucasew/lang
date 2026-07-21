@@ -3,18 +3,28 @@ package morfologik
 import (
 	"fmt"
 	"strings"
+	"unicode/utf16"
 )
 
 // MorfologikMultiSpeller ports org.languagetool.rules.spelling.morfologik.MorfologikMultiSpeller
 // as an ordered list of spellers (user dict, main dict, ...).
 type MorfologikMultiSpeller struct {
+	// Spellers is the full list: optional user dict first, then default dicts
+	// (binary + plain-text), matching Java ctor order.
 	Spellers []*MorfologikSpeller
+	// UserDictSpellers ports userDictSpellers (user accepted-words FSA only).
+	UserDictSpellers []*MorfologikSpeller
+	// DefaultDictSpellers ports defaultDictSpellers (binary + plain-text, no user).
+	DefaultDictSpellers []*MorfologikSpeller
 	// BinaryDictPath is the primary .dict classpath (API parity with Java ctor).
 	BinaryDictPath string
 }
 
 func NewMorfologikMultiSpeller(spellers ...*MorfologikSpeller) *MorfologikMultiSpeller {
-	return &MorfologikMultiSpeller{Spellers: append([]*MorfologikSpeller(nil), spellers...)}
+	m := &MorfologikMultiSpeller{Spellers: append([]*MorfologikSpeller(nil), spellers...)}
+	// No user dict unless set via Open / WithUserDict — treat all as default.
+	m.DefaultDictSpellers = append([]*MorfologikSpeller(nil), m.Spellers...)
+	return m
 }
 
 // NewMorfologikMultiSpellerFromPaths validates dict path conventions (Java ctor parity)
@@ -63,28 +73,86 @@ func (m *MorfologikMultiSpeller) IsMisspelled(word string) bool {
 	return true
 }
 
-// GetSuggestions merges replacements from all spellers (first-seen order).
-// Non-misspelled words yield an empty list (Java MorfologikMultiSpeller parity).
+// GetSuggestions merges weighted replacements from all spellers, sorted by weight
+// (Java MorfologikMultiSpeller.getSuggestions → getSuggestionsFromSpellers + sort).
+// Non-misspelled words yield an empty list.
 func (m *MorfologikMultiSpeller) GetSuggestions(word string) []string {
+	return wordsFromWeighted(m.GetWeightedSuggestions(word))
+}
+
+// GetWeightedSuggestions ports getSuggestionsFromSpellers(word, spellers).
+func (m *MorfologikMultiSpeller) GetWeightedSuggestions(word string) []WeightedSuggestion {
 	if m == nil || !m.IsMisspelled(word) {
 		return nil
 	}
+	return m.getSuggestionsFromSpellers(word, m.Spellers)
+}
+
+// GetSuggestionsFromUserDicts ports getSuggestionsFromUserDicts.
+func (m *MorfologikMultiSpeller) GetSuggestionsFromUserDicts(word string) []string {
+	return wordsFromWeighted(m.GetWeightedSuggestionsFromUserDicts(word))
+}
+
+// GetWeightedSuggestionsFromUserDicts ports getWeightedSuggestionsFromUserDicts.
+func (m *MorfologikMultiSpeller) GetWeightedSuggestionsFromUserDicts(word string) []WeightedSuggestion {
+	if m == nil {
+		return nil
+	}
+	return m.getSuggestionsFromSpellers(word, m.UserDictSpellers)
+}
+
+// GetSuggestionsFromDefaultDicts ports getSuggestionsFromDefaultDicts.
+func (m *MorfologikMultiSpeller) GetSuggestionsFromDefaultDicts(word string) []string {
+	return wordsFromWeighted(m.GetWeightedSuggestionsFromDefaultDicts(word))
+}
+
+// GetWeightedSuggestionsFromDefaultDicts ports getWeightedSuggestionsFromDefaultDicts.
+func (m *MorfologikMultiSpeller) GetWeightedSuggestionsFromDefaultDicts(word string) []WeightedSuggestion {
+	if m == nil {
+		return nil
+	}
+	list := m.DefaultDictSpellers
+	if len(list) == 0 {
+		// Fallback when only Spellers is populated (legacy NewMorfologikMultiSpeller).
+		list = m.Spellers
+	}
+	return m.getSuggestionsFromSpellers(word, list)
+}
+
+// getSuggestionsFromSpellers ports private getSuggestionsFromSpellers:
+// merge unique words, then Collections.sort by weight ascending.
+func (m *MorfologikMultiSpeller) getSuggestionsFromSpellers(word string, spellerList []*MorfologikSpeller) []WeightedSuggestion {
+	if m == nil || word == "" || len(spellerList) == 0 {
+		return nil
+	}
 	seen := map[string]struct{}{}
-	var out []string
-	for _, s := range m.Spellers {
+	var result []WeightedSuggestion
+	for _, s := range spellerList {
 		if s == nil {
 			continue
 		}
-		for _, sug := range s.FindReplacements(word) {
-			if sug == word {
+		for _, sug := range s.GetWeightedSuggestions(word) {
+			if sug.Word == "" || sug.Word == word {
 				continue
 			}
-			if _, ok := seen[sug]; ok {
+			if _, ok := seen[sug.Word]; ok {
 				continue
 			}
-			seen[sug] = struct{}{}
-			out = append(out, sug)
+			seen[sug.Word] = struct{}{}
+			result = append(result, sug)
 		}
+	}
+	SortByWeight(result)
+	return result
+}
+
+func wordsFromWeighted(ws []WeightedSuggestion) []string {
+	if len(ws) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(ws))
+	for _, w := range ws {
+		out = append(out, w.Word)
 	}
 	return out
 }
@@ -109,6 +177,13 @@ func (m *MorfologikMultiSpeller) GetFrequency(word string) int {
 // without user-dict: binary FSA + plain-text map membership (Java builds runtime FSA from lines).
 // prepareLine is Language.prepareLineForSpeller (nil → raw lines).
 func OpenMultiSpellerFromClasspath(binaryClasspath string, plainTextRels []string, languageVariantRel string, maxEditDistance int, prepareLine PrepareLineFn) *MorfologikMultiSpeller {
+	return OpenMultiSpellerFromClasspathWithUser(binaryClasspath, plainTextRels, languageVariantRel, maxEditDistance, prepareLine, nil)
+}
+
+// OpenMultiSpellerFromClasspathWithUser ports MorfologikMultiSpeller with UserConfig accepted words.
+// userWords non-empty builds a user-dict speller first (Java: premiumUid + acceptedWords).
+// Java also gates on premiumUid != null; callers pass words only when that applies.
+func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels []string, languageVariantRel string, maxEditDistance int, prepareLine PrepareLineFn, userWords []string) *MorfologikMultiSpeller {
 	if maxEditDistance < 1 {
 		maxEditDistance = 1
 	}
@@ -133,12 +208,41 @@ func OpenMultiSpellerFromClasspath(binaryClasspath string, plainTextRels []strin
 		plain.AddWord("LanguageTooler")
 	}
 
-	spellers := []*MorfologikSpeller{main}
+	var userDictSpellers []*MorfologikSpeller
+	var spellers []*MorfologikSpeller
+	// Java: user dict first so personal suggestions are not drowned (before weight sort).
+	if len(userWords) > 0 {
+		user := NewMorfologikSpeller(binaryClasspath+"#user", maxEditDistance)
+		// Inherit binary .info case flags (Java uses same .info for runtime FSA).
+		_ = user.LoadInfoFromClasspath(binaryClasspath)
+		for _, w := range userWords {
+			w = strings.TrimSpace(w)
+			if w == "" {
+				continue
+			}
+			user.AddWord(w)
+		}
+		if user.HasDictionary() {
+			userDictSpellers = []*MorfologikSpeller{user}
+			spellers = append(spellers, user)
+		}
+	}
+
+	defaultDict := []*MorfologikSpeller{main}
+	spellers = append(spellers, main)
 	if plain.HasDictionary() {
+		defaultDict = append(defaultDict, plain)
 		spellers = append(spellers, plain)
 	}
 	return &MorfologikMultiSpeller{
-		Spellers:       spellers,
-		BinaryDictPath: binaryClasspath,
+		Spellers:            spellers,
+		UserDictSpellers:    userDictSpellers,
+		DefaultDictSpellers: defaultDict,
+		BinaryDictPath:      binaryClasspath,
 	}
+}
+
+// UTF16Len ports Java String.length() for word-length gates (user-dict ordering).
+func UTF16Len(s string) int {
+	return len(utf16.Encode([]rune(s)))
 }

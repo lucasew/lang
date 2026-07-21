@@ -257,7 +257,8 @@ func (r *MorfologikSpellerRule) isMisspelledWord(word string) bool {
 }
 
 // collectSuggestions ports calcSpellerSuggestions:
-// only-suggestions early return; else dict + getAdditionalTopSuggestions; then filterSuggestions.
+// only-suggestions early return; else user vs default dicts + tops; concat by word length;
+// then filterSuggestions / filterDupes.
 func (r *MorfologikSpellerRule) collectSuggestions(word string) []string {
 	if r == nil {
 		return nil
@@ -271,41 +272,77 @@ func (r *MorfologikSpellerRule) collectSuggestions(word string) []string {
 			return only
 		}
 	}
-	var sug []string
+
+	// Java: defaultSuggestions / userSuggestions from speller1 (and 2/3 cascade inside Multi binary).
+	var defaultSug, userSug []string
 	if r.Multi != nil {
-		sug = r.Multi.GetSuggestions(word)
+		defaultSug = r.Multi.GetSuggestionsFromDefaultDicts(word)
+		userSug = r.Multi.GetSuggestionsFromUserDicts(word)
 	} else if r.Speller != nil {
-		sug = r.Speller.FindReplacements(word)
+		defaultSug = r.Speller.FindReplacements(word)
 	}
+
 	// Java: if no default/user sugs and word contains "-", addHyphenSuggestions first into top.
 	var top []string
-	if len(sug) == 0 && strings.Contains(word, "-") && r.AddHyphenSuggestionsFn != nil {
+	if len(defaultSug) == 0 && len(userSug) == 0 && strings.Contains(word, "-") && r.AddHyphenSuggestionsFn != nil {
 		// Java word.split("-") keeps empty segments for leading/trailing/double hyphens.
 		parts := strings.Split(word, "-")
 		top = append(top, r.AddHyphenSuggestionsFn(parts)...)
 	}
-	// Java: topSuggestions.addAll(getAdditionalTopSuggestions(...))
+	// Java: topSuggestions.addAll(getAdditionalTopSuggestions(defaultSuggestions, word))
 	if r.GetAdditionalTopSuggestionsFn != nil {
-		if langTop := r.GetAdditionalTopSuggestionsFn(sug, word); len(langTop) > 0 {
+		if langTop := r.GetAdditionalTopSuggestionsFn(defaultSug, word); len(langTop) > 0 {
 			top = append(top, langTop...)
-		} else if baseTop := spelling.AdditionalTopSuggestions(sug, word); len(baseTop) > 0 {
+		} else if baseTop := spelling.AdditionalTopSuggestions(defaultSug, word); len(baseTop) > 0 {
 			// EN returns early when curated non-empty; only use base when language top empty.
 			top = append(top, baseTop...)
 		}
-	} else if baseTop := spelling.AdditionalTopSuggestions(sug, word); len(baseTop) > 0 {
+	} else if baseTop := spelling.AdditionalTopSuggestions(defaultSug, word); len(baseTop) > 0 {
 		top = append(top, baseTop...)
 	}
 	if len(top) > 0 {
-		sug = append(top, sug...)
+		defaultSug = append(top, defaultSug...)
 	}
-	if len(sug) == 0 {
+	if len(defaultSug) == 0 && len(userSug) == 0 {
 		return nil
 	}
-	// Java: filterSuggestions (prohibit, " s"→"'s", no-suggest).
+	// Java: defaultSuggestions = filterSuggestions(...); userSuggestions = filterDupes(...)
 	if r.SpellingCheckRule != nil {
-		sug = r.SpellingCheckRule.FilterSuggestions(sug)
+		defaultSug = r.SpellingCheckRule.FilterSuggestions(defaultSug)
+	} else {
+		defaultSug = filterStringDupes(defaultSug)
 	}
-	return sug
+	userSug = filterStringDupes(userSug)
+	// Java orderSuggestions is identity on base rule.
+	// Java: word.length()>4 → user then default; else default then user
+	// (short user-dict hits usually hide best suggestions).
+	var sug []string
+	if UTF16Len(word) > 4 {
+		sug = append(append([]string{}, userSug...), defaultSug...)
+	} else {
+		sug = append(append([]string{}, defaultSug...), userSug...)
+	}
+	// Final de-dupe preserving order (user may overlap default).
+	return filterStringDupes(sug)
+}
+
+func filterStringDupes(in []string) []string {
+	if len(in) == 0 {
+		return in
+	}
+	seen := make(map[string]struct{}, len(in))
+	out := make([]string, 0, len(in))
+	for _, s := range in {
+		if s == "" {
+			continue
+		}
+		if _, ok := seen[s]; ok {
+			continue
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	return out
 }
 
 func hasLetter(s string) bool {

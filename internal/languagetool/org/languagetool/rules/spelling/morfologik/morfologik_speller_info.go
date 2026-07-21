@@ -88,11 +88,68 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	s.SuggestFn = func(word string) []string {
 		return binaryCascadeSuggestions(d, word, 8)
 	}
+	// Weighted candidates for multi-speller merge / Collections.sort by weight.
+	s.WeightedSuggestFn = func(word string) []WeightedSuggestion {
+		return binaryCascadeWeighted(d, word, 8)
+	}
 	// Binary frequency: Java Speller.getFrequency last payload byte.
 	s.GetFrequencyFn = func(word string) int {
 		return d.GetFrequency(word)
 	}
 	return true
+}
+
+// binaryCascadeWeighted same cascade as binaryCascadeSuggestions but keeps weights.
+func binaryCascadeWeighted(d *atticmorfo.Dictionary, word string, max int) []WeightedSuggestion {
+	if d == nil || word == "" {
+		return nil
+	}
+	w1 := d.WeightedEditSuggestions(word, max, 1)
+	sugs := toWeighted(w1)
+	onlyCase := len(sugs) > 0 && strings.EqualFold(word, sugs[0].Word)
+	if len(word) >= 3 && (onlyCase || len(sugs) == 0) {
+		w2 := d.WeightedEditSuggestions(word, max, 2)
+		sugs = mergeWeightedUnique(sugs, toWeighted(w2))
+		if len(word) >= 5 && len(sugs) == 0 {
+			w3 := d.WeightedEditSuggestions(word, max, 3)
+			sugs = mergeWeightedUnique(sugs, toWeighted(w3))
+		}
+	}
+	if len(sugs) > max {
+		sugs = sugs[:max]
+	}
+	return sugs
+}
+
+func toWeighted(w []struct {
+	Word   string
+	Weight int
+}) []WeightedSuggestion {
+	out := make([]WeightedSuggestion, 0, len(w))
+	for _, x := range w {
+		out = append(out, NewWeightedSuggestion(x.Word, x.Weight))
+	}
+	return out
+}
+
+func mergeWeightedUnique(a, b []WeightedSuggestion) []WeightedSuggestion {
+	seen := map[string]struct{}{}
+	var out []WeightedSuggestion
+	for _, s := range a {
+		if _, ok := seen[s.Word]; ok {
+			continue
+		}
+		seen[s.Word] = struct{}{}
+		out = append(out, s)
+	}
+	for _, s := range b {
+		if _, ok := seen[s.Word]; ok {
+			continue
+		}
+		seen[s.Word] = struct{}{}
+		out = append(out, s)
+	}
+	return out
 }
 
 // binaryCascadeSuggestions ports MorfologikSpellerRule.calcSpellerSuggestions distance cascade:

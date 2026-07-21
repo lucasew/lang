@@ -38,6 +38,8 @@ type MorfologikSpeller struct {
 	InDictionaryFn func(word string) bool
 	// SuggestFn ports binary Speller.findReplacements (optional; map Suggestions still preferred).
 	SuggestFn func(word string) []string
+	// WeightedSuggestFn ports Speller.findReplacementCandidates with distances (optional).
+	WeightedSuggestFn func(word string) []WeightedSuggestion
 	// GetFrequencyFn ports binary Speller.getFrequency (optional; Frequencies map preferred).
 	GetFrequencyFn func(word string) int
 	// BinaryDictPath is the absolute .dict path when AttachBinaryDictionary succeeded.
@@ -317,42 +319,174 @@ func initialUppercaseWord(s string) string {
 	return string(r)
 }
 
-// GetSuggestions is the Java API alias for FindReplacements.
+// GetSuggestions is the Java API alias for FindReplacements (string list, no weights).
 func (s *MorfologikSpeller) GetSuggestions(word string) []string {
 	return s.FindReplacements(word)
 }
 
-// FindReplacements returns suggestions for word.
-// Order: inject Suggestions map → binary SuggestFn → small-map edit-distance peers.
-func (s *MorfologikSpeller) FindReplacements(word string) []string {
-	if s == nil {
+// FreqRanges ports morfologik Speller.FREQ_RANGES ('Z'-'A'+1 = 26).
+const FreqRanges = 26
+
+// GetWeightedSuggestions ports MorfologikSpeller.getSuggestions (WeightedSuggestion list).
+// Weights match morfologik CandidateData distance: edit*FREQ_RANGES + FREQ_RANGES - freq - 1.
+func (s *MorfologikSpeller) GetWeightedSuggestions(word string) []WeightedSuggestion {
+	if s == nil || word == "" {
 		return nil
 	}
+	// Java: word.length() > StringMatcher.MAX_MATCH_LENGTH → empty (MAX is large; skip for now)
+	// Inject Suggestions map: preserve injection order (tests stand in for already-ordered Speller hits).
 	if sug, ok := s.Suggestions[word]; ok {
-		return append([]string(nil), sug...)
-	}
-	// Binary FSA (Java Speller.findReplacements / SuggestEdits Contains probe)
-	if s.SuggestFn != nil {
-		if out := s.SuggestFn(word); len(out) > 0 {
-			return out
+		out := make([]WeightedSuggestion, 0, len(sug))
+		for i, w := range sug {
+			if w == "" || w == word {
+				continue
+			}
+			// ascending weight by position so multi-merge keeps inject order when freqs equal
+			out = append(out, NewWeightedSuggestion(w, i))
 		}
+		return applyCaseToWeighted(s, word, out)
 	}
-	// limited: collect dictionary words within MaxEditDistance (small dicts only)
+	if s.WeightedSuggestFn != nil {
+		return applyCaseToWeighted(s, word, s.WeightedSuggestFn(word))
+	}
+	// Binary FSA string SuggestFn: re-weight each hit
+	if s.SuggestFn != nil {
+		raw := s.SuggestFn(word)
+		if len(raw) == 0 {
+			return nil
+		}
+		out := make([]WeightedSuggestion, 0, len(raw))
+		for _, w := range raw {
+			if w == "" || w == word {
+				continue
+			}
+			out = append(out, NewWeightedSuggestion(w, s.suggestionWeight(word, w)))
+		}
+		SortByWeight(out)
+		return applyCaseToWeighted(s, word, out)
+	}
+	// small map: peers within MaxEditDistance
 	if len(s.Words) == 0 || len(s.Words) > 5000 {
 		return nil
 	}
-	var out []string
+	var out []WeightedSuggestion
 	for w := range s.Words {
 		d := editDistance(word, w)
-		// exclude exact dictionary form (Java getSuggestions returns empty for known words)
 		if d > 0 && d <= s.MaxEditDistance {
-			out = append(out, w)
+			out = append(out, NewWeightedSuggestion(w, s.suggestionWeightDist(w, d)))
 			if len(out) >= 8 {
 				break
 			}
 		}
 	}
-	return out
+	SortByWeight(out)
+	return applyCaseToWeighted(s, word, out)
+}
+
+// suggestionWeight computes Java-like candidate weight for sug relative to word.
+func (s *MorfologikSpeller) suggestionWeight(word, sug string) int {
+	d := editDistance(strings.ToLower(word), strings.ToLower(sug))
+	if d < 1 {
+		d = 1
+	}
+	return s.suggestionWeightDist(sug, d)
+}
+
+func (s *MorfologikSpeller) suggestionWeightDist(sug string, dist int) int {
+	freq := 0
+	if s != nil {
+		freq = s.GetFrequency(sug)
+		if freq < 0 {
+			freq = 0
+		}
+	}
+	// weight = dist*FREQ_RANGES + FREQ_RANGES - frequency - 1
+	return dist*FreqRanges + FreqRanges - freq - 1
+}
+
+// applyCaseToWeighted ports MorfologikSpeller.getSuggestions all-upper / capitalize arms.
+func applyCaseToWeighted(s *MorfologikSpeller, word string, suggestions []WeightedSuggestion) []WeightedSuggestion {
+	if s == nil || !s.ConvertCase || len(suggestions) == 0 {
+		return suggestions
+	}
+	if isAllUppercaseWord(word) {
+		for i := 0; i < len(suggestions); i++ {
+			sugg := suggestions[i]
+			allUpper := strings.ToUpper(sugg.Word)
+			if allUpper == word || isMixedCaseWord(sugg.Word) {
+				allUpper = sugg.Word
+			}
+			// remove duplicates of allUpper
+			aux := weightedIndex(suggestions, allUpper)
+			if aux > i {
+				suggestions = append(suggestions[:aux], suggestions[aux+1:]...)
+			}
+			if aux > -1 && aux < i {
+				suggestions = append(suggestions[:i], suggestions[i+1:]...)
+				i--
+			} else {
+				suggestions[i] = NewWeightedSuggestion(allUpper, sugg.Weight)
+			}
+		}
+		return suggestions
+	}
+	if startsWithUppercase(word) {
+		for i := 0; i < len(suggestions); i++ {
+			sugg := suggestions[i]
+			upFirst := uppercaseFirstChar(sugg.Word)
+			if upFirst == word || isMixedCaseWord(sugg.Word) {
+				upFirst = sugg.Word
+			}
+			aux := weightedIndex(suggestions, upFirst)
+			if aux > i {
+				suggestions = append(suggestions[:aux], suggestions[aux+1:]...)
+			}
+			if aux > -1 && aux < i {
+				suggestions = append(suggestions[:i], suggestions[i+1:]...)
+				i--
+			} else {
+				suggestions[i] = NewWeightedSuggestion(upFirst, sugg.Weight)
+			}
+		}
+	}
+	return suggestions
+}
+
+func weightedIndex(suggestions []WeightedSuggestion, word string) int {
+	for i, s := range suggestions {
+		if s.Word == word {
+			return i
+		}
+	}
+	return -1
+}
+
+func startsWithUppercase(s string) bool {
+	r := []rune(s)
+	return len(r) > 0 && unicode.IsUpper(r[0])
+}
+
+func uppercaseFirstChar(s string) string {
+	r := []rune(s)
+	if len(r) == 0 {
+		return s
+	}
+	r[0] = unicode.ToUpper(r[0])
+	return string(r)
+}
+
+// FindReplacements returns suggestions for word.
+// Order: inject Suggestions map → binary SuggestFn → small-map edit-distance peers.
+func (s *MorfologikSpeller) FindReplacements(word string) []string {
+	// Prefer weighted path so order matches Java getSuggestions / multi merge.
+	if ws := s.GetWeightedSuggestions(word); len(ws) > 0 {
+		out := make([]string, 0, len(ws))
+		for _, w := range ws {
+			out = append(out, w.Word)
+		}
+		return out
+	}
+	return nil
 }
 
 func editDistance(a, b string) int {
