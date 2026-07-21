@@ -28,19 +28,13 @@ func TestGenericUnpairedBracketsRule_GermanRule(t *testing.T) {
 	require.Equal(t, 0, matchN("Das ist ein Satz mit Smiley :)"))
 	require.Equal(t, 0, matchN("Das ist ein Satz mit Smiley :("))
 
-	// URL with paren as single previous token (Java isNoException https?://.+ containing '(')
-	// AnalyzePlain may split URLs; inject one token like Java WordTokenizer keeps it.
-	urlSent := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Die", "ART", "die"),
-		atrWithPOS("URL", "SUB", "URL"),
-		atrWithPOS("lautet", "VER", "lauten"),
-		atrWithPOS("https://de.wikipedia.org/wiki/Schlammersdorf_(Adelsgeschlecht)", "URL", "https://…"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{urlSent})))
-
-	// outer parens around URL sentence (balanced)
+	// URLs: WordTokenizer.joinUrls keeps path+open-paren; ')' ends URL (Java urlEndsAt).
+	// isNoException skips ')' when previous token is https?://… containing '('.
+	require.Equal(t, 0, matchN("Die URL lautet https://de.wikipedia.org/wiki/Schlammersdorf_(Adelsgeschlecht)"))
+	require.Equal(t, 0, matchN("Die URL lautet https://de.wikipedia.org/wiki/Schlammersdorf_(Adelsgeschlecht)."))
+	require.Equal(t, 0, matchN("(Die URL lautet https://de.wikipedia.org/wiki/Schlammersdorf_(Adelsgeschlecht))"))
+	require.Equal(t, 0, matchN("(Die URL lautet https://de.wikipedia.org/wiki/Schlammersdorf)"))
+	require.Equal(t, 0, matchN("(Die URL lautet https://de.wikipedia.org/wiki/Schlammersdorf oder so)"))
 	require.Equal(t, 0, matchN("(Die URL lautet: http://www.pariscinema.org/)."))
 
 	// unpaired
