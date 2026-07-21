@@ -472,27 +472,21 @@ func javaUTF16DropPrefix(s string, n int) string {
 	return javaUTF16Suffix(s, n)
 }
 
-// isWeiseException ports GermanTagger.isWeiseException: ends with "erweise" and
-// stem has ADJ reading.
+// isWeiseException ports GermanTagger.isWeiseException:
+// endsWith("erweise") && tag(removeEnd).anyMatch POS startsWith "ADJ".
+// Java uses getWordTagger().tag only (not adj expansion).
 func (t *GermanTagger) isWeiseException(word string) bool {
-	if !strings.HasSuffix(word, "erweise") {
+	if t == nil || !strings.HasSuffix(word, "erweise") {
 		return false
 	}
+	// Java: StringUtils.removeEnd(word, "erweise")
 	stem := strings.TrimSuffix(word, "erweise")
 	if stem == "" {
 		return false
 	}
 	for _, tw := range t.TagWordExact(stem) {
-		if strings.HasPrefix(tw.PosTag, "ADJ") {
+		if tw.PosTag != "" && strings.HasPrefix(tw.PosTag, "ADJ") {
 			return true
-		}
-	}
-	// also try adj expansion for stem
-	if t.AdjExpansion != nil {
-		for _, tw := range t.AdjExpansion.Tag(stem) {
-			if strings.HasPrefix(tw.PosTag, "ADJ") {
-				return true
-			}
 		}
 	}
 	return false
