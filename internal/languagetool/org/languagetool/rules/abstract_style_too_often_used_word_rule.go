@@ -191,22 +191,15 @@ func (r *AbstractStyleTooOftenUsedWordRule) getTooOftenUsedWords(wordMap map[str
 		numWords += c
 	}
 	minW := r.minWords()
-	// Java: if numWords < MIN_WORD_COUNT return empty (unless MinWordCount forced 0 for tests)
+	// Java: if (numWords < MIN_WORD_COUNT) return empty
+	// MinWordCount 0 is only for unit tests that force the gate off (Java constant is 100).
 	if minW > 0 && numWords < minW {
 		return out
 	}
 	if numWords == 0 {
 		return out
 	}
-	// Twin-test path: MinPercent 0 → flag lemmas appearing ≥2 times
-	if r.MinPercent == 0 {
-		for w, c := range wordMap {
-			if c >= 2 {
-				out[w] = struct{}{}
-			}
-		}
-		return out
-	}
+	// Java: percent = (count * 100) / numWords; if (percent >= minPercent) add
 	for w, c := range wordMap {
 		percent := int(float64(c*100) / float64(numWords))
 		if percent >= r.MinPercent {

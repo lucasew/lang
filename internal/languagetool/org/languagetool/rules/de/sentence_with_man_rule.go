@@ -18,7 +18,7 @@ func NewSentenceWithManRule(messages map[string]string) *SentenceWithManRule {
 		AbstractStatisticSentenceStyleRule: &rules.AbstractStatisticSentenceStyleRule{
 			ID:                  "SENTENCE_WITH_MAN_DE",
 			Description:         "Statistische Stilanalyse: Sätze mit indirekter Leseransprache 'man'",
-			MinPercent:          0, // twin tests / Match show all; Java default 15‰
+			MinPercent:          sentenceWithManDefaultMinPercent, // Java DEFAULT_MIN_PERCENT=15
 			ExcludeDirectSpeech: true,
 			Denominator:         1000,
 		},
@@ -30,8 +30,12 @@ func NewSentenceWithManRule(messages map[string]string) *SentenceWithManRule {
 }
 
 func NewSentenceWithManRuleWithDefaultLimit(messages map[string]string) *SentenceWithManRule {
+	return NewSentenceWithManRule(messages)
+}
+
+func NewSentenceWithManRuleWithMinPercent(messages map[string]string, min int) *SentenceWithManRule {
 	r := NewSentenceWithManRule(messages)
-	r.MinPercent = sentenceWithManDefaultMinPercent
+	r.MinPercent = min
 	return r
 }
 

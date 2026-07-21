@@ -16,8 +16,8 @@ func NewStyleTooOftenUsedVerbRule(messages map[string]string) *StyleTooOftenUsed
 		Messages:     messages,
 		ID:           "TOO_OFTEN_USED_VERB_DE",
 		Description:  "Statistische Stilanalyse: Zu häufig genutztes Verb",
-		MinPercent:   0,
-		MinWordCount: 0,
+		MinPercent:   5, // Java DEFAULT_MIN_PERCENT
+		MinWordCount: 100, // Java MIN_WORD_COUNT
 		LimitMessage: func(limit int) string {
 			return "Das Verb wird häufiger verwendet als " + itoaDE(limit) +
 				"% aller Verben. Möglicherweise ist es besser es durch ein Synonym zu ersetzen."

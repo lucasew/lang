@@ -21,7 +21,7 @@ func NewConjunctionAtBeginOfSentenceRule(messages map[string]string) *Conjunctio
 			// Java getId
 			ID:                  "SENTENCE_BEGINNING_WITH_CONJUNCTION_DE",
 			Description:         "Statistische Stilanalyse: Sätze beginnend mit Konjunktion",
-			MinPercent:          0,
+			MinPercent:          10, // Java DEFAULT_MIN_PERCENT
 			ExcludeDirectSpeech: true,
 			Denominator:         100,
 		},

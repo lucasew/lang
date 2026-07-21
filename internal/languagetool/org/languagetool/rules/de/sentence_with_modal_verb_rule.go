@@ -19,7 +19,7 @@ func NewSentenceWithModalVerbRule(messages map[string]string) *SentenceWithModal
 		AbstractStatisticSentenceStyleRule: &rules.AbstractStatisticSentenceStyleRule{
 			ID:                  "SENTENCE_WITH_MODAL_VERB_DE",
 			Description:         "Statistische Stilanalyse: Sätze mit Modalverben",
-			MinPercent:          0,
+			MinPercent:          sentenceWithModalDefaultMinPercent, // Java DEFAULT_MIN_PERCENT=18
 			ExcludeDirectSpeech: true,
 			Denominator:         100,
 		},
@@ -31,8 +31,12 @@ func NewSentenceWithModalVerbRule(messages map[string]string) *SentenceWithModal
 }
 
 func NewSentenceWithModalVerbRuleWithDefaultLimit(messages map[string]string) *SentenceWithModalVerbRule {
+	return NewSentenceWithModalVerbRule(messages)
+}
+
+func NewSentenceWithModalVerbRuleWithMinPercent(messages map[string]string, min int) *SentenceWithModalVerbRule {
 	r := NewSentenceWithModalVerbRule(messages)
-	r.MinPercent = sentenceWithModalDefaultMinPercent
+	r.MinPercent = min
 	return r
 }
 

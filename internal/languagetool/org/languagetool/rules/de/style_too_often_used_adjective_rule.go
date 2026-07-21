@@ -16,8 +16,8 @@ func NewStyleTooOftenUsedAdjectiveRule(messages map[string]string) *StyleTooOfte
 		Messages:     messages,
 		ID:           "TOO_OFTEN_USED_ADJECTIVE_DE",
 		Description:  "Statistische Stilanalyse: Zu häufig genutztes Adjektiv",
-		MinPercent:   0,
-		MinWordCount: 0,
+		MinPercent:   5, // Java DEFAULT_MIN_PERCENT
+		MinWordCount: 100, // Java MIN_WORD_COUNT
 		LimitMessage: func(limit int) string {
 			// Java has a space before the period: "Adjektive . "
 			return "Das Adjektiv wird häufiger verwendet als " + itoaDE(limit) +

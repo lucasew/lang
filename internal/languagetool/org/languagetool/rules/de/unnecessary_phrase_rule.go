@@ -47,7 +47,7 @@ func NewUnnecessaryPhraseRule(messages map[string]string) *UnnecessaryPhraseRule
 			// Java getId: UNNECESSARY_PHRASES_DE
 			ID:                  "UNNECESSARY_PHRASES_DE",
 			Description:         "Statistische Stilanalyse: Potenzielle Phrasen",
-			MinPercent:          0, // twin tests show all
+			MinPercent:          8, // Java DEFAULT_MIN_PER_MILL
 			Denominator:         10000,
 			ExcludeDirectSpeech: true,
 		},

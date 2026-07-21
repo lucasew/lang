@@ -9,7 +9,8 @@ import (
 
 func TestStyleTooOftenUsedVerbRule(t *testing.T) {
 	rule := NewStyleTooOftenUsedVerbRule(nil)
-	// laufen ×2 with VER: + lemma
+	require.Equal(t, 5, rule.MinPercent)
+	require.Equal(t, 100, rule.MinWordCount)
 	s1 := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
 		atrWithPOS("Sie", "PRO:PER:NOM:PLU:MAS", "sie"),
@@ -25,6 +26,9 @@ func TestStyleTooOftenUsedVerbRule(t *testing.T) {
 		atrWithPOS("weiter", "ADV", "weiter"),
 		atrWithPOS(".", "PKT", "."),
 	))
+	// short text under MIN_WORD_COUNT
+	require.Empty(t, rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2}))
+	rule.MinWordCount = 0
 	require.GreaterOrEqual(t, len(rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})), 2)
 	// untagged no invent
 	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Sie laufen schnell. Dann laufen sie weiter."))))
@@ -32,6 +36,8 @@ func TestStyleTooOftenUsedVerbRule(t *testing.T) {
 
 func TestStyleTooOftenUsedAdjectiveRule(t *testing.T) {
 	rule := NewStyleTooOftenUsedAdjectiveRule(nil)
+	require.Equal(t, 5, rule.MinPercent)
+	require.Equal(t, 100, rule.MinWordCount)
 	s1 := languagetool.NewAnalyzedSentence(withPositions(
 		sentStartATR(),
 		atrWithPOS("Ein", "ART:IND:NOM:SIN:NEU", "ein"),
@@ -47,6 +53,8 @@ func TestStyleTooOftenUsedAdjectiveRule(t *testing.T) {
 		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
 		atrWithPOS(".", "PKT", "."),
 	))
+	require.Empty(t, rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2}))
+	rule.MinWordCount = 0
 	require.GreaterOrEqual(t, len(rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})), 2)
 	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Ein schönes Auto. Noch ein schönes Haus."))))
 }

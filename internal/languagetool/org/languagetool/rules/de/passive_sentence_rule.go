@@ -20,7 +20,7 @@ func NewPassiveSentenceRule(messages map[string]string) *PassiveSentenceRule {
 		AbstractStatisticSentenceStyleRule: &rules.AbstractStatisticSentenceStyleRule{
 			ID:                  "PASSIVE_SENTENCE_DE",
 			Description:         "Statistische Stilanalyse: Passivsätze",
-			MinPercent:          0, // twin tests / Match show all; Java default 8 via UserConfig
+			MinPercent:          passiveSentenceDefaultMinPercent, // Java DEFAULT_MIN_PERCENT=8
 			ExcludeDirectSpeech: true,
 			Denominator:         100,
 		},
@@ -31,10 +31,15 @@ func NewPassiveSentenceRule(messages map[string]string) *PassiveSentenceRule {
 	return r
 }
 
-// NewPassiveSentenceRuleWithDefaultLimit uses Java DEFAULT_MIN_PERCENT=8.
+// NewPassiveSentenceRuleWithDefaultLimit is an alias of the Java constructor (8%).
 func NewPassiveSentenceRuleWithDefaultLimit(messages map[string]string) *PassiveSentenceRule {
+	return NewPassiveSentenceRule(messages)
+}
+
+// NewPassiveSentenceRuleWithMinPercent sets an explicit limit (tests / UserConfig).
+func NewPassiveSentenceRuleWithMinPercent(messages map[string]string, min int) *PassiveSentenceRule {
 	r := NewPassiveSentenceRule(messages)
-	r.MinPercent = passiveSentenceDefaultMinPercent
+	r.MinPercent = min
 	return r
 }
 
