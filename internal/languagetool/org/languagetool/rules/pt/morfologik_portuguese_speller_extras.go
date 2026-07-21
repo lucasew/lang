@@ -199,23 +199,10 @@ func matchSurface(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) strin
 	if m == nil || sent == nil {
 		return ""
 	}
-	text := sent.GetText()
-	from, to := m.GetFromPos(), m.GetToPos()
-	if from < 0 || from >= to {
-		return ""
-	}
-	// AnalyzedTokenReadings positions are character offsets (Java char / Go runes for BMP).
-	// Slicing UTF-8 by byte index truncates multi-byte letters (á, ü, …).
-	runes := []rune(text)
-	if to <= len(runes) {
-		return string(runes[from:to])
-	}
-	// Fallback: treat as byte offsets when consistent with len(text).
-	if to <= len(text) {
-		return text[from:to]
-	}
-	return ""
+	// Java RuleMatch FromPos/ToPos are UTF-16 code units (String.substring).
+	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
+
 
 func (r *MorfologikPortugueseSpellerRule) dialectAlternativeSurface(word string) string {
 	if r == nil || r.dialectMap == nil {

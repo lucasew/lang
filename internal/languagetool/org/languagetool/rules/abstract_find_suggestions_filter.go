@@ -285,12 +285,11 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 		}
 	}
 	// remove original error string
+	// Java: setOriginalErrorStr / getOriginalErrorStr — UTF-16 FromPos/ToPos.
 	orig := match.GetOriginalErrorStr()
-	if orig == "" && match.Sentence != nil {
-		text := match.Sentence.GetText()
-		if match.FromPos >= 0 && match.ToPos <= len(text) {
-			orig = text[match.FromPos:match.ToPos]
-		}
+	if orig == "" {
+		match.SetOriginalErrorStr()
+		orig = match.GetOriginalErrorStr()
 	}
 	definitiveReplacements = removeStringFS(definitiveReplacements, orig)
 	// distinct

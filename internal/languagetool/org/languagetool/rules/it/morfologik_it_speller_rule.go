@@ -85,17 +85,7 @@ func matchSurfaceIT(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) str
 	if m == nil || sent == nil {
 		return ""
 	}
-	text := sent.GetText()
-	from, to := m.GetFromPos(), m.GetToPos()
-	if from < 0 || from >= to {
-		return ""
-	}
-	runes := []rune(text)
-	if to <= len(runes) {
-		return string(runes[from:to])
-	}
-	if to <= len(text) {
-		return text[from:to]
-	}
-	return ""
+	// Java RuleMatch FromPos/ToPos are UTF-16 code units (String.substring).
+	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
+

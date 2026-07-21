@@ -2,7 +2,6 @@ package en
 
 import (
 	"strings"
-	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -233,26 +232,7 @@ func matchSurfaceEN(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) str
 	if m == nil || sent == nil {
 		return ""
 	}
-	text := sent.GetText()
-	from, to := m.GetFromPos(), m.GetToPos()
-	if from < 0 || from >= to {
-		return ""
-	}
-	return utf16SliceEN(text, from, to)
-}
-
-func utf16SliceEN(s string, from, to int) string {
-	u := utf16.Encode([]rune(s))
-	if from < 0 {
-		from = 0
-	}
-	if to > len(u) {
-		to = len(u)
-	}
-	if from >= to {
-		return ""
-	}
-	return string(utf16.Decode(u[from:to]))
+	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
 
 // GetAdditionalSpellingFileNames ports AbstractEnglishSpellerRule.getAdditionalSpellingFileNames:

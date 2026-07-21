@@ -269,10 +269,13 @@ func enrichLocalMatches(out []languagetool.LocalMatch, text string, meta grammar
 		}
 		if text != "" {
 			from, to := out[i].FromPos, out[i].ToPos
-			if from >= 0 && to <= len(text) && from < to && len(out[i].Suggestions) > 0 {
-				matched := text[from:to]
-				for j, sug := range out[i].Suggestions {
-					out[i].Suggestions[j] = languagetool.PreserveCase(matched, sug)
+			// LocalMatch positions are UTF-16 units (Java RuleMatch); not byte indices.
+			if from >= 0 && from < to && len(out[i].Suggestions) > 0 {
+				matched := rules.UTF16Substring(text, from, to)
+				if matched != "" {
+					for j, sug := range out[i].Suggestions {
+						out[i].Suggestions[j] = languagetool.PreserveCase(matched, sug)
+					}
 				}
 			}
 		}

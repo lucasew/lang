@@ -890,21 +890,6 @@ func sentenceTextSlice(sentence *languagetool.AnalyzedSentence, from, to int) st
 	if sentence == nil {
 		return ""
 	}
-	text := sentence.GetText()
-	// Positions are UTF-16-oriented in Java; for BMP text byte==UTF-16 for ASCII.
-	// Use rune-safe slice by mapping via token positions when possible.
-	if from < 0 {
-		from = 0
-	}
-	if to > len(text) {
-		to = len(text)
-	}
-	if from >= to {
-		return ""
-	}
-	// Prefer byte indices when they fall inside the Go string (AnalyzePlain uses UTF-16-friendly for BMP).
-	if to <= len(text) {
-		return text[from:to]
-	}
-	return ""
+	// Java RuleMatch / token positions are UTF-16 code units (String.substring).
+	return rules.UTF16Substring(sentence.GetText(), from, to)
 }

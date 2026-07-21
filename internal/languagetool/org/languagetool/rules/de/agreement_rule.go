@@ -245,12 +245,10 @@ func (r *AgreementRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.
 			from := tokens[i+1].GetStartPos()
 			to := tokens[afterMod-1].GetEndPos()
 			if to > from {
-				text := sentence.GetText()
-				if from >= 0 && to <= len(text) {
-					sub := text[from:to]
-					if sub == joined {
-						skippedStr = sub
-					}
+				// Java String.substring with UTF-16 token positions.
+				sub := rules.UTF16Substring(sentence.GetText(), from, to)
+				if sub == joined {
+					skippedStr = sub
 				}
 			}
 		}
