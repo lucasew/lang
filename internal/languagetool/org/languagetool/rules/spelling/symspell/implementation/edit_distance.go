@@ -9,22 +9,26 @@ const (
 )
 
 // EditDistance ports org.languagetool.rules.spelling.symspell.implementation.EditDistance.
+// All indexing uses Java String length/charAt (UTF-16 code units).
 type EditDistance struct {
 	baseString string
-	algorithm  DistanceAlgorithm
-	v0, v2     []int
+	// baseNull mirrors Java constructor setting baseString=null when empty input.
+	baseNull  bool
+	algorithm DistanceAlgorithm
+	v0, v2    []int
 }
 
 func NewEditDistance(baseString string, algorithm DistanceAlgorithm) *EditDistance {
 	e := &EditDistance{baseString: baseString, algorithm: algorithm}
+	// Java: if (this.baseString.isEmpty()) { this.baseString = null; return; }
 	if baseString == "" {
+		e.baseNull = true
 		e.baseString = ""
 		return e
 	}
 	if algorithm == Damerau {
-		// Java: new int[baseString.length()] — UTF-16 units; for BMP LT tags/tokens
-		// runes match Java char counts. Size by runes (not UTF-8 bytes).
-		n := len([]rune(baseString))
+		// Java: new int[baseString.length()]
+		n := javaStringLen(baseString)
 		e.v0 = make([]int, n)
 		e.v2 = make([]int, n)
 	}
@@ -44,17 +48,20 @@ func (e *EditDistance) Compare(string2 string, maxDistance int) int {
 	}
 }
 
-// DamerauLevenshteinDistance ports the SymSpell optimized Damerau-Levenshtein.
+// DamerauLevenshteinDistance ports the SymSpell optimized Damerau-Levenshtein
+// bug-for-bug with Java (UTF-16 charAt / length).
 func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance int) int {
-	// Java String.length is UTF-16; LT spelling words are BMP — use runes, not UTF-8 bytes.
-	if e.baseString == "" {
+	// Java: if (baseString == null) return string2 == null ? 0 : string2.length();
+	if e.baseNull {
 		if string2 == "" {
+			// Go has no null strings; empty is the only empty case.
 			return 0
 		}
-		return len([]rune(string2))
+		return javaStringLen(string2)
 	}
+	// Java: if (string2 == null || string2.isEmpty()) return baseString.length();
 	if string2 == "" {
-		return len([]rune(e.baseString))
+		return javaStringLen(e.baseString)
 	}
 	if maxDistance == 0 {
 		if e.baseString == string2 {
@@ -63,28 +70,33 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 		return -1
 	}
 
-	// work on rune slices for unicode safety while matching Java char indexing for BMP
-	base := []rune(e.baseString)
-	other := []rune(string2)
+	base := javaChars(e.baseString)
+	other := javaChars(string2)
 
 	// ensure shorter is string1
-	var string1, string2r []rune
+	var string1, string2c []uint16
 	if len(base) > len(other) {
-		string1, string2r = other, base
+		string1, string2c = other, base
 	} else {
-		string1, string2r = base, other
+		string1, string2c = base, other
 	}
 	sLen := len(string1)
-	tLen := len(string2r)
+	tLen := len(string2c)
 
 	// common suffix
-	for sLen > 0 && string1[sLen-1] == string2r[tLen-1] {
+	for sLen > 0 && string1[sLen-1] == string2c[tLen-1] {
 		sLen--
 		tLen--
 	}
 	start := 0
-	if (sLen > 0 && string1[0] == string2r[0]) || sLen == 0 {
-		for start < sLen && string1[start] == string2r[start] {
+	// Java: if ((string1.charAt(0) == string2.charAt(0)) || (sLen == 0))
+	// Note: when sLen==0 after suffix strip, charAt(0) is not evaluated in Java?
+	// Actually || short-circuits only if first is true; if sLen==0 and string1 empty after suffix
+	// from non-empty, string1 still has content. If original shorter was empty — not here.
+	// If sLen==0 because entire string was suffix, string1 may still be non-empty (common case).
+	// Edge: if string1 was empty from start — we already returned. Safe when sLen>0 or check length.
+	if sLen == 0 || (len(string1) > 0 && string1[0] == string2c[0]) {
+		for start < sLen && string1[start] == string2c[start] {
 			start++
 		}
 		sLen -= start
@@ -92,7 +104,8 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 		if sLen == 0 {
 			return tLen
 		}
-		string2r = string2r[start : start+tLen]
+		// Java: string2 = string2.substring(start, start + tLen)
+		string2c = string2c[start : start+tLen]
 	}
 	lenDiff := tLen - sLen
 	if maxDistance < 0 || maxDistance > tLen {
@@ -125,8 +138,9 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 	current := 0
 	for i := 0; i < sLen; i++ {
 		prevsChar := sChar
+		// Java: sChar = string1.charAt(start+i) — string1 is unsliced original shorter
 		sChar = string1[start+i]
-		tChar := string2r[0]
+		tChar := string2c[0]
 		left := i
 		current = left + 1
 		nextTransCost := 0
@@ -144,7 +158,7 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 			e.v2[j] = current
 			left = e.v0[j]
 			prevtChar := tChar
-			tChar = string2r[j]
+			tChar = string2c[j]
 			if sChar != tChar {
 				if left < current {
 					current = left

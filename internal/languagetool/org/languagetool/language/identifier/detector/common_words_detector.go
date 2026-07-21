@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"unicode"
+	"unicode/utf16"
 )
 
 // CommonWordsDetector ports org.languagetool.language.identifier.detector.CommonWordsDetector
@@ -44,8 +46,12 @@ func (d *CommonWordsDetector) LoadWords(langShortCode string, r io.Reader) error
 			continue
 		}
 		key := strings.ToLower(line)
-		if len(key) == 1 && key[0] <= ' ' {
-			continue
+		// Java: key.length() == 1 && Character.isSpaceChar(key.charAt(0))
+		if len(utf16.Encode([]rune(key))) == 1 {
+			r := []rune(key)[0]
+			if unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r) {
+				continue
+			}
 		}
 		langs := d.word2Lang[key]
 		found := false

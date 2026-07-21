@@ -1,5 +1,10 @@
 package detector
 
+import (
+	"unicode"
+	"unicode/utf16"
+)
+
 // UnicodeBasedDetector ports org.languagetool.language.identifier.detector.UnicodeBasedDetector.
 type UnicodeBasedDetector struct {
 	maxCheckLength int
@@ -18,55 +23,60 @@ func NewUnicodeBasedDetectorMax(maxCheckLength int) *UnicodeBasedDetector {
 	return &UnicodeBasedDetector{maxCheckLength: maxCheckLength}
 }
 
-// GetDominantLangCodes returns language codes whose script dominates the sample.
+// GetDominantLangCodes ports UnicodeBasedDetector.getDominantLangCodes.
+// Java iterates charAt(i) for i < min(str.length(), maxCheckLength) — UTF-16 units.
 func (d *UnicodeBasedDetector) GetDominantLangCodes(str string) []string {
-	// Match Java: iterate UTF-16 code units via range over string as runes for BMP scripts
-	// (all script ranges used here are BMP).
+	if d == nil {
+		return nil
+	}
 	max := d.maxCheckLength
+	if max <= 0 {
+		max = defaultMaxCheckLength
+	}
+	u := utf16.Encode([]rune(str))
+	limit := len(u)
+	if limit > max {
+		limit = max
+	}
 	arabic, cyrillic, cjk, khmer, tamil := 0, 0, 0, 0, 0
 	greek, devanagari, thai, hebrew, hangul := 0, 0, 0, 0, 0
 	significant := 0
-	n := 0
-	for _, val := range str {
-		if n >= max {
-			break
-		}
-		// Java counts each charAt once; for BMP this is 1 per character.
-		n++
-		if !isWhitespaceRune(val) && !isDigitRune(val) && val != '.' {
+	for i := 0; i < limit; i++ {
+		val := int(u[i])
+		// Character.isWhitespace / isDigit on the UTF-16 code unit
+		if !characterIsWhitespace(val) && !characterIsDigit(val) && val != '.' {
 			significant++
 		}
-		v := int(val)
-		if v >= 0x0600 && v <= 0x06FF {
+		if val >= 0x0600 && val <= 0x06FF {
 			arabic++
 		}
-		if v >= 0x0400 && v <= 0x04FF {
+		if val >= 0x0400 && val <= 0x04FF {
 			cyrillic++
 		}
-		if (v >= 0x4E00 && v <= 0x9FFF) || (v >= 0x3040 && v <= 0x309F) || (v >= 0x30A0 && v <= 0x30FF) {
+		if (val >= 0x4E00 && val <= 0x9FFF) || (val >= 0x3040 && val <= 0x309F) || (val >= 0x30A0 && val <= 0x30FF) {
 			cjk++
 		}
-		if v >= 0x1780 && v <= 0x17FF {
+		if val >= 0x1780 && val <= 0x17FF {
 			khmer++
 		}
-		if v >= 0xB82 && v <= 0xBFA {
+		if val >= 0xB82 && val <= 0xBFA {
 			tamil++
 		}
-		if (v >= 0x0370 && v <= 0x03FF) || (v >= 0x1F00 && v <= 0x1FFF) {
+		if (val >= 0x0370 && val <= 0x03FF) || (val >= 0x1F00 && val <= 0x1FFF) {
 			greek++
 		}
-		if v >= 0x0900 && v <= 0x097F {
+		if val >= 0x0900 && val <= 0x097F {
 			devanagari++
 		}
-		if v >= 0x0E00 && v <= 0x0E7F {
+		if val >= 0x0E00 && val <= 0x0E7F {
 			thai++
 		}
-		if (v >= 0x0590 && v <= 0x05FF) || (v >= 0xFB1D && v <= 0xFB40) {
+		if (val >= 0x0590 && val <= 0x05FF) || (val >= 0xFB1D && val <= 0xFB40) {
 			hebrew++
 		}
-		if (v >= 0xAC00 && v <= 0xD7AF) || (v >= 0x1100 && v <= 0x11FF) ||
-			(v >= 0x3130 && v <= 0x318F) || (v >= 0xA960 && v <= 0xA97F) ||
-			(v >= 0xD7B0 && v <= 0xD7FF) {
+		if (val >= 0xAC00 && val <= 0xD7AF) || (val >= 0x1100 && val <= 0x11FF) ||
+			(val >= 0x3130 && val <= 0x318F) || (val >= 0xA960 && val <= 0xA97F) ||
+			(val >= 0xD7B0 && val <= 0xD7FF) {
 			hangul++
 		}
 	}
@@ -108,10 +118,26 @@ func (d *UnicodeBasedDetector) GetDominantLangCodes(str string) []string {
 	return langCodes
 }
 
-func isWhitespaceRune(r rune) bool {
-	return r == ' ' || r == '\t' || r == '\n' || r == '\r' || r == '\u00A0'
+// characterIsWhitespace ports java.lang.Character.isWhitespace(int) for BMP code units.
+// Used by UnicodeBasedDetector (not isSpaceChar).
+func characterIsWhitespace(val int) bool {
+	if val < 0 || val > 0xFFFF {
+		return false
+	}
+	r := rune(val)
+	switch r {
+	case '\t', '\n', '\u000B', '\f', '\r':
+		return true
+	case 0x1C, 0x1D, 0x1E, 0x1F:
+		return true
+	}
+	// Java excludes non-breaking Zs from isWhitespace
+	if r == '\u00A0' || r == '\u2007' || r == '\u202F' {
+		return false
+	}
+	return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
 }
 
-func isDigitRune(r rune) bool {
-	return r >= '0' && r <= '9'
+func characterIsDigit(val int) bool {
+	return val >= '0' && val <= '9'
 }

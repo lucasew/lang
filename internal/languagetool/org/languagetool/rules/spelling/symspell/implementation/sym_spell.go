@@ -137,8 +137,8 @@ func (s *SymSpell) CreateDictionaryEntry(key string, count int64, staging *Sugge
 	}
 
 	s.words[key] = count
-	if len(key) > s.maxLength {
-		s.maxLength = len(key)
+	if javaStringLen(key) > s.maxLength {
+		s.maxLength = javaStringLen(key)
 	}
 
 	edits := s.editsPrefix(key)
@@ -181,7 +181,7 @@ func (s *SymSpell) LookupMax(input string, verbosity Verbosity, maxEditDistance 
 	}
 
 	var suggestions []SuggestItem
-	inputLen := len(input)
+	inputLen := javaStringLen(input)
 	if inputLen-maxEditDistance > s.maxLength {
 		return suggestions
 	}
@@ -202,7 +202,7 @@ func (s *SymSpell) LookupMax(input string, verbosity Verbosity, maxEditDistance 
 	inputPrefixLen := inputLen
 	if inputPrefixLen > s.prefixLength {
 		inputPrefixLen = s.prefixLength
-		candidates = append(candidates, input[:inputPrefixLen])
+		candidates = append(candidates, javaSubstring(input, 0, inputPrefixLen))
 	} else {
 		candidates = append(candidates, input)
 	}
@@ -212,7 +212,7 @@ func (s *SymSpell) LookupMax(input string, verbosity Verbosity, maxEditDistance 
 	for candidatePointer < len(candidates) {
 		candidate := candidates[candidatePointer]
 		candidatePointer++
-		candidateLen := len(candidate)
+		candidateLen := javaStringLen(candidate)
 		lengthDiff := inputPrefixLen - candidateLen
 
 		if lengthDiff > maxEditDistance2 {
@@ -227,7 +227,7 @@ func (s *SymSpell) LookupMax(input string, verbosity Verbosity, maxEditDistance 
 				if suggestion == input {
 					continue
 				}
-				suggestionLen := len(suggestion)
+				suggestionLen := javaStringLen(suggestion)
 				if abs(suggestionLen-inputLen) > maxEditDistance2 ||
 					suggestionLen < candidateLen ||
 					(suggestionLen == candidateLen && suggestion != candidate) {
@@ -311,7 +311,8 @@ func (s *SymSpell) LookupMax(input string, verbosity Verbosity, maxEditDistance 
 				continue
 			}
 			for i := 0; i < candidateLen; i++ {
-				del := candidate[:i] + candidate[i+1:]
+				// Java: StringBuilder.deleteCharAt(i) — UTF-16 unit
+				del := javaDeleteCharAt(candidate, i)
 				if _, ok := consideredDeletes[del]; !ok {
 					consideredDeletes[del] = struct{}{}
 					candidates = append(candidates, del)
@@ -335,10 +336,15 @@ func (s *SymSpell) deleteInSuggestionPrefix(delete string, deleteLen int, sugges
 	if s.prefixLength < suggestionLen {
 		suggestionLen = s.prefixLength
 	}
+	delU := javaChars(delete)
+	sugU := javaChars(suggestion)
+	if suggestionLen > len(sugU) {
+		suggestionLen = len(sugU)
+	}
 	j := 0
-	for i := 0; i < deleteLen; i++ {
-		delChar := delete[i]
-		for j < suggestionLen && delChar != suggestion[j] {
+	for i := 0; i < deleteLen && i < len(delU); i++ {
+		delChar := delU[i]
+		for j < suggestionLen && delChar != sugU[j] {
 			j++
 		}
 		if j == suggestionLen {
@@ -350,9 +356,11 @@ func (s *SymSpell) deleteInSuggestionPrefix(delete string, deleteLen int, sugges
 
 func (s *SymSpell) edits(word string, editDistance int, deleteWords map[string]struct{}) {
 	editDistance++
-	if len(word) > 1 {
-		for i := 0; i < len(word); i++ {
-			del := word[:i] + word[i+1:]
+	// Java: if (word.length() > 1) for i in 0..length-1 deleteCharAt(i)
+	wLen := javaStringLen(word)
+	if wLen > 1 {
+		for i := 0; i < wLen; i++ {
+			del := javaDeleteCharAt(word, i)
 			if _, ok := deleteWords[del]; !ok {
 				deleteWords[del] = struct{}{}
 				if editDistance < s.maxDictionaryEditDistance {
@@ -365,11 +373,11 @@ func (s *SymSpell) edits(word string, editDistance int, deleteWords map[string]s
 
 func (s *SymSpell) editsPrefix(key string) map[string]struct{} {
 	hashSet := map[string]struct{}{}
-	if len(key) <= s.maxDictionaryEditDistance {
+	if javaStringLen(key) <= s.maxDictionaryEditDistance {
 		hashSet[""] = struct{}{}
 	}
-	if len(key) > s.prefixLength {
-		key = key[:s.prefixLength]
+	if javaStringLen(key) > s.prefixLength {
+		key = javaSubstring(key, 0, s.prefixLength)
 	}
 	hashSet[key] = struct{}{}
 	s.edits(key, 0, hashSet)
@@ -377,13 +385,15 @@ func (s *SymSpell) editsPrefix(key string) map[string]struct{} {
 }
 
 func (s *SymSpell) stringHash(str string) int {
-	lenMask := len(str)
+	// Java getStringHash: length and charAt are UTF-16
+	u := javaChars(str)
+	lenMask := len(u)
 	if lenMask > 3 {
 		lenMask = 3
 	}
 	var hash uint32 = 2166136261
-	for i := 0; i < len(str); i++ {
-		hash ^= uint32(str[i])
+	for i := 0; i < len(u); i++ {
+		hash ^= uint32(u[i])
 		hash *= 16777619
 	}
 	hash &= uint32(s.compactMask)
@@ -403,15 +413,6 @@ func max(a, b int) int {
 		return a
 	}
 	return b
-}
-
-func indexByte(s string, c byte) int {
-	for i := 0; i < len(s); i++ {
-		if s[i] == c {
-			return i
-		}
-	}
-	return -1
 }
 
 func itoa(n int) string {
