@@ -91,11 +91,8 @@ func getCoherencyMap(r io.Reader, filePath string, sentStartMode bool, expand fu
 }
 
 func startsWithLowercase(s string) bool {
-	if s == "" {
-		return false
-	}
-	r := []rune(s)[0]
-	return r >= 'a' && r <= 'z' || r == 'ä' || r == 'ö' || r == 'ü' || r == 'ß'
+	// Java SpellingData: StringTools.startsWithLowercase (UTF-16 charAt(0))
+	return tools.StartsWithLowercase(s)
 }
 
 func sanityChecks(filePath, line, oldSpelling, newSpelling string, coherencyMap map[string]string) error {

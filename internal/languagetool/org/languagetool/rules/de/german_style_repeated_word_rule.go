@@ -165,7 +165,8 @@ func (r *GermanStyleRepeatedWordRule) isCorrectSpell(word string) bool {
 }
 
 func (r *GermanStyleRepeatedWordRule) isSecondPartOfWord(testTokenText, tokenText string) bool {
-	if len(testTokenText)-len(tokenText) < 3 {
+	// Java: testTokenText.length() - tokenText.length() < 3 (UTF-16)
+	if utf16LenDE(testTokenText)-utf16LenDE(tokenText) < 3 {
 		return false
 	}
 	lowerTokenText := tools.LowercaseFirstChar(tokenText)
@@ -174,25 +175,34 @@ func (r *GermanStyleRepeatedWordRule) isSecondPartOfWord(testTokenText, tokenTex
 		return false
 	}
 	if strings.HasPrefix(tools.LowercaseFirstChar(testTokenText), lowerTokenText) {
-		word := testTokenText[len(tokenText):]
+		// Java: testTokenText.substring(tokenText.length())
+		word := javaUTF16SuffixFrom(testTokenText, utf16LenDE(tokenText))
 		if r.isCorrectSpell(word) {
 			return true
 		}
 		if strings.HasPrefix(word, "s") {
-			word = word[1:]
+			// Java: word.substring(1)
+			word = javaUTF16SuffixFrom(word, 1)
 			if r.isCorrectSpell(word) {
 				return true
 			}
 		}
 		return false
 	} else if strings.HasSuffix(testTokenText, lowerTokenText) {
-		word := testTokenText[:len(testTokenText)-len(tokenText)]
+		// Java: substring(0, testTokenText.length() - tokenText.length())
+		// endsWith(lowerTokenText): lowerTokenText is ASCII-lower of tokenText first-char change —
+		// for German Morphy tokens, suffix match uses UTF-16-safe HasSuffix on equal encoding.
+		drop := utf16LenDE(tokenText)
+		if utf16LenDE(testTokenText) < drop {
+			return false
+		}
+		word := javaUTF16PrefixDE(testTokenText, utf16LenDE(testTokenText)-drop)
 		if r.isCorrectSpell(word) {
 			return true
 		}
 		if strings.HasSuffix(word, "s") {
-			// Java: word = word.substring(word.length() - 1) — last char only (bug-for-bug)
-			word = word[len(word)-1:]
+			// Java: word.substring(word.length() - 1) — last UTF-16 unit only (bug-for-bug)
+			word = javaUTF16SuffixFrom(word, utf16LenDE(word)-1)
 			if r.isCorrectSpell(word) {
 				return true
 			}
@@ -203,13 +213,38 @@ func (r *GermanStyleRepeatedWordRule) isSecondPartOfWord(testTokenText, tokenTex
 }
 
 func (r *GermanStyleRepeatedWordRule) isPartOfWord(testTokenText, tokenText string) bool {
-	if !r.TestCompoundWords || len(testTokenText) < 3 || len(tokenText) < 3 {
+	// Java: length() < 3 on both (UTF-16)
+	if !r.TestCompoundWords || utf16LenDE(testTokenText) < 3 || utf16LenDE(tokenText) < 3 {
 		return false
 	}
-	if len(testTokenText) > len(tokenText) {
+	if utf16LenDE(testTokenText) > utf16LenDE(tokenText) {
 		return r.isSecondPartOfWord(testTokenText, tokenText)
 	}
 	return r.isSecondPartOfWord(tokenText, testTokenText)
+}
+
+// javaUTF16PrefixDE ports String.substring(0, n) in UTF-16 units.
+func javaUTF16PrefixDE(s string, n int) string {
+	u := utf16EncodeDE(s)
+	if n <= 0 {
+		return ""
+	}
+	if n > len(u) {
+		n = len(u)
+	}
+	return utf16DecodeDE(u[:n])
+}
+
+// javaUTF16SuffixFrom ports String.substring(n) in UTF-16 units.
+func javaUTF16SuffixFrom(s string, n int) string {
+	u := utf16EncodeDE(s)
+	if n <= 0 {
+		return s
+	}
+	if n >= len(u) {
+		return ""
+	}
+	return utf16DecodeDE(u[n:])
 }
 
 func (r *GermanStyleRepeatedWordRule) isExceptionPair(token1, token2 *languagetool.AnalyzedTokenReadings) bool {

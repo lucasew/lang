@@ -124,21 +124,22 @@ func (r *GermanReadabilityRule) getMessage(level int) string {
 		". Zu " + few + " Wörter pro Satz und zu " + few + " Silben pro Wort."
 }
 
-// simpleSyllablesCount ports GermanReadabilityRule.simpleSyllablesCount (GermanTools.isVowel).
+// simpleSyllablesCount ports GermanReadabilityRule.simpleSyllablesCount:
+// word.charAt(i) / word.length() are UTF-16 units; GermanTools.isVowel(char).
 func simpleSyllablesCountDE(word string) int {
-	runes := []rune(word)
-	if len(runes) == 0 {
+	n := utf16LenDE(word)
+	if n == 0 {
 		return 0
 	}
 	nSyllables := 0
-	if IsVowel(runes[0]) {
+	if IsVowel(javaCharAtDE(word, 0)) {
 		nSyllables++
 	}
 	lastDouble := false
-	for i := 1; i < len(runes); i++ {
-		c := runes[i]
+	for i := 1; i < n; i++ {
+		c := javaCharAtDE(word, i)
 		if IsVowel(c) {
-			cl := runes[i-1]
+			cl := javaCharAtDE(word, i-1)
 			if lastDouble {
 				nSyllables++
 				lastDouble = false

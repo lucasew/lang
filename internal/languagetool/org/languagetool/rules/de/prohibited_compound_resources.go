@@ -5,7 +5,6 @@ import (
 	"embed"
 	"strings"
 	"sync"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -142,9 +141,6 @@ func loadConfusionPairsForProhibited() []prohibitedPair {
 }
 
 func startsWithUppercaseDE(s string) bool {
-	if s == "" {
-		return false
-	}
-	r := []rune(s)[0]
-	return unicode.IsUpper(r)
+	// Java Character.isUpperCase(s.charAt(0)) — UTF-16 first unit
+	return tools.StartsWithUppercase(s)
 }

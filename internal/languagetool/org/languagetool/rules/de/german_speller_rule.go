@@ -9,6 +9,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // GermanSpellerRule ports org.languagetool.rules.de.GermanSpellerRule at a partial
@@ -489,15 +490,12 @@ func (r *GermanSpellerRule) isIgnored(word string) bool {
 }
 
 func isFirstUpper(word string) bool {
-	if word == "" {
-		return false
-	}
-	r0 := []rune(word)[0]
-	return unicode.IsUpper(r0)
+	// Java Character.isUpperCase(word.charAt(0)) — UTF-16 first unit
+	return tools.StartsWithUppercase(word)
 }
 
 func startsWithUppercase(word string) bool {
-	return isFirstUpper(word)
+	return tools.StartsWithUppercase(word)
 }
 
 // hasNoLatinLetter ports SpellingCheckRule pHasNoLetterLatin: true if no Latin-script letters.
