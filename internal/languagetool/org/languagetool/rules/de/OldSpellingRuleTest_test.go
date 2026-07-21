@@ -88,3 +88,18 @@ func TestOldSpellingRule_GermanAT(t *testing.T) {
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Erdgeschoß"))))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Erdgeschoßes"))))
 }
+
+// Twin Java ignoreMatch: substring boundary, titles, Prof.
+func TestOldSpellingRule_IgnoreMatchTwins(t *testing.T) {
+	rule := NewOldSpellingRule(nil)
+	// Photons must not match Photo
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Photons"))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Des Photons"))))
+	// Title + Naß
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Hallo Herr Naß"))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Prof. Naß"))))
+	// Sentence-start Läßt
+	ms := rule.Match(languagetool.AnalyzePlain("Läßt du das bitte"))
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, "Lässt", ms[0].GetSuggestedReplacements()[0])
+}

@@ -2,6 +2,7 @@ package de
 
 import (
 	"embed"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -16,6 +17,7 @@ import (
 //go:embed data/alt_neu.csv
 var altNeuFS embed.FS
 
+// oldSpellingExceptions ports OldSpellingRule.EXCEPTIONS.
 var oldSpellingExceptions = []string{
 	"Schloß Holte", "Schloß Neuhaus", "Schloß Ricklingen", "Schloß-Nauses",
 	"Schloß Rötteln", "Klinikum Schloß Winnenden", "Grazer Schloßberg",
@@ -24,14 +26,20 @@ var oldSpellingExceptions = []string{
 	"World Telephone", "Tip Top", "Hans Joachim Blaß", "kurz fassen",
 }
 
-// loadOldSpelling ports SpellingData(file) body map: CSV pairs plus optional
-// ß→ss inflected forms via GermanSynthesizer.synthesizeForPosTags when
-// german_synth.dict is discoverable. Without synthesizer resources, fail closed
-// (CSV forms only — no invented suffixes).
+// Java: private static final Pattern CHARS = Pattern.compile("[a-zA-Zöäüß]");
+var oldSpellingCharsRE = regexp.MustCompile(`^[a-zA-Zöäüß]$`)
+
+type oldSpellingHit struct {
+	begin, end int // UTF-16 offsets into sentence text
+	value      string
+}
+
 var (
-	oldSpellingOnce sync.Once
-	oldSpellingKeys []string // longest first
-	oldSpellingMap  map[string]string
+	oldSpellingOnce     sync.Once
+	oldSpellingBodyKeys []string // longest first (UTF-16 length)
+	oldSpellingBodyMap  map[string]string
+	oldSpellingSentKeys []string
+	oldSpellingSentMap  map[string]string
 )
 
 func loadOldSpelling() (map[string]string, []string) {
@@ -44,29 +52,35 @@ func loadOldSpelling() (map[string]string, []string) {
 		if err != nil {
 			panic(err)
 		}
-		m := sd.Map
-		keys := make([]string, 0, len(m))
-		for k := range m {
-			keys = append(keys, k)
-		}
-		sort.Slice(keys, func(i, j int) bool {
-			return utf16Len(keys[i]) > utf16Len(keys[j])
-		})
-		oldSpellingMap = m
-		oldSpellingKeys = keys
+		oldSpellingBodyMap = sd.Map
+		oldSpellingSentMap = sd.SentenceStartMap
+		oldSpellingBodyKeys = keysLongestFirst(sd.Map)
+		oldSpellingSentKeys = keysLongestFirst(sd.SentenceStartMap)
 	})
-	return oldSpellingMap, oldSpellingKeys
+	return oldSpellingBodyMap, oldSpellingBodyKeys
 }
 
-// oldSpellingExpandForms ports SpellingData's GermanSynthesizer.INSTANCE.synthesizeForPosTags(old, s -> true).
-// Returns nil when german_synth.dict / tags are missing (fail-closed).
+func keysLongestFirst(m map[string]string) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(i, j int) bool {
+		li, lj := utf16Len(keys[i]), utf16Len(keys[j])
+		if li != lj {
+			return li > lj
+		}
+		return keys[i] < keys[j]
+	})
+	return keys
+}
+
 func oldSpellingExpandForms() func(string) []string {
 	if gs := openDiscoveredGermanSynthesizer(); gs != nil {
 		return func(oldSpelling string) []string {
 			return gs.SynthesizeForPosTags(oldSpelling, func(string) bool { return true })
 		}
 	}
-	// Bare base without German case filter — still better than invent suffixes.
 	if base := openDiscoveredGermanSynthBase(); base != nil {
 		return func(oldSpelling string) []string {
 			return base.SynthesizeForPosTags(oldSpelling, func(string) bool { return true })
@@ -76,8 +90,7 @@ func oldSpellingExpandForms() func(string) []string {
 }
 
 // OldSpellingRule ports org.languagetool.rules.de.OldSpellingRule.
-// Inflected ß→ss forms require german_synth.dict (same as Java GermanSynthesizer).
-// Java: TYPOS, Misspelling.
+// Match uses full-text scan of SpellingData tries (body + sentence-start), not token invent.
 type OldSpellingRule struct {
 	messages  map[string]string
 	austrian  bool
@@ -103,7 +116,6 @@ func NewOldSpellingRuleAT(messages map[string]string) *OldSpellingRule {
 
 func (r *OldSpellingRule) GetID() string { return "OLD_SPELLING_RULE" }
 
-// GetDescription ports OldSpellingRule.getDescription.
 func (r *OldSpellingRule) GetDescription() string {
 	return "Findet Schreibweisen, die nur in der alten Rechtschreibung gültig waren"
 }
@@ -122,92 +134,211 @@ func (r *OldSpellingRule) GetLocQualityIssueType() rules.ITSIssueType {
 	return r.IssueType
 }
 
+// Match ports OldSpellingRule.match: AhoCorasick-style hits on full text, longest-first,
+// ignoreMatch, then sentence-start trie hits only at begin==0.
 func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	m, _ := loadOldSpelling()
-	text := sentence.GetText()
-	tokens := sentence.GetTokensWithoutWhitespace()
-	covered := map[int]bool{}
-	var out []*rules.RuleMatch
-
-	for i := 0; i < len(tokens); i++ {
-		if tokens[i].IsSentenceStart() {
-			continue
-		}
-		fromPos := tokens[i].GetStartPos()
-		if covered[fromPos] {
-			continue
-		}
-
-		// Build phrases of 1..4 tokens (handles "Hot pants", "Corpus delicti", "naß machen").
-		var b strings.Builder
-		bestEnd := -1
-		var bestNeu string
-		var bestCovered string
-		for j := i; j < len(tokens) && j-i < 4; j++ {
-			if tokens[j].IsSentenceStart() {
-				break
-			}
-			if j > i {
-				if tokens[j].IsWhitespaceBefore() {
-					b.WriteByte(' ')
-				}
-			}
-			b.WriteString(tokens[j].GetToken())
-			phrase := b.String()
-			if neu, ok := lookupOldSpelling(phrase, m); ok {
-				bestEnd = j
-				bestNeu = neu
-				bestCovered = phrase
-			}
-		}
-		if bestEnd < 0 {
-			continue
-		}
-
-		from := tokens[i].GetStartPos()
-		to := tokens[bestEnd].GetEndPos()
-		if r.shouldIgnore(text, from, to, bestCovered) {
-			// still consume? no — allow shorter match? skip this start
-			continue
-		}
-		// Austrian Geschoß
-		if r.austrian && strings.Contains(strings.ToLower(bestCovered), "geschoß") {
-			continue
-		}
-
-		// Mark covered start positions for joined tokens
-		for k := i; k <= bestEnd; k++ {
-			covered[tokens[k].GetStartPos()] = true
-		}
-
-		msg := "Diese Schreibweise war nur in der alten Rechtschreibung korrekt."
-		suggs := strings.Split(bestNeu, "|")
-		// ss/ß tip
-		if len(suggs) > 0 {
-			ssForm := strings.Replace(suggs[0], "ss", "ß", 1)
-			if ssForm == bestCovered {
-				msg += " Das Wort wird mit 'ss' geschrieben, wenn davor eine kurz gesprochene Silbe steht."
-			}
-		}
-		rm := rules.NewRuleMatch(r, sentence, from, to, msg)
-		rm.ShortMessage = "Alte Rechtschreibung"
-		rm.SetSuggestedReplacements(suggs)
-		out = append(out, rm)
-		i = bestEnd
+	if r == nil || sentence == nil {
+		return nil
 	}
-	return out
+	_, _ = loadOldSpelling()
+	text := sentence.GetText()
+	hits := findOldSpellingHits(text, oldSpellingBodyKeys, oldSpellingBodyMap)
+	// Java: Collections.reverse(hits) then process — work on longest matches first.
+	// We already emit longest keys first per start; sort all by length desc, then begin.
+	sort.SliceStable(hits, func(i, j int) bool {
+		li, lj := hits[i].end-hits[i].begin, hits[j].end-hits[j].begin
+		if li != lj {
+			return li > lj
+		}
+		return hits[i].begin < hits[j].begin
+	})
+
+	startPositions := map[int]struct{}{}
+	var matches []*rules.RuleMatch
+	for _, hit := range hits {
+		if _, ok := startPositions[hit.begin]; ok {
+			continue
+		}
+		if ignoreOldSpellingMatch(hit, text) {
+			continue
+		}
+		if m := r.addOldSpellingMatch(sentence, hit); m != nil {
+			matches = append(matches, m)
+			startPositions[hit.begin] = struct{}{}
+		}
+	}
+	// Sentence-start trie: only hit.begin == 0
+	sentHits := findOldSpellingHits(text, oldSpellingSentKeys, oldSpellingSentMap)
+	sort.SliceStable(sentHits, func(i, j int) bool {
+		return (sentHits[i].end - sentHits[i].begin) > (sentHits[j].end - sentHits[j].begin)
+	})
+	for _, hit := range sentHits {
+		if hit.begin != 0 {
+			continue
+		}
+		if _, ok := startPositions[hit.begin]; ok {
+			continue
+		}
+		if ignoreOldSpellingMatch(hit, text) {
+			continue
+		}
+		if m := r.addOldSpellingMatch(sentence, hit); m != nil {
+			matches = append(matches, m)
+		}
+		break // Java: only one match at sentence start
+	}
+	return matches
 }
 
+func findOldSpellingHits(text string, keys []string, m map[string]string) []oldSpellingHit {
+	if text == "" || len(keys) == 0 {
+		return nil
+	}
+	var hits []oldSpellingHit
+	// Case-sensitive search of each key; positions are UTF-16 (Java String indices).
+	for _, key := range keys {
+		if key == "" {
+			continue
+		}
+		val := m[key]
+		// Scan UTF-16 window for exact key match
+		u := utf16.Encode([]rune(text))
+		ku := utf16.Encode([]rune(key))
+		if len(ku) == 0 || len(ku) > len(u) {
+			continue
+		}
+		for i := 0; i+len(ku) <= len(u); i++ {
+			match := true
+			for j := 0; j < len(ku); j++ {
+				if u[i+j] != ku[j] {
+					match = false
+					break
+				}
+			}
+			if match {
+				hits = append(hits, oldSpellingHit{begin: i, end: i + len(ku), value: val})
+			}
+		}
+	}
+	return hits
+}
+
+// addOldSpellingMatch ports addMatch (may skip AT Geschoß).
+func (r *OldSpellingRule) addOldSpellingMatch(sentence *languagetool.AnalyzedSentence, hit oldSpellingHit) *rules.RuleMatch {
+	message := "Diese Schreibweise war nur in der alten Rechtschreibung korrekt."
+	suggs := strings.Split(hit.value, "|")
+	covered := substringByUTF16(sentence.GetText(), hit.begin, hit.end)
+	if len(suggs) > 0 {
+		// Java: StringUtils.replaceOnce(suggestions[0], "ss", "ß").equals(covered)
+		ssForm := strings.Replace(suggs[0], "ss", "ß", 1)
+		if ssForm == covered {
+			if r != nil && r.austrian && strings.Contains(strings.ToLower(covered), "geschoß") {
+				return nil
+			}
+			message += " Das Wort wird mit 'ss' geschrieben, wenn davor eine kurz gesprochene Silbe steht."
+		}
+	}
+	rm := rules.NewRuleMatch(r, sentence, hit.begin, hit.end, message)
+	rm.ShortMessage = "Alte Rechtschreibung"
+	rm.SetSuggestedReplacements(suggs)
+	return rm
+}
+
+// ignoreOldSpellingMatch ports OldSpellingRule.ignoreMatch.
+func ignoreOldSpellingMatch(hit oldSpellingHit, text string) bool {
+	// EXCEPTIONS via regionMatches(true, …) at hit.begin or hit.end-exception.length
+	for _, exception := range oldSpellingExceptions {
+		exLen := utf16Len(exception)
+		if regionMatchesIgnoreCaseUTF16(text, hit.begin, exception, 0, exLen) {
+			return true
+		}
+		if hit.end >= exLen && regionMatchesIgnoreCaseUTF16(text, hit.end-exLen, exception, 0, exLen) {
+			return true
+		}
+	}
+	tl := utf16Len(text)
+	// boundary: previous char
+	if hit.begin > 0 {
+		prev := substringByUTF16(text, hit.begin-1, hit.begin)
+		if !isOldSpellingBoundary(prev) {
+			return true
+		}
+	}
+	// boundary: next char
+	if hit.end < tl {
+		next := substringByUTF16(text, hit.end, hit.end+1)
+		if !isOldSpellingBoundary(next) {
+			return true
+		}
+	}
+	// Prof. before (6 UTF-16 units back) — Java text.startsWith("Prof.", hit.begin-6)
+	if hit.begin-6 >= 0 && utf16StartsWithAt(text, hit.begin-6, "Prof.") {
+		return true
+	}
+	if hit.begin-5 >= 0 {
+		before5 := substringByUTF16(text, hit.begin-5, hit.begin-1)
+		if before5 == "Herr" || before5 == "Frau" {
+			return true
+		}
+	}
+	if hit.begin-4 >= 0 {
+		before4 := substringByUTF16(text, hit.begin-4, hit.begin-1)
+		if before4 == "Hr." || before4 == "Fr." || before4 == "Dr." {
+			return true
+		}
+	}
+	return false
+}
+
+// isOldSpellingBoundary ports isBoundary: !CHARS.matcher(s).matches()
+func isOldSpellingBoundary(s string) bool {
+	return !oldSpellingCharsRE.MatchString(s)
+}
+
+// regionMatchesIgnoreCaseUTF16 ports String.regionMatches(ignoreCase, toffset, other, ooffset, len).
+func regionMatchesIgnoreCaseUTF16(text string, toffset int, other string, ooffset, length int) bool {
+	if length < 0 || toffset < 0 || ooffset < 0 {
+		return false
+	}
+	tu := utf16.Encode([]rune(text))
+	ou := utf16.Encode([]rune(other))
+	if toffset+length > len(tu) || ooffset+length > len(ou) {
+		return false
+	}
+	for i := 0; i < length; i++ {
+		a, b := rune(tu[toffset+i]), rune(ou[ooffset+i])
+		if a == b {
+			continue
+		}
+		// Java Character.toLowerCase for regionMatches ignoreCase
+		if unicode.ToLower(a) != unicode.ToLower(b) {
+			return false
+		}
+	}
+	return true
+}
+
+// utf16StartsWithAt ports String.startsWith(prefix, toffset) — case-sensitive UTF-16.
+func utf16StartsWithAt(text string, at int, prefix string) bool {
+	pl := utf16Len(prefix)
+	if at < 0 || at+pl > utf16Len(text) {
+		return false
+	}
+	return substringByUTF16(text, at, at+pl) == prefix
+}
+
+// lookupOldSpelling remains for tests of SpellingData maps.
 func lookupOldSpelling(phrase string, m map[string]string) (string, bool) {
 	if neu, ok := m[phrase]; ok {
 		return neu, true
 	}
-	// Sentence-start capitalization of a lowercase CSV entry (Läßt ← läßt).
-	// Java SpellingData also builds a sentence-start trie with UppercaseFirstChar keys.
-	runes := []rune(phrase)
-	if len(runes) > 0 && unicode.IsUpper(runes[0]) {
-		runes[0] = unicode.ToLower(runes[0])
-		low := string(runes)
+	// Sentence-start style: title of lowercase key (tests / expand path)
+	if tools.StartsWithUppercase(phrase) && utf16Len(phrase) > 0 {
+		// lowercase first UTF-16 unit only
+		u := utf16.Encode([]rune(phrase))
+		first := string(utf16.Decode(u[:1]))
+		rest := string(utf16.Decode(u[1:]))
+		low := strings.ToLower(first) + rest
 		if neu, ok := m[low]; ok {
 			return capitalizeSuggestions(neu), true
 		}
@@ -223,60 +354,23 @@ func capitalizeSuggestions(neu string) string {
 	return strings.Join(parts, "|")
 }
 
-func (r *OldSpellingRule) shouldIgnore(text string, from, to int, covered string) bool {
-	// EXCEPTION phrases containing the hit
-	windowFrom := from - 20
-	if windowFrom < 0 {
-		windowFrom = 0
-	}
-	windowTo := to + 30
-	if tl := utf16Len(text); windowTo > tl {
-		windowTo = tl
-	}
-	window := strings.ToLower(substringByUTF16(text, windowFrom, windowTo))
-	for _, ex := range oldSpellingExceptions {
-		if strings.Contains(window, strings.ToLower(ex)) {
-			return true
-		}
-	}
-	// Title + name: "Herr Naß", "Dr. Naß"
-	prev := strings.TrimSpace(substringByUTF16(text, max0(from-8), from))
-	for _, title := range []string{"Herr", "Frau", "Hr.", "Fr.", "Dr.", "Prof."} {
-		if strings.HasSuffix(prev, title) {
-			return true
-		}
-	}
-	_ = covered
-	return false
-}
-
 func substringByUTF16(s string, from, to int) string {
-	var b strings.Builder
-	pos := 0
-	for _, r := range s {
-		w := len(utf16.Encode([]rune{r}))
-		if pos >= to {
-			break
-		}
-		if pos+w > from {
-			b.WriteRune(r)
-		}
-		pos += w
+	if from < 0 {
+		from = 0
 	}
-	return b.String()
+	u := utf16.Encode([]rune(s))
+	if from > len(u) {
+		return ""
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	return string(utf16.Decode(u[from:to]))
 }
 
 func utf16Len(s string) int {
-	n := 0
-	for _, r := range s {
-		n += len(utf16.Encode([]rune{r}))
-	}
-	return n
-}
-
-func max0(a int) int {
-	if a < 0 {
-		return 0
-	}
-	return a
+	return len(utf16.Encode([]rune(s)))
 }
