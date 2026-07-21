@@ -1,6 +1,7 @@
 package identifier
 
 import (
+	"math"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -15,8 +16,10 @@ type DefaultLanguageIdentifier struct {
 	BaseLanguageIdentifier
 	// ProfileScore is the main ngram/optimaize stand-in: cleanText → lang→score.
 	ProfileScore func(cleanText string, preferred []string) map[string]float64
-	// FastTextScore optional fastText stand-in.
+	// FastTextScore optional fastText stand-in (tests; no additionalLangs).
 	FastTextScore func(cleanText string) map[string]float64
+	// fastText is the real detector (Java fastTextDetector) — RunFasttext gets additionalLangs.
+	fastText *detector.FastTextDetector
 	// NGram ports Java NGramDetector (ZIP model or char-ngram test fallback).
 	NGram *detector.NGramDetector
 	// Unicode optional unicode script detector (Java UNICODE_BASED_LANG_IDENTIFIER).
@@ -45,13 +48,13 @@ func NewDefaultLanguageIdentifier(maxLength int) *DefaultLanguageIdentifier {
 	return d
 }
 
-// EnableFastText installs a score function used preferentially for longer text.
+// EnableFastText installs a score function used preferentially for longer text (tests).
 func (d *DefaultLanguageIdentifier) EnableFastText(score func(string) map[string]float64) {
 	d.FastTextScore = score
 }
 
 func (d *DefaultLanguageIdentifier) IsFastTextEnabled() bool {
-	return d != nil && d.FastTextScore != nil
+	return d != nil && (d.FastTextScore != nil || d.fastText != nil)
 }
 
 func (d *DefaultLanguageIdentifier) Detect(cleanText string, noopLangs, preferredLangs []string) *languagetool.DetectedLanguage {
@@ -68,7 +71,7 @@ func (d *DefaultLanguageIdentifier) DetectLimit(cleanText string, noopLangs, pre
 }
 
 // EnableFastTextFromPaths ports enableFasttext(binary, model).
-// Both paths required; creates FastTextDetector and wires FastTextScore.
+// Both paths required; creates FastTextDetector (additionalLangs passed at detect time).
 // Nil/empty paths leave fasttext disabled (Java logs warn when either null).
 func (d *DefaultLanguageIdentifier) EnableFastTextFromPaths(binaryPath, modelPath string) error {
 	if d == nil {
@@ -81,14 +84,15 @@ func (d *DefaultLanguageIdentifier) EnableFastTextFromPaths(binaryPath, modelPat
 	if err != nil {
 		return err
 	}
-	d.EnableFastText(func(text string) map[string]float64 {
-		m, err := ft.RunFasttext(text, nil)
-		if err != nil || m == nil {
-			return map[string]float64{}
-		}
-		return m
-	})
+	d.fastText = ft
 	return nil
+}
+
+// SetFastTextDetector ports setFastTextDetector (tests).
+func (d *DefaultLanguageIdentifier) SetFastTextDetector(ft *detector.FastTextDetector) {
+	if d != nil {
+		d.fastText = ft
+	}
 }
 
 // EnableNgramsFromPath ports enableNgrams(File) — loads NGramDetector from ZIP (maxLength 50).
@@ -145,23 +149,36 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 
 	scores := map[string]float64{}
 	src := "profile"
+	textLen := javaStringLen(text)
+	useFastText := (d.fastText != nil || d.FastTextScore != nil) &&
+		(textLen > ShortAlgoThreshold || d.NGram == nil)
 
 	// Prefer fastText when available (Java: longer text → fasttext, short → ngram)
-	if d.FastTextScore != nil && (javaStringLen(text) > ShortAlgoThreshold || d.NGram == nil) {
-		for k, v := range d.FastTextScore(text) {
-			scores[k] = v
+	// Java: fastTextDetector.runFasttext(text, additionalLangs)
+	if useFastText {
+		if d.fastText != nil {
+			if m, err := d.fastText.RunFasttext(text, additional); err == nil && m != nil {
+				for k, v := range m {
+					scores[k] = v
+				}
+				src = "fasttext"
+			}
+		} else if d.FastTextScore != nil {
+			for k, v := range d.FastTextScore(text) {
+				scores[k] = v
+			}
+			src = "fasttext"
 		}
-		src = "fasttext"
 	}
 	// NGram for short text when Java would use ngram over fasttext
 	// Java: ngram.detectLanguages(text.trim(), additionalLangs)
-	if d.NGram != nil && (len(scores) == 0 || javaStringLen(text) <= ShortAlgoThreshold) {
+	if d.NGram != nil && (len(scores) == 0 || textLen <= ShortAlgoThreshold) {
 		for k, v := range d.NGram.DetectLanguagesAdditional(text, additional) {
 			if cur, ok := scores[k]; !ok || v > cur {
 				scores[k] = v
 			}
 		}
-		if src != "fasttext" || javaStringLen(text) <= ShortAlgoThreshold {
+		if src != "fasttext" || textLen <= ShortAlgoThreshold {
 			src = "ngram"
 		}
 	}
@@ -220,14 +237,43 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 		count = len(pairs)
 	}
 	var out []languagetool.DetectedLanguage
+	// Java: only emit if canLanguageBeDetected(code, additionalLangs)
 	for i := 0; i < len(pairs) && i < count; i++ {
 		code := pairs[i].code
-		_ = noopLangs
+		if code == "" || !CanLanguageBeDetected(code, nil, additional) {
+			continue
+		}
 		s := src
-		out = append(out, languagetool.NewDetectedLanguageFull(
-			"", code, float32(pairs[i].score), &s))
+		score := float32(pairs[i].score)
+		// Java: fasttext confidence rewritten for short-text unreliability
+		// newScore = 0.99 / (30.0 / min(text.length(), 30))
+		if count == 1 && strings.Contains(src, "fasttext") {
+			denom := 30.0 / float64(minInt(textLen, 30))
+			if denom > 0 {
+				score = float32(0.99 / denom)
+			}
+		} else if count > 1 {
+			// Java: Math.round(value * 100.0) / 100.0f
+			score = float32(math.Round(float64(pairs[i].score)*100.0) / 100.0)
+		}
+		out = append(out, languagetool.NewDetectedLanguageFull("", code, score, &s))
+	}
+	// Java: empty → fallbackToPrefLang with confidence 0.1
+	if len(out) == 0 && len(preferred) > 0 {
+		pref := tools.JavaStringTrim(preferred[0])
+		if pref != "" && CanLanguageBeDetected(pref, nil, nil) {
+			s := src + "+fallbackToPrefLang"
+			out = append(out, languagetool.NewDetectedLanguageFull("", pref, 0.1, &s))
+		}
 	}
 	return out
+}
+
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // DetectLanguage is the Java-style entry that cleans text first.

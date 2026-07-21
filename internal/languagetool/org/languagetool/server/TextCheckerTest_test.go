@@ -343,8 +343,19 @@ func TestDetectLanguageOfStringFromDetected_PreservesConfidence(t *testing.T) {
 	require.Equal(t, float32(0), r2.Confidence)
 }
 
+func ensureDetectLangs(t *testing.T) {
+	t.Helper()
+	// Java Languages registry is always populated for canLanguageBeDetected.
+	for _, c := range []string{"en", "de", "fr"} {
+		if !languagetool.GlobalLanguages.IsLanguageSupported(c) {
+			languagetool.GlobalLanguages.Register(languagetool.LanguageMeta{Name: c, Code: c})
+		}
+	}
+}
+
 // TextChecker uses LanguageIdentifierService (Java ctor local vs default).
 func TestTextChecker_LanguageIdentifierWired(t *testing.T) {
+	ensureDetectLangs(t)
 	tc := NewTextChecker(nil, false, nil)
 	require.NotNil(t, tc.LanguageIdentifier)
 
@@ -423,6 +434,7 @@ func TestApiV2_CheckPassesToneTagsAndDetect(t *testing.T) {
 
 // Ports V2 forcePreferredLanguages → detectLanguage(..., limitOnPreferredLangs=true).
 func TestForcePreferredLanguages_DetectLimit(t *testing.T) {
+	ensureDetectLangs(t)
 	require.False(t, ParseForcePreferredLanguages(nil))
 	require.False(t, ParseForcePreferredLanguages(map[string]string{"forcePreferredLanguages": "TRUE"}))
 	require.True(t, ParseForcePreferredLanguages(map[string]string{"forcePreferredLanguages": "true"}))

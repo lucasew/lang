@@ -1,13 +1,21 @@
 package identifier
 
 import (
+	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier/detector"
 	"github.com/stretchr/testify/require"
 )
 
 func TestDefaultLanguageIdentifier(t *testing.T) {
+	// canLanguageBeDetected needs registry entries
+	for _, c := range []string{"en", "de", "fr"} {
+		if !languagetool.GlobalLanguages.IsLanguageSupported(c) {
+			languagetool.GlobalLanguages.Register(languagetool.LanguageMeta{Name: c, Code: c})
+		}
+	}
 	d := NewDefaultLanguageIdentifier(1000)
 	d.ProfileScore = func(text string, preferred []string) map[string]float64 {
 		if containsStr(preferred, "de") && javaStringLen(text) <= ConsiderOnlyPreferredThreshold {
@@ -44,6 +52,40 @@ func TestDefaultLanguageIdentifier_PrepareDetectUnsupported(t *testing.T) {
 	scores := d.Scores(thai, []string{}, []string{"en"}, false, 3)
 	require.NotEmpty(t, scores)
 	require.Equal(t, "zz", scores[0].DetectedLanguageCode)
+}
+
+// Ports DefaultLanguageIdentifier: runFasttext(text, additionalLangs) + fasttext conf rewrite.
+func TestDefaultLanguageIdentifier_FastTextAdditionalAndConf(t *testing.T) {
+	for _, c := range []string{"en", "de", "fr"} {
+		if !languagetool.GlobalLanguages.IsLanguageSupported(c) {
+			languagetool.GlobalLanguages.Register(languagetool.LanguageMeta{Name: c, Code: c})
+		}
+	}
+	ft := detector.NewFastTextDetectorForTest()
+	ft.Runner = func(line string) (string, error) {
+		return "__label__en 0.99 __label__de 0.01\n", nil
+	}
+	d := NewDefaultLanguageIdentifier(1000)
+	d.SetFastTextDetector(ft)
+	// long text → fasttext path
+	long := strings.Repeat("hello world ", 20)
+	got := d.Detect(long, nil, nil)
+	require.NotNil(t, got)
+	require.Equal(t, "en", got.DetectedLanguageCode)
+	// Java: 0.99 / (30.0 / min(len, 30)) for fasttext single result
+	// text length UTF-16 of long > 30 → 0.99 / (30/30) = 0.99
+	require.InDelta(t, 0.99, float64(got.GetDetectionConfidence()), 1e-5)
+	require.NotNil(t, got.GetDetectionSource())
+	require.Contains(t, *got.GetDetectionSource(), "fasttext")
+
+	// noop additional "xx" alone would not register en drop; additional zz kept only if listed
+	ft.Runner = func(line string) (string, error) {
+		return "__label__en 0.5 __label__zz 0.4\n", nil
+	}
+	got2 := d.Detect(long, []string{"zz"}, nil)
+	require.NotNil(t, got2)
+	// en still preferred as higher score among canDetect
+	require.Equal(t, "en", got2.DetectedLanguageCode)
 }
 
 func TestDefaultLanguageIdentifier_NoInventHasNonLatin(t *testing.T) {

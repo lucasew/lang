@@ -4,15 +4,47 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
+func registerDetectLangs(t *testing.T) {
+	t.Helper()
+	// Java Languages registry is always populated; tests need en/de/fr for canLanguageBeDetected.
+	for _, m := range []languagetool.LanguageMeta{
+		{Name: "English", Code: "en"},
+		{Name: "German", Code: "de"},
+		{Name: "French", Code: "fr"},
+	} {
+		if !languagetool.GlobalLanguages.IsLanguageSupported(m.Code) {
+			languagetool.GlobalLanguages.Register(m)
+		}
+	}
+}
+
 func TestFastTextParseBuffer(t *testing.T) {
+	registerDetectLangs(t)
 	d := NewFastTextDetectorForTest()
+	// Java: canLanguageBeDetected — supported langs kept
 	m, err := d.ParseBuffer("__label__en 0.9 __label__de 0.1", nil)
 	require.NoError(t, err)
 	require.InDelta(t, 0.9, m["en"], 1e-9)
 	require.InDelta(t, 0.1, m["de"], 1e-9)
+
+	// unsupported code dropped unless in additional
+	m, err = d.ParseBuffer("__label__en 0.5 __label__zz 0.4", nil)
+	require.NoError(t, err)
+	require.Contains(t, m, "en")
+	require.NotContains(t, m, "zz")
+	m, err = d.ParseBuffer("__label__en 0.5 __label__zz 0.4", []string{"zz"})
+	require.NoError(t, err)
+	require.Contains(t, m, "zz")
+
+	// invent removed: non-empty additional must NOT drop supported langs
+	m, err = d.ParseBuffer("__label__en 0.9 __label__de 0.1", []string{"fr"})
+	require.NoError(t, err)
+	require.Contains(t, m, "en")
+	require.Contains(t, m, "de")
 
 	_, err = d.ParseBuffer("nope", nil)
 	require.Error(t, err)

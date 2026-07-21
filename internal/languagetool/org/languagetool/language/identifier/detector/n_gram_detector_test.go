@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -22,6 +23,13 @@ func TestNGramDetectorScripts(t *testing.T) {
 
 // Minimal ZIP layout matching Java NGramDetector constructor file names.
 func TestNGramDetectorFromZip_LoadAndScore(t *testing.T) {
+	// canLanguageBeDetected needs registry (Java Languages always loaded)
+	for _, m := range []struct{ n, c string }{{"English", "en"}, {"German", "de"}} {
+		meta := languagetool.LanguageMeta{Name: m.n, Code: m.c}
+		if !languagetool.GlobalLanguages.IsLanguageSupported(m.c) {
+			languagetool.GlobalLanguages.Register(meta)
+		}
+	}
 	dir := t.TempDir()
 	zipPath := filepath.Join(dir, "model.zip")
 	writeMiniNGramZip(t, zipPath)

@@ -129,8 +129,8 @@ func (d *FastTextDetector) RunFasttext(text string, additionalLanguageCodes []st
 }
 
 // ParseBuffer ports FastTextDetector.parseBuffer.
-// When CanDetect is nil and additionalLanguageCodes is non-empty, only those codes are kept
-// (Java LanguageIdentifierService.canLanguageBeDetected with supported+additional).
+// Java always filters with LanguageIdentifierService.canLanguageBeDetected
+// (supported language OR listed in additionalLanguageCodes) — not "only additional".
 func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []string) (map[string]float64, error) {
 	// Java: String[] values = WHITESPACE.split(buffer.trim());
 	// WHITESPACE = Pattern.compile("\\s+") without UNICODE_CHARACTER_CLASS;
@@ -148,10 +148,6 @@ func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []
 			Disabled: true,
 		}
 	}
-	allowed := map[string]struct{}{}
-	for _, c := range additionalLanguageCodes {
-		allowed[c] = struct{}{}
-	}
 	probs := map[string]float64{}
 	for i := 0; i < len(values); i += 2 {
 		lang := values[i]
@@ -164,14 +160,13 @@ func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []
 		if err != nil {
 			return nil, err
 		}
+		// CanDetect override for tests; else Java canLanguageBeDetected
 		if d.CanDetect != nil {
 			if !d.CanDetect(langCode, additionalLanguageCodes) {
 				continue
 			}
-		} else if len(allowed) > 0 {
-			if _, ok := allowed[langCode]; !ok {
-				continue
-			}
+		} else if !CanLanguageBeDetected(langCode, additionalLanguageCodes) {
+			continue
 		}
 		probs[langCode] = prob
 	}

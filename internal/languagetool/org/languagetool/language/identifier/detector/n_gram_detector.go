@@ -295,14 +295,9 @@ func (d *NGramDetector) detectLanguagesZip(text string, additional []string) map
 	return result
 }
 
+// canDetectLang ports LanguageIdentifierService.canLanguageBeDetected for NGram ZIP results.
 func canDetectLang(langCode string, additional []string) bool {
-	// Defer full Languages.isLanguageSupported — accept all non-empty + additional.
-	// Callers filter further via DefaultLanguageIdentifier.
-	if langCode == "" {
-		return false
-	}
-	_ = additional
-	return true
+	return CanLanguageBeDetected(langCode, additional)
 }
 
 func (d *NGramDetector) encode(text string) []int {
