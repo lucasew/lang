@@ -54,6 +54,34 @@ func TestDefaultLanguageIdentifier_PrepareDetectUnsupported(t *testing.T) {
 	require.Equal(t, "zz", scores[0].DetectedLanguageCode)
 }
 
+// Ports reinitFasttextAfterFailure when RunFasttext returns FastTextException(disabled).
+func TestDefaultLanguageIdentifier_FastTextFailureFallback(t *testing.T) {
+	for _, c := range []string{"en", "de"} {
+		if !languagetool.GlobalLanguages.IsLanguageSupported(c) {
+			languagetool.GlobalLanguages.Register(languagetool.LanguageMeta{Name: c, Code: c})
+		}
+	}
+	ft := detector.NewFastTextDetectorForTest()
+	calls := 0
+	ft.Runner = func(line string) (string, error) {
+		calls++
+		return "", detector.NewFastTextException("disabled", true)
+	}
+	d := NewDefaultLanguageIdentifier(1000)
+	d.SetFastTextDetector(ft)
+	d.ProfileScore = func(text string, preferred []string) map[string]float64 {
+		return map[string]float64{"en": 0.9}
+	}
+	long := strings.Repeat("hello world ", 20)
+	got := d.Detect(long, nil, nil)
+	require.NotNil(t, got)
+	require.Equal(t, "en", got.DetectedLanguageCode)
+	// Fallback path used after fasttext failure
+	require.NotNil(t, got.GetDetectionSource())
+	require.Contains(t, *got.GetDetectionSource(), "fallback")
+	require.GreaterOrEqual(t, calls, 1)
+}
+
 // Ports DefaultLanguageIdentifier: runFasttext(text, additionalLangs) + fasttext conf rewrite.
 func TestDefaultLanguageIdentifier_FastTextAdditionalAndConf(t *testing.T) {
 	for _, c := range []string{"en", "de", "fr"} {

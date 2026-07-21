@@ -103,3 +103,23 @@ func TestJavaLocaleRootToLower(t *testing.T) {
 	// dotted capital I (U+0130) lowercases to i + combining dot under Unicode default
 	require.Equal(t, strings.ToLower("İ"), javaLocaleRootToLower("İ"))
 }
+
+// Ports FastTextDetector.restartProcess — Runner has no process (returns false).
+func TestFastTextRestartProcess_Runner(t *testing.T) {
+	d := NewFastTextDetectorForTest()
+	// healthy runner → no reinit
+	d.Runner = func(line string) (string, error) {
+		return "__label__en 1.0\n", nil
+	}
+	ok, err := d.RestartProcess()
+	require.NoError(t, err)
+	require.False(t, ok)
+
+	// failing runner → error, no process to restart
+	d.Runner = func(line string) (string, error) {
+		return "", NewFastTextException("boom", true)
+	}
+	ok, err = d.RestartProcess()
+	require.Error(t, err)
+	require.False(t, ok)
+}

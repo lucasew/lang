@@ -11,6 +11,8 @@ func CanLanguageBeDetected(langCode string, additional []string) bool {
 	if langCode == "" {
 		return false
 	}
+	// Java Languages class is initialized before any detect call.
+	languagetool.EnsureBuiltInLanguagesRegistered()
 	for _, a := range additional {
 		if a == langCode {
 			return true

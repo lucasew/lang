@@ -20,6 +20,19 @@ func TestLanguages_Registry(t *testing.T) {
 	require.False(t, L.IsLanguageSupported("xx"))
 }
 
+// Ports Java Languages class-init: built-in modules available for canLanguageBeDetected.
+func TestEnsureBuiltInLanguagesRegistered(t *testing.T) {
+	EnsureBuiltInLanguagesRegistered()
+	require.True(t, GlobalLanguages.IsLanguageSupported("en"))
+	require.True(t, GlobalLanguages.IsLanguageSupported("de"))
+	require.True(t, GlobalLanguages.IsLanguageSupported("fr"))
+	// zz/xx not registered as normal modules
+	require.False(t, GlobalLanguages.IsLanguageSupported("xx"))
+	// idempotent
+	EnsureBuiltInLanguagesRegistered()
+	require.True(t, GlobalLanguages.IsLanguageSupported("en"))
+}
+
 func TestLanguages_InvalidFormat(t *testing.T) {
 	L := &Languages{}
 	require.Panics(t, func() { L.IsLanguageSupported("somthing-totally-inv-alid") })

@@ -124,6 +124,8 @@ func (s *LanguageIdentifierService) GetSimpleLanguageIdentifier(preferred []stri
 // CanLanguageBeDetected ports LanguageIdentifierService.canLanguageBeDetected.
 // When supported is nil, uses Languages.isLanguageSupported via GlobalLanguages.
 func CanLanguageBeDetected(langCode string, supported, additional []string) bool {
+	// Java Languages static init before first call.
+	languagetool.EnsureBuiltInLanguagesRegistered()
 	if supported == nil {
 		if languagetool.GlobalLanguages.IsLanguageSupported(langCode) {
 			return true

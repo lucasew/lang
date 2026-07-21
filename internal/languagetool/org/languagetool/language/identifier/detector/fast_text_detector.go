@@ -177,14 +177,70 @@ func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []
 func (d *FastTextDetector) Destroy() {
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	d.destroyLocked()
+}
+
+func (d *FastTextDetector) destroyLocked() {
 	if d.stdin != nil {
 		_ = d.stdin.Close()
+		d.stdin = nil
+	}
+	if d.stdout != nil {
+		// stdout closed with process
+		d.stdout = nil
 	}
 	if d.cmd != nil && d.cmd.Process != nil {
 		_ = d.cmd.Process.Kill()
 		_, _ = d.cmd.Process.Wait()
 	}
 	d.cmd = nil
+}
+
+// RestartProcess ports FastTextDetector.restartProcess.
+// Tries a probe runFasttext; on failure destroys and re-inits the subprocess.
+// Returns true if the process was reinitialized.
+// Runner-based (test) detectors: probe failure does not reinit (no process).
+func (d *FastTextDetector) RestartProcess() (bool, error) {
+	if d == nil {
+		return false, nil
+	}
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	// Java: try runFasttext("This is a test text that should work.", empty)
+	// Without holding lock for whole RunFasttext (deadlock), probe via unlocked path:
+	// call run under lock carefully — use runner/process directly.
+	probe := "this is a test text that should work." // already lower (Locale.ROOT)
+	var err error
+	if d.Runner != nil {
+		_, err = d.Runner(probe)
+	} else if d.stdin != nil && d.stdout != nil {
+		if _, werr := io.WriteString(d.stdin, probe+"\n"); werr != nil {
+			err = werr
+		} else {
+			r := bufio.NewReaderSize(d.stdout, fastTextBufSize)
+			_, rerr := r.ReadString('\n')
+			if rerr != nil && rerr != io.EOF {
+				err = rerr
+			}
+		}
+	} else {
+		// no process / runner — nothing to restart
+		return false, nil
+	}
+	if err == nil {
+		// also treat FastTextException from parse as failure when probing process
+		return false, nil
+	}
+	// Java: destroy + init() → return true
+	if d.Runner != nil {
+		// test runner has no process to restart
+		return false, err
+	}
+	d.destroyLocked()
+	if ierr := d.initProcess(); ierr != nil {
+		return false, ierr
+	}
+	return true, nil
 }
 
 // javaLocaleRootToLower ports String.toLowerCase(Locale.ROOT).

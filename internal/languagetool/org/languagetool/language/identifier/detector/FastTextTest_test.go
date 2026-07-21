@@ -38,9 +38,21 @@ func TestFastText_Parsing(t *testing.T) {
 	_, err = ft.ParseBuffer("xxx foo", l)
 	require.Error(t, err)
 
-	// multi-line: fr not in allow-list → only de
+	// multi-line: Java canLanguageBeDetected keeps supported langs even if not in additional list.
+	// fr is a built-in supported short code → both de and fr kept (not invent only-additional).
 	res5, err := ft.ParseBuffer("__label__de 0.9\n__label__fr 0.1", l)
 	require.NoError(t, err)
-	require.Equal(t, 1, len(res5))
+	require.Equal(t, 2, len(res5))
 	require.Equal(t, 0.9, res5["de"])
+	require.Equal(t, 0.1, res5["fr"])
+
+	// unsupported code only via additional
+	res6, err := ft.ParseBuffer("__label__de 0.9\n__label__zz 0.1", []string{"de"})
+	require.NoError(t, err)
+	require.Contains(t, res6, "de")
+	require.NotContains(t, res6, "zz")
+	res7, err := ft.ParseBuffer("__label__de 0.9\n__label__zz 0.1", []string{"zz"})
+	require.NoError(t, err)
+	require.Contains(t, res7, "de") // still supported
+	require.Contains(t, res7, "zz") // additional noop
 }

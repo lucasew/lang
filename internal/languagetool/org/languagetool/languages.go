@@ -54,10 +54,50 @@ const NoopLanguageCode = "zz"
 // NoopLanguageMeta is a stand-in for Languages.NOOP_LANGUAGE.
 var NoopLanguageMeta = LanguageMeta{Name: "NoopLanguage", Code: NoopLanguageCode}
 
+// builtInLanguageShortCodes mirrors languages discovered from Java
+// META-INF/org/languagetool/language-module.properties modules (short codes only).
+// Used so canLanguageBeDetected works without classpath module scanning.
+var builtInLanguageShortCodes = []struct {
+	Name string
+	Code string
+}{
+	{"Arabic", "ar"}, {"Asturian", "ast"}, {"Belarusian", "be"}, {"Breton", "br"},
+	{"Catalan", "ca"}, {"Crimean Tatar", "crh"}, {"Danish", "da"}, {"German", "de"},
+	{"Greek", "el"}, {"English", "en"}, {"Esperanto", "eo"}, {"Spanish", "es"},
+	{"Persian", "fa"}, {"French", "fr"}, {"Irish", "ga"}, {"Galician", "gl"},
+	{"Icelandic", "is"}, {"Italian", "it"}, {"Japanese", "ja"}, {"Khmer", "km"},
+	{"Lithuanian", "lt"}, {"Malayalam", "ml"}, {"Dutch", "nl"}, {"Norwegian", "no"},
+	{"Polish", "pl"}, {"Portuguese", "pt"}, {"Romanian", "ro"}, {"Russian", "ru"},
+	{"Slovak", "sk"}, {"Slovenian", "sl"}, {"Serbian", "sr"}, {"Swedish", "sv"},
+	{"Tamil", "ta"}, {"Tagalog", "tl"}, {"Ukrainian", "uk"}, {"Chinese", "zh"},
+}
+
+var builtInLangsOnce sync.Once
+
+// EnsureBuiltInLanguagesRegistered ports Java Languages class-init:
+// language modules registered before any detect / canLanguageBeDetected call.
+// Safe to call repeatedly (sync.Once).
+func EnsureBuiltInLanguagesRegistered() {
+	builtInLangsOnce.Do(func() {
+		for _, m := range builtInLanguageShortCodes {
+			// Register without IsLanguageSupported (avoids recursive Ensure)
+			GlobalLanguages.Register(LanguageMeta{Name: m.Name, Code: m.Code})
+		}
+		// Do not register NoopLanguage "zz" here — Java Languages.get() excludes zz/xx;
+		// canLanguageBeDetected("zz") is true only via additionalLanguageCodes (noop list).
+	})
+}
+
 // Register adds a static language definition.
 func (L *Languages) Register(lang LanguageMeta) {
 	L.mu.Lock()
 	defer L.mu.Unlock()
+	// skip exact duplicate codes (idempotent for EnsureBuiltIn + tests)
+	for _, existing := range L.static {
+		if strings.EqualFold(existing.Code, lang.Code) {
+			return
+		}
+	}
 	L.static = append(L.static, lang)
 }
 

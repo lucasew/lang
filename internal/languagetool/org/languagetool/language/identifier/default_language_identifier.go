@@ -30,12 +30,18 @@ type DefaultLanguageIdentifier struct {
 	MinimalConfidence float64
 	// IgnoreLangCodes are never returned as top (ast, gl by default).
 	IgnoreLangCodes map[string]struct{}
+	// fasttextInitCounter ports DefaultLanguageIdentifier.fasttextInitCounter.
+	fasttextInitCounter int
 }
+
+// FastTextConfidenceThreshold ports FASTTEXT_CONFIDENCE_THRESHOLD (0.85f).
+const FastTextConfidenceThreshold = 0.85
 
 func NewDefaultLanguageIdentifier(maxLength int) *DefaultLanguageIdentifier {
 	if maxLength <= 0 {
 		maxLength = DefaultMaxLength
 	}
+	languagetool.EnsureBuiltInLanguagesRegistered()
 	d := &DefaultLanguageIdentifier{
 		BaseLanguageIdentifier: NewBaseLanguageIdentifier(maxLength),
 		MinimalConfidence:      0.0, // surface allows low scores; Java uses 0.9 inside optimaize
@@ -46,6 +52,27 @@ func NewDefaultLanguageIdentifier(maxLength int) *DefaultLanguageIdentifier {
 		Unicode: detector.NewUnicodeBasedDetector(),
 	}
 	return d
+}
+
+// GetFasttextInitCounter ports getFasttextInitCounter (tests).
+func (d *DefaultLanguageIdentifier) GetFasttextInitCounter() int {
+	if d == nil {
+		return 0
+	}
+	return d.fasttextInitCounter
+}
+
+// reinitFasttextAfterFailure ports reinitFasttextAfterFailure.
+func (d *DefaultLanguageIdentifier) reinitFasttextAfterFailure() {
+	if d == nil || d.fastText == nil {
+		return
+	}
+	d.fasttextInitCounter++
+	ok, err := d.fastText.RestartProcess()
+	if err != nil || !ok {
+		// Java: decrement if restart did not reinit
+		d.fasttextInitCounter--
+	}
 }
 
 // EnableFastText installs a score function used preferentially for longer text (tests).
@@ -148,69 +175,120 @@ func (d *DefaultLanguageIdentifier) Scores(cleanText string, noopLangs, preferre
 	}
 
 	scores := map[string]float64{}
-	src := "profile"
+	src := ""
 	textLen := javaStringLen(text)
-	useFastText := (d.fastText != nil || d.FastTextScore != nil) &&
-		(textLen > ShortAlgoThreshold || d.NGram == nil)
+	fasttextFailed := false
+	usingFastText := false
+	hasFTOrNGram := d.fastText != nil || d.FastTextScore != nil || d.NGram != nil
 
 	// Prefer fastText when available (Java: longer text → fasttext, short → ngram)
-	// Java: fastTextDetector.runFasttext(text, additionalLangs)
-	if useFastText {
-		if d.fastText != nil {
-			if m, err := d.fastText.RunFasttext(text, additional); err == nil && m != nil {
-				for k, v := range m {
+	// Java: try { … runFasttext / ngram … } catch → fasttextFailed + reinit
+	if hasFTOrNGram {
+		useFastText := (d.fastText != nil || d.FastTextScore != nil) &&
+			(textLen > ShortAlgoThreshold || d.NGram == nil)
+		if useFastText {
+			usingFastText = true
+			if d.fastText != nil {
+				m, err := d.fastText.RunFasttext(text, additional)
+				if err != nil {
+					// FastTextException.isDisabled or other → reinit + fallback
+					if fe, ok := err.(*detector.FastTextException); ok && fe.IsDisabled() {
+						d.reinitFasttextAfterFailure()
+					} else {
+						d.reinitFasttextAfterFailure()
+					}
+					fasttextFailed = true
+				} else if m != nil {
+					for k, v := range m {
+						scores[k] = v
+					}
+					src += "fasttext"
+				}
+			} else if d.FastTextScore != nil {
+				for k, v := range d.FastTextScore(text) {
 					scores[k] = v
 				}
-				src = "fasttext"
-			}
-		} else if d.FastTextScore != nil {
-			for k, v := range d.FastTextScore(text) {
-				scores[k] = v
-			}
-			src = "fasttext"
-		}
-	}
-	// NGram for short text when Java would use ngram over fasttext
-	// Java: ngram.detectLanguages(text.trim(), additionalLangs)
-	if d.NGram != nil && (len(scores) == 0 || textLen <= ShortAlgoThreshold) {
-		for k, v := range d.NGram.DetectLanguagesAdditional(text, additional) {
-			if cur, ok := scores[k]; !ok || v > cur {
-				scores[k] = v
+				src += "fasttext"
 			}
 		}
-		if src != "fasttext" || textLen <= ShortAlgoThreshold {
-			src = "ngram"
-		}
-	}
-	// Merge profile scores if empty or low confidence (Java optimaize fallback ~0.85)
-	maxScore := maxMap(scores)
-	if d.ProfileScore != nil && (len(scores) == 0 || maxScore < 0.85) {
-		for k, v := range d.ProfileScore(text, preferred) {
-			if cur, ok := scores[k]; !ok || v > cur {
-				scores[k] = v
+		// NGram for short text when Java would use ngram over fasttext
+		if !fasttextFailed && d.NGram != nil && (len(scores) == 0 || textLen <= ShortAlgoThreshold) {
+			for k, v := range d.NGram.DetectLanguagesAdditional(text, additional) {
+				if cur, ok := scores[k]; !ok || v > cur {
+					scores[k] = v
+				}
+			}
+			if src == "" || textLen <= ShortAlgoThreshold {
+				if !strings.Contains(src, "ngram") {
+					src += "ngram"
+				}
 			}
 		}
-		if src == "fasttext" && maxScore < 0.85 {
-			src = "profile"
-		} else if src == "" || len(scores) == 0 {
-			src = "profile"
+		// Common words when fasttext low conf or zz (Java FASTTEXT_CONFIDENCE_THRESHOLD 0.85)
+		topCode, topScore := GetHighestScoringResult(scores)
+		if (usingFastText && topScore < FastTextConfidenceThreshold) || topCode == "zz" {
+			if d.CommonWords != nil {
+				for k, c := range d.CommonWords.GetKnownWordsPerLanguage(text) {
+					scores[k] = scores[k] + float64(c)
+				}
+				if !strings.Contains(src, "commonwords") {
+					src += "+commonwords"
+				}
+			}
 		}
-	}
-	// Common words boost when low confidence / zz (Java FASTTEXT_CONFIDENCE_THRESHOLD path)
-	maxScore = maxMap(scores)
-	topCode, _ := GetHighestScoringResult(scores)
-	if d.CommonWords != nil && (maxScore < 0.85 || topCode == "zz" || len(scores) == 0) {
-		counts := d.CommonWords.GetKnownWordsPerLanguage(text)
-		// Java: scores.put(langCode, scores.get + count) then re-normalize later via ordering
-		for k, c := range counts {
-			scores[k] = scores[k] + float64(c)
+		// Special case: preferred no without da → drop da
+		if containsStr(preferred, "no") && !containsStr(preferred, "da") {
+			delete(scores, "da")
 		}
-		if src != "" && !strings.Contains(src, "commonwords") {
-			src = src + "+commonwords"
+		// Preferred filter for short text or forcePreferred
+		if len(preferred) > 0 && (textLen <= ConsiderOnlyPreferredThreshold || limitOnPreferred) {
+			for k := range scores {
+				if !containsStr(preferred, k) {
+					delete(scores, k)
+				}
+			}
+			src += "+prefLang(forced: " + boolStr(limitOnPreferred) + ")"
 		}
 	}
 
-	// Filter ignore / preferred
+	// Java: if (fastTextDetector == null && ngram == null || fasttextFailed) → fallback profile
+	if (!hasFTOrNGram || fasttextFailed) || (len(scores) == 0 && d.ProfileScore != nil) {
+		if fasttextFailed || !hasFTOrNGram {
+			src += "+fallback"
+		}
+		// Merge profile scores if empty or low confidence (optimaize stand-in)
+		maxScore := maxMap(scores)
+		if d.ProfileScore != nil && (len(scores) == 0 || maxScore < ScoreThreshold || fasttextFailed) {
+			for k, v := range d.ProfileScore(text, preferred) {
+				if cur, ok := scores[k]; !ok || v > cur {
+					scores[k] = v
+				}
+			}
+			if src == "" || strings.HasSuffix(src, "+fallback") || len(scores) > 0 {
+				if !strings.Contains(src, "profile") && !strings.Contains(src, "fasttext") && !strings.Contains(src, "ngram") {
+					src += "profile"
+				}
+			}
+		}
+	}
+	// Common words boost for profile-only path when still low
+	maxScore := maxMap(scores)
+	topCode, _ := GetHighestScoringResult(scores)
+	if d.CommonWords != nil && (maxScore < ScoreThreshold || topCode == "zz" || len(scores) == 0) {
+		if !strings.Contains(src, "commonwords") {
+			for k, c := range d.CommonWords.GetKnownWordsPerLanguage(text) {
+				scores[k] = scores[k] + float64(c)
+			}
+			if src != "" {
+				src += "+commonwords"
+			}
+		}
+	}
+	if src == "" {
+		src = "profile"
+	}
+
+	// Filter ignore (preferred already applied for force path above; re-apply for profile)
 	type pair struct {
 		code  string
 		score float64
@@ -274,6 +352,13 @@ func minInt(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func boolStr(b bool) string {
+	if b {
+		return "true"
+	}
+	return "false"
 }
 
 // DetectLanguage is the Java-style entry that cleans text first.
