@@ -2,6 +2,7 @@ package en
 
 import (
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -215,6 +216,7 @@ func (r *AbstractEnglishSpellerRule) isValidInOtherVariant(word string) *Variant
 	return r.IsValidInOtherVariantFn(word)
 }
 
+// matchSurfaceEN extracts match surface using Java UTF-16 from/to positions.
 func matchSurfaceEN(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) string {
 	if m == nil || sent == nil {
 		return ""
@@ -224,14 +226,21 @@ func matchSurfaceEN(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) str
 	if from < 0 || from >= to {
 		return ""
 	}
-	runes := []rune(text)
-	if to <= len(runes) {
-		return string(runes[from:to])
+	return utf16SliceEN(text, from, to)
+}
+
+func utf16SliceEN(s string, from, to int) string {
+	u := utf16.Encode([]rune(s))
+	if from < 0 {
+		from = 0
 	}
-	if to <= len(text) {
-		return text[from:to]
+	if to > len(u) {
+		to = len(u)
 	}
-	return ""
+	if from >= to {
+		return ""
+	}
+	return string(utf16.Decode(u[from:to]))
 }
 
 // GetAdditionalSpellingFileNames ports getAdditionalSpellingFileNames.

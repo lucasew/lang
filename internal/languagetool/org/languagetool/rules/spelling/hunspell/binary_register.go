@@ -57,8 +57,8 @@ func companionAff(dicPath string) string {
 	return ""
 }
 
-// TryOpenFromClasspath opens a FileHunspellDictionary for a Java resource path.
-// Returns nil if missing or unreadable (fail closed — same as nil Dict on HunspellRule).
+// TryOpenFromClasspath opens a dictionary for a Java resource path via Hunspell.GetDictionary
+// (path-cached). Returns nil if missing or unreadable (fail closed — same as nil Dict on HunspellRule).
 // Affix file is discovered beside the .dic when present; affix rules are not expanded
 // (pure-Go word-list port, incomplete vs full native Hunspell).
 func TryOpenFromClasspath(classpath string) HunspellDictionary {
@@ -66,9 +66,7 @@ func TryOpenFromClasspath(classpath string) HunspellDictionary {
 	if dicPath == "" {
 		return nil
 	}
-	d, err := NewFileHunspellDictionary(dicPath, companionAff(dicPath), false)
-	if err != nil || d == nil {
-		return nil
-	}
-	return d
+	// Recover from GetDictionary panic (I/O failure).
+	defer func() { _ = recover() }()
+	return GetDictionary(dicPath, companionAff(dicPath))
 }
