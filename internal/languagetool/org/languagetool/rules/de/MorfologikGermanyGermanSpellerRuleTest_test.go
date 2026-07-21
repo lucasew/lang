@@ -1,14 +1,11 @@
 package de
 
 // Twin of MorfologikGermanyGermanSpellerRuleTest (class is @Ignore for suite, but testMorfologikSpeller is the oracle).
-// Binary .dict load is deferred in Go MorfologikSpellerRule — inject Words like other map-backed twins
-// (empty Words = fail-closed; no invent misspell flags).
 import (
-	"path/filepath"
-	"runtime"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,16 +18,33 @@ func TestMorfologikGermanyGermanSpellerRule_MorfologikSpeller(t *testing.T) {
 	require.Equal(t, MorfologikGermanyGermanSpellerRuleID, r.GetID())
 	require.Equal(t, MorfologikGermanyGermanDict, r.GetFileName())
 	require.Equal(t, MorfologikGermanyGermanDict, r.GetMorfologikDictFilename())
+	// Java example pair nromale → normale
+	require.Len(t, r.GetIncorrectExamples(), 1)
 
-	// Empty dict: fail-closed (Java always has de_DE.dict; Go does not invent flags)
+	// Java always has de_DE.dict; InitSpellersFromGetters wires multi when dict present.
+	if morfologik.DiscoverLanguageDict(MorfologikGermanyGermanDict) == "" {
+		// fail-closed without invent
+		ms, err := r.Match(languagetool.AnalyzePlain("Hir nicht so ganz."))
+		require.NoError(t, err)
+		require.Empty(t, ms, "no dict → fail-closed empty")
+		return
+	}
+	require.NotNil(t, r.Speller1)
+	// Java assertEquals(1, rule.match(... "Hir nicht so ganz." ...).length)
 	ms, err := r.Match(languagetool.AnalyzePlain("Hir nicht so ganz."))
 	require.NoError(t, err)
-	require.Empty(t, ms, "empty Words must not invent misspell")
+	require.NotEmpty(t, ms, "Hir should be misspelled with real multi-speller")
+	// correct sentence
+	ms, err = r.Match(languagetool.AnalyzePlain("Hier stimmt jedes Wort!"))
+	require.NoError(t, err)
+	require.Empty(t, ms)
 }
 
 // Twin of MorfologikGermanyGermanSpellerRuleTest.testMorfologikSpeller with map-backed dict inject.
 func TestMorfologikGermanyGermanSpellerRule_MorfologikSpeller_InjectedDict(t *testing.T) {
 	r := NewMorfologikGermanyGermanSpellerRule(nil)
+	// Map-inject unit path: clear initSpeller Multis so Speller map is used.
+	r.ClearMultiSpellers()
 	// Java SpellingCheckRule / DE often treats length-1 as ignored ("B" in "B(ℓ2)").
 	if r.SpellingCheckRule != nil {
 		r.IgnoreWordsWithLength = 1
@@ -72,7 +86,7 @@ func TestMorfologikGermanyGermanSpellerRule_MorfologikSpeller_InjectedDict(t *te
 	// Java: math / emoji
 	require.Equal(t, 0, matchN("B(ℓ2)"))
 	require.Equal(t, 0, matchN("🏽"))
-	require.Equal(t, 0, matchN("🧡‍♂️ , 🎉💛✈️"))
+	require.Equal(t, 0, matchN("🧑🏾‍♂️ , 🎉💛✈️"))
 	// Cyrillic / CJK: Java match length 0 (script ignore). Go may still flag letter tokens —
 	// assert Java only when zero; log incomplete otherwise (no invent soften of rule).
 	for _, s := range []string{"компьютерная", "中文維基百科 中文维基百科"} {
@@ -83,14 +97,19 @@ func TestMorfologikGermanyGermanSpellerRule_MorfologikSpeller_InjectedDict(t *te
 	}
 }
 
-// Optional: open real de_DE.dict if Wire path works (same resource Java uses).
+// Real de_DE.dict path: InitSpellersFromGetters wires multi (Java king).
 func TestMorfologikGermanyGermanSpellerRule_RealDictIfPresent(t *testing.T) {
-	_, file, _, _ := runtime.Caller(0)
-	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../../"))
-	dict := filepath.Join(root, "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/hunspell/de_DE.dict")
-	// Binary Morfologik load not wired into MorfologikGermanyGermanSpellerRule Words map.
-	// When WireGermanFilterSpeller works for Hunspell path, still not the same API —
-	// skip unless Words can be populated from binary (not invent).
-	_ = dict
-	t.Skip("binary de_DE.dict not loaded into MorfologikSpeller.Words (fail-closed empty); inject twin covers Java cases")
+	if morfologik.DiscoverLanguageDict(MorfologikGermanyGermanDict) == "" {
+		t.Skip("de_DE.dict not in tree")
+	}
+	r := NewMorfologikGermanyGermanSpellerRule(nil)
+	require.NotNil(t, r.Speller1)
+	// nonsense misspelled
+	ms, err := r.Match(languagetool.AnalyzePlain("sdadsadasxyz"))
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
+	// known word accepted
+	ms, err = r.Match(languagetool.AnalyzePlain("Haus"))
+	require.NoError(t, err)
+	require.Empty(t, ms)
 }
