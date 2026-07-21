@@ -250,9 +250,27 @@ func TestAgreementRule_CompoundMatch_MorphJavaTable(t *testing.T) {
 	)
 }
 
+// Twin of AgreementRuleTest.testGetCategoriesCausingError
 func TestAgreementRule_GetCategoriesCausingError(t *testing.T) {
-	// morphology categories need tagger
-	require.NotNil(t, NewAgreementRule(nil))
+	rule := NewAgreementRule(nil)
+	tokenDetMasSin := atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der")
+	tokenDetFemSin := atrWithPOS("die", "ART:DEF:NOM:SIN:FEM", "der")
+	tokenDetFemPlu := atrWithPOS("die", "ART:DEF:NOM:PLU:FEM", "der")
+	tokenSubNeuSin := atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus")
+	tokenSubFemPlu := atrWithPOS("Frauen", "SUB:NOM:PLU:FEM", "Frau")
+	tokenSubGenFemPlu := atrWithPOS("Frauen", "SUB:GEN:PLU:FEM", "Frau")
+
+	res1 := rule.GetCategoriesCausingError(tokenDetFemPlu, tokenSubGenFemPlu)
+	require.Equal(t, 1, len(res1), "expected Kasus only, got %v", res1)
+	require.Contains(t, res1[0], "Kasus")
+
+	res2 := rule.GetCategoriesCausingError(tokenDetMasSin, tokenSubNeuSin)
+	require.Equal(t, 1, len(res2), "expected Genus only, got %v", res2)
+	require.Contains(t, res2[0], "Genus")
+
+	res3 := rule.GetCategoriesCausingError(tokenDetFemSin, tokenSubFemPlu)
+	require.Equal(t, 1, len(res3), "expected Numerus only, got %v", res3)
+	require.Contains(t, res3[0], "Numerus")
 }
 
 // Twin of AgreementRuleTest.testDetNounRule — morph subset (Java has full LT tagger).

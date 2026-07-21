@@ -695,3 +695,48 @@ func shouldSkipDetAbbrevOrParticiple(tokens []*languagetool.AnalyzedTokenReading
 	}
 	return false
 }
+
+// Grammar category display names (AgreementRule.GrammarCategory.displayName).
+const (
+	displayKasus   = "Kasus (Fall: Wer/Was, Wessen, Wem, Wen/Was - Beispiel: 'das Fahrrads' statt 'des Fahrrads')"
+	displayGenus   = "Genus (männlich, weiblich, sächlich - Beispiel: 'der Fahrrad' statt 'das Fahrrad')"
+	displayNumerus = "Numerus (Einzahl, Mehrzahl - Beispiel: 'das Fahrräder' statt 'die Fahrräder')"
+)
+
+// GetCategoriesCausingError ports AgreementRule.getCategoriesCausingError.
+// For each of KASUS/GENUS/NUMERUS, if relaxing that category makes det and noun agree,
+// the category is reported as causing the error.
+func (r *AgreementRule) GetCategoriesCausingError(token1, token2 *languagetool.AnalyzedTokenReadings) []string {
+	var categories []string
+	checks := []struct {
+		cat     GrammarCategory
+		display string
+	}{
+		{CatKasus, displayKasus},
+		{CatGenus, displayGenus},
+		{CatNumerus, displayNumerus},
+	}
+	for _, c := range checks {
+		if agreementWithCategoryRelaxation(token1, token2, c.cat) {
+			categories = append(categories, c.display)
+		}
+	}
+	return categories
+}
+
+// agreementWithCategoryRelaxation ports AgreementRule.agreementWithCategoryRelaxation:
+// omit one GrammarCategory; true if remaining category sets still intersect.
+func agreementWithCategoryRelaxation(token1, token2 *languagetool.AnalyzedTokenReadings, categoryToRelax GrammarCategory) bool {
+	omit := map[GrammarCategory]bool{categoryToRelax: true}
+	set1 := GetAgreementCategories(token1, omit, true)
+	set2 := GetAgreementCategories(token2, omit, true)
+	if len(set1) == 0 || len(set2) == 0 {
+		return false
+	}
+	for k := range set1 {
+		if _, ok := set2[k]; ok {
+			return true
+		}
+	}
+	return false
+}

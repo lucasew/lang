@@ -383,4 +383,122 @@ func TestSubjectVerbAgreementRule_CorrectSingularPlural_JavaSamples(t *testing.T
 		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
 		atrWithPOS("Innsbruck", "EIG:NOM:SIN:NEU", "Innsbruck"),
 	)
+
+	// Java testRuleWithCorrectPluralVerb morph samples
+	// Julia und Karsten sind alt. — last subject NPP + plural verb
+	karsten := atrWithPOS("Karsten", "EIG:NOM:SIN:MAS", "Karsten")
+	nppSubject(karsten)
+	assertGood("Julia und Karsten sind",
+		atrWithPOS("Julia", "EIG:NOM:SIN:FEM", "Julia"),
+		atrWithPOS("und", "KON:NEB", "und"),
+		karsten,
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("alt", "ADJ:PRD:GRU", "alt"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// Bob und Tom sind Brüder.
+	tom := atrWithPOS("Tom", "EIG:NOM:SIN:MAS", "Tom")
+	nppSubject(tom)
+	assertGood("Bob und Tom sind",
+		atrWithPOS("Bob", "EIG:NOM:SIN:MAS", "Bob"),
+		atrWithPOS("und", "KON:NEB", "und"),
+		tom,
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("Brüder", "SUB:NOM:PLU:MAS", "Bruder"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// Die USA sind …
+	usa := atrWithPOS("USA", "EIG:NOM:PLU:NEU", "USA")
+	nppSubject(usa)
+	assertGood("Die USA sind",
+		atrWithPOS("Die", "ART:DEF:NOM:PLU:NEU", "die"),
+		usa,
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("ein", "ART:IND:NOM:SIN:MAS", "ein"),
+		atrWithPOS("Staat", "SUB:NOM:SIN:MAS", "Staat"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// Hundert Dollar sind doch gar nichts!
+	dollar := atrWithPOS("Dollar", "SUB:NOM:PLU:MAS", "Dollar")
+	nppSubject(dollar)
+	assertGood("Hundert Dollar sind",
+		atrWithPOS("Hundert", "ZAL", "hundert"),
+		dollar,
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("doch", "ADV", "doch"),
+		atrWithPOS("gar", "ADV", "gar"),
+		atrWithPOS("nichts", "PIS", "nichts"),
+		atrWithPOS("!", "PKT", "!"),
+	)
+	// Einzelne Atome sind klein.
+	atome := atrWithPOS("Atome", "SUB:NOM:PLU:NEU", "Atom")
+	nppSubject(atome)
+	assertGood("Einzelne Atome sind",
+		atrWithPOS("Einzelne", "ADJ:NOM:PLU:NEU:GRU:IND", "einzeln"),
+		atome,
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("klein", "ADJ:PRD:GRU", "klein"),
+		atrWithPOS(".", "PKT", "."),
+	)
+
+	// Java testRuleWithCorrectSingularAndPluralVerb — both SIN and PLU OK
+	// Personen ist/sind der Zugriff …
+	personen := atrWithPOS("Personen", "SUB:DAT:PLU:FEM", "Person")
+	// DAT: no nominative chunk → singular/plural verb path skipped
+	npsSubject(personen) // DAT tag means prevChunkIsNominative false
+	assertGood("Personen ist Zugriff",
+		personen,
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
+		atrWithPOS("Zugriff", "SUB:NOM:SIN:MAS", "Zugriff"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// 80 Cent ist/sind — measure; inject NPS singular-ish
+	cent := atrWithPOS("Cent", "SUB:NOM:PLU:MAS", "Cent")
+	nppSubject(cent)
+	// Plural subject + plural verb OK
+	assertGood("80 Cent sind",
+		atrWithPOS("80", "ZAL", "80"),
+		cent,
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("nicht", "ADV", "nicht"),
+		atrWithPOS("genug", "ADV", "genug"),
+		atrWithPOS(".", "PKT", "."),
+	)
+}
+
+// Twin remaining incorrect plural morph: Julia, Heike und Karsten ist / Herr Karsten Schröder sind
+func TestSubjectVerbAgreementRule_IncorrectPluralVerb_MoreJava(t *testing.T) {
+	rule := NewSubjectVerbAgreementRule(nil)
+	assertBad := func(label, want string, toks ...*languagetool.AnalyzedTokenReadings) {
+		t.Helper()
+		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
+		ms := rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))
+		require.GreaterOrEqual(t, len(ms), 1, "bad %s", label)
+		require.Contains(t, ms[0].GetSuggestedReplacements(), want, label)
+	}
+	// Julia, Heike und Karsten ist alt. — coordinated NPP + singular verb
+	karsten := atrWithPOS("Karsten", "EIG:NOM:SIN:MAS", "Karsten")
+	nppSubject(karsten)
+	assertBad("Julia, Heike und Karsten ist", "sind",
+		atrWithPOS("Julia", "EIG:NOM:SIN:FEM", "Julia"),
+		atrWithPOS(",", "PKT", ","),
+		atrWithPOS("Heike", "EIG:NOM:SIN:FEM", "Heike"),
+		atrWithPOS("und", "KON:NEB", "und"),
+		karsten,
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("alt", "ADJ:PRD:GRU", "alt"),
+		atrWithPOS(".", "PKT", "."),
+	)
+	// Herr Karsten Schröder sind alt.
+	schroeder := atrWithPOS("Schröder", "EIG:NOM:SIN:MAS", "Schröder")
+	npsSubject(schroeder)
+	assertBad("Herr Karsten Schröder sind", "ist",
+		atrWithPOS("Herr", "SUB:NOM:SIN:MAS", "Herr"),
+		atrWithPOS("Karsten", "EIG:NOM:SIN:MAS", "Karsten"),
+		schroeder,
+		atrWithPOS("sind", "VER:3:PLU:PRÄ:NON", "sein"),
+		atrWithPOS("alt", "ADJ:PRD:GRU", "alt"),
+		atrWithPOS(".", "PKT", "."),
+	)
 }
