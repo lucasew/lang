@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -121,9 +122,14 @@ func (s *MorfologikSpeller) AttachBinaryDictionary(dictPath string) bool {
 	return true
 }
 
-// binaryFindReplacementCandidates ports Speller.findReplacementCandidates for one maxEdit:
-// input conversion → getAllReplacements variants → distance-0 dict hits + edit search per variant
-// → output conversion → sort/dedupe.
+// minWordLengthFindRepl ports Speller.MIN_WORD_LENGTH (skip short variants after first few).
+const minWordLengthFindRepl = 4
+
+// binaryFindReplacementCandidates ports morfologik Speller.findReplacementCandidates (2.2.0):
+// input conversion → (optional) getAllReplacements theRest variants → dist-0 dict hits
+// → one HMatrix + findRepl per variant (anyToOne/anyToTwo short pairs inside FSA walk)
+// → sort → output conversion + first-occurrence dedupe.
+// Short pairs are NOT surface-rewritten outside findRepl.
 func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictionary, word string, maxResults int) []WeightedSuggestion {
 	if s == nil || d == nil || word == "" {
 		return nil
@@ -132,110 +138,89 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 	if maxEdit < 1 {
 		maxEdit = 1
 	}
-	if maxEdit > 3 {
-		maxEdit = 3
-	}
 	word = s.applyInputConversion(word)
-	// evenIfWordInDictionary=false: empty when already known (caller usually only for misspellings)
-	if d.Contains(word) {
+	// evenIfWordInDictionary=false
+	if len(word) == 0 || len(word) >= atticmorfo.MaxWordLength || d.Contains(word) {
 		return nil
 	}
-	// Multi-char theRest variants seed edit search (Java getAllReplacements → findRepl).
-	variants := GetAllReplacements(word, s.ReplacementTheRest, 0, 0)
-	if len(variants) == 0 {
-		variants = []string{word}
-	}
-	// Short anyToOne/Two: apply only on the original misspelling. Pure rewrite → distance 0
-	// if in dict. Do NOT stack short rewrites onto theRest variants or feed them into edit
-	// search — that invents multi-step paths outside a single HMatrix budget.
-	shortHits := ShortReplacementVariants(word, s.ReplacementShort)
-	var candidates []WeightedSuggestion
-	seen := map[string]struct{}{}
-	addCand := func(w string, dist int) {
-		w = s.applyOutputConversion(w)
-		if w == "" || w == word {
-			return
+
+	// One Speller for CandidateData weights + findRepl (Java single Speller instance).
+	fsaSp := atticmorfo.NewSpellerFSA(d, maxEdit)
+	fsaSp.IgnoreDiacritics = s.IgnoreDiacritics
+	fsaSp.EquivalentChars = s.EquivalentChars
+	if len(s.ReplacementShort) > 0 {
+		pairs := make([]struct{ From, To string }, len(s.ReplacementShort))
+		for i, p := range s.ReplacementShort {
+			pairs[i].From, pairs[i].To = p.From, p.To
 		}
-		if _, ok := seen[w]; ok {
-			return
-		}
-		seen[w] = struct{}{}
-		candidates = append(candidates, NewWeightedSuggestion(w, s.suggestionWeightDist(w, dist)))
+		fsaSp.LoadReplacementPairs(pairs)
 	}
-	for _, h := range shortHits {
-		if d.Contains(h) {
-			addCand(h, 0)
-		} else {
-			low := strings.ToLower(h)
-			if d.Contains(low) {
-				addCand(low, 0)
-			} else if firstUp := uppercaseFirstChar(low); firstUp != low && d.Contains(firstUp) {
-				addCand(firstUp, 0)
+
+	// Java: if (replacementsTheRest != null && word.length() > 1) getAllReplacements else [word]
+	var wordsToCheck []string
+	var raw []atticmorfo.CandidateData
+	if s.ReplacementTheRest != nil && s.ReplacementTheRest.Len() > 0 && len(word) > 1 {
+		for _, wordChecked := range GetAllReplacements(word, s.ReplacementTheRest, 0, 0) {
+			if d.Contains(wordChecked) {
+				raw = append(raw, fsaSp.MakeCandidateData(wordChecked, 0))
+			} else {
+				low := strings.ToLower(wordChecked)
+				up := strings.ToUpper(wordChecked)
+				if d.Contains(low) {
+					raw = append(raw, fsaSp.MakeCandidateData(low, 0))
+				}
+				if d.Contains(up) {
+					raw = append(raw, fsaSp.MakeCandidateData(up, 0))
+				}
+				if len(low) > 1 {
+					firstUp := uppercaseFirstChar(low)
+					if d.Contains(firstUp) {
+						raw = append(raw, fsaSp.MakeCandidateData(firstUp, 0))
+					}
+				}
 			}
+			wordsToCheck = append(wordsToCheck, wordChecked)
 		}
+	} else {
+		wordsToCheck = []string{word}
 	}
-	// Java: for each replacement variant — if in dict, distance 0; always queue for edit search
-	i := 0
-	for _, wordChecked := range variants {
+
+	// Java: hMatrix.reset() once, then findRepl for each variant (shared dirty matrix).
+	fsaSp.ResetHMatrix()
+	// Java: int i = 1; for (...) { i++; if (i > UPPER_SEARCH_LIMIT) break;
+	// if (wordLen < MIN_WORD_LENGTH && i > 2) break; findRepl(...) }
+	i := 1
+	for _, wordChecked := range wordsToCheck {
 		i++
 		if i > upperSearchLimit {
 			break
 		}
-		if d.Contains(wordChecked) {
-			addCand(wordChecked, 0)
-		} else {
-			low := strings.ToLower(wordChecked)
-			up := strings.ToUpper(wordChecked)
-			if d.Contains(low) {
-				addCand(low, 0)
-			}
-			if d.Contains(up) {
-				addCand(up, 0)
-			}
-			if len(low) > 1 {
-				firstUp := uppercaseFirstChar(low)
-				if d.Contains(firstUp) {
-					addCand(firstUp, 0)
-				}
-			}
+		// Java uses UTF-16 char length; BMP EN matches runes for ASCII.
+		if len([]rune(wordChecked)) < minWordLengthFindRepl && i > 2 {
+			break
 		}
-		// edit-distance search: Java findRepl FSA walk (HMatrix/Oflazer) via SpellerFSA.
-		// skip very short after first (Java MIN_WORD_LENGTH=4 && i>2)
-		if len([]rune(wordChecked)) < 4 && i > 2 {
+		fsaSp.AppendFindRepl(&raw, wordChecked)
+	}
+
+	// Collections.sort(candidates) by weighted distance
+	sort.SliceStable(raw, func(a, b int) bool {
+		return raw[a].Distance < raw[b].Distance
+	})
+	// output conversion + first occurrence; Java: new CandidateData(replaced, origDistance)
+	seen := map[string]struct{}{}
+	var candidates []WeightedSuggestion
+	for _, cd := range raw {
+		replaced := s.applyOutputConversion(cd.Word)
+		if replaced == "" || replaced == word {
 			continue
 		}
-		fsaSp := atticmorfo.NewSpellerFSA(d, maxEdit)
-		fsaSp.IgnoreDiacritics = s.IgnoreDiacritics
-		fsaSp.EquivalentChars = s.EquivalentChars
-		// Load short replacement pairs into HMatrix anyToOne/anyToTwo maps
-		if len(s.ReplacementShort) > 0 {
-			pairs := make([]struct{ From, To string }, len(s.ReplacementShort))
-			for i, p := range s.ReplacementShort {
-				pairs[i].From, pairs[i].To = p.From, p.To
-			}
-			fsaSp.LoadReplacementPairs(pairs)
+		if _, ok := seen[replaced]; ok {
+			continue
 		}
-		for _, e := range fsaSp.FindReplacementCandidates(wordChecked) {
-			w := s.applyOutputConversion(e.Word)
-			if w == "" || w == word {
-				continue
-			}
-			if _, ok := seen[w]; ok {
-				continue
-			}
-			seen[w] = struct{}{}
-			wt := e.Distance
-			if w != e.Word {
-				// output conversion changed surface — recompute weight for new form
-				wt = s.suggestionWeightDist(w, e.OrigDistance)
-				if e.OrigDistance < 1 {
-					wt = s.suggestionWeightDist(w, 1)
-				}
-			}
-			candidates = append(candidates, NewWeightedSuggestion(w, wt))
-		}
+		seen[replaced] = struct{}{}
+		wt := s.suggestionWeightDist(replaced, cd.OrigDistance)
+		candidates = append(candidates, NewWeightedSuggestion(replaced, wt))
 	}
-	SortByWeight(candidates)
 	if maxResults > 0 && len(candidates) > maxResults {
 		candidates = candidates[:maxResults]
 	}

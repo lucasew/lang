@@ -123,12 +123,16 @@ func TestSpellerFSA_AnyToOneTwo_EN(t *testing.T) {
 		{"kw", "qu"},
 		{"qu", "kw"},
 	})
-	// fone → phone (f in word matches pattern for dict "ph" via anyToTwo, or f→ph)
+	// fone → phone (f in word matches pattern for dict "ph" via anyToTwo)
 	cands := sp.FindReplacementCandidates("fone")
 	foundPhone := false
 	for _, c := range cands {
 		if c.Word == "phone" {
 			foundPhone = true
+			// pure short replacement keeps HMatrix depth cost 0 (Java anyToTwo path)
+			if c.OrigDistance != 0 {
+				t.Fatalf("phone origDistance=%d want 0 (weight=%d)", c.OrigDistance, c.Distance)
+			}
 		}
 	}
 	if !foundPhone {
@@ -140,6 +144,9 @@ func TestSpellerFSA_AnyToOneTwo_EN(t *testing.T) {
 	for _, c := range cands2 {
 		if c.Word == "quality" {
 			foundQ = true
+			if c.OrigDistance != 0 {
+				t.Fatalf("quality origDistance=%d want 0", c.OrigDistance)
+			}
 		}
 	}
 	if !foundQ {

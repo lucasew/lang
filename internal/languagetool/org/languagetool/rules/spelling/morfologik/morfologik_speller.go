@@ -56,9 +56,9 @@ type MorfologikSpeller struct {
 	InputConversionPairs [][2]string
 	// OutputConversionPairs ports fsa.dict.output-conversion (ordered).
 	OutputConversionPairs [][2]string
-	// ReplacementTheRest ports Speller.replacementsTheRest (multi-char targets, len>=3).
-	ReplacementTheRest map[string][]string
-	// ReplacementShort ports anyToOne/anyToTwo pairs (dict target len 1–2) for short rewrites.
+	// ReplacementTheRest ports Speller.replacementsTheRest (multi-char targets, len>=3; LinkedHashMap order).
+	ReplacementTheRest *LinkedHashStringListMap
+	// ReplacementShort ports anyToOne/anyToTwo pairs (dict target len 1–2) for findRepl maps.
 	ReplacementShort []ReplacementPair
 	// binaryDict is the attached FSA (typed as any to avoid exporting attic in all call sites).
 	// Set only via AttachBinaryDictionary; used for identity/debug.

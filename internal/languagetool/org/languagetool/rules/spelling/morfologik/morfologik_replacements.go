@@ -70,6 +70,7 @@ type ReplacementPair struct {
 
 // ParseReplacementPairs ports DictionaryAttribute.REPLACEMENT_PAIRS fromString.
 // Format: "a b, a c, x y" → multi-map (same key multiple values).
+// Java: '_' represents a space (hunspell REP convention).
 func ParseReplacementPairs(value string) []ReplacementPair {
 	value = strings.TrimSpace(value)
 	if value == "" {
@@ -82,6 +83,9 @@ func ParseReplacementPairs(value string) []ReplacementPair {
 		if !ok {
 			continue
 		}
+		// Java: twoStrings[0].replace('_', ' ') / twoStrings[1].replace('_', ' ')
+		k = strings.ReplaceAll(k, "_", " ")
+		v = strings.ReplaceAll(v, "_", " ")
 		out = append(out, ReplacementPair{From: k, To: v})
 	}
 	return out
@@ -170,12 +174,44 @@ func stripAnchors(key string) string {
 	return key[start:end]
 }
 
-// partitionReplacementPairs splits pairs like Java createReplacementsMaps:
-// target len 1 / 2 → shortPairs (HMatrix anyToOne/anyToTwo); longer → theRest for getAllReplacements.
-// Without full HMatrix, shortPairs are applied as single-position rewrites on the misspelling
-// (same surface effect: replace From with To to reach the dictionary form).
-func partitionReplacementPairs(pairs []ReplacementPair) (theRest map[string][]string, short []ReplacementPair) {
-	theRest = map[string][]string{}
+// LinkedHashStringListMap ports Java LinkedHashMap<String, List<String>> (insertion-ordered keys).
+type LinkedHashStringListMap struct {
+	Keys []string
+	M    map[string][]string
+}
+
+// Len returns the number of keys (nil-safe).
+func (m *LinkedHashStringListMap) Len() int {
+	if m == nil || m.M == nil {
+		return 0
+	}
+	return len(m.M)
+}
+
+// Add appends val to key's list; first insert records key order.
+func (m *LinkedHashStringListMap) Add(key, val string) {
+	if m.M == nil {
+		m.M = map[string][]string{}
+	}
+	if _, ok := m.M[key]; !ok {
+		m.Keys = append(m.Keys, key)
+	}
+	m.M[key] = append(m.M[key], val)
+}
+
+// Get returns the list for key (nil if absent).
+func (m *LinkedHashStringListMap) Get(key string) []string {
+	if m == nil || m.M == nil {
+		return nil
+	}
+	return m.M[key]
+}
+
+// partitionReplacementPairs splits pairs like Java Speller.createReplacementsMaps:
+// target len 1 / 2 → shortPairs (loaded into SpellerFSA anyToOne/anyToTwo for findRepl);
+// longer → theRest for getAllReplacements (LinkedHashMap order).
+func partitionReplacementPairs(pairs []ReplacementPair) (theRest *LinkedHashStringListMap, short []ReplacementPair) {
+	theRest = &LinkedHashStringListMap{}
 	for _, p := range pairs {
 		toRunes := []rune(p.To)
 		// Java: s.length() is UTF-16
@@ -184,87 +220,15 @@ func partitionReplacementPairs(pairs []ReplacementPair) (theRest map[string][]st
 			short = append(short, p)
 			continue
 		}
-		theRest[p.From] = append(theRest[p.From], p.To)
+		theRest.Add(p.From, p.To)
 	}
 	return theRest, short
 }
 
-// ShortReplacementVariants applies each short pair once at every occurrence (and once
-// combined pass of non-overlapping first-hit), producing candidates for dict probe.
-// Ports the surface effect of HMatrix anyToOne/anyToTwo match without FSA traversal.
-func ShortReplacementVariants(word string, short []ReplacementPair) []string {
-	if word == "" || len(short) == 0 {
-		return nil
-	}
-	seen := map[string]struct{}{word: {}}
-	var out []string
-	add := func(s string) {
-		if s == "" || s == word {
-			return
-		}
-		if _, ok := seen[s]; ok {
-			return
-		}
-		seen[s] = struct{}{}
-		out = append(out, s)
-	}
-	for _, p := range short {
-		from, to := p.From, p.To
-		if from == "" || from == to {
-			continue
-		}
-		// strip anchors for application (Java patterns may be anchored)
-		src := stripAnchors(from)
-		if src == "" {
-			continue
-		}
-		startOnly := isStartAnchored(from)
-		endOnly := isEndAnchored(from)
-		// single application at each index
-		searchFrom := 0
-		for searchFrom <= len(word) {
-			var idx int
-			if startOnly {
-				if searchFrom > 0 {
-					break
-				}
-				if strings.HasPrefix(word, src) {
-					idx = 0
-				} else {
-					break
-				}
-			} else if endOnly {
-				if !strings.HasSuffix(word, src) {
-					break
-				}
-				idx = len(word) - len(src)
-				if idx < searchFrom {
-					break
-				}
-			} else {
-				rel := strings.Index(word[searchFrom:], src)
-				if rel < 0 {
-					break
-				}
-				idx = searchFrom + rel
-			}
-			cand := word[:idx] + to + word[idx+len(src):]
-			add(cand)
-			if startOnly || endOnly {
-				break
-			}
-			searchFrom = idx + len(src)
-			if len(src) == 0 {
-				break
-			}
-		}
-	}
-	return out
-}
-
 // GetAllReplacements ports Speller.getAllReplacements (theRest multi-char targets only).
-func GetAllReplacements(str string, theRest map[string][]string, fromIndex, level int) []string {
-	if theRest == nil || len(theRest) == 0 {
+// Iterates keys in LinkedHashMap insertion order (Java DictionaryMetadata.replacementPairs).
+func GetAllReplacements(str string, theRest *LinkedHashStringListMap, fromIndex, level int) []string {
+	if theRest == nil || theRest.Len() == 0 {
 		return []string{str}
 	}
 	if level > maxReplacementRecursion {
@@ -276,7 +240,7 @@ func GetAllReplacements(str string, theRest map[string][]string, fromIndex, leve
 	keyLength := 0
 	found := false
 	strippedKeyForSelected := ""
-	for auxKey := range theRest {
+	for _, auxKey := range theRest.Keys {
 		startAnchor := isStartAnchored(auxKey)
 		endAnchor := isEndAnchored(auxKey)
 		stripped := auxKey
@@ -310,7 +274,7 @@ func GetAllReplacements(str string, theRest map[string][]string, fromIndex, leve
 	}
 	var replaced []string
 	if index < 120 {
-		for _, rep := range theRest[key] {
+		for _, rep := range theRest.Get(key) {
 			if !found {
 				replaced = append(replaced, GetAllReplacements(str, theRest, index+len(strippedKeyForSelected), level+1)...)
 				found = true

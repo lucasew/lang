@@ -27,11 +27,12 @@ func TestParseAndPartitionReplacementPairs(t *testing.T) {
 	require.GreaterOrEqual(t, len(pairs), 4)
 	rest, short := partitionReplacementPairs(pairs)
 	// lite→light (5), shun→tion (4) kept in theRest; f→ph and a→ei in short
-	require.Contains(t, rest, "lite")
-	require.Contains(t, rest["lite"], "light")
-	require.Contains(t, rest, "shun")
-	require.NotContains(t, rest, "f")
-	require.NotContains(t, rest, "a")
+	require.Contains(t, rest.Get("lite"), "light")
+	require.Contains(t, rest.Get("shun"), "tion")
+	require.Nil(t, rest.Get("f"))
+	require.Nil(t, rest.Get("a"))
+	// LinkedHashMap order: lite before shun (f/a went to short)
+	require.Equal(t, []string{"lite", "shun"}, rest.Keys)
 	require.NotEmpty(t, short)
 	foundF := false
 	for _, p := range short {
@@ -43,10 +44,24 @@ func TestParseAndPartitionReplacementPairs(t *testing.T) {
 }
 
 func TestGetAllReplacements_LiteLight(t *testing.T) {
-	rest := map[string][]string{"lite": {"light"}}
+	rest := &LinkedHashStringListMap{}
+	rest.Add("lite", "light")
 	got := GetAllReplacements("lite", rest, 0, 0)
 	require.Contains(t, got, "lite")  // branch without replacement
 	require.Contains(t, got, "light") // branch with
+}
+
+func TestParseReplacementPairs_UnderscoreSpace(t *testing.T) {
+	// Java hunspell REP: '_' → space
+	p := ParseReplacementPairs("a_b c_d")
+	require.Equal(t, []ReplacementPair{{From: "a b", To: "c d"}}, p)
+}
+
+func TestPartitionReplacementPairs_LinkedHashOrder(t *testing.T) {
+	pairs := ParseReplacementPairs("lite light, shun tion, phoby phobia")
+	rest, short := partitionReplacementPairs(pairs)
+	require.Empty(t, short)
+	require.Equal(t, []string{"lite", "shun", "phoby"}, rest.Keys)
 }
 
 func TestBinaryReplacementPairs_Phoby(t *testing.T) {
@@ -78,15 +93,6 @@ func TestInputConversion_IsMisspelled(t *testing.T) {
 	require.False(t, sp.IsMisspelled("æ"))
 	require.True(t, sp.IsMisspelled("ø"))
 }
-func TestShortReplacementVariants_Fone(t *testing.T) {
-	// pair f→ph applied once: fone → phone
-	short := []ReplacementPair{{From: "f", To: "ph"}, {From: "kw", To: "qu"}}
-	got := ShortReplacementVariants("fone", short)
-	require.Contains(t, got, "phone")
-	got2 := ShortReplacementVariants("kwality", short)
-	require.Contains(t, got2, "quality")
-}
-
 func TestBinaryShortReplacementPairs_EN(t *testing.T) {
 	path := DiscoverLanguageDict("/en/hunspell/en_US.dict")
 	if path == "" {
@@ -95,11 +101,21 @@ func TestBinaryShortReplacementPairs_EN(t *testing.T) {
 	sp := NewMorfologikSpeller("/en/hunspell/en_US.dict", 1)
 	require.True(t, sp.AttachBinaryDictionary(path))
 	require.NotEmpty(t, sp.ReplacementShort, "short f/ph etc. pairs")
-	// f→ph: fone → phone (distance-0 rewrite)
+	// f→ph / kw→qu only via findRepl anyToOne/anyToTwo (Java Speller 2.2.0), not surface invent.
 	require.True(t, sp.IsMisspelled("fone"))
 	sugs := sp.FindReplacements("fone")
 	require.Contains(t, sugs, "phone", "sugs=%v", sugs)
-	// kw→qu: kwality → quality
+	// weighted: pure replacement should be distance 0 (weight < typical edit-1 ≈ 51-freq)
+	ws := sp.GetWeightedSuggestions("fone")
+	require.NotEmpty(t, ws)
+	foundPhone := false
+	for _, w := range ws {
+		if w.Word == "phone" {
+			foundPhone = true
+			require.Less(t, w.Weight, 51, "phone should be dist-0 class weight; got %d", w.Weight)
+		}
+	}
+	require.True(t, foundPhone, "ws=%v", ws)
 	require.True(t, sp.IsMisspelled("kwality"))
 	sugs2 := sp.FindReplacements("kwality")
 	require.Contains(t, sugs2, "quality", "sugs=%v", sugs2)

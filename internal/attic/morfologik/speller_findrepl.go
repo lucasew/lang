@@ -84,20 +84,23 @@ func (s *SpellerFSA) LoadReplacementPairs(pairs []struct{ From, To string }) {
 	}
 }
 
-// FindReplacementCandidates ports Speller.findReplacementCandidates(word, false).
-// Resets HMatrix each call (Java MorfologikSpeller recreates Speller / HMatrix.reset).
-func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
-	if s == nil || s.Dict == nil || s.Dict.FSA == nil || word == "" {
-		return nil
-	}
-	if len(word) == 0 || len(word) >= MaxWordLength {
-		return nil
-	}
-	// evenIfWordInDictionary=false
-	if s.Dict.Contains(word) {
-		return nil
+// ResetHMatrix ports Speller.findReplacementCandidates's single hMatrix.reset() at start.
+func (s *SpellerFSA) ResetHMatrix() {
+	if s == nil || s.hMatrix == nil {
+		return
 	}
 	s.hMatrix.Reset()
+}
+
+// AppendFindRepl ports one findRepl call for a variant word without resetting HMatrix.
+// Java reuses the same HMatrix across getAllReplacements variants (dirty matrix between variants).
+func (s *SpellerFSA) AppendFindRepl(candidates *[]CandidateData, word string) {
+	if s == nil || s.Dict == nil || s.Dict.FSA == nil || candidates == nil || word == "" {
+		return
+	}
+	if len(word) >= MaxWordLength {
+		return
+	}
 	s.wordProcessed = []rune(word)
 	s.wordLen = len(s.wordProcessed)
 	if s.wordLen <= s.editDistance {
@@ -110,18 +113,46 @@ func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
 	}
 	s.candidate = s.candBuf
 	s.candLen = MaxWordLength
+	// clear candidate buffer slots we may read (Java allocates new char[MAX] each variant)
+	for i := range s.candBuf {
+		s.candBuf[i] = 0
+	}
+	s.findRepl(candidates, 0, s.Dict.FSA.RootNode(), nil, 0, 0, -1, "", 0)
+}
 
+// MakeCandidateData ports Speller.CandidateData constructor (dist-0 theRest hits, etc.).
+func (s *SpellerFSA) MakeCandidateData(word string, origDist int) CandidateData {
+	return s.makeCandidate(word, origDist)
+}
+
+// FindReplacementCandidates ports Speller.findReplacementCandidates(word, false) for a single word.
+// Resets HMatrix once (Java 2.2.0 Speller.findReplacementCandidates).
+func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
+	if s == nil || s.Dict == nil || s.Dict.FSA == nil || word == "" {
+		return nil
+	}
+	if len(word) == 0 || len(word) >= MaxWordLength {
+		return nil
+	}
+	// evenIfWordInDictionary=false
+	if s.Dict.Contains(word) {
+		return nil
+	}
+	s.ResetHMatrix()
 	var candidates []CandidateData
-	s.findRepl(&candidates, 0, s.Dict.FSA.RootNode(), nil, 0, 0, -1, "", 0)
+	s.AppendFindRepl(&candidates, word)
+	return finalizeCandidates(candidates, word)
+}
 
-	// sort by weighted distance, dedupe words (Java Collections.sort + first occurrence)
+// finalizeCandidates ports sort + first-occurrence dedupe (output conversion is outer layer).
+func finalizeCandidates(candidates []CandidateData, originalWord string) []CandidateData {
 	sort.SliceStable(candidates, func(i, j int) bool {
 		return candidates[i].Distance < candidates[j].Distance
 	})
 	seen := map[string]struct{}{}
 	out := make([]CandidateData, 0, len(candidates))
 	for _, c := range candidates {
-		if c.Word == "" || c.Word == word {
+		if c.Word == "" || c.Word == originalWord {
 			continue
 		}
 		if _, ok := seen[c.Word]; ok {
@@ -131,6 +162,11 @@ func (s *SpellerFSA) FindReplacementCandidates(word string) []CandidateData {
 		out = append(out, c)
 	}
 	return out
+}
+
+// FinalizeCandidates is the exported twin of finalizeCandidates for multi-variant callers.
+func FinalizeCandidates(candidates []CandidateData, originalWord string) []CandidateData {
+	return finalizeCandidates(candidates, originalWord)
 }
 
 // findRepl ports Speller.findRepl (anyToTwo, anyToOne, general).
