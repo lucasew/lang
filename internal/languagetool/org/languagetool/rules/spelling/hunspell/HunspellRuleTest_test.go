@@ -75,3 +75,17 @@ func TestHunspellRule_Performance(t *testing.T) {
 func TestHunspellRule_CompoundAwareRulePerformance(t *testing.T) {
 	t.Skip("Java @Ignore")
 }
+
+// Twin of HunspellRuleTest.testSeparateCorrectWordPerformance (Java @Ignore perf loop).
+// Behavioral twin: known correct DE compounds → 0 matches (Java assertEquals(0, rule.match(s).length)).
+func TestHunspellRule_SeparateCorrectWordPerformance(t *testing.T) {
+	words := []string{"Rechtschreibreform", "Theaterkasse", "Zoobesuch", "Handelsvertreter", "Mückenstich", "gewöhnlich", "Autoverkehr"}
+	dict := NewMapHunspellDictionary(words)
+	r := NewHunspellRule("de", dict)
+	for _, w := range words {
+		sent := languagetool.AnalyzePlain(w)
+		matches, err := r.Match(sent)
+		require.NoError(t, err)
+		require.Empty(t, matches, w)
+	}
+}
