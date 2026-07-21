@@ -147,6 +147,7 @@ func (s *MorfologikSpeller) binaryFindReplacementCandidates(d *atticmorfo.Dictio
 	// One Speller for CandidateData weights + findRepl (Java single Speller instance).
 	fsaSp := atticmorfo.NewSpellerFSA(d, maxEdit)
 	fsaSp.IgnoreDiacritics = s.IgnoreDiacritics
+	fsaSp.ConvertCase = s.ConvertCase
 	fsaSp.EquivalentChars = s.EquivalentChars
 	if len(s.ReplacementShort) > 0 {
 		pairs := make([]struct{ From, To string }, len(s.ReplacementShort))
@@ -233,8 +234,10 @@ func (s *MorfologikSpeller) suggestOpts() atticmorfo.SuggestOpts {
 		return atticmorfo.SuggestOpts{}
 	}
 	return atticmorfo.SuggestOpts{
-		IgnoreDiacritics: s.IgnoreDiacritics,
-		EquivalentChars:  s.EquivalentChars,
+		IgnoreDiacritics:    s.IgnoreDiacritics,
+		ConvertCase:         s.ConvertCase,
+		EquivalentChars:     s.EquivalentChars,
+		SymmetricEquivalent: true, // invent edit-gen path only
 	}
 }
 

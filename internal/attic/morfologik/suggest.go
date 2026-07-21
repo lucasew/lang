@@ -13,12 +13,15 @@ const FreqRanges = 26
 // SuggestOpts ports Speller.areEqual / edit-search options from DictionaryMetadata.
 type SuggestOpts struct {
 	// IgnoreDiacritics ports fsa.dict.speller.ignore-diacritics (EN true).
-	// Expand replace/insert alphabet with common Latin diacritic letters so
-	// cafe→café style hits are reachable without full HMatrix FSA walk.
 	IgnoreDiacritics bool
+	// ConvertCase ports fsa.dict.speller.convert-case (used inside areEqual diacritic fold).
+	ConvertCase bool
 	// EquivalentChars ports fsa.dict.speller.equivalent-chars (from → list of to).
-	// Each to is tried as a free replacement for from at edit generation.
+	// Speller.areEqual only checks map[from].contains(to), not reverse.
 	EquivalentChars map[rune][]rune
+	// SymmetricEquivalent enables reverse MAP lookup for invent edit-candidate generation only
+	// (not Java areEqual). Leave false for SpellerED / findRepl.
+	SymmetricEquivalent bool
 }
 
 // SuggestEdits returns dictionary words within one Damerau-Levenshtein edit of word
@@ -213,7 +216,7 @@ func freeEqualUnderOpts(a, b string, opt SuggestOpts) bool {
 	return true
 }
 
-// runesEqualUnderOpts ports Speller.areEqual for a single character pair.
+// runesEqualUnderOpts ports Speller.areEqual for a single character pair (Java 2.2.0).
 func runesEqualUnderOpts(x, y rune, opt SuggestOpts) bool {
 	if x == y {
 		return true
@@ -226,23 +229,48 @@ func runesEqualUnderOpts(x, y rune, opt SuggestOpts) bool {
 				}
 			}
 		}
-		// also check reverse for generation symmetry
-		if list, ok := opt.EquivalentChars[y]; ok {
-			for _, c := range list {
-				if c == x {
-					return true
+		// invent edit-gen only (not Speller.areEqual)
+		if opt.SymmetricEquivalent {
+			if list, ok := opt.EquivalentChars[y]; ok {
+				for _, c := range list {
+					if c == x {
+						return true
+					}
 				}
 			}
 		}
 	}
 	if opt.IgnoreDiacritics {
-		return stripDiacritic(x) == stripDiacritic(y)
+		xn := nfdFirst(x)
+		yn := nfdFirst(y)
+		if xn == yn {
+			return true
+		}
+		if opt.ConvertCase && unicode.IsLetter(xn) {
+			if unicode.IsLower(xn) != unicode.IsLower(yn) {
+				return unicode.ToLower(xn) == unicode.ToLower(yn)
+			}
+		}
+		return xn == yn
 	}
 	return false
 }
 
+// nfdFirst ports Normalizer.normalize(Character.toString(x), NFD).charAt(0).
+func nfdFirst(r rune) rune {
+	s := norm.NFD.String(string(r))
+	if s == "" {
+		return r
+	}
+	// UTF-16 charAt(0) for BMP = first rune of NFD string
+	for _, c := range s {
+		return c
+	}
+	return r
+}
+
+// stripDiacritic returns the first non-mark code point (legacy edit-gen helper).
 func stripDiacritic(r rune) rune {
-	// Ports Normalizer.normalize(Character.toString(x), NFD).charAt(0)
 	s := norm.NFD.String(string(r))
 	for _, c := range s {
 		if unicode.Is(unicode.Mn, c) {

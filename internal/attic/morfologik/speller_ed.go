@@ -16,6 +16,7 @@ type SpellerED struct {
 	candLen            int
 	// areEqual options (Java dictionaryMetadata)
 	IgnoreDiacritics bool
+	ConvertCase      bool
 	EquivalentChars  map[rune][]rune
 }
 
@@ -184,8 +185,10 @@ func (s *SpellerED) areEqual(x, y rune) bool {
 		return true
 	}
 	opt := SuggestOpts{
-		IgnoreDiacritics: s.IgnoreDiacritics,
-		EquivalentChars:  s.EquivalentChars,
+		IgnoreDiacritics:    s.IgnoreDiacritics,
+		ConvertCase:         s.ConvertCase,
+		EquivalentChars:     s.EquivalentChars,
+		SymmetricEquivalent: false, // Java areEqual is one-way only
 	}
 	return runesEqualUnderOpts(x, y, opt)
 }

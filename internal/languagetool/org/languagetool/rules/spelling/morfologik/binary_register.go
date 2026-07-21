@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 )
@@ -55,7 +54,7 @@ func DiscoverLanguageDict(classpath string) string {
 
 // TryRegisterBinarySpeller opens a CFSA2/FSA speller dict and registers ruleID
 // via SimplePredicateSpellerChecker (Java MorfologikSpellerRule Match parity for
-// isMisspelled + SuggestEdits). Returns false if path empty or dict cannot open.
+// isMisspelled + Speller.findReplacements). Returns false if path empty or dict cannot open.
 func TryRegisterBinarySpeller(lt *languagetool.JLanguageTool, ruleID, classpathOrPath string) bool {
 	if lt == nil || ruleID == "" || classpathOrPath == "" {
 		return false
@@ -70,8 +69,10 @@ func TryRegisterBinarySpeller(lt *languagetool.JLanguageTool, ruleID, classpathO
 	if dictPath == "" {
 		return false
 	}
-	d, err := atticmorfo.OpenDictionary(dictPath)
-	if err != nil || d == nil {
+	// MorfologikSpeller with binary FSA + .info flags (Java Speller.isMisspelled / findReplacements).
+	msp := NewMorfologikSpeller(classpathOrPath, 1)
+	if !msp.AttachBinaryDictionary(dictPath) {
+		// Fail closed: need full Attach for findRepl + .info replacement-pairs.
 		return false
 	}
 	// Java SpellingCheckRule.init word lists for language from classpath (/pl/hunspell/…).
@@ -82,14 +83,6 @@ func TryRegisterBinarySpeller(lt *languagetool.JLanguageTool, ruleID, classpathO
 	}
 	meta := spelling.NewSpellingCheckRule(ruleID, "Possible spelling mistake", langCode)
 	spelling.ApplyDefaultSpellingWordLists(meta)
-	// MorfologikSpeller with binary FSA + .info flags (Java Speller.isMisspelled gates).
-	msp := NewMorfologikSpeller(classpathOrPath, 1)
-	if !msp.AttachBinaryDictionary(dictPath) {
-		// Open already succeeded above; Attach should use same path.
-		msp.InDictionaryFn = d.Contains
-		msp.BinaryDictPath = dictPath
-		msp.LoadInfoBesideDict(dictPath)
-	}
 	isKnown := func(w string) bool {
 		if meta.IsProhibited(w) {
 			return false
@@ -101,7 +94,8 @@ func TryRegisterBinarySpeller(lt *languagetool.JLanguageTool, ruleID, classpathO
 		return !msp.IsMisspelled(w)
 	}
 	suggestFn := func(w string) []string {
-		raw := d.SuggestEdits(w, 8)
+		// Java MorfologikSpeller.findReplacements → Speller.findReplacements (findRepl FSA)
+		raw := msp.FindReplacements(w)
 		if len(meta.ProhibitedWords) == 0 {
 			return raw
 		}

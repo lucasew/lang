@@ -27,12 +27,30 @@ func TestRunesEqualUnderOpts_Diacritics(t *testing.T) {
 }
 
 func TestRunesEqualUnderOpts_EquivalentChars(t *testing.T) {
+	// Java Speller.areEqual: only map[from].contains(to), not reverse
 	opt := SuggestOpts{EquivalentChars: map[rune][]rune{'l': {'ł'}, 'u': {'ó'}}}
 	if !runesEqualUnderOpts('l', 'ł', opt) {
 		t.Fatal("l ~ ł")
 	}
+	if runesEqualUnderOpts('ł', 'l', opt) {
+		t.Fatal("ł !~ l without SymmetricEquivalent (Java one-way)")
+	}
+	// invent edit-gen may enable reverse
+	opt.SymmetricEquivalent = true
 	if !runesEqualUnderOpts('ł', 'l', opt) {
-		t.Fatal("ł ~ l reverse")
+		t.Fatal("ł ~ l with SymmetricEquivalent")
+	}
+}
+
+func TestRunesEqualUnderOpts_DiacriticsConvertCase(t *testing.T) {
+	// Java: IgnoreDiacritics + ConvertCase → E ~ é via NFD first + toLower
+	opt := SuggestOpts{IgnoreDiacritics: true, ConvertCase: true}
+	if !runesEqualUnderOpts('E', 'é', opt) {
+		t.Fatal("E ~ é with ignore-diacritics+convert-case")
+	}
+	optNo := SuggestOpts{IgnoreDiacritics: true}
+	if runesEqualUnderOpts('E', 'é', optNo) {
+		t.Fatal("E !~ é without convert-case (NFD first is E vs e)")
 	}
 }
 
