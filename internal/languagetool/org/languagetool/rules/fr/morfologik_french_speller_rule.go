@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
@@ -40,6 +41,8 @@ func NewMorfologikFrenchSpellerRule() *MorfologikFrenchSpellerRule {
 	}
 	// Java MorfologikFrenchSpellerRule ctor: setIgnoreTaggedWords().
 	r.IgnoreTaggedWords = true
+	// Java MorfologikSpellerRule.initSpeller + French.prepareLineForSpeller on plain lists.
+	r.InitSpellersFromGetters(language.FrenchPrepareLineForSpeller, nil)
 	return r
 }
 

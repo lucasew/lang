@@ -46,5 +46,7 @@ func NewMorfologikDutchSpellerRule() *MorfologikDutchSpellerRule {
 	r.SkipTokenFn = func(tok *languagetool.AnalyzedTokenReadings) bool {
 		return tok != nil && tok.HasPosTag(englishIgnorePOS)
 	}
+	// Java MorfologikSpellerRule.initSpeller; Dutch.prepareLineForSpeller is default identity.
+	r.InitSpellersFromGetters(nil, nil)
 	return r
 }

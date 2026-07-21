@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
@@ -60,6 +61,8 @@ func NewMorfologikPortugueseSpellerRule(variantCode, dict, id string) *Morfologi
 	r.SkipTokenFn = func(tok *languagetool.AnalyzedTokenReadings) bool {
 		return tok != nil && tok.HasPosTag(englishIgnorePOS)
 	}
+	// Java MorfologikSpellerRule.initSpeller + Portuguese.prepareLineForSpeller on plain lists.
+	r.InitSpellersFromGetters(language.PortuguesePrepareLineForSpeller, nil)
 	return r
 }
 

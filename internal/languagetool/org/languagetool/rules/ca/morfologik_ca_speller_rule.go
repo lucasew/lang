@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
@@ -55,6 +56,8 @@ func NewMorfologikCatalanSpellerRule() *MorfologikCatalanSpellerRule {
 		}
 		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
+	// Java MorfologikSpellerRule.initSpeller + Catalan.prepareLineForSpeller on plain lists.
+	r.InitSpellersFromGetters(language.CatalanPrepareLineForSpeller, nil)
 	return r
 }
 

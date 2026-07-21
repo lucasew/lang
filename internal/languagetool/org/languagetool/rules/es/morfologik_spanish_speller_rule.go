@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
@@ -51,6 +52,8 @@ func NewMorfologikSpanishSpellerRule() *MorfologikSpanishSpellerRule {
 		}
 		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	}
+	// Java MorfologikSpellerRule.initSpeller + Spanish.prepareLineForSpeller on plain lists.
+	r.InitSpellersFromGetters(language.SpanishPrepareLineForSpeller, nil)
 	return r
 }
 
