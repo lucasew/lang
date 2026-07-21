@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPersianPatternRuleTest_Rules(t *testing.T) {
+func TestPersianPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("fa").Analyze("x"))
 }

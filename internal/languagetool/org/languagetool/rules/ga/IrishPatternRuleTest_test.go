@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIrishPatternRuleTest_Rules(t *testing.T) {
+func TestIrishPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("ga").Analyze("x"))
 }

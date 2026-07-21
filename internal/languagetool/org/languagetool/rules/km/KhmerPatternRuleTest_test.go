@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestKhmerPatternRuleTest_Rules(t *testing.T) {
+func TestKhmerPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("km").Analyze("x"))
 }

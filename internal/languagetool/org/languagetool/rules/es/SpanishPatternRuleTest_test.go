@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSpanishPatternRuleTest_Rules(t *testing.T) {
+func TestSpanishPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("es").Analyze("x"))
 }

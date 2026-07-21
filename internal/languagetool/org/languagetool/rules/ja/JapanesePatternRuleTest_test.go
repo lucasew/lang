@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestJapanesePatternRuleTest_Rules(t *testing.T) {
+func TestJapanesePatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("ja").Analyze("x"))
 }

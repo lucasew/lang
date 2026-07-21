@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPolishPatternRuleTest_Rules(t *testing.T) {
+func TestPolishPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("pl").Analyze("x"))
 }

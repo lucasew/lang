@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMalayalamPatternRuleTest_Rules(t *testing.T) {
+func TestMalayalamPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("ml").Analyze("x"))
 }

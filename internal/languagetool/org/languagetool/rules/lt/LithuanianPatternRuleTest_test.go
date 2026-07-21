@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLithuanianPatternRuleTest_Rules(t *testing.T) {
+func TestLithuanianPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("lt").Analyze("x"))
 }

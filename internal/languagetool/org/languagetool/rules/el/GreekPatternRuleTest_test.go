@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGreekPatternRuleTest_Rules(t *testing.T) {
+func TestGreekPatternRule_Rules(t *testing.T) {
 	require.NotEmpty(t, languagetool.NewJLanguageTool("el").Analyze("x"))
 }

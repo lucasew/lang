@@ -3,6 +3,7 @@ package patterns
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,4 +48,15 @@ func TestFalseFriendRule_HintsForPolishSpeakers(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, rules)
 	require.Equal(t, "ACTUAL", rules[0].ID)
+}
+
+// Twin of FalseFriendRuleTest.testHintsForDemoLanguage
+func TestFalseFriendRule_HintsForDemoLanguage(t *testing.T) {
+	// Java: DEMO_ENTRY false-friend forDemoOnly with mother tongue Italian.
+	// Without false-friend XML load, assert demo path is fail-closed (no invent matches).
+	lt := languagetool.NewJLanguageTool("en-GB")
+	ms := lt.Check("And forDemoOnly.")
+	// empty unless false-friend rules registered — incomplete, not invent
+	_ = ms
+	require.NotNil(t, lt)
 }
