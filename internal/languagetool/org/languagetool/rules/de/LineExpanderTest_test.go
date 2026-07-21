@@ -29,8 +29,8 @@ func TestLineExpander_Expansion(t *testing.T) {
 	require.ElementsMatch(t, []string{
 		"Lehrer_in", "Lehrer_innen", "Lehrer*in", "Lehrer*innen", "Lehrer:in", "Lehrer:innen",
 	}, e.ExpandLine("Lehrer_in"))
-	// verb prefix: Java always has synthesizer; nil/empty VerbForms panic (no soft join)
-	require.Panics(t, func() { e.ExpandLine("rüber_machen") })
+	// verb prefix without synthesizer: fail-closed (no invent join/zu/genitive)
+	require.Empty(t, e.ExpandLine("rüber_machen"))
 	e.VerbForms = func(lemma string) []string {
 		if lemma == "machen" {
 			return []string{"machen", "machst"}
@@ -51,7 +51,7 @@ func TestLineExpander_Expansion(t *testing.T) {
 	require.Equal(t, []string{"escape_machen"}, e.ExpandLine(`escape\_machen`))
 	// unknown flag panics (Java RuntimeException)
 	require.Panics(t, func() { e.ExpandLine("rüber/invalidword") })
-	// empty synth forms panic
+	// empty synth forms panic (Java RuntimeException)
 	e.VerbForms = func(string) []string { return nil }
 	require.Panics(t, func() { e.ExpandLine("rüber_machen") })
 }

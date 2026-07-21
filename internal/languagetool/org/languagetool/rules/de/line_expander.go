@@ -9,9 +9,9 @@ import (
 )
 
 // LineExpander ports org.languagetool.rules.de.LineExpander.
-// VerbForms optional: Java GermanSynthesizer.synthesizeForPosTags(verb, VER:*).
-// Without VerbForms, verb-prefix lines still emit join, zu-form, and genitive (always
-// present in Java after synth forms); full conjugation needs synthesizer resources.
+// VerbForms: Java GermanSynthesizer.synthesizeForPosTags(verb, VER:*).
+// When german_synth.dict is missing VerbForms is nil → verb-prefix lines fail-closed
+// (no invent join/zu/genitive). Empty non-nil VerbForms panics like Java RuntimeException.
 type LineExpander struct {
 	// VerbForms returns conjugated forms for a verb lemma (VER: tags only).
 	VerbForms func(lemma string) []string
@@ -112,12 +112,15 @@ func (e *LineExpander) handleLineWithPrefix(line string) []string {
 		result = append(result, w)
 	}
 	// Java: verbFormCache.getUnchecked(parts[1]); if forms.length == 0 throw
-	// (always has GermanSynthesizer — never soft-joins without forms)
+	// Never invent plain join/zu/genitive without forms.
 	if e == nil || e.VerbForms == nil {
-		panic(fmt.Sprintf("Could not expand '%s' from line '%s', no forms found", parts[1], line))
+		// Synthesizer asset missing (not available in this tree): fail-closed skip line.
+		// Do not soft-expand; LoadIgnoreWords continues for other lines.
+		return nil
 	}
 	forms := e.VerbForms(parts[1])
 	if len(forms) == 0 {
+		// Java RuntimeException when synthesizer returns empty
 		panic(fmt.Sprintf("Could not expand '%s' from line '%s', no forms found", parts[1], line))
 	}
 	for _, form := range forms {

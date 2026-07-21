@@ -10,8 +10,8 @@ func TestLineExpander(t *testing.T) {
 	e := NewLineExpander()
 	require.Equal(t, []string{"foo", "foos"}, e.ExpandLine("foo/S"))
 	require.Equal(t, []string{"bar", "barn"}, e.ExpandLine("bar/N"))
-	// Without VerbForms: Java synthesizer always present; empty forms → RuntimeException
-	require.Panics(t, func() { e.ExpandLine("weiter_gehen") })
+	// Without VerbForms (synth asset missing): fail-closed — no invent
+	require.Empty(t, e.ExpandLine("weiter_gehen"))
 	// With synth-like VerbForms including infinitive:
 	e.VerbForms = func(lemma string) []string {
 		if lemma == "gehen" {
