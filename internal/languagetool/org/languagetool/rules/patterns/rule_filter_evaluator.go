@@ -10,8 +10,9 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// WHITESPACE ports RuleFilterEvaluator.WHITESPACE (\\s+).
-var whitespaceRE = regexp.MustCompile(`\s+`)
+// whitespaceRE ports RuleFilterEvaluator.WHITESPACE = Pattern.compile("\\s+")
+// without UNICODE_CHARACTER_CLASS: [ \t\n\x0B\f\r]+ (not Go RE2 \s / NBSP).
+var whitespaceRE = regexp.MustCompile(`[ \t\n\v\f\r]+`)
 
 // RuleFilterEvaluator ports org.languagetool.rules.patterns.RuleFilterEvaluator.
 type RuleFilterEvaluator struct {

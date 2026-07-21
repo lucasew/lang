@@ -47,6 +47,18 @@ func TestCheckPostagsInSuggestionFilter_SplitWSLikeJava(t *testing.T) {
 	require.Equal(t, []string{" cat"}, f.Filter([]string{" cat"}, "EMPTY,NN"))
 }
 
+// Java Pattern \\s without UNICODE_CHARACTER_CLASS does not split on NBSP.
+func TestCheckPostagsInSuggestionFilter_NBSPNotSplit(t *testing.T) {
+	f := NewCheckPostagsInSuggestionFilter(func(tok string) []string {
+		if tok == "the\u00a0cat" {
+			return []string{"NN"}
+		}
+		return []string{"XX"}
+	})
+	// One token (NBSP interior) vs one tag — keep; Unicode \\s would invent two tokens → panic.
+	require.Equal(t, []string{"the\u00a0cat"}, f.Filter([]string{"the\u00a0cat"}, "NN"))
+}
+
 func TestCheckPostagsInSuggestionFilter_MismatchPanics(t *testing.T) {
 	f := NewCheckPostagsInSuggestionFilter(func(tok string) []string { return []string{"NN"} })
 	// Java IOException on token/tag count mismatch — not invent skip

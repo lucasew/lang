@@ -463,8 +463,9 @@ func formatMultipleSynthesis(matches []string, leftSide, rightSide string) strin
 }
 
 // whitespaceOrPunct ports PatternRuleMatcher.WHITESPACE_OR_PUNCT = [\\s,:;.!?].*
-// Java Matcher.matches() requires the entire rightSide to match.
-var whitespaceOrPunct = regexp.MustCompile(`(?s)[\s,:;.!?].*`)
+// Java \\s without UNICODE_CHARACTER_CLASS is [ \t\n\x0B\f\r] (not NBSP).
+// Matcher.matches() requires the entire rightSide to match.
+var whitespaceOrPunct = regexp.MustCompile(`(?s)[ \t\n\v\f\r,:;.!?].*`)
 
 func concatWithoutExtraSpace(leftSide, rightSide string) string {
 	// Java: left ends with space + right is </suggestion> OR full match of WHITESPACE_OR_PUNCT

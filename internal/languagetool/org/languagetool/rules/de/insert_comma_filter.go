@@ -21,9 +21,10 @@ func NewInsertCommaFilter() *InsertCommaFilter {
 	return &InsertCommaFilter{}
 }
 
-// Java: Pattern.compile("\\s"), [Ss]agt?, der|die|..., denke|..., bei|für|mit, [Di]ir|...
+// Java: Pattern.compile("\\s") without UNICODE_CHARACTER_CLASS → [ \t\n\x0B\f\r]
+// [Ss]agt?, der|die|..., denke|..., bei|für|mit, [Di]ir|...
 var (
-	insertCommaWS    = regexp.MustCompile(`\s`)
+	insertCommaWS    = regexp.MustCompile(`[ \t\n\v\f\r]`)
 	insertCommaSagt  = regexp.MustCompile(`^[Ss]agt?$`)
 	insertCommaDenke = regexp.MustCompile(`^(denke|dachte|glaube|schätze|vermute|behaupte)$`)
 	insertCommaDer   = regexp.MustCompile(`^(der|die|das|seine|ihre|deine|unsere|meine|folgender|dieser)$`)

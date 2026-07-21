@@ -23,8 +23,9 @@ func NewCheckPostagsInSuggestionFilter(tag func(string) []string) *CheckPostagsI
 var (
 	checkPostagsTagMu      sync.RWMutex
 	defaultCheckPostagsTag func(string) []string
-	// javaSplitWS ports String.split("\\s+") (limit 0: trailing empties discarded).
-	javaSplitWS = regexp.MustCompile(`\s+`)
+	// javaSplitWS ports String.split("\\s+") without UNICODE_CHARACTER_CLASS:
+	// [ \t\n\x0B\f\r]+ (not Go RE2 \s / NBSP). Trailing empties discarded (split limit 0).
+	javaSplitWS = regexp.MustCompile(`[ \t\n\v\f\r]+`)
 )
 
 // SetDefaultCheckPostagsTagger wires language tagger for CheckPostagsInSuggestionFilter

@@ -14,6 +14,18 @@ func TestGetResolvedArguments_Literal(t *testing.T) {
 	require.Equal(t, "true", args["hasTypographicalApostrophe"])
 }
 
+// Java Pattern.compile("\\s+") does not treat NBSP as whitespace.
+func TestGetResolvedArguments_NBSPNotSeparator(t *testing.T) {
+	// key\u00a0with:value is one arg with key "key\u00a0with"
+	args := GetResolvedArguments("key\u00a0with:val other:x", nil, 0, nil)
+	require.Equal(t, "val", args["key\u00a0with"])
+	require.Equal(t, "x", args["other"])
+	// multi ASCII spaces still split
+	args2 := GetResolvedArguments("a:1   b:2", nil, 0, nil)
+	require.Equal(t, "1", args2["a"])
+	require.Equal(t, "2", args2["b"])
+}
+
 func TestGetResolvedArguments_Backref(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("alpha", nil, nil)),

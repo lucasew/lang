@@ -23,13 +23,15 @@ func (e *RegexRuleFilterEvaluator) RunFilter(filterArgs string, ruleMatch *rules
 	return e.Filter.AcceptRuleMatch(ruleMatch, args, sentence, groups)
 }
 
-// ResolveFilterArguments parses "key:value key2:value2" space-separated pairs.
+// ResolveFilterArguments ports RegexRuleFilterEvaluator: filterArgs.split("\\s+").
+// Java Pattern \\s without UNICODE_CHARACTER_CLASS (ASCII whitespace only).
 func ResolveFilterArguments(filterArgs string) map[string]string {
 	result := map[string]string{}
-	if strings.TrimSpace(filterArgs) == "" {
-		return result
-	}
-	for _, arg := range strings.Fields(filterArgs) {
+	// Java "".split("\\s+") → {""}; skip empty segments like non-empty split pieces.
+	for _, arg := range whitespaceSplit(filterArgs) {
+		if arg == "" {
+			continue
+		}
 		delimPos := strings.Index(arg, ":")
 		if delimPos == -1 {
 			panic(fmt.Sprintf("Invalid syntax for key/value, expected 'key:value', got: '%s'", arg))
