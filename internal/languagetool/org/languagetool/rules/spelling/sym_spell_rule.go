@@ -1,31 +1,44 @@
 package spelling
 
 import (
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/suggestions"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
+// SymSpellRuleID ports SymSpellRule.getId.
+const SymSpellRuleID = "SYMSPELL_RULE"
+
 // SymSpellRule ports org.languagetool.rules.spelling.SymSpellRule as a
-// dictionary + edit-distance suggestion rule (full SymSpell index deferred).
+// dictionary + edit-distance suggestion rule (full SymSpell index deferred;
+// lookup uses in-memory Dictionary + edit distance like the Java SuggestItem path).
 type SymSpellRule struct {
 	*SpellingCheckRule
 	EditDistance int
-	// Dictionary accepted words.
+	// Dictionary accepted words (Java defaultDictSpeller surface).
 	Dictionary map[string]struct{}
-	// Prohibited words always flagged.
+	// UserDictionary ports userDictSpeller accepted words.
+	UserDictionary map[string]struct{}
+	// Prohibited words always flagged (filterCandidates).
 	Prohibited map[string]struct{}
-	mu         sync.RWMutex
+	// Orderer ports SymSpellRule.orderer for addSuggestionsToRuleMatch (optional ML).
+	Orderer suggestions.SuggestionsOrderer
+	mu      sync.RWMutex
 }
 
 func NewSymSpellRule(id, languageCode string) *SymSpellRule {
+	if id == "" {
+		id = SymSpellRuleID
+	}
 	r := &SymSpellRule{
-		SpellingCheckRule: NewSpellingCheckRule(id, "Possible spelling mistake (SymSpell)", languageCode),
+		SpellingCheckRule: NewSpellingCheckRule(id, "Spell checking rule using SymSpell algorithm", languageCode),
 		EditDistance:      3,
 		Dictionary:        map[string]struct{}{},
+		UserDictionary:    map[string]struct{}{},
 		Prohibited:        map[string]struct{}{},
 	}
 	r.IsMisspelled = r.isMisspelled
@@ -40,33 +53,71 @@ func (r *SymSpellRule) AddWords(words ...string) {
 	}
 }
 
+// AddUserWords ports user dictionary lines for userDictSpeller.
+func (r *SymSpellRule) AddUserWords(words ...string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.UserDictionary == nil {
+		r.UserDictionary = map[string]struct{}{}
+	}
+	for _, w := range words {
+		r.UserDictionary[w] = struct{}{}
+	}
+}
+
 func (r *SymSpellRule) isMisspelled(word string) bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	if _, bad := r.Prohibited[word]; bad {
 		return true
 	}
-	if _, ok := r.Dictionary[word]; ok {
+	if r.inDictLocked(word) {
 		return false
-	}
-	low := strings.ToLower(word)
-	if low != word {
-		if _, ok := r.Dictionary[low]; ok {
-			return false
-		}
 	}
 	return true
 }
 
-// Suggestions returns dictionary words within EditDistance (small dicts).
+// inDictLocked requires r.mu held for read.
+func (r *SymSpellRule) inDictLocked(word string) bool {
+	if _, ok := r.Dictionary[word]; ok {
+		return true
+	}
+	if _, ok := r.UserDictionary[word]; ok {
+		return true
+	}
+	low := strings.ToLower(word)
+	if low != word {
+		if _, ok := r.Dictionary[low]; ok {
+			return true
+		}
+		if _, ok := r.UserDictionary[low]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+// Suggestions returns default-dict words within EditDistance (small dicts).
 func (r *SymSpellRule) Suggestions(word string) []string {
+	return r.suggestionsFrom(word, false)
+}
+
+func (r *SymSpellRule) suggestionsFrom(word string, user bool) []string {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	if len(r.Dictionary) == 0 || len(r.Dictionary) > 10000 {
+	dict := r.Dictionary
+	if user {
+		dict = r.UserDictionary
+	}
+	if len(dict) == 0 || len(dict) > 10000 {
 		return nil
 	}
 	var out []string
-	for w := range r.Dictionary {
+	for w := range dict {
+		// filterCandidates: skip prohibited
+		if _, bad := r.Prohibited[w]; bad {
+			continue
+		}
 		if levenshtein(word, w) <= r.EditDistance {
 			out = append(out, w)
 			if len(out) >= 10 {
@@ -77,33 +128,55 @@ func (r *SymSpellRule) Suggestions(word string) []string {
 	return out
 }
 
-// Match flags misspelled tokens.
+// Match ports SymSpellRule.match:
+// skip sentence start / immunized / ignored / non-word;
+// empty candidates → misspelling match;
+// top candidate equals word → no match;
+// else match + addSuggestionsToRuleMatch(user, default, orderer).
 func (r *SymSpellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if sentence == nil || r == nil {
 		return nil, nil
 	}
 	var out []*rules.RuleMatch
 	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		// Skip pure SENT_START only — last content word carries SENT_END in LT.
+		// Java: token.isSentenceStart() || immunized || ignoredBySpeller || isNonWord
 		if tok == nil || tok.IsSentenceStart() {
 			continue
 		}
-		if tok.IsIgnoredBySpeller() || tok.IsImmunized() {
+		if tok.IsIgnoredBySpeller() || tok.IsImmunized() || tok.IsNonWord() {
 			continue
 		}
 		w := tok.GetToken()
 		if w == "" || tokenizers.UTF16Len(w) > MaxTokenLength {
 			continue
 		}
-		if r.AcceptWord(w) {
+		// IgnoreWord list (Java ignoredWords.contains)
+		if r.SpellingCheckRule != nil && r.IgnoreWord(w) {
 			continue
 		}
-		m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
-			"Possible spelling mistake found")
-		if sug := r.Suggestions(w); len(sug) > 0 {
-			m.SetSuggestedReplacements(sug)
+		candidates := r.suggestionsFrom(w, false)
+		userCandidates := r.suggestionsFrom(w, true)
+		// Java: candidates empty && user empty → match "Misspelling or unknown word!"
+		// else if top candidate != word → match + suggestions
+		var m *rules.RuleMatch
+		if len(candidates) == 0 && len(userCandidates) == 0 {
+			if !r.isMisspelled(w) {
+				// in dict but no edit-distance sugs from small dict scan — accept
+				continue
+			}
+			m = rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
+				"Misspelling or unknown word!")
+			m.SetType(rules.RuleMatchTypeUnknownWord)
+		} else if !(len(candidates) > 0 && candidates[0] == w ||
+			len(userCandidates) > 0 && userCandidates[0] == w) {
+			m = rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
+				"Misspelling!")
+			m.SetType(rules.RuleMatchTypeUnknownWord)
+			AddSuggestionsToRuleMatchStrings(w, userCandidates, candidates, r.Orderer, m)
 		}
-		out = append(out, m)
+		if m != nil {
+			out = append(out, m)
+		}
 	}
 	return out, nil
 }

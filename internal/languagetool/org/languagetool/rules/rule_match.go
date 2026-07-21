@@ -56,6 +56,10 @@ type RuleMatch struct {
 	// language short code → confidence when ForeignLanguageChecker fires.
 	// Empty means unset / not a foreign-language hint.
 	NewLanguageMatches map[string]float32
+	// AutoCorrect ports RuleMatch.autoCorrect (ML suggestion ranker).
+	AutoCorrect bool
+	// Features ports RuleMatch.features (SortedMap in Java; plain map in Go).
+	Features map[string]float32
 }
 
 func NewRuleMatch(rule any, sentence *languagetool.AnalyzedSentence, fromPos, toPos int, message string) *RuleMatch {
@@ -91,6 +95,12 @@ func CloneRuleMatch(clone *RuleMatch) *RuleMatch {
 			out.NewLanguageMatches[k] = v
 		}
 	}
+	if clone.Features != nil {
+		out.Features = make(map[string]float32, len(clone.Features))
+		for k, v := range clone.Features {
+			out.Features[k] = v
+		}
+	}
 	return &out
 }
 
@@ -116,6 +126,45 @@ func (m *RuleMatch) SetNewLanguageMatches(langs map[string]float32) {
 		out[k] = v
 	}
 	m.NewLanguageMatches = out
+}
+
+// GetAutoCorrect ports RuleMatch.isAutoCorrect.
+func (m *RuleMatch) GetAutoCorrect() bool {
+	if m == nil {
+		return false
+	}
+	return m.AutoCorrect
+}
+
+// SetAutoCorrect ports RuleMatch.setAutoCorrect.
+func (m *RuleMatch) SetAutoCorrect(v bool) {
+	if m != nil {
+		m.AutoCorrect = v
+	}
+}
+
+// GetFeatures ports RuleMatch.getFeatures.
+func (m *RuleMatch) GetFeatures() map[string]float32 {
+	if m == nil || m.Features == nil {
+		return map[string]float32{}
+	}
+	return m.Features
+}
+
+// SetFeatures ports RuleMatch.setFeatures.
+func (m *RuleMatch) SetFeatures(f map[string]float32) {
+	if m == nil {
+		return
+	}
+	if f == nil {
+		m.Features = nil
+		return
+	}
+	out := make(map[string]float32, len(f))
+	for k, v := range f {
+		out[k] = v
+	}
+	m.Features = out
 }
 
 // GetType ports RuleMatch.getType.
