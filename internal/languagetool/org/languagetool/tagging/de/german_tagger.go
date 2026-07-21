@@ -72,16 +72,15 @@ func (t *GermanTagger) TagIgnoreCase(sentenceTokens []string, ignoreCase bool) [
 	prevWord := ""
 	firstWord := true
 	for i, word := range sentenceTokens {
-		readings := t.tagOneInSentence(word, sentenceTokens, i, firstWord, prevWord, ignoreCase)
+		// firstWord is updated only inside the (firstWord||":") empty-tag branch
+		// (Java GermanTagger.tag), so pass a pointer via wrapper return.
+		var nextFirst bool
+		readings, nextFirst := t.tagOneInSentenceWithFirst(word, sentenceTokens, i, firstWord, prevWord, ignoreCase, pos)
+		firstWord = nextFirst
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 		pos += tagging.UTF16Len(word)
-		if strings.TrimSpace(word) != "" {
-			// Java: firstWord = !isAlphanumeric after first successful first-word handling
-			if firstWord {
-				firstWord = !isAlphanumericDE(word)
-			}
-			prevWord = word
-		}
+		// Java always: prevWord = word (including whitespace tokens)
+		prevWord = word
 	}
 	return out
 }
@@ -98,12 +97,22 @@ func isAlphanumericDE(s string) bool {
 // tagOne tags a single word without sentence context.
 // Lookup uses ignoreCase=false (Java tag(singleton, false)).
 func (t *GermanTagger) tagOne(word string) []*languagetool.AnalyzedToken {
-	return t.tagOneInSentence(word, nil, 0, false, "", false)
+	r, _ := t.tagOneInSentenceWithFirst(word, nil, 0, false, "", false, 0)
+	return r
 }
 
 func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, idxPos int, firstWord bool, prevWord string, ignoreCase bool) []*languagetool.AnalyzedToken {
+	r, _ := t.tagOneInSentenceWithFirst(word, sentenceTokens, idxPos, firstWord, prevWord, ignoreCase, 0)
+	return r
+}
+
+// tagOneInSentenceWithFirst ports one loop body of GermanTagger.tag.
+// charPos is Java's running `pos` (UTF-16 start offset of this token).
+// Returns updated firstWord flag (only changes on the firstWord empty-branch).
+func (t *GermanTagger) tagOneInSentenceWithFirst(word string, sentenceTokens []string, idxPos int, firstWord bool, prevWord string, ignoreCase bool, charPos int) ([]*languagetool.AnalyzedToken, bool) {
 	w := word
 	var readings []*languagetool.AnalyzedToken
+	nextFirst := firstWord
 
 	// Gender star: jede * r
 	var taggerTokens []tagging.TaggedWord
@@ -116,13 +125,15 @@ func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, id
 	// Case retries only when ignoreCase (Java tag(..., ignoreCase)).
 	if ignoreCase {
 		// sentence start / after colon: lowercase retry
+		// Java: firstWord = !isAlphanumeric only inside this branch
 		if (firstWord || prevWord == ":") && len(taggerTokens) == 0 {
 			taggerTokens = t.TagWordExact(strings.ToLower(w))
-		} else if idxPos == 0 {
+			nextFirst = !isAlphanumericDE(word)
+		} else if charPos == 0 {
 			// Java pos==0: also merge lowercase readings (Haben, Sollen…)
 			taggerTokens = append(taggerTokens, t.TagWordExact(strings.ToLower(w))...)
-		} else if len(taggerTokens) == 0 && idxPos > 0 {
-			// Java: empty → direct speech after : „ Word (indexOf first occurrence)
+		} else if len(taggerTokens) == 0 && charPos > 1 {
+			// Java: pos > 1 && empty → direct speech after : „ Word (indexOf first occurrence)
 			idx := indexOfToken(sentenceTokens, word)
 			if idx > 2 && sentenceTokens[idx-1] == "„" && sentenceTokens[idx-3] == ":" {
 				taggerTokens = append(taggerTokens, t.TagWordExact(strings.ToLower(w))...)
@@ -247,7 +258,7 @@ func (t *GermanTagger) tagOneInSentence(word string, sentenceTokens []string, id
 	if len(readings) == 0 {
 		readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 	}
-	return readings
+	return readings, nextFirst
 }
 
 // nounTagExpansionExceptions ports GermanTagger.nounTagExpansionExceptions

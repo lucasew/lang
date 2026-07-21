@@ -157,6 +157,7 @@ func stringsHasPrefix(s, p string) bool {
 }
 
 // Twin: Werkstudent : innen-Zielgruppe → tags of Zielgruppe
+// Java: innenPattern1 = "in(nen)-[A-ZÖÄÜ][a-zöäüß-]+" (nen required)
 func TestGenderGap_InnenPattern1(t *testing.T) {
 	wt := tagging.MapWordTagger{
 		"Werkstudent": {tagging.NewTaggedWord("Werkstudent", "SUB:NOM:SIN:MAS")},
@@ -166,8 +167,22 @@ func TestGenderGap_InnenPattern1(t *testing.T) {
 	got := tagger.Tag([]string{"Werkstudent", ":", "innen-Zielgruppe"})
 	tags := posTagsOf(got[0])
 	require.Contains(t, tags, "SUB:NOM:SIN:FEM")
-	// also keeps word alone if tagged; pattern replaces taggerTokens entirely with lastPart tags
+	// pattern replaces taggerTokens entirely with lastPart tags
 	require.NotContains(t, tags, "SUB:NOM:SIN:MAS")
+}
+
+// Twin: Java (nen) is required — "in-Zielgruppe" must not take Pattern1 path
+func TestGenderGap_InnenPattern1_RequiresNen(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"Werkstudent": {tagging.NewTaggedWord("Werkstudent", "SUB:NOM:SIN:MAS")},
+		"Zielgruppe":  {tagging.NewTaggedWord("Zielgruppe", "SUB:NOM:SIN:FEM")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"Werkstudent", ":", "in-Zielgruppe"})
+	tags := posTagsOf(got[0])
+	// falls back to word alone
+	require.Contains(t, tags, "SUB:NOM:SIN:MAS")
+	require.NotContains(t, tags, "SUB:NOM:SIN:FEM")
 }
 
 // Twin: Werkstudent : innenzielgruppe → UppercaseFirst after last "innen"
@@ -179,4 +194,16 @@ func TestGenderGap_InnenPattern2(t *testing.T) {
 	got := tagger.Tag([]string{"Werkstudent", ":", "innenzielgruppe"})
 	tags := posTagsOf(got[0])
 	require.Contains(t, tags, "SUB:NOM:SIN:FEM")
+}
+
+// Twin: after colon empty firstWord branch lowercases; firstWord only flips there.
+func TestFirstWord_AfterColonLowercase(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"das": {tagging.NewTaggedWord("das", "ART:DEF:NOM:SIN:NEU")},
+	}
+	tagger := NewGermanTagger(wt)
+	// after ":", "Das" empty → lowercase "das"
+	got := tagger.Tag([]string{"Wort", ":", "Das"})
+	tags := posTagsOf(got[2])
+	require.Contains(t, tags, "ART:DEF:NOM:SIN:NEU")
 }

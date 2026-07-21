@@ -23,13 +23,14 @@ var reGenderGapChar = regexp.MustCompile(`^[\*:_/]$`)
 // afterAsterisk: in(nen)?|r|e
 var reAfterAsterisk = regexp.MustCompile(`^(?:in(?:nen)?|r|e)$`)
 
-// innenPattern1: in(nen)-[A-ZÖÄÜ][a-zöäüß-]+  e.g. innen-Zielgruppe
-var reInnenPattern1 = regexp.MustCompile(`^in(?:nen)?-[A-ZÖÄÜ][a-zöäüß-]+$`)
+// innenPattern1: Java Pattern "in(nen)-[A-ZÖÄÜ][a-zöäüß-]+" — (nen) is required, not optional.
+// matches() anchors whole string → e.g. innen-Zielgruppe
+var reInnenPattern1 = regexp.MustCompile(`^innen-[A-ZÖÄÜ][a-zöäüß-]+$`)
 
-// anythingDash: .*-  strip through last dash for Pattern1 last part
+// anythingDash: .*-  Java replaceFirst strips through last dash (greedy .*)
 var reAnythingDash = regexp.MustCompile(`.*-`)
 
-// innenPattern2: innen[a-zöäüß-]+  e.g. innenzielgruppe
+// innenPattern2: Java "innen[a-zöäüß-]+" e.g. innenzielgruppe
 var reInnenPattern2 = regexp.MustCompile(`^innen[a-zöäüß-]+$`)
 
 // allAdjGruTags ports GermanTagger.allAdjGruTags (NOM/AKK/GEN/DAT × PLU/SIN × MAS/FEM/NEU × DEF/IND/SOL).
@@ -181,6 +182,9 @@ func (t *GermanTagger) tagMitarbeitenden(word string) []*languagetool.AnalyzedTo
 
 // genderGapTaggerTokens ports gender star / :innen token merging
 // (jede*r, Werkstudent:innen-Zielgruppe, Werkstudent:innenzielgruppe).
+// Returns non-nil (possibly empty) when a gender-gap branch matched — Java
+// sets taggerTokens = new ArrayList<>(...) so later tag(word) is skipped.
+// Returns nil when no gender-gap pattern applies (taggerTokens stays null).
 func (t *GermanTagger) genderGapTaggerTokens(sentenceTokens []string, idxPos int, word string) []tagging.TaggedWord {
 	if t == nil || idxPos+2 >= len(sentenceTokens) {
 		return nil
@@ -191,8 +195,8 @@ func (t *GermanTagger) genderGapTaggerTokens(sentenceTokens []string, idxPos int
 		return nil
 	}
 	if reAfterAsterisk.MatchString(after) {
-		// "jede*r", "sein*e"
-		var out []tagging.TaggedWord
+		// "jede*r", "sein*e" — always allocate (Java new ArrayList)
+		out := make([]tagging.TaggedWord, 0, 4)
 		out = append(out, t.TagWordExact(word)...)
 		out = append(out, t.TagWordExact(word+after)...)
 		return out
@@ -201,18 +205,20 @@ func (t *GermanTagger) genderGapTaggerTokens(sentenceTokens []string, idxPos int
 		// e.g. Werkstudent:innen-Zielgruppe → tags of 'Zielgruppe'
 		// Java: anythingDash.matcher(after).replaceFirst("")
 		lastPart := reAnythingDash.ReplaceAllString(after, "")
-		return append([]tagging.TaggedWord(nil), t.TagWordExact(lastPart)...)
+		// Copy into new slice so empty result is non-nil when tag misses.
+		return append(make([]tagging.TaggedWord, 0, 1), t.TagWordExact(lastPart)...)
 	}
 	if reInnenPattern2.MatchString(after) {
 		// e.g. Werkstudent:innenzielgruppe → uppercaseFirst(substring after last "innen")
 		idx := strings.LastIndex(after, "innen")
 		if idx < 0 {
-			return nil
+			// pattern requires "innen"; keep Java-safe empty non-nil
+			return make([]tagging.TaggedWord, 0)
 		}
 		// Java: substring(idx + "innen".length()) — "innen" is ASCII (5 UTF-16 units)
 		rest := after[idx+len("innen"):]
 		lastPart := tools.UppercaseFirstChar(rest)
-		return append([]tagging.TaggedWord(nil), t.TagWordExact(lastPart)...)
+		return append(make([]tagging.TaggedWord, 0, 1), t.TagWordExact(lastPart)...)
 	}
 	return nil
 }
