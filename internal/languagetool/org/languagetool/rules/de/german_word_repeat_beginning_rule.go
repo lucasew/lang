@@ -30,5 +30,9 @@ func NewGermanWordRepeatBeginningRule(messages map[string]string) *GermanWordRep
 }
 
 func (r *GermanWordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenReadings) bool {
+	if token == nil {
+		return false
+	}
+	// Java: ADVERBS.contains(token.getToken()) — exact surface (incl. Ü in Überdies)
 	return germanAdverbs[token.GetToken()]
 }

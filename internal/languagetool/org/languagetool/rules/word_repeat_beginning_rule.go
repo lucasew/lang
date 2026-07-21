@@ -169,10 +169,14 @@ func (r *WordRepeatBeginningRule) MatchList(sentences []*languagetool.AnalyzedSe
 			analyzedToken := tokens[1]
 			token = analyzedToken.GetToken()
 			if len(tokens) > 3 {
+				// Java: token.length()==1 && !Character.isLetter(charAt(0)) → not a word
+				// length/charAt are UTF-16 units (BMP letter = 1 unit; emoji = 2 → stays a word).
 				isWord := true
-				runes := []rune(token)
-				if len(runes) == 1 && !unicode.IsLetter(runes[0]) {
-					isWord = false
+				if utf16LenStr(token) == 1 {
+					u := utf16.Encode([]rune(token))
+					if len(u) == 1 && !unicode.IsLetter(rune(u[0])) {
+						isWord = false
+					}
 				}
 				if isWord && lastToken == token && !r.isException(token) &&
 					!r.isException(tokens[2].GetToken()) && !r.isException(tokens[3].GetToken()) &&
