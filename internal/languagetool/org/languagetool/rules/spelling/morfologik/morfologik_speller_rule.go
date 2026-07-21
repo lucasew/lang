@@ -118,8 +118,52 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 		if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(w) {
 			continue
 		}
-		m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
+		startPos := tok.GetStartPos()
+		// Java: previous match already covers this token (wrong-split span).
+		if len(out) > 0 && out[len(out)-1] != nil && out[len(out)-1].GetToPos() > startPos {
+			continue
+		}
+
+		// Java getRuleMatches wrong-split with previous / next word.
+		ruleMatch, beforeStr, early := r.tryWrongSplitPrev(sentence, &out, idx, tokens, w, startPos)
+		if early && ruleMatch != nil {
+			out = append(out, ruleMatch)
+			continue
+		}
+		if ruleMatch == nil {
+			var afterStr string
+			ruleMatch, afterStr, early = r.tryWrongSplitNext(sentence, &out, idx, tokens, w, startPos)
+			if early && ruleMatch != nil {
+				out = append(out, ruleMatch)
+				continue
+			}
+			_ = afterStr
+			if ruleMatch != nil {
+				// wrong-split with correctly spelled neighbor: keep span, still append dict sugs
+				sug := r.collectSuggestions(w)
+				for _, s := range sug {
+					joined := strings.TrimSpace(beforeStr + s)
+					if afterStr != "" {
+						joined = strings.TrimSpace(beforeStr + s + afterStr)
+					}
+					addSug(ruleMatch, joined)
+				}
+				out = append(out, ruleMatch)
+				continue
+			}
+		} else {
+			// prev wrong-split but prev not misspelled: keep span + dict sugs with beforeStr
+			sug := r.collectSuggestions(w)
+			for _, s := range sug {
+				addSug(ruleMatch, strings.TrimSpace(beforeStr+s))
+			}
+			out = append(out, ruleMatch)
+			continue
+		}
+
+		m := rules.NewRuleMatch(r, sentence, startPos, tok.GetEndPos(),
 			"Possible spelling mistake found")
+		m.SetType(rules.RuleMatchTypeUnknownWord)
 		sug := r.collectSuggestions(w)
 		if len(sug) > 0 {
 			m.SetSuggestedReplacements(sug)

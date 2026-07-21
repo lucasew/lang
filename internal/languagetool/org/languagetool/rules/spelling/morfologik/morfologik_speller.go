@@ -14,6 +14,9 @@ type MorfologikSpeller struct {
 	Words map[string]struct{}
 	// Suggestions for misspellings.
 	Suggestions map[string][]string
+	// Frequencies ports dictionary frequency tags (optional inject; default 1 for known words).
+	// Java MorfologikSpeller.getFrequency; used by wrong-split frequency gates.
+	Frequencies map[string]int
 	// ConversionLocale lowercases via strings.ToLower when set.
 	ConversionLocale string
 }
@@ -27,6 +30,7 @@ func NewMorfologikSpeller(fileInClassPath string, maxEditDistance int) *Morfolog
 		MaxEditDistance: maxEditDistance,
 		Words:           map[string]struct{}{},
 		Suggestions:     map[string][]string{},
+		Frequencies:     map[string]int{},
 	}
 }
 
@@ -36,6 +40,45 @@ func (s *MorfologikSpeller) AddWord(word string) {
 		s.Words = map[string]struct{}{}
 	}
 	s.Words[word] = struct{}{}
+}
+
+// SetFrequency injects a dictionary frequency for wrong-split tests (Java fsa freq tag).
+func (s *MorfologikSpeller) SetFrequency(word string, freq int) {
+	if s == nil {
+		return
+	}
+	if s.Frequencies == nil {
+		s.Frequencies = map[string]int{}
+	}
+	s.Frequencies[word] = freq
+}
+
+// GetFrequency ports MorfologikSpeller.getFrequency (exact then lowercase).
+// Unknown words → 0. Known map words without explicit freq → 1 (low, below MAX_FREQUENCY_FOR_SPLITTING).
+func (s *MorfologikSpeller) GetFrequency(word string) int {
+	if s == nil || word == "" {
+		return 0
+	}
+	if s.Frequencies != nil {
+		if f, ok := s.Frequencies[word]; ok {
+			return f
+		}
+	}
+	if _, ok := s.Words[word]; ok {
+		return 1
+	}
+	low := strings.ToLower(word)
+	if low != word {
+		if s.Frequencies != nil {
+			if f, ok := s.Frequencies[low]; ok {
+				return f
+			}
+		}
+		if _, ok := s.Words[low]; ok {
+			return 1
+		}
+	}
+	return 0
 }
 
 // IsMisspelled returns true if word is not in the dictionary.

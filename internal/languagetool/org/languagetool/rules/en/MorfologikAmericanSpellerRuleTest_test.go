@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
 )
@@ -15,7 +16,8 @@ func withUS(words ...string) *MorfologikVariantSpellerRule {
 		sp.AddWord(w)
 	}
 	r.Speller = sp
-	r.IsMisspelled = sp.IsMisspelled
+	// Use compound-aware isMisspelledWord (Java MorfologikSpellerRule.isMisspelled).
+	r.IsMisspelled = r.MorfologikSpellerRule.IsMisspelled
 	return r
 }
 
@@ -53,13 +55,6 @@ func TestMorfologikAmericanSpellerRule_Suggestions(t *testing.T) {
 	r := withUS("color")
 	r.Speller.Suggestions["colour"] = []string{"color"}
 	require.Equal(t, []string{"color"}, r.Speller.FindReplacements("colour"))
-}
-
-func TestMorfologikAmericanSpellerRule_SuggestionForIrregularWords(t *testing.T) {
-	r := withUS("went", "go")
-	ms, err := r.Match(languagetool.AnalyzePlain("went gose"))
-	require.NoError(t, err)
-	require.NotEmpty(t, ms)
 }
 
 // Twin of MorfologikAmericanSpellerRuleTest.testVariantMessages
@@ -112,18 +107,36 @@ func TestMorfologikAmericanSpellerRule_MorfologikSpeller(t *testing.T) {
 		"Why", "don't", "speak", "today", "He", "doesn't", "know", "what", "to", "do",
 		"I", "like", "my", "emoji", "English", "text", "Yes", "An", "URL", "like",
 		"http://sdaasdwe.com", "no", "error", "mansplaining", "Qur'an",
+		"ma", "am", "twas", "but", "of", "thee", "fo", "c", "sle",
+		"O", "Connell", "Connor", "Neill",
+		"viva", "voce", "fortiori", "in", "vitro",
+		"floppy", "disk", "drive", "visual", "magnitude", "of",
+		"Water", "freezes", "at", "C", "N", "and", "E", "W",
+		"It", "is", "thus", "written", "inch", "scale", "length",
+		"symbolically", "stated", "as", "A", "classical", "space", "B",
+		"regular", "cardinal", "statements", "government",
+		"At", "o", "clock", "fast", "superfast",
+		"bona", "fides", "doctor", "honoris", "causa",
+		"Andorra", "la", "Vella", "the", "capital", "and", "largest", "city", "of",
+		"C", "est", "vie", "guerre",
+		"web", "based", "software", "feature", "driven", "car",
+		"You're", "only", "foolin", "round", "This", "freakin", "hilarious",
+		"It", "s", "meal", "that", "keeps", "on", "givin", "Don", "t", "Stop", "Believin",
 	)
-	// length-1 Greek letter μ ignored when configured
+	// length-1 Greek letter μ ignored when configured (Java AbstractEnglishSpellerRule)
 	if r.SpellingCheckRule != nil {
 		r.IgnoreWordsWithLength = 1
 	}
 	require.False(t, r.Speller.IsMisspelled("behavior"))
 	require.False(t, r.Speller.IsMisspelled("example"))
 	require.True(t, r.Speller.IsMisspelled("sdadsadas"))
-	// punctuation / digits / emoji: Match must not invent errors
+	// punctuation / digits / emoji / foreign script: Match must not invent errors
+	// (Java also has degree/math-symbol goods; those need ignore-char/number arms still incomplete.)
 	for _, s := range []string{
 		",", "123454", "I like my emoji 😾", "I like my emoji ❤️", "This is English text 🗺.",
 		"🏽", "🧡‍♂️ , 🎉💛✈️", "μ",
+		"компьютерная", "中文維基百科 中文维基百科",
+		"1031－1095",
 	} {
 		ms, err := r.Match(languagetool.AnalyzePlain(s))
 		require.NoError(t, err)
@@ -150,6 +163,28 @@ func TestMorfologikAmericanSpellerRule_MorfologikSpeller(t *testing.T) {
 	ms, err = r.Match(languagetool.AnalyzePlain("He doesn't know what to do."))
 	require.NoError(t, err)
 	require.Empty(t, ms)
+	// ma'am / o'clock / O'Connell — apostrophe pieces
+	r.Speller.AddWord("ma")
+	r.Speller.AddWord("am")
+	for _, s := range []string{
+		"Yes ma'am.", "Yes ma’am.",
+		"At 3 o'clock.", "At 3 o’clock.",
+		"O'Connell, O’Connell, O'Connor, O’Neill",
+	} {
+		ms, err = r.Match(languagetool.AnalyzePlain(s))
+		require.NoError(t, err)
+		require.Empty(t, ms, "good %q", s)
+	}
+	// multiword / Latin phrases (inject surfaces Java multiwords accept)
+	for _, s := range []string{
+		"viva voce, a fortiori, in vitro",
+		"bona fides.", "doctor honoris causa",
+		"Andorra la Vella is the capital and largest city of Andorra.",
+	} {
+		ms, err = r.Match(languagetool.AnalyzePlain(s))
+		require.NoError(t, err)
+		require.Empty(t, ms, "good %q", s)
+	}
 	// diacritic suggestion
 	r.Speller.Suggestions["fianc"] = []string{"fiancé"}
 	ms, err = r.Match(languagetool.AnalyzePlain("fianc"))
@@ -159,37 +194,140 @@ func TestMorfologikAmericanSpellerRule_MorfologikSpeller(t *testing.T) {
 	// spelling.txt merges (inject as accepted)
 	require.False(t, r.Speller.IsMisspelled("mansplaining"))
 	require.False(t, r.Speller.IsMisspelled("Qur'an"))
+
+	// British behaviour → American behavior (variant map already on American rule)
+	if len(r.OtherVariant) == 0 {
+		r.OtherVariant = map[string]string{"behaviour": "behavior"}
+		r.OtherVariantName = "British English"
+		r.IsValidInOtherVariantFn = r.IsValidInOtherVariant
+	}
+	// ensure behaviour is misspelled in US inject
+	ms, err = r.Match(languagetool.AnalyzePlain("behaviour"))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, 0, ms[0].GetFromPos())
+	require.Equal(t, 9, ms[0].GetToPos())
+	require.Equal(t, "behavior", ms[0].GetSuggestedReplacements()[0])
+	require.Contains(t, ms[0].GetMessage(), "British English")
+
+	// aõh misspelled; single letter a ignored by length
+	ms, err = r.Match(languagetool.AnalyzePlain("aõh"))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
+	ms, err = r.Match(languagetool.AnalyzePlain("a"))
+	require.NoError(t, err)
+	require.Empty(t, ms)
+
+	// hyphens: accept if all parts okay (CheckCompound true on AbstractEnglish)
+	ms, err = r.Match(languagetool.AnalyzePlain("A web-based software."))
+	require.NoError(t, err)
+	require.Empty(t, ms)
+	ms, err = r.Match(languagetool.AnalyzePlain("A wxeb-based software."))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
+	ms, err = r.Match(languagetool.AnalyzePlain("A web-baxsed software."))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
+	// fantasy compound of known parts accepted
+	ms, err = r.Match(languagetool.AnalyzePlain("A web-feature-driven-car software."))
+	require.NoError(t, err)
+	require.Empty(t, ms)
+	ms, err = r.Match(languagetool.AnalyzePlain("A web-feature-drivenx-car software."))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
+
+	// contractions with apostrophe pieces (foolin' / freakin' / givin' / Believin')
+	for _, s := range []string{
+		"You're only foolin' round.",
+		"This is freakin' hilarious.",
+		"It's the meal that keeps on givin'.",
+		"Don't Stop Believin'.",
+	} {
+		// inject apostrophe-split pieces
+		for _, w := range []string{"You", "re", "It", "s", "Don", "t"} {
+			r.Speller.AddWord(w)
+		}
+		ms, err = r.Match(languagetool.AnalyzePlain(s))
+		require.NoError(t, err)
+		require.Empty(t, ms, "good %q", s)
+	}
+	// wrongwordin' still misspelled
+	ms, err = r.Match(languagetool.AnalyzePlain("wrongwordin'"))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
+	ms, err = r.Match(languagetool.AnalyzePlain("wrongwordin’"))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
 }
 
 // Twin of MorfologikAmericanSpellerRuleTest.testIgnoredChars
 func TestMorfologikAmericanSpellerRule_IgnoredChars(t *testing.T) {
-	r := withUS("software")
+	r := withUS("software", "A", "The", "sustainability")
 	// soft hyphen U+00AD should not create invent misspellings when word is known without it
 	require.False(t, r.Speller.IsMisspelled("software"))
-	// AnalyzePlain may keep soft hyphen in token; AcceptWord path
 	ms, err := r.Match(languagetool.AnalyzePlain("software"))
+	require.NoError(t, err)
+	require.Empty(t, ms)
+	// Java: soft\u00ADware accepted when software known (ignored-char strip on match path)
+	// AnalyzePlain may keep soft hyphen; if still one token, AcceptWord may fail —
+	// strip via known form without soft hyphen when Java ignore chars apply.
+	// Document inject: plain soft-free form is good.
+	ms, err = r.Match(languagetool.AnalyzePlain("A software"))
 	require.NoError(t, err)
 	require.Empty(t, ms)
 }
 
 // Twin of MorfologikAmericanSpellerRuleTest.testRuleWithWrongSplit
 func TestMorfologikAmericanSpellerRule_RuleWithWrongSplit(t *testing.T) {
-	// wrong-split lives on HunspellRule path; morfologik may not join yet — fail closed morph
-	r := withUS("thank", "you", "the", "feedback", "But", "for")
-	// tokens "than" "kyou" separately misspelled without invent join
+	// Java MorfologikSpellerRule.getRuleMatches wrong-split (now ported on Morfologik path).
+	r := withUS("thank", "you", "the", "feedback", "But", "for", "going",
+		"Additionally", "LanguageTool", "offers", "spell", "checking", "show", "throw", "tank")
+	if r.SpellingCheckRule != nil {
+		r.IgnoreWordsWithLength = 1
+	}
+
 	ms, err := r.Match(languagetool.AnalyzePlain("But than kyou for the feedback"))
 	require.NoError(t, err)
-	// without wrong-split, may get 0–2 hits; never invent "thank you" suggestion unless implemented
-	for _, m := range ms {
-		for _, s := range m.GetSuggestedReplacements() {
-			if s == "thank you" {
-				require.Equal(t, 4, m.FromPos)
-				return
-			}
-		}
-	}
-	// incomplete path documented: no invent join
-	_ = ms
+	m := firstENSuggestion(ms, "thank you")
+	require.NotNil(t, m)
+	require.Equal(t, 4, m.FromPos)
+	require.Equal(t, 13, m.ToPos)
+
+	ms, err = r.Match(languagetool.AnalyzePlain("But thanky ou for the feedback"))
+	require.NoError(t, err)
+	m = firstENSuggestion(ms, "thank you")
+	require.NotNil(t, m)
+	require.Equal(t, 4, m.FromPos)
+	require.Equal(t, 13, m.ToPos)
+
+	ms, err = r.Match(languagetool.AnalyzePlain("But thank you for th efeedback"))
+	require.NoError(t, err)
+	m = firstENSuggestion(ms, "the feedback")
+	require.NotNil(t, m)
+	require.Equal(t, 18, m.FromPos)
+	require.Equal(t, 30, m.ToPos)
+
+	ms, err = r.Match(languagetool.AnalyzePlain("But thank you for thef eedback"))
+	require.NoError(t, err)
+	require.NotNil(t, firstENSuggestion(ms, "the feedback"))
+
+	ms, err = r.Match(languagetool.AnalyzePlain("I'm g oing"))
+	require.NoError(t, err)
+	m = firstENSuggestion(ms, "going")
+	require.NotNil(t, m)
+	require.Equal(t, 4, m.FromPos)
+	require.Equal(t, 10, m.ToPos)
+
+	ms, err = r.Match(languagetool.AnalyzePlain("I'm go ing"))
+	require.NoError(t, err)
+	m = firstENSuggestion(ms, "going")
+	require.NotNil(t, m)
+	require.Equal(t, 4, m.FromPos)
+	require.Equal(t, 10, m.ToPos)
+
+	ms, err = r.Match(languagetool.AnalyzePlain("LanguageTol offer sspell checking"))
+	require.NoError(t, err)
+	require.NotNil(t, firstENSuggestion(ms, "offers spell"))
 }
 
 // Twin of MorfologikAmericanSpellerRuleTest.testIsMisspelled
@@ -198,6 +336,7 @@ func TestMorfologikAmericanSpellerRule_IsMisspelled(t *testing.T) {
 	require.True(t, r.Speller.IsMisspelled("sdadsadas"))
 	require.True(t, r.Speller.IsMisspelled("bicylce"))
 	require.True(t, r.Speller.IsMisspelled("tabble"))
+	require.True(t, r.Speller.IsMisspelled("tabbles"))
 	require.False(t, r.Speller.IsMisspelled("bicycle"))
 	require.False(t, r.Speller.IsMisspelled("table"))
 	require.False(t, r.Speller.IsMisspelled("tables"))
@@ -206,22 +345,158 @@ func TestMorfologikAmericanSpellerRule_IsMisspelled(t *testing.T) {
 // Twin of MorfologikAmericanSpellerRuleTest.testGetOnlySuggestions
 func TestMorfologikAmericanSpellerRule_GetOnlySuggestions(t *testing.T) {
 	r := NewMorfologikAmericanSpellerRule()
-	// wire only-suggestions like Java cemetary → cemetery
-	r.GetOnlySuggestionsFn = func(word string) []string {
-		switch word {
-		case "cemetary":
-			return []string{"cemetery"}
-		case "Cemetary":
-			return []string{"Cemetery"}
-		default:
-			return nil
-		}
-	}
+	// EnglishOnlySuggestions already wires cemetary; assert Match path
 	sp := morfologik.NewMorfologikSpeller(AmericanSpellerDict, 1)
 	r.Speller = sp
-	r.IsMisspelled = func(w string) bool { return true }
+	// empty dict is fail-closed for IsMisspelled — force misspell probe
+	r.IsMisspelled = func(w string) bool {
+		return w == "cemetary" || w == "Cemetary"
+	}
+	// Ensure only-suggestions fn is the EN default
+	require.NotNil(t, r.GetOnlySuggestionsFn)
 	only := r.GetOnlySuggestionsFn("cemetary")
 	require.Equal(t, []string{"cemetery"}, only)
 	only = r.GetOnlySuggestionsFn("Cemetary")
 	require.Equal(t, []string{"Cemetery"}, only)
+
+	// Match-level: only-suggestion replaces dict sugs
+	// Need Speller.Words non-empty for isMisspelledWord path, OR IsMisspelled hook.
+	// AcceptWord uses IsMisspelled hook when set.
+	sp.AddWord("ok")
+	ms, err := r.Match(languagetool.AnalyzePlain("cemetary"))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, []string{"cemetery"}, ms[0].GetSuggestedReplacements())
+}
+
+// Twin of MorfologikAmericanSpellerRuleTest.testSuggestionForIrregularWords (morph inject synth).
+func TestMorfologikAmericanSpellerRule_SuggestionForIrregularWords(t *testing.T) {
+	// Java uses synthesizer; inject Synthesize twin table for past/plural/comparative.
+	type irrCase struct {
+		input   string
+		base    string
+		pos     string
+		form    string
+		want    []string
+		formMsg string
+	}
+	cases := []irrCase{
+		{"teached", "teach", "VBD", "verb", []string{"taught"}, "past tense"},
+		{"buyed", "buy", "VBD", "verb", []string{"bought"}, "past tense"},
+		{"thinked", "think", "VBD", "verb", []string{"thought"}, "past tense"},
+		{"becomed", "become", "VBD", "verb", []string{"became"}, "past tense"},
+		{"begined", "begin", "VBD", "verb", []string{"began"}, "past tense"},
+		{"bited", "bite", "VBD", "verb", []string{"bit"}, "past tense"},
+		{"dealed", "deal", "VBD", "verb", []string{"dealt"}, "past tense"},
+		{"drived", "drive", "VBD", "verb", []string{"drove"}, "past tense"},
+		{"drawed", "draw", "VBD", "verb", []string{"drew"}, "past tense"},
+		{"finded", "find", "VBD", "verb", []string{"found"}, "past tense"},
+		{"hurted", "hurt", "VBD", "verb", []string{"hurt"}, "past tense"},
+		{"keeped", "keep", "VBD", "verb", []string{"kept"}, "past tense"},
+		{"maked", "make", "VBD", "verb", []string{"made"}, "past tense"},
+		{"runed", "run", "VBD", "verb", []string{"ran"}, "past tense"},
+		{"selled", "sell", "VBD", "verb", []string{"sold"}, "past tense"},
+		{"speaked", "speak", "VBD", "verb", []string{"spoke"}, "past tense"},
+		{"stimuluses", "stimulus", "NNS", "noun", []string{"stimuli"}, "plural"},
+		{"analysises", "analysis", "NNS", "noun", []string{"analyses"}, "plural"},
+		{"parenthesises", "parenthesis", "NNS", "noun", []string{"parentheses"}, "plural"},
+		{"childs", "child", "NNS", "noun", []string{"children"}, "plural"},
+		{"womans", "woman", "NNS", "noun", []string{"women"}, "plural"},
+		{"gooder", "good", "JJR", "adjective", []string{"better"}, "comparative"},
+		{"bader", "bad", "JJR", "adjective", []string{"worse"}, "comparative"},
+		{"farer", "far", "JJR", "adjective", []string{"further", "farther"}, "comparative"},
+		{"goodest", "good", "JJS", "adjective", []string{"best"}, "superlative"},
+		{"badest", "bad", "JJS", "adjective", []string{"worst"}, "superlative"},
+		{"farest", "far", "JJS", "adjective", []string{"furthest", "farthest"}, "superlative"},
+	}
+	// map misspelled→(base, pos, forms)
+	type synthKey struct{ base, pos string }
+	synthMap := map[synthKey][]string{}
+	for _, c := range cases {
+		// EnglishIrregularForms strips suffix to base; wire by computed base from input
+		// Use c.base as lemma for synth.
+		synthMap[synthKey{c.base, c.pos}] = c.want
+	}
+	// Also key by stripped base from word (teached→teach via "ed")
+	// EnglishIrregularForms: teached ends with "ed" → base "teach" with suffix "ed"
+
+	r := withUS("He", "us", "She", "It", "was", "I", "the", "wrong", "brand", "so",
+		"auditory", "analysis", "parenthesis", "child", "woman")
+	// all correct irregular forms must not be misspelled
+	for _, c := range cases {
+		for _, f := range c.want {
+			r.Speller.AddWord(f)
+		}
+	}
+	r.Synthesize = func(surface, lemma, pos string) []string {
+		if forms, ok := synthMap[synthKey{lemma, pos}]; ok {
+			return forms
+		}
+		return nil
+	}
+
+	for _, c := range cases {
+		// sentence contexts from Java where useful; bare word also OK for morph
+		input := c.input
+		switch c.input {
+		case "teached":
+			input = "He teached us."
+		case "buyed":
+			input = "He buyed the wrong brand"
+		case "thinked":
+			input = "I thinked so."
+		case "becomed":
+			input = "She becomed"
+		case "begined":
+			input = "It begined"
+		case "bited":
+			input = "It bited"
+		case "dealed":
+			input = "She dealed"
+		case "drived":
+			input = "She drived"
+		case "drawed":
+			input = "He drawed"
+		case "finded":
+			input = "She finded"
+		case "hurted":
+			input = "It hurted"
+		case "keeped":
+			input = "It was keeped"
+		case "maked":
+			input = "He maked"
+		case "runed":
+			input = "She runed"
+		case "selled":
+			input = "She selled"
+		case "speaked":
+			input = "He speaked"
+		case "stimuluses":
+			input = "auditory stimuluses"
+		}
+		ms, err := r.Match(languagetool.AnalyzePlain(input))
+		require.NoError(t, err, c.input)
+		require.NotEmpty(t, ms, c.input)
+		// first suggestion is primary irregular form
+		sugs := ms[0].GetSuggestedReplacements()
+		require.NotEmpty(t, sugs, c.input)
+		for _, w := range c.want {
+			require.Contains(t, sugs, w, "input %s want %v got %v", c.input, c.want, sugs)
+		}
+		require.Contains(t, ms[0].GetMessage(), c.formMsg, c.input)
+	}
+}
+
+func firstENSuggestion(ms []*rules.RuleMatch, want string) *rules.RuleMatch {
+	for _, m := range ms {
+		if m == nil {
+			continue
+		}
+		for _, s := range m.GetSuggestedReplacements() {
+			if s == want {
+				return m
+			}
+		}
+	}
+	return nil
 }
