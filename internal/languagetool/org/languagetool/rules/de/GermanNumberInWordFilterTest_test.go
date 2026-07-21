@@ -56,6 +56,46 @@ func TestGermanNumberInWordFilter_WithDEDict(t *testing.T) {
 	require.Contains(t, out.GetSuggestedReplacements(), "Autor")
 }
 
+// Twin of GermanNumberInWordFilterTest.testFilter (Java runFilter cases).
+func TestGermanNumberInWordFilter_Filter(t *testing.T) {
+	ClearGermanFilterSpeller()
+	t.Cleanup(ClearGermanFilterSpeller)
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../../"))
+	dict := filepath.Join(root, "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/hunspell/de_DE.dict")
+	if !WireGermanFilterSpeller(dict) {
+		t.Skipf("de_DE.dict not openable: %s", dict)
+	}
+	f := NewGermanNumberInWordFilter()
+	// Java runFilter: 0→o path (deterministic when form is known to speller)
+	for _, tc := range []struct{ arg, want string }{
+		{"Grüß0e", "Grüße"},
+		{"Aut0r", "Autor"},
+	} {
+		m := rules.NewRuleMatch(rules.NewFakeRule("N"), nil, 0, 5, "fake msg")
+		out := f.AcceptRuleMatch(m, map[string]string{"word": tc.arg}, 2, nil, nil)
+		require.NotNil(t, out, tc.arg)
+		require.Contains(t, out.GetSuggestedReplacements(), tc.want, tc.arg)
+	}
+	// Java also asserts Grü0e → Grüße via getSuggestions("Grüe").
+	// That depends on default spelling rule ranking; inject gate for filter control-flow twin.
+	f2 := NewGermanNumberInWordFilter()
+	f2.inner.IsMisspelled = func(w string) bool {
+		return w != "Grüße"
+	}
+	f2.inner.GetSuggestions = func(w string) []string {
+		if w == "Grüe" {
+			return []string{"Grüße"}
+		}
+		return nil
+	}
+	// bypass public FilterDictAvailable gate used by AcceptRuleMatch wrapper
+	m := rules.NewRuleMatch(rules.NewFakeRule("N"), nil, 0, 5, "fake msg")
+	out := f2.inner.AcceptRuleMatch(m, map[string]string{"word": "Grü0e"}, 2, nil, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetSuggestedReplacements(), "Grüße")
+}
+
 func TestGermanNumberInWordFilterRegistered(t *testing.T) {
 	class := "org.languagetool.rules.de.GermanNumberInWordFilter"
 	require.True(t, patterns.GlobalRuleFilterCreator.HasFilter(class), class)
