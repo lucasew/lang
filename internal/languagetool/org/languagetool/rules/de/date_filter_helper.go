@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DateFilterHelper ports org.languagetool.rules.de.DateFilterHelper.
@@ -14,7 +15,8 @@ func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
 // GetDayOfWeek returns Go time.Weekday for a German day name prefix.
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
-	day := strings.ToLower(trimSpecial(dayStr))
+	// Java: StringTools.trimSpecialCharacters(dayStr).toLowerCase()
+	day := strings.ToLower(tools.TrimSpecialCharacters(dayStr))
 	switch {
 	case strings.HasPrefix(day, "sonnabend"):
 		return time.Saturday, nil
@@ -54,7 +56,8 @@ func (h *DateFilterHelper) GetDayOfWeekName(t time.Time) string {
 
 // GetMonth returns month number 1–12 for a German month name prefix.
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
-	mon := strings.ToLower(trimSpecial(monthStr))
+	// Java: StringTools.trimSpecialCharacters(monthStr).toLowerCase()
+	mon := strings.ToLower(tools.TrimSpecialCharacters(monthStr))
 	switch {
 	case strings.HasPrefix(mon, "jän"), strings.HasPrefix(mon, "jan"):
 		return time.January, nil
@@ -83,24 +86,4 @@ func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 	default:
 		return 0, fmt.Errorf("could not find month %q", monthStr)
 	}
-}
-
-func trimSpecial(s string) string {
-	return strings.Map(func(r rune) rune {
-		if unicode.IsLetter(r) || unicode.IsDigit(r) {
-			return r
-		}
-		// keep soft hyphen stripped etc.
-		if r == '\u00AD' {
-			return -1
-		}
-		if unicode.IsSpace(r) {
-			return -1
-		}
-		// keep letters only for name matching
-		if r == '.' {
-			return -1
-		}
-		return r
-	}, s)
 }

@@ -446,13 +446,14 @@ func IsEmoji(token string) bool {
 }
 
 // IsNumericSpace ports Apache Commons StringUtils.isNumericSpace (WordRepeatRule).
-// True when every character is a digit or whitespace (empty → false, matching Commons).
+// True when every character is a digit or Character.isWhitespace (empty → false).
+// Uses Java Character.isWhitespace, not Go unicode.IsSpace (NBSP differs).
 func IsNumericSpace(token string) bool {
 	if token == "" {
 		return false
 	}
 	for _, r := range token {
-		if !(unicode.IsDigit(r) || unicode.IsSpace(r)) {
+		if !(unicode.IsDigit(r) || CharacterIsWhitespace(r)) {
 			return false
 		}
 	}
@@ -667,13 +668,26 @@ func IsAllUppercaseList(strList []string) bool {
 	return isInputAllUppercase && !isAllNotLetters
 }
 
-// trimSpecialRE ports StringTools.PATTERN: (?U)[^\p{Space}\p{Alnum}\p{Punct}]
-var trimSpecialRE = regexp.MustCompile(`[^\p{Z}\p{N}\p{L}\p{P}]`)
-
 // TrimSpecialCharacters ports StringTools.trimSpecialCharacters —
-// delete characters that are not space/alnum/punct (e.g. soft hyphens).
+// Java PATTERN (?U)[^\p{Space}\p{Alnum}\p{Punct}] replaced with "".
+// Keeps Unicode whitespace (incl. NBSP), letters, digits, punctuation;
+// deletes e.g. soft hyphens (U+00AD). Not Character.isWhitespace (that excludes NBSP).
 func TrimSpecialCharacters(s string) string {
-	return trimSpecialRE.ReplaceAllString(s, "")
+	if s == "" {
+		return s
+	}
+	var b strings.Builder
+	b.Grow(len(s))
+	for _, r := range s {
+		// Java (?U)\p{Space} ≈ Unicode White_Space (Go unicode.IsSpace)
+		// \p{Alnum} ≈ letter|digit; \p{Punct} ≈ punctuation
+		if unicode.IsSpace(r) || unicode.IsLetter(r) || unicode.IsDigit(r) || unicode.IsPunct(r) {
+			b.WriteRune(r)
+			continue
+		}
+		// drop specials (soft hyphen, format controls, symbols, …)
+	}
+	return b.String()
 }
 
 // NormalizeNFKC ports StringTools.normalizeNFKC.

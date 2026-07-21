@@ -16,3 +16,14 @@ func TestDateFilterHelper(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, time.September, m)
 }
+
+func TestDateFilterHelper_TrimSpecialCharacters(t *testing.T) {
+	h := NewDateFilterHelper()
+	// Java StringTools.trimSpecialCharacters strips soft hyphen, keeps letters
+	m, err := h.GetMonth("Sep\u00ADtember")
+	require.NoError(t, err)
+	require.Equal(t, time.September, m)
+	d, err := h.GetDayOfWeek("Mon\u00ADday")
+	require.NoError(t, err)
+	require.Equal(t, time.Monday, d)
+}

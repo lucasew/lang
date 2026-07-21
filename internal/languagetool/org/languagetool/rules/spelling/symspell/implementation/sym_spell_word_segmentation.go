@@ -3,8 +3,9 @@ package implementation
 import (
 	"math"
 	"strings"
-	"unicode"
 	"unicode/utf16"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // corpusWordCountN ports SymSpell.N — total word count constant used for Naive Bayes log probs.
@@ -135,21 +136,12 @@ func (s *SymSpell) WordSegmentationMax(input string, maxEditDistance, maxSegment
 }
 
 // isJavaWhitespaceChar ports Character.isWhitespace(part.charAt(0)) for first UTF-16 unit.
-// Java Character.isWhitespace covers a fixed set; for BMP we use unicode.IsSpace on the first rune
-// when it is not a surrogate pair start, else treat high surrogate as non-whitespace (rare for WS).
+// Surrogate code units are never whitespace under Java Character.isWhitespace(char).
 func isJavaWhitespaceChar(part string) bool {
 	u := utf16.Encode([]rune(part))
 	if len(u) == 0 {
 		return false
 	}
-	// Reconstruct first code point if surrogate pair
-	r := utf16.Decode(u[:1])
-	if len(r) == 0 {
-		return false
-	}
-	// If high surrogate alone, Decode may produce replacement — treat as not whitespace
-	ch := r[0]
-	// Java Character.isWhitespace(char) for BMP code units.
-	// For simplicity mirror unicode.IsSpace for common whitespace used by SymSpell inputs.
-	return unicode.IsSpace(ch)
+	// Java charAt(0): single UTF-16 code unit (not decoded surrogate pair).
+	return tools.CharacterIsWhitespace(rune(u[0]))
 }

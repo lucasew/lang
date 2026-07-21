@@ -3,6 +3,8 @@ package zh
 import (
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // ChineseWordTokenizer ports tokenizers.zh.ChineseWordTokenizer.
@@ -108,7 +110,8 @@ func (t *ChineseSentenceTokenizer) Tokenize(text string) []string {
 	var whitespace strings.Builder
 	var nonWhitespace strings.Builder
 	for _, r := range text {
-		if unicode.IsSpace(r) {
+		// Java: Character.isWhitespace(text.charAt(i)) — not Go unicode.IsSpace (NBSP differs).
+		if tools.CharacterIsWhitespace(r) {
 			if nonWhitespace.Len() > 0 {
 				result = append(result, sentencesUtilToSentenceList(nonWhitespace.String())...)
 				nonWhitespace.Reset()

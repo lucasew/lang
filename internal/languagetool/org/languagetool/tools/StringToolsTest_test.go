@@ -396,6 +396,23 @@ func TestStringTools_TrimSpecialCharacters(t *testing.T) {
 	// soft hyphen U+00AD removed
 	require.Equal(t, "foobar", TrimSpecialCharacters("foo\u00ADbar"))
 	require.Equal(t, "ok!", TrimSpecialCharacters("ok!"))
+	// Java (?U)\p{Space} keeps whitespace including NBSP and ASCII controls
+	require.Equal(t, "a b", TrimSpecialCharacters("a b"))
+	require.Equal(t, "a\tb", TrimSpecialCharacters("a\tb"))
+	require.Equal(t, "a\u00A0b", TrimSpecialCharacters("a\u00A0b"), "NBSP kept as space class")
+	// punctuation kept
+	require.Equal(t, "ok.", TrimSpecialCharacters("ok."))
+}
+
+func TestStringTools_IsNumericSpace(t *testing.T) {
+	// Apache Commons StringUtils.isNumericSpace uses Character.isWhitespace
+	require.True(t, IsNumericSpace("123"))
+	require.True(t, IsNumericSpace("1 2 3"))
+	require.True(t, IsNumericSpace("1\t2"))
+	require.False(t, IsNumericSpace(""))
+	require.False(t, IsNumericSpace("12a"))
+	// NBSP is NOT Character.isWhitespace → not numeric-space
+	require.False(t, IsNumericSpace("1\u00A02"), "NBSP is not Java whitespace")
 }
 
 func TestStringTools_TrimLeadingAndTrailingSpaces(t *testing.T) {

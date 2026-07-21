@@ -2,9 +2,9 @@ package filters
 
 import (
 	"fmt"
-	"strings"
 	"time"
-	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // ArabicDateFilterHelper ports org.languagetool.rules.ar.filters.ArabicDateFilterHelper.
@@ -13,6 +13,7 @@ type ArabicDateFilterHelper struct{}
 func NewArabicDateFilterHelper() *ArabicDateFilterHelper { return &ArabicDateFilterHelper{} }
 
 func (h *ArabicDateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
+	// Java: switch on dayStr as-is (no trimSpecialCharacters)
 	switch dayStr {
 	case "السبت":
 		return time.Saturday, nil
@@ -34,7 +35,8 @@ func (h *ArabicDateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, erro
 }
 
 func (h *ArabicDateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
-	mon := trimSpecial(monthStr)
+	// Java: String mon = StringTools.trimSpecialCharacters(monthStr);
+	mon := tools.TrimSpecialCharacters(monthStr)
 	switch mon {
 	// Syriac-style Arabic months
 	case "كانون الثاني", "كانون ثاني", "يناير", "جانفي", "جانفييه":
@@ -85,17 +87,4 @@ func (h *ArabicDateFilterHelper) GetDayOfWeekName(day time.Weekday) string {
 	default:
 		return "غير محدد"
 	}
-}
-
-func trimSpecial(s string) string {
-	return strings.Map(func(r rune) rune {
-		if unicode.IsLetter(r) || unicode.IsNumber(r) || unicode.IsSpace(r) {
-			return r
-		}
-		// keep Arabic letters; drop punctuation
-		if r >= 0x0600 && r <= 0x06FF {
-			return r
-		}
-		return -1
-	}, s)
 }

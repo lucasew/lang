@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"strings"
 	"sync"
-	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/case_rule_exceptions.txt
@@ -39,12 +40,13 @@ func CaseRuleExceptions() map[string]struct{} {
 			if line == "" || strings.HasPrefix(line, "#") {
 				continue
 			}
-			// Character.isWhitespace(line.charAt(0)) || charAt(length-1)
+			// Java: Character.isWhitespace(line.charAt(0)) || charAt(length-1)
+			// Not Go unicode.IsSpace (NBSP U+00A0 differs).
 			n := utf16LenDE(line)
 			if n > 0 {
 				c0 := javaCharAtDE(line, 0)
 				cN := javaCharAtDE(line, n-1)
-				if unicode.IsSpace(c0) || unicode.IsSpace(cN) {
+				if tools.CharacterIsWhitespace(c0) || tools.CharacterIsWhitespace(cN) {
 					panic(fmt.Sprintf("Invalid line in case_rule_exceptions.txt, starts or ends with whitespace: '%s'", line))
 				}
 			}

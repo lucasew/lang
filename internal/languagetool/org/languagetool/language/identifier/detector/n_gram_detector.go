@@ -109,8 +109,9 @@ func isDigitsOnlyText(text string) bool {
 	if s == "" {
 		return false
 	}
+	// Twin Character.isDigit / Character.isWhitespace (not Go unicode.IsSpace — NBSP).
 	for _, r := range s {
-		if !unicode.IsDigit(r) && !unicode.IsSpace(r) {
+		if !unicode.IsDigit(r) && !tools.CharacterIsWhitespace(r) {
 			return false
 		}
 	}

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DateFilterHelper ports org.languagetool.rules.pt.DateFilterHelper.
@@ -13,7 +14,8 @@ type DateFilterHelper struct{}
 func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
-	day := strings.ToLower(trimSpecialPT(dayStr))
+	// Java: StringTools.trimSpecialCharacters(dayStr).toLowerCase()
+	day := strings.ToLower(tools.TrimSpecialCharacters(dayStr))
 	switch {
 	case strings.HasPrefix(day, "dom"):
 		return time.Sunday, nil
@@ -27,7 +29,8 @@ func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 		return time.Thursday, nil
 	case strings.HasPrefix(day, "sex"):
 		return time.Friday, nil
-	case strings.HasPrefix(day, "sáb"), strings.HasPrefix(day, "sab"):
+	// Java only: startsWith("sáb") — no unaccented "sab" invent
+	case strings.HasPrefix(day, "sáb"):
 		return time.Saturday, nil
 	default:
 		return 0, fmt.Errorf("could not find day of week for %q", dayStr)
@@ -35,7 +38,8 @@ func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 }
 
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
-	mon := strings.ToLower(trimSpecialPT(monthStr))
+	// Java: StringTools.trimSpecialCharacters(monthStr).toLowerCase()
+	mon := strings.ToLower(tools.TrimSpecialCharacters(monthStr))
 	switch {
 	case strings.HasPrefix(mon, "jan"):
 		return time.January, nil
@@ -64,19 +68,4 @@ func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 	default:
 		return 0, fmt.Errorf("could not find month %q", monthStr)
 	}
-}
-
-func trimSpecialPT(s string) string {
-	return strings.Map(func(r rune) rune {
-		if unicode.IsLetter(r) || unicode.IsDigit(r) {
-			return r
-		}
-		if r == '\u00AD' || r == '.' {
-			return -1
-		}
-		if unicode.IsSpace(r) {
-			return -1
-		}
-		return r
-	}, s)
 }

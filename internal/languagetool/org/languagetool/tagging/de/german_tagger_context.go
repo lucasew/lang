@@ -100,13 +100,15 @@ func (t *GermanTagger) getImperativeForm(word string, sentenceTokens []string, c
 	return nil
 }
 
-// isJavaWhitespaceToken ports StringUtils.isWhitespace (all chars whitespace, or empty).
+// isJavaWhitespaceToken ports Apache Commons StringUtils.isWhitespace —
+// true when empty or every char is Character.isWhitespace (not Go unicode.IsSpace;
+// NBSP is not whitespace under Java Character.isWhitespace).
 func isJavaWhitespaceToken(s string) bool {
 	if s == "" {
 		return true
 	}
 	for _, r := range s {
-		if !unicode.IsSpace(r) {
+		if !tools.CharacterIsWhitespace(r) {
 			return false
 		}
 	}
