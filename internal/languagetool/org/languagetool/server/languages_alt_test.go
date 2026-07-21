@@ -11,11 +11,13 @@ func TestDefaultCoreLanguages_LongCode(t *testing.T) {
 	// ApiV2.getLanguages: Languages.get() + getLongCodeToLangMapping extras (no soft invent table).
 	langs := DefaultCoreLanguages()
 	require.NotEmpty(t, langs)
-	var hasEnUS, hasDeDE, hasFrFRMap, hasEsBare bool
+	var hasEnUS, hasDeDE, hasFrFRMap, hasEsBare, hasEsAR, hasCaES, hasCaVal bool
+	longCodes := map[string]int{}
 	for _, l := range langs {
 		require.NotEmpty(t, l.Name)
 		require.NotEmpty(t, l.Code)
 		require.NotEmpty(t, l.LongCode)
+		longCodes[l.LongCode]++
 		if l.LongCode == "en-US" {
 			hasEnUS = true
 			require.Equal(t, "en", l.Code)
@@ -28,22 +30,46 @@ func TestDefaultCoreLanguages_LongCode(t *testing.T) {
 		// LibreOffice mapping from getLongCodeToLangMapping (French multi-country → fr-FR key)
 		if l.Code == "fr" && l.LongCode == "fr-FR" {
 			hasFrFRMap = true
+			require.Equal(t, "French", l.Name)
 		}
 		// Spanish multi-country: getShortCodeWithCountryAndVariant is bare "es"
 		if l.Code == "es" && l.LongCode == "es" {
 			hasEsBare = true
+			require.Equal(t, "Spanish", l.Name)
+		}
+		// SpanishVoseo single-country AR → es-AR in get() list
+		if l.LongCode == "es-AR" {
+			hasEsAR = true
+			require.Equal(t, "Spanish (voseo)", l.Name)
+		}
+		if l.LongCode == "ca-ES" {
+			hasCaES = true
+			require.Equal(t, "Catalan", l.Name)
+		}
+		if l.LongCode == "ca-ES-valencia" {
+			hasCaVal = true
+			require.Equal(t, "Catalan (Valencian)", l.Name)
 		}
 	}
 	require.True(t, hasEnUS)
 	require.True(t, hasDeDE)
 	require.True(t, hasFrFRMap)
 	require.True(t, hasEsBare)
+	require.True(t, hasEsAR)
+	require.True(t, hasCaES)
+	require.True(t, hasCaVal)
+	// fr-FR appears once from mapping (not from get() where French longCode is "fr")
+	require.Equal(t, 1, longCodes["fr-FR"])
+	// es-ES from mapping (Spanish multi → longCode "es", mapping key es-ES)
+	require.Equal(t, 1, longCodes["es-ES"])
 
 	api := NewApiV2(nil, nil)
 	r, err := api.Handle("languages", nil)
 	require.NoError(t, err)
 	require.Contains(t, r.Body, "longCode")
 	require.Contains(t, r.Body, "en-US")
+	require.Contains(t, r.Body, "es-AR")
+	require.Contains(t, r.Body, "ca-ES-valencia")
 }
 
 func TestParseAltLanguages_CommaWhitespace(t *testing.T) {

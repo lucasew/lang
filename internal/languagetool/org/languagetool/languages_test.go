@@ -30,14 +30,47 @@ func TestEnsureBuiltInLanguagesRegistered(t *testing.T) {
 	// multi-country Spanish → longCode is bare "es"
 	es := GlobalLanguages.GetLanguageForShortCode("es")
 	require.Equal(t, "es", es.GetShortCodeWithCountryAndVariant())
+	require.Equal(t, "Spanish", es.GetName())
 	// single-country AmericanEnglish
 	enUS := GlobalLanguages.GetLanguageForShortCode("en-US")
 	require.Equal(t, "English (US)", enUS.GetName())
 	require.Equal(t, "en", enUS.GetShortCode())
 	require.Equal(t, "en-US", enUS.GetShortCodeWithCountryAndVariant())
+	require.True(t, enUS.IsVariant())
+	require.False(t, GlobalLanguages.GetLanguageForShortCode("en").IsVariant())
+	// SpanishVoseo: only AR active in Java (commented countries not in array)
+	voseo := GlobalLanguages.GetLanguageForShortCode("es-AR")
+	require.Equal(t, "Spanish (voseo)", voseo.GetName())
+	require.Equal(t, "es-AR", voseo.GetShortCodeWithCountryAndVariant())
+	require.True(t, voseo.IsVariant())
+	// Catalan base longCode is ca-ES (countries=["ES"]); not a variant (extends Language)
+	ca := GlobalLanguages.GetLanguageForShortCode("ca-ES")
+	require.Equal(t, "Catalan", ca.GetName())
+	require.Equal(t, "ca-ES", ca.GetShortCodeWithCountryAndVariant())
+	require.False(t, ca.IsVariant())
+	require.True(t, GlobalLanguages.HasVariant(ca))
+	require.False(t, GlobalLanguages.IsHiddenFromGui(ca)) // default variant of itself
+	val := GlobalLanguages.GetLanguageForShortCode("ca-ES-valencia")
+	require.Equal(t, "Catalan (Valencian)", val.GetName())
+	require.True(t, val.IsVariant())
 	// long-code mapping for LibreOffice (fr-FR → French)
 	m := GlobalLanguages.GetLongCodeToLangMapping()
 	require.Equal(t, "fr", m["fr-FR"].GetShortCode())
+	require.Equal(t, "French", m["fr-FR"].GetName())
+	// getLanguageForShortCode uses mapping; isLanguageSupported does not
+	require.Equal(t, "French", GlobalLanguages.GetLanguageForShortCode("fr-FR").GetName())
+	require.False(t, GlobalLanguages.IsLanguageSupported("fr-FR"),
+		"Java isLanguageSupported uses OrNull only — no long-code mapping")
+	// Arabic first country is "" → no ar-SA mapping from Arabic itself
+	_, arMapped := m["ar-SA"]
+	require.False(t, arMapped, "Arabic countries[0] is empty — no ar-SA map entry")
+	// Portuguese first country "" → no pt-CV from base Portuguese
+	_, ptMapped := m["pt-CV"]
+	require.False(t, ptMapped)
+	// SimpleGerman force isVariant
+	sg := GlobalLanguages.GetLanguageForShortCode("de-DE-x-simple-language")
+	require.Equal(t, "Simple German", sg.GetName())
+	require.True(t, sg.IsVariant())
 	// zz/xx not registered as normal modules
 	require.False(t, GlobalLanguages.IsLanguageSupported("xx"))
 	// idempotent
