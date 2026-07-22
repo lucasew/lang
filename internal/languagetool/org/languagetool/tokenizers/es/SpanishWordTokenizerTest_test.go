@@ -86,6 +86,15 @@ func TestSpanishWordTokenizer_Tokenize(t *testing.T) {
 	tokens = w.Tokenize("1.er.")
 	require.Equal(t, "[1.er, .]", tokStr(tokens))
 
+	// Java ORDINAL_POINT leading \b (UNICODE_CHARACTER_CLASS): digit run must
+	// not follow a Unicode word char. Non-ASCII letters are word chars in Java
+	// but not under Go ASCII \b — must not over-protect/merge.
+	tokens = w.Tokenize("ñ1.o")
+	require.Equal(t, "[ñ1, ., o]", tokStr(tokens))
+
+	tokens = w.Tokenize("á1.º")
+	require.Equal(t, "[á1, ., º]", tokStr(tokens))
+
 	tokens = w.Tokenize("al-Ándalus")
 	require.Equal(t, 1, len(tokens))
 }

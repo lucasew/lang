@@ -20,11 +20,11 @@ var (
 	tokenizerPattern = regexp.MustCompile(`[` + wordCharacters + `]+|[^` + wordCharacters + `]`)
 	decimalPoint = regexp.MustCompile(`(?i)([\d])\.([\d])`)
 	decimalComma = regexp.MustCompile(`(?i)([\d]),([\d])`)
-	// Longer ordinal suffixes first. Java ORDINAL_POINT trailing \b uses
-	// UNICODE_CHARACTER_CLASS; Go's \b is ASCII-only (breaks after º/ª and
-	// over-matches when suffix is followed by more word chars). Right edge is
-	// gated in replaceOrdinalPoint.
-	ordinalPoint = regexp.MustCompile(`(?i)\b([\d]+)\.(º|ª|er|os|as|o|a)`)
+	// Longer ordinal suffixes first. Java ORDINAL_POINT uses \b…\b with
+	// UNICODE_CHARACTER_CLASS; Go's \b is ASCII-only (false left boundary after
+	// non-ASCII letters; false right boundary after º/ª or before more word
+	// chars). Both edges gated in replaceOrdinalPoint — no RE2 \b.
+	ordinalPoint = regexp.MustCompile(`(?i)([\d]+)\.(º|ª|er|os|as|o|a)`)
 	softHyphen   = regexp.MustCompile(`\x{00AD}`)
 	// Java SpanishWordTokenizer.wordsToAdd camel-case hyphen exceptions only.
 	javaHyphenExceptions = map[string]bool{
@@ -64,14 +64,21 @@ func (w *SpanishWordTokenizer) Tokenize(text string) []string {
 }
 
 // replaceOrdinalPoint ports Java ORDINAL_POINT.replaceAll("$1xxES_ORDINAL_POINTxx$2")
-// with UNICODE_CHARACTER_CLASS trailing \b: right edge must be end or non-word
-// (Unicode letter/digit/underscore), same as Java \w under UNICODE_CHARACTER_CLASS.
+// with UNICODE_CHARACTER_CLASS \b on both edges: left must be start or non-word,
+// right must be end or non-word (Unicode letter/digit/underscore = Java \w).
 func replaceOrdinalPoint(text string) string {
 	var b strings.Builder
 	last := 0
 	for _, loc := range ordinalPoint.FindAllStringSubmatchIndex(text, -1) {
 		full0, full1 := loc[0], loc[1]
-		// Java \b: right edge must be end or non-word (Unicode letter/digit/_)
+		// Java leading \b: start or previous rune is non-word (Unicode letter/digit/_)
+		if full0 > 0 {
+			r, _ := utf8.DecodeLastRuneInString(text[:full0])
+			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
+				continue
+			}
+		}
+		// Java trailing \b: end or next rune is non-word (Unicode letter/digit/_)
 		if full1 < len(text) {
 			r, _ := utf8.DecodeRuneInString(text[full1:])
 			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
