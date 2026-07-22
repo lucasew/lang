@@ -80,12 +80,13 @@ var (
 	// meter-like second abbr that Java excludes via (?![смкд]?м\.)
 	abbrDot2SmallMeterSecond = regexp.MustCompile(`^[\s\x{00A0}\x{202F}]*(?:[смкд]?м|мк)$`)
 
-	// non-ending abbreviations (long list); bare "в." handled carefully (not "в...")
+	// non-ending abbreviations (long list).
+	// Java includes dead alternative в(?!\.+) which never protects bare "в." (lookahead fails on the required following \.);
+	// bug-for-bug: bare mid-sentence/BOS "в." / "В." split as "в"+"." — do not invent protection.
 	// Java: (?!\uE120|\.+[\h\v]*$) after the dot — applied via replaceAbbrNonEnding.
+	// "в." in "в. о." is handled earlier by abbrDotVO1, not this list.
 	abbrNonEndingList = `абз|австрал|ам|амер|англ|акад(?:ем)?|арк|ауд|біол|бл(?:изьк)?|болг|буд|вип|вірм|грец(?:ьк)?|держ|див|дир|діал|дод|дол|досл|доц|доп|екон|ел|жін|зав|заст|зах|зб|зв|зневажл?|зовн|іл|ім|івр|інж|ісп|іст|італ|к|каб|каф|канд|кв|[1-9]-кімн|кімн|кін|кл|кн|коеф|крим|латин|мал|моб|н|[Нн]апр|нач|нім|нац|нпр|образн|оз|оп|оф|п|пен|перекл|перен|пл|пол|пом|пор|порівн|[Пп]оч|пп|прибл|прикм|прим|присл|пров|пром|просп|[Рр]ед|[Рр]еж|розд|розм|рос|рт|рум|с|санскр|[Сс]вв?|скор|соц|співавт|[сС]т|стор|суч|сх|табл|тт|[тТ]ел|техн|укр|філол|фр|франц|худ|[цЦ]ит|ч|чайн|част|ц|яп|япон`
 	abbrNonEnding = regexp.MustCompile(`(?i)(^|[^а-яіїєґ'\x{0301}-])(` + abbrNonEndingList + `)\.`)
-	// single-letter в. abbreviation when not ellipsis / not already protected
-	abbrDotV = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([вВ])\.([^\.\x{E120}])`)
 	abbrNonEnding2 = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'-]м\.)([\s\x{00A0}\x{202F}]*[А-ЯІЇЄҐ])`)
 
 	abbrNar1 = regexp.MustCompile(`(([0-9]|рік|[рp]\.|[-–—])[\s\x{00A0}\x{202F}]+нар)\.`)
@@ -282,8 +283,8 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 		text = abbrTZV.ReplaceAllString(text, "$1"+nonBreakingPlaceholder2+breakingPlaceholder+"$2"+nonBreakingPlaceholder2+breakingPlaceholder)
 		text = abbrRedAvt.ReplaceAllString(text, "$1."+nonBreakingPlaceholder2+breakingPlaceholder+"$3")
 		// Java ABBR_DOT_NON_ENDING: \.(?!\uE120|\.+[\h\v]*$)
+		// No bare "в." path: Java's в(?!\.+) is dead; split bare "в." like Java.
 		text = replaceAbbrNonEnding(text)
-		text = replaceAbbrDotV(text)
 		text = abbrNonEnding2.ReplaceAllString(text, "$1"+nonBreakingPlaceholder2+breakingPlaceholder+"$2")
 		text = invalidMln.ReplaceAllString(text, "$1."+nonBreakingPlaceholder2+breakingPlaceholder+"$2")
 	}
@@ -405,27 +406,6 @@ func replaceAbbrNonEnding(text string) string {
 		g1 := text[loc[2]:loc[3]]
 		g2 := text[loc[4]:loc[5]]
 		b.WriteString(g1 + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
-		last = full1
-	}
-	b.WriteString(text[last:])
-	return b.String()
-}
-
-// replaceAbbrDotV ports bare "в." / "В." when not ellipsis and not already protected.
-func replaceAbbrDotV(text string) string {
-	var b strings.Builder
-	last := 0
-	for _, loc := range abbrDotV.FindAllStringSubmatchIndex(text, -1) {
-		full0, full1 := loc[0], loc[1]
-		// full match includes the char after the dot ($3); only rewrite if not E120
-		g3 := text[loc[6]:loc[7]]
-		if g3 == nonBreakingPlaceholder2 {
-			continue
-		}
-		b.WriteString(text[last:full0])
-		g1 := text[loc[2]:loc[3]]
-		g2 := text[loc[4]:loc[5]]
-		b.WriteString(g1 + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder + g3)
 		last = full1
 	}
 	b.WriteString(text[last:])
