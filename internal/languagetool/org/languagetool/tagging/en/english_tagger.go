@@ -35,22 +35,22 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
-		// Java EnglishTagger: typewriter apostrophe hack + setTypographicApostrophe.
-		w := word
+		// Java EnglishTagger: mutates local word to typewriter apostrophe for lookup +
+		// AnalyzedToken surface; flags ATR with setTypographicApostrophe.
 		containsTypographicApostrophe := false
-		if len(w) > 1 && strings.Contains(w, "’") {
+		if len(word) > 1 && strings.Contains(word, "’") {
 			containsTypographicApostrophe = true
-			w = strings.ReplaceAll(w, "’", "'")
+			word = strings.ReplaceAll(word, "’", "'")
 		}
-		lower := strings.ToLower(w)
-		isLower := w == lower
-		isMixed := tools.IsMixedCase(w)
-		isAllUpper := tools.IsAllUppercase(w)
+		lower := strings.ToLower(word)
+		isLower := word == lower
+		isMixed := tools.IsMixedCase(word)
+		isAllUpper := tools.IsAllUppercase(word)
 
 		// Java EnglishTagger.tag uses getWordTagger().tag (exact), not BaseTagger.getAnalyzedTokens.
 		// TagWord would re-merge case variants and duplicate title-case readings.
 		var readings []*languagetool.AnalyzedToken
-		for _, tw := range t.TagWordExact(w) {
+		for _, tw := range t.TagWordExact(word) {
 			readings = append(readings, taggedToToken(word, tw))
 		}
 		if !isLower && !isMixed {
@@ -66,11 +66,11 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 		}
 		// Java: walkin'/doin' → walking/doing style (endsWith "in'")
 		if len(readings) == 0 && strings.HasSuffix(lower, "in'") {
-			corrected := w
+			corrected := word
 			if isAllUpper {
-				corrected = w[:len(w)-1] + "G"
+				corrected = word[:len(word)-1] + "G"
 			} else {
-				corrected = w[:len(w)-1] + "g"
+				corrected = word[:len(word)-1] + "g"
 			}
 			for _, tw := range t.TagWordExact(corrected) {
 				readings = append(readings, taggedToToken(word, tw))
@@ -89,6 +89,7 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 			atr.SetTypographicApostrophe(true)
 		}
 		out = append(out, atr)
+		// Java: pos += word.length() after apostrophe rewrite (same UTF-16 length for ’→').
 		pos += tagging.UTF16Len(word)
 	}
 	return out

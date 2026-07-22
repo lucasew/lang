@@ -38,7 +38,11 @@ func TestEnglishTagger_TypographicApostrophe(t *testing.T) {
 	tagger := NewEnglishTagger(wt)
 	got := tagger.Tag([]string{"don’t"})
 	require.Len(t, got, 1)
+	// Java mutates word ’→' for AnalyzedToken surface; flags typographic apostrophe.
+	require.Equal(t, "don't", got[0].GetToken())
 	require.True(t, got[0].HasTypographicApostrophe())
+	require.Len(t, got[0].GetReadings(), 1)
+	require.Equal(t, "don't", got[0].GetReadings()[0].GetToken())
 }
 
 // Java BaseTagger: pos += word.length() (UTF-16). Non-BMP emoji advances by 2.
