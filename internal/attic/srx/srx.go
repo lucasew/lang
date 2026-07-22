@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 )
 
 // Document is a parsed segment.srx.
@@ -28,6 +30,11 @@ type Rule struct {
 	beforeNegAlts []string
 	// afterNegAlts is the same for afterbreak (rare; Ukrainian rules).
 	afterNegAlts []string
+	// beforeWBGroups / afterWBGroups are 1-based capturing-group indices for empty
+	// groups that replaced Java \b (RE2 has no zero-width Unicode word boundary).
+	// A match is kept only if isJavaWordBoundary holds at each group's start offset.
+	beforeWBGroups []int
+	afterWBGroups  []int
 }
 
 // MapRule maps a language code pattern to a language rule name.
@@ -63,8 +70,8 @@ func parse(r io.Reader) (*Document, error) {
 		if curBreak == "" && beforeBuf.Len() == 0 && afterBuf.Len() == 0 {
 			return
 		}
-		before, beforeNeg, err1 := compilePart(beforeBuf.String())
-		after, afterNeg, err2 := compilePart(afterBuf.String())
+		before, beforeNeg, beforeWB, err1 := compilePart(beforeBuf.String())
+		after, afterNeg, afterWB, err2 := compilePart(afterBuf.String())
 		if err1 != nil || err2 != nil {
 			curBreak = ""
 			beforeBuf.Reset()
@@ -72,11 +79,13 @@ func parse(r io.Reader) (*Document, error) {
 			return
 		}
 		curRules = append(curRules, Rule{
-			Break:         strings.EqualFold(curBreak, "yes"),
-			Before:        before,
-			After:         after,
-			beforeNegAlts: beforeNeg,
-			afterNegAlts:  afterNeg,
+			Break:          strings.EqualFold(curBreak, "yes"),
+			Before:         before,
+			After:          after,
+			beforeNegAlts:  beforeNeg,
+			afterNegAlts:   afterNeg,
+			beforeWBGroups: beforeWB,
+			afterWBGroups:  afterWB,
 		})
 		curBreak = ""
 		beforeBuf.Reset()
@@ -155,13 +164,14 @@ func attr(se xml.StartElement, name string) string {
 
 // compilePart compiles one beforebreak/afterbreak pattern.
 // Returns optional fixed-string negative-lookahead alternatives when the Java
-// pattern uses (?!a|b|c) that RE2 cannot express (English "p. 6" rule, etc.).
+// pattern uses (?!a|b|c) that RE2 cannot express (English "p. 6" rule, etc.),
+// and 1-based group indices for Java \b positions (empty captures + runtime WB).
 //
 // Do not TrimSpace: Java SRX keeps significant leading/trailing spaces in
 // patterns (e.g. English "[...]\\*\\*\\* " for ellipsis + space).
-func compilePart(pat string) (*regexp.Regexp, []string, error) {
+func compilePart(pat string) (*regexp.Regexp, []string, []int, error) {
 	if pat == "" {
-		return nil, nil, nil // empty = always match (for after) / handled by caller
+		return nil, nil, nil, nil // empty = always match (for after) / handled by caller
 	}
 	// Java (?iu) → RE2 (?i); UNICODE_CASE is approximate via \p{L} elsewhere.
 	pat = strings.ReplaceAll(pat, "(?iu)", "(?i)")
@@ -169,26 +179,73 @@ func compilePart(pat string) (*regexp.Regexp, []string, error) {
 	// Simple fixed-string negative lookahead: PREFIX(?!a|b|c)SUFFIX
 	// (no nested parens inside the lookahead). Used by English segment.srx:
 	// [\.\s](?!(on|it|...))\p{L}{1,2}\.\s
-	if re, neg, err, ok := tryCompileSimpleNegLookahead(pat); ok {
-		return re, neg, err
+	if re, neg, wb, err, ok := tryCompileSimpleNegLookahead(pat); ok {
+		return re, neg, wb, err
 	}
+	// Rewrite Java \b to empty () captures before other transforms (group numbers).
+	pat, wbGroups := rewriteWordBoundaries(pat)
 	goPat := javaRegexToGo(pat)
 	re, err := regexp.Compile("(?m:" + goPat + ")")
-	return re, nil, err
+	return re, nil, wbGroups, err
+}
+
+// rewriteWordBoundaries replaces each Java \b with an empty capturing group ()
+// so RE2 can match (zero-width) while Split verifies UNICODE_CHARACTER_CLASS
+// word boundaries at those offsets. RE2's \b is ASCII-only and cannot express
+// Java \b; a consuming expansion (old approach) misses letter→punctuation
+// boundaries such as Spanish "tal…» " (ellipsis after a letter).
+//
+// Returns the rewritten pattern and 1-based group indices for each \b.
+func rewriteWordBoundaries(pat string) (string, []int) {
+	var b strings.Builder
+	b.Grow(len(pat) + 8)
+	var wbGroups []int
+	groupNum := 0
+	for i := 0; i < len(pat); i++ {
+		if pat[i] == '\\' && i+1 < len(pat) {
+			if pat[i+1] == 'b' {
+				// Java word boundary → empty capture; verified in Split.
+				groupNum++
+				wbGroups = append(wbGroups, groupNum)
+				b.WriteString("()")
+				i++
+				continue
+			}
+			// Copy backslash + next; javaRegexToGo handles \uXXXX on the result.
+			b.WriteByte('\\')
+			b.WriteByte(pat[i+1])
+			i++
+			continue
+		}
+		if pat[i] == '(' {
+			// Capturing group if not (?… special form.
+			if i+1 < len(pat) && pat[i+1] == '?' {
+				b.WriteByte('(')
+				continue
+			}
+			groupNum++
+			b.WriteByte('(')
+			continue
+		}
+		b.WriteByte(pat[i])
+	}
+	return b.String(), wbGroups
 }
 
 // tryCompileSimpleNegLookahead rewrites A(?!alt1|alt2)B or A(?!(alt1|alt2))B
-// into RE2 (A)B with group 1 = A, returning the fixed alternatives for
+// into RE2 (A)B with group 1 = prefix, returning the fixed alternatives for
 // match-time rejection (Java zero-width negative lookahead).
-func tryCompileSimpleNegLookahead(pat string) (*regexp.Regexp, []string, error, bool) {
+// Word-boundary groups inside A/B are rewritten; group 1 remains the prefix
+// for neg-alt checks (wb groups are offset after that outer group).
+func tryCompileSimpleNegLookahead(pat string) (*regexp.Regexp, []string, []int, error, bool) {
 	const marker = "(?!"
 	i := strings.Index(pat, marker)
 	if i < 0 {
-		return nil, nil, nil, false
+		return nil, nil, nil, nil, false
 	}
 	// Only one simple lookahead; nested or multiple → not handled here.
 	if strings.Count(pat, marker) != 1 {
-		return nil, nil, nil, false
+		return nil, nil, nil, nil, false
 	}
 	rest := pat[i+len(marker):]
 	// Balance parentheses to find end of (?! ... ). English uses (?!(on|it|...)).
@@ -209,7 +266,7 @@ func tryCompileSimpleNegLookahead(pat string) (*regexp.Regexp, []string, error, 
 		}
 	}
 	if end < 0 {
-		return nil, nil, nil, false
+		return nil, nil, nil, nil, false
 	}
 	altsRaw := rest[:end]
 	// Unwrap a single outer non-capturing/capturing group: (on|it|...)
@@ -220,37 +277,62 @@ func tryCompileSimpleNegLookahead(pat string) (*regexp.Regexp, []string, error, 
 	// Fixed-string alts only (English exclusion list: on|it|of|...).
 	// Reject regex metacharacters so we never mis-handle (?!Так?) etc.
 	if strings.ContainsAny(altsRaw, `+*?[]{}()^$\`) {
-		return nil, nil, nil, false
+		return nil, nil, nil, nil, false
 	}
 	alts := strings.Split(altsRaw, "|")
 	if len(alts) == 0 {
-		return nil, nil, nil, false
+		return nil, nil, nil, nil, false
 	}
 	for _, a := range alts {
 		if a == "" {
-			return nil, nil, nil, false
+			return nil, nil, nil, nil, false
 		}
 	}
 	prefix := pat[:i]
 	suffix := rest[end+1:]
+	prefix2, prefWB := rewriteWordBoundaries(prefix)
+	suffix2, sufWB := rewriteWordBoundaries(suffix)
+	// Outer (prefix) is group 1 for neg-alt; shift wb groups in prefix/suffix.
+	var wb []int
+	for _, g := range prefWB {
+		wb = append(wb, g+1) // +1 for outer prefix group
+	}
+	prefGroups := countCapturingGroups(prefix2)
+	for _, g := range sufWB {
+		wb = append(wb, g+1+prefGroups)
+	}
 	// (prefix)suffix — group 1 ends where (?!...) was checked in Java.
-	goPat := "(" + javaRegexToGo(prefix) + ")" + javaRegexToGo(suffix)
+	goPat := "(" + javaRegexToGo(prefix2) + ")" + javaRegexToGo(suffix2)
 	re, err := regexp.Compile("(?m:" + goPat + ")")
 	if err != nil {
-		return nil, nil, err, true
+		return nil, nil, nil, err, true
 	}
-	return re, alts, nil, true
+	return re, alts, wb, nil, true
+}
+
+// countCapturingGroups counts capturing '(' in a pattern that has already had
+// \b rewritten (no raw \b). Non-capturing (?… forms are skipped.
+func countCapturingGroups(pat string) int {
+	n := 0
+	for i := 0; i < len(pat); i++ {
+		if pat[i] == '\\' && i+1 < len(pat) {
+			i++
+			continue
+		}
+		if pat[i] == '(' {
+			if i+1 < len(pat) && pat[i+1] == '?' {
+				continue
+			}
+			n++
+		}
+	}
+	return n
 }
 
 // javaRegexToGo converts common Java Pattern escapes to RE2.
-//
-// Java SRX uses Pattern.UNICODE_CHARACTER_CLASS (see SrxTools), so \b treats
-// letters like ș/ä as word chars. RE2's \b is ASCII-only ([A-Za-z0-9_]), which
-// breaks Romanian șamd, German abbreviations, etc. We expand \b to a Unicode
-// approximation: zero-width at ^/$, otherwise one non-word rune. SRX break
-// positions use the match end, so a leading consumed separator is safe.
+// Word boundaries (\b) must already be rewritten via rewriteWordBoundaries;
+// raw \b left here would be ASCII-only in RE2 and is not used for segment.srx.
 func javaRegexToGo(pat string) string {
-	const unicodeWordBoundary = `(?:^|$|[^\p{L}\p{N}_])`
 	var b strings.Builder
 	b.Grow(len(pat) + 8)
 	for i := 0; i < len(pat); i++ {
@@ -266,18 +348,59 @@ func javaRegexToGo(pat string) string {
 					continue
 				}
 			}
-			// \b → Unicode-aware word boundary (Java UNICODE_CHARACTER_CLASS)
-			if pat[i+1] == 'b' {
-				b.WriteString(unicodeWordBoundary)
-				i++
-				continue
-			}
-			// \B non-boundary: leave as-is (rare in segment.srx)
-			// \x{...} / \p{...} already fine for RE2
 		}
 		b.WriteByte(pat[i])
 	}
 	return b.String()
+}
+
+// isJavaWordChar approximates Java Pattern.UNICODE_CHARACTER_CLASS \w:
+// letters, digits, marks, and connector punctuation (includes '_').
+func isJavaWordChar(r rune) bool {
+	if r == utf8.RuneError {
+		return false
+	}
+	if unicode.IsLetter(r) || unicode.IsDigit(r) {
+		return true
+	}
+	return unicode.In(r, unicode.Mn, unicode.Me, unicode.Mc, unicode.Pc)
+}
+
+// isJavaWordBoundary reports a Java \b at byte offset pos in s
+// (boundary between word and non-word; start/end count as non-word).
+func isJavaWordBoundary(s string, pos int) bool {
+	if pos < 0 || pos > len(s) {
+		return false
+	}
+	prevWord := false
+	if pos > 0 {
+		r, _ := utf8.DecodeLastRuneInString(s[:pos])
+		prevWord = isJavaWordChar(r)
+	}
+	nextWord := false
+	if pos < len(s) {
+		r, _ := utf8.DecodeRuneInString(s[pos:])
+		nextWord = isJavaWordChar(r)
+	}
+	return prevWord != nextWord
+}
+
+// wbGroupsOK reports whether every listed capturing group sits on a Java \b.
+// groups are 1-based; sub is FindStringSubmatchIndex relative to absBase in text.
+func wbGroupsOK(text string, absBase int, sub []int, groups []int) bool {
+	if len(groups) == 0 {
+		return true
+	}
+	for _, g := range groups {
+		si := 2 * g
+		if si+1 >= len(sub) || sub[si] < 0 {
+			return false
+		}
+		if !isJavaWordBoundary(text, absBase+sub[si]) {
+			return false
+		}
+	}
+	return true
 }
 
 func (d *Document) ruleNames(code string) []string {
@@ -321,16 +444,21 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 			// FindAllStringIndex is non-overlapping and would skip the second.
 			for bstart := 0; bstart < len(text); {
 				var abs0, abs1 int
-				if len(rule.beforeNegAlts) > 0 {
-					// Submatch: group 1 = prefix before Java (?!alts); reject if alts match there.
+				// Always use SubmatchIndex when \b groups or neg-alts need group offsets.
+				needSub := len(rule.beforeNegAlts) > 0 || len(rule.beforeWBGroups) > 0
+				if needSub {
 					sub := rule.Before.FindStringSubmatchIndex(text[bstart:])
 					if sub == nil {
 						break
 					}
 					abs0 = bstart + sub[0]
 					abs1 = bstart + sub[1]
-					// group 1 end
-					if len(sub) >= 4 && sub[2] >= 0 {
+					if !wbGroupsOK(text, bstart, sub, rule.beforeWBGroups) {
+						bstart = abs0 + 1
+						continue
+					}
+					// group 1 end: prefix before Java (?!alts); reject if alts match there.
+					if len(rule.beforeNegAlts) > 0 && len(sub) >= 4 && sub[2] >= 0 {
 						afterPrefix := text[bstart+sub[3]:]
 						if hasFixedPrefix(afterPrefix, rule.beforeNegAlts) {
 							bstart = abs0 + 1
@@ -348,7 +476,7 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 				pos := len([]rune(text[:abs1]))
 				if pos > 0 && pos < rn && !decided[pos] {
 					after := string(runes[pos:])
-					if matchAfter(rule.After, after, rule.afterNegAlts) {
+					if matchAfter(rule.After, after, rule.afterNegAlts, rule.afterWBGroups) {
 						breakAt[pos] = rule.Break
 						decided[pos] = true
 					}
@@ -380,16 +508,19 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 	return out
 }
 
-func matchAfter(re *regexp.Regexp, after string, negAlts []string) bool {
+func matchAfter(re *regexp.Regexp, after string, negAlts []string, wbGroups []int) bool {
 	if re == nil {
 		return true
 	}
-	if len(negAlts) > 0 {
+	if len(negAlts) > 0 || len(wbGroups) > 0 {
 		sub := re.FindStringSubmatchIndex(after)
 		if sub == nil || sub[0] != 0 {
 			return false
 		}
-		if len(sub) >= 4 && sub[2] >= 0 {
+		if !wbGroupsOK(after, 0, sub, wbGroups) {
+			return false
+		}
+		if len(negAlts) > 0 && len(sub) >= 4 && sub[2] >= 0 {
 			if hasFixedPrefix(after[sub[3]:], negAlts) {
 				return false
 			}
