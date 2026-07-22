@@ -3,6 +3,7 @@ package es
 import (
 	"regexp"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
@@ -17,10 +18,12 @@ const wordCharacters = `§©@€£\$_\p{L}\d·\-\x{0300}-\x{036F}\x{00A8}\x{2070
 
 var (
 	tokenizerPattern = regexp.MustCompile(`[` + wordCharacters + `]+|[^` + wordCharacters + `]`)
-	decimalPoint     = regexp.MustCompile(`(?i)([\d])\.([\d])`)
-	decimalComma     = regexp.MustCompile(`(?i)([\d]),([\d])`)
-	// Longer ordinal suffixes first. No trailing \b: Go's \b is ASCII-only and
-	// fails after º/ª (Java uses UNICODE_CHARACTER_CLASS).
+	decimalPoint = regexp.MustCompile(`(?i)([\d])\.([\d])`)
+	decimalComma = regexp.MustCompile(`(?i)([\d]),([\d])`)
+	// Longer ordinal suffixes first. Java ORDINAL_POINT trailing \b uses
+	// UNICODE_CHARACTER_CLASS; Go's \b is ASCII-only (breaks after º/ª and
+	// over-matches when suffix is followed by more word chars). Right edge is
+	// gated in replaceOrdinalPoint.
 	ordinalPoint = regexp.MustCompile(`(?i)\b([\d]+)\.(º|ª|er|os|as|o|a)`)
 	softHyphen   = regexp.MustCompile(`\x{00AD}`)
 	// Java SpanishWordTokenizer.wordsToAdd camel-case hyphen exceptions only.
@@ -40,7 +43,7 @@ func (w *SpanishWordTokenizer) Tokenize(text string) []string {
 	auxText = strings.ReplaceAll(auxText, "\u2011", "\u002d")
 	auxText = decimalPoint.ReplaceAllString(auxText, "${1}xxES_DECIMAL_POINTxx${2}")
 	auxText = decimalComma.ReplaceAllString(auxText, "${1}xxES_DECIMAL_COMMAxx${2}")
-	auxText = ordinalPoint.ReplaceAllString(auxText, "${1}xxES_ORDINAL_POINTxx${2}")
+	auxText = replaceOrdinalPoint(auxText)
 
 	var l []string
 	for _, loc := range tokenizerPattern.FindAllStringIndex(auxText, -1) {
@@ -58,6 +61,31 @@ func (w *SpanishWordTokenizer) Tokenize(text string) []string {
 		l = append(l, wordsToAddES(s)...)
 	}
 	return tokenizers.JoinEMailsAndUrls(l)
+}
+
+// replaceOrdinalPoint ports Java ORDINAL_POINT.replaceAll("$1xxES_ORDINAL_POINTxx$2")
+// with UNICODE_CHARACTER_CLASS trailing \b: right edge must be end or non-word
+// (Unicode letter/digit/underscore), same as Java \w under UNICODE_CHARACTER_CLASS.
+func replaceOrdinalPoint(text string) string {
+	var b strings.Builder
+	last := 0
+	for _, loc := range ordinalPoint.FindAllStringSubmatchIndex(text, -1) {
+		full0, full1 := loc[0], loc[1]
+		// Java \b: right edge must be end or non-word (Unicode letter/digit/_)
+		if full1 < len(text) {
+			r, _ := utf8.DecodeRuneInString(text[full1:])
+			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
+				continue
+			}
+		}
+		b.WriteString(text[last:full0])
+		g1 := text[loc[2]:loc[3]]
+		g2 := text[loc[4]:loc[5]]
+		b.WriteString(g1 + "xxES_ORDINAL_POINTxx" + g2)
+		last = full1
+	}
+	b.WriteString(text[last:])
+	return b.String()
 }
 
 func wordsToAddES(s string) []string {

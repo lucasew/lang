@@ -71,6 +71,21 @@ func TestSpanishWordTokenizer_Tokenize(t *testing.T) {
 	require.Equal(t, 7, len(tokens))
 	require.Equal(t, "[11.as,  , Jornadas,  , de,  , Estudio]", tokStr(tokens))
 
+	// Java ORDINAL_POINT trailing \b (UNICODE_CHARACTER_CLASS): suffix must be
+	// followed by a word boundary. "1.apple" / "1.asiento" must not protect/merge.
+	tokens = w.Tokenize("1.apple")
+	require.Equal(t, "[1, ., apple]", tokStr(tokens))
+
+	tokens = w.Tokenize("1.asiento")
+	require.Equal(t, "[1, ., asiento]", tokStr(tokens))
+
+	tokens = w.Tokenize("21.asiento")
+	require.Equal(t, "[21, ., asiento]", tokStr(tokens))
+
+	// Still protect real ordinals when boundary follows (end or non-word).
+	tokens = w.Tokenize("1.er.")
+	require.Equal(t, "[1.er, .]", tokStr(tokens))
+
 	tokens = w.Tokenize("al-Ándalus")
 	require.Equal(t, 1, len(tokens))
 }
