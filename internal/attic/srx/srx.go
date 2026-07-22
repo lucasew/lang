@@ -22,6 +22,12 @@ type Rule struct {
 	Break  bool
 	Before *regexp.Regexp
 	After  *regexp.Regexp
+	// beforeNegAlts holds fixed-string alternatives from a Java (?!a|b|c) in beforebreak.
+	// Before is compiled as (prefix)suffix with group 1 = prefix; a match is rejected if
+	// text after the prefix starts with any alternative (Java zero-width negative lookahead).
+	beforeNegAlts []string
+	// afterNegAlts is the same for afterbreak (rare; Ukrainian rules).
+	afterNegAlts []string
 }
 
 // MapRule maps a language code pattern to a language rule name.
@@ -57,8 +63,8 @@ func parse(r io.Reader) (*Document, error) {
 		if curBreak == "" && beforeBuf.Len() == 0 && afterBuf.Len() == 0 {
 			return
 		}
-		before, err1 := compilePart(beforeBuf.String())
-		after, err2 := compilePart(afterBuf.String())
+		before, beforeNeg, err1 := compilePart(beforeBuf.String())
+		after, afterNeg, err2 := compilePart(afterBuf.String())
 		if err1 != nil || err2 != nil {
 			curBreak = ""
 			beforeBuf.Reset()
@@ -66,9 +72,11 @@ func parse(r io.Reader) (*Document, error) {
 			return
 		}
 		curRules = append(curRules, Rule{
-			Break:  strings.EqualFold(curBreak, "yes"),
-			Before: before,
-			After:  after,
+			Break:         strings.EqualFold(curBreak, "yes"),
+			Before:        before,
+			After:         after,
+			beforeNegAlts: beforeNeg,
+			afterNegAlts:  afterNeg,
 		})
 		curBreak = ""
 		beforeBuf.Reset()
@@ -145,13 +153,93 @@ func attr(se xml.StartElement, name string) string {
 	return ""
 }
 
-func compilePart(pat string) (*regexp.Regexp, error) {
-	pat = strings.TrimSpace(pat)
+// compilePart compiles one beforebreak/afterbreak pattern.
+// Returns optional fixed-string negative-lookahead alternatives when the Java
+// pattern uses (?!a|b|c) that RE2 cannot express (English "p. 6" rule, etc.).
+//
+// Do not TrimSpace: Java SRX keeps significant leading/trailing spaces in
+// patterns (e.g. English "[...]\\*\\*\\* " for ellipsis + space).
+func compilePart(pat string) (*regexp.Regexp, []string, error) {
 	if pat == "" {
-		return nil, nil // empty = always match (for after) / handled by caller
+		return nil, nil, nil // empty = always match (for after) / handled by caller
 	}
-	pat = javaRegexToGo(pat)
-	return regexp.Compile("(?m:" + pat + ")")
+	// Java (?iu) → RE2 (?i); UNICODE_CASE is approximate via \p{L} elsewhere.
+	pat = strings.ReplaceAll(pat, "(?iu)", "(?i)")
+	pat = strings.ReplaceAll(pat, "(?ui)", "(?i)")
+	// Simple fixed-string negative lookahead: PREFIX(?!a|b|c)SUFFIX
+	// (no nested parens inside the lookahead). Used by English segment.srx:
+	// [\.\s](?!(on|it|...))\p{L}{1,2}\.\s
+	if re, neg, err, ok := tryCompileSimpleNegLookahead(pat); ok {
+		return re, neg, err
+	}
+	goPat := javaRegexToGo(pat)
+	re, err := regexp.Compile("(?m:" + goPat + ")")
+	return re, nil, err
+}
+
+// tryCompileSimpleNegLookahead rewrites A(?!alt1|alt2)B or A(?!(alt1|alt2))B
+// into RE2 (A)B with group 1 = A, returning the fixed alternatives for
+// match-time rejection (Java zero-width negative lookahead).
+func tryCompileSimpleNegLookahead(pat string) (*regexp.Regexp, []string, error, bool) {
+	const marker = "(?!"
+	i := strings.Index(pat, marker)
+	if i < 0 {
+		return nil, nil, nil, false
+	}
+	// Only one simple lookahead; nested or multiple → not handled here.
+	if strings.Count(pat, marker) != 1 {
+		return nil, nil, nil, false
+	}
+	rest := pat[i+len(marker):]
+	// Balance parentheses to find end of (?! ... ). English uses (?!(on|it|...)).
+	depth := 1 // already inside the (?!  ... )
+	end := -1
+	for j := 0; j < len(rest); j++ {
+		switch rest[j] {
+		case '\\':
+			j++ // skip escaped char
+		case '(':
+			depth++
+		case ')':
+			depth--
+			if depth == 0 {
+				end = j
+				j = len(rest) // break
+			}
+		}
+	}
+	if end < 0 {
+		return nil, nil, nil, false
+	}
+	altsRaw := rest[:end]
+	// Unwrap a single outer non-capturing/capturing group: (on|it|...)
+	if len(altsRaw) >= 2 && altsRaw[0] == '(' && altsRaw[len(altsRaw)-1] == ')' &&
+		!strings.Contains(altsRaw[1:len(altsRaw)-1], "(") {
+		altsRaw = altsRaw[1 : len(altsRaw)-1]
+	}
+	// Fixed-string alts only (English exclusion list: on|it|of|...).
+	// Reject regex metacharacters so we never mis-handle (?!Так?) etc.
+	if strings.ContainsAny(altsRaw, `+*?[]{}()^$\`) {
+		return nil, nil, nil, false
+	}
+	alts := strings.Split(altsRaw, "|")
+	if len(alts) == 0 {
+		return nil, nil, nil, false
+	}
+	for _, a := range alts {
+		if a == "" {
+			return nil, nil, nil, false
+		}
+	}
+	prefix := pat[:i]
+	suffix := rest[end+1:]
+	// (prefix)suffix — group 1 ends where (?!...) was checked in Java.
+	goPat := "(" + javaRegexToGo(prefix) + ")" + javaRegexToGo(suffix)
+	re, err := regexp.Compile("(?m:" + goPat + ")")
+	if err != nil {
+		return nil, nil, err, true
+	}
+	return re, alts, nil, true
 }
 
 // javaRegexToGo converts common Java Pattern escapes to RE2.
@@ -232,16 +320,35 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 			// match start so "d. h." gets no-break on both single-letter dots.
 			// FindAllStringIndex is non-overlapping and would skip the second.
 			for bstart := 0; bstart < len(text); {
-				loc := rule.Before.FindStringIndex(text[bstart:])
-				if loc == nil {
-					break
+				var abs0, abs1 int
+				if len(rule.beforeNegAlts) > 0 {
+					// Submatch: group 1 = prefix before Java (?!alts); reject if alts match there.
+					sub := rule.Before.FindStringSubmatchIndex(text[bstart:])
+					if sub == nil {
+						break
+					}
+					abs0 = bstart + sub[0]
+					abs1 = bstart + sub[1]
+					// group 1 end
+					if len(sub) >= 4 && sub[2] >= 0 {
+						afterPrefix := text[bstart+sub[3]:]
+						if hasFixedPrefix(afterPrefix, rule.beforeNegAlts) {
+							bstart = abs0 + 1
+							continue
+						}
+					}
+				} else {
+					loc := rule.Before.FindStringIndex(text[bstart:])
+					if loc == nil {
+						break
+					}
+					abs0 = bstart + loc[0]
+					abs1 = bstart + loc[1]
 				}
-				abs0 := bstart + loc[0]
-				abs1 := bstart + loc[1]
 				pos := len([]rune(text[:abs1]))
 				if pos > 0 && pos < rn && !decided[pos] {
 					after := string(runes[pos:])
-					if matchAfter(rule.After, after) {
+					if matchAfter(rule.After, after, rule.afterNegAlts) {
 						breakAt[pos] = rule.Break
 						decided[pos] = true
 					}
@@ -273,10 +380,33 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 	return out
 }
 
-func matchAfter(re *regexp.Regexp, after string) bool {
+func matchAfter(re *regexp.Regexp, after string, negAlts []string) bool {
 	if re == nil {
+		return true
+	}
+	if len(negAlts) > 0 {
+		sub := re.FindStringSubmatchIndex(after)
+		if sub == nil || sub[0] != 0 {
+			return false
+		}
+		if len(sub) >= 4 && sub[2] >= 0 {
+			if hasFixedPrefix(after[sub[3]:], negAlts) {
+				return false
+			}
+		}
 		return true
 	}
 	loc := re.FindStringIndex(after)
 	return loc != nil && loc[0] == 0
+}
+
+// hasFixedPrefix reports whether s starts with any of the fixed alternatives
+// (Java (?!a|b|c) zero-width check at the current position).
+func hasFixedPrefix(s string, alts []string) bool {
+	for _, a := range alts {
+		if strings.HasPrefix(s, a) {
+			return true
+		}
+	}
+	return false
 }
