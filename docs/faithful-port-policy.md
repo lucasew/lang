@@ -28,12 +28,16 @@ Anything that is not a 1:1 port of LT logic does **not** belong under `internal/
 - Do **not** grow parallel soft APIs, helper packages, or “approx” pipelines inside the tree.
 - **No hardcoded name blocklists** (e.g. banning the word `soft`) — they are rename-cheatable. Path law + reviewer + Java-king behavior are the fences.
 
-## 4. Work model: sector → implementer → reviewer
+## 4. Work model: sector → implementer → validator
+
+Unattended coordination (parent, queue, P2 fires, checklist marks): **[`docs/loop-protocol.md`](loop-protocol.md)** + **[`docs/validation/queue.md`](validation/queue.md)**.  
+“Reviewer” in older text = **validator**. Implementer **never** marks the checklist.
 
 ### Sector
 
 - **One unit of work = one Java type** (Go twin file(s) + colocated tests for that type).
 - **Order: leaves → root** — port low-dependency types first; composites only after dependencies are faithful twins.
+- **Checklist mark unit** = one checklist line; chase references to a leaf before implementing (see loop protocol).
 
 ### Implementer
 
@@ -42,21 +46,21 @@ In-bounds for a sector (only under `internal/languagetool`):
 - Transcribe the Java type (algorithm and control flow).
 - Wire **real** LT resource loading where that type needs it.
 - **Delete** soft/fake code in that sector.
-- Colocated tests for that type when needed for the twin.
+- Colocated tests for that type when needed for the twin (Java-visible outcomes).
 
-**Out of bounds:** anything outside `internal/languagetool`; inventing behavior; soft goldens as proof; stubs; expanding scope to multiple unrelated types.
+**Out of bounds:** anything outside `internal/languagetool`; inventing behavior; soft goldens as proof; stubs; expanding scope to multiple unrelated types; writing checklist `[x]` or the validation queue.
 
-### Reviewer agent
+### Validator agent
 
 Mandatory two-phase loop for agent work on the wall:
 
-1. Implementer finishes **one sector**.
-2. **Reviewer agent** checks this policy (and path law / Java twin).
+1. Implementer finishes **one sector** (or declares a checklist line **ready**).
+2. **Validator agent** checks this policy + loop-protocol audit (scope, twins, outcomes, invent, resources, green tests).
 3. **REJECT** → implementer fixes the **same** sector and resubmits.
-4. Loop until **ACCEPT** or **human abort**.
-5. Implementer **must not** self-ACCEPT.
+4. Loop until **ACCEPT** or line **blocked** (skip/revisit; see loop protocol).
+5. Implementer **must not** self-ACCEPT. Parent applies checklist mark only after validator ACCEPT.
 
-Reviewer **REJECT** if any of:
+Validator **REJECT** if any of:
 
 - No clear Java twin (path + type/method) for the change.
 - Algorithm or control flow diverges from Java without being an unavoidable Go mapping of the same logic.
@@ -64,17 +68,17 @@ Reviewer **REJECT** if any of:
 - Stubs or fake dependencies.
 - Loads non-Java / soft-only resources as the real engine input.
 - Sector too large (more than one Java type / unfocused).
-- Touches files outside `internal/languagetool` (while freeze holds).
+- Touches files outside `internal/languagetool` (while freeze holds), except parent-owned validation/checklist updates.
 - Claims “parity” from soft metrics or edited expectations instead of Java behavior.
 
-Reviewer **ACCEPT** only when the sector is a credible 1:1 twin and fakeness in that sector is gone.
+Validator **ACCEPT** only when the sector is a credible 1:1 twin and fakeness in that sector is gone.
 
 ### Proven to enter (current bar)
 
 A type may land when:
 
 1. It maps to a Java twin under `inspiration/languagetool`, and  
-2. The **reviewer ACCEPT**s.
+2. The **validator ACCEPT**s (parent marks checklist; implementer never marks).
 
 Soft goldens / miss-scan percentages are **not** proof. Product-level claim “same results on any text” still means exact match with JVM LT on the corpus when end-to-end parity is asserted — Java remains king; Go differences are **bugs in Go**.
 
