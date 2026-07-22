@@ -85,7 +85,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.1-LithuanianSRXSentenceTokenizer | accepted | inspiration/languagetool/languagetool-language-modules/lt/src/test/java/org/languagetool/tokenizers/lt/LithuanianSRXSentenceTokenizerTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tokenizers/SRXSentenceTokenizer.java; inspiration/languagetool/languagetool-core/src/main/resources/org/languagetool/resource/segment.srx; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/TestTools.java | internal/languagetool/org/languagetool/tokenizers/lt/; internal/languagetool/org/languagetool/tokenizers/ | c1e8a1d3f80a7a69ec7ff31aba6cbf4979e08acb | 0 | 0 | | | 2026-07-22T22:14:59Z |
 | docs/faithful-port-checklist.md#3.A.1-MalayalamSRXSentenceTokenizer | accepted | inspiration/languagetool/languagetool-language-modules/ml/src/test/java/org/languagetool/tokenizers/ml/MalayalamSRXSentenceTokenizerTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tokenizers/SRXSentenceTokenizer.java; inspiration/languagetool/languagetool-core/src/main/resources/org/languagetool/resource/segment.srx; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/TestTools.java | internal/languagetool/org/languagetool/tokenizers/ml/; internal/languagetool/org/languagetool/tokenizers/ | 45dddca11347d82499b9e6ea397afe579cc1657f | 0 | 0 | | | 2026-07-22T22:24:48Z |
 | docs/faithful-port-checklist.md#3.A.1-TagalogSRXSentenceTokenizer | accepted | inspiration/languagetool/languagetool-language-modules/tl/src/test/java/org/languagetool/tokenizers/tl/TagalogSRXSentenceTokenizerTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tokenizers/SRXSentenceTokenizer.java; inspiration/languagetool/languagetool-core/src/main/resources/org/languagetool/resource/segment.srx; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/TestTools.java | internal/languagetool/org/languagetool/tokenizers/tl/; internal/languagetool/org/languagetool/tokenizers/ | 614f57df50dadbf0822eaf508d69fc53a90807da | 0 | 0 | | | 2026-07-22T22:35:41Z |
-| docs/faithful-port-checklist.md#3.A.1-UkrainianWordTokenizer | ready | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tokenizers/uk/UkrainianWordTokenizer.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/tokenizers/uk/UkrainianWordTokenizerTest.java | internal/languagetool/org/languagetool/tokenizers/uk/ | cafa2037fe19d9e8948f4b88da5ba7fa1e931615 | 2 | 0 | round=2 fix: removed replaceAbbrDotV invent; VO paths kept | | 2026-07-22T23:15:40Z |
+| docs/faithful-port-checklist.md#3.A.1-UkrainianWordTokenizer | blocked | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tokenizers/uk/UkrainianWordTokenizer.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/tokenizers/uk/UkrainianWordTokenizerTest.java | internal/languagetool/org/languagetool/tokenizers/uk/ | cafa2037fe19d9e8948f4b88da5ba7fa1e931615 | 3 | 0 | r1 LEADING_DASH+breakPlus FIXED; r2 bare в. FIXED. r3 REJECT invent: (?i) on case-sensitive Java abbrNonEnding/abbrEnding/abbrDotProf/abbrDotLat (КОП./ДИВ./ПРОФ./ЛАТ. diverge); mid-word emdash E110 pre-split invent beyond Java \u2014+ws only. | reject CAP=3 hit @ cafa2037; remaining invent case-fold abbr + mid-word emdash; revisit after K=5 productive steps | 2026-07-22T23:23:00Z |
 
 ---
 
@@ -96,8 +96,8 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | When idle | Summary |
 |-----------|---------|
 | Last idle at | _(never)_ |
-| Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict) |
-| Notes | |
+| Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (reject CAP=3: invent `(?i)` on case-sensitive abbr patterns + mid-word emdash pre-split; prior LEADING_DASH/breakPlus/bare-в. fixed) |
+| Notes | UK word revisit after K=5 productive accepts/ready elsewhere, or next calendar day |
 
 ---
 
@@ -237,3 +237,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-22T23:12:30Z REJECT: 3.A.1-UkrainianWordTokenizer @ 94c94c72 round=2 — prior LEADING_DASH/breakPlus fixed; invent bare в. via replaceAbbrDotV
 - 2026-07-22T23:13:40Z fix/implementing: 3.A.1-UkrainianWordTokenizer round=2 (remove replaceAbbrDotV invent; keep VO paths)
 - 2026-07-22T23:15:40Z ready: 3.A.1-UkrainianWordTokenizer @ cafa2037 (fix round=2: bare в. invent removed; regression asserts; parent go test uk green)
+- 2026-07-22T23:18:40Z validating: 3.A.1-UkrainianWordTokenizer @ cafa2037
+- 2026-07-22T23:23:00Z REJECT→blocked CAP: 3.A.1-UkrainianWordTokenizer @ cafa2037 round=3 — invent (?i) abbr + mid-word emdash; prior r1/r2 fixed; skip thrash
