@@ -22,6 +22,17 @@ func TestEnglishTagger(t *testing.T) {
 	require.Equal(t, "xyz", got[2].GetToken())
 }
 
+// Java EnglishTagger uses getWordTagger().tag (exact), then separately lowercases.
+// Title-case must not double-merge via BaseTagger.TagWord.
+func TestEnglishTagger_TitleCaseNoDuplicate(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"he": {tagging.NewTaggedWord("he", "PRP"), tagging.NewTaggedWord("he", "PRP_S3SM")},
+	}
+	got := NewEnglishTagger(wt).Tag([]string{"He"})
+	require.Len(t, got, 1)
+	require.Len(t, got[0].GetReadings(), 2, "Java: surface empty + lower tags once, not doubled")
+}
+
 func TestEnglishTagger_TypographicApostrophe(t *testing.T) {
 	wt := tagging.MapWordTagger{"don't": {tagging.NewTaggedWord("do", "VBP")}}
 	tagger := NewEnglishTagger(wt)

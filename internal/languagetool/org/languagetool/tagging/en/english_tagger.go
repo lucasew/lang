@@ -47,18 +47,20 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 		isMixed := tools.IsMixedCase(w)
 		isAllUpper := tools.IsAllUppercase(w)
 
+		// Java EnglishTagger.tag uses getWordTagger().tag (exact), not BaseTagger.getAnalyzedTokens.
+		// TagWord would re-merge case variants and duplicate title-case readings.
 		var readings []*languagetool.AnalyzedToken
-		for _, tw := range t.TagWord(w) {
+		for _, tw := range t.TagWordExact(w) {
 			readings = append(readings, taggedToToken(word, tw))
 		}
 		if !isLower && !isMixed {
-			for _, tw := range t.TagWord(lower) {
+			for _, tw := range t.TagWordExact(lower) {
 				readings = append(readings, taggedToToken(word, tw))
 			}
 		}
 		if len(readings) == 0 && isAllUpper {
 			firstUpper := tools.UppercaseFirstChar(lower)
-			for _, tw := range t.TagWord(firstUpper) {
+			for _, tw := range t.TagWordExact(firstUpper) {
 				readings = append(readings, taggedToToken(word, tw))
 			}
 		}
@@ -70,11 +72,11 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 			} else {
 				corrected = w[:len(w)-1] + "g"
 			}
-			for _, tw := range t.TagWord(corrected) {
+			for _, tw := range t.TagWordExact(corrected) {
 				readings = append(readings, taggedToToken(word, tw))
 			}
 			if !isLower && !isMixed {
-				for _, tw := range t.TagWord(strings.ToLower(corrected)) {
+				for _, tw := range t.TagWordExact(strings.ToLower(corrected)) {
 					readings = append(readings, taggedToToken(word, tw))
 				}
 			}

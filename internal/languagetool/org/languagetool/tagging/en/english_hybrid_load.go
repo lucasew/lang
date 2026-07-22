@@ -77,6 +77,12 @@ func openENMultiWordChunker(path, defaultTag string) (*disambiguation.MultiWordC
 	return c, nil
 }
 
+// EnglishXmlRuleDisambiguator ports Java new XmlRuleDisambiguator(English)
+// (useGlobalDisambiguation=false). Used by EnglishDisambiguationRuleTest.setUp.
+func EnglishXmlRuleDisambiguator() *disambigrules.XmlRuleDisambiguator {
+	return loadENXmlRuleDisambiguator(false)
+}
+
 // loadENXmlRuleDisambiguator ports XmlRuleDisambiguator(English, useGlobalDisambiguation).
 func loadENXmlRuleDisambiguator(useGlobal bool) *disambigrules.XmlRuleDisambiguator {
 	var all []*disambigrules.DisambiguationPatternRule
