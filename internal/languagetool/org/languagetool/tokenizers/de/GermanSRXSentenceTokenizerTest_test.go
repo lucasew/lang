@@ -75,6 +75,7 @@ func TestGermanSRXSentenceTokenizer_Tokenize(t *testing.T) {
 	testSplitDE(t, "Das hier ist ein(!!) Satz.")
 	testSplitDE(t, "Das hier ist ein(?) Satz.")
 	testSplitDE(t, "Das hier ist ein(???) Satz.")
+	testSplitDE(t, "Das hier ist ein(???) Satz.")
 
 	testSplitDE(t, "»Der Papagei ist grün.« ", "Das kam so.")
 	testSplitDE(t, "»Der Papagei ist grün«, sagte er")
