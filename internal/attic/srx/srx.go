@@ -34,6 +34,10 @@ type zeroWidthCheck struct {
 type Rule struct {
 	Break  bool
 	Before *regexp.Regexp
+	// BeforeEnd is Before anchored with \z for loomchild exception checks:
+	// whether beforebreak matches ending at a candidate break position
+	// (Java lookbehind (?<=before) at the break offset).
+	BeforeEnd *regexp.Regexp
 	After  *regexp.Regexp
 	// emptyBefore is true when beforebreak was empty (always-match zero-width).
 	// Before is nil in that case; Split uses After-only matching.
@@ -99,6 +103,7 @@ func parse(r io.Reader) (*Document, error) {
 		curRules = append(curRules, Rule{
 			Break:          strings.EqualFold(curBreak, "yes"),
 			Before:         bp.re,
+			BeforeEnd:      bp.reEnd,
 			After:          ap.re,
 			emptyBefore:    bp.empty,
 			beforeNegAlts:  bp.negAlts,
@@ -186,6 +191,7 @@ func attr(se xml.StartElement, name string) string {
 // compiledPart is one beforebreak/afterbreak side after Java→RE2 adaptation.
 type compiledPart struct {
 	re       *regexp.Regexp
+	reEnd    *regexp.Regexp // re with \z — exception lookbehind at a fixed end pos
 	empty    bool // original pattern was empty
 	negAlts  []string
 	wbGroups []int
@@ -207,17 +213,42 @@ func compilePart(pat string) (compiledPart, error) {
 	// Java (?iu) → RE2 (?i); UNICODE_CASE is approximate via \p{L} elsewhere.
 	pat = strings.ReplaceAll(pat, "(?iu)", "(?i)")
 	pat = strings.ReplaceAll(pat, "(?ui)", "(?i)")
+	// Java (?U) = UNICODE_CHARACTER_CLASS; RE2 (?U) = ungreedy — strip leftover.
+	pat = strings.ReplaceAll(pat, "(?U)", "")
 	// Expand \h/\v early so lookaround bodies and the main pattern agree.
 	pat = expandJavaHV(pat)
 	// Simple fixed-string negative lookahead: PREFIX(?!a|b|c)SUFFIX
 	// (no nested parens inside the lookahead). Used by English segment.srx:
 	// [\.\s](?!(on|it|...))\p{L}{1,2}\.\s
 	if re, neg, wb, err, ok := tryCompileSimpleNegLookahead(pat); ok {
-		return compiledPart{re: re, negAlts: neg, wbGroups: wb}, err
+		return compiledPart{re: re, reEnd: endAnchor(re), negAlts: neg, wbGroups: wb}, err
 	}
 	// General path: \b rewrite + negative lookaround extraction (Ukrainian).
 	re, wb, zw, err := compileWithLookarounds(pat)
-	return compiledPart{re: re, wbGroups: wb, zw: zw}, err
+	return compiledPart{re: re, reEnd: endAnchor(re), wbGroups: wb, zw: zw}, err
+}
+
+// endAnchor returns re with a \z anchor so Find on text[:pos] only succeeds when
+// the pattern matches a suffix ending at pos (loomchild exception lookbehind).
+// Uses \z not $ because (?m)$ also matches before embedded newlines.
+func endAnchor(re *regexp.Regexp) *regexp.Regexp {
+	if re == nil {
+		return nil
+	}
+	s := re.String()
+	// Patterns are compiled as (?m:PAT); insert \z before the closing paren.
+	if strings.HasPrefix(s, "(?m:") && strings.HasSuffix(s, ")") {
+		inner := s[len("(?m:") : len(s)-1]
+		reEnd, err := regexp.Compile("(?m:" + inner + `\z)`)
+		if err == nil {
+			return reEnd
+		}
+	}
+	reEnd, err := regexp.Compile("(?:" + s + `)\z`)
+	if err != nil {
+		return nil
+	}
+	return reEnd
 }
 
 // compileWithLookarounds rewrites Java \b and (?!…)/(?<!…) into RE2 plus
@@ -628,9 +659,9 @@ func (d *Document) ruleNames(code string) []string {
 // Split splits text into sentences for LT short code (e.g. "en") with paragraph mode.
 //
 // Semantics match loomchild segment with segment.srx header cascade="yes":
-// language maps are applied in document order; at each candidate boundary the
-// first matching rule (before + after) decides break yes/no. Later rules that
-// also match the same boundary are ignored (unlike last-write-wins).
+// break=no rules accumulate as exceptions; break=yes rules propose candidates;
+// at each candidate, any prior exception whose beforebreak matches ending at that
+// position (Java lookbehind) suppresses the break. First decided boundary wins.
 func (d *Document) Split(text, shortCode, parCode string) []string {
 	if text == "" {
 		return nil
@@ -640,6 +671,9 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 	names := d.ruleNames(shortCode + parCode)
 	breakAt := make([]bool, rn+1)
 	decided := make([]bool, rn+1)
+	// loomchild RuleManager: break=no rules accumulate into the exception pattern
+	// attached to subsequent break=yes rules (document order, cascade).
+	var exceptions []Rule
 
 	for _, name := range names {
 		for _, rule := range d.LangRules[name] {
@@ -649,24 +683,38 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 				if rule.Before == nil && !rule.emptyBefore {
 					continue // failed compile / missing before — skip
 				}
+				if !rule.Break {
+					exceptions = append(exceptions, rule)
+					continue
+				}
 				for pos := 1; pos < rn; pos++ {
 					if decided[pos] {
 						continue
 					}
 					after := string(runes[pos:])
-					if matchAfter(rule.After, after, rule.afterNegAlts, rule.afterWBGroups, rule.afterZW) {
-						breakAt[pos] = rule.Break
-						decided[pos] = true
+					if !matchAfter(rule.After, after, rule.afterNegAlts, rule.afterWBGroups, rule.afterZW) {
+						continue
 					}
+					if exceptionAt(exceptions, text, runes, pos) {
+						continue
+					}
+					breakAt[pos] = true
+					decided[pos] = true
 				}
 				continue
 			}
-			// Overlapping matches (loomchild/Java): advance one byte after each
-			// match start so "d. h." gets no-break on both single-letter dots.
-			// FindAllStringIndex is non-overlapping and would skip the second.
+			if !rule.Break {
+				// Exception (break=no): do not claim positions via forward Find.
+				// Loomchild checks them as lookbehinds at break candidates only.
+				// Forward Find misses longer alts after shorter prefix alts
+				// (Catalan "Dra|Dra. Ma" → "La Dra. Ma. Victòria.").
+				exceptions = append(exceptions, rule)
+				continue
+			}
+			// break=yes: overlapping matches; suppress when an exception applies.
+			// Advance one byte after each match start so "d. h." is found twice.
 			for bstart := 0; bstart < len(text); {
 				var abs0, abs1 int
-				// Always use SubmatchIndex when \b groups, neg-alts, or ZW need group offsets.
 				needSub := len(rule.beforeNegAlts) > 0 || len(rule.beforeWBGroups) > 0 || len(rule.beforeZW) > 0
 				if needSub {
 					sub := rule.Before.FindStringSubmatchIndex(text[bstart:])
@@ -679,7 +727,6 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 						bstart = abs0 + 1
 						continue
 					}
-					// group 1 end: prefix before Java (?!alts); reject if alts match there.
 					if len(rule.beforeNegAlts) > 0 && len(sub) >= 4 && sub[2] >= 0 {
 						afterPrefix := text[bstart+sub[3]:]
 						if hasFixedPrefix(afterPrefix, rule.beforeNegAlts) {
@@ -703,11 +750,12 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 				if pos > 0 && pos < rn && !decided[pos] {
 					after := string(runes[pos:])
 					if matchAfter(rule.After, after, rule.afterNegAlts, rule.afterWBGroups, rule.afterZW) {
-						breakAt[pos] = rule.Break
-						decided[pos] = true
+						if !exceptionAt(exceptions, text, runes, pos) {
+							breakAt[pos] = true
+							decided[pos] = true
+						}
 					}
 				}
-				// next search starts one past this match's start (overlap)
 				bstart = abs0 + 1
 			}
 		}
@@ -732,6 +780,92 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 		return []string{text}
 	}
 	return out
+}
+
+// exceptionAt reports whether any accumulated break=no rule matches at the
+// candidate break position (rune index), matching loomchild isException /
+// lookbehind+lookahead at that offset.
+func exceptionAt(exceptions []Rule, text string, runes []rune, pos int) bool {
+	if len(exceptions) == 0 {
+		return false
+	}
+	bytePos := len(string(runes[:pos]))
+	prefix := text[:bytePos]
+	after := string(runes[pos:])
+	for _, ex := range exceptions {
+		if ex.emptyBefore || ex.Before == nil {
+			if ex.Before == nil && !ex.emptyBefore {
+				continue
+			}
+			if matchAfter(ex.After, after, ex.afterNegAlts, ex.afterWBGroups, ex.afterZW) {
+				return true
+			}
+			continue
+		}
+		if !beforeMatchesEndingAt(ex, prefix) {
+			continue
+		}
+		if matchAfter(ex.After, after, ex.afterNegAlts, ex.afterWBGroups, ex.afterZW) {
+			return true
+		}
+	}
+	return false
+}
+
+// beforeMatchesEndingAt is RE2's stand-in for Java lookbehind (?<=before) at
+// the end of prefix: BeforeEnd = Before\z against prefix so the engine must
+// pick an alternative that reaches the break position (Catalan "Dra. Ma.").
+func beforeMatchesEndingAt(rule Rule, prefix string) bool {
+	if rule.BeforeEnd != nil {
+		needSub := len(rule.beforeNegAlts) > 0 || len(rule.beforeWBGroups) > 0 || len(rule.beforeZW) > 0
+		if !needSub {
+			return rule.BeforeEnd.FindStringIndex(prefix) != nil
+		}
+		sub := rule.BeforeEnd.FindStringSubmatchIndex(prefix)
+		if sub == nil || sub[1] != len(prefix) {
+			return false
+		}
+		if !wbGroupsOK(prefix, 0, sub, rule.beforeWBGroups) {
+			return false
+		}
+		if len(rule.beforeNegAlts) > 0 && len(sub) >= 4 && sub[2] >= 0 {
+			if hasFixedPrefix(prefix[sub[3]:], rule.beforeNegAlts) {
+				return false
+			}
+		}
+		return zeroWidthOK(prefix, 0, sub, rule.beforeZW)
+	}
+	// Fallback without BeforeEnd: overlapping Find requiring match end == len(prefix).
+	if rule.Before == nil {
+		return false
+	}
+	for bstart := 0; bstart < len(prefix); {
+		sub := rule.Before.FindStringSubmatchIndex(prefix[bstart:])
+		if sub == nil {
+			return false
+		}
+		abs0 := bstart + sub[0]
+		abs1 := bstart + sub[1]
+		if abs1 == len(prefix) {
+			if !wbGroupsOK(prefix, bstart, sub, rule.beforeWBGroups) {
+				bstart = abs0 + 1
+				continue
+			}
+			if len(rule.beforeNegAlts) > 0 && len(sub) >= 4 && sub[2] >= 0 {
+				if hasFixedPrefix(prefix[bstart+sub[3]:], rule.beforeNegAlts) {
+					bstart = abs0 + 1
+					continue
+				}
+			}
+			if !zeroWidthOK(prefix, bstart, sub, rule.beforeZW) {
+				bstart = abs0 + 1
+				continue
+			}
+			return true
+		}
+		bstart = abs0 + 1
+	}
+	return false
 }
 
 func matchAfter(re *regexp.Regexp, after string, negAlts []string, wbGroups []int, zw []zeroWidthCheck) bool {
