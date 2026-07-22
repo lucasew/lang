@@ -94,7 +94,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | 3.A.3 | `MultiWordChunker` | Official multiwords only | [ ] EN hybrid multiword stage; core MultiWordChunkerTest twin ACCEPT @ 3b4841a4 (sub-sector 3.A.3-MultiWordChunker-core-test) |
 | 3.A.4 | `XmlRuleDisambiguator` | Full lang XML + global when Java enables | [ ] EN hybrid wires official XML+global; loader has rulegroup/`and`/`marker` |
 | 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [ ] EN/FR/ES/PT/DE/CA/NL wired; EN testChunker myAssert twin ACCEPT @ 251a9820 (sub-sector 3.A.5-en-hybrid-disambig-testChunker) |
-| 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [ ] EnglishChunkFilter 1:1; POS→BIO without soft invent; OpenNLP models not executed |
+| 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [ ] EnglishChunkFilter twin ACCEPT @ 859b2393; OpenNLP EnglishChunker path still partial |
 | 3.A.7 | `JLanguageTool` analyze/check wiring | Same stages, mode flags | [ ] |
 | 3.A.8 | Rule match pipeline (enable/disable, categories, text-level) | Java semantics | [ ] |
 
