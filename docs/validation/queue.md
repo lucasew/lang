@@ -180,3 +180,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-22T20:58:50Z implement: 3.A.1-SwedishSRXSentenceTokenizer (full SwedishSRXSentenceTokenizerTest twin; replace incomplete smoke)
 - 2026-07-22T21:01:00Z ready: 3.A.1-SwedishSRXSentenceTokenizer @ fb900fab0841 (implementer report; 2 testSplit / 26 parts exact twin; parent green reconfirm; no attic change)
 - 2026-07-22T21:03:40Z validating: 3.A.1-SwedishSRXSentenceTokenizer @ fb900fab
+- 2026-07-22T21:06:30Z ACCEPT: 3.A.1-SwedishSRXSentenceTokenizer @ fb900fab (validator + parent green reconfirm; 26 exact testSplit parts / 2 calls)
+
