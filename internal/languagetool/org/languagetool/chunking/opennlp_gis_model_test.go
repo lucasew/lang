@@ -47,3 +47,35 @@ func TestChunkerME_Runs(t *testing.T) {
 	}
 	require.Contains(t, joined, "NP")
 }
+
+// Java OpenNLP 1.9.4 ChunkerME ground truth on same en-*.bin models:
+// I'll be there → I/PRP/B-NP, 'll/MD/B-VP, be/VB/I-VP, there/RB/I-VP
+func TestChunkerME_IllBeThere_JavaParity(t *testing.T) {
+	p := DiscoverOpenNLPChunkerModel()
+	if p == "" {
+		t.Skip("en-chunker.bin not found")
+	}
+	c, err := NewChunkerME(p)
+	require.NoError(t, err)
+	toks := []string{"I", "'ll", "be", "there"}
+	tags := []string{"PRP", "MD", "VB", "RB"}
+	chunks := c.Chunk(toks, tags)
+	require.Equal(t, []string{"B-NP", "B-VP", "I-VP", "I-VP"}, chunks)
+}
+
+// DefaultChunkerContext must emit OpenNLP's p_2 quirk (no '=' when not bos).
+func TestDefaultChunkerContext_P2Quirk(t *testing.T) {
+	preds := []string{"B-NP", "B-VP", "I-VP"}
+	toks := []string{"I", "'ll", "be", "there"}
+	tags := []string{"PRP", "MD", "VB", "RB"}
+	ctx := DefaultChunkerContext(3, toks, tags, preds)
+	// At i=3, p_2 should be "p_2"+"B-VP" = "p_2B-VP" (not "p_2=B-VP")
+	found := false
+	for _, f := range ctx {
+		if f == "p_2B-VP" {
+			found = true
+		}
+		require.NotEqual(t, "p_2=B-VP", f)
+	}
+	require.True(t, found, "missing p_2 quirk feature p_2B-VP in %v", ctx)
+}
