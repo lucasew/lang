@@ -74,21 +74,27 @@ var (
 	abbrDotChl = regexp.MustCompile(`(чл)\.(-кор)\.`)
 	abbrDotPn = regexp.MustCompile(`(пн|пд)\.(-(зах|сх))\.`)
 	invalidMln = regexp.MustCompile(`(млн|млрд)\.( [а-яіїєґ])`)
-	// no negative lookahead: second abbr letter group is plain
+	// Java ABBR_DOT_2_SMALL_LETTERS_PATTERN: second group has (?![смкд]?м\.) — RE2 has no
+	// lookahead; applied via replaceAbbrDot2Small.
 	abbrDot2Small = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([векнпрстцч]{1,2})\.([\s\x{00A0}\x{202F}]*[екмнпрстч]{1,2})\.`)
+	// meter-like second abbr that Java excludes via (?![смкд]?м\.)
+	abbrDot2SmallMeterSecond = regexp.MustCompile(`^[\s\x{00A0}\x{202F}]*(?:[смкд]?м|мк)$`)
 
 	// non-ending abbreviations (long list); bare "в." handled carefully (not "в...")
+	// Java: (?!\uE120|\.+[\h\v]*$) after the dot — applied via replaceAbbrNonEnding.
 	abbrNonEndingList = `абз|австрал|ам|амер|англ|акад(?:ем)?|арк|ауд|біол|бл(?:изьк)?|болг|буд|вип|вірм|грец(?:ьк)?|держ|див|дир|діал|дод|дол|досл|доц|доп|екон|ел|жін|зав|заст|зах|зб|зв|зневажл?|зовн|іл|ім|івр|інж|ісп|іст|італ|к|каб|каф|канд|кв|[1-9]-кімн|кімн|кін|кл|кн|коеф|крим|латин|мал|моб|н|[Нн]апр|нач|нім|нац|нпр|образн|оз|оп|оф|п|пен|перекл|перен|пл|пол|пом|пор|порівн|[Пп]оч|пп|прибл|прикм|прим|присл|пров|пром|просп|[Рр]ед|[Рр]еж|розд|розм|рос|рт|рум|с|санскр|[Сс]вв?|скор|соц|співавт|[сС]т|стор|суч|сх|табл|тт|[тТ]ел|техн|укр|філол|фр|франц|худ|[цЦ]ит|ч|чайн|част|ц|яп|япон`
 	abbrNonEnding = regexp.MustCompile(`(?i)(^|[^а-яіїєґ'\x{0301}-])(` + abbrNonEndingList + `)\.`)
-	// single-letter в. abbreviation when not ellipsis
-	abbrDotV = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([вВ])\.([^\.])`)
+	// single-letter в. abbreviation when not ellipsis / not already protected
+	abbrDotV = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([вВ])\.([^\.\x{E120}])`)
 	abbrNonEnding2 = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'-]м\.)([\s\x{00A0}\x{202F}]*[А-ЯІЇЄҐ])`)
 
 	abbrNar1 = regexp.MustCompile(`(([0-9]|рік|[рp]\.|[-–—])[\s\x{00A0}\x{202F}]+нар)\.`)
 	abbrNar2 = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])(нар)\.([\s\x{00A0}\x{202F}]+[0-9а-яіїєґ])`)
 
-	// ending abbreviations: та ін., коп., шт., etc.
-	abbrEnding = regexp.MustCompile(`(?i)((?:та|й|і) (?:інш?|под)|атм|відс|гр|коп|дес|дол|обл|пов|рр|руб|стст|стол|стор|чол|шт)\.`)
+	// ending abbreviations: Java includes р|РР|ст (single) in addition to рр|стст|...
+	// Java: ([^letter-](abbr))\. (?!\uE120) — left boundary required so "пародист." is not "ст."
+	// Applied via replaceAbbrEnding.
+	abbrEnding = regexp.MustCompile(`(?i)(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])((?:та|й|і) (?:інш?|под)|атм|відс|гр|коп|дес|дол|обл|пов|рр|РР|р|руб|стст|ст|стол|стор|чол|шт)\.`)
 	abbrITP = regexp.MustCompile(`([ій][\s\x{00A0}\x{202F}]+т\.)([\s\x{00A0}\x{202F}]*(д|п|ін)\.)`)
 	abbrITCH = regexp.MustCompile(`([ву][\s\x{00A0}\x{202F}]+т\.)([\s\x{00A0}\x{202F}]*ч\.)`)
 	abbrTZV = regexp.MustCompile(`([\s\x{00A0}\x{202F}(]+т\.)([\s\x{00A0}\x{202F}]*зв\.)`)
@@ -106,8 +112,10 @@ var (
 	leadingDash = regexp.MustCompile(`^([\x{2014}\x{2013}])([а-яіїєґА-ЯІЇЄҐA-Z])`)
 	leadingDash2 = regexp.MustCompile(`^(-)([А-ЯІЇЄҐA-Z])`)
 	numberMissingSpace = regexp.MustCompile(`((?:[\s\x{00A0}\x{202F}\x{E110}]|^)[а-яїієґА-ЯІЇЄҐ'-]*[а-яїієґ']?[а-яїієґ])([0-9]+(?:$|[^а-яіїєґА-ЯІЇЄҐa-zA-Z»"“]))`)
-	// RE2 (?i) is weak on Cyrillic; list both cases for second part.
-	webEntities = regexp.MustCompile(`([а-яіїєґА-ЯІЇЄҐ])\.(НЕТ|Нет|нет|net|NET|Інфо|інфо|Info|INFO|City|CITY|Life|LIFE|UA|ua|юа|лі|media|com|COM|фм|ru|RU|ру|орг)`)
+	// Java WEB_ENTITIES: CASE_INSENSITIVE|UNICODE_CHARACTER_CLASS + \b after TLD.
+	// Go \b is ASCII-only — boundary checked in replaceWebEntities (Unicode letter/digit/_).
+	// Enumerate Cyrillic case variants; Latin listed in common cases (+ ToLower check).
+	webEntities = regexp.MustCompile(`([а-яіїєґА-ЯІЇЄҐ])\.([Nn][Ee][Tt]|[Ii][Nn][Ff][Oo]|[Cc][Ii][Tt][Yy]|[Ll][Ii][Ff][Ee]|[Uu][Aa]|[Mm][Ee][Dd][Ii][Aa]|[Cc][Oo][Mm]|[Rr][Uu]|НЕТ|Нет|нет|Інфо|інфо|юа|лі|фм|ру|Ру|РУ|орг)`)
 	webEntities2 = regexp.MustCompile(`(?i)\.([a-z_-]+)\.(ua)`)
 
 	// colloquial forms ending with ' that must stay attached
@@ -246,7 +254,8 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 		text = abbrNar1.ReplaceAllString(text, "$1."+nonBreakingPlaceholder2+breakingPlaceholder)
 		text = abbrNar2.ReplaceAllString(text, "$1$2."+nonBreakingPlaceholder2+breakingPlaceholder+"$3")
 
-		text = abbrDot2Small.ReplaceAllString(text, "$1$2."+nonBreakingPlaceholder2+breakingPlaceholder+"$3."+nonBreakingPlaceholder2+breakingPlaceholder)
+		// Java: $1.\uE120\uE110$2.\uE120\uE110 with meter exclusion on $2
+		text = replaceAbbrDot2Small(text)
 		nb2 := string(nonBreakingDotSubst) + breakingPlaceholder
 		text = abbrDotVO1.ReplaceAllString(text, "$1"+nb2+"$2"+nb2)
 		text = abbrDotVO2.ReplaceAllString(text, "$1"+nb2+"$2"+nb2)
@@ -273,24 +282,20 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 		text = abbrITCH.ReplaceAllString(text, "$1"+nonBreakingPlaceholder2+breakingPlaceholder+"$2"+nonBreakingPlaceholder2+breakingPlaceholder)
 		text = abbrTZV.ReplaceAllString(text, "$1"+nonBreakingPlaceholder2+breakingPlaceholder+"$2"+nonBreakingPlaceholder2+breakingPlaceholder)
 		text = abbrRedAvt.ReplaceAllString(text, "$1."+nonBreakingPlaceholder2+breakingPlaceholder+"$3")
-		text = abbrNonEnding.ReplaceAllString(text, "$1$2."+nonBreakingPlaceholder2+breakingPlaceholder)
-		text = abbrDotV.ReplaceAllString(text, "$1$2."+nonBreakingPlaceholder2+breakingPlaceholder+"$3")
+		// Java ABBR_DOT_NON_ENDING: \.(?!\uE120|\.+[\h\v]*$)
+		text = replaceAbbrNonEnding(text)
+		text = replaceAbbrDotV(text)
 		text = abbrNonEnding2.ReplaceAllString(text, "$1"+nonBreakingPlaceholder2+breakingPlaceholder+"$2")
 		text = invalidMln.ReplaceAllString(text, "$1."+nonBreakingPlaceholder2+breakingPlaceholder+"$2")
 	}
 
 	if dotInsideSentence {
-		text = webEntities.ReplaceAllString(text, "$1."+nonBreakingPlaceholder2+"$2")
+		text = replaceWebEntities(text)
 		text = webEntities2.ReplaceAllString(text, "."+nonBreakingPlaceholder2+"$1."+nonBreakingPlaceholder2+"$2")
 	}
 
-	text = abbrEnding.ReplaceAllStringFunc(text, func(m string) string {
-		// m includes trailing dot; protect the dot
-		if strings.HasSuffix(m, ".") {
-			return m[:len(m)-1] + "." + nonBreakingPlaceholder2 + breakingPlaceholder
-		}
-		return m
-	})
+	// Java ABBR_DOT_ENDING: \.(?!\uE120)
+	text = replaceAbbrEnding(text)
 
 	// spaced decimals: protect groups like "2 000" and "12 000 000"
 	text = protectSpacedNumbers(text)
@@ -333,6 +338,145 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 
 	text = numberMissingSpace.ReplaceAllString(text, "$1"+breakingPlaceholder+"$2")
 	return text
+}
+
+// replaceWebEntities ports Java WEB_ENTITIES with Unicode-aware \b after the TLD.
+func replaceWebEntities(text string) string {
+	var b strings.Builder
+	last := 0
+	for _, loc := range webEntities.FindAllStringSubmatchIndex(text, -1) {
+		full0, full1 := loc[0], loc[1]
+		// Java \b: right edge must be end or non-word (Unicode letter/digit/_)
+		if full1 < len(text) {
+			r, _ := utf8.DecodeRuneInString(text[full1:])
+			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
+				continue
+			}
+		}
+		b.WriteString(text[last:full0])
+		g1 := text[loc[2]:loc[3]]
+		g2 := text[loc[4]:loc[5]]
+		b.WriteString(g1 + "." + nonBreakingPlaceholder2 + g2)
+		last = full1
+	}
+	b.WriteString(text[last:])
+	return b.String()
+}
+
+// replaceAbbrDot2Small ports Java ABBR_DOT_2_SMALL_LETTERS_PATTERN +
+// replaceAll("$1.\uE120\uE110$2.\uE120\uE110") with (?![смкд]?м\.) on the second group.
+func replaceAbbrDot2Small(text string) string {
+	var b strings.Builder
+	last := 0
+	for _, loc := range abbrDot2Small.FindAllStringSubmatchIndex(text, -1) {
+		// groups: full, $1 prefix, $2 first abbr, $3 second abbr (with optional spaces)
+		full0, full1 := loc[0], loc[1]
+		g3 := text[loc[6]:loc[7]]
+		// Java (?![смкд]?м\.) — skip when second token is a meter unit
+		if abbrDot2SmallMeterSecond.MatchString(g3) {
+			continue
+		}
+		b.WriteString(text[last:full0])
+		g1 := text[loc[2]:loc[3]]
+		g2 := text[loc[4]:loc[5]]
+		// Java: $1 includes prefix+letters then .\uE120\uE110; Go pattern splits prefix/$2
+		b.WriteString(g1 + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder + g3 + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
+		last = full1
+	}
+	b.WriteString(text[last:])
+	return b.String()
+}
+
+// replaceAbbrNonEnding ports Java ABBR_DOT_NON_ENDING_PATTERN with
+// \.(?!\uE120|\.+[\h\v]*$) after the abbreviation.
+func replaceAbbrNonEnding(text string) string {
+	var b strings.Builder
+	last := 0
+	for _, loc := range abbrNonEnding.FindAllStringSubmatchIndex(text, -1) {
+		full0, full1 := loc[0], loc[1]
+		rest := text[full1:]
+		if strings.HasPrefix(rest, nonBreakingPlaceholder2) {
+			continue // already protected (\uE120)
+		}
+		// Java \.+[\h\v]*$ — ellipsis (or more dots) to end of string: do not protect
+		if isDotsThenEnd(rest) {
+			continue
+		}
+		b.WriteString(text[last:full0])
+		g1 := text[loc[2]:loc[3]]
+		g2 := text[loc[4]:loc[5]]
+		b.WriteString(g1 + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
+		last = full1
+	}
+	b.WriteString(text[last:])
+	return b.String()
+}
+
+// replaceAbbrDotV ports bare "в." / "В." when not ellipsis and not already protected.
+func replaceAbbrDotV(text string) string {
+	var b strings.Builder
+	last := 0
+	for _, loc := range abbrDotV.FindAllStringSubmatchIndex(text, -1) {
+		full0, full1 := loc[0], loc[1]
+		// full match includes the char after the dot ($3); only rewrite if not E120
+		g3 := text[loc[6]:loc[7]]
+		if g3 == nonBreakingPlaceholder2 {
+			continue
+		}
+		b.WriteString(text[last:full0])
+		g1 := text[loc[2]:loc[3]]
+		g2 := text[loc[4]:loc[5]]
+		b.WriteString(g1 + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder + g3)
+		last = full1
+	}
+	b.WriteString(text[last:])
+	return b.String()
+}
+
+// replaceAbbrEnding ports Java ABBR_DOT_ENDING_PATTERN with \.(?!\uE120).
+// Replacement is $1.\uE120\uE110 where $1 is (prefix+abbr) including the left boundary char.
+func replaceAbbrEnding(text string) string {
+	var b strings.Builder
+	last := 0
+	for _, loc := range abbrEnding.FindAllStringSubmatchIndex(text, -1) {
+		full0, full1 := loc[0], loc[1]
+		rest := text[full1:]
+		if strings.HasPrefix(rest, nonBreakingPlaceholder2) {
+			continue
+		}
+		b.WriteString(text[last:full0])
+		// full match ends with '.'; protect: (prefix+abbr).\uE120\uE110
+		m := text[full0:full1]
+		b.WriteString(m[:len(m)-1] + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
+		last = full1
+	}
+	b.WriteString(text[last:])
+	return b.String()
+}
+
+// isDotsThenEnd ports Java \.+[\h\v]*$ for the non-ending negative lookahead.
+func isDotsThenEnd(rest string) bool {
+	if rest == "" {
+		return false
+	}
+	i := 0
+	rr := []rune(rest)
+	if rr[0] != '.' {
+		return false
+	}
+	for i < len(rr) && rr[i] == '.' {
+		i++
+	}
+	if i == 0 {
+		return false
+	}
+	for i < len(rr) {
+		if !isJavaHOrVSpace(rr[i]) {
+			return false
+		}
+		i++
+	}
+	return true
 }
 
 func protectSpacedNumbers(text string) string {
