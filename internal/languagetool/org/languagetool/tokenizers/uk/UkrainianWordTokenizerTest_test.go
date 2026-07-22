@@ -74,6 +74,8 @@ func TestUkrainianWordTokenizer_Plus(t *testing.T) {
 	assertTok(t, "прислівник+займенник", "прислівник", "+", "займенник")
 	assertTok(t, "+займенник", "+", "займенник")
 	assertTok(t, "Роттердам+ ", "Роттердам+", " ")
+	// Java \\+(?=[а-яіїєґА-ЯІЇЄҐ0-9]) — Latin after + must not split
+	assertTok(t, "foo+bar", "foo+bar")
 }
 
 func TestUkrainianWordTokenizer_Superscript(t *testing.T) {
@@ -255,6 +257,8 @@ func TestUkrainianWordTokenizer_Dash(t *testing.T) {
 	assertTok(t, "Стрий– ", "Стрий", "–", " ")
 	assertTok(t, "фіто– та термотерапії", "фіто–", " ", "та", " ", "термотерапії")
 	assertTok(t, " –Виділено", " ", "–", "Виділено")
+	// BOS en-dash (no leading space): first rune must gate LEADING_DASH, not text[0] byte
+	assertTok(t, "–Виділено", "–", "Виділено")
 	assertTok(t, "так,\u2013так", "так", ",", "\u2013", "так")
 	// compound with quotes from original Go subset
 	assertTok(t, "екс-«депутат»", "екс-«депутат»")

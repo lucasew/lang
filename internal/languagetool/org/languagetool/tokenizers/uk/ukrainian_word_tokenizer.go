@@ -171,16 +171,15 @@ func cleanup(text string) string {
 func adjustTextForTokenizing(text string, urls map[string]string) string {
 	text = cleanup(text)
 
-	if text != "" && strings.ContainsRune("\u2014\u2013-", rune(text[0])) {
-		// leading dash - need rune-aware for multi-byte
-		r, size := utf8.DecodeRuneInString(text)
+	// Java: "\u2014\u2013-".indexOf(text.charAt(0)) >= 0 — first *char* (rune), not first byte.
+	if text != "" {
+		r, _ := utf8.DecodeRuneInString(text)
 		if r == '\u2014' || r == '\u2013' || r == '-' {
 			if m := leadingDash.FindStringSubmatch(text); m != nil {
 				text = leadingDash.ReplaceAllString(text, "$1"+breakingPlaceholder+"$2")
 			} else if m := leadingDash2.FindStringSubmatch(text); m != nil {
 				text = leadingDash2.ReplaceAllString(text, "$1"+breakingPlaceholder+"$2")
 			}
-			_ = size
 		}
 	}
 
@@ -518,15 +517,16 @@ func protectSpacedNumbers(text string) string {
 }
 
 func breakPlus(text string) string {
-	// + before letter/digit becomes separate token; trailing word+ stays together
+	// Java: text.replaceAll("\\+(?=[а-яіїєґА-ЯІЇЄҐ0-9])", BREAKING_PLACEHOLDER + "+" + BREAKING_PLACEHOLDER)
+	// Only Ukrainian letters + digits in the lookahead — not Latin (foo+bar stays one token).
 	var b strings.Builder
 	runes := []rune(text)
 	for i := 0; i < len(runes); i++ {
 		if runes[i] == '+' {
-			// +20, +займенник, mid word+word
+			// +20, +займенник, mid word+word (Cyrillic)
 			if i+1 < len(runes) {
 				n := runes[i+1]
-				if isUKCyrLetter(n) || isLatinLetter(n) || (n >= '0' && n <= '9') {
+				if isUKCyrLetter(n) || (n >= '0' && n <= '9') {
 					b.WriteString(breakingPlaceholder)
 					b.WriteRune('+')
 					b.WriteString(breakingPlaceholder)
