@@ -50,6 +50,12 @@ func DiscoverEnglishPOSDict() string {
 	return ""
 }
 
+func init() {
+	// Java EnglishWordTokenizer imports EnglishTagger.INSTANCE (always on classpath).
+	// Register lazy ensure so wordsToAdd uses real english.dict isTagged, not invent lists.
+	entok.SetEnsureEnglishTagger(EnsureDefaultEnglishTagger)
+}
+
 // EnsureDefaultEnglishTagger loads english.dict into DefaultEnglishTagger and
 // wires EnglishWordTokenizer.IsTaggedEN (Java EnglishTagger.INSTANCE).
 // Idempotent; no-op if dict missing (fail closed).
@@ -72,19 +78,22 @@ func EnsureDefaultEnglishTagger() {
 		}
 		DefaultEnglishTagger = NewEnglishTagger(wt)
 		enTagWordFn = englishTagWordFromTagger(DefaultEnglishTagger)
-		// Java EnglishWordTokenizer.wordsToAdd → EnglishTagger.INSTANCE.tag(...).isTagged()
-		entok.IsTaggedEN = func(s string) bool {
-			if enTagWordFn == nil {
-				return false
-			}
-			for _, tg := range enTagWordFn(s) {
-				if tg.POS != "" {
-					return true
-				}
-			}
-			return false
-		}
+		// Java EnglishWordTokenizer.wordsToAdd →
+		// EnglishTagger.INSTANCE.tag(Arrays.asList(normalized)).get(0).isTagged()
+		entok.IsTaggedEN = englishTaggerIsTagged
 	})
+}
+
+// englishTaggerIsTagged ports EnglishTagger.INSTANCE.tag([s]).get(0).isTagged().
+func englishTaggerIsTagged(s string) bool {
+	if DefaultEnglishTagger == nil {
+		return false
+	}
+	atrs := DefaultEnglishTagger.Tag([]string{s})
+	if len(atrs) == 0 || atrs[0] == nil {
+		return false
+	}
+	return atrs[0].IsTagged()
 }
 
 // EnglishTagWord returns the TagWord function for English POS analysis (nil if dict missing).

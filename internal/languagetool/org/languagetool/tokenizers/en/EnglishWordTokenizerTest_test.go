@@ -1,38 +1,31 @@
-package en
+package en_test
 
 import (
 	"strings"
 	"testing"
 
+	tagen "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
+	en "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/en"
 	"github.com/stretchr/testify/require"
 )
 
 // Port of org.languagetool.tokenizers.en.EnglishWordTokenizerTest.
+// Java uses EnglishTagger.INSTANCE (english.dict) for apostrophe/hyphen keep;
+// Go uses the same path via EnsureDefaultEnglishTagger — no invent surface lists.
 
 func tokStr(tokens []string) string {
 	return "[" + strings.Join(tokens, ", ") + "]"
 }
 
 func TestEnglishWordTokenizer_Tokenize(t *testing.T) {
-	// Java keeps dictionary-tagged apostrophe/hyphen forms via EnglishTagger.
-	// Inject IsTaggedEN for those surfaces — no soft invent keepApostropheForm.
-	prev := IsTaggedEN
-	IsTaggedEN = func(s string) bool {
-		// Surfaces EnglishTagger keeps whole (clitics after pattern split + archaic forms).
-		switch strings.ToLower(s) {
-		case "doin'", "ne'er", "e'er", "o'er", "jack-o'-lantern",
-			"doin’", "ne’er", "o’er", "jack-o’-lantern",
-			"fo'c'sle", "fo’c’sle", "rec'd", "rec’d", "ok'd", "ok’d",
-			"'m", "’m", "'re", "’re", "'ll", "’ll", "'ve", "’ve",
-			"'d", "’d", "'s", "’s", "n't", "n’t":
-			return true
-		default:
-			return false
-		}
+	if tagen.DiscoverEnglishPOSDict() == "" {
+		t.Skip("english.dict not in tree (third_party/english-pos-dict or inspiration)")
 	}
-	t.Cleanup(func() { IsTaggedEN = prev })
+	// Java: EnglishTagger.INSTANCE always available; wire real english.dict isTagged.
+	tagen.EnsureDefaultEnglishTagger()
+	require.NotNil(t, en.IsTaggedEN, "IsTaggedEN must be wired from EnglishTagger/english.dict")
 
-	w := NewEnglishWordTokenizer()
+	w := en.NewEnglishWordTokenizer()
 	tokens := w.Tokenize("This is\u00A0a test")
 	require.Equal(t, 7, len(tokens))
 	require.Equal(t, "[This,  , is, \u00A0, a,  , test]", tokStr(tokens))

@@ -39,10 +39,23 @@ var (
 	}
 )
 
-// IsTaggedEN optional EnglishTagger.INSTANCE.tag(...).isTagged() hook.
-// Java keeps hyphen/apostrophe compounds only when EnglishTagger tags them.
-// Without a tagger, miss — do not invent soft keep lists for doin'/ne'er/etc.
-var IsTaggedEN func(s string) bool
+// IsTaggedEN is the production wire for Java:
+//   EnglishTagger.INSTANCE.tag(Arrays.asList(normalized)).get(0).isTagged()
+// Set by tagging/en.EnsureDefaultEnglishTagger / RegisterBinaryEnglishTagger
+// from english.dict (+ manuals). Not a soft surface list.
+//
+// ensureEnglishTagger, when set (tagging/en init), lazy-loads that INSTANCE
+// path before the first isTagged check — mirrors Java static INSTANCE.
+var (
+	IsTaggedEN          func(s string) bool
+	ensureEnglishTagger func()
+)
+
+// SetEnsureEnglishTagger registers the Java EnglishTagger.INSTANCE loader
+// (called from tagging/en). Safe to call multiple times; last wins.
+func SetEnsureEnglishTagger(fn func()) {
+	ensureEnglishTagger = fn
+}
 
 func (w *EnglishWordTokenizer) Tokenize(text string) []string {
 	auxText := singleQuote.ReplaceAllString(text, "xxAPOSTYPEWxx")
@@ -123,11 +136,20 @@ func wordsToAdd(s string) []string {
 }
 
 func isTaggedEN(s string) bool {
-	// Java: EnglishTagger.INSTANCE.tag(...).isTagged(). Without a tagger, miss —
-	// do not invent soft keep for @, doin', ne'er, etc. (emails via JoinEMailsAndUrls).
+	// Java: EnglishTagger.INSTANCE.tag(Arrays.asList(normalized)).get(0).isTagged()
+	// Prefer an already-wired hook (product Ensure / RegisterBinary / test override).
 	if IsTaggedEN != nil {
 		return IsTaggedEN(s)
 	}
+	// Lazy-load EnglishTagger.INSTANCE (english.dict) when tagging/en registered ensure.
+	if ensureEnglishTagger != nil {
+		ensureEnglishTagger()
+	}
+	if IsTaggedEN != nil {
+		return IsTaggedEN(s)
+	}
+	// No tagger on classpath / dict missing / intentional clear: fail closed (split).
+	// Never invent soft keep lists for doin'/ne'er/etc.
 	return false
 }
 
