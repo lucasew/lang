@@ -28,12 +28,17 @@ type GermanRuleDisambiguator struct {
 
 // NewGermanRuleDisambiguator builds the hybrid stages Java constructs as final fields.
 // MultitokenIgnore is wired from official /de/multitoken-ignore.txt when discoverable
-// (Java multitokenSpeller + setIgnoreSpelling(true)). Suggest/global/XML remain optional
-// injectors until those loaders are wired the same way.
+// (Java multitokenSpeller + setIgnoreSpelling(true)).
+// MultitokenGlobal is wired from official /spelling_global.txt when discoverable
+// (Java multitokenSpeller3 + setIgnoreSpelling(true); allowFirstCapitalized=false).
+// Suggest/XML remain optional injectors until those loaders are wired the same way.
 func NewGermanRuleDisambiguator() *GermanRuleDisambiguator {
 	d := &GermanRuleDisambiguator{}
 	if mw := GermanMultitokenIgnore(); mw != nil {
 		d.MultitokenIgnore = mw
+	}
+	if mw := GermanMultitokenGlobal(); mw != nil {
+		d.MultitokenGlobal = mw
 	}
 	return d
 }
