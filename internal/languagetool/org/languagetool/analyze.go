@@ -612,6 +612,8 @@ func AnalyzeWithTaggerTokenizerAndIgnore(text string, tagWord func(token string)
 }
 
 // attachPolishHyphenTagger wires TagWord into PolishWordTokenizer like Java setTagger.
+// Builds real AnalyzedTokenReadings so hyphen decisions use IsTagged / HasPosTag /
+// HasPartialPosTag (same as PolishTagger + polish.dict).
 func attachPolishHyphenTagger(wt tokenizers.Tokenizer, tagWord func(string) []TokenTag) {
 	if tagWord == nil {
 		return
@@ -623,32 +625,33 @@ func attachPolishHyphenTagger(wt tokenizers.Tokenizer, tagWord func(string) []To
 	pl.SetTagger(polishHyphenTagger(tagWord))
 }
 
+// polishHyphenTagger adapts per-token TagWord to PolishWordTokenizer.SetTagger.
 type polishHyphenTagger func(string) []TokenTag
 
-func (t polishHyphenTagger) Tag(tokens []string) []pltok.PolishTokenReadings {
-	out := make([]pltok.PolishTokenReadings, len(tokens))
+func (t polishHyphenTagger) Tag(tokens []string) []pltok.PolishHyphenReadings {
+	out := make([]pltok.PolishHyphenReadings, len(tokens))
+	pos := 0
 	for i, tok := range tokens {
 		tags := t(tok)
+		var readings []*AnalyzedToken
 		if len(tags) == 0 {
-			continue
-		}
-		r := pltok.PolishTokenReadings{IsTagged: true}
-		for _, tg := range tags {
-			pos := tg.POS
-			if pos == "adja" {
-				r.HasAdja = true
-			}
-			if strings.HasPrefix(pos, "adj:") || pos == "adja" {
-				r.HasAdjPartial = true
-			}
-			if strings.HasPrefix(pos, "subst:") {
-				r.HasSubstPartial = true
-			}
-			if strings.HasPrefix(pos, "num:") {
-				r.HasNumPartial = true
+			readings = []*AnalyzedToken{NewAnalyzedToken(tok, nil, nil)}
+		} else {
+			for _, tg := range tags {
+				var p, l *string
+				if tg.POS != "" {
+					pp := tg.POS
+					p = &pp
+				}
+				if tg.Lemma != "" {
+					ll := tg.Lemma
+					l = &ll
+				}
+				readings = append(readings, NewAnalyzedToken(tok, p, l))
 			}
 		}
-		out[i] = r
+		out[i] = NewAnalyzedTokenReadingsList(readings, pos)
+		pos += len([]rune(tok)) // startPos only for ATR metadata; not used by hyphen logic
 	}
 	return out
 }

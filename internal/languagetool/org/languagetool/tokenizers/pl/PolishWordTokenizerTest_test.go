@@ -1,9 +1,11 @@
-package pl
+package pl_test
 
 import (
 	"strings"
 	"testing"
 
+	pltag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/pl"
+	pl "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pl"
 	"github.com/stretchr/testify/require"
 )
 
@@ -11,119 +13,86 @@ func tokStr(tokens []string) string {
 	return "[" + strings.Join(tokens, ", ") + "]"
 }
 
+// polishTaggerAsHyphen adapts *pltag.PolishTagger to PolishHyphenTagger
+// (Java: wordTokenizer.setTagger(pl.getTagger())).
+func polishTaggerAsHyphen(t *pltag.PolishTagger) pl.PolishHyphenTagger {
+	if t == nil {
+		return nil
+	}
+	return pl.ATRTagFunc(func(tokens []string) []pl.PolishHyphenReadings {
+		atrs := t.Tag(tokens)
+		out := make([]pl.PolishHyphenReadings, len(atrs))
+		for i, a := range atrs {
+			out[i] = a
+		}
+		return out
+	})
+}
+
+// Twin of org.languagetool.tokenizers.pl.PolishWordTokenizerTest.testTokenize.
 func TestPolishWordTokenizer_Tokenize(t *testing.T) {
-	w := NewPolishWordTokenizer()
-	tokens := w.Tokenize("To jest\u00A0 test")
+	wordTokenizer := pl.NewPolishWordTokenizer()
+	tokens := wordTokenizer.Tokenize("To jest\u00A0 test")
 	require.Equal(t, 6, len(tokens))
 	require.Equal(t, "[To,  , jest, \u00A0,  , test]", tokStr(tokens))
 
-	tokens2 := w.Tokenize("To\rłamie")
+	tokens2 := wordTokenizer.Tokenize("To\rłamie")
 	require.Equal(t, 3, len(tokens2))
 	require.Equal(t, "[To, \r, łamie]", tokStr(tokens2))
 
-	tokens3 := w.Tokenize("A to jest-naprawdę-test!")
+	// hyphen with no whitespace
+	tokens3 := wordTokenizer.Tokenize("A to jest-naprawdę-test!")
 	require.Equal(t, 6, len(tokens3))
 	require.Equal(t, "[A,  , to,  , jest-naprawdę-test, !]", tokStr(tokens3))
 
-	tokens4 := w.Tokenize("Niemiecko- i angielsko-polski")
+	// hyphen at the end of the word
+	tokens4 := wordTokenizer.Tokenize("Niemiecko- i angielsko-polski")
 	require.Equal(t, 6, len(tokens4))
 	require.Equal(t, "[Niemiecko, -,  , i,  , angielsko-polski]", tokStr(tokens4))
 
-	tokens5 := w.Tokenize("Widzę krowę -i to dobrze!")
+	// hyphen probably instead of mdash
+	tokens5 := wordTokenizer.Tokenize("Widzę krowę -i to dobrze!")
 	require.Equal(t, 11, len(tokens5))
 	require.Equal(t, "[Widzę,  , krowę,  , -, i,  , to,  , dobrze, !]", tokStr(tokens5))
 
-	tokens6 := w.Tokenize("A to jest zdanie—rzeczywiście—z wtrąceniem.")
+	// mdash
+	tokens6 := wordTokenizer.Tokenize("A to jest zdanie—rzeczywiście—z wtrąceniem.")
 	require.Equal(t, 14, len(tokens6))
 	require.Equal(t, "[A,  , to,  , jest,  , zdanie, —, rzeczywiście, —, z,  , wtrąceniem, .]", tokStr(tokens6))
 
-	// without tagger: compounds stay whole (Java tagger==null branch)
+	// compound words with hyphens (tagger null — stay whole)
 	compoundSentence := "To jest kobieta-wojownik w polsko-czeskim ubraniu, która wysłała dwa SMS-y."
-	compoundTokens := w.Tokenize(compoundSentence)
+	compoundTokens := wordTokenizer.Tokenize(compoundSentence)
 	require.Equal(t, 21, len(compoundTokens))
 	require.Equal(t, "[To,  , jest,  , kobieta-wojownik,  , w,  , polsko-czeskim,  , ubraniu, ,,  , która,  , wysłała,  , dwa,  , SMS-y, .]", tokStr(compoundTokens))
 
-	// number ranges also stay whole without tagger (Java only splits after setTagger)
-	n := w.Tokenize("Impreza odbędzie się w dniach 1-23 maja.")
-	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1-23,  , maja, .]", tokStr(n))
-}
-
-// mockHyphenTagger marks parts as adjective compounds (adja + adj:).
-type mockHyphenTagger struct{}
-
-func (mockHyphenTagger) Tag(tokens []string) []PolishTokenReadings {
-	out := make([]PolishTokenReadings, len(tokens))
-	// last is full compound — untagged
-	for i := 0; i < len(tokens)-1; i++ {
-		if i == 0 {
-			out[i] = PolishTokenReadings{IsTagged: true, HasAdja: true}
-		} else {
-			out[i] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
-		}
+	// now setup the tagger... Java: Language pl = new Polish(); wordTokenizer.setTagger(pl.getTagger())
+	pltag.EnsureDefaultPolishTagger()
+	if pltag.DefaultPolishTagger == nil {
+		t.Skip("polish.dict not available; cannot twin setTagger section")
 	}
-	out[len(tokens)-1] = PolishTokenReadings{IsTagged: false}
-	// for 3-part: all first as adja except last part adj
-	if len(tokens) == 4 { // 3 parts + full
-		out[0] = PolishTokenReadings{IsTagged: true, HasAdja: true}
-		out[1] = PolishTokenReadings{IsTagged: true, HasAdja: true}
-		out[2] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
-		out[3] = PolishTokenReadings{IsTagged: false}
-	}
-	// for 2-part subst compounds like kobieta-wojownik — use subst partial
-	if len(tokens) == 3 {
-		// prefer adj pattern for polsko-czeskim; subst for kobieta-wojownik
-		// caller sets tokens; we use subst for any 2-part when first isn't known adja prefix
-		out[0] = PolishTokenReadings{IsTagged: true, HasSubstPartial: true}
-		out[1] = PolishTokenReadings{IsTagged: true, HasSubstPartial: true}
-		out[2] = PolishTokenReadings{IsTagged: false}
-	}
-	return out
-}
+	wordTokenizer.SetTagger(polishTaggerAsHyphen(pltag.DefaultPolishTagger))
+	compoundTokens = wordTokenizer.Tokenize(compoundSentence)
+	// we should get 4 more tokens: two hyphen tokens and two for the split words
+	require.Equal(t, 25, len(compoundTokens))
+	require.Equal(t, "[To,  , jest,  , kobieta, -, wojownik,  , w,  , polsko, -, czeskim,  , ubraniu, ,,  , która,  , wysłała,  , dwa,  , SMS-y, .]", tokStr(compoundTokens))
 
-// adjHyphenTagger always uses adja/adj for 2-part compounds.
-type adjHyphenTagger struct{}
+	compoundTokens = wordTokenizer.Tokenize("Miała osiemnaście-dwadzieścia lat.")
+	require.Equal(t, 8, len(compoundTokens))
+	require.Equal(t, "[Miała,  , osiemnaście, -, dwadzieścia,  , lat, .]", tokStr(compoundTokens))
 
-func (adjHyphenTagger) Tag(tokens []string) []PolishTokenReadings {
-	out := make([]PolishTokenReadings, len(tokens))
-	if len(tokens) == 4 {
-		out[0] = PolishTokenReadings{IsTagged: true, HasAdja: true}
-		out[1] = PolishTokenReadings{IsTagged: true, HasAdja: true}
-		out[2] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
-		out[3] = PolishTokenReadings{IsTagged: false}
-		return out
-	}
-	if len(tokens) >= 3 {
-		out[0] = PolishTokenReadings{IsTagged: true, HasAdja: true}
-		out[1] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
-		out[len(tokens)-1] = PolishTokenReadings{IsTagged: false}
-	}
-	return out
-}
+	// now three-part adja-adja-adj...:
+	compoundTokens = wordTokenizer.Tokenize("Słownik polsko-niemiecko-indonezyjski")
+	require.Equal(t, 7, len(compoundTokens))
+	require.Equal(t, "[Słownik,  , polsko, -, niemiecko, -, indonezyjski]", tokStr(compoundTokens))
 
-func TestPolishWordTokenizer_TokenizeWithTagger(t *testing.T) {
-	w := NewPolishWordTokenizer()
-	w.SetTagger(mockHyphenTagger{})
-	// 2-part subst compound splits
-	got := w.Tokenize("kobieta-wojownik")
-	require.Equal(t, "[kobieta, -, wojownik]", tokStr(got))
+	// number ranges:
+	compoundTokens = wordTokenizer.Tokenize("Impreza odbędzie się w dniach 1-23 maja.")
+	require.Equal(t, 16, len(compoundTokens))
+	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, 23,  , maja, .]", tokStr(compoundTokens))
 
-	w.SetTagger(adjHyphenTagger{})
-	got = w.Tokenize("polsko-czeskim")
-	require.Equal(t, "[polsko, -, czeskim]", tokStr(got))
-
-	got = w.Tokenize("polsko-niemiecko-indonezyjski")
-	require.Equal(t, "[polsko, -, niemiecko, -, indonezyjski]", tokStr(got))
-
-	// Java: number ranges split only when tagger is set
-	got = w.Tokenize("Impreza odbędzie się w dniach 1-23 maja.")
-	require.Equal(t, 16, len(got))
-	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, 23,  , maja, .]", tokStr(got))
-
-	got = w.Tokenize("Impreza odbędzie się w dniach 1--23 maja.")
-	require.Equal(t, 18, len(got))
-	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, , -, 23,  , maja, .]", tokStr(got))
-
-	// prefix + digit last part: Java keeps whole (prefix branch before digit)
-	got = w.Tokenize("pre-1")
-	require.Equal(t, "[pre-1]", tokStr(got))
+	// number ranges:
+	compoundTokens = wordTokenizer.Tokenize("Impreza odbędzie się w dniach 1--23 maja.")
+	require.Equal(t, 18, len(compoundTokens))
+	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, , -, 23,  , maja, .]", tokStr(compoundTokens))
 }

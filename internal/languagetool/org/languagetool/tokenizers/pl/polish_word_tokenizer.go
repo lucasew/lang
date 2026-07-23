@@ -17,32 +17,54 @@ type PolishWordTokenizer struct {
 	tagger PolishHyphenTagger
 }
 
-// PolishHyphenTagger is the subset of Tagger used for hyphen compounds.
+// PolishHyphenTagger is the subset of org.languagetool.tagging.Tagger used for
+// hybrid hyphen tokenization (Java field type is Tagger).
+// Implementations typically wrap PolishTagger.Tag.
 type PolishHyphenTagger interface {
-	// Tag returns readings for tokens; last entry is the full compound.
-	// isTagged / hasPosTag / hasPartialPosTag inspect readings.
-	Tag(tokens []string) []PolishTokenReadings
+	// Tag returns one readings object per input token (same contract as Tagger.tag).
+	Tag(tokens []string) []PolishHyphenReadings
 }
 
-// PolishTokenReadings minimal readings for hyphen decisions.
-type PolishTokenReadings struct {
-	IsTagged        bool
-	HasAdja         bool // pos tag "adja"
-	HasAdjPartial   bool // partial "adj:"
-	HasSubstPartial bool
-	HasNumPartial   bool
+// PolishHyphenReadings is the subset of AnalyzedTokenReadings consulted by
+// PolishWordTokenizer. *languagetool.AnalyzedTokenReadings implements this.
+type PolishHyphenReadings interface {
+	IsTagged() bool
+	HasPosTag(posTag string) bool
+	HasPartialPosTag(posTag string) bool
+}
+
+// ATRTagFunc adapts a batch-tag function to PolishHyphenTagger.
+// Use to wrap PolishTagger.Tag (or any ATR producer) without invent POS lists.
+type ATRTagFunc func(tokens []string) []PolishHyphenReadings
+
+// Tag implements PolishHyphenTagger.
+func (f ATRTagFunc) Tag(tokens []string) []PolishHyphenReadings {
+	if f == nil {
+		return nil
+	}
+	return f(tokens)
+}
+
+// WrapATRSlice converts a slice of PolishHyphenReadings-capable values (e.g.
+// []*AnalyzedTokenReadings) for SetTagger. Callers with concrete ATR slices
+// should map elements to the interface.
+func WrapATRTagger(tag func(tokens []string) []PolishHyphenReadings) PolishHyphenTagger {
+	return ATRTagFunc(tag)
 }
 
 func NewPolishWordTokenizer() *PolishWordTokenizer {
 	return &PolishWordTokenizer{
-		plTokenizing: tokenizers.TokenizingCharacters() + "–‚", // n-dash
+		plTokenizing: tokenizers.TokenizingCharacters() + "–‚", // n-dash (Java)
 	}
 }
 
+// SetTagger ports PolishWordTokenizer.setTagger — enables hybrid hyphen splitting
+// and digit-range splits using POS from the real Polish tagger.
 func (w *PolishWordTokenizer) SetTagger(t PolishHyphenTagger) {
 	w.tagger = t
 }
 
+// Polish prefixes that should never be used to split parts of words (Java static set).
 var polishPrefixes = map[string]bool{
 	"arcy": true, "neo": true, "pre": true, "anty": true, "eks": true, "bez": true,
 	"beze": true, "ekstra": true, "hiper": true, "infra": true, "kontr": true,
@@ -64,12 +86,10 @@ func (w *PolishWordTokenizer) Tokenize(text string) []string {
 				l = append(l, w.Tokenize(token[1:])...)
 			} else if strings.Contains(token, "-") {
 				tokenParts := strings.Split(token, "-")
-				// Java order: prefixes || tagger==null → keep whole;
-				// else digit last part → split range; else tagger compound logic.
-				// Do not invent digit-range split without a tagger (Java never does).
+				// Java: prefixes.contains(tokenParts[0]) || tagger == null → keep whole
 				if polishPrefixes[tokenParts[0]] || w.tagger == nil {
 					l = append(l, token)
-				} else if len(tokenParts) > 0 && len(tokenParts[len(tokenParts)-1]) > 0 &&
+				} else if len(tokenParts[len(tokenParts)-1]) > 0 &&
 					unicode.IsDigit(rune(tokenParts[len(tokenParts)-1][0])) {
 					// split numbers at dash or minus sign, 1-10
 					for i, p := range tokenParts {
@@ -96,35 +116,45 @@ func (w *PolishWordTokenizer) splitCompoundWithTagger(token string, tokenParts [
 		return []string{token}
 	}
 	tested := append(append([]string{}, tokenParts...), token)
-	tagged := w.tagger.Tag(tested)
-	if len(tagged) == len(tokenParts)+1 && !tagged[len(tokenParts)].IsTagged {
+	taggedToks := w.tagger.Tag(tested)
+	// Java: taggedToks.size() == tokenParts.length + 1 && !taggedToks.get(tokenParts.length).isTagged()
+	if len(taggedToks) == len(tokenParts)+1 &&
+		taggedToks[len(tokenParts)] != nil &&
+		!taggedToks[len(tokenParts)].IsTagged() {
 		isCompound := false
 		switch len(tokenParts) {
 		case 2:
-			if (tagged[0].HasAdja && tagged[1].HasAdjPartial) ||
-				(tagged[0].HasSubstPartial && tagged[1].HasSubstPartial) ||
-				(tagged[0].HasNumPartial && tagged[1].HasNumPartial) {
+			// "niemiecko-indonezyjski" / "kobieta-wojownik" / "osiemnaście-dwadzieścia"
+			if taggedToks[0] != nil && taggedToks[1] != nil &&
+				((taggedToks[0].HasPosTag("adja") && taggedToks[1].HasPartialPosTag("adj:")) ||
+					(taggedToks[0].HasPartialPosTag("subst:") && taggedToks[1].HasPartialPosTag("subst:")) ||
+					(taggedToks[0].HasPartialPosTag("num:") && taggedToks[1].HasPartialPosTag("num:"))) {
 				isCompound = true
 			}
 		case 3:
-			if tagged[0].HasAdja && tagged[1].HasAdja && tagged[2].HasAdjPartial {
+			// "polsko-niemiecko-indonezyjski"
+			if taggedToks[0] != nil && taggedToks[1] != nil && taggedToks[2] != nil &&
+				taggedToks[0].HasPosTag("adja") &&
+				taggedToks[1].HasPosTag("adja") &&
+				taggedToks[2].HasPartialPosTag("adj:") {
 				isCompound = true
 			}
 		}
 		if isCompound {
-			var l []string
+			var out []string
 			for i, p := range tokenParts {
-				l = append(l, p)
+				out = append(out, p)
 				if i != len(tokenParts)-1 {
-					l = append(l, "-")
+					out = append(out, "-")
 				}
 			}
-			return l
+			return out
 		}
 	}
 	return []string{token}
 }
 
+// splitKeepDelims ports StringTokenizer(text, delims, true).
 func splitKeepDelims(text, delims string) []string {
 	if text == "" {
 		return nil
