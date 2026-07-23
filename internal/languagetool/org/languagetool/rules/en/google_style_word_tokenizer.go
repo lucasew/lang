@@ -1,56 +1,66 @@
 package en
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // GoogleStyleWordTokenizer ports org.languagetool.rules.en.GoogleStyleWordTokenizer.
 // Approximates Google ngram tokenization: hyphen splits; 'm/'re/'ve/'ll rejoin.
-type GoogleStyleWordTokenizer struct {
-	base *tokenizers.WordTokenizer
-}
+// Java: extends WordTokenizer.
+type GoogleStyleWordTokenizer struct{}
 
 func NewGoogleStyleWordTokenizer() *GoogleStyleWordTokenizer {
-	return &GoogleStyleWordTokenizer{base: tokenizers.NewWordTokenizer()}
+	return &GoogleStyleWordTokenizer{}
 }
 
+// GetTokenizingCharacters ports GoogleStyleWordTokenizer.getTokenizingCharacters.
+// Java: return super.getTokenizingCharacters() + "-";
 func (w *GoogleStyleWordTokenizer) GetTokenizingCharacters() string {
 	return tokenizers.TokenizingCharacters() + "-"
 }
 
+// Tokenize ports GoogleStyleWordTokenizer.tokenize.
+// Java: super.tokenize(text) then Stack re-glue of 'm/'re/'ve/'ll after apostrophe.
 func (w *GoogleStyleWordTokenizer) Tokenize(text string) []string {
-	// WordTokenizer uses fixed delims; re-tokenize with hyphen included via custom split.
-	raw := splitKeepDelims(text, w.GetTokenizingCharacters())
-	raw = tokenizers.JoinEMailsAndUrls(raw)
-	var prev string
-	var out []string
-	for _, token := range raw {
+	// super.tokenize: StringTokenizer(text, getTokenizingCharacters(), true) + joinEMailsAndUrls
+	tokens := stringTokenizerKeepDelims(text, w.GetTokenizingCharacters())
+	tokens = tokenizers.JoinEMailsAndUrls(tokens)
+
+	var prev string // Java: String prev = null; "" never equals "'"
+	// Java: Stack<String> l = new Stack<>();
+	l := make([]string, 0, len(tokens))
+	for _, token := range tokens {
 		if prev == "'" {
+			// TODO (Java): add more cases if needed
 			switch token {
 			case "m":
-				out[len(out)-1] = "'m"
+				l = l[:len(l)-1] // pop apostrophe
+				l = append(l, "'m")
 			case "re":
-				out[len(out)-1] = "'re"
+				l = l[:len(l)-1]
+				l = append(l, "'re")
 			case "ve":
-				out[len(out)-1] = "'ve"
+				l = l[:len(l)-1]
+				l = append(l, "'ve")
 			case "ll":
-				out[len(out)-1] = "'ll"
+				l = l[:len(l)-1]
+				l = append(l, "'ll")
 			default:
-				out = append(out, token)
+				l = append(l, token)
 			}
 		} else {
-			out = append(out, token)
+			l = append(l, token)
 		}
 		prev = token
 	}
-	return out
+	return l
 }
 
-func splitKeepDelims(text, delims string) []string {
-	if text == "" {
-		return nil
-	}
-	var out []string
+// stringTokenizerKeepDelims ports Java StringTokenizer(text, delims, true).
+func stringTokenizerKeepDelims(text, delims string) []string {
+	out := make([]string, 0)
 	var cur []rune
 	flush := func() {
 		if len(cur) > 0 {
@@ -59,7 +69,7 @@ func splitKeepDelims(text, delims string) []string {
 		}
 	}
 	for _, r := range text {
-		if containsRune(delims, r) {
+		if strings.ContainsRune(delims, r) {
 			flush()
 			out = append(out, string(r))
 		} else {
@@ -68,13 +78,4 @@ func splitKeepDelims(text, delims string) []string {
 	}
 	flush()
 	return out
-}
-
-func containsRune(s string, r rune) bool {
-	for _, c := range s {
-		if c == r {
-			return true
-		}
-	}
-	return false
 }
