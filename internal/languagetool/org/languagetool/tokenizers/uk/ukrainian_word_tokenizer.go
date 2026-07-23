@@ -76,17 +76,22 @@ var (
 	// Prof uses negative lookbehind in Java → (^|prefix) here.
 	abbrDotLat  = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-]лат)\.([` + javaHVClass + `]+[a-zA-Z])`)
 	abbrDotProf = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([Аа]кад|[Пп]роф|[Дд]оц|[Аа]сист|[Аа]рх|ап|тов|вул|бул|бульв|о|р|ім|упорядн?|др|[Пп]реп|Ів|Дж|Ол|[сС]вт|Авг)\.([` + javaHVClass + `]+[А-ЯІЇЄҐа-яіїєґ])`)
-	abbrDotGub  = regexp.MustCompile(`(.[А-ЯІЇЄҐ][а-яіїєґ'-]+[` + javaHVClass + `]+губ)\.`)
-	// Go \b is ASCII-only; use explicit non-letter left edge for Cyrillic initials like К.-Святошинський
-	abbrDotDash = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])([А-ЯІЇЄҐ]ж?)\.([-\x{2013}](?:[А-ЯІЇЄҐ][а-яіїєґ']{2}|[А-ЯІЇЄҐ]\.))`)
+	abbrDotGub = regexp.MustCompile(`(.[А-ЯІЇЄҐ][а-яіїєґ'-]+[` + javaHVClass + `]+губ)\.`)
+	// Java ABBR_DOT_DASH: \b([А-ЯІЇЄҐ]ж?)\.([-\u2013](...)) with UNICODE_CHARACTER_CLASS.
+	// RE2 has no Unicode \b (ASCII \b is invent for Cyrillic). Emulate zero-width Unicode
+	// word-boundary: BOS or previous char is not (letter|digit|_); consume non-word prefix.
+	// Replacement re-emits prefix: $1$2 + NON_BREAKING_DOT + $3.
+	abbrDotDash = regexp.MustCompile(`(?:^|([^_\p{L}\p{N}]))([А-ЯІЇЄҐ]ж?)\.([-\x{2013}](?:[А-ЯІЇЄҐ][а-яіїєґ']{2}|[А-ЯІЇЄҐ]\.))`)
 	abbrDotKub  = regexp.MustCompile(`(кв|куб)\.([` + javaHVClass + `]*(?:[смкд]|мк)?м)`)
 	abbrDotSG   = regexp.MustCompile(`(с)\.(-г)\.`)
 	abbrDotChl  = regexp.MustCompile(`(чл)\.(-кор)\.`)
 	abbrDotPn   = regexp.MustCompile(`(пн|пд)\.(-(зах|сх))\.`)
 	invalidMln  = regexp.MustCompile(`(млн|млрд)\.( [а-яіїєґ])`)
-	// Java ABBR_DOT_2_SMALL_LETTERS: second group \h*(?![смкд]?м\.)[екмнпрстч]{1,2}
-	// RE2 has no lookahead; meter exclusion applied in replaceAbbrDot2Small (only [смкд]?м, not мк).
-	abbrDot2Small = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([векнпрстцч]{1,2})\.([` + javaHClass + `]*[екмнпрстч]{1,2})\.`)
+	// Java ABBR_DOT_2_SMALL_LETTERS:
+	// ([^letter-][векнпрстцч]{1,2})\.(\h*(?![смкд]?м\.)[екмнпрстч]{1,2})\.
+	// Prefix char is required (Java capturing group, not lookbehind, not BOS ^ invent).
+	// Meter exclusion only [смкд]?м — not мк. RE2 has no lookahead → replaceAbbrDot2Small.
+	abbrDot2Small = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-][векнпрстцч]{1,2})\.([` + javaHClass + `]*[екмнпрстч]{1,2})\.`)
 
 	// non-ending abbreviations (long list).
 	// Java ABBR_DOT_NON_ENDING: case-sensitive; only listed dual-case arms ([Нн]апр, [Пп]оч, …).
@@ -288,6 +293,7 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 		// Prof: (^|prefix)(abbr).(rest) → $1$2 + NON_BREAKING_DOT + E110 + $3
 		text = abbrDotProf.ReplaceAllString(text, "$1$2"+string(nonBreakingDotSubst)+breakingPlaceholder+"$3")
 		text = abbrDotGub.ReplaceAllString(text, "$1"+string(nonBreakingDotSubst)+breakingPlaceholder)
+		// Java: $1 + NON_BREAKING_DOT + $2; Go groups: optional non-word prefix, letter, dash-part
 		text = abbrDotDash.ReplaceAllString(text, "$1$2"+string(nonBreakingDotSubst)+"$3")
 
 		text = initialsSP2.ReplaceAllString(text, "$1"+string(nonBreakingDotSubst)+breakingPlaceholder+"$2"+string(nonBreakingDotSubst)+breakingPlaceholder+"$3")
@@ -558,33 +564,31 @@ func isUnicodeWordChar(r rune) bool {
 // replaceAbbrDot2Small ports Java ABBR_DOT_2_SMALL_LETTERS_PATTERN +
 // replaceAll("$1.\uE120\uE110$2.\uE120\uE110") with (?![смкд]?м\.) on the second group.
 // Meter exclusion is only [смкд]?м\. — freestanding "мк" is NOT excluded.
+// Pattern groups mirror Java: $1 = prefix_char+letters, $2 = \h*+letters (no BOS ^).
 func replaceAbbrDot2Small(text string) string {
 	var b strings.Builder
 	last := 0
 	for _, loc := range abbrDot2Small.FindAllStringSubmatchIndex(text, -1) {
-		// groups: full, $1 prefix, $2 first abbr, $3 second abbr (with optional \h*)
+		// groups: full, $1 = prefix+letters, $2 = \h*+letters (mirrors Java)
 		full0, full1 := loc[0], loc[1]
-		g3 := text[loc[6]:loc[7]]
-		// Java (?![смкд]?м\.) checked after \h* before matching letters —
-		// equivalent once letters are matched: letters ∈ {м, см, км, дм, мм}
-		if isAbbrDot2SmallMeterSecond(g3) {
+		g2 := text[loc[4]:loc[5]]
+		// Java (?![смкд]?м\.) — skip when second token letters are м/см/км/дм/мм (not мк)
+		if isAbbrDot2SmallMeterSecond(g2) {
 			continue
 		}
 		b.WriteString(text[last:full0])
 		g1 := text[loc[2]:loc[3]]
-		g2 := text[loc[4]:loc[5]]
-		// Java: $1 includes prefix+letters then .\uE120\uE110; Go pattern splits prefix/$2
-		b.WriteString(g1 + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder + g3 + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
+		b.WriteString(g1 + "." + nonBreakingPlaceholder2 + breakingPlaceholder + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
 		last = full1
 	}
 	b.WriteString(text[last:])
 	return b.String()
 }
 
-// isAbbrDot2SmallMeterSecond reports whether g3 (\h* + letters) is a meter unit
+// isAbbrDot2SmallMeterSecond reports whether g2 (\h* + letters) is a meter unit
 // excluded by Java (?![смкд]?м\.) — i.e. letters are м/см/км/дм/мм, not мк.
-func isAbbrDot2SmallMeterSecond(g3 string) bool {
-	rr := []rune(g3)
+func isAbbrDot2SmallMeterSecond(g2 string) bool {
+	rr := []rune(g2)
 	i := 0
 	for i < len(rr) && isJavaH(rr[i]) {
 		i++
@@ -1010,6 +1014,17 @@ func isUKCyrLetter(r rune) bool {
 	return false
 }
 
+// isLowerUKCyrLetter matches Java [а-яіїєґ] (lowercase Ukrainian only).
+func isLowerUKCyrLetter(r rune) bool {
+	switch {
+	case r >= 'а' && r <= 'я':
+		return true
+	case r == 'і' || r == 'ї' || r == 'є' || r == 'ґ':
+		return true
+	}
+	return false
+}
+
 func isLatinLetter(r rune) bool {
 	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
 }
@@ -1096,13 +1111,13 @@ func splitUK(str string) []string {
 
 		r := runes[i]
 
-		// % with lookahead (?![-–][cyrillic])
+		// Java SPLIT_CHARS: %(?![-\u2013][а-яіїєґ]) — lowercase Ukrainian only (no uppercase invent)
 		if r == '%' {
 			ok := true
 			if i+1 < len(runes) {
 				n1 := runes[i+1]
-				if (n1 == '-' || n1 == '\u2013') && i+2 < len(runes) && isUKCyrLetter(runes[i+2]) {
-					ok = false // 5%-й keep together - don't split %
+				if (n1 == '-' || n1 == '\u2013') && i+2 < len(runes) && isLowerUKCyrLetter(runes[i+2]) {
+					ok = false // 5%-й keep together — don't split %
 				}
 			}
 			if ok && !followedByE120(i+1) {

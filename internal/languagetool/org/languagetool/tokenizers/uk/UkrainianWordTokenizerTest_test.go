@@ -149,6 +149,13 @@ func TestUkrainianWordTokenizer_Abbreviations(t *testing.T) {
 	assertTok(t, "також зав. відділом", "також", " ", "зав.", " ", "відділом")
 	assertTok(t, "до н. е.", "до", " ", "н.", " ", "е.")
 	assertTok(t, "до н.е.", "до", " ", "н.", "е.")
+	// CAP: ABBR_DOT_2_SMALL requires a non-letter prefix char (Java group, not BOS ^ invent).
+	// BOS "е.е." cannot match ABBR_DOT_2 (no prefix); bare "е" is also not NON_ENDING → splits.
+	assertTok(t, "е.е.", "е", ".", "е", ".")
+	// With space prefix → dual-abbr glue (т.ч.).
+	assertTok(t, " і т.ч.", " ", "і", " ", "т.", "ч.")
+	// second token "м" excluded by (?![смкд]?м.) — dual-abbr does not glue; "п." still NON_ENDING.
+	assertTok(t, " 1 п.м.", " ", "1", " ", "п.", "м", ".")
 	assertTok(t, "в. о. начальника", "в.", " ", "о.", " ", "начальника")
 	assertTok(t, "в.о. начальника", "в.", "о.", " ", "начальника")
 	// Java ABBR_DOT_2_SMALL meter exclusion is only (?![смкд]?м\.) — freestanding "мк" is allowed.
@@ -157,6 +164,9 @@ func TestUkrainianWordTokenizer_Abbreviations(t *testing.T) {
 	// meter second units excluded from dual-abbr glue; "к." still protected via NON_ENDING list
 	assertTok(t, " к.м. x", " ", "к.", "м", ".", " ", "x")
 	assertTok(t, " к.см. x", " ", "к.", "см", ".", " ", "x")
+	// ABBR_DOT_DASH: Java UNICODE \b — after digit does not glue (digit is word char);
+	// bare "К." splits; hyphen is not a SPLIT_CHARS delimiter so stays with following word.
+	assertTok(t, "1К.-Святошинський", "1К", ".", "-Святошинський")
 	// Java ABBR_DOT_NON_ENDING has dead в(?!\.+): bare mid-sentence/BOS "в."/"В." split (not one token)
 	assertTok(t, "слово в. слово", "слово", " ", "в", ".", " ", "слово")
 	assertTok(t, "в. слово", "в", ".", " ", "слово")
@@ -323,6 +333,8 @@ func TestUkrainianWordTokenizer_SpecialChars(t *testing.T) {
 
 	assertTok(t, "а%його", "а", "%", "його")
 	assertTok(t, "5%-го", "5%-го")
+	// Java %(?![-\u2013][а-яіїєґ]) — uppercase after - does not suppress % split
+	assertTok(t, "5%-Й", "5", "%", "-Й")
 	assertTok(t, "5′", "5", "′") // U+2032
 	assertTok(t, "'⚪'", "'", "⚪", "'")
 }
