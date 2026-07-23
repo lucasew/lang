@@ -315,20 +315,22 @@ func TestSerbianRuleDisambiguator_ControlUnmatchedStaysClean(t *testing.T) {
 	}
 }
 
-// Hybrid Rules stage uses the same official XML (Java eager XmlRuleDisambiguator field).
-// Chunker left nil so only the Rules stage runs (like Swedish hybrid parity test).
+// Hybrid stages use the same official multiwords + XML Java constructs eagerly.
+// Official sr/multiwords.txt is empty → multiword stage is a no-op; readings match
+// standalone XmlRuleDisambiguator (multiword first, then XML).
 func TestSerbianHybridDisambiguator_RulesStageMatchesXml(t *testing.T) {
 	_, xmlDisam := setupSRDisambiguation(t)
 	hybrid := disambigsr.NewSerbianHybridDisambiguator()
 	require.NotNil(t, hybrid.Rules, "Java constructs XmlRuleDisambiguator eagerly")
-	require.Nil(t, hybrid.Chunker, "Chunker is injector-filled; constructor leaves nil")
+	require.NotNil(t, hybrid.Chunker, "Java constructs MultiWordChunker eagerly (empty multiwords OK)")
 
 	const input = "XXI i MCMXCIX"
 	// Note: XXI matches (X + X + I); "i" lowercase does not (case_sensitive).
+	// Empty multiword stage does not change readings/flags vs XML alone.
 	require.Equal(t,
 		myAssertDisambiguate(input, xmlDisam),
 		myAssertDisambiguate(input, hybrid),
-		"hybrid Rules stage readings == standalone XmlRuleDisambiguator")
+		"hybrid multiword→XML readings == standalone XmlRuleDisambiguator")
 
 	hs := analyzeSR(input, hybrid)
 	requireIgnoredBySpeller(t, hs, "XXI", "MCMXCIX")

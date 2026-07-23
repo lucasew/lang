@@ -7,11 +7,16 @@ import (
 
 // SerbianHybridDisambiguator ports
 // org.languagetool.tagging.disambiguation.sr.SerbianHybridDisambiguator:
-// MultiWordChunker("/sr/multiwords.txt") defaults, then XmlRuleDisambiguator(Serbian) no global.
+// MultiWordChunker("/sr/multiwords.txt") with getInstance defaults (F,F,F;
+// NO setRemovePreviousTags; NO setIgnoreSpelling), then
+// XmlRuleDisambiguator(new Serbian()) with useGlobalDisambiguation=false.
 // Java order: disambiguator.disambiguate(chunker.disambiguate(input)) — multiwords then XML.
-// Rules is eagerly wired from official sr/disambiguation.xml when present (Java final field).
+// Official sr/multiwords.txt is empty (0 lines); Java still constructs MultiWordChunker —
+// Chunker is eagerly wired (empty maps OK) when the official file is discoverable.
+// Do not invent multiword entries.
 type SerbianHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
+	// Chunker is Java MultiWordChunker("/sr/multiwords.txt") / getInstance defaults.
 	Chunker interface {
 		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 	}
@@ -21,11 +26,17 @@ type SerbianHybridDisambiguator struct {
 	}
 }
 
-// NewSerbianHybridDisambiguator ports Java field init: XmlRuleDisambiguator(new Serbian())
-// (useGlobalDisambiguation=false). Chunker is left for injectors / multiword load helpers
-// (same pattern as Swedish/Polish hybrid: multiwords loaded by callers).
+// NewSerbianHybridDisambiguator builds stages Java constructs as final fields.
+// Chunker is wired from official /sr/multiwords.txt when discoverable
+// (getInstance defaults: F/F/F; no removePreviousTags; no ignoreSpelling).
+// Official multiwords may be empty → non-nil empty MultiWordChunker (Java still constructs).
+// Rules is eagerly wired from official sr/disambiguation.xml when present
+// (XmlRuleDisambiguator(Serbian) — useGlobalDisambiguation=false).
 func NewSerbianHybridDisambiguator() *SerbianHybridDisambiguator {
 	d := &SerbianHybridDisambiguator{}
+	if mw := SerbianMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
 	if xml := SerbianXmlRuleDisambiguator(); xml != nil {
 		d.Rules = xml
 	}
@@ -37,12 +48,18 @@ func NewSerbianHybridDisambiguatorWithStages(chunker, secondary disambiguation.D
 	return &SerbianHybridDisambiguator{Chunker: chunker, Rules: secondary}
 }
 
+// NewDefaultSerbianHybridDisambiguator matches Java default construction (both stages when present).
+func NewDefaultSerbianHybridDisambiguator() *SerbianHybridDisambiguator {
+	return NewSerbianHybridDisambiguator()
+}
+
 func (d *SerbianHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
-	if input == nil {
-		return nil
+	if d == nil || input == nil {
+		return input
 	}
 	out := input
-	// multiwords first, then XML (Java: disambiguator.disambiguate(chunker.disambiguate(input)))
+	// Java: return disambiguator.disambiguate(chunker.disambiguate(input));
+	// multiwords first, then XML
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}
@@ -50,6 +67,10 @@ func (d *SerbianHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSe
 		out = d.Rules.Disambiguate(out)
 	}
 	return out
+}
+
+func (d *SerbianHybridDisambiguator) PreDisambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	return input
 }
 
 var _ disambiguation.Disambiguator = (*SerbianHybridDisambiguator)(nil)
