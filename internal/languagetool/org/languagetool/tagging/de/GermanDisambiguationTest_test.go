@@ -2,14 +2,10 @@ package de
 
 // Twin of GermanDisambiguationTest — chunker + MultitokenIgnore from official lists
 import (
-	"os"
-	"path/filepath"
-	"runtime"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/chunking"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	disde "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/de"
 	"github.com/stretchr/testify/require"
 )
@@ -26,33 +22,35 @@ func sentStartDE() *languagetool.AnalyzedTokenReadings {
 	return languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", &tag, nil))
 }
 
-// openOfficialMultitokenIgnore loads Java /de/multitoken-ignore.txt (no invent patterns).
-func openOfficialMultitokenIgnore(t *testing.T) *disambiguation.MultiWordChunker {
-	t.Helper()
-	_, file, _, ok := runtime.Caller(0)
-	require.True(t, ok)
-	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../../"))
-	path := filepath.Join(root, "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/multitoken-ignore.txt")
-	if st, err := os.Stat(path); err != nil || !st.Mode().IsRegular() {
-		t.Skipf("official multitoken-ignore.txt missing: %s", path)
+// multiwordContent builds SENT_START + token + " " + token for MultiWordChunker.
+func multiwordContent(a, b string) []*languagetool.AnalyzedTokenReadings {
+	return []*languagetool.AnalyzedTokenReadings{
+		sentStartDE(),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(a, nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(b, nil, nil)),
 	}
-	f, err := os.Open(path)
-	require.NoError(t, err)
-	defer f.Close()
-	c, err := disambiguation.NewMultiWordChunkerFromReader(f, disambiguation.MultiWordChunkerSettings{
-		AllowFirstCapitalized: true,
-		AllowAllUppercase:     true,
-		AllowTitlecase:        false,
-		DefaultTag:            disambiguation.TagForNotAddingTags,
-	})
-	require.NoError(t, err)
-	require.NotNil(t, c)
-	c.AddIgnoreSpelling = true
-	return c
+}
+
+// requireIgnoredBoth asserts isIgnoredBySpeller on both content tokens (Java tokens[1], tokens[2]).
+func requireIgnoredBoth(t *testing.T, d *disde.GermanRuleDisambiguator, a, b string, want bool) {
+	t.Helper()
+	out := d.Disambiguate(languagetool.NewAnalyzedSentence(multiwordContent(a, b)))
+	toks := out.GetTokens()
+	require.Len(t, toks, 4)
+	if want {
+		require.True(t, toks[1].IsIgnoredBySpeller(), "%q %q first content token", a, b)
+		require.True(t, toks[3].IsIgnoredBySpeller(), "%q %q second content token", a, b)
+	} else {
+		require.False(t, toks[1].IsIgnoredBySpeller(), "%q %q first content token should NOT ignore", a, b)
+		require.False(t, toks[3].IsIgnoredBySpeller(), "%q %q second content token should NOT ignore", a, b)
+	}
 }
 
 // Port of GermanDisambiguationTest.testChunker
 func TestGermanDisambiguation_Chunker(t *testing.T) {
+	// GermanChunker NP tags (Java same test method has chunk cases).
+	// Full analyzeText POS strings need GermanTagger/dict pipeline — not claimed here.
 	toks2 := []*languagetool.AnalyzedTokenReadings{
 		atrDE("ein", "ART:IND:AKK:SIN:NEU"),
 		atrDE("Konzept", "SUB:AKK:SIN:NEU"),
@@ -63,38 +61,44 @@ func TestGermanDisambiguation_Chunker(t *testing.T) {
 	require.Contains(t, toks2[0].GetChunkTags(), "B-NP")
 	require.Contains(t, toks2[1].GetChunkTags(), "I-NP")
 
-	// Java MultitokenIgnore: multitoken-ignore.txt "3-adische System/E"
-	// (not invent digit-hyphen regex on bare "3-adische").
-	mw := openOfficialMultitokenIgnore(t)
+	// Java MultitokenIgnore via GermanRuleDisambiguator.multitokenSpeller
+	// (/de/multitoken-ignore.txt, tagForNotAddingTags, setIgnoreSpelling true).
+	if disde.DiscoverGermanMultitokenIgnore() == "" {
+		t.Skip("official multitoken-ignore.txt not discoverable")
+	}
 	d := disde.NewGermanRuleDisambiguator()
-	d.MultitokenIgnore = mw
+	require.NotNil(t, d.MultitokenIgnore, "NewGermanRuleDisambiguator wires MultitokenIgnore")
 
-	toks3 := []*languagetool.AnalyzedTokenReadings{
-		sentStartDE(),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("3-adische", nil, nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("System", nil, nil)),
-	}
-	out := d.Disambiguate(languagetool.NewAnalyzedSentence(toks3))
-	require.True(t, out.GetTokens()[1].IsIgnoredBySpeller(), "3-adische from multitoken-ignore")
-	require.True(t, out.GetTokens()[3].IsIgnoredBySpeller(), "System multiword span ignore")
+	// Official entries:
+	//   3-adische System/E
+	//   3-adischen System/S
+	//   3-adischen Systeme/N
+	//   Kelassurier Mauer/N
+	// Java GermanDisambiguationTest.testChunker isIgnoredBySpeller cases:
 
-	// Kelassurier Mauer is in multitoken-ignore.txt — both tokens ignored.
-	toks4 := []*languagetool.AnalyzedTokenReadings{
-		sentStartDE(),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("Kelassurier", nil, nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("Mauer", nil, nil)),
-	}
-	out4 := d.Disambiguate(languagetool.NewAnalyzedSentence(toks4))
-	require.True(t, out4.GetTokens()[1].IsIgnoredBySpeller(), "Kelassurier from multitoken-ignore")
-	require.True(t, out4.GetTokens()[3].IsIgnoredBySpeller(), "Mauer multiword span ignore")
+	// "3-adische System" → both content tokens ignored
+	requireIgnoredBoth(t, d, "3-adische", "System", true)
+	// "3-adische Systeme" → ignored (/E expansion)
+	requireIgnoredBoth(t, d, "3-adische", "Systeme", true)
+	// "3-adischen Systems" → ignored (/S)
+	requireIgnoredBoth(t, d, "3-adischen", "Systems", true)
+
+	// "Kelassurier Mauer" → ignored
+	requireIgnoredBoth(t, d, "Kelassurier", "Mauer", true)
+	// "Kelassurier Mauern" → ignored (/N)
+	requireIgnoredBoth(t, d, "Kelassurier", "Mauern", true)
+	// "Kelassurier Mauers" → not ignored (no /S on Mauer)
+	requireIgnoredBoth(t, d, "Kelassurier", "Mauers", false)
 
 	// Bare Kelassurier alone is not a multitoken match — no invent single-token ignore.
-	toks5 := []*languagetool.AnalyzedTokenReadings{
+	toksBare := []*languagetool.AnalyzedTokenReadings{
 		sentStartDE(),
 		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("Kelassurier", nil, nil)),
 	}
-	out5 := d.Disambiguate(languagetool.NewAnalyzedSentence(toks5))
-	require.False(t, out5.GetTokens()[1].IsIgnoredBySpeller(), "single Kelassurier needs multiword partner")
+	outBare := d.Disambiguate(languagetool.NewAnalyzedSentence(toksBare))
+	require.False(t, outBare.GetTokens()[1].IsIgnoredBySpeller(), "single Kelassurier needs multiword partner")
+
+	// Optional confidence: official "Smart Home/S" (not invent).
+	requireIgnoredBoth(t, d, "Smart", "Home", true)
+	requireIgnoredBoth(t, d, "Smart", "Homes", true)
 }

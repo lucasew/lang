@@ -26,8 +26,16 @@ type GermanRuleDisambiguator struct {
 	Rules sentenceStep
 }
 
+// NewGermanRuleDisambiguator builds the hybrid stages Java constructs as final fields.
+// MultitokenIgnore is wired from official /de/multitoken-ignore.txt when discoverable
+// (Java multitokenSpeller + setIgnoreSpelling(true)). Suggest/global/XML remain optional
+// injectors until those loaders are wired the same way.
 func NewGermanRuleDisambiguator() *GermanRuleDisambiguator {
-	return &GermanRuleDisambiguator{}
+	d := &GermanRuleDisambiguator{}
+	if mw := GermanMultitokenIgnore(); mw != nil {
+		d.MultitokenIgnore = mw
+	}
+	return d
 }
 
 func (d *GermanRuleDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
