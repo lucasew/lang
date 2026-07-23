@@ -1,43 +1,50 @@
 package chunking
 
+// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/chunking/TokenPredicateTest.java
+
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/stretchr/testify/require"
 )
 
-// Port of TokenPredicateTest.test — covered by unit tests below.
+// Port of TokenPredicateTest.test — Java-visible match / no-match outcomes.
 func TestTokenPredicate_Test(t *testing.T) {
-	tok := NewChunkTaggedToken("foo", nil, nil)
-	requireTrue(t, NewTokenPredicate("foo", true).Apply(tok))
-	requireFalse(t, NewTokenPredicate("bar", true).Apply(tok))
-	// single-quoted unquote
-	requireTrue(t, NewTokenPredicate("string='foo'", true).Apply(tok))
-	// pos contains
-	pos := "NN"
-	reading := languagetool.NewAnalyzedToken("foo", &pos, nil)
-	atr := languagetool.NewAnalyzedTokenReadings(reading)
-	ct := NewChunkTaggedToken("foo", nil, atr)
-	requireTrue(t, NewTokenPredicate("pos=NN", true).Apply(ct))
-	requireTrue(t, NewTokenPredicate("posre=N.*", true).Apply(ct))
-	// bad multi-equals panics
-	defer func() {
-		if recover() == nil {
-			t.Fatal("expected panic")
-		}
-	}()
-	_ = NewTokenPredicate("a=b=c", true)
+	chunkTags := []ChunkTag{NewChunkTag("CHUNK1"), NewChunkTag("CHUNK2")}
+	pos := "MYPOS"
+	readings := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("mytoken", &pos, strPtr("mylemma")))
+	chunkTaggedToken := NewChunkTaggedToken("mytoken", chunkTags, readings)
+
+	assertMatch := func(expr string) {
+		t.Helper()
+		p := NewTokenPredicate(expr, false)
+		require.True(t, p.Apply(chunkTaggedToken), "expected match for %q", expr)
+	}
+	assertNoMatch := func(expr string) {
+		t.Helper()
+		p := NewTokenPredicate(expr, false)
+		require.False(t, p.Apply(chunkTaggedToken), "expected no match for %q", expr)
+	}
+
+	assertMatch("mytoken")
+	assertNoMatch("mytoken2")
+	assertMatch("string=mytoken")
+	assertNoMatch("string=mytoken2")
+	assertMatch("regex=my[abct]oken")
+	assertNoMatch("regex=my[abc]oken")
+	assertMatch("chunk=CHUNK1")
+	assertMatch("chunk=CHUNK2")
+	assertNoMatch("chunk=OTHERCHUNK")
+	assertMatch("pos=MYPOS")
+	assertNoMatch("pos=OTHER")
+	assertMatch("posre=M.POS")
+	assertNoMatch("posre=O.HER")
+
+	// invalid=token → RuntimeException in Java; panic in Go
+	require.Panics(t, func() {
+		_ = NewTokenPredicate("invalid=token", false).Apply(chunkTaggedToken)
+	})
 }
 
-func requireTrue(t *testing.T, v bool) {
-	t.Helper()
-	if !v {
-		t.Fatal("expected true")
-	}
-}
-func requireFalse(t *testing.T, v bool) {
-	t.Helper()
-	if v {
-		t.Fatal("expected false")
-	}
-}
+func strPtr(s string) *string { return &s }

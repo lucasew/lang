@@ -1,7 +1,6 @@
 package chunking
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -924,12 +923,13 @@ func TestGermanChunker_DerenBestimmungUndFunktion_NPS(t *testing.T) {
 		atrPos("Funktion", "SUB:NOM:SIN:FEM", 21),
 	}
 	NewGermanChunker().AddChunkTags(tokens)
-	// <deren> <B-NP !PLU> <und> <B-NP>* — Funktion is I-NP after SUB und SUB, so B-NP* stops at und.
+	// <deren> <B-NP !PLU> <und> <B-NP>* — bare SUB+ also tags Funktion as B-NP (overlap),
+	// so B-NP* includes Funktion → full span NPS (Java assertFullChunks).
 	require.Contains(t, tokens[0].GetChunkTags(), "NPS")
 	require.Contains(t, tokens[1].GetChunkTags(), "NPS")
 	require.Contains(t, tokens[2].GetChunkTags(), "NPS") // und
-	// Funktion remains I-NP (may gain NPS only if Morphy leaves it B-NP)
-	require.Contains(t, tokens[3].GetChunkTags(), "I-NP")
+	require.Contains(t, tokens[3].GetChunkTags(), "NPS") // Funktion
+	require.Contains(t, tokens[3].GetChunkTags(), "B-NP")
 }
 
 // Java: Rekonstruktionen/NPP oder/NPP der/NPP Wiederaufbau/NPP
@@ -1052,8 +1052,9 @@ func TestGermanChunker_IsolationUndIhreUeberwindung_NPP(t *testing.T) {
 }
 
 // Java late REGEXES2: <chunk=NPS> <pos=PRO> <pos=ADJ> <pos=ADJ> <NP> → NPS
-// "die hohe Zahl dieser relativ kleinen Verwaltungseinheiten"
-// Java Morphy often tags "relativ" as ADJ (pos=ADJ substring); ADV-only is incomplete here.
+// Java GermanChunkerTest has this assertFullChunks commented with "//?" — REGEXES1 fuses
+// "dieser relativ kleinen Verwaltungseinheiten" as one B-NP…I-NP span, so <NP> after two ADJs
+// does not start at a B-NP and the extension pattern does not fire. Head stays NPS.
 func TestGermanChunker_HoheZahlDieserRelativ_NPS(t *testing.T) {
 	tokens := []*languagetool.AnalyzedTokenReadings{
 		atrPos("die", "ART:DEF:NOM:SIN:FEM", 0),
@@ -1065,12 +1066,10 @@ func TestGermanChunker_HoheZahlDieserRelativ_NPS(t *testing.T) {
 		atrPos("Verwaltungseinheiten", "SUB:GEN:PLU:FEM", 37),
 	}
 	NewGermanChunker().AddChunkTags(tokens)
-	// "die hohe Zahl" → NPS; genitive tail may be NPP/NPS depending on GEN fuse order
 	require.Contains(t, tokens[0].GetChunkTags(), "NPS")
 	require.Contains(t, tokens[2].GetChunkTags(), "NPS")
-	// "dieser relativ kleinen Verwaltungseinheiten" — NPP or NPS after genitive patterns
-	joined := strings.Join(tokens[6].GetChunkTags(), ",")
-	require.True(t, strings.Contains(joined, "NP"), "tail tags %v", tokens[6].GetChunkTags())
+	// Fused genitive tail: plural NPP (or I-NP), not invent full-span NPS
+	require.NotContains(t, tokens[6].GetChunkTags(), "NPS", "tail tags %v", tokens[6].GetChunkTags())
 }
 
 // Java: In/PP den/PP alten/PP Religionen/PP ,/PP Mythen/PP und/PP Sagen/PP
@@ -1334,24 +1333,8 @@ func TestGermanChunker_AtomeWelcheDerUrstoff_NPP(t *testing.T) {
 		require.Equal(t, tok, tokens[idx].GetToken())
 		require.Contains(t, tokens[idx].GetChunkTags(), "NPP", "token %q", tok)
 	}
-	// Atome itself is NPP in Java full assert (plural NP head absorbed into relative NPP span
-	// or left as NPP from singular/plural NPS/NPP pass). Accept NPP or B-NP/NPS on Atome.
-	require.True(t, containsAnyChunk(tokens[2], "NPP", "NPS", "B-NP"),
-		"Atome tags=%v", tokens[2].GetChunkTags())
-}
-
-func containsAnyChunk(t *languagetool.AnalyzedTokenReadings, want ...string) bool {
-	if t == nil {
-		return false
-	}
-	for _, c := range t.GetChunkTags() {
-		for _, w := range want {
-			if c == w {
-				return true
-			}
-		}
-	}
-	return false
+	// Atome itself is NPP in Java assertFullChunks.
+	require.Contains(t, tokens[2].GetChunkTags(), "NPP", "Atome tags=%v", tokens[2].GetChunkTags())
 }
 
 // Java assertFullChunks:

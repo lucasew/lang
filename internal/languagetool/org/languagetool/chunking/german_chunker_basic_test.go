@@ -173,22 +173,33 @@ func TestGermanChunker_GetBasicChunks_JavaOpenNLPTable(t *testing.T) {
 	}
 }
 
-// Java GermanChunker.REGEXES2 has 77 build(...) entries — keep list complete.
+// Java GermanChunker.REGEXES2 has 73 active build(...) entries (commented //build and
+// "with OpenNLP:" historical lines are not active).
 func TestGermanRegexes2_CountMatchesJava(t *testing.T) {
-	require.Equal(t, 77, len(germanRegexes2), "REGEXES2 must list every Java build() entry in order")
-	// Patterns previously missing from the Go transcription:
-	need := []string{
+	require.Equal(t, 73, len(germanRegexes2), "REGEXES2 must list every active Java build() entry in order")
+	// Must NOT include invent patterns that Java only has as comments:
+	forbidden := []string{
 		`<chunk=B-NP & pos=PLU> <chunk=I-NP>* <chunk=B-NP & pos=GEN> <chunk=I-NP>*`,
 		`<pos=PRP> <NP> <pos=ADJ> (<und>|<oder>|<bzw.>) <pos=ADJ> <NP>`,
 		`<pos=PRP> <pos=ADJ> (<und|oder|sowie>) <pos=ADJ> <chunk=B-NP>`,
 		`<pos=PRP> <NP> <pos=ADJ> <NP> (<und|oder>) <NP>`,
 	}
+	// Must include the active replacements Java actually compiles:
+	need := []string{
+		`<pos=PRP> <NP> <pos=ADJ> <und|oder|bzw.> <NP>`,
+		`<pos=PRP> <pos=ADJ> <und|oder|sowie> <NP>`,
+		`<pos=PRP> <NP> <NP> <und|oder> <NP>`,
+		`<eine> <menge> <NP>+`,
+	}
 	have := map[string]bool{}
 	for _, r := range germanRegexes2 {
 		have[r.pattern] = true
 	}
+	for _, p := range forbidden {
+		require.False(t, have[p], "invent/comment-only REGEXES2 pattern must not be active: %s", p)
+	}
 	for _, p := range need {
-		require.True(t, have[p], "missing REGEXES2 pattern: %s", p)
+		require.True(t, have[p], "missing active REGEXES2 pattern: %s", p)
 	}
 }
 

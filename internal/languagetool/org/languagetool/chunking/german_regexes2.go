@@ -18,6 +18,9 @@ const (
 
 func (p germanPhraseType) tagName() string {
 	switch p {
+	case phraseNP:
+		// OpenNLP-like; actual B-NP/I-NP assigned in germanChunkTagForMatch.
+		return "NP"
 	case phraseNPS:
 		return "NPS"
 	case phraseNPP:
@@ -76,7 +79,7 @@ var germanRegexes2 = []germanRegex2{
 	{`<chunk=NPS>+ <der> <pos=ADJ> <pos=ADV> <pos=PA2> <NP>`, phraseNPS, true},
 	{`<chunk=NPS>+ <pos=PRO:POS> <pos=ADJ> <NP>`, phraseNPS, true},
 	{`<der|das> <pos=ADJ> <der> <pos=ZAL> <NP>`, phraseNPS, true},
-	{`<chunk=B-NP & pos=PLU> <chunk=I-NP>* <chunk=B-NP & pos=GEN> <chunk=I-NP>*`, phraseNPP, false},
+	// Java commented-out: //build("<chunk=B-NP & pos=PLU> <chunk=I-NP>* <chunk=B-NP & pos=GEN> <chunk=I-NP>*", NPP),
 	{`<eine> <menge> <NP>+`, phraseNPP, true},
 	{`<er|sie|es> <und> <NP> <NP>`, phraseNPP, false},
 	{`<laut> <regex=.*>{0,3} <Quellen>`, phrasePP, true},
@@ -85,18 +88,18 @@ var germanRegexes2 = []germanRegex2{
 	{`<pos=PRP> <chunk=NPP>+`, phrasePP, true},
 	{`<pos=PRP> <der> <chunk=NPP>+`, phrasePP, false},
 	{`<pos=PRP> <NP>`, phrasePP, false},
-	{`<pos=PRP> <NP> <pos=ADJ> (<und>|<oder>|<bzw.>) <pos=ADJ> <NP>`, phrasePP, false},
+	// Java "with OpenNLP" variants are comments only; active replacement is next:
 	{`<pos=PRP> <NP> <pos=ADJ> <und|oder|bzw.> <NP>`, phrasePP, false},
 	{`<pos=PRP> (<NP>)+`, phrasePP, false},
 	{`<pos=PRP> <chunk=B-NP> <pos=ADV> <NP>`, phrasePP, false},
 	{`<pos=PRP> <pos=ADV> <pos=ZAL> <chunk=B-NP>`, phrasePP, false},
 	{`<pos=PRP> <pos=PRO> <NP>`, phrasePP, false},
-	{`<pos=PRP> <pos=ADJ> (<und|oder|sowie>) <pos=ADJ> <chunk=B-NP>`, phrasePP, false},
+	// Java "with OpenNLP" comment only; active:
 	{`<pos=PRP> <pos=ADJ> <und|oder|sowie> <NP>`, phrasePP, false},
 	{`<pos=PRP> <pos=ADV> <regex=\d+> <NP>`, phrasePP, false},
 	{`<pos=PRP> <pos=PA1> <NP>`, phrasePP, false},
 	{`<pos=PRP> <pos=ADJ> <pos=PA1> <NP>`, phrasePP, false},
-	{`<pos=PRP> <NP> <pos=ADJ> <NP> (<und|oder>) <NP>`, phrasePP, false},
+	// Java "with OpenNLP" comment only; active:
 	{`<pos=PRP> <NP> <NP> <und|oder> <NP>`, phrasePP, false},
 	{`<pos=PRP> <pos=ADV> <pos=ADJ> <NP>`, phrasePP, false},
 	{`<pos=PRP> <pos=ADJ:PRD:GRU> <pos=ZAL> <NP>`, phrasePP, false},
