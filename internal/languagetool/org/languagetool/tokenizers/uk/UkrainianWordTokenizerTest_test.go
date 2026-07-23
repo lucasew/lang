@@ -143,6 +143,15 @@ func TestUkrainianWordTokenizer_Abbreviations(t *testing.T) {
 	assertTok(t, "100 к.с.", "100", " ", "к.", "с.")
 	assertTok(t, "1998 р.н.", "1998", " ", "р.", "н.")
 	assertTok(t, "22 коп.", "22", " ", "коп.")
+	// Java ABBR_DOT_ENDING / NON_ENDING / PROF / LAT are case-sensitive — no (?i).
+	// Uppercase КОП./ДИВ./ПРОФ./ЛАТ. must not glue like lowercase arms.
+	// (Avoid "ПРОФ. Name": initials pattern matches trailing "Ф. Name" independently.)
+	assertTok(t, "22 КОП.", "22", " ", "КОП", ".")
+	assertTok(t, "отримав ДИВ. орден", "отримав", " ", "ДИВ", ".", " ", "орден")
+	assertTok(t, "ПРОФ. щось", "ПРОФ", ".", " ", "щось")
+	assertTok(t, "від ЛАТ. momento", "від", " ", "ЛАТ", ".", " ", "momento")
+	// Explicit dual-case arms still match (Java [Пп]роф)
+	assertTok(t, "Проф. Артюхов", "Проф.", " ", "Артюхов")
 	assertTok(t, "800 гр. м'яса", "800", " ", "гр.", " ", "м'яса")
 	assertTok(t, "18-19 ст.ст. були", "18-19", " ", "ст.", "ст.", " ", "були")
 	assertTok(t, "І ст. 11", "І", " ", "ст.", " ", "11")
@@ -254,7 +263,9 @@ func TestUkrainianWordTokenizer_Dash(t *testing.T) {
 	assertTok(t, "вересні--жовтні", "вересні", "--", "жовтні")
 	assertTok(t, "—У певному", "—", "У", " ", "певному")
 	assertTok(t, "-У певному", "-", "У", " ", "певному")
+	// Mid-word emdash: Java only pre-splits \u2014 before [\h\v]; letter—letter relies on SPLIT_CHARS.
 	assertTok(t, "праця—голова", "праця", "—", "голова")
+	assertTok(t, "слово—слово", "слово", "—", "слово")
 	assertTok(t, "Людина—", "Людина", "—")
 	assertTok(t, "Х–ХІ", "Х", "–", "ХІ")
 	assertTok(t, "VII-VIII", "VII", "-", "VIII")

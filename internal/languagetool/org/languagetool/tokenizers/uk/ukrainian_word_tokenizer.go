@@ -31,6 +31,10 @@ const (
 	softHyphenWrap          = "\u00AD\n"
 	softHyphenWrapSubst     = "\uE103"
 	urlStartReplaceChar     = 0xE300
+	// javaHVClass approximates Java Pattern [\h\v] for use inside a character class.
+	// \h: space, tab, NBSP, Ogham, Mongolian vowel sep, U+2000–200A, NNBSP, MMSP, ideographic space
+	// \v: LF, VT, FF, CR, NEL, line/paragraph separators
+	javaHVClass = `\t\n\x0B\f\r \x{00A0}\x{0085}\x{1680}\x{180E}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}`
 )
 
 var (
@@ -63,9 +67,12 @@ var (
 	abbrDotTys2 = regexp.MustCompile(`(тис|арт)\.([\s\x{00A0}\x{202F}]+[а-яіїєґ0-9])`)
 	abbrDotArt = regexp.MustCompile(`([Аа]рт|[Мм]ал|[Рр]ис|[Сс]пр)\.([\s\x{00A0}\x{202F}]*(?:№[\s\x{00A0}\x{202F}]*)?[0-9])`)
 	abbrDotMan = regexp.MustCompile(`(Ман)\.([\s\x{00A0}\x{202F}]*(?:Сіті|[Юю]н))`)
-	// lat. without lookbehind: use non-letter prefix
-	abbrDotLat = regexp.MustCompile(`(?i)(^|[^а-яіїєґ'\x{0301}-])(лат)\.([\s\x{00A0}\x{202F}]+[a-zA-Z])`)
-	abbrDotProf = regexp.MustCompile(`(?i)(^|[^а-яіїєґ'\x{0301}-])([Аа]кад|[Пп]роф|[Дд]оц|[Аа]сист|[Аа]рх|ап|тов|вул|бул|бульв|о|р|ім|упорядн?|др|[Пп]реп|Ів|Дж|Ол|[сС]вт|Авг)\.([\s\x{00A0}\x{202F}]+[А-ЯІЇЄҐа-яіїєґ])`)
+	// Java ABBR_DOT_LAT / ABBR_DOT_PROF: case-sensitive (no CASE_INSENSITIVE).
+	// Only explicit dual-case arms match (e.g. [Пп]роф); uppercase ЛАТ./ПРОФ. do not.
+	// Lat requires a non-letter left char (Java group, not lookbehind — no BOS).
+	// Prof uses negative lookbehind in Java → (^|prefix) here.
+	abbrDotLat = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-]лат)\.([\s\x{00A0}\x{202F}]+[a-zA-Z])`)
+	abbrDotProf = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([Аа]кад|[Пп]роф|[Дд]оц|[Аа]сист|[Аа]рх|ап|тов|вул|бул|бульв|о|р|ім|упорядн?|др|[Пп]реп|Ів|Дж|Ол|[сС]вт|Авг)\.([\s\x{00A0}\x{202F}]+[А-ЯІЇЄҐа-яіїєґ])`)
 	abbrDotGub = regexp.MustCompile(`(.[А-ЯІЇЄҐ][а-яіїєґ'-]+[\s\x{00A0}\x{202F}]+губ)\.`)
 	// Go \b is ASCII-only; use explicit non-letter left edge for Cyrillic initials like К.-Святошинський
 	abbrDotDash = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])([А-ЯІЇЄҐ]ж?)\.([-\x{2013}](?:[А-ЯІЇЄҐ][а-яіїєґ']{2}|[А-ЯІЇЄҐ]\.))`)
@@ -81,21 +88,22 @@ var (
 	abbrDot2SmallMeterSecond = regexp.MustCompile(`^[\s\x{00A0}\x{202F}]*(?:[смкд]?м|мк)$`)
 
 	// non-ending abbreviations (long list).
-	// Java includes dead alternative в(?!\.+) which never protects bare "в." (lookahead fails on the required following \.);
-	// bug-for-bug: bare mid-sentence/BOS "в." / "В." split as "в"+"." — do not invent protection.
+	// Java ABBR_DOT_NON_ENDING: case-sensitive; only listed dual-case arms ([Нн]апр, [Пп]оч, …).
+	// Dead alternative в(?!\.+) never protects bare "в." — do not invent protection.
 	// Java: (?!\uE120|\.+[\h\v]*$) after the dot — applied via replaceAbbrNonEnding.
 	// "в." in "в. о." is handled earlier by abbrDotVO1, not this list.
 	abbrNonEndingList = `абз|австрал|ам|амер|англ|акад(?:ем)?|арк|ауд|біол|бл(?:изьк)?|болг|буд|вип|вірм|грец(?:ьк)?|держ|див|дир|діал|дод|дол|досл|доц|доп|екон|ел|жін|зав|заст|зах|зб|зв|зневажл?|зовн|іл|ім|івр|інж|ісп|іст|італ|к|каб|каф|канд|кв|[1-9]-кімн|кімн|кін|кл|кн|коеф|крим|латин|мал|моб|н|[Нн]апр|нач|нім|нац|нпр|образн|оз|оп|оф|п|пен|перекл|перен|пл|пол|пом|пор|порівн|[Пп]оч|пп|прибл|прикм|прим|присл|пров|пром|просп|[Рр]ед|[Рр]еж|розд|розм|рос|рт|рум|с|санскр|[Сс]вв?|скор|соц|співавт|[сС]т|стор|суч|сх|табл|тт|[тТ]ел|техн|укр|філол|фр|франц|худ|[цЦ]ит|ч|чайн|част|ц|яп|япон`
-	abbrNonEnding = regexp.MustCompile(`(?i)(^|[^а-яіїєґ'\x{0301}-])(` + abbrNonEndingList + `)\.`)
+	// Java lookbehind (?<![а-яіїєґА-ЯІЇЄҐ'\u0301-]) → (^|same class)
+	abbrNonEnding = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])(` + abbrNonEndingList + `)\.`)
 	abbrNonEnding2 = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'-]м\.)([\s\x{00A0}\x{202F}]*[А-ЯІЇЄҐ])`)
 
 	abbrNar1 = regexp.MustCompile(`(([0-9]|рік|[рp]\.|[-–—])[\s\x{00A0}\x{202F}]+нар)\.`)
 	abbrNar2 = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])(нар)\.([\s\x{00A0}\x{202F}]+[0-9а-яіїєґ])`)
 
-	// ending abbreviations: Java includes р|РР|ст (single) in addition to рр|стст|...
-	// Java: ([^letter-](abbr))\. (?!\uE120) — left boundary required so "пародист." is not "ст."
+	// ending abbreviations: Java case-sensitive; р|рр|РР (not case-fold of р).
+	// Java: ([^letter-](abbr))\. (?!\uE120) — left boundary char required (no BOS alone).
 	// Applied via replaceAbbrEnding.
-	abbrEnding = regexp.MustCompile(`(?i)(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])((?:та|й|і) (?:інш?|под)|атм|відс|гр|коп|дес|дол|обл|пов|рр|РР|р|руб|стст|ст|стол|стор|чол|шт)\.`)
+	abbrEnding = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-]((?:та|й|і) (?:інш?|под)|атм|відс|гр|коп|дес|дол|обл|пов|р|рр|РР|руб|ст|стст|стол|стор|чол|шт))\.`)
 	abbrITP = regexp.MustCompile(`([ій][\s\x{00A0}\x{202F}]+т\.)([\s\x{00A0}\x{202F}]*(д|п|ін)\.)`)
 	abbrITCH = regexp.MustCompile(`([ву][\s\x{00A0}\x{202F}]+т\.)([\s\x{00A0}\x{202F}]*ч\.)`)
 	abbrTZV = regexp.MustCompile(`([\s\x{00A0}\x{202F}(]+т\.)([\s\x{00A0}\x{202F}]*зв\.)`)
@@ -112,6 +120,9 @@ var (
 
 	leadingDash = regexp.MustCompile(`^([\x{2014}\x{2013}])([а-яіїєґА-ЯІЇЄҐA-Z])`)
 	leadingDash2 = regexp.MustCompile(`^(-)([А-ЯІЇЄҐA-Z])`)
+	// Java: text.replaceAll("\u2014([\\h\\v])", BREAKING_PLACEHOLDER + "\u2014$1") only —
+	// mid-word emdash splits later via SPLIT_CHARS (\u2014 is a delimiter); do not pre-split letter—letter.
+	emDashBeforeHV = regexp.MustCompile("\u2014([" + javaHVClass + "])")
 	numberMissingSpace = regexp.MustCompile(`((?:[\s\x{00A0}\x{202F}\x{E110}]|^)[а-яїієґА-ЯІЇЄҐ'-]*[а-яїієґ']?[а-яїієґ])([0-9]+(?:$|[^а-яіїєґА-ЯІЇЄҐa-zA-Z»"“]))`)
 	// Java WEB_ENTITIES: CASE_INSENSITIVE|UNICODE_CHARACTER_CLASS + \b after TLD.
 	// Go \b is ASCII-only — boundary checked in replaceWebEntities (Unicode letter/digit/_).
@@ -203,11 +214,10 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 		}
 	}
 
+	// Java: only \u2014 immediately before [\h\v] gets a breaking placeholder.
+	// Mid-word "слово—слово" is split later because \u2014 is in SPLIT_CHARS — no pre-split invent.
 	if strings.Contains(text, "\u2014") {
-		text = regexp.MustCompile(`\x{2014}([\s\x{00A0}\x{202F}])`).ReplaceAllString(text, breakingPlaceholder+"\u2014$1")
-		// also mid-word emdash without space
-		text = regexp.MustCompile(`([а-яіїєґА-ЯІЇЄҐ])\x{2014}`).ReplaceAllString(text, "$1"+breakingPlaceholder+"\u2014")
-		text = regexp.MustCompile(`\x{2014}([а-яіїєґА-ЯІЇЄҐ])`).ReplaceAllString(text, "\u2014"+breakingPlaceholder+"$1")
+		text = emDashBeforeHV.ReplaceAllString(text, breakingPlaceholder+"\u2014$1")
 	}
 
 	nDashPresent := strings.Contains(text, "\u2013")
@@ -264,7 +274,9 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 		text = abbrDotMan.ReplaceAllString(text, "$1"+string(nonBreakingDotSubst)+breakingPlaceholder+"$2")
 		text = abbrDotTys1.ReplaceAllString(text, "$1$2"+string(nonBreakingDotSubst)+breakingPlaceholder)
 		text = abbrDotTys2.ReplaceAllString(text, "$1"+string(nonBreakingDotSubst)+breakingPlaceholder+"$2")
-		text = abbrDotLat.ReplaceAllString(text, "$1$2"+string(nonBreakingDotSubst)+breakingPlaceholder+"$3")
+		// Lat: Java ONE_DOT_TWO_REPL on (prefix+лат). + rest → $1 + NON_BREAKING_DOT + E110 + $2
+		text = abbrDotLat.ReplaceAllString(text, "$1"+string(nonBreakingDotSubst)+breakingPlaceholder+"$2")
+		// Prof: (^|prefix)(abbr).(rest) → $1$2 + NON_BREAKING_DOT + E110 + $3
 		text = abbrDotProf.ReplaceAllString(text, "$1$2"+string(nonBreakingDotSubst)+breakingPlaceholder+"$3")
 		text = abbrDotGub.ReplaceAllString(text, "$1"+string(nonBreakingDotSubst)+breakingPlaceholder)
 		text = abbrDotDash.ReplaceAllString(text, "$1$2"+string(nonBreakingDotSubst)+"$3")
