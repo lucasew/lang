@@ -170,9 +170,25 @@ func TestSpanishXmlRule_ABBREVIATIONS_CtrlAlt(t *testing.T) {
 func TestSpanishXmlRule_UNIDADES_SI_Min(t *testing.T) {
 	requireESXmlResources(t)
 	xml := SpanishXmlRuleDisambiguator()
-	// UNIDADES_SI: \d+ + min → ignore_spelling on min
+	// UNIDADES_SI: \d+ + marker min → ignore_spelling on min only (startCorr=1).
+	// Full pack also has IGNORE_NUMBERS (official −?[\d .,]+%?) which ignore_spelling on
+	// pure digits like "30" — do not assert "30" is free of ignore under the full pack.
+	// Isolate the two-token UNIDADES_SI ignore rule to prove marker span.
+	var minRule *disambigrules.DisambiguationPatternRule
+	for _, r := range xml.Rules {
+		if r != nil && r.ID == "UNIDADES_SI" && r.Action == disambigrules.ActionIgnoreSpelling &&
+			r.PatternRule != nil && len(r.Tokens) == 2 {
+			minRule = r
+			break
+		}
+	}
+	require.NotNil(t, minRule, "UNIDADES_SI two-token ignore_spelling rule")
+	require.Equal(t, 1, minRule.StartPositionCorrection, "marker starts at min")
+	isolated := minRule.Replace(tokenSentence("30", "min"))
+	requireNotIgnored(t, isolated, "30")
+	requireIgnored(t, isolated, "min")
+	// Full pack still applies UNIDADES_SI so min is ignored.
 	sent := xml.Disambiguate(tokenSentence("30", "min"))
-	requireNotIgnored(t, sent, "30")
 	requireIgnored(t, sent, "min")
 }
 
