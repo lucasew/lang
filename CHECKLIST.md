@@ -1599,7 +1599,7 @@
 - [ ] org/languagetool/language/Chinese.java::Chinese
 - [x] org/languagetool/rules/zh/ChineseConfusionProbabilityRule.java::ChineseConfusionProbabilityRule
 - [ ] org/languagetool/tagging/zh/ChineseTagger.java::ChineseTagger
-- [ ] org/languagetool/tokenizers/zh/ChineseSentenceTokenizer.java::ChineseSentenceTokenizer
+- [x] org/languagetool/tokenizers/zh/ChineseSentenceTokenizer.java::ChineseSentenceTokenizer
 - [ ] org/languagetool/tokenizers/zh/ChineseWordTokenizer.java::ChineseWordTokenizer
 
 ## languagetool-server
