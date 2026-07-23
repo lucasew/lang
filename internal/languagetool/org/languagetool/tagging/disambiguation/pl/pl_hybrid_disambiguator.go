@@ -8,9 +8,10 @@ import (
 // PolishHybridDisambiguator ports org.languagetool.tagging.disambiguation.pl.PolishHybridDisambiguator:
 // MultiWordChunker.getInstance("/pl/multiwords.txt") defaults, then XmlRuleDisambiguator(Polish) no global.
 // Java order: chunker.disambiguate(disambiguator.disambiguate(input)) — XML first, then multiwords.
-// Rules is eagerly wired from official pl/disambiguation.xml when present (Java final field).
+// Both stages are eagerly wired from official resources when present (Java final fields).
 type PolishHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
+	// Chunker is Java MultiWordChunker.getInstance("/pl/multiwords.txt") defaults.
 	Chunker interface {
 		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 	}
@@ -20,11 +21,17 @@ type PolishHybridDisambiguator struct {
 	}
 }
 
-// NewPolishHybridDisambiguator ports Java field init: XmlRuleDisambiguator(new Polish())
-// (useGlobalDisambiguation=false). Chunker is left for injectors / multiword load helpers
-// (same pattern as Russian hybrid: multiwords loaded by callers).
+// NewPolishHybridDisambiguator ports Java field init:
+//
+//	chunker = MultiWordChunker.getInstance("/pl/multiwords.txt"); // F,F,F defaults
+//	disambiguator = new XmlRuleDisambiguator(new Polish()); // useGlobalDisambiguation=false
+//
+// Stages are wired when the same official resources Java loads are discoverable.
 func NewPolishHybridDisambiguator() *PolishHybridDisambiguator {
 	d := &PolishHybridDisambiguator{}
+	if mw := PolishMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
 	if xml := PolishXmlRuleDisambiguator(); xml != nil {
 		d.Rules = xml
 	}
@@ -43,7 +50,7 @@ func (d *PolishHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSen
 	out := input
 	// Java PolishHybridDisambiguator:
 	// return chunker.disambiguate(disambiguator.disambiguate(input));
-	// i.e. XML rules first, then multiword chunker.
+	// i.e. XML rules first, then multiword chunker (inverted vs Romance hybrids).
 	if d.Rules != nil {
 		out = d.Rules.Disambiguate(out)
 	}
