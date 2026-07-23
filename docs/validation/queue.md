@@ -137,6 +137,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.A.2-TamilTagger-testTagger | accepted | inspiration/languagetool/languagetool-language-modules/ta/src/main/java/org/languagetool/language/tagging/TamilTagger.java; inspiration/languagetool/languagetool-language-modules/ta/src/main/resources/org/languagetool/resource/ta/tamil.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/ta/ | d447b149c878f718563212a5824020d436c3ab1c | 0 | 0 | | | 2026-07-23T09:18:00Z |
 | docs/faithful-port-checklist.md#3.A.2-BretonTagger-testTagger | accepted | inspiration/languagetool/languagetool-language-modules/br/src/main/java/org/languagetool/tagging/br/BretonTagger.java; inspiration/languagetool/languagetool-language-modules/br/src/main/resources/org/languagetool/resource/br/breton.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/br/ | a41de305abced19a003d3233d211b69cf09ef55f | 0 | 0 | | | 2026-07-23T09:34:30Z |
+| docs/faithful-port-checklist.md#3.A.3-PolishMultiWordChunker-testChunker | ready | inspiration/languagetool/languagetool-language-modules/pl/src/test/java/org/languagetool/tagging/disambiguation/PolishDisambiguationRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker.java; inspiration/languagetool/languagetool-language-modules/pl/src/main/resources/org/languagetool/resource/pl/multiwords.txt; inspiration/languagetool/languagetool-language-modules/pl/src/main/java/org/languagetool/tagging/pl/PolishTagger.java | internal/languagetool/org/languagetool/tagging/disambiguation/; internal/languagetool/org/languagetool/tagging/pl/; internal/languagetool/org/languagetool/tokenizers/pl/ | 09002c2f74c9be5532c08a74c61ba5b8ec639956 | 0 | 0 | | | 2026-07-23T09:45:00Z |
 
 ---
 
@@ -148,7 +149,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | BretonTagger ACCEPT @ a41de305. UK CAP-revisit eligible K≥5. ChineseWord HanLP-blocked. FR hybrid missing french.dict. Next: remaining 3.A.2 leaves (el GreekTagger needs GreekAnalyzer; many POS dicts missing). |
+| Notes | PL MultiWordChunker ready @ 09002c2f (official multiwords; parent green). UK CAP-revisit eligible K≥5. GreekTagger needs morphology-el. ChineseWord HanLP-blocked. FR hybrid missing french.dict. |
 
 ---
 
@@ -499,3 +500,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T09:24:40Z ready: 3.A.2-BretonTagger-testTagger @ a41de305 (implementer report; real breton.dict; parent go test br tagger green)
 - 2026-07-23T09:28:40Z validating: 3.A.2-BretonTagger-testTagger @ a41de305
 - 2026-07-23T09:34:30Z ACCEPT: 3.A.2-BretonTagger-testTagger @ a41de305 (validator + parent green reconfirm; real breton.dict; custom tag)
+- 2026-07-23T09:40:00Z implement: 3.A.3-PolishMultiWordChunker-testChunker (PolishDisambiguationRuleTest.testChunker + official pl/multiwords.txt)
+- 2026-07-23T09:45:00Z ready: 3.A.3-PolishMultiWordChunker-testChunker @ 09002c2f (implementer report; official pl/multiwords; parent green)
