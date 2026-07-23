@@ -22,10 +22,13 @@ func (w *CrimeanTatarWordTokenizer) GetTokenizingCharacters() string {
 }
 
 func (w *CrimeanTatarWordTokenizer) Tokenize(text string) []string {
+	// Java: StringTokenizer(text, getTokenizingCharacters(), true)
 	raw := splitKeepDelims(text, w.delims)
 	var l []string
 	for _, token := range raw {
-		if len(token) > 1 && strings.HasSuffix(token, "-") {
+		// Java: token.length() > 1 && token.endsWith("-")
+		// then substring(0, length-1) + separate "-"
+		if tokenizers.UTF16Len(token) > 1 && strings.HasSuffix(token, "-") {
 			l = append(l, token[:len(token)-1], "-")
 		} else {
 			l = append(l, token)
