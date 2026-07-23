@@ -179,6 +179,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.4-GreekXmlRuleDisambiguator-tests | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/el/src/main/java/org/languagetool/language/Greek.java; inspiration/languagetool/languagetool-language-modules/el/src/main/resources/org/languagetool/resource/el/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/el/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | 62163db914d1fac508668cbbcb8856d490cfa9a1 | 0 | 0 |  |  | 2026-07-23T18:35:32Z |
 | docs/faithful-port-checklist.md#3.A.3-EnglishMultiWordChunker-multiwords | accepted | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/tagging/en/EnglishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/multiwords.txt | internal/languagetool/org/languagetool/tagging/en/; internal/languagetool/org/languagetool/tagging/disambiguation/ | 33b266633ea9191854c90dc30a6326e0b78fbf19 | 0 | 0 |  |  | 2026-07-23T18:50:28Z |
 | docs/faithful-port-checklist.md#3.A.3-EnglishGlobalChunker-spellingGlobal | accepted | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/tagging/en/EnglishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker.java; inspiration/languagetool/languagetool-core/src/main/resources/org/languagetool/resource/spelling_global.txt | internal/languagetool/org/languagetool/tagging/en/; internal/languagetool/org/languagetool/tagging/disambiguation/ | c95da659bef327649bcfda1f6018fe6c8df9bf23 | 0 | 0 |  |  | 2026-07-23T19:00:26Z |
+| docs/faithful-port-checklist.md#3.A.4-EnglishXmlRuleDisambiguator-tests | implementing | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/tagging/en/EnglishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/disambiguation.xml; inspiration/languagetool/languagetool-core/src/main/resources/org/languagetool/resource/disambiguation-global.xml | internal/languagetool/org/languagetool/tagging/en/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | | 0 | 0 |  |  | 2026-07-23T19:04:36Z |
 ---
 
 ## Human inbox
@@ -189,7 +190,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.A.3-EnglishGlobalChunker-spellingGlobal @ c95da659 (validator+parent green). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
+| Notes | implementing 3.A.4-EnglishXmlRuleDisambiguator-tests (useGlobal=true; en/disambiguation.xml + disambiguation-global.xml). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
 
 ---
 
@@ -711,3 +712,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T18:56:59Z ready: 3.A.3-EnglishGlobalChunker-spellingGlobal @ c95da659 (implementer report; parent green)
 - 2026-07-23T18:58:53Z validating: 3.A.3-EnglishGlobalChunker-spellingGlobal @ c95da659
 - 2026-07-23T19:00:26Z ACCEPT: 3.A.3-EnglishGlobalChunker-spellingGlobal @ c95da659 (validator ACCEPT + parent green reconfirm)
+- 2026-07-23T19:04:36Z implement: 3.A.4-EnglishXmlRuleDisambiguator-tests (XmlRuleDisambiguator(English, true); official en XML + global; outcome twins)
