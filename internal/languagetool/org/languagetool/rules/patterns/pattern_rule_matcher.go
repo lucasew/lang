@@ -335,7 +335,10 @@ func (m *PatternRuleMatcher) testUnification(bag *unifyBag) (ok bool, unified []
 			anyMatched := false
 			for i, reading := range readings {
 				lastReading := i == len(readings)-1
-				anyMatched = anyMatched || uni.IsUnified(reading, pt.GetUniFeatures(), lastReading)
+				// Java: anyMatched |= unifier.isUnified(...) — always evaluate RHS.
+				// Go `||` short-circuits and would skip lastReading StartNextToken/StartUnify.
+				matched := uni.IsUnified(reading, pt.GetUniFeatures(), lastReading)
+				anyMatched = anyMatched || matched
 			}
 			// Empty reading set: still need lastReading semantics for empty?
 			// Java only iterates non-empty lists collected from matches.

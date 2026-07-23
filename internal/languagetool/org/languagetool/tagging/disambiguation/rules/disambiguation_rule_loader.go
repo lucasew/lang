@@ -688,6 +688,11 @@ func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *p
 	// default Java: REPLACE when only postag set (or match element)
 	rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, posSelect, action)
 	rule.UnifierConfig = cfg
+	// Matching (PatternRuleMatcher.testUnification) reads PatternRule.UnifierConfig.
+	// DisambiguationPatternRule.UnifierConfig is a separate field used by applyUnify fallback.
+	if rule.PatternRule != nil {
+		rule.PatternRule.UnifierConfig = cfg
+	}
 	// Java prepareRule: start/end position corrections from <marker>
 	if rule.PatternRule != nil {
 		startCorr, endCorr := patterns.PositionCorrectionsFromTokens(tokens)

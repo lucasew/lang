@@ -122,7 +122,10 @@ func (u *Unifier) IsUnified(matchToken *languagetool.AnalyzedToken, uFeatures ma
 func (u *Unifier) IsUnifiedMatched(matchToken *languagetool.AnalyzedToken, uFeatures map[string][]string, lastReading, isMatched bool) bool {
 	if u.inUnification {
 		if isMatched {
-			u.uniMatched = u.uniMatched || u.IsSatisfied(matchToken, uFeatures)
+			// Java: uniMatched |= isSatisfied(...) — must always evaluate RHS so every
+			// reading is recorded (Go `||` would skip later compatible readings).
+			sat := u.IsSatisfied(matchToken, uFeatures)
+			u.uniMatched = u.uniMatched || sat
 		}
 		u.uniAllMatched = u.uniMatched
 		if lastReading {

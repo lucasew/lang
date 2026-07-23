@@ -256,11 +256,14 @@ func registerIrishHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOption
 
 // registerItalianRuleDisambiguator ports ItalianRuleDisambiguator (XML only, no multiwords).
 // Java: new XmlRuleDisambiguator(new Italian()) — no global.
+// NewItalianRuleDisambiguator eagerly loads official it/disambiguation.xml like Java's final field.
 func registerItalianRuleDisambiguator(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
 	d := it.NewItalianRuleDisambiguator()
+	// Prefer CLI/data-dir discovery when available; otherwise keep constructor load.
 	if xml := loadXmlRuleDisambiguator("it", opts, false); xml != nil && len(xml.Rules) > 0 {
-		d.Rules = xml.Disambiguate
-	} else {
+		d.Rules = xml
+	}
+	if d.Rules == nil {
 		return false
 	}
 	lt.Disambiguator = d

@@ -62,8 +62,14 @@ func (d *XmlRuleDisambiguator) DisambiguateWithCancel(sentence *languagetool.Ana
 		if !ok || rule == nil {
 			continue
 		}
-		if rule.UnifierConfig == nil && d.UnifierConfig != nil {
-			rule.UnifierConfig = d.UnifierConfig
+		if d.UnifierConfig != nil {
+			if rule.UnifierConfig == nil {
+				rule.UnifierConfig = d.UnifierConfig
+			}
+			// testUnification uses PatternRule.UnifierConfig (Java Language unifier tables).
+			if rule.PatternRule != nil && rule.PatternRule.UnifierConfig == nil {
+				rule.PatternRule.UnifierConfig = d.UnifierConfig
+			}
 		}
 		sentence = rule.Replace(sentence)
 	}
