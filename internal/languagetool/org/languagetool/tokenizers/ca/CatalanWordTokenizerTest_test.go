@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"unicode"
 
 	"github.com/stretchr/testify/require"
 )
@@ -13,7 +14,8 @@ func tokStr(tokens []string) string {
 	return "[" + strings.Join(tokens, ", ") + "]"
 }
 
-// pronomFeble / proclitic forms CatalanTagger keeps whole after pattern split.
+// pronomFeble / proclitic forms CatalanTagger keeps whole after pattern split
+// (Java wordsToAdd → CatalanTagger.INSTANCE_CAT.tag(...).isTagged()).
 var (
 	testPronomFeble = regexp.MustCompile(`(?i)^(['’]en|['’]hi|['’]ho|['’]l|['’]ls|['’]m|['’]n|['’]ns|['’]s|['’]t|-el|-els|-em|-en|-ens|-hi|-ho|-l|-la|-les|-li|-lo|-los|-m|-me|-n|-ne|-nos|-s|-se|-t|-te|-us|-vos)$`)
 	testProclitic   = regexp.MustCompile(`(?i)^[lnmtsd]['’]$`)
@@ -22,32 +24,23 @@ var (
 func TestCatalanWordTokenizer_Tokenize(t *testing.T) {
 	// Java keeps dictionary-tagged hyphen compounds via CatalanTagger.
 	// Inject IsTaggedCA for those surfaces — no soft invent doNotSplit lexicon.
+	// CatalanTagger.tag: non-lowercase non-mixedCase falls back to lowerWord;
+	// mixed case (e.g. Sud-Est) does not — model that for compass compounds only.
 	prev := IsTaggedCA
 	IsTaggedCA = func(s string) bool {
 		if testPronomFeble.MatchString(s) || testProclitic.MatchString(s) {
 			return true
 		}
-		switch strings.ToLower(s) {
+		low := strings.ToLower(s)
+		switch low {
 		case "vint-i-quatre", "mont-ras", "emília-romanya", "tel-aviv",
-			"abans-d'ahir", "sud-est", "nord-est", "sud-oest", "nord-oest",
+			"abans-d'ahir",
 			"qui-sap-lo", "qui-sap-la", "qui-sap-los", "qui-sap-les":
-			// Sud-Est must split (Title-Title not in dict the same way as Sud-est).
-			// Only exact case-insensitive match for lower-style compounds; reject
-			// when both sides are Title-case for compass forms.
-			if strings.Contains(s, "-") {
-				parts := strings.Split(s, "-")
-				if len(parts) == 2 {
-					low := strings.ToLower(s)
-					switch low {
-					case "sud-est", "nord-est", "sud-oest", "nord-oest":
-						// Keep Sud-est (second lower); split Sud-Est.
-						if hasTitleStartCA(parts[0]) && hasTitleStartCA(parts[1]) {
-							return false
-						}
-					}
-				}
-			}
 			return true
+		case "sud-est", "nord-est", "sud-oest", "nord-oest":
+			// Mirror StringTools.isMixedCase: Sud-est (capitalized) → lower lookup hits;
+			// Sud-Est (mixed) → no lower fallback → untagged → split.
+			return !isMixedCaseCA(s)
 		default:
 			return false
 		}
@@ -138,6 +131,8 @@ func TestCatalanWordTokenizer_Tokenize(t *testing.T) {
 	require.Equal(t, 1, len(tokens))
 	tokens = w.Tokenize("COL∙LABORADORES")
 	require.Equal(t, 1, len(tokens))
+	// Java ELA_GEMINADA_UPPERCASE restores as L.L (not lowercase l.l).
+	require.Equal(t, "[COL.LABORADORES]", tokStr(tokens))
 
 	tokens = w.Tokenize("abans-d’ahir")
 	require.Equal(t, 1, len(tokens))
@@ -148,6 +143,7 @@ func TestCatalanWordTokenizer_Tokenize(t *testing.T) {
 	require.Equal(t, "[Sud, -, Est]", tokStr(tokens))
 	tokens = w.Tokenize("Sud-est")
 	require.Equal(t, 1, len(tokens))
+	require.Equal(t, "[Sud-est]", tokStr(tokens))
 	tokens = w.Tokenize("10 000")
 	require.Equal(t, 1, len(tokens))
 	tokens = w.Tokenize("1 000 000")
@@ -215,10 +211,43 @@ func TestCatalanWordTokenizer_Tokenize(t *testing.T) {
 	require.Equal(t, "[És,  , ell,  , ㅡva,  , dir, .]", tokStr(tokens))
 }
 
-func hasTitleStartCA(s string) bool {
-	if s == "" {
+// isMixedCaseCA ports org.languagetool.tools.StringTools.isMixedCase for the
+// CatalanTagger isTagged test hook (not tokenizer production logic).
+func isMixedCaseCA(str string) bool {
+	return !isAllUppercaseCA(str) && !isCapitalizedWordCA(str) && isNotAllLowercaseCA(str)
+}
+
+func isAllUppercaseCA(str string) bool {
+	for _, r := range str {
+		// Java: Character.isLetter(c) && Character.isLowerCase(c) → false
+		if unicode.IsLetter(r) && unicode.IsLower(r) {
+			return false
+		}
+	}
+	return true
+}
+
+func isNotAllLowercaseCA(str string) bool {
+	for _, r := range str {
+		if unicode.IsLetter(r) && !unicode.IsLower(r) {
+			return true
+		}
+	}
+	return false
+}
+
+func isCapitalizedWordCA(str string) bool {
+	if str == "" {
 		return false
 	}
-	r := []rune(s)[0]
-	return (r >= 'A' && r <= 'Z') || (r > 127 && strings.ToUpper(string(r)) == string(r) && strings.ToLower(string(r)) != string(r))
+	rs := []rune(str)
+	if !unicode.IsUpper(rs[0]) {
+		return false
+	}
+	for _, r := range rs[1:] {
+		if unicode.IsLetter(r) && !unicode.IsLower(r) {
+			return false
+		}
+	}
+	return true
 }

@@ -24,7 +24,10 @@ const pf = `(['’]en|['’]hi|['’]ho|['’]l|['’]ls|['’]m|['’]n|['’]n
 var (
 	tokenizerPattern = regexp.MustCompile(`[` + wordCharacters + `]+|[^` + wordCharacters + `]`)
 
-	elaGeminada          = regexp.MustCompile(`(?i)([aeiouàéèíóòúïü])l[.\x{2022}\x{22C5}\x{2219}\x{F0D7}]l([aeiouàéèíóòúïü])`)
+	// Java ELA_GEMINADA: UNICODE_CASE|UNICODE_CHARACTER_CLASS only (no CASE_INSENSITIVE).
+	// Group1 lists both cases; middle `l…l` and group2 vowels stay lowercase.
+	// ELA_GEMINADA_UPPERCASE is a separate all-upper pattern → restore as L.L.
+	elaGeminada          = regexp.MustCompile(`([aeiouàéèíóòúïüAEIOUÀÈÉÍÒÓÚÏÜ])l[.\x{2022}\x{22C5}\x{2219}\x{F0D7}]l([aeiouàéèíóòúïü])`)
 	elaGeminadaUppercase = regexp.MustCompile(`([AEIOUÀÈÉÍÒÓÚÏÜ])L[.\x{2022}\x{22C5}\x{2219}\x{F0D7}]L([AEIOUÀÈÉÍÒÓÚÏÜ])`)
 	apostrofRecte        = regexp.MustCompile(`(?i)([\p{L}])'([\p{L}"‘“«])`)
 	apostrofRodo         = regexp.MustCompile(`(?i)([\p{L}])’([\p{L}"‘“«])`)
