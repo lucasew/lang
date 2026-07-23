@@ -135,7 +135,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.A.2-MalayalamTagger-testTagger | accepted | inspiration/languagetool/languagetool-language-modules/ml/src/main/java/org/languagetool/tagging/ml/MalayalamTagger.java; inspiration/languagetool/languagetool-language-modules/ml/src/main/resources/org/languagetool/resource/ml/malayalam.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/ml/ | 7a852e4a7d259c3168381495361b7f0a1f1059af | 0 | 0 | | | 2026-07-23T09:04:53Z|
 
-| docs/faithful-port-checklist.md#3.A.2-TamilTagger-testTagger | ready | inspiration/languagetool/languagetool-language-modules/ta/src/main/java/org/languagetool/language/tagging/TamilTagger.java; inspiration/languagetool/languagetool-language-modules/ta/src/main/resources/org/languagetool/resource/ta/tamil.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/ta/ | d447b149c878f718563212a5824020d436c3ab1c | 0 | 0 | | | 2026-07-23T09:11:36Z |
+| docs/faithful-port-checklist.md#3.A.2-TamilTagger-testTagger | accepted | inspiration/languagetool/languagetool-language-modules/ta/src/main/java/org/languagetool/language/tagging/TamilTagger.java; inspiration/languagetool/languagetool-language-modules/ta/src/main/resources/org/languagetool/resource/ta/tamil.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/ta/ | d447b149c878f718563212a5824020d436c3ab1c | 0 | 0 | | | 2026-07-23T09:18:00Z |
 
 ---
 
@@ -147,7 +147,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | TamilTagger ready @ d447b149 (real tamil.dict; parent green). UK CAP-revisit eligible K≥5. ChineseWord HanLP-blocked. FR hybrid missing french.dict. |
+| Notes | TamilTagger ACCEPT @ d447b149. UK CAP-revisit eligible K≥5. ChineseWord HanLP-blocked. FR hybrid missing french.dict. |
 
 ---
 
@@ -492,3 +492,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T09:04:53Z ACCEPT: 3.A.2-MalayalamTagger-testTagger @ 7a852e4a (validator + parent green reconfirm; real malayalam.dict)
 - 2026-07-23T09:08:51Z implement: 3.A.2-TamilTagger-testTagger (thin BaseTagger + real tamil.dict; fix tagLowercaseWithUppercase)
 - 2026-07-23T09:11:36Z ready: 3.A.2-TamilTagger-testTagger @ d447b149 (implementer report; real tamil.dict; parent go test ta tagger green)
+- 2026-07-23T09:13:40Z validating: 3.A.2-TamilTagger-testTagger @ d447b149
+- 2026-07-23T09:18:00Z ACCEPT: 3.A.2-TamilTagger-testTagger @ d447b149 (validator + parent green reconfirm; real tamil.dict)
