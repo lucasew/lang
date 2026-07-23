@@ -131,6 +131,8 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.A.2-TagalogTagger-testTagger | accepted | inspiration/languagetool/languagetool-language-modules/tl/src/main/java/org/languagetool/tagging/tl/TagalogTagger.java; inspiration/languagetool/languagetool-language-modules/tl/src/main/resources/org/languagetool/resource/tl/tagalog.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/tl/ | 0937a0f20eda2d92f48276d04a32e251f676d511 | 0 | 0 | | | 2026-07-23T08:44:49Z|
 
+| docs/faithful-port-checklist.md#3.A.2-KhmerTagger-testTagger | ready | inspiration/languagetool/languagetool-language-modules/km/src/main/java/org/languagetool/tagging/km/KhmerTagger.java; inspiration/languagetool/languagetool-language-modules/km/src/main/resources/org/languagetool/resource/km/khmer.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/km/ | 18e3da2a5ad9175bc93243c0aba2ccf04e6161ee | 0 | 0 | | | 2026-07-23T08:51:59Z |
+
 ---
 
 ## Human inbox
@@ -141,7 +143,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | TagalogTagger ACCEPT @ 0937a0f2. UK CAP-revisit eligible K≥5. ChineseWord HanLP-blocked. FR hybrid missing french.dict. |
+| Notes | KhmerTagger ready @ 18e3da2a (real khmer.dict; parent green). UK CAP-revisit eligible K≥5. ChineseWord HanLP-blocked. FR hybrid missing french.dict. |
 
 ---
 
@@ -476,3 +478,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T08:42:03Z ready: 3.A.2-TagalogTagger-testTagger @ 0937a0f2 (implementer report; real tagalog.dict; parent go test tl tagger green)
 - 2026-07-23T08:43:42Z validating: 3.A.2-TagalogTagger-testTagger @ 0937a0f2
 - 2026-07-23T08:44:49Z ACCEPT: 3.A.2-TagalogTagger-testTagger @ 0937a0f2 (validator + parent green reconfirm; real tagalog.dict)
+- 2026-07-23T08:48:47Z implement: 3.A.2-KhmerTagger-testTagger (thin BaseTagger + real khmer.dict; fix tagLowercaseWithUppercase)
+- 2026-07-23T08:51:59Z ready: 3.A.2-KhmerTagger-testTagger @ 18e3da2a (implementer report; real khmer.dict; parent go test km tagger green)
