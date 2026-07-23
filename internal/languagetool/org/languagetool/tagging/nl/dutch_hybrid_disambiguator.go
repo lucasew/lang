@@ -20,12 +20,16 @@ type DutchHybridDisambiguator struct {
 }
 
 // NewDutchHybridDisambiguator builds stages Java constructs as final fields.
-// Chunker is wired from official /nl/multiwords.txt when discoverable
-// (Java MultiWordChunker.getInstance(..., true, true, false, tagForNotAddingTags)
-// + setIgnoreSpelling(true)). GlobalChunker and Rules remain optional injectors
-// until those sectors land.
+// GlobalChunker is wired from official /spelling_global.txt when discoverable
+// (Java MultiWordChunker.getInstance(..., false, true, false, tagForNotAddingTags)
+// + setIgnoreSpelling(true)). Chunker is wired from official /nl/multiwords.txt
+// when discoverable (allowFirstCapitalized=true). Rules remain optional injectors
+// until that sector lands.
 func NewDutchHybridDisambiguator() *DutchHybridDisambiguator {
 	d := &DutchHybridDisambiguator{}
+	if g := DutchGlobalChunker(); g != nil {
+		d.GlobalChunker = g
+	}
 	if mw := DutchMultiWordChunker(); mw != nil {
 		d.Chunker = mw
 	}
