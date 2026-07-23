@@ -37,9 +37,26 @@ func (t *JapaneseTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTo
 	return out
 }
 
+// CreateNullToken ports JapaneseTagger.createNullToken.
+func (t *JapaneseTagger) CreateNullToken(token string, startPos int) *languagetool.AnalyzedTokenReadings {
+	return languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken(token, nil, nil), startPos)
+}
+
+// CreateToken ports JapaneseTagger.createToken (lemma null).
+func (t *JapaneseTagger) CreateToken(token, posTag string) *languagetool.AnalyzedToken {
+	p := posTag
+	return languagetool.NewAnalyzedToken(token, &p, nil)
+}
+
 // asAnalyzedToken ports JapaneseTagger.asAnalyzedToken.
 func asAnalyzedToken(word string) *languagetool.AnalyzedToken {
+	// Java: word.split(" ") — default limit 0 discards trailing empty strings.
 	parts := strings.Split(word, " ")
+	// Match Java Pattern.split trailing-empty discard for parity on edge cases.
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
+	}
 	if len(parts) != 3 {
 		// Java returns new AnalyzedToken(" ", null, null) for malformed rows.
 		return languagetool.NewAnalyzedToken(" ", nil, nil)
