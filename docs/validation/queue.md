@@ -175,6 +175,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.3-IrishMultiWordChunker-multiwords | accepted | inspiration/languagetool/languagetool-language-modules/ga/src/main/java/org/languagetool/tagging/disambiguation/ga/IrishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker.java; inspiration/languagetool/languagetool-language-modules/ga/src/main/resources/org/languagetool/resource/ga/multiwords.txt | internal/languagetool/org/languagetool/tagging/disambiguation/ga/; internal/languagetool/org/languagetool/tagging/disambiguation/ | d74e3c6a8402053708e1b89a41ec16dd56b079cf | 0 | 0 |  |  | 2026-07-23T17:30:30Z |
 | docs/faithful-port-checklist.md#3.A.4-IrishXmlRuleDisambiguator-tests | accepted | inspiration/languagetool/languagetool-language-modules/ga/src/main/java/org/languagetool/tagging/disambiguation/ga/IrishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/ga/src/main/resources/org/languagetool/resource/ga/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/ga/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | 68457a678e95a3eb66727350dd2fd5131ac61cac | 0 | 0 |  |  | 2026-07-23T17:46:40Z |
 | docs/faithful-port-checklist.md#3.A.3-UkrainianMultiwordChunker-multiwords | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/disambiguation/uk/UkrainianMultiwordChunker.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker2.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/multiwords.txt | internal/languagetool/org/languagetool/tagging/disambiguation/uk/; internal/languagetool/org/languagetool/tagging/disambiguation/ | 5178649a34b37f30a85178091b7cfd334a8bb469 | 0 | 0 |  |  | 2026-07-23T18:01:22Z |
+| docs/faithful-port-checklist.md#3.A.4-UkrainianXmlRuleDisambiguator-tests | implementing | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/uk/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | | 0 | 0 |  |  | 2026-07-23T18:05:13Z |
 ---
 
 ## Human inbox
@@ -185,7 +186,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.A.3-UkrainianMultiwordChunker-multiwords @ 5178649a (validator+parent green). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
+| Notes | implementing 3.A.4-UkrainianXmlRuleDisambiguator-tests (useGlobal=false; official uk/disambiguation.xml). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
 
 ---
 
@@ -691,3 +692,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T17:54:40Z ready: 3.A.3-UkrainianMultiwordChunker-multiwords @ 5178649a (implementer report; official multiwords tab-only; parent green)
 - 2026-07-23T17:58:59Z validating: 3.A.3-UkrainianMultiwordChunker-multiwords @ 5178649a
 - 2026-07-23T18:01:22Z ACCEPT: 3.A.3-UkrainianMultiwordChunker-multiwords @ 5178649a (validator ACCEPT + parent green reconfirm)
+- 2026-07-23T18:05:13Z implement: 3.A.4-UkrainianXmlRuleDisambiguator-tests (XmlRuleDisambiguator(Ukrainian.DEFAULT_VARIANT) useGlobal=false; official uk/disambiguation.xml outcome twins)
