@@ -1,21 +1,33 @@
 package chunking
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 // RussianChunker ports org.languagetool.chunking.RussianChunker (@Experimental).
-// REGEXES1/REGEXES2 run Java OpenRegex patterns via CompileOpenRegex — not invent POS→BIO.
+// REGEXES1 / REGEXES2 are OpenRegex patterns; tokens start as O (no invent POS→BIO).
+// Control flow matches Java: getBasicChunks (REGEXES1) → REGEXES2 → assignChunksToReadings.
 type RussianChunker struct{}
 
 func NewRussianChunker() *RussianChunker { return &RussianChunker{} }
 
-// Java FILTER_TAGS for overwrite mode.
+// FILTER_TAGS ports Java RussianChunker.FILTER_TAGS (overwrite mode removes these exact names).
 var russianFilterTags = map[string]bool{
 	"PP": true, "NPP": true, "NPS": true, "MayMissingYO": true,
 	"VP": true, "SBAR": true, "ADJP": true, "DPT": true,
-	// also B/I forms removed? Java FILTER_TAGS is exact names above only.
 }
+
+// russianChunkerDebug mirrors Java RussianChunker.debug (setDebug / isDebug).
+var russianChunkerDebug bool
+
+// SetRussianChunkerDebug ports RussianChunker.setDebug (deprecated for internal use only).
+func SetRussianChunkerDebug(debugMode bool) { russianChunkerDebug = debugMode }
+
+// IsRussianChunkerDebug ports RussianChunker.isDebug.
+func IsRussianChunkerDebug() bool { return russianChunkerDebug }
 
 type russianPhraseType int
 
@@ -31,13 +43,38 @@ const (
 	ruPhraseDPT
 )
 
+func (p russianPhraseType) name() string {
+	switch p {
+	case ruPhraseNP:
+		return "NP"
+	case ruPhraseNPS:
+		return "NPS"
+	case ruPhraseNPP:
+		return "NPP"
+	case ruPhrasePP:
+		return "PP"
+	case ruPhraseMayMissingYO:
+		return "MayMissingYO"
+	case ruPhraseVP:
+		return "VP"
+	case ruPhraseSBAR:
+		return "SBAR"
+	case ruPhraseADJP:
+		return "ADJP"
+	case ruPhraseDPT:
+		return "DPT"
+	default:
+		return ""
+	}
+}
+
 type russianRegex struct {
 	pattern   string
 	phrase    russianPhraseType
 	overwrite bool
 }
 
-// Java RussianChunker.REGEXES1 (order + overwrite).
+// Java RussianChunker.REGEXES1 (order + overwrite flags exact).
 var russianRegexes1 = []russianRegex{
 	// Иванов Иван Иванович
 	{`<posre='NN:(Name|Fam|Patr):.*'> <posre='NN:(Name|Fam|Patr):.*'>+ `, ruPhraseNP, true},
@@ -70,30 +107,34 @@ var russianRegexes1 = []russianRegex{
 	{`<тов>`, ruPhraseNP, false},
 }
 
-// Java RussianChunker.REGEXES2
+// Java RussianChunker.REGEXES2 (order + overwrite flags exact).
 var russianRegexes2 = []russianRegex{
+	// "Маша и Миша":
 	{`<posre=NN:Name:.*> <и> <posre=NN:Name:.*>`, ruPhraseNPP, true},
 	{`<posre=NN:Name:.*> <или> <posre=NN:Name:.*>`, ruPhraseNPP, true},
+	// не + VB
 	{`<не> <posre='VB:.*:.*' & !posre='NN:.*'>* `, ruPhraseVP, false},
 }
 
+// AddChunkTags ports RussianChunker.addChunkTags:
+// getBasicChunks (REGEXES1) → apply REGEXES2 → assignChunksToReadings.
 func (c *RussianChunker) AddChunkTags(tokens []*languagetool.AnalyzedTokenReadings) {
-	if c == nil || len(tokens) == 0 {
+	if c == nil {
 		return
 	}
 	toks := getRussianBasicChunks(tokens)
-	if len(toks) == 0 {
-		return
-	}
 	factory := NewChunkTokenFactory(false)
-	for _, spec := range russianRegexes2 {
-		applyRussianRegex(spec, toks, factory)
+	for _, regex := range russianRegexes2 {
+		applyRussianRegex(regex, toks, factory)
 	}
 	assignRussianChunksToReadings(toks)
 }
 
-// GetBasicChunks ports RussianChunker.getBasicChunks (REGEXES1 only).
+// GetBasicChunks ports RussianChunker.getBasicChunks — REGEXES1 only; does not mutate readings.
 func (c *RussianChunker) GetBasicChunks(tokens []*languagetool.AnalyzedTokenReadings) []ChunkTaggedToken {
+	if c == nil {
+		return nil
+	}
 	return getRussianBasicChunks(tokens)
 }
 
@@ -103,7 +144,7 @@ func getRussianBasicChunks(tokenReadings []*languagetool.AnalyzedTokenReadings) 
 		if tokenReading == nil || tokenReading.IsWhitespace() {
 			continue
 		}
-		// Java: skip tokens that already have MayMissingYO chunk tag
+		// Java: (!tokenReading.isWhitespace()) && (!tokenReading.getChunkTags().contains(new ChunkTag("MayMissingYO")))
 		skip := false
 		for _, ct := range tokenReading.GetChunkTags() {
 			if ct == "MayMissingYO" {
@@ -117,45 +158,80 @@ func getRussianBasicChunks(tokenReadings []*languagetool.AnalyzedTokenReadings) 
 		chunkTaggedTokens = append(chunkTaggedTokens,
 			NewChunkTaggedToken(tokenReading.GetToken(), []ChunkTag{NewChunkTag("O")}, tokenReading))
 	}
+	if russianChunkerDebug {
+		fmt.Println("=============== CHUNKER INPUT ===============")
+		fmt.Print(russianChunkDebugString(chunkTaggedTokens))
+	}
 	factory := NewChunkTokenFactory(false)
-	for _, spec := range russianRegexes1 {
-		applyRussianRegex(spec, chunkTaggedTokens, factory)
+	for _, regex := range russianRegexes1 {
+		applyRussianRegex(regex, chunkTaggedTokens, factory)
 	}
 	return chunkTaggedTokens
 }
 
-func applyRussianRegex(spec russianRegex, tokens []ChunkTaggedToken, factory func(string) func(ChunkTaggedToken) bool) {
-	pat := ExpandRussianChunkSyntax(spec.pattern)
+// applyRussianRegex ports RussianChunker.apply / doApplyRegex.
+func applyRussianRegex(regex russianRegex, tokens []ChunkTaggedToken, factory func(string) func(ChunkTaggedToken) bool) {
+	pat := ExpandRussianChunkSyntax(regex.pattern)
 	re := CompileOpenRegex(pat, factory)
-	for _, m := range re.FindAll(tokens) {
+	prevDebug := ""
+	if russianChunkerDebug {
+		prevDebug = russianChunkDebugString(tokens)
+	}
+	// Java wraps exceptions as RuntimeException with pattern + tokens context.
+	defer func() {
+		if r := recover(); r != nil {
+			panic(fmt.Sprintf("Could not apply chunk regexp '%s' to tokens: %v: %v", regex.pattern, tokens, r))
+		}
+	}()
+	matches := re.FindAll(tokens)
+	for _, m := range matches {
 		for i := m.Start; i < m.End; i++ {
-			newTags := make([]ChunkTag, 0, len(tokens[i].ChunkTags)+1)
-			for _, ct := range tokens[i].ChunkTags {
-				s := ct.GetChunkTag()
-				if spec.overwrite && russianFilterTags[s] {
-					continue
+			token := tokens[i]
+			newChunkTags := make([]ChunkTag, 0, len(token.ChunkTags)+1)
+			newChunkTags = append(newChunkTags, token.ChunkTags...)
+			if regex.overwrite {
+				filtered := make([]ChunkTag, 0, len(newChunkTags))
+				for _, ct := range newChunkTags {
+					if !russianFilterTags[ct.GetChunkTag()] {
+						filtered = append(filtered, ct)
+					}
 				}
-				// overwrite also drops B-NP/I-NP etc.? Java only FILTER_TAGS set above.
-				newTags = append(newTags, ct)
+				newChunkTags = filtered
 			}
-			newTag := russianChunkTag(spec.phrase, m, i)
+			newTag := russianChunkTag(regex.phrase, m, i)
+			if newTag == "" {
+				continue
+			}
 			has := false
-			for _, ct := range newTags {
+			for _, ct := range newChunkTags {
 				if ct.GetChunkTag() == newTag {
 					has = true
 					break
 				}
 			}
+			// Java: if (!newChunkTags.contains(newTag)) { add; remove O }
 			if !has {
-				newTags = append(newTags, NewChunkTag(newTag))
-			}
-			filtered := make([]ChunkTag, 0, len(newTags))
-			for _, ct := range newTags {
-				if ct.GetChunkTag() != "O" {
-					filtered = append(filtered, ct)
+				newChunkTags = append(newChunkTags, NewChunkTag(newTag))
+				final := make([]ChunkTag, 0, len(newChunkTags))
+				for _, ct := range newChunkTags {
+					if ct.GetChunkTag() != "O" {
+						final = append(final, ct)
+					}
 				}
+				newChunkTags = final
 			}
-			tokens[i] = NewChunkTaggedToken(tokens[i].Token, filtered, tokens[i].Readings)
+			tokens[i] = NewChunkTaggedToken(token.Token, newChunkTags, token.Readings)
+		}
+	}
+	if russianChunkerDebug {
+		debug := russianChunkDebugString(tokens)
+		if debug != prevDebug {
+			fmt.Printf("=== Applied %s <= %s (overwrite: %v) ===\n", regex.phrase.name(), regex.pattern, regex.overwrite)
+			if regex.overwrite {
+				fmt.Printf("Note: overwrite mode, replacing old %v tags\n", []string{"PP", "NPP", "NPS", "MayMissingYO", "VP", "SBAR", "ADJP", "DPT"})
+			}
+			fmt.Print(debug)
+			fmt.Println()
 		}
 	}
 }
@@ -189,16 +265,9 @@ func russianChunkTag(phrase russianPhraseType, m SeqMatch, i int) string {
 			return "B-DPT"
 		}
 		return "I-DPT"
-	case ruPhraseNPS:
-		return "NPS"
-	case ruPhrasePP:
-		return "PP"
-	case ruPhraseMayMissingYO:
-		return "MayMissingYO"
-	case ruPhraseSBAR:
-		return "SBAR"
 	default:
-		return ""
+		// NPS, PP, MayMissingYO, SBAR — Java: new ChunkTag(regex.phraseType.name())
+		return phrase.name()
 	}
 }
 
@@ -207,7 +276,7 @@ func assignRussianChunksToReadings(chunkTaggedTokens []ChunkTaggedToken) {
 		if tagged.Readings == nil {
 			continue
 		}
-		var strs []string
+		strs := make([]string, 0, len(tagged.ChunkTags))
 		for _, ct := range tagged.ChunkTags {
 			if s := ct.GetChunkTag(); s != "" {
 				strs = append(strs, s)
@@ -215,6 +284,23 @@ func assignRussianChunksToReadings(chunkTaggedTokens []ChunkTaggedToken) {
 		}
 		tagged.Readings.SetChunkTags(strs)
 	}
+}
+
+func russianChunkDebugString(tokens []ChunkTaggedToken) string {
+	if !russianChunkerDebug {
+		return ""
+	}
+	var b strings.Builder
+	for _, token := range tokens {
+		b.WriteString("  ")
+		b.WriteString(token.String())
+		b.WriteString(" -- ")
+		if token.Readings != nil {
+			b.WriteString(token.Readings.String())
+		}
+		b.WriteByte('\n')
+	}
+	return b.String()
 }
 
 var _ Chunker = (*RussianChunker)(nil)
