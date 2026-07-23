@@ -101,14 +101,14 @@ func TestRussianDisambiguationRule_Chunker(t *testing.T) {
 
 // TestRussianHybridDisambiguator_ChunkerLoad wires official multiwords into the hybrid
 // (Java field: MultiWordChunker.getInstance("/ru/multiwords.txt")).
+// Isolates the multiword stage (Rules nil) — XML stage is covered by rules/ru XmlRule tests.
 func TestRussianHybridDisambiguator_ChunkerLoad(t *testing.T) {
 	if tagru.DiscoverRussianPOSDict() == "" {
 		t.Skip("russian.dict not in tree")
 	}
 	chunker := loadRussianMultiWordChunker(t)
-	h := NewRussianHybridDisambiguator()
-	h.Chunker = chunker
-	// multiwords-only path (Rules nil): same as chunker stage
+	// Multiword-only path: do not run eager XmlRuleDisambiguator stage here.
+	h := NewRussianHybridDisambiguatorWithStages(chunker, nil)
 	got := myAssertRussianChunker("до мажор", h)
 	want := "/[null]SENT_START до/[до мажор]<NN:Masc>|до/[до]PREP  /[null]null мажор/[до мажор]</NN:Masc>|мажор/[мажор]NN:Inanim:Masc:Sin:Nom|мажор/[мажор]NN:Inanim:Masc:Sin:V"
 	require.Equal(t, want, got)
