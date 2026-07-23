@@ -7,13 +7,15 @@ import (
 
 // IrishHybridDisambiguator ports org.languagetool.tagging.disambiguation.ga.IrishHybridDisambiguator.
 // Java: disambiguator.disambiguate(chunker.disambiguate(input)) — multiwords first, then XML.
+// MultiWordChunker.getInstance("/ga/multiwords.txt") defaults, then
+// XmlRuleDisambiguator(Irish.getInstance()) with useGlobalDisambiguation=false.
 type IrishHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
 	// Chunker is Java MultiWordChunker.getInstance("/ga/multiwords.txt") defaults.
 	Chunker interface {
 		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 	}
-	// Rules is Java XmlRuleDisambiguator(Irish) — not wired this sector.
+	// Rules is Java XmlRuleDisambiguator (field name "disambiguator" in Java).
 	Rules interface {
 		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 	}
@@ -22,11 +24,15 @@ type IrishHybridDisambiguator struct {
 // NewIrishHybridDisambiguator builds stages Java constructs as final fields.
 // Chunker is wired from official /ga/multiwords.txt when discoverable
 // (getInstance("/ga/multiwords.txt") defaults: F/F/F; no removePreviousTags; no ignoreSpelling).
-// Rules remains nil until the Irish XmlRuleDisambiguator sector.
+// Rules is eagerly wired from official ga/disambiguation.xml when present
+// (XmlRuleDisambiguator(Irish) — useGlobalDisambiguation=false).
 func NewIrishHybridDisambiguator() *IrishHybridDisambiguator {
 	d := &IrishHybridDisambiguator{}
 	if mw := IrishMultiWordChunker(); mw != nil {
 		d.Chunker = mw
+	}
+	if xml := IrishXmlRuleDisambiguator(); xml != nil {
+		d.Rules = xml
 	}
 	return d
 }
