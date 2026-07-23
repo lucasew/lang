@@ -84,9 +84,11 @@ var (
 	abbrDotChl  = regexp.MustCompile(`(чл)\.(-кор)\.`)
 	abbrDotPn   = regexp.MustCompile(`(пн|пд)\.(-(зах|сх))\.`)
 	invalidMln  = regexp.MustCompile(`(млн|млрд)\.( [а-яіїєґ])`)
-	// Java ABBR_DOT_2_SMALL_LETTERS: second group \h*(?![смкд]?м\.)[екмнпрстч]{1,2}
-	// RE2 has no lookahead; meter exclusion applied in replaceAbbrDot2Small (only [смкд]?м, not мк).
-	abbrDot2Small = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([векнпрстцч]{1,2})\.([` + javaHClass + `]*[екмнпрстч]{1,2})\.`)
+	// Java ABBR_DOT_2_SMALL_LETTERS:
+	// ([^letter-][векнпрстцч]{1,2})\.(\h*(?![смкд]?м\.)[екмнпрстч]{1,2})\.
+	// Prefix char is required (not lookbehind / not BOS-only ^). Meter exclusion only [смкд]?м — not мк.
+	// RE2 has no lookahead; meter exclusion applied in replaceAbbrDot2Small.
+	abbrDot2Small = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-][векнпрстцч]{1,2})\.([` + javaHClass + `]*[екмнпрстч]{1,2})\.`)
 
 	// non-ending abbreviations (long list).
 	// Java ABBR_DOT_NON_ENDING: case-sensitive; only listed dual-case arms ([Нн]апр, [Пп]оч, …).
@@ -560,29 +562,26 @@ func replaceAbbrDot2Small(text string) string {
 	var b strings.Builder
 	last := 0
 	for _, loc := range abbrDot2Small.FindAllStringSubmatchIndex(text, -1) {
-		// groups: full, $1 prefix, $2 first abbr, $3 second abbr (with optional \h*)
+		// groups: full, $1 = prefix+letters, $2 = \h*+letters (mirrors Java)
 		full0, full1 := loc[0], loc[1]
-		g3 := text[loc[6]:loc[7]]
-		// Java (?![смкд]?м\.) checked after \h* before matching letters —
-		// equivalent once letters are matched: letters ∈ {м, см, км, дм, мм}
-		if isAbbrDot2SmallMeterSecond(g3) {
+		g2 := text[loc[4]:loc[5]]
+		// Java (?![смкд]?м\.) — skip when second token letters are м/см/км/дм/мм (not мк)
+		if isAbbrDot2SmallMeterSecond(g2) {
 			continue
 		}
 		b.WriteString(text[last:full0])
 		g1 := text[loc[2]:loc[3]]
-		g2 := text[loc[4]:loc[5]]
-		// Java: $1 includes prefix+letters then .\uE120\uE110; Go pattern splits prefix/$2
-		b.WriteString(g1 + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder + g3 + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
+		b.WriteString(g1 + "." + nonBreakingPlaceholder2 + breakingPlaceholder + g2 + "." + nonBreakingPlaceholder2 + breakingPlaceholder)
 		last = full1
 	}
 	b.WriteString(text[last:])
 	return b.String()
 }
 
-// isAbbrDot2SmallMeterSecond reports whether g3 (\h* + letters) is a meter unit
+// isAbbrDot2SmallMeterSecond reports whether g2 (\h* + letters) is a meter unit
 // excluded by Java (?![смкд]?м\.) — i.e. letters are м/см/км/дм/мм, not мк.
-func isAbbrDot2SmallMeterSecond(g3 string) bool {
-	rr := []rune(g3)
+func isAbbrDot2SmallMeterSecond(g2 string) bool {
+	rr := []rune(g2)
 	i := 0
 	for i < len(rr) && isJavaH(rr[i]) {
 		i++
