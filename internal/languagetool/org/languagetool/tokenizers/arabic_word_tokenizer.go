@@ -1,31 +1,34 @@
 package tokenizers
 
+import "strings"
+
 // ArabicWordTokenizer ports org.languagetool.tokenizers.ArabicWordTokenizer.
+// Java: extends WordTokenizer; getTokenizingCharacters = super + "،؟؛-"
+// (، = U+060C Arabic comma, ؟ = U+061F Arabic question mark, ؛ = U+061B Arabic
+// semicolon, - = U+002D ASCII hyphen-minus). tokenize() is inherited from
+// WordTokenizer unchanged (StringTokenizer keep-delims + joinEMailsAndUrls).
 type ArabicWordTokenizer struct {
-	*WordTokenizer
+	// Cached super.getTokenizingCharacters() + "،؟؛-" (Java recomputes; result is constant).
+	arTokenizingChars string
 }
 
+// NewArabicWordTokenizer ports ArabicWordTokenizer().
 func NewArabicWordTokenizer() *ArabicWordTokenizer {
-	return &ArabicWordTokenizer{WordTokenizer: NewWordTokenizer()}
+	return &ArabicWordTokenizer{
+		arTokenizingChars: TokenizingCharacters() + "،؟؛-",
+	}
 }
 
-// GetTokenizingCharacters adds Arabic punctuation: ، ؟ ؛ and hyphen.
+// GetTokenizingCharacters ports ArabicWordTokenizer.getTokenizingCharacters.
 func (w *ArabicWordTokenizer) GetTokenizingCharacters() string {
-	base := TokenizingCharacters()
-	return base + "،؟؛-"
+	return w.arTokenizingChars
 }
 
+// Tokenize ports the inherited WordTokenizer.tokenize using Arabic delims.
+// Java: StringTokenizer(text, getTokenizingCharacters(), true) then joinEMailsAndUrls.
 func (w *ArabicWordTokenizer) Tokenize(text string) []string {
-	if text == "" {
-		return nil
-	}
-	// Use custom character set via local tokenization.
-	chars := w.GetTokenizingCharacters()
-	set := map[rune]bool{}
-	for _, r := range chars {
-		set[r] = true
-	}
-	var out []string
+	delims := w.arTokenizingChars
+	out := make([]string, 0)
 	var cur []rune
 	flush := func() {
 		if len(cur) > 0 {
@@ -34,7 +37,7 @@ func (w *ArabicWordTokenizer) Tokenize(text string) []string {
 		}
 	}
 	for _, r := range text {
-		if set[r] {
+		if strings.ContainsRune(delims, r) {
 			flush()
 			out = append(out, string(r))
 		} else {
