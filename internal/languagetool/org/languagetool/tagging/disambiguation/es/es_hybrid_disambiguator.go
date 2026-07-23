@@ -24,7 +24,8 @@ type SpanishHybridDisambiguator struct {
 // (Java MultiWordChunker.getInstance("/spelling_global.txt", false, true, false, "NPCN000");
 // no setIgnoreSpelling). Chunker is wired from official /es/multiwords.txt when
 // discoverable (getInstance("/es/multiwords.txt", true, true, false)
-// + setRemovePreviousTags(true); no setIgnoreSpelling). Rules left nil (XML sector).
+// + setRemovePreviousTags(true); no setIgnoreSpelling). Rules is wired from
+// XmlRuleDisambiguator(lang, true) when official es + global XML load.
 func NewSpanishHybridDisambiguator() *SpanishHybridDisambiguator {
 	d := &SpanishHybridDisambiguator{}
 	if g := SpanishGlobalChunker(); g != nil {
@@ -32,6 +33,9 @@ func NewSpanishHybridDisambiguator() *SpanishHybridDisambiguator {
 	}
 	if mw := SpanishMultiWordChunker(); mw != nil {
 		d.Chunker = mw
+	}
+	if r := SpanishXmlRuleDisambiguator(); r != nil {
+		d.Rules = r
 	}
 	return d
 }

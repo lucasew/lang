@@ -59,8 +59,10 @@ func TestSpanishGlobalChunker_ProcessCachedOfficial(t *testing.T) {
 	d := NewSpanishHybridDisambiguator()
 	require.NotNil(t, d.GlobalChunker)
 	require.Same(t, a, d.GlobalChunker)
-	// Rules still left for separate sector
-	require.Nil(t, d.Rules)
+	// Rules wired from SpanishXmlRuleDisambiguator when es+global XML present
+	if SpanishXmlRuleDisambiguator() != nil {
+		require.Same(t, SpanishXmlRuleDisambiguator(), d.Rules)
+	}
 }
 
 func TestSpanishGlobalChunker_DisambiguateOfficialPhrases(t *testing.T) {

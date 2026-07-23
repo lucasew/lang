@@ -43,8 +43,10 @@ func TestSpanishMultiWordChunker_ProcessCachedOfficial(t *testing.T) {
 	d := NewSpanishHybridDisambiguator()
 	require.NotNil(t, d.Chunker)
 	require.Same(t, a, d.Chunker)
-	// GlobalChunker is a separate stage (spelling_global); Rules still separate sector.
-	require.Nil(t, d.Rules)
+	// Rules wired from SpanishXmlRuleDisambiguator when es+global XML present
+	if SpanishXmlRuleDisambiguator() != nil {
+		require.Same(t, SpanishXmlRuleDisambiguator(), d.Rules)
+	}
 }
 
 // multiwordTokens builds SENT_START + alternating content/space tokens for MultiWordChunker.
