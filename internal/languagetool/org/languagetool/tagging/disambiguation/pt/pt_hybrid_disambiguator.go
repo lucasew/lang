@@ -19,8 +19,17 @@ type PortugueseHybridDisambiguator struct {
 	Rules         sentenceStep
 }
 
+// NewPortugueseHybridDisambiguator builds stages Java constructs as final fields.
+// Chunker is wired from official /pt/multiwords.txt when discoverable
+// (getInstance("/pt/multiwords.txt", true, true, true)
+// + setRemovePreviousTags(true) + setIgnoreSpelling(true)).
+// GlobalChunker and Rules stay nil until their sectors land.
 func NewPortugueseHybridDisambiguator() *PortugueseHybridDisambiguator {
-	return &PortugueseHybridDisambiguator{}
+	d := &PortugueseHybridDisambiguator{}
+	if mw := PortugueseMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
+	return d
 }
 
 func (d *PortugueseHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
