@@ -30,9 +30,13 @@ type CatalanHybridDisambiguator struct {
 // + setRemovePreviousTags(true); no setIgnoreSpelling).
 // Rules is wired from XmlRuleDisambiguator(lang, true) when official ca + global
 // XML load (useGlobalDisambiguation=true).
-// Multitoken remains unwired until CatalanMultitokenDisambiguator sector lands.
+// Multitoken is always constructed (Java field initializer
+// new CatalanMultitokenDisambiguator()); with nil IsMisspelled it no-ops like
+// Java when speller == null — no invent dictionary.
 func NewCatalanHybridDisambiguator() *CatalanHybridDisambiguator {
-	d := &CatalanHybridDisambiguator{}
+	d := &CatalanHybridDisambiguator{
+		Multitoken: NewCatalanMultitokenDisambiguator(),
+	}
 	if g := CatalanGlobalChunker(); g != nil {
 		d.GlobalChunker = g
 	}
