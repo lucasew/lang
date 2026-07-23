@@ -19,8 +19,17 @@ type DutchHybridDisambiguator struct {
 	Rules         sentenceStep
 }
 
+// NewDutchHybridDisambiguator builds stages Java constructs as final fields.
+// Chunker is wired from official /nl/multiwords.txt when discoverable
+// (Java MultiWordChunker.getInstance(..., true, true, false, tagForNotAddingTags)
+// + setIgnoreSpelling(true)). GlobalChunker and Rules remain optional injectors
+// until those sectors land.
 func NewDutchHybridDisambiguator() *DutchHybridDisambiguator {
-	return &DutchHybridDisambiguator{}
+	d := &DutchHybridDisambiguator{}
+	if mw := DutchMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
+	return d
 }
 
 func (d *DutchHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
