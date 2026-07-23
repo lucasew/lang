@@ -53,8 +53,11 @@ func TestPortugueseGlobalChunker_ProcessCachedOfficial(t *testing.T) {
 	d := NewPortugueseHybridDisambiguator()
 	require.NotNil(t, d.GlobalChunker)
 	require.Same(t, a, d.GlobalChunker)
-	// Rules stay nil until XmlRule sector
-	require.Nil(t, d.Rules)
+	// Rules wired when official pt + global disambiguation XML load
+	if PortugueseXmlRuleDisambiguator() != nil {
+		require.NotNil(t, d.Rules)
+		require.Same(t, PortugueseXmlRuleDisambiguator(), d.Rules)
+	}
 	// Chunker still wired from multiwords when discoverable
 	if PortugueseMultiWordChunker() != nil {
 		require.NotNil(t, d.Chunker)

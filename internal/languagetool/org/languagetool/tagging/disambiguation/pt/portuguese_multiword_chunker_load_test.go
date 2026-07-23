@@ -42,12 +42,16 @@ func TestPortugueseMultiWordChunker_ProcessCachedOfficial(t *testing.T) {
 	d := NewPortugueseHybridDisambiguator()
 	require.NotNil(t, d.Chunker)
 	require.Same(t, a, d.Chunker)
-	// GlobalChunker wired when spelling_global.txt is discoverable; Rules stay nil
+	// GlobalChunker wired when spelling_global.txt is discoverable
 	if PortugueseGlobalChunker() != nil {
 		require.NotNil(t, d.GlobalChunker)
 		require.Same(t, PortugueseGlobalChunker(), d.GlobalChunker)
 	}
-	require.Nil(t, d.Rules)
+	// Rules wired when official pt + global disambiguation XML load
+	if PortugueseXmlRuleDisambiguator() != nil {
+		require.NotNil(t, d.Rules)
+		require.Same(t, PortugueseXmlRuleDisambiguator(), d.Rules)
+	}
 }
 
 // multiwordTokens builds SENT_START + alternating content/space tokens for MultiWordChunker.

@@ -26,7 +26,7 @@ type PortugueseHybridDisambiguator struct {
 // Chunker is wired from official /pt/multiwords.txt when discoverable
 // (getInstance("/pt/multiwords.txt", true, true, true)
 // + setRemovePreviousTags(true) + setIgnoreSpelling(true)).
-// Rules stay nil until the XmlRule sector lands.
+// Rules is wired from XmlRuleDisambiguator(lang, true) when official pt + global XML load.
 func NewPortugueseHybridDisambiguator() *PortugueseHybridDisambiguator {
 	d := &PortugueseHybridDisambiguator{}
 	if g := PortugueseGlobalChunker(); g != nil {
@@ -34,6 +34,9 @@ func NewPortugueseHybridDisambiguator() *PortugueseHybridDisambiguator {
 	}
 	if mw := PortugueseMultiWordChunker(); mw != nil {
 		d.Chunker = mw
+	}
+	if r := PortugueseXmlRuleDisambiguator(); r != nil {
+		d.Rules = r
 	}
 	return d
 }
