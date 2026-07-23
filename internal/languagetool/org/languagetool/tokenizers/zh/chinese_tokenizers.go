@@ -3,6 +3,7 @@ package zh
 import (
 	"strings"
 	"unicode"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -94,78 +95,49 @@ func encodeChineseTerms(surfaces []string) []string {
 }
 
 // ChineseSentenceTokenizer ports tokenizers.zh.ChineseSentenceTokenizer.
-// Java walks chars, emits whitespace runs as their own tokens, and runs
-// HanLP SentencesUtil.toSentenceList on non-whitespace chunks (so match
-// positions stay aligned). Without HanLP we use a local sentence split that
-// matches the official ChineseSentenceTokenizerTest cases (，！？；。 and Latin .!?).
+//
+// Java walks text by char (UTF-16 unit), emits Character.isWhitespace runs as
+// their own tokens, and runs HanLP SentencesUtil.toSentenceList on each
+// non-whitespace chunk so match positions stay aligned.
+//
+// Twin: inspiration/languagetool/.../tokenizers/zh/ChineseSentenceTokenizer.java
 type ChineseSentenceTokenizer struct{}
 
 func NewChineseSentenceTokenizer() *ChineseSentenceTokenizer { return &ChineseSentenceTokenizer{} }
 
 func (t *ChineseSentenceTokenizer) Tokenize(text string) []string {
-	if text == "" {
-		return nil
-	}
-	// Java ChineseSentenceTokenizer.tokenize: whitespace runs are tokens;
-	// non-whitespace is passed through SentencesUtil.toSentenceList.
+	// Java:
+	//   for (int i = 0; i < text.length(); i++) {
+	//     if (Character.isWhitespace(text.charAt(i))) { ... }
+	//   }
+	// Buffers hold UTF-16 units so surrogate pairs match Java StringBuilder.
 	var result []string
-	var whitespace strings.Builder
-	var nonWhitespace strings.Builder
-	for _, r := range text {
-		// Java: Character.isWhitespace(text.charAt(i)) — not Go unicode.IsSpace (NBSP differs).
-		if tools.CharacterIsWhitespace(r) {
-			if nonWhitespace.Len() > 0 {
-				result = append(result, sentencesUtilToSentenceList(nonWhitespace.String())...)
-				nonWhitespace.Reset()
+	var whitespace []uint16
+	var nonWhitespace []uint16
+	for _, u := range utf16.Encode([]rune(text)) {
+		ch := rune(u)
+		// Java Character.isWhitespace — not Go unicode.IsSpace (NBSP differs).
+		if tools.CharacterIsWhitespace(ch) {
+			if len(nonWhitespace) > 0 {
+				result = append(result, sentencesUtilToSentenceList(utf16UnitsToString(nonWhitespace))...)
+				nonWhitespace = nonWhitespace[:0]
 			}
-			whitespace.WriteRune(r)
+			whitespace = append(whitespace, u)
 			continue
 		}
-		if whitespace.Len() > 0 {
-			result = append(result, whitespace.String())
-			whitespace.Reset()
+		if len(whitespace) > 0 {
+			result = append(result, utf16UnitsToString(whitespace))
+			whitespace = whitespace[:0]
 		}
-		nonWhitespace.WriteRune(r)
+		nonWhitespace = append(nonWhitespace, u)
 	}
-	if whitespace.Len() > 0 {
-		result = append(result, whitespace.String())
+	if len(whitespace) > 0 {
+		result = append(result, utf16UnitsToString(whitespace))
 	}
-	if nonWhitespace.Len() > 0 {
-		result = append(result, sentencesUtilToSentenceList(nonWhitespace.String())...)
+	if len(nonWhitespace) > 0 {
+		result = append(result, sentencesUtilToSentenceList(utf16UnitsToString(nonWhitespace))...)
 	}
 	return result
-}
-
-// sentencesUtilToSentenceList is an incomplete stand-in for HanLP
-// SentencesUtil.toSentenceList — splits after Chinese sentence punctuation
-// (，！？；。) and Latin .!? when they end a clause. Does not invent lexicon
-// segmentation; structure matches ChineseSentenceTokenizerTest.
-func sentencesUtilToSentenceList(text string) []string {
-	if text == "" {
-		return nil
-	}
-	// ChineseSentenceTokenizerTest: split on ，！？；。 (fullwidth/CJK)
-	// Latin .!? also end sentences in mixed text (TestTokenize2 Linux…).
-	seps := map[rune]bool{
-		'，': true, '！': true, '？': true, '；': true, '。': true,
-		'.': true, '!': true, '?': true,
-	}
-	var out []string
-	var buf strings.Builder
-	for _, r := range text {
-		buf.WriteRune(r)
-		if seps[r] {
-			out = append(out, buf.String())
-			buf.Reset()
-		}
-	}
-	if buf.Len() > 0 {
-		out = append(out, buf.String())
-	}
-	if len(out) == 0 {
-		return []string{text}
-	}
-	return out
 }
 
 // SetSingleLineBreaksMarksParagraph ports ChineseSentenceTokenizer note:
