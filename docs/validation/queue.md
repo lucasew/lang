@@ -196,6 +196,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.5-sr-hybrid-disambig-order | accepted | inspiration/languagetool/languagetool-language-modules/sr/src/main/java/org/languagetool/tagging/disambiguation/sr/SerbianHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/sr/src/main/resources/org/languagetool/resource/sr/multiwords.txt; inspiration/languagetool/languagetool-language-modules/sr/src/main/resources/org/languagetool/resource/sr/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/sr/ | cff608fdfec5e1c4ea1b7136d53e88da55eb7b88 | 0 | 0 |  |  | 2026-07-23T22:30:49Z |
 | docs/faithful-port-checklist.md#3.A.5-uk-hybrid-disambig-order | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/disambiguation/uk/UkrainianMultiwordChunker.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/multiwords.txt; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/uk/ | 68242bd3e93b14aecdbd12ff648bf86e64e62acb | 0 | 0 |  |  | 2026-07-23T22:50:30Z |
 | docs/faithful-port-checklist.md#3.A.6-GermanChunker | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/chunking/GermanChunker.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/chunking/GermanChunkerTest.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/chunking/TokenPredicateTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/chunking/Chunker.java | internal/languagetool/org/languagetool/chunking/ | 59298ec4eeede1240c6ee5db552ba661294986bf | 1 | 0 |  |  | 2026-07-23T23:37:00Z |
+| docs/faithful-port-checklist.md#3.A.6-RussianChunker | ready | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/chunking/RussianChunker.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/chunking/Chunker.java | internal/languagetool/org/languagetool/chunking/ | 332c0dbbc6096ae17947f0e6862b0e1caefd0df6 | 0 | 0 |  |  | 2026-07-23T23:47:00Z |
 
 ---
 
@@ -207,7 +208,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.A.6-GermanChunker @ 59298ec4 (REGEXES1→2 full/basic twins; r1 findings fixed). Tokenizer CAP-revisit eligible. FR/zh blocked. |
+| Notes | ready 3.A.6-RussianChunker @ 332c0dbb (REGEXES1→2 matrix; parent green). Tokenizer CAP-revisit eligible. FR/zh blocked. |
 
 ---
 
@@ -801,3 +802,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T23:33:00Z ready: 3.A.6-GermanChunker @ 59298ec4 (fix r1; implementer report; parent green)
 - 2026-07-23T23:33:45Z validating: 3.A.6-GermanChunker @ 59298ec4 (post r1 fix)
 - 2026-07-23T23:37:00Z ACCEPT: 3.A.6-GermanChunker @ 59298ec4 (validator + parent green reconfirm; r1 findings fixed)
+- 2026-07-23T23:39:00Z implement: 3.A.6-RussianChunker (RussianChunker REGEXES1/2 outcome twins; Java king)
+- 2026-07-23T23:47:00Z ready: 3.A.6-RussianChunker @ 332c0dbb (implementer report; parent green)
