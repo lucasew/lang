@@ -21,8 +21,17 @@ type CatalanHybridDisambiguator struct {
 	Multitoken sentenceStep
 }
 
+// NewCatalanHybridDisambiguator builds stages Java constructs as final fields.
+// Chunker is wired from official /ca/multiwords.txt when discoverable
+// (getInstance("/ca/multiwords.txt", true, true, false)
+// + setRemovePreviousTags(true); no setIgnoreSpelling).
+// GlobalChunker / Rules / Multitoken remain unwired until their sectors land.
 func NewCatalanHybridDisambiguator() *CatalanHybridDisambiguator {
-	return &CatalanHybridDisambiguator{}
+	d := &CatalanHybridDisambiguator{}
+	if mw := CatalanMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
+	return d
 }
 
 func (d *CatalanHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
