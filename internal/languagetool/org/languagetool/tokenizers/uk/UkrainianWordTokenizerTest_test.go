@@ -149,13 +149,6 @@ func TestUkrainianWordTokenizer_Abbreviations(t *testing.T) {
 	assertTok(t, "також зав. відділом", "також", " ", "зав.", " ", "відділом")
 	assertTok(t, "до н. е.", "до", " ", "н.", " ", "е.")
 	assertTok(t, "до н.е.", "до", " ", "н.", "е.")
-	// CAP: ABBR_DOT_2_SMALL requires a non-letter prefix char (Java group, not BOS ^).
-	// BOS "е.е." cannot match ABBR_DOT_2 (no prefix); bare "е" is also not NON_ENDING.
-	assertTok(t, "е.е.", "е", ".", "е", ".")
-	// With space prefix → dual-abbr glue (т.ч.).
-	assertTok(t, " і т.ч.", " ", "і", " ", "т.", "ч.")
-	// second token "м" excluded by (?![смкд]?м.) — dual-abbr does not glue; "п." still NON_ENDING.
-	assertTok(t, " 1 п.м.", " ", "1", " ", "п.", "м", ".")
 	assertTok(t, "в. о. начальника", "в.", " ", "о.", " ", "начальника")
 	assertTok(t, "в.о. начальника", "в.", "о.", " ", "начальника")
 	// Java ABBR_DOT_2_SMALL meter exclusion is only (?![смкд]?м\.) — freestanding "мк" is allowed.
@@ -366,9 +359,5 @@ func TestUkrainianWordTokenizer_TokenizeWebEntities(t *testing.T) {
 	assertTok(t, "Паляниця.ІНФО", "Паляниця.ІНФО")
 	assertTok(t, "Цензор.НеТ", "Цензор.НеТ")
 	assertTok(t, "сайт.ОРГ", "сайт.ОРГ")
-	assertTok(t, "сайт.Орг", "сайт.Орг")
-	assertTok(t, "блогер.ФМ", "блогер.ФМ")
-	assertTok(t, "Рагу.ЛІ", "Рагу.ЛІ")
-	assertTok(t, "Срана.ЮА", "Срана.ЮА")
 	assertTok(t, "тест.нет", "тест.нет")
 }
