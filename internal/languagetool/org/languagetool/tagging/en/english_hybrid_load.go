@@ -11,11 +11,9 @@ import (
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 )
 
-// official EN multiword / disambiguation resources (Java EnglishHybridDisambiguator).
-const (
-	enMultiwordsRel     = "en/multiwords.txt"
-	enSpellingGlobalRel = "spelling_global.txt"
-)
+// official EN disambiguation resources (Java EnglishHybridDisambiguator).
+// Multiwords: EnglishMultiWordChunker / DiscoverEnglishMultiwords.
+const enSpellingGlobalRel = "spelling_global.txt"
 
 var (
 	englishHybridOnce sync.Once
@@ -42,12 +40,9 @@ func loadEnglishHybridDisambiguator() *EnglishHybridDisambiguator {
 		}
 	}
 	// Java: MultiWordChunker.getInstance("/en/multiwords.txt", true, true, false)
-	if p := spelling.DiscoverSpellingResource(enMultiwordsRel); p != "" {
-		if c, err := openENMultiWordChunker(p, ""); err == nil && c != nil {
-			c.SetIgnoreSpelling(true)
-			c.SetRemovePreviousTags(true)
-			d.Chunker = c
-		}
+	// + setIgnoreSpelling(true) + setRemovePreviousTags(true) — process-cached twin.
+	if c := EnglishMultiWordChunker(); c != nil {
+		d.Chunker = c
 	}
 	// Java: new XmlRuleDisambiguator(lang, true) — language + global XML
 	if xml := loadENXmlRuleDisambiguator(true); xml != nil && len(xml.Rules) > 0 {
