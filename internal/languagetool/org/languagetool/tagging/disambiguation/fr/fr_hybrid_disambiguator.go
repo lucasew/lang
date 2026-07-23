@@ -23,8 +23,17 @@ type FrenchHybridDisambiguator struct {
 	Rules sentenceStep
 }
 
+// NewFrenchHybridDisambiguator builds stages Java constructs as final fields.
+// Chunker is wired from official /fr/multiwords.txt when discoverable
+// (getInstance("/fr/multiwords.txt", true, true, false)
+// + setRemovePreviousTags(true); no setIgnoreSpelling).
+// GlobalChunker and Rules remain nil until their sectors land.
 func NewFrenchHybridDisambiguator() *FrenchHybridDisambiguator {
-	return &FrenchHybridDisambiguator{}
+	d := &FrenchHybridDisambiguator{}
+	if mw := FrenchMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
+	return d
 }
 
 func (d *FrenchHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
