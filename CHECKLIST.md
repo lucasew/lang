@@ -1294,7 +1294,7 @@
 - [ ] org/languagetool/rules/it/MorfologikItalianSpellerRule.java::MorfologikItalianSpellerRule
 - [x] org/languagetool/synthesis/it/ItalianSynthesizer.java::ItalianSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/rules/it/ItalianRuleDisambiguator.java::ItalianRuleDisambiguator
-- [ ] org/languagetool/tagging/it/ItalianTagger.java::ItalianTagger
+- [x] org/languagetool/tagging/it/ItalianTagger.java::ItalianTagger
 
 ## languagetool-language-modules/ja
 
