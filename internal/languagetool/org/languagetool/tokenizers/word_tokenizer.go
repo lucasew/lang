@@ -80,6 +80,8 @@ func (w *WordTokenizer) GetTokenizingCharacters() string {
 func TokenizingCharacters() string { return tokenizing }
 
 func (w *WordTokenizer) Tokenize(text string) []string {
+	// Java: StringTokenizer(text, getTokenizingCharacters(), true)
+	delims := w.GetTokenizingCharacters()
 	out := make([]string, 0)
 	var cur []rune
 	flush := func() {
@@ -89,7 +91,7 @@ func (w *WordTokenizer) Tokenize(text string) []string {
 		}
 	}
 	for _, r := range text {
-		if isTokenizing(r) {
+		if strings.ContainsRune(delims, r) {
 			flush()
 			out = append(out, string(r))
 		} else {
@@ -134,7 +136,8 @@ func joinEMails(list []string) []string {
 			idx++
 		}
 	}
-	if idx < len(list) {
+	// Java: if (currentPosition < text.length()) { l.addAll(list.subList(idx, list.size())); }
+	if currentPosition < UTF16Len(text) {
 		out = append(out, list[idx:]...)
 	}
 	return out
@@ -282,10 +285,6 @@ func IsEMail(token string) bool {
 	return loc != nil && loc[0] == 0 && loc[1] == len(token)
 }
 
-func isTokenizing(r rune) bool {
-	return strings.ContainsRune(tokenizing, r)
-}
-
 // UTF16Len returns Java String.length() equivalent.
 func UTF16Len(s string) int {
 	return len(utf16.Encode([]rune(s)))
@@ -372,11 +371,10 @@ func (w *WordTokenizer) RestoreEmojis(tokens []string, removedEmojis []string) [
 	i := 0
 	emojiCount := 1
 	for i < len(tokens) {
+		// Java: tokens.get(i).equals(",") && tokens.get(i+1).equals(REMOVED_EMOJI) && tokens.get(i+2).equals(",")
 		if i+2 < len(tokens) && tokens[i] == "," &&
 			tokens[i+1] == RemovedEmoji && tokens[i+2] == "," {
-			if emojiCount < len(removedEmojis) {
-				results = append(results, removedEmojis[emojiCount])
-			}
+			results = append(results, removedEmojis[emojiCount])
 			emojiCount++
 			i += 3
 		} else {
