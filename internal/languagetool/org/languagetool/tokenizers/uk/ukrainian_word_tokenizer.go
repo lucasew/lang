@@ -341,7 +341,9 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 	}
 
 	if strings.Contains(text, softHyphenWrap) {
-		text = regexp.MustCompile(`([^\s])`+softHyphenWrap).ReplaceAllString(text, "$1"+softHyphenWrapSubst)
+		// Java: text.replaceAll("(?<!\\s)"+SOFT_HYPHEN_WRAP, SOFT_HYPHEN_WRAP_SUBST)
+		// Negative lookbehind succeeds at BOS (no char before ≠ whitespace).
+		text = replaceSoftHyphenWrap(text)
 	}
 
 	if strings.Contains(text, "'") {
@@ -845,17 +847,57 @@ func isSpaceLike(r rune) bool {
 	return isJavaHOrVSpace(r)
 }
 
+// replaceSoftHyphenWrap ports Java:
+// text.replaceAll("(?<!\\s)"+SOFT_HYPHEN_WRAP, SOFT_HYPHEN_WRAP_SUBST)
+// Java Pattern \s (no UNICODE_CHARACTER_CLASS): [ \t\n\x0B\f\r]
+// (?<!\s) succeeds at BOS — do not require a captured non-space char.
+func replaceSoftHyphenWrap(text string) string {
+	var b strings.Builder
+	b.Grow(len(text))
+	for i := 0; i < len(text); {
+		if strings.HasPrefix(text[i:], softHyphenWrap) {
+			// lookbehind: at BOS, or previous rune is not Java \s
+			ok := true
+			if i > 0 {
+				prev, _ := utf8.DecodeLastRuneInString(text[:i])
+				if isJavaPatternS(prev) {
+					ok = false
+				}
+			}
+			if ok {
+				b.WriteString(softHyphenWrapSubst)
+				i += len(softHyphenWrap)
+				continue
+			}
+		}
+		b.WriteByte(text[i])
+		i++
+	}
+	return b.String()
+}
+
+// isJavaPatternS ports Java Pattern \s without UNICODE_CHARACTER_CLASS: [ \t\n\x0B\f\r]
+func isJavaPatternS(r rune) bool {
+	switch r {
+	case ' ', '\t', '\n', '\v', '\f', '\r':
+		return true
+	default:
+		return false
+	}
+}
+
 func splitBeginApostrophe(text string) string {
-	// (^|[\s(„«"'])'(?!дно)(\p{L})
+	// Java APOSTROPHE_BEGIN_PATTERN: (^|[\h\v(„«"'])'(?!дно)(\p{L})
+	// No CASE_INSENSITIVE — only lowercase "дно" is protected; 'Дно / 'ДНО split.
 	var b strings.Builder
 	runes := []rune(text)
 	for i := 0; i < len(runes); i++ {
 		if runes[i] == '\'' {
 			atBoundary := i == 0 || isSpaceLike(runes[i-1]) || strings.ContainsRune(`(„«"'`, runes[i-1])
 			if atBoundary && i+1 < len(runes) && unicode.IsLetter(runes[i+1]) {
-				// don't split 'дно...
+				// don't split 'дно... (case-sensitive)
 				rest := string(runes[i+1:])
-				if strings.HasPrefix(strings.ToLower(rest), "дно") {
+				if strings.HasPrefix(rest, "дно") {
 					b.WriteRune('\'')
 					continue
 				}

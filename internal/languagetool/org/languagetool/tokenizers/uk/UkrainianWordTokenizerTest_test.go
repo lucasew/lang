@@ -267,6 +267,10 @@ func TestUkrainianWordTokenizer_Apostrophe(t *testing.T) {
 	assertTok(t, "('дзеркало')", "(", "'", "дзеркало", "'", ")")
 	assertTok(t, "все 'дно піду", "все", " ", "'дно", " ", "піду")
 	assertTok(t, "трохи 'дно 'дному сказано", "трохи", " ", "'дно", " ", "'дному", " ", "сказано")
+	// APOSTROPHE_BEGIN: Java '(?!дно) is case-sensitive — only lowercase дно stays attached.
+	assertTok(t, "'дно", "'дно")
+	assertTok(t, "'Дно", "'", "Дно")
+	assertTok(t, "'ДНО", "'", "ДНО")
 	assertTok(t, "а мо',", "а", " ", "мо'", ",")
 	assertTok(t, "підемо'", "підемо", "'")
 	assertTok(t, "ЗДОРОВ’Я.", "ЗДОРОВ'Я", ".")
@@ -310,6 +314,12 @@ func TestUkrainianWordTokenizer_SpecialChars(t *testing.T) {
 		mapped[i] = strings.ReplaceAll(strings.ReplaceAll(s, "\n", "\\n"), "\u00AD", "\\xAD")
 	}
 	require.Equal(t, []string{"РЕАЛІЗАЦІЇ", " ", "\\xAD", "\\n", "СІЛЬСЬКОГОСПОДАРСЬКОЇ"}, mapped)
+
+	// SOFT_HYPHEN_WRAP: Java (?<!\s)\u00AD\n — succeeds at BOS; fails after whitespace.
+	assertTok(t, "\u00AD\nку", "\u00AD\nку")
+	assertTok(t, " \u00AD\nку", " ", "\u00AD", "\n", "ку")
+	assertTok(t, "а\u00AD\nку", "а\u00AD\nку")
+	assertTok(t, "стін\u00AD\nку", "стін\u00AD\nку")
 
 	assertTok(t, "а%його", "а", "%", "його")
 	assertTok(t, "5%-го", "5%-го")
