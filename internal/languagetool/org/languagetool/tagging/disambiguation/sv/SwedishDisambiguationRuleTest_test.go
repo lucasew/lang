@@ -95,16 +95,16 @@ func svMultiwordsPath(t *testing.T) string {
 
 // loadSwedishMultiWordChunker ports MultiWordChunker.getInstance("/sv/multiwords.txt")
 // defaults: allowFirstCapitalized=false, allowAllUppercase=false, allowTitlecase=false.
+// Prefer process-cached production wire (Java hybrid chunker field).
 func loadSwedishMultiWordChunker(t *testing.T) *disambiguation.MultiWordChunker {
 	t.Helper()
+	if c := SwedishMultiWordChunker(); c != nil {
+		return c
+	}
 	f, err := os.Open(svMultiwordsPath(t))
 	require.NoError(t, err)
 	defer f.Close()
-	c, err := disambiguation.NewMultiWordChunkerFromReader(f, disambiguation.MultiWordChunkerSettings{
-		AllowFirstCapitalized: false,
-		AllowAllUppercase:     false,
-		AllowTitlecase:        false,
-	})
+	c, err := OpenSwedishMultiWordChunker(f)
 	require.NoError(t, err)
 	return c
 }
