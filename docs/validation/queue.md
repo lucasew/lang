@@ -176,6 +176,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.4-IrishXmlRuleDisambiguator-tests | accepted | inspiration/languagetool/languagetool-language-modules/ga/src/main/java/org/languagetool/tagging/disambiguation/ga/IrishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/ga/src/main/resources/org/languagetool/resource/ga/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/ga/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | 68457a678e95a3eb66727350dd2fd5131ac61cac | 0 | 0 |  |  | 2026-07-23T17:46:40Z |
 | docs/faithful-port-checklist.md#3.A.3-UkrainianMultiwordChunker-multiwords | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/disambiguation/uk/UkrainianMultiwordChunker.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker2.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/multiwords.txt | internal/languagetool/org/languagetool/tagging/disambiguation/uk/; internal/languagetool/org/languagetool/tagging/disambiguation/ | 5178649a34b37f30a85178091b7cfd334a8bb469 | 0 | 0 |  |  | 2026-07-23T18:01:22Z |
 | docs/faithful-port-checklist.md#3.A.4-UkrainianXmlRuleDisambiguator-tests | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/uk/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | d45f80cea3358c8d9a10b07bf1b794f21e8b2a8f | 0 | 0 |  |  | 2026-07-23T18:22:13Z |
+| docs/faithful-port-checklist.md#3.A.4-GreekXmlRuleDisambiguator-tests | implementing | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/el/src/main/java/org/languagetool/language/Greek.java; inspiration/languagetool/languagetool-language-modules/el/src/main/resources/org/languagetool/resource/el/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/el/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | | 0 | 0 |  |  | 2026-07-23T18:25:22Z |
 ---
 
 ## Human inbox
@@ -186,7 +187,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.A.4-UkrainianXmlRuleDisambiguator-tests @ d45f80ce (validator+parent green). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
+| Notes | implementing 3.A.4-GreekXmlRuleDisambiguator-tests (useGlobal=false; official el/disambiguation.xml HAVE_INF). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
 
 ---
 
@@ -696,3 +697,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T18:16:06Z ready: 3.A.4-UkrainianXmlRuleDisambiguator-tests @ d45f80ce (implementer report; useGlobal=false; parent green)
 - 2026-07-23T18:18:52Z validating: 3.A.4-UkrainianXmlRuleDisambiguator-tests @ d45f80ce
 - 2026-07-23T18:22:13Z ACCEPT: 3.A.4-UkrainianXmlRuleDisambiguator-tests @ d45f80ce (validator ACCEPT + parent green reconfirm)
+- 2026-07-23T18:25:22Z implement: 3.A.4-GreekXmlRuleDisambiguator-tests (XmlRuleDisambiguator(Greek) useGlobal=false; official el/disambiguation.xml HAVE_INF)
