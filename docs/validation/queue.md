@@ -178,6 +178,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.4-UkrainianXmlRuleDisambiguator-tests | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguator.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/uk/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | d45f80cea3358c8d9a10b07bf1b794f21e8b2a8f | 0 | 0 |  |  | 2026-07-23T18:22:13Z |
 | docs/faithful-port-checklist.md#3.A.4-GreekXmlRuleDisambiguator-tests | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/rules/XmlRuleDisambiguator.java; inspiration/languagetool/languagetool-language-modules/el/src/main/java/org/languagetool/language/Greek.java; inspiration/languagetool/languagetool-language-modules/el/src/main/resources/org/languagetool/resource/el/disambiguation.xml | internal/languagetool/org/languagetool/tagging/disambiguation/el/; internal/languagetool/org/languagetool/tagging/disambiguation/rules/ | 62163db914d1fac508668cbbcb8856d490cfa9a1 | 0 | 0 |  |  | 2026-07-23T18:35:32Z |
 | docs/faithful-port-checklist.md#3.A.3-EnglishMultiWordChunker-multiwords | accepted | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/tagging/en/EnglishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/multiwords.txt | internal/languagetool/org/languagetool/tagging/en/; internal/languagetool/org/languagetool/tagging/disambiguation/ | 33b266633ea9191854c90dc30a6326e0b78fbf19 | 0 | 0 |  |  | 2026-07-23T18:50:28Z |
+| docs/faithful-port-checklist.md#3.A.3-EnglishGlobalChunker-spellingGlobal | implementing | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/tagging/en/EnglishHybridDisambiguator.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/disambiguation/MultiWordChunker.java; inspiration/languagetool/languagetool-core/src/main/resources/org/languagetool/resource/spelling_global.txt | internal/languagetool/org/languagetool/tagging/en/; internal/languagetool/org/languagetool/tagging/disambiguation/ | | 0 | 0 |  |  | 2026-07-23T18:53:54Z |
 ---
 
 ## Human inbox
@@ -188,7 +189,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.A.3-EnglishMultiWordChunker-multiwords @ 33b26663 (validator+parent green). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
+| Notes | implementing 3.A.3-EnglishGlobalChunker-spellingGlobal (spelling_global.txt; tagForNotAddingTags+ignoreSpelling). UK WordTokenizer CAP-revisit still eligible. FR hybrid missing french.dict. |
 
 ---
 
@@ -706,3 +707,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T18:44:48Z ready: 3.A.3-EnglishMultiWordChunker-multiwords @ 33b26663 (implementer report; parent green)
 - 2026-07-23T18:48:54Z validating: 3.A.3-EnglishMultiWordChunker-multiwords @ 33b26663
 - 2026-07-23T18:50:28Z ACCEPT: 3.A.3-EnglishMultiWordChunker-multiwords @ 33b26663 (validator ACCEPT + parent green reconfirm)
+- 2026-07-23T18:53:54Z implement: 3.A.3-EnglishGlobalChunker-spellingGlobal (MultiWordChunker /spelling_global.txt true,true,false,tagForNotAddingTags; ignoreSpelling)
