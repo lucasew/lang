@@ -16,15 +16,28 @@ const ArabicDictPath = "/ar/arabic.dict"
 // Base dict lookup + prefix/suffix stemming (additionalTags) like Java.
 type ArabicTagger struct {
 	*tagging.BaseTagger
-	TagManager         *ArabicTagManager
+	TagManager *ArabicTagManager
+	// dictLookup is Java DictionaryLookup(getDictionary()) used by additionalTags.
+	// When nil, additionalTags falls back to WordTagger (injected maps / tests).
+	dictLookup         tagging.WordTagger
 	newStylePronounTag bool
 }
 
+// NewArabicTagger builds an ArabicTagger over the given WordTagger.
+// Java: super("/ar/arabic.dict", new Locale("ar")) → tagLowercaseWithUppercase true.
 func NewArabicTagger(wt tagging.WordTagger) *ArabicTagger {
 	return &ArabicTagger{
-		BaseTagger: tagging.NewBaseTagger(wt, ArabicDictPath, "ar", false),
+		BaseTagger: tagging.NewBaseTagger(wt, ArabicDictPath, "ar", true),
 		TagManager: NewArabicTagManager(),
 	}
+}
+
+// NewArabicTaggerWithDictLookup sets the binary-dict stemmer for additionalTags
+// (Java new DictionaryLookup(getDictionary()) inside tag()).
+func NewArabicTaggerWithDictLookup(wt, dictLookup tagging.WordTagger) *ArabicTagger {
+	t := NewArabicTagger(wt)
+	t.dictLookup = dictLookup
+	return t
 }
 
 // EnableNewStylePronounTag ports ArabicTagger.enableNewStylePronounTag.
@@ -34,6 +47,8 @@ func (t *ArabicTagger) EnableNewStylePronounTag() {
 	}
 }
 
+// Tag ports ArabicTagger.tag: strip tashkeel for WordTagger; if not stop word,
+// additionalTags via DictionaryLookup; null fallback; pos += word.length() (UTF-16).
 func (t *ArabicTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
 	if t == nil {
 		return nil
@@ -43,6 +58,7 @@ func (t *ArabicTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 	for _, word := range sentenceTokens {
 		readings := t.tagOne(word)
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+		// Java: pos += word.length() (UTF-16 code units)
 		pos += tagging.UTF16Len(word)
 	}
 	return out
@@ -52,7 +68,8 @@ func (t *ArabicTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 func (t *ArabicTagger) tagOne(word string) []*languagetool.AnalyzedToken {
 	striped := tools.RemoveTashkeel(word)
 	var readings []*languagetool.AnalyzedToken
-	for _, tw := range t.TagWord(striped) {
+	// Java: getWordTagger().tag(striped) — exact WordTagger, no BaseTagger case-merge
+	for _, tw := range t.TagWordExact(striped) {
 		readings = append(readings, tagged(word, tw))
 	}
 	// Java: if not a stop word, additional prefix/suffix stemming
@@ -115,9 +132,17 @@ func (t *ArabicTagger) IsStopWordReading(readings []*languagetool.AnalyzedToken)
 }
 
 // additionalTags ports ArabicTagger.additionalTags.
+// Java uses DictionaryLookup(getDictionary()) — not getWordTagger() — for stem lookups.
 func (t *ArabicTagger) additionalTags(word string) []*languagetool.AnalyzedToken {
 	if t == nil {
 		return nil
+	}
+	stemmer := t.dictLookup
+	if stemmer == nil {
+		if t.WordTagger == nil {
+			return nil
+		}
+		stemmer = t.WordTagger
 	}
 	striped := tools.RemoveTashkeel(word)
 	var out []*languagetool.AnalyzedToken
@@ -125,14 +150,17 @@ func (t *ArabicTagger) additionalTags(word string) []*languagetool.AnalyzedToken
 	suffixes := getSuffixIndexList(striped)
 	for _, i := range prefixes {
 		for _, j := range suffixes {
+			// Java: (i == 0) && (j == striped.length()) — BMP Arabic: length == rune count
 			if i == 0 && j == utf8.RuneCountInString(striped) {
 				continue
 			}
 			stems := getStem(striped, i, j)
 			tags := t.getTags(striped, i, j)
 			for _, stem := range stems {
-				for _, tw := range t.TagWord(stem) {
+				// Java: asAnalyzedTokenList(stem, stemmer.lookup(stem))
+				for _, tw := range stemmer.Tag(stem) {
 					posTag := tw.PosTag
+					// modify tags in postag, return null if not compatible
 					posTag = t.TagManager.ModifyPosTag(posTag, tags)
 					if posTag == "" {
 						continue
@@ -339,4 +367,176 @@ func getStem(word string, posStart, posEnd int) []string {
 	}
 	stemList = append(stemList, stem)
 	return stemList
+}
+
+// TagSingle ports ArabicTagger.tag(String) — single surface form.
+// Named TagSingle to avoid shadowing BaseTagger.TagWord (WordTagger case-merge).
+func (t *ArabicTagger) TagSingle(word string) *languagetool.AnalyzedTokenReadings {
+	if t == nil {
+		return nil
+	}
+	atr := t.Tag([]string{word})
+	if len(atr) == 0 {
+		return nil
+	}
+	return atr[0]
+}
+
+// GetProclitic ports ArabicTagger.getProclitic.
+func (t *ArabicTagger) GetProclitic(token *languagetool.AnalyzedToken) string {
+	if t == nil || token == nil || t.TagManager == nil {
+		return ""
+	}
+	postagPtr := token.GetPOSTag()
+	if postagPtr == nil || *postagPtr == "" {
+		return ""
+	}
+	postag := *postagPtr
+	word := token.GetToken()
+	if t.TagManager.IsVerb(postag) {
+		conjflag := t.TagManager.GetFlag(postag, "CONJ")
+		istqbalflag := t.TagManager.GetFlag(postag, "ISTIQBAL")
+		prefixLength := 0
+		if conjflag == 'W' {
+			prefixLength++
+		}
+		if istqbalflag == 'S' {
+			prefixLength++
+		}
+		return getPrefix(word, prefixLength)
+	}
+	if t.TagManager.IsNoun(postag) {
+		conjflag := t.TagManager.GetFlag(postag, "CONJ")
+		jarflag := t.TagManager.GetFlag(postag, "JAR")
+		prefixLength := 0
+		if conjflag != '-' {
+			prefixLength++
+		}
+		if jarflag != '-' {
+			prefixLength++
+		}
+		if t.TagManager.IsDefinite(postag) {
+			if jarflag == 'L' {
+				prefixLength++
+			} else {
+				prefixLength += 2
+			}
+		}
+		return getPrefix(word, prefixLength)
+	}
+	return ""
+}
+
+// GetEnclitic ports ArabicTagger.getEnclitic.
+func (t *ArabicTagger) GetEnclitic(token *languagetool.AnalyzedToken) string {
+	if t == nil || token == nil || t.TagManager == nil {
+		return ""
+	}
+	postagPtr := token.GetPOSTag()
+	if postagPtr == nil || *postagPtr == "" {
+		return ""
+	}
+	postag := *postagPtr
+	word := token.GetToken()
+	flag := t.TagManager.GetFlag(postag, "PRONOUN")
+	if flag == '-' {
+		return t.TagManager.GetPronounSuffix(postag)
+	}
+	suffix := ""
+	switch {
+	case strings.HasSuffix(word, "ه"):
+		suffix = "ه"
+	case strings.HasSuffix(word, "ها"):
+		suffix = "ها"
+	case strings.HasSuffix(word, "هما"):
+		suffix = "هما"
+	case strings.HasSuffix(word, "هم"):
+		suffix = "هم"
+	case strings.HasSuffix(word, "هن"):
+		suffix = "هن"
+	case strings.HasSuffix(word, "ك"):
+		suffix = "ك"
+	case strings.HasSuffix(word, "كما"):
+		suffix = "كما"
+	case strings.HasSuffix(word, "كم"):
+		suffix = "كم"
+	case strings.HasSuffix(word, "كن"):
+		suffix = "كن"
+	case strings.HasSuffix(word, "ني"):
+		suffix = "ني"
+	case strings.HasSuffix(word, "نا"):
+		suffix = "نا"
+	// Java unreachable-ish branches for مني/عني (already matched above)
+	case (word == "عني" || word == "مني") && strings.HasSuffix(word, "ني"):
+		suffix = "ني"
+	case (word == "عنا" || word == "منا") && strings.HasSuffix(word, "نا"):
+		suffix = "نا"
+	default:
+		suffix = ""
+	}
+	return suffix
+}
+
+// GetJarProclitic ports ArabicTagger.getJarProclitic.
+func (t *ArabicTagger) GetJarProclitic(token *languagetool.AnalyzedToken) string {
+	if t == nil || token == nil || t.TagManager == nil {
+		return ""
+	}
+	postagPtr := token.GetPOSTag()
+	if postagPtr == nil || *postagPtr == "" {
+		return ""
+	}
+	postag := *postagPtr
+	word := token.GetToken()
+	if !t.TagManager.IsNoun(postag) {
+		return ""
+	}
+	conjflag := t.TagManager.GetFlag(postag, "CONJ")
+	jarflag := t.TagManager.GetFlag(postag, "JAR")
+	prefixLength := 0
+	if conjflag != '-' {
+		prefixLength++
+	}
+	if jarflag != '-' {
+		prefixLength++
+	}
+	if prefixLength > 0 {
+		// Java: word.substring(prefixLength - 1, prefixLength) — one letter
+		rs := []rune(word)
+		idx := prefixLength - 1
+		if idx >= 0 && idx < len(rs) {
+			return string(rs[idx : idx+1])
+		}
+	}
+	return ""
+}
+
+// GetLemmas ports ArabicTagger.getLemmas — unique lemmas by type (verb/adj/masdar).
+func (t *ArabicTagger) GetLemmas(patternTokens *languagetool.AnalyzedTokenReadings, typ string) []string {
+	if t == nil || patternTokens == nil || t.TagManager == nil {
+		return nil
+	}
+	var lemmaList []string
+	seen := map[string]bool{}
+	for _, tok := range patternTokens.GetReadings() {
+		if tok == nil || tok.GetPOSTag() == nil {
+			continue
+		}
+		pos := *tok.GetPOSTag()
+		ok := (t.TagManager.IsVerb(pos) && typ == "verb") ||
+			(t.TagManager.IsAdj(pos) && typ == "adj") ||
+			(t.TagManager.IsMasdar(pos) && typ == "masdar")
+		if !ok {
+			continue
+		}
+		lemma := ""
+		if tok.GetLemma() != nil {
+			lemma = *tok.GetLemma()
+		}
+		if !seen[lemma] {
+			seen[lemma] = true
+			lemmaList = append(lemmaList, lemma)
+		}
+	}
+	return lemmaList
 }

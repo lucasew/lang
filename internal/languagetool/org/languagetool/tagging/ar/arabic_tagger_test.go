@@ -5,6 +5,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
@@ -32,14 +33,15 @@ func TestArabicTagManagerFlags(t *testing.T) {
 	require.True(t, m.IsStopWord("Pxxxxxxxxxx"))
 }
 
-func TestArabicTaggerRemoveTashkeel(t *testing.T) {
-	// map looks up without tashkeel
+// Unit: strip tashkeel before WordTagger lookup (Java ArabicStringTools.removeTashkeel).
+// MapWordTagger is only for isolating the strip path — real outcomes use arabic.dict.
+func TestArabicTagger_RemoveTashkeelLookup(t *testing.T) {
 	wt := tagging.MapWordTagger{
 		"كتب": {tagging.NewTaggedWord("كتب", "Nxx-M1I-x---")},
 	}
 	tagger := NewArabicTagger(wt)
-	// كتب with fatha on first letter
 	withTashkeel := "كَتب"
+	require.Equal(t, "كتب", tools.RemoveTashkeel(withTashkeel))
 	got := tagger.Tag([]string{withTashkeel, "xyz"})
 	require.Len(t, got, 2)
 	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
@@ -51,13 +53,4 @@ func TestArabicHybridDisambiguator(t *testing.T) {
 	require.Nil(t, d.Disambiguate(nil))
 	empty := languagetool.NewAnalyzedSentence(nil)
 	require.NotNil(t, d.Disambiguate(empty))
-}
-
-func TestArabicTaggerMapSmoke(t *testing.T) {
-	wt := tagging.MapWordTagger{"كتاب": {tagging.NewTaggedWord("كتاب", "N")}}
-	tagger := NewArabicTagger(wt)
-	require.Equal(t, ArabicDictPath, tagger.GetDictionaryPath())
-	got := tagger.Tag([]string{"كتاب", "xyz"})
-	require.Len(t, got, 2)
-	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 }

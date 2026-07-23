@@ -273,6 +273,39 @@ func (m *ArabicTagManager) GetDefinitePrefix(postag string) string {
 	return ""
 }
 
+// GetPronounSuffix ports ArabicTagManager.getPronounSuffix (new-style pronoun flags).
+func (m *ArabicTagManager) GetPronounSuffix(postag string) string {
+	if postag == "" {
+		return ""
+	}
+	switch m.GetFlag(postag, "PRONOUN") {
+	case 'b':
+		return "ني"
+	case 'c':
+		return "نا"
+	case 'd':
+		return "ك"
+	case 'e':
+		return "كما"
+	case 'f':
+		return "كم"
+	case 'g':
+		return "كن"
+	case 'H':
+		return "ه"
+	case 'i':
+		return "ها"
+	case 'j':
+		return "هما"
+	case 'k':
+		return "هم"
+	case 'n':
+		return "هن"
+	default:
+		return ""
+	}
+}
+
 func (m *ArabicTagManager) UnifyPronounTag(postag string) string {
 	if m.IsAttached(postag) {
 		return m.SetFlag(postag, "PRONOUN", 'H')
