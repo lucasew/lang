@@ -53,7 +53,10 @@ var (
 )
 
 func (w *FrenchWordTokenizer) Tokenize(text string) []string {
-	auxText := typewriterApos.ReplaceAllString(text, "${1}xxFR_APOS_TYPEWxx${2}")
+	// Java: replace hyphen, non-break hyphen → hyphen-minus
+	auxText := strings.ReplaceAll(text, "\u2010", "\u002d")
+	auxText = strings.ReplaceAll(auxText, "\u2011", "\u002d")
+	auxText = typewriterApos.ReplaceAllString(auxText, "${1}xxFR_APOS_TYPEWxx${2}")
 	auxText = typographicApos.ReplaceAllString(auxText, "${1}xxFR_APOS_TYPOGxx${2}")
 	auxText = nearbyHyphens.ReplaceAllString(auxText, "${1}xxFR_HYPHENxx${2}xxFR_HYPHENxx${3}")
 	auxText = hyphens.ReplaceAllString(auxText, "${1}xxFR_HYPHENxx${2}")
@@ -100,10 +103,8 @@ func (w *FrenchWordTokenizer) Tokenize(text string) []string {
 			}
 		}
 		if matchFound {
+			// Java: for each capturing group, wordsToAdd (empty → no-op)
 			for _, g := range groups {
-				if g == "" {
-					continue
-				}
 				l = append(l, wordsToAddFR(g)...)
 			}
 		} else {
