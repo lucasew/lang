@@ -1,26 +1,39 @@
 package ro
 
+// Twin of RomanianTaggerDiacriticsTest.java — UTF-8 /ro/test_diacritics.dict.
+
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
 )
 
-func TestRomanianTaggerDiacritics_TaggerMerseseram(t *testing.T) {
-	wt := tagging.MapWordTagger{"merseserăm": {tagging.NewTaggedWord("merge", "V")}}
-	got := NewRomanianTagger(wt).Tag([]string{"merseserăm"})
-	require.Len(t, got, 1)
-	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+func requireDiacriticsTagger(t *testing.T) *RomanianTagger {
+	t.Helper()
+	p := DiscoverRomanianDiacriticsDict()
+	if p == "" {
+		t.Skip("test_diacritics.dict not in tree")
+	}
+	tagger := OpenRomanianTaggerFromFilesystem(p, RomanianTestDiacriticsDictPath)
+	require.NotNil(t, tagger, "failed to open test_diacritics.dict at %s", p)
+	require.Equal(t, RomanianTestDiacriticsDictPath, tagger.GetDictionaryPath())
+	require.NotNil(t, tagger.GetWordTagger())
+	return tagger
 }
 
+// Twin of RomanianTaggerDiacriticsTest.testTaggerMerseseram
+func TestRomanianTaggerDiacritics_TaggerMerseseram(t *testing.T) {
+	tagger := requireDiacriticsTagger(t)
+	assertHasLemmaAndPos(t, tagger, "făcusem", "face", "004")
+	assertHasLemmaAndPos(t, tagger, "cuțitul", "cuțit", "002")
+	// make sure lemma is correct (POS is hard-coded, not important)
+	assertHasLemmaAndPos(t, tagger, "merseserăm", "merge", "002")
+}
+
+// Twin of RomanianTaggerDiacriticsTest.testTaggerCuscaCutit
 func TestRomanianTaggerDiacritics_TaggerCuscaCutit(t *testing.T) {
-	wt := tagging.MapWordTagger{
-		"cușcă": {tagging.NewTaggedWord("cușcă", "S")},
-		"cuțit": {tagging.NewTaggedWord("cuțit", "S")},
-	}
-	got := NewRomanianTagger(wt).Tag([]string{"cușcă", "cuțit"})
-	require.Len(t, got, 2)
-	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
-	require.NotNil(t, got[1].GetReadings()[0].GetPOSTag())
+	tagger := requireDiacriticsTagger(t)
+	assertHasLemmaAndPos(t, tagger, "cușcă", "cușcă", "001")
+	assertHasLemmaAndPos(t, tagger, "cuțit", "cuțit", "001")
+	assertHasLemmaAndPos(t, tagger, "cuțitul", "cuțit", "002")
 }
