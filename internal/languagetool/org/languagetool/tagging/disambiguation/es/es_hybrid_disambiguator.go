@@ -20,12 +20,16 @@ type SpanishHybridDisambiguator struct {
 }
 
 // NewSpanishHybridDisambiguator builds stages Java constructs as final fields.
-// Chunker is wired from official /es/multiwords.txt when discoverable
-// (Java MultiWordChunker.getInstance("/es/multiwords.txt", true, true, false)
-// + setRemovePreviousTags(true); no setIgnoreSpelling).
-// GlobalChunker and Rules are left nil here (separate sectors).
+// GlobalChunker is wired from official /spelling_global.txt when discoverable
+// (Java MultiWordChunker.getInstance("/spelling_global.txt", false, true, false, "NPCN000");
+// no setIgnoreSpelling). Chunker is wired from official /es/multiwords.txt when
+// discoverable (getInstance("/es/multiwords.txt", true, true, false)
+// + setRemovePreviousTags(true); no setIgnoreSpelling). Rules left nil (XML sector).
 func NewSpanishHybridDisambiguator() *SpanishHybridDisambiguator {
 	d := &SpanishHybridDisambiguator{}
+	if g := SpanishGlobalChunker(); g != nil {
+		d.GlobalChunker = g
+	}
 	if mw := SpanishMultiWordChunker(); mw != nil {
 		d.Chunker = mw
 	}

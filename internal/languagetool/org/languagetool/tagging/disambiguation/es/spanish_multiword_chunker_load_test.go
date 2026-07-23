@@ -43,8 +43,7 @@ func TestSpanishMultiWordChunker_ProcessCachedOfficial(t *testing.T) {
 	d := NewSpanishHybridDisambiguator()
 	require.NotNil(t, d.Chunker)
 	require.Same(t, a, d.Chunker)
-	// This sector does not wire GlobalChunker / Rules
-	require.Nil(t, d.GlobalChunker)
+	// GlobalChunker is a separate stage (spelling_global); Rules still separate sector.
 	require.Nil(t, d.Rules)
 }
 
