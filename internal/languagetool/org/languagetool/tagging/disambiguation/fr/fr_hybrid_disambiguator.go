@@ -24,12 +24,18 @@ type FrenchHybridDisambiguator struct {
 }
 
 // NewFrenchHybridDisambiguator builds stages Java constructs as final fields.
+// GlobalChunker is wired from official /spelling_global.txt when discoverable
+// (getInstance("/spelling_global.txt", false, true, false, tagForNotAddingTags)
+// + setIgnoreSpelling(true)).
 // Chunker is wired from official /fr/multiwords.txt when discoverable
 // (getInstance("/fr/multiwords.txt", true, true, false)
 // + setRemovePreviousTags(true); no setIgnoreSpelling).
-// GlobalChunker and Rules remain nil until their sectors land.
+// Rules remain nil until the XmlRuleDisambiguator sector lands.
 func NewFrenchHybridDisambiguator() *FrenchHybridDisambiguator {
 	d := &FrenchHybridDisambiguator{}
+	if g := FrenchGlobalChunker(); g != nil {
+		d.GlobalChunker = g
+	}
 	if mw := FrenchMultiWordChunker(); mw != nil {
 		d.Chunker = mw
 	}
