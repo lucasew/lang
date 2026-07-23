@@ -7,23 +7,35 @@ import (
 )
 
 // GermanWordTokenizer ports org.languagetool.tokenizers.de.GermanWordTokenizer.
-// Adds underscore and single low-9 quotation mark ‚ as tokenizing characters.
+// Java: extends WordTokenizer; getTokenizingCharacters = super + "_‚"
+// (‚ = U+201A single low-9 quotation mark, not a comma). tokenize() is
+// inherited from WordTokenizer unchanged (StringTokenizer keep-delims +
+// joinEMailsAndUrls; no DE-only wordsToAdd/currency path).
 type GermanWordTokenizer struct {
-	delims string
+	// Java: private final String deTokenizingChars = super.getTokenizingCharacters() + "_‚";
+	deTokenizingChars string
 }
 
+// NewGermanWordTokenizer ports GermanWordTokenizer().
 func NewGermanWordTokenizer() *GermanWordTokenizer {
 	return &GermanWordTokenizer{
-		delims: tokenizers.TokenizingCharacters() + "_‚",
+		deTokenizingChars: tokenizers.TokenizingCharacters() + "_‚",
 	}
 }
 
-func (w *GermanWordTokenizer) GetTokenizingCharacters() string { return w.delims }
-
-func (w *GermanWordTokenizer) Tokenize(text string) []string {
-	return tokenizers.JoinEMailsAndUrls(splitKeepDelims(text, w.delims))
+// GetTokenizingCharacters ports GermanWordTokenizer.getTokenizingCharacters.
+func (w *GermanWordTokenizer) GetTokenizingCharacters() string {
+	return w.deTokenizingChars
 }
 
+// Tokenize ports the inherited WordTokenizer.tokenize using German delims.
+// Java: StringTokenizer(text, getTokenizingCharacters(), true) then joinEMailsAndUrls.
+func (w *GermanWordTokenizer) Tokenize(text string) []string {
+	raw := splitKeepDelims(text, w.deTokenizingChars)
+	return tokenizers.JoinEMailsAndUrls(raw)
+}
+
+// splitKeepDelims is StringTokenizer(text, delims, true).
 func splitKeepDelims(text, delims string) []string {
 	if text == "" {
 		return nil
