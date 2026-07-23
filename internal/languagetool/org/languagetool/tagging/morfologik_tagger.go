@@ -86,9 +86,16 @@ func (t *MorfologikTagger) Tag(word string) []TaggedWord {
 	if err != nil || len(forms) == 0 {
 		return nil
 	}
+	// Java MorfologikTagger.tag: strip last byte when frequency-included
+	// (freq data is the last byte of the tag, without a separator).
+	freqStrip := d.FrequencyIncluded()
 	out := make([]TaggedWord, 0, len(forms))
 	for _, f := range forms {
-		out = append(out, NewTaggedWord(f.Stem, f.Tag))
+		tag := f.Tag
+		if freqStrip && len(tag) > 1 {
+			tag = tag[:len(tag)-1]
+		}
+		out = append(out, NewTaggedWord(f.Stem, tag))
 	}
 	return out
 }
