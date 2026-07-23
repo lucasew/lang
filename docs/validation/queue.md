@@ -127,6 +127,8 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.1-JapaneseWordTokenizer | accepted | inspiration/languagetool/languagetool-language-modules/ja/src/main/java/org/languagetool/tokenizers/ja/JapaneseWordTokenizer.java; inspiration/languagetool/languagetool-language-modules/ja/src/test/java/org/languagetool/tokenizers/ja/JapaneseWordTokenizerTest.java | internal/languagetool/org/languagetool/tokenizers/ja/ | 528837ae27b4daee7e0dc41af6a255b613d01283 | 0 | 0 | | | 2026-07-23T02:03:44Z |
 | docs/faithful-port-checklist.md#3.A.1-core-WordTokenizer | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tokenizers/WordTokenizer.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/tokenizers/WordTokenizerTest.java | internal/languagetool/org/languagetool/tokenizers/ | 786cbae497100e820762081b9e786763bf3c97af | 0 | 0 | | | 2026-07-23T02:12:25Z |
 
+| docs/faithful-port-checklist.md#3.A.2-DanishTagger-testTagger | ready | inspiration/languagetool/languagetool-language-modules/da/src/main/java/org/languagetool/tagging/da/DanishTagger.java; inspiration/languagetool/languagetool-language-modules/da/src/main/resources/org/languagetool/resource/da/danish.dict; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/tagging/BaseTagger.java | internal/languagetool/org/languagetool/tagging/da/ | 622e8e1a00e32a42debb12bd6ae2e4237cc54058 | 0 | 0 | | | 2026-07-23T08:29:37Z |
+
 ---
 
 ## Human inbox
@@ -137,7 +139,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-UkrainianWordTokenizer` (CAP-revisit attempt=1 CAP=3: ABBR_DOT_2 BOS invent); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | CombiningTagger ACCEPT @ 062d22b6. UK CAP-revisit eligible K≥5. ChineseWord HanLP-blocked. FR hybrid missing french.dict. |
+| Notes | DanishTagger ready @ 622e8e1a (real danish.dict; parent green). UK CAP-revisit eligible K≥5. ChineseWord HanLP-blocked. FR hybrid missing french.dict. |
 
 ---
 
@@ -464,3 +466,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-23T08:15:10Z ready: 3.A.2-CombiningTagger-core-test @ 062d22b6 (implementer report; twin already exact on xx resources; no code change; parent green)
 - 2026-07-23T08:18:48Z validating: 3.A.2-CombiningTagger-core-test @ 062d22b6
 - 2026-07-23T08:20:24Z ACCEPT: 3.A.2-CombiningTagger-core-test @ 062d22b6 (validator + parent green reconfirm; 4/4 twins)
+- 2026-07-23T08:26:15Z implement: 3.A.2-DanishTagger-testTagger (thin BaseTagger + real danish.dict; fix invent /da/da.dict path)
+- 2026-07-23T08:29:37Z ready: 3.A.2-DanishTagger-testTagger @ 622e8e1a (implementer report; real danish.dict; parent go test da tagger green)
