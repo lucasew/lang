@@ -1473,7 +1473,7 @@
 - [ ] org/languagetool/rules/ru/RussianWordRootRepeatRule.java::RussianWordRootRepeatRule
 - [x] org/languagetool/synthesis/ru/RussianSynthesizer.java::RussianSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/ru/RussianHybridDisambiguator.java::RussianHybridDisambiguator
-- [ ] org/languagetool/tagging/ru/RussianTagger.java::RussianTagger
+- [x] org/languagetool/tagging/ru/RussianTagger.java::RussianTagger
 - [x] org/languagetool/tokenizers/ru/RussianWordTokenizer.java::RussianWordTokenizer
 
 ## languagetool-language-modules/sk
