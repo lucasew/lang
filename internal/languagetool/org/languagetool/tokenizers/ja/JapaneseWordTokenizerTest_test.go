@@ -1,6 +1,8 @@
 package ja
 
-// Twin of JapaneseWordTokenizerTest — kagome/IPA mirrors Java Sen (lucene-gosen).
+// Twin of org.languagetool.tokenizers.ja.JapaneseWordTokenizerTest
+// (inspiration/languagetool/.../tokenizers/ja/JapaneseWordTokenizerTest.java).
+// Asserts full Java-visible token lists (surface POS basicForm), not smoke-only.
 import (
 	"testing"
 
@@ -8,25 +10,22 @@ import (
 )
 
 func TestJapaneseWordTokenizer_Tokenize(t *testing.T) {
-	tok := NewJapaneseWordTokenizer()
-	// custom segmenter path
-	tok.Segment = func(text string) []string {
-		return []string{"日本 名詞-一般 日本", "語 名詞-一般 語"}
-	}
-	require.Equal(t, []string{"日本 名詞-一般 日本", "語 名詞-一般 語"}, tok.Tokenize("日本語"))
+	w := NewJapaneseWordTokenizer()
 
-	// Java twin: これはペンです。
-	got := NewJapaneseWordTokenizer().Tokenize("これはペンです。")
+	// Java: tokenize("これはペンです。") → size 5, exact list toString
+	testList := w.Tokenize("これはペンです。")
+	require.Equal(t, 5, len(testList))
 	require.Equal(t, []string{
 		"これ 名詞-代名詞-一般 これ",
 		"は 助詞-係助詞 は",
 		"ペン 名詞-一般 ペン",
 		"です 助動詞 です",
 		"。 記号-句点 。",
-	}, got)
+	}, testList)
 
-	// Second Java example (答えた stem 答え + た).
-	got2 := NewJapaneseWordTokenizer().Tokenize("私は「うん、そうだ」と答えた。")
+	// Java: tokenize("私は「うん、そうだ」と答えた。") → size 12, exact list
+	testList = w.Tokenize("私は「うん、そうだ」と答えた。")
+	require.Equal(t, 12, len(testList))
 	require.Equal(t, []string{
 		"私 名詞-代名詞-一般 私",
 		"は 助詞-係助詞 は",
@@ -40,5 +39,5 @@ func TestJapaneseWordTokenizer_Tokenize(t *testing.T) {
 		"答え 動詞-自立 答える",
 		"た 助動詞 た",
 		"。 記号-句点 。",
-	}, got2)
+	}, testList)
 }
