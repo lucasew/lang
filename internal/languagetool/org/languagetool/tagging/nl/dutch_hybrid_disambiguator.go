@@ -23,8 +23,8 @@ type DutchHybridDisambiguator struct {
 // GlobalChunker is wired from official /spelling_global.txt when discoverable
 // (Java MultiWordChunker.getInstance(..., false, true, false, tagForNotAddingTags)
 // + setIgnoreSpelling(true)). Chunker is wired from official /nl/multiwords.txt
-// when discoverable (allowFirstCapitalized=true). Rules remain optional injectors
-// until that sector lands.
+// when discoverable (allowFirstCapitalized=true). Rules is wired from official
+// nl/disambiguation.xml + disambiguation-global.xml (Java XmlRuleDisambiguator(lang, true)).
 func NewDutchHybridDisambiguator() *DutchHybridDisambiguator {
 	d := &DutchHybridDisambiguator{}
 	if g := DutchGlobalChunker(); g != nil {
@@ -32,6 +32,9 @@ func NewDutchHybridDisambiguator() *DutchHybridDisambiguator {
 	}
 	if mw := DutchMultiWordChunker(); mw != nil {
 		d.Chunker = mw
+	}
+	if xml := DutchXmlRuleDisambiguator(); xml != nil {
+		d.Rules = xml
 	}
 	return d
 }
