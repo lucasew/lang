@@ -16,6 +16,12 @@ import (
 var (
 	englishHybridOnce sync.Once
 	englishHybridInst *EnglishHybridDisambiguator
+
+	enXmlHybridOnce sync.Once
+	enXmlHybridInst *disambigrules.XmlRuleDisambiguator
+
+	enXmlLocalOnce sync.Once
+	enXmlLocalInst *disambigrules.XmlRuleDisambiguator
 )
 
 // DefaultEnglishHybridDisambiguator returns a process singleton matching Java
@@ -41,25 +47,40 @@ func loadEnglishHybridDisambiguator() *EnglishHybridDisambiguator {
 		d.Chunker = c
 	}
 	// Java: new XmlRuleDisambiguator(lang, true) — language + global XML
-	if xml := loadENXmlRuleDisambiguator(true); xml != nil && len(xml.Rules) > 0 {
+	if xml := EnglishHybridXmlRuleDisambiguator(); xml != nil && len(xml.Rules) > 0 {
 		d.RulesDisambiguator = xml
 	}
 	return d
 }
 
+// EnglishHybridXmlRuleDisambiguator ports Java new XmlRuleDisambiguator(lang, true)
+// as used by EnglishHybridDisambiguator: official en/disambiguation.xml then
+// disambiguation-global.xml (useGlobalDisambiguation=true). Process-cached.
+func EnglishHybridXmlRuleDisambiguator() *disambigrules.XmlRuleDisambiguator {
+	enXmlHybridOnce.Do(func() {
+		enXmlHybridInst = loadENXmlRuleDisambiguator(true)
+	})
+	return enXmlHybridInst
+}
+
 // EnglishXmlRuleDisambiguator ports Java new XmlRuleDisambiguator(English)
 // (useGlobalDisambiguation=false). Used by EnglishDisambiguationRuleTest.setUp.
+// Process-cached EN-only pack (no disambiguation-global.xml).
 func EnglishXmlRuleDisambiguator() *disambigrules.XmlRuleDisambiguator {
-	return loadENXmlRuleDisambiguator(false)
+	enXmlLocalOnce.Do(func() {
+		enXmlLocalInst = loadENXmlRuleDisambiguator(false)
+	})
+	return enXmlLocalInst
 }
 
 // loadENXmlRuleDisambiguator ports XmlRuleDisambiguator(English, useGlobalDisambiguation).
+// Language XML first; when useGlobal, append official disambiguation-global.xml.
 func loadENXmlRuleDisambiguator(useGlobal bool) *disambigrules.XmlRuleDisambiguator {
 	var all []*disambigrules.DisambiguationPatternRule
 	var uni *patterns.UnifierConfiguration
 	loader := disambigrules.NewDisambiguationRuleLoader()
 
-	if p := discoverENDisambiguationXML(); p != "" {
+	if p := DiscoverEnglishDisambiguationXML(); p != "" {
 		if rules, u, err := loadDisambigFile(loader, p, "en"); err == nil {
 			all = append(all, rules...)
 			if uni == nil {
@@ -68,7 +89,7 @@ func loadENXmlRuleDisambiguator(useGlobal bool) *disambigrules.XmlRuleDisambigua
 		}
 	}
 	if useGlobal {
-		if p := discoverGlobalDisambiguationXML(); p != "" {
+		if p := DiscoverGlobalDisambiguationXML(); p != "" {
 			if rules, u, err := loadDisambigFile(loader, p, "global"); err == nil {
 				all = append(all, rules...)
 				if uni == nil {
@@ -94,7 +115,14 @@ func loadDisambigFile(loader *disambigrules.DisambiguationRuleLoader, path, lang
 	return loader.GetRulesAndUnifierFromReader(f, langCode, path)
 }
 
-func discoverENDisambiguationXML() string {
+// DiscoverEnglishDisambiguationXML finds official en/disambiguation.xml
+// (Java resource /en/disambiguation.xml used by XmlRuleDisambiguator(English, …)).
+func DiscoverEnglishDisambiguationXML() string {
+	if p := os.Getenv("LANG_EN_DISAMBIGUATION_FILE"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
 	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 			return p
@@ -104,7 +132,10 @@ func discoverENDisambiguationXML() string {
 		"src", "main", "resources", "org", "languagetool", "resource", "en", "disambiguation.xml"))
 }
 
-func discoverGlobalDisambiguationXML() string {
+// DiscoverGlobalDisambiguationXML finds official disambiguation-global.xml
+// (Java resource /org/languagetool/resource/disambiguation-global.xml).
+// Twin of nl/fr discoverers for EnglishHybrid useGlobal=true.
+func DiscoverGlobalDisambiguationXML() string {
 	if p := os.Getenv("LANG_DISAMBIGUATION_GLOBAL"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 			return p
