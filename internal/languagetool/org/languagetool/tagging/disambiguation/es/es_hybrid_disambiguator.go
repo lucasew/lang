@@ -19,8 +19,17 @@ type SpanishHybridDisambiguator struct {
 	Rules         sentenceStep
 }
 
+// NewSpanishHybridDisambiguator builds stages Java constructs as final fields.
+// Chunker is wired from official /es/multiwords.txt when discoverable
+// (Java MultiWordChunker.getInstance("/es/multiwords.txt", true, true, false)
+// + setRemovePreviousTags(true); no setIgnoreSpelling).
+// GlobalChunker and Rules are left nil here (separate sectors).
 func NewSpanishHybridDisambiguator() *SpanishHybridDisambiguator {
-	return &SpanishHybridDisambiguator{}
+	d := &SpanishHybridDisambiguator{}
+	if mw := SpanishMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
+	return d
 }
 
 func (d *SpanishHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
