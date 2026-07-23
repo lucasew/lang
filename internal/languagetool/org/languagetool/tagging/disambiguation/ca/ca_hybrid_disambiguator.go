@@ -22,12 +22,18 @@ type CatalanHybridDisambiguator struct {
 }
 
 // NewCatalanHybridDisambiguator builds stages Java constructs as final fields.
+// GlobalChunker is wired from official /spelling_global.txt when discoverable
+// (getInstance("/spelling_global.txt", false, true, false, "NPCN000");
+// no setIgnoreSpelling; no setRemovePreviousTags).
 // Chunker is wired from official /ca/multiwords.txt when discoverable
 // (getInstance("/ca/multiwords.txt", true, true, false)
 // + setRemovePreviousTags(true); no setIgnoreSpelling).
-// GlobalChunker / Rules / Multitoken remain unwired until their sectors land.
+// Rules / Multitoken remain unwired until their sectors land.
 func NewCatalanHybridDisambiguator() *CatalanHybridDisambiguator {
 	d := &CatalanHybridDisambiguator{}
+	if g := CatalanGlobalChunker(); g != nil {
+		d.GlobalChunker = g
+	}
 	if mw := CatalanMultiWordChunker(); mw != nil {
 		d.Chunker = mw
 	}
