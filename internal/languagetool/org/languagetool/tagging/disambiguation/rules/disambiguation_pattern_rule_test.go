@@ -174,3 +174,61 @@ func TestDisambiguationPatternRule_AddChunk(t *testing.T) {
 	require.True(t, foundB, "expected B-NP chunk on New")
 	require.True(t, foundI, "expected I-NP chunk on York")
 }
+
+// TestDisambiguationPatternRule_ReplaceLemmaFallbackEmptyOnly ports Java
+// DisambiguationPatternRuleReplacer REPLACE (~320–329): after scanning for exact
+// POS match lemma, fall back to getAnalyzedToken(0).getLemma() only when the
+// collected lemma is empty — not when the matched lemma equals the surface form.
+func TestDisambiguationPatternRule_ReplaceLemmaFallbackEmptyOnly(t *testing.T) {
+	// Token "a" with dict-like order: first reading mont/V…, later a/P.
+	// REPLACE to P must keep lemma "a", not overwrite with token0 "mont".
+	posV, posP := "V", "P"
+	lemmaMont, lemmaA := "mont", "a"
+	orig := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("a", &posV, &lemmaMont), 0)
+	orig.AddReading(languagetool.NewAnalyzedToken("a", &posP, &lemmaA), "tagger")
+	toks := []*languagetool.AnalyzedTokenReadings{sentStart(), orig}
+	sent := languagetool.NewAnalyzedSentence(toks)
+
+	rule := NewDisambiguationPatternRule(
+		"PREP_A", "a → P", "br",
+		[]*patterns.PatternToken{patterns.Token("a")},
+		"P", nil, ActionReplace,
+	)
+	out := rule.Replace(sent)
+	var aOut *languagetool.AnalyzedTokenReadings
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok != nil && tok.GetToken() == "a" {
+			aOut = tok
+		}
+	}
+	require.NotNil(t, aOut)
+	require.Len(t, aOut.GetReadings(), 1)
+	require.Equal(t, "P", *aOut.GetReadings()[0].GetPOSTag())
+	require.NotNil(t, aOut.GetReadings()[0].GetLemma())
+	require.Equal(t, "a", *aOut.GetReadings()[0].GetLemma(),
+		"REPLACE must keep POS-matched lemma, not surface==lemma fallback to token0")
+
+	// No matching POS: lemma stays empty → fallback to token0 lemma (may be null).
+	posX := "X"
+	untagged := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("XXI", nil, nil), 0)
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{sentStart(), untagged})
+	rule2 := NewDisambiguationPatternRule(
+		"XXI", "roman", "br",
+		[]*patterns.PatternToken{patterns.Token("XXI")},
+		posX, nil, ActionReplace,
+	)
+	out2 := rule2.Replace(sent2)
+	var xOut *languagetool.AnalyzedTokenReadings
+	for _, tok := range out2.GetTokensWithoutWhitespace() {
+		if tok != nil && tok.GetToken() == "XXI" {
+			xOut = tok
+		}
+	}
+	require.NotNil(t, xOut)
+	require.Len(t, xOut.GetReadings(), 1)
+	require.Equal(t, "X", *xOut.GetReadings()[0].GetPOSTag())
+	require.Nil(t, xOut.GetReadings()[0].GetLemma(),
+		"empty-lemma fallback uses token0 lemma (null here), not surface as lemma")
+}

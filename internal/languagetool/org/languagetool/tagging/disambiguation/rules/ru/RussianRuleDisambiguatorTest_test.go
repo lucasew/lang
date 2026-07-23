@@ -137,7 +137,7 @@ func TestRussianRuleDisambiguator_NumD_D_73Procenta(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START 73/[73]NumD_D  /[null]null процента/[процент]NN:Inanim:Masc:Sin:R",
+		"/[null]SENT_START 73/[null]NumD_D  /[null]null процента/[процент]NN:Inanim:Masc:Sin:R",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml NumD_D_tag")
 }
@@ -151,7 +151,7 @@ func TestRussianRuleDisambiguator_NumD_S_71Procent(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START 71/[71]NumD_S  /[null]null процент/[процент]NN:Inanim:Masc:Sin:Nom|процент/[процент]NN:Inanim:Masc:Sin:V",
+		"/[null]SENT_START 71/[null]NumD_S  /[null]null процент/[процент]NN:Inanim:Masc:Sin:Nom|процент/[процент]NN:Inanim:Masc:Sin:V",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml NumD_S_tag")
 }
@@ -165,7 +165,7 @@ func TestRussianRuleDisambiguator_NumD_P_Procentov(t *testing.T) {
 		myAssertDisambiguate("75 процентов", demo),
 		"demo 75")
 	require.Equal(t,
-		"/[null]SENT_START 75/[75]NumD_P  /[null]null процентов/[процент]NN:Inanim:Masc:PL:R",
+		"/[null]SENT_START 75/[null]NumD_P  /[null]null процентов/[процент]NN:Inanim:Masc:PL:R",
 		myAssertDisambiguate("75 процентов", xmlDisam),
 		"xml NumD_P_tag 75")
 
@@ -174,7 +174,7 @@ func TestRussianRuleDisambiguator_NumD_P_Procentov(t *testing.T) {
 		myAssertDisambiguate("11 процентов", demo),
 		"demo 11")
 	require.Equal(t,
-		"/[null]SENT_START 11/[11]NumD_P  /[null]null процентов/[процент]NN:Inanim:Masc:PL:R",
+		"/[null]SENT_START 11/[null]NumD_P  /[null]null процентов/[процент]NN:Inanim:Masc:PL:R",
 		myAssertDisambiguate("11 процентов", xmlDisam),
 		"xml NumD_P_tag 11")
 }

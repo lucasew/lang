@@ -123,7 +123,7 @@ func TestGalicianRuleDisambiguator_QuotOpenSentenceStart(t *testing.T) {
 	// QUOT open: disambig postag "``"; PUNCT adds _PUNCT on '.'.
 	// (backticks are the open-quote POS tag from official gl/disambiguation.xml)
 	require.Equal(t,
-		"/[null]SENT_START \"/[\"]"+"``"+" Um/[null]null  /[null]null teste/[ter]VMIP2S0:PP2CSA00|teste/[testar]VMM03S0|teste/[testar]VMSP1S0|teste/[testar]VMSP3S0 ./[.]_PUNCT",
+		"/[null]SENT_START \"/[null]"+"``"+" Um/[null]null  /[null]null teste/[ter]VMIP2S0:PP2CSA00|teste/[testar]VMM03S0|teste/[testar]VMSP1S0|teste/[testar]VMSP3S0 ./[.]_PUNCT",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml QUOT open + PUNCT")
 }

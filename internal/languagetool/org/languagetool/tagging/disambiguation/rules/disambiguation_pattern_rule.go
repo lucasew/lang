@@ -592,21 +592,27 @@ func (r *DisambiguationPatternRule) applyAction(
 		if r.DisambiguatedPOS == "" {
 			return
 		}
+		// Java REPLACE (matchElement==null): scan readings for exact POS match lemma;
+		// fall back to getAnalyzedToken(0).getLemma() only when lemma is empty
+		// (StringTools.isEmpty), not when lemma equals surface.
 		surface := nws[first].GetToken()
-		lemma := surface
+		lemma := ""
 		for _, reading := range nws[first].GetReadings() {
-			if reading.GetPOSTag() != nil && *reading.GetPOSTag() == r.DisambiguatedPOS && reading.GetLemma() != nil {
-				lemma = *reading.GetLemma()
-				break
+			if reading != nil && reading.GetPOSTag() != nil && *reading.GetPOSTag() == r.DisambiguatedPOS && reading.GetLemma() != nil {
+				lemma = *reading.GetLemma() // last match wins (Java overwrites, no break)
 			}
 		}
-		if lemma == surface {
-			if at := nws[first].GetAnalyzedToken(0); at != nil && at.GetLemma() != nil && *at.GetLemma() != "" {
-				lemma = *at.GetLemma()
+		var lemmaPtr *string
+		if tools.IsEmptyStr(lemma) {
+			if at := nws[first].GetAnalyzedToken(0); at != nil {
+				lemmaPtr = at.GetLemma() // may be nil, matching Java
 			}
+		} else {
+			l := lemma
+			lemmaPtr = &l
 		}
 		pos := r.DisambiguatedPOS
-		newTok := languagetool.NewAnalyzedToken(surface, &pos, &lemma)
+		newTok := languagetool.NewAnalyzedToken(surface, &pos, lemmaPtr)
 		setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], []*languagetool.AnalyzedToken{newTok}, r.ID))
 	case ActionFilter:
 		// Java FILTER: when matchElement==null, build Match(disambiguatedPOS, postagRegexp)

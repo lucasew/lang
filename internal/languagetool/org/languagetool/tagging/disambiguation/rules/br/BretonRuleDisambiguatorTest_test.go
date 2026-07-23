@@ -118,7 +118,7 @@ func TestBretonRuleDisambiguator_XXIRoman(t *testing.T) {
 		myAssertDisambiguate("XXI", demo),
 		"demo XXI")
 	require.Equal(t,
-		"/[null]SENT_START XXI/[XXI]K e sp",
+		"/[null]SENT_START XXI/[null]K e sp",
 		myAssertDisambiguate("XXI", xmlDisam),
 		"xml XXI")
 
@@ -127,7 +127,7 @@ func TestBretonRuleDisambiguator_XXIRoman(t *testing.T) {
 		myAssertDisambiguate("XXI-vet", demo),
 		"demo XXI-vet")
 	require.Equal(t,
-		"/[null]SENT_START XXI-vet/[XXI-vet]K e sp o",
+		"/[null]SENT_START XXI-vet/[null]K e sp o",
 		myAssertDisambiguate("XXI-vet", xmlDisam),
 		"xml XXI-vet")
 
@@ -136,7 +136,7 @@ func TestBretonRuleDisambiguator_XXIRoman(t *testing.T) {
 		myAssertDisambiguate("Iañ", demo),
 		"demo Iañ")
 	require.Equal(t,
-		"/[null]SENT_START Iañ/[Iañ]K e sp o",
+		"/[null]SENT_START Iañ/[null]K e sp o",
 		myAssertDisambiguate("Iañ", xmlDisam),
 		"xml Iañ")
 }
@@ -150,7 +150,7 @@ func TestBretonRuleDisambiguator_PrepAKalz(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START kalz/[kalz]A|kalz/[kalz]N m s|kalz/[kalz]P  /[null]null a/[mont]P  /[null]null dud/[den]N m p t M:1:1a",
+		"/[null]SENT_START kalz/[kalz]A|kalz/[kalz]N m s|kalz/[kalz]P  /[null]null a/[a]P  /[null]null dud/[den]N m p t M:1:1a",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml PREP_A kalz a dud")
 }
@@ -313,7 +313,7 @@ func TestBretonRuleDisambiguator_PeInt(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START pe/[bezañ]J itg  /[null]null den/[den]A|den/[den]N m s|den/[denañ]V impe 2 s|den/[denañ]V pres 3 s",
+		"/[null]SENT_START pe/[pe]J itg  /[null]null den/[den]A|den/[den]N m s|den/[denañ]V impe 2 s|den/[denañ]V pres 3 s",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml PE_INT pe den")
 }
@@ -327,7 +327,7 @@ func TestBretonRuleDisambiguator_RaL(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START ra/[ober]L r  /[null]null vo/[bezañ]V futu 3 s M:1:1a:1b:4:",
+		"/[null]SENT_START ra/[ra]L r  /[null]null vo/[bezañ]V futu 3 s M:1:1a:1b:4:",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml RA_L ra vo")
 }
@@ -341,12 +341,12 @@ func TestBretonRuleDisambiguator_MontARa(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START mont/[mont]V inf  /[null]null a/[mont]L a  /[null]null ra/[ober]V pres 3 s",
+		"/[null]SENT_START mont/[mont]V inf  /[null]null a/[a]L a  /[null]null ra/[ober]V pres 3 s",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml RA_V mont a ra")
 }
 
-// GANT: sentence-initial gant → P (replace; lemma may keep first reading).
+// GANT: sentence-initial gant → P (REPLACE keeps matching POS lemma "gant").
 func TestBretonRuleDisambiguator_GantStart(t *testing.T) {
 	demo, xmlDisam := setupBRDisambiguation(t)
 	const input = "gant den"
@@ -355,7 +355,7 @@ func TestBretonRuleDisambiguator_GantStart(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START gant/[kant]P  /[null]null den/[den]A|den/[den]N m s|den/[denañ]V impe 2 s|den/[denañ]V pres 3 s",
+		"/[null]SENT_START gant/[gant]P  /[null]null den/[den]A|den/[den]N m s|den/[denañ]V impe 2 s|den/[denañ]V pres 3 s",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml GANT gant den")
 }
@@ -383,7 +383,7 @@ func TestBretonRuleDisambiguator_MeALabour(t *testing.T) {
 		myAssertDisambiguate(input, demo),
 		"demo disambiguator")
 	require.Equal(t,
-		"/[null]SENT_START Me/[me]R suj e s 1  /[null]null a/[mont]L a  /[null]null labour/[labour]N m s|labour/[labourat]V pres 3 s",
+		"/[null]SENT_START Me/[me]R suj e s 1  /[null]null a/[a]L a  /[null]null labour/[labour]N m s|labour/[labourat]V pres 3 s",
 		myAssertDisambiguate(input, xmlDisam),
 		"xml O Me a labour")
 }
