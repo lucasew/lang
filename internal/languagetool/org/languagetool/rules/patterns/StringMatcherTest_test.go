@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/require"
 )
@@ -47,6 +48,23 @@ func TestStringMatcher_GetPossibleValues(t *testing.T) {
 	vals = GetPossibleRegexpValues("NN|PRP\\$")
 	require.Contains(t, vals, "NN")
 	require.Contains(t, vals, "PRP$")
+
+	// Multi-byte UTF-8 + optional quantifier must expand by rune (Java charAt),
+	// not by byte — otherwise combining marks / Cyrillic corrupt possible values.
+	// Official uk/disambiguation.xml conj_or_part_da: [ГҐ]а́?мм?а
+	vals = GetPossibleRegexpValues("[ГҐ]а́?мм?а")
+	require.NotNil(t, vals)
+	require.Contains(t, vals, "Гамма")
+	require.Contains(t, vals, "Ґамма")
+	// with optional combining acute after first а
+	require.Contains(t, vals, "Га́мма")
+	// single-м variants (мм?)
+	require.Contains(t, vals, "Гама")
+	// no UTF-8 replacement / truncated sequences
+	for v := range vals {
+		require.NotContains(t, v, "\uFFFD")
+		require.True(t, utf8.ValidString(v), "invalid UTF-8 possible value %q", v)
+	}
 
 	m := NewStringMatcherRegexp("aa|bb")
 	require.True(t, m.Matches("aa"))

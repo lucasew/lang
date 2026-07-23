@@ -374,16 +374,23 @@ func (p *subParser) atom() (Substrings, bool) {
 		p.pos++
 		return unknownSubstrings(), true
 	default:
+		// Java RegexpParser.atom: scan with charAt (UTF-16 units ≈ Go runes for BMP).
+		// Must not step by raw bytes — multi-byte Cyrillic / combining marks break
+		// optional-? shrink (e.g. uk "а́?мм?а" → corrupt hints → CanBeIgnoredFor false negative).
 		start := p.pos
 		for p.pos < len(p.s) {
-			c := p.s[p.pos]
-			if strings.ContainsRune(")|?$^{}*+([\\.", rune(c)) {
+			c, size := utf8.DecodeRuneInString(p.s[p.pos:])
+			if strings.ContainsRune(")|?$^{}*+([\\.", c) {
 				break
 			}
-			p.pos++
+			p.pos += size
 		}
-		if start+1 < p.pos && p.pos < len(p.s) && p.s[p.pos] == '?' {
-			p.pos--
+		if start < p.pos && p.pos < len(p.s) && p.s[p.pos] == '?' {
+			// Java: if multi-char literal and next is ?, shrink so ? applies to last char only.
+			_, lastSize := utf8.DecodeLastRuneInString(p.s[start:p.pos])
+			if p.pos-lastSize > start {
+				p.pos -= lastSize
+			}
 		}
 		return NewSubstrings(true, true, []string{p.s[start:p.pos]}), true
 	}
@@ -585,17 +592,23 @@ func (p *reParser) atom() ([]string, bool) {
 	case '.':
 		return nil, false
 	default:
+		// Java RegexpParser.atom: charAt-based scan (UTF-16 units ≈ Go runes for BMP).
+		// Step by rune, not byte — otherwise multi-byte chars + trailing ? corrupt expansions
+		// (e.g. uk disambiguation "а́?мм?а" / "Гамма" token hints).
 		start := p.pos
 		for p.pos < len(p.s) {
-			c := p.s[p.pos]
-			if strings.ContainsRune(")|?$^{}*+([\\.", rune(c)) {
+			c, size := utf8.DecodeRuneInString(p.s[p.pos:])
+			if strings.ContainsRune(")|?$^{}*+([\\.", c) {
 				break
 			}
-			p.pos++
+			p.pos += size
 		}
 		// Java: if next is ? and multi-char literal, shrink so ? applies to last char only
-		if start+1 < p.pos && p.pos < len(p.s) && p.s[p.pos] == '?' {
-			p.pos--
+		if start < p.pos && p.pos < len(p.s) && p.s[p.pos] == '?' {
+			_, lastSize := utf8.DecodeLastRuneInString(p.s[start:p.pos])
+			if p.pos-lastSize > start {
+				p.pos -= lastSize
+			}
 		}
 		return []string{p.s[start:p.pos]}, true
 	}

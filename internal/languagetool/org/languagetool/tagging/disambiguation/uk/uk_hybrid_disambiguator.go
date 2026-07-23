@@ -19,7 +19,7 @@ func NewUkrainianHybridDisambiguator() *UkrainianHybridDisambiguator {
 	// Java: multiwords + XmlRuleDisambiguator(Ukrainian) + SimpleDisambiguator pre
 	return &UkrainianHybridDisambiguator{
 		Chunker: UkrainianMultiwordChunkerDefault(),
-		Inner:   LoadDefaultUkrainianXmlDisambiguator(),
+		Inner:   UkrainianXmlRuleDisambiguator(),
 		Simple:  NewSimpleDisambiguator(),
 	}
 }
