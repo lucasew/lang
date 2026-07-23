@@ -20,12 +20,18 @@ type PortugueseHybridDisambiguator struct {
 }
 
 // NewPortugueseHybridDisambiguator builds stages Java constructs as final fields.
+// GlobalChunker is wired from official /spelling_global.txt when discoverable
+// (getInstance("/spelling_global.txt", false, true, true, "NPCN000")
+// + setIgnoreSpelling(true); no setRemovePreviousTags).
 // Chunker is wired from official /pt/multiwords.txt when discoverable
 // (getInstance("/pt/multiwords.txt", true, true, true)
 // + setRemovePreviousTags(true) + setIgnoreSpelling(true)).
-// GlobalChunker and Rules stay nil until their sectors land.
+// Rules stay nil until the XmlRule sector lands.
 func NewPortugueseHybridDisambiguator() *PortugueseHybridDisambiguator {
 	d := &PortugueseHybridDisambiguator{}
+	if g := PortugueseGlobalChunker(); g != nil {
+		d.GlobalChunker = g
+	}
 	if mw := PortugueseMultiWordChunker(); mw != nil {
 		d.Chunker = mw
 	}

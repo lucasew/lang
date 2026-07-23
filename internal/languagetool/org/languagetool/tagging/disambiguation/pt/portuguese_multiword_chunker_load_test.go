@@ -42,8 +42,11 @@ func TestPortugueseMultiWordChunker_ProcessCachedOfficial(t *testing.T) {
 	d := NewPortugueseHybridDisambiguator()
 	require.NotNil(t, d.Chunker)
 	require.Same(t, a, d.Chunker)
-	// GlobalChunker / Rules remain nil in this sector
-	require.Nil(t, d.GlobalChunker)
+	// GlobalChunker wired when spelling_global.txt is discoverable; Rules stay nil
+	if PortugueseGlobalChunker() != nil {
+		require.NotNil(t, d.GlobalChunker)
+		require.Same(t, PortugueseGlobalChunker(), d.GlobalChunker)
+	}
 	require.Nil(t, d.Rules)
 }
 
