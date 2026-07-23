@@ -15,60 +15,105 @@ type PolishTagger struct {
 	*tagging.BaseTagger
 }
 
+// NewPolishTagger builds a PolishTagger over the given WordTagger
+// (Java: super("/pl/polish.dict", new Locale("pl"))).
 func NewPolishTagger(wt tagging.WordTagger) *PolishTagger {
+	// Java BaseTagger ctor sets tagLowercaseWithUppercase true by default, but
+	// PolishTagger overrides tag() entirely and does not call getAnalyzedTokens.
 	return &PolishTagger{BaseTagger: tagging.NewBaseTagger(wt, PolishDictPath, "pl", false)}
 }
 
+// Tag ports PolishTagger.tag — exact WordTagger lookups with Polish-specific
+// case retries and POS tags split on '+'.
 func (t *PolishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
 	if t == nil {
 		return nil
 	}
-	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
+	tokenReadings := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
+
 	for _, word := range sentenceTokens {
-		w := word
-		if strings.Contains(w, "’") {
-			w = strings.ReplaceAll(w, "’", "'")
+		var l []*languagetool.AnalyzedToken
+		// Java: word.toLowerCase(locale) with Locale("pl") — Polish maps like Unicode.
+		lowerWord := strings.ToLower(word)
+		taggerTokens := asAnalyzedTokenListForTaggedWords(word, t.TagWordExact(word))
+		lowerTaggerTokens := asAnalyzedTokenListForTaggedWords(word, t.TagWordExact(lowerWord))
+		isLowercase := word == lowerWord
+
+		// normal case
+		l = addTokens(taggerTokens, l)
+
+		if !isLowercase {
+			// lowercase (Java: always when surface ≠ lower, including mixed case)
+			l = addTokens(lowerTaggerTokens, l)
 		}
-		var readings []*languagetool.AnalyzedToken
-		// Java PolishTagger uses getWordTagger().tag (exact) — not BaseTagger.getAnalyzedTokens.
-		for _, tw := range t.TagWordExact(w) {
-			readings = append(readings, tagged(word, tw))
-		}
-		lower := strings.ToLower(w)
-		// Java: if (!isLowercase) addTokens(lowerTaggerTokens) — always, including mixed case.
-		if w != lower {
-			for _, tw := range t.TagWordExact(lower) {
-				readings = append(readings, tagged(word, tw))
-			}
-		}
-		// uppercase first-char only when both empty and surface is lower (Java PolishTagger)
-		if len(readings) == 0 && w == lower {
-			title := tools.UppercaseFirstChar(w)
-			if title != w {
-				for _, tw := range t.TagWordExact(title) {
-					readings = append(readings, tagged(word, tw))
+
+		// uppercase
+		if len(lowerTaggerTokens) == 0 && len(taggerTokens) == 0 {
+			if isLowercase {
+				upperTaggerTokens := asAnalyzedTokenListForTaggedWords(word,
+					t.TagWordExact(tools.UppercaseFirstChar(word)))
+				if len(upperTaggerTokens) > 0 {
+					l = addTokens(upperTaggerTokens, l)
+				} else {
+					l = append(l, languagetool.NewAnalyzedToken(word, nil, nil))
 				}
+			} else {
+				l = append(l, languagetool.NewAnalyzedToken(word, nil, nil))
 			}
 		}
-		if len(readings) == 0 {
-			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
-		}
-		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+		tokenReadings = append(tokenReadings, languagetool.NewAnalyzedTokenReadingsList(l, pos))
+		// Java: pos += word.length() (UTF-16 code units)
 		pos += tagging.UTF16Len(word)
+	}
+
+	return tokenReadings
+}
+
+// asAnalyzedTokenListForTaggedWords ports BaseTagger.asAnalyzedTokenListForTaggedWords
+// used by PolishTagger.tag (surface form is the original word).
+func asAnalyzedTokenListForTaggedWords(word string, taggedWords []tagging.TaggedWord) []*languagetool.AnalyzedToken {
+	if len(taggedWords) == 0 {
+		return nil
+	}
+	out := make([]*languagetool.AnalyzedToken, 0, len(taggedWords))
+	for _, tw := range taggedWords {
+		var pos, lemma *string
+		if tw.PosTag != "" {
+			p := tw.PosTag
+			pos = &p
+		}
+		if tw.Lemma != "" {
+			l := tw.Lemma
+			lemma = &l
+		}
+		out = append(out, languagetool.NewAnalyzedToken(word, pos, lemma))
 	}
 	return out
 }
 
-func tagged(surface string, tw tagging.TaggedWord) *languagetool.AnalyzedToken {
-	var pos, lemma *string
-	if tw.PosTag != "" {
-		p := tw.PosTag
-		pos = &p
+// addTokens ports PolishTagger.addTokens: each POS tag is split on '+' into
+// separate AnalyzedToken readings sharing token and lemma.
+func addTokens(taggedTokens, l []*languagetool.AnalyzedToken) []*languagetool.AnalyzedToken {
+	if taggedTokens == nil {
+		return l
 	}
-	if tw.Lemma != "" {
-		l := tw.Lemma
-		lemma = &l
+	for _, at := range taggedTokens {
+		if at == nil {
+			continue
+		}
+		// Java: StringTools.asString(at.getPOSTag()).split("\\+")
+		// asString(null) → null → NPE; dictionary readings always carry a tag.
+		posStr := ""
+		if p := at.GetPOSTag(); p != nil {
+			posStr = *p
+		}
+		tagsArr := strings.Split(posStr, "+")
+		lemma := at.GetLemma()
+		for _, currTag := range tagsArr {
+			tag := currTag
+			l = append(l, languagetool.NewAnalyzedToken(at.GetToken(), &tag, lemma))
+		}
 	}
-	return languagetool.NewAnalyzedToken(surface, pos, lemma)
+	return l
 }
