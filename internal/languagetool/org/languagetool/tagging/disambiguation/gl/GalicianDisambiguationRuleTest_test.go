@@ -92,9 +92,9 @@ func TestGalicianHybridDisambiguator_ChunkerLoad(t *testing.T) {
 		t.Skip("galician.dict not in tree")
 	}
 	chunker := loadGalicianMultiWordChunker(t)
-	h := NewGalicianHybridDisambiguator()
-	h.Chunker = chunker
-	// multiwords-only path (Rules nil): same as chunker stage
+	// Multiword isolation: Rules=nil still chunks (Java stage order MW→XML).
+	// NewGalicianHybridDisambiguator() eagerly wires XmlRuleDisambiguator when XML present.
+	h := NewGalicianHybridDisambiguatorWithStages(chunker, nil)
 	got := myAssertGalicianChunker("abaixo de", h)
 	want := "/[null]SENT_START abaixo/[abaixar]VMIP1S0|abaixo/[abaixo de]<SP000>|abaixo/[abaixo]RG  /[null]null de/[abaixo de]</SP000>|de/[de]NCMS000|de/[de]SPS00"
 	require.Equal(t, want, got)
