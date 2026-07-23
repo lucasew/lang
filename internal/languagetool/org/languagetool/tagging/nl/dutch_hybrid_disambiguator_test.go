@@ -7,9 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDutchHybridDisambiguator(t *testing.T) {
+// PreDisambiguate is AbstractDisambiguator identity (Java DutchHybrid has no override).
+// Full Disambiguate outcomes: dutch_hybrid_disambiguator_order_test.go.
+func TestDutchHybridDisambiguator_PreDisambiguateIdentity(t *testing.T) {
 	d := NewDutchHybridDisambiguator()
 	s := languagetool.AnalyzePlain("Hallo wereld")
-	require.Equal(t, s, d.Disambiguate(s))
 	require.Equal(t, s, d.PreDisambiguate(s))
 }
