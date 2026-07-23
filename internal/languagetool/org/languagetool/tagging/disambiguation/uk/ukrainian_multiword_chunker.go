@@ -3,8 +3,10 @@ package uk
 import (
 	"bufio"
 	"embed"
+	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"sync"
@@ -20,10 +22,27 @@ var multiwordsFS embed.FS
 var (
 	multiwordsOnce  sync.Once
 	multiwordsLines []string
+
+	ukMultiwordChunkerOnce sync.Once
+	ukMultiwordChunkerInst *disambiguation.MultiWordChunker2
 )
 
 // UkrainianMultiwordChunker ports tagging.disambiguation.uk.UkrainianMultiwordChunker
 // (MultiWordChunker2 + /POS-regex matchText).
+//
+// Java:
+//
+//	class UkrainianMultiwordChunker extends MultiWordChunker2 {
+//	  UkrainianMultiwordChunker(String filename, boolean allowFirstCapitalized) {
+//	    super(filename, allowFirstCapitalized);
+//	  }
+//	  protected boolean matches(String matchText, AnalyzedTokenReadings inputTokens) {
+//	    if (!matchText.startsWith("/")) return super.matches(...);
+//	    return PosTagHelper.hasPosTag(inputTokens, Pattern.compile(matchText.substring(1)));
+//	  }
+//	}
+//
+// Hybrid: new UkrainianMultiwordChunker("/uk/multiwords.txt", true)
 type UkrainianMultiwordChunker = disambiguation.MultiWordChunker2
 
 // NewUkrainianMultiwordChunker builds from phrase\ttag lines (allowFirstCapitalized=true).
@@ -33,14 +52,37 @@ func NewUkrainianMultiwordChunker(lines []string) *disambiguation.MultiWordChunk
 	return c
 }
 
-// NewDefaultUkrainianMultiwordChunker loads official /uk/multiwords.txt (embedded).
+// NewDefaultUkrainianMultiwordChunker loads official /uk/multiwords.txt
+// (discovered inspiration path when present; embedded identical copy as fallback).
 func NewDefaultUkrainianMultiwordChunker() *disambiguation.MultiWordChunker2 {
 	return NewUkrainianMultiwordChunker(LoadUkrainianMultiwordsLines())
 }
 
-// LoadUkrainianMultiwordsLines returns phrase\ttag lines from embedded multiwords.txt.
+// UkrainianMultiwordChunkerDefault returns a process-cached MultiWordChunker2 for
+// official /uk/multiwords.txt (Java UkrainianHybridDisambiguator.chunker field).
+// Prefer discoverable official file; embedded fallback when discovery fails.
+func UkrainianMultiwordChunkerDefault() *disambiguation.MultiWordChunker2 {
+	ukMultiwordChunkerOnce.Do(func() {
+		ukMultiwordChunkerInst = NewDefaultUkrainianMultiwordChunker()
+	})
+	return ukMultiwordChunkerInst
+}
+
+// LoadUkrainianMultiwordsLines returns phrase\ttag lines from official multiwords.txt.
+// Prefer DiscoverUkrainianMultiwords(); fall back to embedded data/multiwords.txt
+// (byte-identical to official resource when submodule is present).
 func LoadUkrainianMultiwordsLines() []string {
 	multiwordsOnce.Do(func() {
+		if p := DiscoverUkrainianMultiwords(); p != "" {
+			if f, err := os.Open(p); err == nil {
+				lines, err := parseUkrainianMultiwordReader(f)
+				_ = f.Close()
+				if err == nil {
+					multiwordsLines = lines
+					return
+				}
+			}
+		}
 		f, err := multiwordsFS.Open("data/multiwords.txt")
 		if err != nil {
 			return
@@ -56,6 +98,7 @@ func LoadUkrainianMultiwordsLines() []string {
 }
 
 // NewUkrainianMultiwordChunkerFromReader loads multiwords lines then builds the chunker.
+// Input must be Java MultiWordChunker2 format: tab-separated phrase\ttag (no invent glue).
 func NewUkrainianMultiwordChunkerFromReader(r io.Reader) (*disambiguation.MultiWordChunker2, error) {
 	lines, err := parseUkrainianMultiwordReader(r)
 	if err != nil {
@@ -74,9 +117,38 @@ func NewUkrainianMultiwordChunkerFromPath(path string) (*disambiguation.MultiWor
 	return NewUkrainianMultiwordChunkerFromReader(f)
 }
 
-// parseUkrainianMultiwordReader accepts:
-//   - standard phrase\ttag lines (Java MultiWordChunker2)
-//   - official UK resource lines with glued POS suffix (а капелаadv, без сумнівуinsert)
+// DiscoverUkrainianMultiwords finds official uk/multiwords.txt
+// (Java resource /uk/multiwords.txt used by UkrainianHybridDisambiguator.chunker).
+func DiscoverUkrainianMultiwords() string {
+	if p := os.Getenv("LANG_UK_MULTIWORDS_FILE"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	rel := filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "uk",
+		"src", "main", "resources", "org", "languagetool", "resource", "uk", "multiwords.txt")
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for i := 0; i < 14; i++ {
+		p := filepath.Join(dir, rel)
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
+
+// parseUkrainianMultiwordReader ports MultiWordChunker2.loadWords:
+// trim, skip empty and # lines; remaining lines must be tab-separated phrase\ttag
+// (Java throws on non-tab format — no glued-POS invent path).
 func parseUkrainianMultiwordReader(r io.Reader) ([]string, error) {
 	var lines []string
 	sc := bufio.NewScanner(r)
@@ -87,53 +159,22 @@ func parseUkrainianMultiwordReader(r io.Reader) ([]string, error) {
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		if i := strings.IndexByte(line, '#'); i >= 0 {
-			// only strip trailing comments when space before #
-			if i == 0 || line[i-1] == ' ' {
-				line = tools.JavaStringTrim(line[:i])
-			}
+		// Java MultiWordChunker2: split("\t") and require length == 2
+		parts := strings.Split(line, "\t")
+		if len(parts) != 2 {
+			return nil, fmt.Errorf("Invalid format in multiwords: '%s', expected two tab-separated parts", line)
 		}
-		if line == "" {
-			continue
+		if tools.JavaStringTrim(parts[0]) == "" || tools.JavaStringTrim(parts[1]) == "" {
+			return nil, fmt.Errorf("Invalid format in multiwords: '%s', empty phrase or tag", line)
 		}
-		if norm, ok := normalizeUkrainianMultiwordLine(line); ok {
-			lines = append(lines, norm)
-		}
+		// Keep line as Java loadWords does (trimmed whole line, not re-joined parts).
+		lines = append(lines, line)
 	}
 	return lines, sc.Err()
 }
 
-// glued POS suffixes used in official UK multiwords.txt (longest first).
-var ukMultiwordGluedTags = []string{
-	"insert",
-	"adv",
-}
-
-func normalizeUkrainianMultiwordLine(line string) (string, bool) {
-	if strings.Contains(line, "\t") {
-		parts := strings.SplitN(line, "\t", 2)
-		if len(parts) != 2 || tools.JavaStringTrim(parts[0]) == "" || tools.JavaStringTrim(parts[1]) == "" {
-			return "", false
-		}
-		return tools.JavaStringTrim(parts[0]) + "\t" + tools.JavaStringTrim(parts[1]), true
-	}
-	// glued tag at end (no tab in official resource)
-	for _, tag := range ukMultiwordGluedTags {
-		if strings.HasSuffix(line, tag) {
-			phrase := tools.JavaStringTrim(line[:len(line)-len(tag)])
-			if phrase == "" {
-				continue
-			}
-			// phrase must contain a space or hyphen multi-token, or single token is ok
-			return phrase + "\t" + tag, true
-		}
-	}
-	// /POS-regex style match tokens may appear as last field after space — unsupported without tab
-	return "", false
-}
-
 // ukMultiwordMatches ports UkrainianMultiwordChunker.matches:
-// non-/ → token equality; /pattern → POS tag full-match regex on readings.
+// non-/ → token equality; /pattern → PosTagHelper.hasPosTag full-match regex on readings.
 func ukMultiwordMatches(matchText string, tok *languagetool.AnalyzedTokenReadings) bool {
 	if tok == nil {
 		return false
