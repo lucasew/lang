@@ -23,24 +23,53 @@ const tokenizing = "\u0020\u00A0\u115f\u1160\u1680" +
 	"\u00b9\u00b2\u00b3\u2070\u2071\u2074\u2075\u2076\u2077\u2078\u2079" +
 	"\t\n\r\u000B"
 
+// RemovedEmoji ports WordTokenizer.REMOVED_EMOJI.
+const RemovedEmoji = "MyReMoVeDeMoJi"
+
+// protocolList ports WordTokenizer.PROTOCOLS (including duplicate "magnet" as in Java).
+var protocolList = []string{
+	"http", "https", "ws", "wss", "ftp", "ftps", "sftp", "file", "mailto", "tel", "sms",
+	"git", "ssh", "data", "magnet", "smb", "slack", "spotify", "magnet",
+}
+
 var (
-	protocols = map[string]bool{
-		"http": true, "https": true, "ws": true, "wss": true, "ftp": true, "ftps": true,
-		"sftp": true, "file": true, "mailto": true, "tel": true, "sms": true, "git": true,
-		"ssh": true, "data": true, "magnet": true, "smb": true, "slack": true, "spotify": true,
-	}
+	protocols = func() map[string]bool {
+		m := make(map[string]bool, len(protocolList))
+		for _, p := range protocolList {
+			m[p] = true
+		}
+		return m
+	}()
 	// Java: [a-zA-ZÄÖÜäöü0-9/%$-_.+!*'(),?#~]+ where $-_ is a char range ($.._).
 	urlChars = regexp.MustCompile(`^[a-zA-ZÄÖÜäöü0-9/%$` + `-` + `_.+!*'(),?#~]+$`)
 	domainChars   = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9-]+$`)
 	noProtocolURL = regexp.MustCompile(`^([a-zA-Z0-9][a-zA-Z0-9-]+\.)?([a-zA-Z0-9][a-zA-Z0-9-]+)\.([a-zA-Z0-9][a-zA-Z0-9-]+)/.*$`)
-	// simplified email pattern matching Java E_MAIL for tests
-	eMailPattern = regexp.MustCompile(`(?i)@?\b[a-zA-Z0-9.!#$%&'*+/=?^_` + "`" + `{|}~-]+@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))\b`)
+	// Java E_MAIL body without (?<!:) lookbehind (RE2 has no lookbehind; emulated in helpers).
+	// No (?i) — Java pattern is case-sensitive.
+	eMailBody = `@?\b[a-zA-Z0-9.!#$%&'*+/=?^_` + "`" + `{|}~-]+@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))\b`
+	eMailPattern = regexp.MustCompile(eMailBody)
+	// Currency (same pattern Java uses for matches() and find()).
+	currencySymbolsClass = `[A-Z]*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤]`
+	currencyValue        = `\d+(?:[.,]\d+)*`
+	currencyExpression   = regexp.MustCompile(
+		`(?:(` + currencySymbolsClass + `)(` + currencyValue + `)|(` + currencyValue + `)(` + currencySymbolsClass + `))`,
+	)
+	currencyExpressionFull = regexp.MustCompile(
+		`^(?:(` + currencySymbolsClass + `)(` + currencyValue + `)|(` + currencyValue + `)(` + currencySymbolsClass + `))$`,
+	)
 )
 
 // WordTokenizer ports org.languagetool.tokenizers.WordTokenizer.
 type WordTokenizer struct{}
 
 func NewWordTokenizer() *WordTokenizer { return &WordTokenizer{} }
+
+// GetProtocols ports WordTokenizer.getProtocols.
+func GetProtocols() []string {
+	out := make([]string, len(protocolList))
+	copy(out, protocolList)
+	return out
+}
 
 // GetTokenizingCharacters ports WordTokenizer.getTokenizingCharacters.
 func (w *WordTokenizer) GetTokenizingCharacters() string {
@@ -51,10 +80,7 @@ func (w *WordTokenizer) GetTokenizingCharacters() string {
 func TokenizingCharacters() string { return tokenizing }
 
 func (w *WordTokenizer) Tokenize(text string) []string {
-	if text == "" {
-		return nil
-	}
-	var out []string
+	out := make([]string, 0)
 	var cur []rune
 	flush := func() {
 		if len(cur) > 0 {
@@ -78,33 +104,20 @@ func JoinEMailsAndUrls(list []string) []string {
 	return joinUrls(joinEMails(list))
 }
 
-
 func joinEMails(list []string) []string {
 	var sb strings.Builder
 	for _, item := range list {
 		sb.WriteString(item)
 	}
 	text := sb.String()
-	if !strings.Contains(text, "@") || !eMailPattern.MatchString(text) {
+	// Java: text.contains("@") && E_MAIL.matcher(text).find()
+	if !strings.Contains(text, "@") || !emailFind(text) {
 		return list
 	}
-	// Java walks tokens by UTF-16 length; emails are BMP so byte len == utf16 for ASCII emails.
-	// Build cumulative UTF-16 positions.
-	starts := make([]int, len(list))
-	pos := 0
-	for i, t := range list {
-		starts[i] = pos
-		pos += UTF16Len(t)
-	}
-	// Find email spans in flat text (UTF-8 byte → UTF-16 for BMP content)
-	byteLocs := eMailPattern.FindAllStringIndex(text, -1)
-	if len(byteLocs) == 0 {
+	// Java walks tokens by UTF-16 length; matcher.start/end are UTF-16 indices.
+	spans := emailFindSpans(text)
+	if len(spans) == 0 {
 		return list
-	}
-	type span struct{ start, end int }
-	var spans []span
-	for _, loc := range byteLocs {
-		spans = append(spans, span{UTF16Len(text[:loc[0]]), UTF16Len(text[:loc[1]])})
 	}
 	var out []string
 	idx := 0
@@ -114,14 +127,8 @@ func joinEMails(list []string) []string {
 			if currentPosition < sp.start {
 				out = append(out, list[idx])
 			} else if currentPosition == sp.start {
-				// reconstruct email from covered tokens
-				var em strings.Builder
-				startIdx := idx
-				for startIdx < len(list) && starts[startIdx] < sp.end {
-					em.WriteString(list[startIdx])
-					startIdx++
-				}
-				out = append(out, em.String())
+				// Java: l.add(matcher.group())
+				out = append(out, sp.group)
 			}
 			currentPosition += UTF16Len(list[idx])
 			idx++
@@ -131,6 +138,37 @@ func joinEMails(list []string) []string {
 		out = append(out, list[idx:]...)
 	}
 	return out
+}
+
+type emailSpan struct {
+	start, end int // UTF-16
+	group      string
+}
+
+// emailFind reports whether E_MAIL with (?<!:) would find a match (Java find()).
+func emailFind(text string) bool {
+	return len(emailFindSpans(text)) > 0
+}
+
+// emailFindSpans ports E_MAIL.matcher(text).find() with (?<!:) lookbehind emulation.
+func emailFindSpans(text string) []emailSpan {
+	byteLocs := eMailPattern.FindAllStringIndex(text, -1)
+	if len(byteLocs) == 0 {
+		return nil
+	}
+	var spans []emailSpan
+	for _, loc := range byteLocs {
+		// (?<!:): reject when previous UTF-8/byte unit is ':'
+		if loc[0] > 0 && text[loc[0]-1] == ':' {
+			continue
+		}
+		spans = append(spans, emailSpan{
+			start: UTF16Len(text[:loc[0]]),
+			end:   UTF16Len(text[:loc[1]]),
+			group: text[loc[0]:loc[1]],
+		})
+	}
+	return spans
 }
 
 func joinUrls(l []string) []string {
@@ -229,7 +267,7 @@ func isAny(s string, opts ...string) bool {
 
 // IsURL ports WordTokenizer.isUrl.
 func IsURL(token string) bool {
-	for p := range protocols {
+	for _, p := range protocolList {
 		if strings.HasPrefix(token, p+"://") || strings.HasPrefix(token, "www.") {
 			return true
 		}
@@ -237,9 +275,11 @@ func IsURL(token string) bool {
 	return noProtocolURL.MatchString(token)
 }
 
-// IsEMail ports WordTokenizer.isEMail.
+// IsEMail ports WordTokenizer.isEMail (Java Pattern.matcher(token).matches()).
 func IsEMail(token string) bool {
-	return eMailPattern.MatchString(token)
+	// Full-string match of E_MAIL; (?<!:) at index 0 always succeeds.
+	loc := eMailPattern.FindStringIndex(token)
+	return loc != nil && loc[0] == 0 && loc[1] == len(token)
 }
 
 func isTokenizing(r rune) bool {
@@ -264,28 +304,85 @@ func BuildPositions(tokens []string) []int {
 	return pos
 }
 
-var (
-	currencySymbols = regexp.MustCompile(`^[A-Z]*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤]$`)
-	// full match expression for token
-	currencyExpression = regexp.MustCompile(`^(?:([A-Z]*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤])(\d+(?:[.,]\d+)*)|(\d+(?:[.,]\d+)*)([A-Z]*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤]))$`)
-)
-
 // IsCurrencyExpression ports WordTokenizer.isCurrencyExpression.
 func IsCurrencyExpression(token string) bool {
-	return currencyExpression.MatchString(token)
+	return currencyExpressionFull.MatchString(token)
 }
 
 // SplitCurrencyExpression ports WordTokenizer.splitCurrencyExpression.
 func SplitCurrencyExpression(token string) []string {
-	m := currencyExpression.FindStringSubmatch(token)
-	if m == nil {
+	var newList []string
+	for _, m := range currencyExpression.FindAllStringSubmatch(token, -1) {
+		if m[1] != "" && m[2] != "" {
+			newList = append(newList, m[1], m[2])
+		} else if m[3] != "" && m[4] != "" {
+			newList = append(newList, m[3], m[4])
+		}
+	}
+	if len(newList) == 0 {
 		return []string{token}
 	}
-	if m[1] != "" && m[2] != "" {
-		return []string{m[1], m[2]}
+	return newList
+}
+
+// IsCurrencyExpression ports the instance method on WordTokenizer.
+func (w *WordTokenizer) IsCurrencyExpression(token string) bool {
+	return IsCurrencyExpression(token)
+}
+
+// SplitCurrencyExpression ports the instance method on WordTokenizer.
+func (w *WordTokenizer) SplitCurrencyExpression(token string) []string {
+	return SplitCurrencyExpression(token)
+}
+
+// ReplaceEmojis ports WordTokenizer.replaceEmojis.
+// Output: cleaned string at [0], then removed emojis in order.
+func (w *WordTokenizer) ReplaceEmojis(s string) []string {
+	removedEmojis := make([]string, 0)
+	// Java: s.length() > 1 && s.codePointCount(0, s.length()) != s.length()
+	if UTF16Len(s) > 1 {
+		cps := 0
+		for range s {
+			cps++
+		}
+		if cps != UTF16Len(s) {
+			// Matcher is bound to the original string; replacements apply to s.
+			original := s
+			for _, found := range tools.CharsNotForSpelling.FindAllString(original, -1) {
+				// emojis (😂) have a string length (UTF-16) larger than 1
+				if UTF16Len(found) > 1 {
+					s = strings.ReplaceAll(s, found, ","+RemovedEmoji+",")
+					removedEmojis = append(removedEmojis, found)
+				}
+			}
+		}
 	}
-	if m[3] != "" && m[4] != "" {
-		return []string{m[3], m[4]}
+	out := make([]string, 0, 1+len(removedEmojis))
+	out = append(out, s)
+	out = append(out, removedEmojis...)
+	return out
+}
+
+// RestoreEmojis ports WordTokenizer.restoreEmojis.
+func (w *WordTokenizer) RestoreEmojis(tokens []string, removedEmojis []string) []string {
+	if len(removedEmojis) < 2 {
+		return tokens
 	}
-	return []string{token}
+	results := make([]string, 0, len(tokens))
+	i := 0
+	emojiCount := 1
+	for i < len(tokens) {
+		if i+2 < len(tokens) && tokens[i] == "," &&
+			tokens[i+1] == RemovedEmoji && tokens[i+2] == "," {
+			if emojiCount < len(removedEmojis) {
+				results = append(results, removedEmojis[emojiCount])
+			}
+			emojiCount++
+			i += 3
+		} else {
+			results = append(results, tokens[i])
+			i++
+		}
+	}
+	return results
 }

@@ -581,8 +581,8 @@ func TitlecaseGlobal(str string) string {
 	return strings.Join(out, " ")
 }
 
-// charsNotForSpelling ports StringTools.CHARS_NOT_FOR_SPELLING: [^\p{L}\d\p{P}\p{Zs}]
-var charsNotForSpelling = regexp.MustCompile(`[^\p{L}\d\p{P}\p{Zs}]`)
+// CharsNotForSpelling ports StringTools.CHARS_NOT_FOR_SPELLING: [^\p{L}\d\p{P}\p{Zs}]
+var CharsNotForSpelling = regexp.MustCompile(`[^\p{L}\d\p{P}\p{Zs}]`)
 
 // StringForSpeller ports StringTools.stringForSpeller — replace non-spelling symbols
 // (e.g. emoji) with same-width spaces using UTF-16 length of the match.
@@ -594,7 +594,7 @@ func StringForSpeller(s string) string {
 			cps++
 		}
 		if cps != utf16LenTools(s) {
-			s = charsNotForSpelling.ReplaceAllStringFunc(s, func(found string) string {
+			s = CharsNotForSpelling.ReplaceAllStringFunc(s, func(found string) string {
 				return strings.Repeat(" ", utf16LenTools(found))
 			})
 		}

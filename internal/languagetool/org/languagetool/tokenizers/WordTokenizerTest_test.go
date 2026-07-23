@@ -114,23 +114,25 @@ func TestWordTokenizer_IncompleteUrlTokenize(t *testing.T) {
 
 // Twin of WordTokenizerTest.testCheckCurrencyExpression
 func TestWordTokenizer_CheckCurrencyExpression(t *testing.T) {
-	require.True(t, IsCurrencyExpression("US$45"))
-	require.True(t, IsCurrencyExpression("5,000€"))
-	require.True(t, IsCurrencyExpression("£1.50"))
-	require.True(t, IsCurrencyExpression("R$1.999.99"))
-	require.False(t, IsCurrencyExpression("US$"))
-	require.False(t, IsCurrencyExpression("X€"))
-	require.False(t, IsCurrencyExpression(".50£"))
-	require.False(t, IsCurrencyExpression("5R$5"))
+	wt := NewWordTokenizer()
+	require.True(t, wt.IsCurrencyExpression("US$45"))
+	require.True(t, wt.IsCurrencyExpression("5,000€"))
+	require.True(t, wt.IsCurrencyExpression("£1.50"))
+	require.True(t, wt.IsCurrencyExpression("R$1.999.99"))
+	require.False(t, wt.IsCurrencyExpression("US$"))
+	require.False(t, wt.IsCurrencyExpression("X€"))
+	require.False(t, wt.IsCurrencyExpression(".50£"))
+	require.False(t, wt.IsCurrencyExpression("5R$5"))
 }
 
 // Twin of WordTokenizerTest.testSplitCurrencyExpression
 func TestWordTokenizer_SplitCurrencyExpression(t *testing.T) {
-	require.Equal(t, []string{"US$", "45"}, SplitCurrencyExpression("US$45"))
-	require.Equal(t, []string{"5,000", "€"}, SplitCurrencyExpression("5,000€"))
-	require.Equal(t, []string{"£", "1.50"}, SplitCurrencyExpression("£1.50"))
-	require.Equal(t, []string{"R$", "1.999.99"}, SplitCurrencyExpression("R$1.999.99"))
+	wt := NewWordTokenizer()
+	require.Equal(t, []string{"US$", "45"}, wt.SplitCurrencyExpression("US$45"))
+	require.Equal(t, []string{"5,000", "€"}, wt.SplitCurrencyExpression("5,000€"))
+	require.Equal(t, []string{"£", "1.50"}, wt.SplitCurrencyExpression("£1.50"))
+	require.Equal(t, []string{"R$", "1.999.99"}, wt.SplitCurrencyExpression("R$1.999.99"))
 	// not currency expr — return original token only
-	require.Equal(t, []string{"US$X"}, SplitCurrencyExpression("US$X"))
-	require.Equal(t, []string{"foobar"}, SplitCurrencyExpression("foobar"))
+	require.Equal(t, []string{"US$X"}, wt.SplitCurrencyExpression("US$X"))
+	require.Equal(t, []string{"foobar"}, wt.SplitCurrencyExpression("foobar"))
 }
