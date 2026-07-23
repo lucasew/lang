@@ -95,6 +95,39 @@ func TestSpanishWordTokenizer_Tokenize(t *testing.T) {
 	tokens = w.Tokenize("á1.º")
 	require.Equal(t, "[á1, ., º]", tokStr(tokens))
 
+	// Java UCC \w includes Mn/Me/Mc — combining mark after suffix is not \b.
+	// Must not over-protect (Java: [1, ., ó] with o+U+0301 as one word run).
+	tokens = w.Tokenize("1.o\u0301")
+	require.Equal(t, "[1, ., o\u0301]", tokStr(tokens))
+
+	// Join_Control (ZWJ/ZWNJ) are UCC \w — trailing \b fails.
+	tokens = w.Tokenize("1.o\u200D")
+	require.Equal(t, "[1, ., o, \u200D]", tokStr(tokens))
+
+	tokens = w.Tokenize("1.o\u200C")
+	require.Equal(t, "[1, ., o, \u200C]", tokStr(tokens))
+
+	// VS-16 (U+FE0F) is Mn → UCC \w; no ORDINAL protect; VS merges onto prior token.
+	tokens = w.Tokenize("1.o\uFE0F")
+	require.Equal(t, "[1, ., o\uFE0F]", tokStr(tokens))
+
+	// Pc (Connector_Punctuation) beyond ASCII '_' is UCC \w — e.g. undertie U+203F.
+	tokens = w.Tokenize("1.o\u203F")
+	require.Equal(t, "[1, ., o, \u203F]", tokStr(tokens))
+
+	// ASCII '_' neighbor (Pc) still blocks trailing \b.
+	tokens = w.Tokenize("1.o_x")
+	require.Equal(t, "[1, ., o_x]", tokStr(tokens))
+
+	// Java UCC \d matches Nd (Arabic-Indic etc.). ORDINAL_POINT protects the
+	// point; tokenizer wordCharacters still use ASCII \d so non-ASCII digits
+	// stay outside the word run — Java yields [١, .º] / [٢, .a].
+	tokens = w.Tokenize("١.º")
+	require.Equal(t, "[١, .º]", tokStr(tokens))
+
+	tokens = w.Tokenize("٢.a")
+	require.Equal(t, "[٢, .a]", tokStr(tokens))
+
 	tokens = w.Tokenize("al-Ándalus")
 	require.Equal(t, 1, len(tokens))
 }
