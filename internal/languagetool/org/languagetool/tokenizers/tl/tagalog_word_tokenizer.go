@@ -7,26 +7,35 @@ import (
 )
 
 // TagalogWordTokenizer ports org.languagetool.language.tokenizers.TagalogWordTokenizer.
-// Adds hyphen as an additional tokenizing character.
+// Java: extends WordTokenizer; getTokenizingCharacters = super + "-"
+// (- = U+002D ASCII hyphen-minus). tokenize() is inherited from WordTokenizer
+// unchanged (StringTokenizer keep-delims + joinEMailsAndUrls).
 type TagalogWordTokenizer struct {
-	delims string
+	// Cached super.getTokenizingCharacters() + "-" (Java recomputes; result is constant).
+	tlTokenizingChars string
 }
 
+// NewTagalogWordTokenizer ports TagalogWordTokenizer().
 func NewTagalogWordTokenizer() *TagalogWordTokenizer {
 	return &TagalogWordTokenizer{
-		delims: tokenizers.TokenizingCharacters() + "-",
+		tlTokenizingChars: tokenizers.TokenizingCharacters() + "-",
 	}
 }
 
+// GetTokenizingCharacters ports TagalogWordTokenizer.getTokenizingCharacters.
+// Java: return super.getTokenizingCharacters() + "-";
 func (w *TagalogWordTokenizer) GetTokenizingCharacters() string {
-	return w.delims
+	return w.tlTokenizingChars
 }
 
+// Tokenize ports the inherited WordTokenizer.tokenize using Tagalog delims.
+// Java: StringTokenizer(text, getTokenizingCharacters(), true) then joinEMailsAndUrls.
 func (w *TagalogWordTokenizer) Tokenize(text string) []string {
-	raw := splitKeepDelims(text, w.delims)
+	raw := splitKeepDelims(text, w.tlTokenizingChars)
 	return tokenizers.JoinEMailsAndUrls(raw)
 }
 
+// splitKeepDelims is StringTokenizer(text, delims, true).
 func splitKeepDelims(text, delims string) []string {
 	if text == "" {
 		return nil
