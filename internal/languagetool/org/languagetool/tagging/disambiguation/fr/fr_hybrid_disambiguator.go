@@ -30,7 +30,7 @@ type FrenchHybridDisambiguator struct {
 // Chunker is wired from official /fr/multiwords.txt when discoverable
 // (getInstance("/fr/multiwords.txt", true, true, false)
 // + setRemovePreviousTags(true); no setIgnoreSpelling).
-// Rules remain nil until the XmlRuleDisambiguator sector lands.
+// Rules is wired from XmlRuleDisambiguator(lang, true) when official fr + global XML load.
 func NewFrenchHybridDisambiguator() *FrenchHybridDisambiguator {
 	d := &FrenchHybridDisambiguator{}
 	if g := FrenchGlobalChunker(); g != nil {
@@ -38,6 +38,9 @@ func NewFrenchHybridDisambiguator() *FrenchHybridDisambiguator {
 	}
 	if mw := FrenchMultiWordChunker(); mw != nil {
 		d.Chunker = mw
+	}
+	if r := FrenchXmlRuleDisambiguator(); r != nil {
+		d.Rules = r
 	}
 	return d
 }
