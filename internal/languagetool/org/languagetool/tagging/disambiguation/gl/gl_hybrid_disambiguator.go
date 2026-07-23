@@ -8,9 +8,10 @@ import (
 // GalicianHybridDisambiguator ports org.languagetool.tagging.disambiguation.gl.GalicianHybridDisambiguator:
 // MultiWordChunker.getInstance("/gl/multiwords.txt") defaults, then XmlRuleDisambiguator(Galician) no global.
 // Java order: disambiguator.disambiguate(chunker.disambiguate(input)) — multiwords first, then XML.
-// Rules is eagerly wired from official gl/disambiguation.xml when present (Java final field).
+// Both stages are eagerly wired from official resources when present (Java final fields).
 type GalicianHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
+	// Chunker is Java MultiWordChunker.getInstance("/gl/multiwords.txt") defaults.
 	Chunker interface {
 		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 	}
@@ -20,11 +21,17 @@ type GalicianHybridDisambiguator struct {
 	}
 }
 
-// NewGalicianHybridDisambiguator ports Java field init: XmlRuleDisambiguator(new Galician())
-// (useGlobalDisambiguation=false). Chunker is left for injectors / multiword load helpers
-// (same pattern as Russian hybrid: multiwords loaded by callers).
+// NewGalicianHybridDisambiguator ports Java field init:
+//
+//	chunker = MultiWordChunker.getInstance("/gl/multiwords.txt"); // F,F,F defaults
+//	disambiguator = new XmlRuleDisambiguator(new Galician()); // useGlobalDisambiguation=false
+//
+// Stages are wired when the same official resources Java loads are discoverable.
 func NewGalicianHybridDisambiguator() *GalicianHybridDisambiguator {
 	d := &GalicianHybridDisambiguator{}
+	if mw := GalicianMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
 	if xml := GalicianXmlRuleDisambiguator(); xml != nil {
 		d.Rules = xml
 	}
@@ -41,7 +48,9 @@ func (d *GalicianHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedS
 		return input
 	}
 	out := input
-	// multiwords first, then XML (Java GalicianHybridDisambiguator)
+	// Java GalicianHybridDisambiguator:
+	// return disambiguator.disambiguate(chunker.disambiguate(input));
+	// i.e. multiword chunker first, then XML rules (Romance order; inverted vs Polish/Swedish).
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}
