@@ -60,183 +60,122 @@ func parseGermanChunkAnno(input string) []gcAnno {
 	return out
 }
 
-// fullPOS: Morphy-like POS for assertFullChunks fixtures (not invent chunker rules).
-func fullPOS(tok, prev string) string {
+// morphyPOSReadings returns Morphy-inventory POS tag(s) for a surface in full-chunk
+// fixtures. Multi-readings mirror real Morphy ambiguity (e.g. Aber KON|SUB, Ich PRO|SUB).
+// Selection never consults expected chunk tags (no circular want-driven invent).
+func morphyPOSReadings(tok, prev, next, next2, next3 string) []string {
 	low := strings.ToLower(tok)
+	n1 := strings.ToLower(next)
+	n2 := strings.ToLower(next2)
+	n3 := strings.ToLower(next3)
 
 	if tok == "," || tok == "." {
-		return "PKT"
+		return []string{"PKT"}
 	}
 
 	// relative "die"/"das" after comma
 	if (low == "die" || low == "das") && prev == "," {
-		return "PRO:REL:NOM:SIN:NEU"
+		return []string{"PRO:REL:NOM:SIN:NEU"}
 	}
 
-	switch low {
-	// articles
-	case "ein", "eine", "einen", "einem", "einer", "eines", "das", "die", "der", "den", "dem", "des", "keine", "kein":
-		return "ART:DEF:NOM:SIN:NEU"
-	// personal pronouns
-	case "ich", "du", "er", "sie", "es", "wir", "ihr":
-		return "PRO:PER:NOM:SIN:1"
-	// possessive / indefinite pronouns
-	case "seine", "sein", "ihre", "ihrer", "deren", "unserer", "unsere", "meisten", "beiden", "aller", "welche", "eins":
-		return "PRO:POS:GEN:PLU:FEM"
-	// conjunctions
-	case "und", "oder", "sowie", "weder", "noch", "sowohl", "bzw", "dass", "wie", "als":
-		return "KON:NEB"
-	// prepositions
-	case "zwischen", "nach", "bei", "mit", "in", "für", "durch", "einschließlich", "aufgrund", "von", "aus", "im", "am", "laut":
-		return "PRP:DAT"
-	case "über":
-		// "mit über 1000" → ADV; otherwise PRP
-		if strings.EqualFold(prev, "mit") {
-			return "ADV"
-		}
-		return "PRP:AKK"
-	// adverbs
-	case "sehr", "da", "dort", "schon", "mehr", "so", "immer", "wieder", "auch", "nur", "darauf", "los", "auf", "dabei",
-		"privat", "unklar", "betrunken", "alt", "grün", "blau", "kalt", "unterkühlt", "beeindruckend", "nötig",
-		"nichts", "unnötig", "bitte", "schön":
-		return "ADV"
-	// numbers / ZAL
-	case "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "zwanzig":
-		return "ZAL"
-	case "37":
-		return "ZAL" // surface matches regex=[\d,.]+
-	case "1000", "20", "35":
-		return "CARD"
-	// titles
-	case "herr", "frau", "herrn":
-		return "SUB:NOM:SIN:MAS"
-	// proper names
-	case "julia", "karsten", "schröder", "kanada", "iran", "nil", "meier", "schrödinger",
-		"finn", "westerwalbesloh", "karl", "tom", "maria", "österreich", "sowjetunion", "kuba":
-		return "EIG:NOM:SIN:NEU"
-	case "stephen", "king":
-		// bare SUB+ → each B-NP → NPS (REGEXES1 has no bare EIG+EIG joiner)
-		return "SUB:NOM:SIN:MAS"
-	// PA2
-	case "geprüfte", "ausgestellten", "verbreiteten", "festgestellte", "abgeleitet":
-		return "PA2:NOM:SIN:MAS:GRU:SOL"
-	// PA1
-	case "anliegende", "laufende", "teilnehmenden", "vorliegenden", "schwankender", "lebende", "folgenden":
-		return "PA1:NOM:SIN:NEU:GRU:SOL"
-	// ADJ (incl. genitive forms used in fixtures)
-	case "größte", "erfolgreichste", "bekannteste", "älteste", "ältere", "letzte", "letzten", "letztes",
-		"hohe", "relativ", "kleinen", "organischer", "englischer", "umfangreichen", "heutigen", "großen",
-		"gute", "guten", "chemischen", "biologischen", "sozialen", "sachlichen", "militärischen", "deutschen",
-		"niedrigen", "selbständigen", "bessere", "größerer", "ersten", "erste", "kultureller", "stark",
-		"darauffolgenden", "alten", "gesteigerte", "schönes", "großes", "leckere", "leckeren", "blauen",
-		"schöne", "neue", "grünen":
-		if low == "organischer" || low == "englischer" || low == "heutigen" || low == "großen" ||
-			low == "umfangreichen" || low == "ersten" || low == "kleiner" || low == "kleinen" {
-			return "ADJ:GEN:PLU:NEU:GRU:SOL"
-		}
-		return "ADJ:NOM:SIN:NEU:GRU:SOL"
-	// verbs
-	case "stehen", "sind", "ist", "war", "waren", "fährt", "gibt", "sitzen", "geht", "ging", "tauchen",
-		"umfasst", "umgestalten", "bin", "kennt", "stammt", "finanziert", "herrscht", "gab", "bellt",
-		"verbrennt", "funktioniert", "will", "isst", "meint", "muss", "überträgt", "mag", "betrifft",
-		"geben", "runter", "wurde":
-		return "VER:3:SIN:PRÄ:SFT"
-	// genitive nouns used in full-chunk fixtures
-	case "sprache", "friedens", "eintracht", "körpers", "lateinischen", "urstoff":
-		return "SUB:GEN:SIN:NEU"
-	case "bestände", "bücher", "städte", "siedlungen", "flüsse", "wörter", "verbindungen",
-		"charaktere", "töchter", "höfe", "autos":
-		return "SUB:GEN:PLU:NEU"
-	// time units
-	case "jahr":
-		return "SUB:NOM:SIN:NEU"
-	case "jahre", "monate", "wochen", "sekunden", "minuten", "stunden", "tage", "jahrzehnte", "jahrhunderte":
-		return "SUB:NOM:PLU:NEU"
-	case "prozent", "euro":
-		return "SUB:NOM:PLU:NEU"
-	case "regel", "menge", "weg":
-		return "SUB:NOM:SIN:FEM"
+	// Morphy multi-readings for capitalized noun readings that coexist with function-word tags.
+	// Lowercase "aber"/"ich" stay pure KON/PRO (mid-sentence pronouns are not "das Ich").
+	// "Aber" = KON "but" | SUB "das Aber"; Java assertFullChunks expects B-NP via SUB+.
+	if tok == "Aber" {
+		return []string{"KON:NEB", "SUB:NOM:SIN:NEU"}
+	}
+	// "Ich" = PRO:PER | SUB "das Ich"; Java assertBasicChunks expects B-NP via SUB+.
+	if tok == "Ich" {
+		return []string{"PRO:PER:NOM:SIN:1", "SUB:NOM:SIN:NEU"}
 	}
 
-	// known plural nouns (NPP heads)
-	switch low {
-	case "hunde", "katzen", "arbeitsplätze", "knochenbrüche", "platzwunden", "kenntnisse",
-		"beziehungen", "atome", "kommentare", "korrekturen", "traditionen", "mythen", "sagen",
-		"religionen", "stadtteile", "ortsteile", "handschriften", "sanierungsmaßnahmen", "quellen",
-		"beschwerden", "geräte", "rekonstruktionen", "funktionen", "geister", "ärzte", "ärztinnen",
-		"maschinen", "kriterien", "grundlagen", "installationen", "oberflächentemperaturen",
-		"komplexverbindungen", "beobachtungsbedingungen", "absatzmärkte", "afrikaner", "afrikanerinnen",
-		"almhütten", "krankheiten", "jahre":
-		return "SUB:NOM:PLU:NEU"
-	}
-
-	// Capitalized default → SUB SIN (Morphy noun)
-	if tok != "" {
-		r := []rune(tok)[0]
-		if unicode.IsUpper(r) {
-			return "SUB:NOM:SIN:NEU"
-		}
-	}
-	return "UNKNOWN"
-}
-
-func tokensFromFullAnno(ann []gcAnno) []*languagetool.AnalyzedTokenReadings {
-	out := make([]*languagetool.AnalyzedTokenReadings, len(ann))
-	pos := 0
-	prev := ""
-	for i, a := range ann {
-		next := ""
-		if i+1 < len(ann) {
-			next = ann[i+1].token
-		}
-		p := fullPOS(a.token, prev)
-		p = refinePOS(a.token, prev, next, p, a.want)
-		out[i] = languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken(a.token, &p, nil), pos)
-		pos += len(a.token) + 1
-		prev = a.token
-	}
-	return out
-}
-
-// refinePOS applies Morphy-like agreement so REGEXES2 PLU/SIN/GEN gates match Java.
-func refinePOS(tok, prev, next, p, want string) string {
-	low := strings.ToLower(tok)
-	nextLow := strings.ToLower(next)
-
-	// Hard Morphy-like fixes for known full-chunk fixtures (Java de tagger outcomes).
+	// Hard Morphy-like fixes for known full-chunk fixture surfaces (context, not want).
 	switch low {
 	case "körpers":
-		return "SUB:GEN:SIN:MAS"
+		return []string{"SUB:GEN:SIN:MAS"}
 	case "urstoff":
-		return "SUB:NOM:SIN:MAS"
+		return []string{"SUB:NOM:SIN:MAS"}
 	case "körper":
-		return "SUB:GEN:PLU:MAS"
+		return []string{"SUB:GEN:PLU:MAS"}
 	case "des":
-		return "ART:DEF:GEN:SIN:MAS"
-	case "der":
-		switch nextLow {
-		case "urstoff":
-			return "ART:DEF:NOM:SIN:MAS"
-		case "sprache", "friedens", "eintracht", "beiden", "ersten", "dort",
-			"umfangreichen", "vier", "organischer", "teilnehmenden", "regierung",
-			"bestände", "bücher", "körpers":
-			return "ART:DEF:GEN:SIN:FEM"
-		}
+		return []string{"ART:DEF:GEN:SIN:MAS"}
+	case "dem":
+		return []string{"ART:DEF:DAT:SIN:MAS"}
 	case "welche":
-		return "PRO:REL:NOM:PLU:NEU"
+		return []string{"PRO:REL:NOM:PLU:NEU"}
 	case "aller":
-		return "PRO:IND:GEN:PLU:MAS"
+		return []string{"PRO:IND:GEN:PLU:MAS"}
 	case "atome":
-		return "SUB:NOM:PLU:NEU"
+		return []string{"SUB:NOM:PLU:NEU"}
 	case "sprache":
-		return "SUB:GEN:SIN:FEM"
+		return []string{"SUB:GEN:SIN:FEM"}
 	case "kenntnisse":
-		return "SUB:NOM:PLU:FEM"
+		return []string{"SUB:NOM:PLU:FEM"}
+	case "stephen":
+		return []string{"EIG:NOM:SIN:MAS"}
+	case "king":
+		return []string{"SUB:NOM:SIN:MAS"}
+	case "iran", "kanada":
+		return []string{"EIG:DAT:SIN:NEU"}
+	case "einer":
+		return []string{"PRO:IND:NOM:SIN:MAS"}
+	case "geprüfte":
+		return []string{"PA2:NOM:SIN:MAS:GRU:SOL"}
+	case "regierung", "hund":
+		return []string{"SUB:NOM:SIN:MAS"}
+	case "von", "im":
+		return []string{"PRP:DAT"}
+	case "weg":
+		return []string{"SUB:DAT:SIN:MAS"}
+	case "funktionen":
+		return []string{"SUB:NOM:PLU:FEM"}
+	case "beiden":
+		return []string{"PRO:IND:GEN:PLU:MAS"}
+	case "unserer", "ihrer":
+		return []string{"PRO:POS:GEN:PLU:FEM"}
+	case "ausgestellten":
+		return []string{"PA2:GEN:PLU:MAS:GRU:DEF"}
+	case "dort":
+		return []string{"ADV"}
+	case "keine":
+		return []string{"ART:IND:NOM:SIN:FEM"}
+	case "eins":
+		return []string{"PRO:IND:NOM:SIN:NEU"}
+	case "drei", "zwei", "vier":
+		return []string{"ZAL"}
+	case "mythen", "sagen":
+		return []string{"SUB:NOM:PLU:MAS"}
+	case "programme":
+		return []string{"SUB:NOM:PLU:NEU"}
+	case "geister":
+		return []string{"SUB:NOM:PLU:MAS"}
+	case "folgenden":
+		return []string{"ADJ:DAT:PLU:FEM:GRU:SOL"}
+	case "darauffolgenden", "letzten", "alten", "niedrigen",
+		"deutschen", "chemischen", "biologischen", "sozialen",
+		"sachlichen", "militärischen", "selbständigen", "guten":
+		return []string{"ADJ:NOM:PLU:NEU:GRU:SOL"}
+	case "organischer", "englischer", "heutigen", "großen",
+		"umfangreichen", "ersten":
+		return []string{"ADJ:GEN:PLU:NEU:GRU:SOL"}
+	case "jahre", "monate", "wochen":
+		return []string{"SUB:NOM:PLU:NEU"}
 	}
 
-	// Articles agreeing with plural heads (avoid false pos=SIN substring).
+	// "der" genitive vs other — grounded on following surface (Morphy agreement).
+	if low == "der" {
+		switch n1 {
+		case "urstoff":
+			return []string{"ART:DEF:NOM:SIN:MAS"}
+		case "sprache", "friedens", "eintracht", "beiden", "ersten", "dort",
+			"umfangreichen", "vier", "organischer", "teilnehmenden", "regierung",
+			"bestände", "bücher", "körpers", "vorliegenden":
+			return []string{"ART:DEF:GEN:SIN:FEM"}
+		}
+	}
+
+	// Plural heads (Morphy PLU noun inventory used in fixtures).
 	pluralHeads := map[string]bool{
-		"hund": false,
 		"arbeitsplätze": true, "kenntnisse": true, "beziehungen": true, "atome": true,
 		"kommentare": true, "korrekturen": true, "religionen": true, "mythen": true,
 		"sagen": true, "stadtteile": true, "ortsteile": true, "handschriften": true,
@@ -248,195 +187,157 @@ func refinePOS(tok, prev, next, p, want string) string {
 		"monate": true, "jahre": true, "töchter": true, "höfe": true, "flüsse": true,
 		"wörter": true, "verbindungen": true, "bestände": true, "siedlungen": true,
 		"städte": true, "bücher": true, "traditionen": true, "platzwunden": true,
-		"knochenbrüche": true, "darauffolgenden": true,
+		"knochenbrüche": true,
 	}
-	// "die/den/der ART" before plural noun → PLU tag without SIN
+	// Article before plural NP: ART PLU when the head after optional modifiers is plural.
+	// Do not skip past a noun (e.g. "Der Synthese … Verbindungen" must stay SIN on Der).
+	// Never keyed off expected chunk tags.
+	isMod := func(s string) bool {
+		switch s {
+		case "sehr", "nur", "auch", "so", "immer", "wieder", "darauf", "meisten", "beiden",
+			"letzten", "letztes", "darauffolgenden", "alten", "niedrigen", "deutschen",
+			"chemischen", "biologischen", "sozialen", "sachlichen", "militärischen",
+			"selbständigen", "guten", "gute", "große", "großen", "erste", "ersten",
+			"umfangreichen", "heutigen", "organischer", "englischer", "zwei", "drei", "vier",
+			"folgenden", "laufende", "geprüfte", "ausgestellten", "festgestellte":
+			return true
+		}
+		// ADJ/PRO/ZAL/ADV/PA* surfaces often end in -en/-er/-e; treat known inventory only.
+		return false
+	}
 	if low == "die" || low == "den" || low == "der" || low == "das" {
-		if pluralHeads[nextLow] || want == "NPP" || want == "PP" {
-			// keep REL after comma
-			if prev == "," {
-				return p
-			}
-			return "ART:DEF:NOM:PLU:FEM"
+		switch {
+		case pluralHeads[n1]:
+			return []string{"ART:DEF:NOM:PLU:FEM"}
+		case isMod(n1) && pluralHeads[n2]:
+			return []string{"ART:DEF:NOM:PLU:FEM"}
+		case isMod(n1) && isMod(n2) && pluralHeads[n3]:
+			return []string{"ART:DEF:NOM:PLU:FEM"}
 		}
 	}
-	// Plural noun heads: force PLU without SIN (do NOT use want==NPP alone —
-	// genitive singular tokens like "Körpers" can sit inside an NPP span).
-	if pluralHeads[low] && strings.Contains(p, "SUB") {
-		if strings.Contains(p, "GEN") {
-			return "SUB:GEN:PLU:NEU"
-		}
-		return "SUB:NOM:PLU:NEU"
-	}
-	// Genitive articles
-	if low == "des" || (low == "der" && (want == "NPS" || want == "NPP") && next != "") {
-		// "der Sprache", "des Friedens", "der beiden", "der ersten"
-		if nextLow == "sprache" || nextLow == "friedens" || nextLow == "eintracht" ||
-			nextLow == "beiden" || nextLow == "ersten" || nextLow == "dort" ||
-			nextLow == "umfangreichen" || nextLow == "körpers" || nextLow == "vier" ||
-			nextLow == "organischer" || nextLow == "teilnehmenden" || nextLow == "vorliegenden" ||
-			nextLow == "regierung" || nextLow == "bestände" || nextLow == "bücher" {
-			if low == "des" {
-				return "ART:DEF:GEN:SIN:MAS"
-			}
-			return "ART:DEF:GEN:PLU:FEM"
-		}
-	}
-	// Genitive nouns
+
+	// Genitive noun surfaces (Morphy GEN forms used in fixtures). Prefer GEN over bare PLU
+	// so REGEXES2 genitive merges (pos=GEN) fire as in Java.
 	genNouns := map[string]string{
-		"sprache": "SUB:GEN:SIN:FEM", "friedens": "SUB:GEN:SIN:MAS", "eintracht": "SUB:GEN:SIN:FEM",
-		"körpers": "SUB:GEN:SIN:MAS", "lateinischen": "SUB:GEN:SIN:NEU", "urstoff": "SUB:NOM:SIN:MAS",
+		"friedens": "SUB:GEN:SIN:MAS", "eintracht": "SUB:GEN:SIN:FEM",
+		"lateinischen": "SUB:GEN:SIN:NEU",
 		"bestände": "SUB:GEN:PLU:MAS", "bücher": "SUB:GEN:PLU:NEU", "städte": "SUB:GEN:PLU:FEM",
 		"siedlungen": "SUB:GEN:PLU:FEM", "flüsse": "SUB:GEN:PLU:MAS", "wörter": "SUB:GEN:PLU:NEU",
 		"verbindungen": "SUB:GEN:PLU:NEU", "charaktere": "SUB:GEN:PLU:MAS", "töchter": "SUB:GEN:PLU:FEM",
-		"höfe": "SUB:GEN:PLU:MAS", "autos": "SUB:GEN:PLU:NEU", "körper": "SUB:GEN:PLU:MAS",
+		"höfe": "SUB:GEN:PLU:MAS", "autos": "SUB:GEN:PLU:NEU",
 	}
 	if g, ok := genNouns[low]; ok {
-		// only force GEN when in genitive span expectations
-		if want == "NPS" || want == "NPP" || want == "PP" {
-			return g
+		return []string{g}
+	}
+	if pluralHeads[low] {
+		return []string{"SUB:NOM:PLU:NEU"}
+	}
+
+	// Singular noun heads common in NPS fixtures (Morphy SUB SIN).
+	sinNouns := map[string]bool{
+		"synthese": true, "pyramide": true, "krankheit": true, "verkehr": true,
+		"autor": true, "teil": true, "nil": true, "maßnahme": true, "erfindung": true,
+		"masseeinheit": true, "gewichtseinheit": true, "schwester": true, "ziel": true,
+		"thema": true, "gerechtigkeit": true, "freiheit": true, "wiederaufbau": true,
+		"isolation": true, "überwindung": true, "bestimmung": true, "funktion": true,
+		"veranstaltung": true, "höhepunkt": true, "dokument": true, "risikoprofil": true,
+		"sammlung": true, "effizienz": true, "einsatz": true, "kapazitätsplanung": true,
+		"laune": true, "straße": true, "kritik": true,
+	}
+	if sinNouns[low] {
+		return []string{"SUB:NOM:SIN:NEU"}
+	}
+
+	// Base closed-class / open-class inventory (single Morphy-like tag).
+	switch low {
+	case "ein", "eine", "einen", "einem", "eines", "das", "die", "der", "den", "dem", "des", "kein":
+		return []string{"ART:DEF:NOM:SIN:NEU"}
+	case "ich", "du", "er", "sie", "es", "wir", "ihr":
+		return []string{"PRO:PER:NOM:SIN:1"}
+	case "seine", "sein", "ihre", "deren", "unsere", "meisten", "eins":
+		return []string{"PRO:POS:GEN:PLU:FEM"}
+	case "und", "oder", "sowie", "weder", "noch", "sowohl", "bzw", "dass", "wie", "als":
+		return []string{"KON:NEB"}
+	case "zwischen", "nach", "bei", "mit", "in", "für", "durch", "einschließlich", "aufgrund", "von", "aus", "im", "am", "laut":
+		return []string{"PRP:DAT"}
+	case "über":
+		if strings.EqualFold(prev, "mit") {
+			return []string{"ADV"}
+		}
+		return []string{"PRP:AKK"}
+	case "sehr", "da", "schon", "mehr", "so", "immer", "wieder", "auch", "nur", "darauf", "los", "auf", "dabei",
+		"privat", "unklar", "betrunken", "alt", "grün", "blau", "kalt", "unterkühlt", "beeindruckend", "nötig",
+		"nichts", "unnötig", "bitte", "schön":
+		return []string{"ADV"}
+	case "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "zwanzig":
+		return []string{"ZAL"}
+	case "37":
+		return []string{"ZAL"}
+	case "1000", "20", "35":
+		return []string{"CARD"}
+	case "herr", "frau", "herrn":
+		return []string{"SUB:NOM:SIN:MAS"}
+	case "julia", "karsten", "schröder", "meier", "schrödinger",
+		"finn", "westerwalbesloh", "karl", "tom", "maria", "österreich", "sowjetunion", "kuba":
+		return []string{"EIG:NOM:SIN:NEU"}
+	case "geprüfte", "verbreiteten", "festgestellte", "abgeleitet":
+		return []string{"PA2:NOM:SIN:MAS:GRU:SOL"}
+	case "anliegende", "laufende", "teilnehmenden", "vorliegenden", "schwankender", "lebende":
+		return []string{"PA1:NOM:SIN:NEU:GRU:SOL"}
+	case "größte", "erfolgreichste", "bekannteste", "älteste", "ältere", "letzte", "letztes",
+		"hohe", "relativ", "kleinen", "gute", "bessere", "größerer", "erste", "kultureller", "stark",
+		"gesteigerte", "schönes", "großes", "leckere", "leckeren", "blauen",
+		"schöne", "neue", "grünen":
+		return []string{"ADJ:NOM:SIN:NEU:GRU:SOL"}
+	case "stehen", "sind", "ist", "war", "waren", "fährt", "gibt", "sitzen", "geht", "ging", "tauchen",
+		"umfasst", "umgestalten", "bin", "kennt", "stammt", "finanziert", "herrscht", "gab", "bellt",
+		"verbrennt", "funktioniert", "will", "isst", "meint", "muss", "überträgt", "mag", "betrifft",
+		"geben", "runter", "wurde":
+		return []string{"VER:3:SIN:PRÄ:SFT"}
+	case "jahr":
+		return []string{"SUB:NOM:SIN:NEU"}
+	case "prozent", "euro":
+		return []string{"SUB:NOM:PLU:NEU"}
+	case "regel", "menge":
+		return []string{"SUB:NOM:SIN:FEM"}
+	}
+
+	// Capitalized default → SUB SIN (Morphy noun)
+	if tok != "" {
+		r := []rune(tok)[0]
+		if unicode.IsUpper(r) {
+			return []string{"SUB:NOM:SIN:NEU"}
 		}
 	}
-	// "folgenden" must be ADJ for In den darauf folgenden Wochen
-	if low == "folgenden" {
-		return "ADJ:DAT:PLU:FEM:GRU:SOL"
-	}
-	// "darauffolgenden" ADJ PLU without SIN issues — use PLU
-	if low == "darauffolgenden" || low == "letzten" || low == "alten" || low == "niedrigen" ||
-		low == "deutschen" || low == "chemischen" || low == "biologischen" || low == "sozialen" ||
-		low == "sachlichen" || low == "militärischen" || low == "selbständigen" || low == "guten" {
-		return "ADJ:NOM:PLU:NEU:GRU:SOL"
-	}
-	// Stephen: EIG → O; King: SUB → NPS (Java annotation "Stephen King/NPS")
-	if low == "stephen" {
-		return "EIG:NOM:SIN:MAS"
-	}
-	if low == "king" {
-		return "SUB:NOM:SIN:MAS"
-	}
-	// "Jahre" PLU for NPP/PP time patterns
-	if low == "jahre" || low == "monate" || low == "wochen" {
-		return "SUB:NOM:PLU:NEU"
-	}
-	// "Iran" as EIG after dem
-	if low == "iran" || low == "kanada" {
-		return "EIG:DAT:SIN:NEU"
-	}
-	// "dem" before EIG/Lateinischen
-	if low == "dem" {
-		return "ART:DEF:DAT:SIN:MAS"
-	}
-	// "einer" for Einer der beiden Höfe
-	if low == "einer" {
-		return "PRO:IND:NOM:SIN:MAS"
-	}
-	// "welche" relative
-	if low == "welche" {
-		return "PRO:REL:NOM:PLU:NEU"
-	}
-	// "aller" PRO GEN
-	if low == "aller" {
-		return "PRO:IND:GEN:PLU:MAS"
-	}
-	// "geprüfte" PA2
-	if low == "geprüfte" {
-		return "PA2:NOM:SIN:MAS:GRU:SOL"
-	}
-	// "Regierung" SIN for der von der Regierung…
-	if low == "regierung" || low == "hund" {
-		return "SUB:NOM:SIN:MAS"
-	}
-	// "von" PRP
-	if low == "von" {
-		return "PRP:DAT"
-	}
-	// "im" PRP
-	if low == "im" {
-		return "PRP:DAT"
-	}
-	// "Weg" SIN NPS
-	if low == "weg" {
-		return "SUB:DAT:SIN:MAS"
-	}
-	// "Synthese" SIN
-	if low == "synthese" || low == "pyramide" || low == "krankheit" || low == "verkehr" ||
-		low == "autor" || low == "teil" || low == "nil" || low == "maßnahme" || low == "erfindung" ||
-		low == "masseeinheit" || low == "gewichtseinheit" || low == "schwester" || low == "ziel" ||
-		low == "thema" || low == "gerechtigkeit" || low == "freiheit" || low == "wiederaufbau" ||
-		low == "isolation" || low == "überwindung" || low == "bestimmung" || low == "funktion" ||
-		low == "veranstaltung" || low == "höhepunkt" || low == "dokument" || low == "risikoprofil" ||
-		low == "sammlung" || low == "effizienz" || low == "einsatz" || low == "kapazitätsplanung" ||
-		low == "laune" || low == "straße" || low == "kritik" {
-		if want == "NPS" || want == "B-NP" || want == "I-NP" || want == "PP" {
-			return "SUB:NOM:SIN:NEU"
+	return []string{"UNKNOWN"}
+}
+
+func tokensFromFullAnno(ann []gcAnno) []*languagetool.AnalyzedTokenReadings {
+	out := make([]*languagetool.AnalyzedTokenReadings, len(ann))
+	pos := 0
+	prev := ""
+	for i, a := range ann {
+		next, next2, next3 := "", "", ""
+		if i+1 < len(ann) {
+			next = ann[i+1].token
 		}
+		if i+2 < len(ann) {
+			next2 = ann[i+2].token
+		}
+		if i+3 < len(ann) {
+			next3 = ann[i+3].token
+		}
+		tags := morphyPOSReadings(a.token, prev, next, next2, next3)
+		readings := make([]*languagetool.AnalyzedToken, len(tags))
+		for j, tag := range tags {
+			p := tag
+			readings[j] = languagetool.NewAnalyzedToken(a.token, &p, nil)
+		}
+		out[i] = languagetool.NewAnalyzedTokenReadingsList(readings, pos)
+		pos += len(a.token) + 1
+		prev = a.token
 	}
-	// "Funktionen" PLU
-	if low == "funktionen" {
-		return "SUB:NOM:PLU:FEM"
-	}
-	// ADJ genitive for organischer/englischer/heutigen/großen/umfangreichen/ersten
-	if low == "organischer" || low == "englischer" || low == "heutigen" || low == "großen" ||
-		low == "umfangreichen" || low == "ersten" {
-		return "ADJ:GEN:PLU:NEU:GRU:SOL"
-	}
-	// "beiden" PRO
-	if low == "beiden" {
-		return "PRO:IND:GEN:PLU:MAS"
-	}
-	// "unserer" PRO:POS
-	if low == "unserer" || low == "ihrer" {
-		return "PRO:POS:GEN:PLU:FEM"
-	}
-	// "ausgestellten" PA2 GEN
-	if low == "ausgestellten" {
-		return "PA2:GEN:PLU:MAS:GRU:DEF"
-	}
-	// "dort" ADV
-	if low == "dort" {
-		return "ADV"
-	}
-	// "keine" for und keine
-	if low == "keine" {
-		return "ART:IND:NOM:SIN:FEM"
-	}
-	// "eins" PRO
-	if low == "eins" {
-		return "PRO:IND:NOM:SIN:NEU"
-	}
-	// "drei" ZAL
-	if low == "drei" || low == "zwei" || low == "vier" {
-		return "ZAL"
-	}
-	// "Mythen"/"Sagen" after comma in PP — PLU
-	if low == "mythen" || low == "sagen" {
-		return "SUB:NOM:PLU:MAS"
-	}
-	// "Körper" genitive plural after aller
-	if low == "körper" {
-		return "SUB:GEN:PLU:MAS"
-	}
-	// "Urstoff" SIN after welche der
-	if low == "urstoff" {
-		return "SUB:NOM:SIN:MAS"
-	}
-	// "Atome" PLU
-	if low == "atome" {
-		return "SUB:NOM:PLU:NEU"
-	}
-	// "Programme" PLU B-NP
-	if low == "programme" {
-		return "SUB:NOM:PLU:NEU"
-	}
-	// "Geister" PLU B
-	if low == "geister" {
-		return "SUB:NOM:PLU:MAS"
-	}
-	// "Jahre" with B annotation after Zahlen
-	if low == "jahre" && want == "B-NP" {
-		return "SUB:NOM:PLU:NEU"
-	}
-	return p
+	return out
 }
 
 func assertGermanFullChunks(t *testing.T, input string) {
@@ -507,8 +408,9 @@ func TestGermanChunker_Chunking(t *testing.T) {
 		"Eine/NPS Veranstaltung/NPS ,/NPS die/NPS immer/NPS wieder/NPS ein/NPS kultureller/NPS Höhepunkt/NPS war",
 		"Und die/NPS ältere/NPS der/NPS beiden/NPS Töchter/NPS ist 20.",
 		"Der/NPS Synthese/NPS organischer/NPS Verbindungen/NPS steht nichts im/PP Weg/NPS",
-		// Java asserts Aber/B but comments it should not be tagged — no invent B-NP on KON:
-		"die/NPP Kenntnisse/NPP der/NPP Sprache/NPP sind nötig.",
+		// Java active: expects B on Aber (comment notes it *should* not be tagged, but assertion still requires B).
+		// Morphy multi-reading KON|SUB yields B-NP via REGEXES1 SUB+ (Java-visible outcome).
+		"Aber/B die/NPP Kenntnisse/NPP der/NPP Sprache/NPP sind nötig.",
 		"Dort steht die/NPS Pyramide/NPS des/NPS Friedens/NPS und/NPS der/NPS Eintracht/NPS",
 		"Und Teil/B der/NPS dort/NPS ausgestellten/NPS Bestände/NPS wurde privat finanziert.",
 		"Autor/NPS der/NPS ersten/NPS beiden/NPS Bücher/NPS ist Stephen King/NPS",
@@ -528,6 +430,7 @@ func TestGermanChunker_Chunking(t *testing.T) {
 		"Funktionen/NPP des/NPP Körpers/NPP einschließlich/PP der/PP biologischen/PP und/PP sozialen/PP Grundlagen/PP",
 		"Das/NPS Dokument/NPS umfasst das für/PP Ärzte/PP und/PP Ärztinnen/PP festgestellte/PP Risikoprofil/PP",
 		"In/PP den/PP darauf/PP folgenden/PP Wochen/PP ging es los.",
+		"In/PP nur/PP zwei/PP Wochen/PP geht es los.",
 		"Programme/B , in/PP deren/PP deutschen/PP Installationen/PP nichts funktioniert.",
 		"Nach/PP sachlichen/PP und/PP militärischen/PP Kriterien/PP war das unnötig.",
 		"Mit/PP über/PP 1000/PP Handschriften/PP ist es die/NPS größte/NPS Sammlung/NPS",
@@ -570,7 +473,8 @@ func TestGermanChunker_OpenNLPLikeChunking(t *testing.T) {
 		"Herr/B Finn/I Westerwalbesloh/I isst eine/B leckere/I Lasagne/I",
 		"Unsere/B schöne/I Heimat/I geht den/B Bach/I runter",
 		"Er meint das/B Haus/I am grünen/B Hang/I",
-		// Ich/B … Futter/I skipped — bare PRO is not REGEXES1 without invent
+		// Java active: Ich/B via Morphy PRO|SUB multi-reading (SUB+ → B-NP); dem Hund Futter as ART SUB+
+		"Ich/B muss dem/B Hund/I Futter/I geben",
 		"Das/B Wasser/I , das die/B Wärme/I überträgt",
 		"Er mag das/B Wasser/I , das/B Meer/I und die/B Luft/I",
 		"Schon mehr als zwanzig/B Prozent/I der/B Arbeiter/I sind im Streik/B",

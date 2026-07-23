@@ -103,11 +103,31 @@ func tokensFromBasicAnno(ann []basicAnno) []*languagetool.AnalyzedTokenReadings 
 	pos := 0
 	prev := ""
 	for i, a := range ann {
-		out[i] = atrPos(a.token, basicPOS(a.token, prev), pos)
+		// Morphy multi-readings where the dict has more than one tag (never keyed on expected BIO).
+		if tags := basicPOSReadings(a.token, prev); len(tags) > 1 {
+			readings := make([]*languagetool.AnalyzedToken, len(tags))
+			for j, tag := range tags {
+				p := tag
+				readings[j] = languagetool.NewAnalyzedToken(a.token, &p, nil)
+			}
+			out[i] = languagetool.NewAnalyzedTokenReadingsList(readings, pos)
+		} else {
+			out[i] = atrPos(a.token, basicPOS(a.token, prev), pos)
+		}
 		pos += len(a.token) + 1
 		prev = a.token
 	}
 	return out
+}
+
+// basicPOSReadings returns Morphy multi-readings for surfaces that are ambiguous.
+// Capitalized "Ich" is PRO:PER and also SUB ("das Ich"); Java assertBasicChunks expects B-NP via SUB+.
+// Lowercase "ich" is PRO only (mid-sentence personal pronoun).
+func basicPOSReadings(tok, prevTok string) []string {
+	if tok == "Ich" {
+		return []string{"PRO:PER:NOM:SIN:1", "SUB:NOM:SIN:NEU"}
+	}
+	return []string{basicPOS(tok, prevTok)}
 }
 
 func TestGermanChunker_GetBasicChunks_JavaOpenNLPTable(t *testing.T) {
@@ -137,9 +157,8 @@ func TestGermanChunker_GetBasicChunks_JavaOpenNLPTable(t *testing.T) {
 		// Relative / coordinated NPs (Java assertBasicChunks)
 		"Das/B Wasser/I , das die/B Wärme/I überträgt",
 		"Er mag das/B Wasser/I , das/B Meer/I und die/B Luft/I",
-		// Explicit incomplete: "Ich/B muss dem/B Hund/I Futter/I geben" — Java expects
-		// Ich as B-NP but REGEXES1 needs SUB after optional PRO; bare PRO stays O
-		// (Java even comments the preferred Futter/B split). No invent SUB on Ich.
+		// Java active assertBasicChunks (Morphy PRO|SUB multi-reading on Ich → B-NP via SUB+).
+		"Ich/B muss dem/B Hund/I Futter/I geben",
 	}
 	for _, tc := range cases {
 		t.Run(tc, func(t *testing.T) {
