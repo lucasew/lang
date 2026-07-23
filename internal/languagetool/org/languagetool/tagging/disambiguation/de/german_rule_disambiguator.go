@@ -33,7 +33,8 @@ type GermanRuleDisambiguator struct {
 // (Java multitokenSpeller3 + setIgnoreSpelling(true); allowFirstCapitalized=false).
 // MultitokenSuggest is wired from official /de/multitoken-suggest.txt when discoverable
 // (Java multitokenSpeller2 + setIgnoreSpelling(true); same flags as MultitokenIgnore).
-// XML remains an optional injector until that loader is wired the same way.
+// Rules is wired from official de/disambiguation.xml + disambiguation-global.xml
+// (Java XmlRuleDisambiguator(lang, true)).
 func NewGermanRuleDisambiguator() *GermanRuleDisambiguator {
 	d := &GermanRuleDisambiguator{}
 	if mw := GermanMultitokenIgnore(); mw != nil {
@@ -44,6 +45,9 @@ func NewGermanRuleDisambiguator() *GermanRuleDisambiguator {
 	}
 	if mw := GermanMultitokenSuggest(); mw != nil {
 		d.MultitokenSuggest = mw
+	}
+	if xml := GermanXmlRuleDisambiguator(); xml != nil {
+		d.Rules = xml
 	}
 	return d
 }
