@@ -6,12 +6,16 @@ import (
 )
 
 // ArabicHybridDisambiguator ports org.languagetool.tagging.ar.ArabicHybridDisambiguator:
-// MultiWordChunker.getInstance("/ar/multiwords.txt") defaults, then XmlRuleDisambiguator(Arabic) no global.
+// MultiWordChunker.getInstance("/ar/multiwords.txt") defaults (F,F,F;
+// NO setRemovePreviousTags; NO setIgnoreSpelling), then
+// XmlRuleDisambiguator(new Arabic()) with useGlobalDisambiguation=false.
 // Java order: disambiguator.disambiguate(chunker.disambiguate(input)) — multiwords then XML.
-// Official ar/multiwords.txt is comment-only; Chunker stays nil unless injected (no invent entries).
-// Rules is eagerly wired from official ar/disambiguation.xml when present (Java final field).
+// Official ar/multiwords.txt is comment-only; Java still constructs MultiWordChunker —
+// Chunker is eagerly wired (empty maps OK) when the official file is discoverable.
+// Do not invent multiword entries.
 type ArabicHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
+	// Chunker is Java MultiWordChunker.getInstance("/ar/multiwords.txt") defaults.
 	Chunker interface {
 		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 	}
@@ -21,11 +25,17 @@ type ArabicHybridDisambiguator struct {
 	}
 }
 
-// NewArabicHybridDisambiguator ports Java field init: XmlRuleDisambiguator(new Arabic())
-// (useGlobalDisambiguation=false). MultiWordChunker is left for injectors / commandline
-// (official multiwords empty — no invent).
+// NewArabicHybridDisambiguator builds stages Java constructs as final fields.
+// Chunker is wired from official /ar/multiwords.txt when discoverable
+// (getInstance("/ar/multiwords.txt") defaults: F/F/F; no removePreviousTags; no ignoreSpelling).
+// Official multiwords may be comment-only → non-nil empty MultiWordChunker (Java still constructs).
+// Rules is eagerly wired from official ar/disambiguation.xml when present
+// (XmlRuleDisambiguator(Arabic) — useGlobalDisambiguation=false).
 func NewArabicHybridDisambiguator() *ArabicHybridDisambiguator {
 	d := &ArabicHybridDisambiguator{}
+	if mw := ArabicMultiWordChunker(); mw != nil {
+		d.Chunker = mw
+	}
 	if xml := ArabicXmlRuleDisambiguator(); xml != nil {
 		d.Rules = xml
 	}
@@ -37,7 +47,7 @@ func NewArabicHybridDisambiguatorWithStages(chunker, secondary disambiguation.Di
 	return &ArabicHybridDisambiguator{Chunker: chunker, Rules: secondary}
 }
 
-// NewDefaultArabicHybridDisambiguator matches Java default construction (XML rules stage).
+// NewDefaultArabicHybridDisambiguator matches Java default construction (both stages when present).
 func NewDefaultArabicHybridDisambiguator() *ArabicHybridDisambiguator {
 	return NewArabicHybridDisambiguator()
 }
@@ -47,6 +57,7 @@ func (d *ArabicHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSen
 		return input
 	}
 	out := input
+	// Java: return disambiguator.disambiguate(chunker.disambiguate(input));
 	// multiwords first, then XML
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
