@@ -3,7 +3,6 @@ package tokenizers
 import (
 	"regexp"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -73,15 +72,14 @@ func (t *SRXSentenceTokenizer) Tokenize(text string) []string {
 	// Java: SrxTools.createSrxDocument(srxInClassPath) then tokenize with shortCode+parCode
 	doc, err := cachedCreateSrxDocument(path)
 	if err != nil || doc == nil {
-		// Fallback only if resource load failed.
+		// Java throws RuntimeException("Could not load SRX rules"). No invent
+		// Default rules for segment-simple (or other paths). Last-resort for
+		// /segment.srx only remains while that path's load is hardened separately.
 		np := normalizeSrxClasspath(path)
 		if np == "/segment.srx" {
 			return defaultSrxLikeTokenize(text, par)
 		}
-		if np == "/org/languagetool/tokenizers/segment-simple.srx" {
-			return simpleSrxDefaultRulesTokenize(text)
-		}
-		// Unknown path fail-closed: no invent rules for foreign SRX
+		// Fail closed: no soft segment-simple invent tokenizer.
 		return []string{text}
 	}
 	return doc.Split(text, lang, par)
@@ -182,31 +180,4 @@ func splitKeep(text, sep string) []string {
 var (
 	_ Tokenizer         = (*SRXSentenceTokenizer)(nil)
 	_ SentenceTokenizer = (*SRXSentenceTokenizer)(nil)
-	_ SentenceTokenizer = (*sentenceTokenizerAdapter)(nil)
 )
-
-// sentenceTokenizerAdapter lets SimpleSentenceTokenizer satisfy SentenceTokenizer.
-// Forwards paragraph mode to SimpleSentenceTokenizer (segment-simple.srx _one/_two maps).
-type sentenceTokenizerAdapter struct {
-	*SimpleSentenceTokenizer
-}
-
-func (a *sentenceTokenizerAdapter) SetSingleLineBreaksMarksParagraph(v bool) {
-	if a != nil && a.SimpleSentenceTokenizer != nil {
-		a.SimpleSentenceTokenizer.SetSingleLineBreaksMarksParagraph(v)
-	}
-}
-func (a *sentenceTokenizerAdapter) SingleLineBreaksMarksPara() bool {
-	if a == nil || a.SimpleSentenceTokenizer == nil {
-		return false
-	}
-	return a.SimpleSentenceTokenizer.SingleLineBreaksMarksPara()
-}
-
-// AsSentenceTokenizer wraps SimpleSentenceTokenizer.
-func (t *SimpleSentenceTokenizer) AsSentenceTokenizer() SentenceTokenizer {
-	return &sentenceTokenizerAdapter{SimpleSentenceTokenizer: t}
-}
-
-// isUpper is reserved for future abbreviation-aware breaks.
-var _ = unicode.IsUpper

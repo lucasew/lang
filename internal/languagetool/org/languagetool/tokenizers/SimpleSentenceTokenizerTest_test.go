@@ -8,44 +8,52 @@ import (
 
 // Port of org.languagetool.tokenizers.SimpleSentenceTokenizerTest.
 
+// TestSimpleSentenceTokenizer_Tokenize ports testTokenize → private testSplit
+// → TestTools.testSplit(sentences, tokenizer): join parts, tokenize, equal parts.
 func TestSimpleSentenceTokenizer_Tokenize(t *testing.T) {
-	// TestTools.testSplit: join parts, tokenize, expect same parts
-	sentences := []string{"Hi! ", "This is a test. ", "Here's more. ", "And even more?? ", "Yes."}
+	testSplitSimple(t, "Hi! ", "This is a test. ", "Here's more. ", "And even more?? ", "Yes.")
+}
+
+// testSplitSimple mirrors Java SimpleSentenceTokenizerTest.testSplit + TestTools.testSplit.
+func testSplitSimple(t *testing.T, sentences ...string) {
+	t.Helper()
+	tokenizer := NewSimpleSentenceTokenizer()
 	var input string
 	for _, s := range sentences {
 		input += s
 	}
-	got := NewSimpleSentenceTokenizer().Tokenize(input)
-	require.Equal(t, sentences, got)
+	require.Equal(t, []string(sentences), tokenizer.Tokenize(input))
 }
 
 // segment-simple.srx has no abbreviation exceptions (full segment.srx does).
-// Soft invent noBreakAbbrevs removed — "etc. " may end a sentence here.
+// Official Default rule breaks after ". " — exact segments, not soft len checks.
 func TestSimpleSentenceTokenizer_NoInventAbbrevNoBreak(t *testing.T) {
 	got := NewSimpleSentenceTokenizer().Tokenize("Fruits, etc. Next sentence.")
-	// Default rule: break after ". " → two segments
-	require.GreaterOrEqual(t, len(got), 2)
-	require.Equal(t, "Fruits, etc. ", got[0])
+	require.Equal(t, []string{"Fruits, etc. ", "Next sentence."}, got)
 }
 
-func TestSimpleSentenceTokenizer_UsesSegmentSimpleSRX(t *testing.T) {
-	// Load path must succeed so we exercise real SRX (not invent fallback only).
-	doc, err := segmentSimpleDocument()
-	require.NoError(t, err)
-	require.NotNil(t, doc)
-	// Default rule breaks after ". " with Unicode \s (UNICODE_CHARACTER_CLASS in Java).
-	got := NewSimpleSentenceTokenizer().Tokenize("Hi.\u00A0Next")
-	// NBSP is \s under UNICODE_CHARACTER_CLASS → break after ".NBSP"
-	require.GreaterOrEqual(t, len(got), 1)
-}
-
-func TestSimpleSentenceTokenizer_ParagraphModeFlags(t *testing.T) {
+// Construction path: language "xx", SRX path segment-simple.srx; paragraph flags
+// from SRXSentenceTokenizer (Java inheritance).
+func TestSimpleSentenceTokenizer_ConstructionAndParagraphFlags(t *testing.T) {
 	st := NewSimpleSentenceTokenizer()
+	require.Equal(t, "xx", st.LanguageCode)
+	require.Equal(t, "/org/languagetool/tokenizers/segment-simple.srx", st.SrxPath)
+
+	// Java constructor: setSingleLineBreaksMarksParagraph(false) → parCode "_two"
 	require.False(t, st.SingleLineBreaksMarksPara())
 	st.SetSingleLineBreaksMarksParagraph(true)
 	require.True(t, st.SingleLineBreaksMarksPara())
-	// Adapter forwards flags
-	ad := st.AsSentenceTokenizer()
-	ad.SetSingleLineBreaksMarksParagraph(false)
+	st.SetSingleLineBreaksMarksParagraph(false)
 	require.False(t, st.SingleLineBreaksMarksPara())
+
+	// is-a SentenceTokenizer (Java extends)
+	var as SentenceTokenizer = st
+	as.SetSingleLineBreaksMarksParagraph(true)
+	require.True(t, st.SingleLineBreaksMarksPara())
+	require.True(t, as.SingleLineBreaksMarksPara())
+
+	// Official resource loads (SrxTools.createSrxDocument twin)
+	doc, err := segmentSimpleDocument()
+	require.NoError(t, err)
+	require.NotNil(t, doc)
 }
