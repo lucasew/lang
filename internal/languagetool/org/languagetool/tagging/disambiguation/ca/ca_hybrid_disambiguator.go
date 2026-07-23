@@ -28,7 +28,9 @@ type CatalanHybridDisambiguator struct {
 // Chunker is wired from official /ca/multiwords.txt when discoverable
 // (getInstance("/ca/multiwords.txt", true, true, false)
 // + setRemovePreviousTags(true); no setIgnoreSpelling).
-// Rules / Multitoken remain unwired until their sectors land.
+// Rules is wired from XmlRuleDisambiguator(lang, true) when official ca + global
+// XML load (useGlobalDisambiguation=true).
+// Multitoken remains unwired until CatalanMultitokenDisambiguator sector lands.
 func NewCatalanHybridDisambiguator() *CatalanHybridDisambiguator {
 	d := &CatalanHybridDisambiguator{}
 	if g := CatalanGlobalChunker(); g != nil {
@@ -36,6 +38,9 @@ func NewCatalanHybridDisambiguator() *CatalanHybridDisambiguator {
 	}
 	if mw := CatalanMultiWordChunker(); mw != nil {
 		d.Chunker = mw
+	}
+	if r := CatalanXmlRuleDisambiguator(); r != nil {
+		d.Rules = r
 	}
 	return d
 }
