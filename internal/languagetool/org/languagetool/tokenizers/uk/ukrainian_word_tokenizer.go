@@ -15,77 +15,78 @@ type UkrainianWordTokenizer struct{}
 func NewUkrainianWordTokenizer() *UkrainianWordTokenizer { return &UkrainianWordTokenizer{} }
 
 const (
-	decimalCommaSubst     = '\uE001'
-	nonBreakingSpaceSubst = '\uE002'
-	nonBreakingDotSubst   = '\uE003'
-	nonBreakingColonSubst = '\uE004'
-	leftBraceSubst        = '\uE005'
-	rightBraceSubst       = '\uE006'
-	nonBreakingSlashSubst = '\uE007'
-	leftAngleSubst        = '\uE008'
-	rightAngleSubst       = '\uE009'
-	slashSubst            = '\uE010'
+	decimalCommaSubst       = '\uE001'
+	nonBreakingSpaceSubst   = '\uE002'
+	nonBreakingDotSubst     = '\uE003'
+	nonBreakingColonSubst   = '\uE004'
+	leftBraceSubst          = '\uE005'
+	rightBraceSubst         = '\uE006'
+	nonBreakingSlashSubst   = '\uE007'
+	leftAngleSubst          = '\uE008'
+	rightAngleSubst         = '\uE009'
+	slashSubst              = '\uE010'
 	nonBreakingPlaceholder  = "\uE109"
 	breakingPlaceholder     = "\uE110"
 	nonBreakingPlaceholder2 = "\uE120"
 	softHyphenWrap          = "\u00AD\n"
 	softHyphenWrapSubst     = "\uE103"
 	urlStartReplaceChar     = 0xE300
-	// javaHVClass approximates Java Pattern [\h\v] for use inside a character class.
-	// \h: space, tab, NBSP, Ogham, Mongolian vowel sep, U+2000–200A, NNBSP, MMSP, ideographic space
-	// \v: LF, VT, FF, CR, NEL, line/paragraph separators
-	javaHVClass = `\t\n\x0B\f\r \x{00A0}\x{0085}\x{1680}\x{180E}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}`
+	// javaHClass = Java Pattern \h (horizontal whitespace) for character classes.
+	// [ \t\xA0\u1680\u180e\u2000-\u200a\u202f\u205f\u3000]
+	javaHClass = `\t \x{00A0}\x{1680}\x{180E}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200A}\x{202F}\x{205F}\x{3000}`
+	// javaVClass = Java Pattern \v (vertical whitespace).
+	// [\n\x0B\f\r\x85\u2028\u2029]
+	javaVClass = `\n\x0B\f\r\x{0085}\x{2028}\x{2029}`
+	// javaHVClass = Java [\h\v]
+	javaHVClass = javaHClass + javaVClass
 )
 
 var (
-	weirdApostroph = regexp.MustCompile(`(?i)([бвджзклмнпрстфхш])(["\x{201D}\x{201F}` + "`" + `´])([єїюя])`)
+	weirdApostroph    = regexp.MustCompile(`(?i)([бвджзклмнпрстфхш])(["\x{201D}\x{201F}` + "`" + `´])([єїюя])`)
 	wordsWithBrackets = regexp.MustCompile(`(?i)([а-яіїєґ])\[([а-яіїєґ]+)\]`)
 	decimalComma      = regexp.MustCompile(`([\d]),([\d])`)
-	// spaced thousands without lookbehind: handle via ReplaceAllStringFunc
-	decimalSpace = regexp.MustCompile(`(?:^|[\s\x{00A0}\x{202F}(])(\d{1,3}(?:[\s\x{00A0}\x{202F}]\d{3})+)(?:[\s\x{00A0}\x{202F}(]|$)`)
-	// better: find numbers with spaces inside
-	decimalSpaceInner = regexp.MustCompile(`\d{1,3}(?:[\s\x{00A0}\x{202F}]\d{3})+`)
 
-	dashNumbers   = regexp.MustCompile(`([IVXІХ]+)([\x{2013}-])([IVXІХ]+)`)
-	nDashSpace    = regexp.MustCompile(`(?i)([а-яіїєґa-z0-9])(\x{2013}[\s\x{00A0}\x{202F}])`)
-	nDashSpace2   = regexp.MustCompile(`(?i)([\s.,;!?]\x{2013})([а-яіїєґa-z])`)
-	dottedNumbers = regexp.MustCompile(`([\d])\.([\d])`)
+	dashNumbers = regexp.MustCompile(`([IVXІХ]+)([\x{2013}-])([IVXІХ]+)`)
+	// Java N_DASH_SPACE: ([а-яіїєґa-z0-9])(\u2013\h) — \h only (not \v/\s)
+	nDashSpace = regexp.MustCompile(`(?i)([а-яіїєґa-z0-9])(\x{2013}[` + javaHClass + `])`)
+	// Java N_DASH_SPACE2: ([\h.,;!?]\u2013)
+	nDashSpace2    = regexp.MustCompile(`(?i)([` + javaHClass + `.,;!?]\x{2013})([а-яіїєґa-z])`)
+	dottedNumbers  = regexp.MustCompile(`([\d])\.([\d])`)
 	dottedNumbers3 = regexp.MustCompile(`([\d])\.([\d]+)\.([\d])`)
-	colonNumbers  = regexp.MustCompile(`([\d]):([\d])`)
-	braceInWord   = regexp.MustCompile(`(?i)([а-яіїєґ])\(([а-яіїєґ']+)\)`)
-	xmlTag        = regexp.MustCompile(`(?i)<(/?[a-z_]+/?)>`)
+	colonNumbers   = regexp.MustCompile(`([\d]):([\d])`)
+	braceInWord    = regexp.MustCompile(`(?i)([а-яіїєґ])\(([а-яіїєґ']+)\)`)
+	xmlTag         = regexp.MustCompile(`(?i)<(/?[a-z_]+/?)>`)
 
-	initialsSP2 = regexp.MustCompile(`([А-ЯІЇЄҐ])\.([\s\x{00A0}\x{202F}]{0,5}[А-ЯІЇЄҐ])\.([\s\x{00A0}\x{202F}]{0,5}[А-ЯІЇЄҐ][а-яіїєґ']+)`)
-	initialsSP1 = regexp.MustCompile(`([А-ЯІЇЄҐ])\.([\s\x{00A0}\x{202F}]{0,5}[А-ЯІЇЄҐ][а-яіїєґ']+)`)
-	initialsRSP2 = regexp.MustCompile(`([А-ЯІЇЄҐ][а-яіїєґ']+)([\s\x{00A0}\x{202F}]?[А-ЯІЇЄҐ])\.([\s\x{00A0}\x{202F}]?[А-ЯІЇЄҐ])\.`)
-	initialsRSP1 = regexp.MustCompile(`([А-ЯІЇЄҐ][а-яіїєґ']+)([\s\x{00A0}\x{202F}]?[А-ЯІЇЄҐ])\.`)
+	initialsSP2  = regexp.MustCompile(`([А-ЯІЇЄҐ])\.([` + javaHVClass + `]{0,5}[А-ЯІЇЄҐ])\.([` + javaHVClass + `]{0,5}[А-ЯІЇЄҐ][а-яіїєґ']+)`)
+	initialsSP1  = regexp.MustCompile(`([А-ЯІЇЄҐ])\.([` + javaHVClass + `]{0,5}[А-ЯІЇЄҐ][а-яіїєґ']+)`)
+	initialsRSP2 = regexp.MustCompile(`([А-ЯІЇЄҐ][а-яіїєґ']+)([` + javaHVClass + `]?[А-ЯІЇЄҐ])\.([` + javaHVClass + `]?[А-ЯІЇЄҐ])\.`)
+	initialsRSP1 = regexp.MustCompile(`([А-ЯІЇЄҐ][а-яіїєґ']+)([` + javaHVClass + `]?[А-ЯІЇЄҐ])\.`)
 
-	abbrDotVO1 = regexp.MustCompile(`([вВу])\.([\s\x{00A0}\x{202F}]*о)\.`)
-	abbrDotVO2 = regexp.MustCompile(`(к)\.([\s\x{00A0}\x{202F}]*с)\.`)
-	abbrDotVO3 = regexp.MustCompile(`(ч|ст)\.([\s\x{00A0}\x{202F}]*л)\.`)
-	abbrDotTys1 = regexp.MustCompile(`([0-9IІ][\s\x{00A0}\x{202F}]+)(тис|арт)\.`)
-	abbrDotTys2 = regexp.MustCompile(`(тис|арт)\.([\s\x{00A0}\x{202F}]+[а-яіїєґ0-9])`)
-	abbrDotArt = regexp.MustCompile(`([Аа]рт|[Мм]ал|[Рр]ис|[Сс]пр)\.([\s\x{00A0}\x{202F}]*(?:№[\s\x{00A0}\x{202F}]*)?[0-9])`)
-	abbrDotMan = regexp.MustCompile(`(Ман)\.([\s\x{00A0}\x{202F}]*(?:Сіті|[Юю]н))`)
+	abbrDotVO1  = regexp.MustCompile(`([вВу])\.([` + javaHVClass + `]*о)\.`)
+	abbrDotVO2  = regexp.MustCompile(`(к)\.([` + javaHVClass + `]*с)\.`)
+	abbrDotVO3  = regexp.MustCompile(`(ч|ст)\.([` + javaHVClass + `]*л)\.`)
+	abbrDotTys1 = regexp.MustCompile(`([0-9IІ][` + javaHVClass + `]+)(тис|арт)\.`)
+	abbrDotTys2 = regexp.MustCompile(`(тис|арт)\.([` + javaHVClass + `]+[а-яіїєґ0-9])`)
+	// Java ABBR_DOT_ART / MAN use [\h]* only
+	abbrDotArt = regexp.MustCompile(`([Аа]рт|[Мм]ал|[Рр]ис|[Сс]пр)\.([` + javaHClass + `]*(?:№[` + javaHClass + `]*)?[0-9])`)
+	abbrDotMan = regexp.MustCompile(`(Ман)\.([` + javaHClass + `]*(?:Сіті|[Юю]н))`)
 	// Java ABBR_DOT_LAT / ABBR_DOT_PROF: case-sensitive (no CASE_INSENSITIVE).
 	// Only explicit dual-case arms match (e.g. [Пп]роф); uppercase ЛАТ./ПРОФ. do not.
 	// Lat requires a non-letter left char (Java group, not lookbehind — no BOS).
 	// Prof uses negative lookbehind in Java → (^|prefix) here.
-	abbrDotLat = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-]лат)\.([\s\x{00A0}\x{202F}]+[a-zA-Z])`)
-	abbrDotProf = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([Аа]кад|[Пп]роф|[Дд]оц|[Аа]сист|[Аа]рх|ап|тов|вул|бул|бульв|о|р|ім|упорядн?|др|[Пп]реп|Ів|Дж|Ол|[сС]вт|Авг)\.([\s\x{00A0}\x{202F}]+[А-ЯІЇЄҐа-яіїєґ])`)
-	abbrDotGub = regexp.MustCompile(`(.[А-ЯІЇЄҐ][а-яіїєґ'-]+[\s\x{00A0}\x{202F}]+губ)\.`)
+	abbrDotLat  = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-]лат)\.([` + javaHVClass + `]+[a-zA-Z])`)
+	abbrDotProf = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([Аа]кад|[Пп]роф|[Дд]оц|[Аа]сист|[Аа]рх|ап|тов|вул|бул|бульв|о|р|ім|упорядн?|др|[Пп]реп|Ів|Дж|Ол|[сС]вт|Авг)\.([` + javaHVClass + `]+[А-ЯІЇЄҐа-яіїєґ])`)
+	abbrDotGub  = regexp.MustCompile(`(.[А-ЯІЇЄҐ][а-яіїєґ'-]+[` + javaHVClass + `]+губ)\.`)
 	// Go \b is ASCII-only; use explicit non-letter left edge for Cyrillic initials like К.-Святошинський
 	abbrDotDash = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])([А-ЯІЇЄҐ]ж?)\.([-\x{2013}](?:[А-ЯІЇЄҐ][а-яіїєґ']{2}|[А-ЯІЇЄҐ]\.))`)
-	abbrDotKub = regexp.MustCompile(`(кв|куб)\.([\s\x{00A0}\x{202F}]*(?:[смкд]|мк)?м)`)
-	abbrDotSG = regexp.MustCompile(`(с)\.(-г)\.`)
-	abbrDotChl = regexp.MustCompile(`(чл)\.(-кор)\.`)
-	abbrDotPn = regexp.MustCompile(`(пн|пд)\.(-(зах|сх))\.`)
-	invalidMln = regexp.MustCompile(`(млн|млрд)\.( [а-яіїєґ])`)
-	// Java ABBR_DOT_2_SMALL_LETTERS_PATTERN: second group has (?![смкд]?м\.) — RE2 has no
-	// lookahead; applied via replaceAbbrDot2Small.
-	abbrDot2Small = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([векнпрстцч]{1,2})\.([\s\x{00A0}\x{202F}]*[екмнпрстч]{1,2})\.`)
-	// meter-like second abbr that Java excludes via (?![смкд]?м\.)
-	abbrDot2SmallMeterSecond = regexp.MustCompile(`^[\s\x{00A0}\x{202F}]*(?:[смкд]?м|мк)$`)
+	abbrDotKub  = regexp.MustCompile(`(кв|куб)\.([` + javaHVClass + `]*(?:[смкд]|мк)?м)`)
+	abbrDotSG   = regexp.MustCompile(`(с)\.(-г)\.`)
+	abbrDotChl  = regexp.MustCompile(`(чл)\.(-кор)\.`)
+	abbrDotPn   = regexp.MustCompile(`(пн|пд)\.(-(зах|сх))\.`)
+	invalidMln  = regexp.MustCompile(`(млн|млрд)\.( [а-яіїєґ])`)
+	// Java ABBR_DOT_2_SMALL_LETTERS: second group \h*(?![смкд]?м\.)[екмнпрстч]{1,2}
+	// RE2 has no lookahead; meter exclusion applied in replaceAbbrDot2Small (only [смкд]?м, not мк).
+	abbrDot2Small = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])([векнпрстцч]{1,2})\.([` + javaHClass + `]*[екмнпрстч]{1,2})\.`)
 
 	// non-ending abbreviations (long list).
 	// Java ABBR_DOT_NON_ENDING: case-sensitive; only listed dual-case arms ([Нн]апр, [Пп]оч, …).
@@ -94,21 +95,21 @@ var (
 	// "в." in "в. о." is handled earlier by abbrDotVO1, not this list.
 	abbrNonEndingList = `абз|австрал|ам|амер|англ|акад(?:ем)?|арк|ауд|біол|бл(?:изьк)?|болг|буд|вип|вірм|грец(?:ьк)?|держ|див|дир|діал|дод|дол|досл|доц|доп|екон|ел|жін|зав|заст|зах|зб|зв|зневажл?|зовн|іл|ім|івр|інж|ісп|іст|італ|к|каб|каф|канд|кв|[1-9]-кімн|кімн|кін|кл|кн|коеф|крим|латин|мал|моб|н|[Нн]апр|нач|нім|нац|нпр|образн|оз|оп|оф|п|пен|перекл|перен|пл|пол|пом|пор|порівн|[Пп]оч|пп|прибл|прикм|прим|присл|пров|пром|просп|[Рр]ед|[Рр]еж|розд|розм|рос|рт|рум|с|санскр|[Сс]вв?|скор|соц|співавт|[сС]т|стор|суч|сх|табл|тт|[тТ]ел|техн|укр|філол|фр|франц|худ|[цЦ]ит|ч|чайн|част|ц|яп|япон`
 	// Java lookbehind (?<![а-яіїєґА-ЯІЇЄҐ'\u0301-]) → (^|same class)
-	abbrNonEnding = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])(` + abbrNonEndingList + `)\.`)
-	abbrNonEnding2 = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'-]м\.)([\s\x{00A0}\x{202F}]*[А-ЯІЇЄҐ])`)
+	abbrNonEnding  = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'\x{0301}-])(` + abbrNonEndingList + `)\.`)
+	abbrNonEnding2 = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'-]м\.)([` + javaHVClass + `]*[А-ЯІЇЄҐ])`)
 
-	abbrNar1 = regexp.MustCompile(`(([0-9]|рік|[рp]\.|[-–—])[\s\x{00A0}\x{202F}]+нар)\.`)
-	abbrNar2 = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])(нар)\.([\s\x{00A0}\x{202F}]+[0-9а-яіїєґ])`)
+	abbrNar1 = regexp.MustCompile(`(([0-9]|рік|[рp]\.|[-–—])[` + javaHVClass + `]+нар)\.`)
+	abbrNar2 = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])(нар)\.([` + javaHVClass + `]+[0-9а-яіїєґ])`)
 
 	// ending abbreviations: Java case-sensitive; р|рр|РР (not case-fold of р).
 	// Java: ([^letter-](abbr))\. (?!\uE120) — left boundary char required (no BOS alone).
 	// Applied via replaceAbbrEnding.
 	abbrEnding = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'\x{0301}-]((?:та|й|і) (?:інш?|под)|атм|відс|гр|коп|дес|дол|обл|пов|р|рр|РР|руб|ст|стст|стол|стор|чол|шт))\.`)
-	abbrITP = regexp.MustCompile(`([ій][\s\x{00A0}\x{202F}]+т\.)([\s\x{00A0}\x{202F}]*(д|п|ін)\.)`)
-	abbrITCH = regexp.MustCompile(`([ву][\s\x{00A0}\x{202F}]+т\.)([\s\x{00A0}\x{202F}]*ч\.)`)
-	abbrTZV = regexp.MustCompile(`([\s\x{00A0}\x{202F}(]+т\.)([\s\x{00A0}\x{202F}]*зв\.)`)
-	abbrAtEnd = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])(тис|губ|[А-ЯІЇЄҐ])\.[\s\x{00A0}\x{202F}]*$`)
-	abbrRedAvt = regexp.MustCompile(`([\s\x{00A0}\x{202F}]+([Рр]ед|[Аа]вт))\.([\s\x{00A0}\x{202F}]*[)\]а-яіїєґ])`)
+	abbrITP    = regexp.MustCompile(`([ій][` + javaHVClass + `]+т\.)([` + javaHVClass + `]*(д|п|ін)\.)`)
+	abbrITCH   = regexp.MustCompile(`([ву][` + javaHVClass + `]+т\.)([` + javaHVClass + `]*ч\.)`)
+	abbrTZV    = regexp.MustCompile(`([` + javaHVClass + `(]+т\.)([` + javaHVClass + `]*зв\.)`)
+	abbrAtEnd  = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])(тис|губ|[А-ЯІЇЄҐ])\.[` + javaHVClass + `]*$`)
+	abbrRedAvt = regexp.MustCompile(`([` + javaHVClass + `]+([Рр]ед|[Аа]вт))\.([` + javaHClass + `]*[)\]а-яіїєґ])`)
 
 	// Year with р.
 	yearWithR = regexp.MustCompile(`((?:[12][0-9]{3}[—–-])?[12][0-9]{3})(рр?\.)`)
@@ -116,19 +117,26 @@ var (
 	compoundQuotes1 = regexp.MustCompile(`(?i)([а-яіїє]-)([«"„])([а-яіїєґ'-]+)([»"“])`)
 	compoundQuotes2 = regexp.MustCompile(`(?i)([«"„])([а-яіїєґ0-9'-]+)([»"“])(-[а-яіїє])`)
 
-	urlPattern = regexp.MustCompile(`(?i)((https?|ftp)://|www\.)[^\s\x{00A0}\x{202F}/$.?#),]+\.[^\s\x{00A0}\x{202F}),">]*|(mailto:)?[\p{L}\d._-]+@[\p{L}\d_-]+(\.[\p{L}\d_-]+)+`)
+	// Java URL_PATTERN: [^\h\v/$.?#),]+ etc.
+	urlPattern = regexp.MustCompile(`(?i)((https?|ftp)://|www\.)[^` + javaHVClass + `/$.?#),]+\.[^` + javaHVClass + `),">]*|(mailto:)?[\p{L}\d._-]+@[\p{L}\d_-]+(\.[\p{L}\d_-]+)+`)
 
-	leadingDash = regexp.MustCompile(`^([\x{2014}\x{2013}])([а-яіїєґА-ЯІЇЄҐA-Z])`)
+	leadingDash  = regexp.MustCompile(`^([\x{2014}\x{2013}])([а-яіїєґА-ЯІЇЄҐA-Z])`)
 	leadingDash2 = regexp.MustCompile(`^(-)([А-ЯІЇЄҐA-Z])`)
 	// Java: text.replaceAll("\u2014([\\h\\v])", BREAKING_PLACEHOLDER + "\u2014$1") only —
 	// mid-word emdash splits later via SPLIT_CHARS (\u2014 is a delimiter); do not pre-split letter—letter.
 	emDashBeforeHV = regexp.MustCompile("\u2014([" + javaHVClass + "])")
-	numberMissingSpace = regexp.MustCompile(`((?:[\s\x{00A0}\x{202F}\x{E110}]|^)[а-яїієґА-ЯІЇЄҐ'-]*[а-яїієґ']?[а-яїієґ])([0-9]+(?:$|[^а-яіїєґА-ЯІЇЄҐa-zA-Z»"“]))`)
-	// Java WEB_ENTITIES: CASE_INSENSITIVE|UNICODE_CHARACTER_CLASS + \b after TLD.
-	// Go \b is ASCII-only — boundary checked in replaceWebEntities (Unicode letter/digit/_).
-	// Enumerate Cyrillic case variants; Latin listed in common cases (+ ToLower check).
-	webEntities = regexp.MustCompile(`([а-яіїєґА-ЯІЇЄҐ])\.([Nn][Ee][Tt]|[Ii][Nn][Ff][Oo]|[Cc][Ii][Tt][Yy]|[Ll][Ii][Ff][Ee]|[Uu][Aa]|[Mm][Ee][Dd][Ii][Aa]|[Cc][Oo][Mm]|[Rr][Uu]|НЕТ|Нет|нет|Інфо|інфо|юа|лі|фм|ру|Ру|РУ|орг)`)
+	// NUMBER_MISSING_SPACE / WEB_ENTITIES: RE2 lacks lookahead and Unicode CASE_INSENSITIVE
+	// for mixed-script alternatives — handled by scan helpers replaceNumberMissingSpace / replaceWebEntities.
 	webEntities2 = regexp.MustCompile(`(?i)\.([a-z_-]+)\.(ua)`)
+
+	// Java WEB_ENTITIES TLD alternatives (CASE_INSENSITIVE|UNICODE_CHARACTER_CLASS).
+	// Compared via strings.ToLower (Unicode-aware for Cyrillic І/Ї/Є/Ґ).
+	webEntityTLDsLower = map[string]bool{
+		"нет": true, "net": true, "інфо": true, "info": true,
+		"city": true, "life": true, "ua": true, "юа": true,
+		"лі": true, "media": true, "com": true, "фм": true,
+		"ru": true, "ру": true, "орг": true,
+	}
 
 	// colloquial forms ending with ' that must stay attached
 	colloquialApos = map[string]bool{
@@ -253,7 +261,8 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 	}
 
 	dotIndex := strings.IndexByte(text, '.')
-	textRtrimmed := strings.TrimRight(text, " \t\n\r\u00A0\u202F")
+	// Java: text.replaceFirst("[\\h\\v]*$", "")
+	textRtrimmed := trimRightJavaHV(text)
 	dotInsideSentence := dotIndex >= 0 && dotIndex < len(textRtrimmed)-1
 	abbrAtEnd := abbrAtEnd.MatchString(text)
 
@@ -348,44 +357,215 @@ func adjustTextForTokenizing(text string, urls map[string]string) string {
 		text = breakLeadingSignedNumber(text)
 	}
 
-	text = numberMissingSpace.ReplaceAllString(text, "$1"+breakingPlaceholder+"$2")
+	text = replaceNumberMissingSpace(text)
 	return text
 }
 
-// replaceWebEntities ports Java WEB_ENTITIES with Unicode-aware \b after the TLD.
-func replaceWebEntities(text string) string {
+// trimRightJavaHV ports Java text.replaceFirst("[\\h\\v]*$", "").
+func trimRightJavaHV(text string) string {
+	rr := []rune(text)
+	end := len(rr)
+	for end > 0 && isJavaHOrVSpace(rr[end-1]) {
+		end--
+	}
+	return string(rr[:end])
+}
+
+// replaceNumberMissingSpace ports Java NUMBER_MISSING_SPACE:
+// ((?:[\h\v\uE110]|^)[а-яїієґА-ЯІЇЄҐ'-]*[а-яїієґ']?[а-яїієґ])([0-9]+(?![а-яіїєґА-ЯІЇЄҐa-zA-Z»"“]))
+// RE2 cannot express the negative lookahead; scan helper matches Java backtracking semantics
+// (longest digit run, then shorter prefixes until lookahead passes — does NOT consume the follower).
+func replaceNumberMissingSpace(text string) string {
+	runes := []rune(text)
 	var b strings.Builder
-	last := 0
-	for _, loc := range webEntities.FindAllStringSubmatchIndex(text, -1) {
-		full0, full1 := loc[0], loc[1]
-		// Java \b: right edge must be end or non-word (Unicode letter/digit/_)
-		if full1 < len(text) {
-			r, _ := utf8.DecodeRuneInString(text[full1:])
-			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
-				continue
+	i := 0
+	for i < len(runes) {
+		// left boundary: ^ or previous char is \h|\v|\uE110
+		atBoundary := i == 0 || isJavaHOrVSpace(runes[i-1]) || runes[i-1] == '\uE110'
+		if !atBoundary {
+			b.WriteRune(runes[i])
+			i++
+			continue
+		}
+		// group1: [а-яїієґА-ЯІЇЄҐ'-]*[а-яїієґ']?[а-яїієґ]
+		g1End := matchNumberMissingGroup1(runes, i)
+		if g1End < 0 {
+			b.WriteRune(runes[i])
+			i++
+			continue
+		}
+		// group2: [0-9]+(?![letter/quote]) with Java greedy+backtrack
+		g2End := matchNumberMissingGroup2(runes, g1End)
+		if g2End < 0 {
+			b.WriteRune(runes[i])
+			i++
+			continue
+		}
+		// $1 + BREAKING_PLACEHOLDER + $2
+		b.WriteString(string(runes[i:g1End]))
+		b.WriteString(breakingPlaceholder)
+		b.WriteString(string(runes[g1End:g2End]))
+		i = g2End
+	}
+	return b.String()
+}
+
+// matchNumberMissingGroup1 returns end index of group1 starting at i, or -1.
+func matchNumberMissingGroup1(runes []rune, i int) int {
+	// Greedy Java match of [A]*[B]?[C] where
+	// A = [а-яїієґА-ЯІЇЄҐ'-], B = [а-яїієґ'], C = [а-яїієґ] (lowercase UK)
+	n := len(runes)
+	if i >= n {
+		return -1
+	}
+	// Consume maximal A*, then backtrack to allow [B]?[C]
+	j := i
+	for j < n && isNumberMissingA(runes[j]) {
+		j++
+	}
+	// Try from longest A* down so [B]?[C] can match
+	for aEnd := j; aEnd >= i; aEnd-- {
+		pos := aEnd
+		// optional B
+		if pos < n && isNumberMissingB(runes[pos]) {
+			// try with B consumed
+			if pos+1 < n && isNumberMissingC(runes[pos+1]) {
+				return pos + 2
+			}
+			// B char might itself be C (B is subset-ish of letters+'')
+			if isNumberMissingC(runes[pos]) {
+				// Prefer longer match: if B is also C, consuming as C (without separate B) is ok
+				// Java: [B]?[C] — if one letter, B optional empty, C matches that letter.
+				return pos + 1
 			}
 		}
-		b.WriteString(text[last:full0])
-		g1 := text[loc[2]:loc[3]]
-		g2 := text[loc[4]:loc[5]]
-		b.WriteString(g1 + "." + nonBreakingPlaceholder2 + g2)
-		last = full1
+		// B empty, need C
+		if pos < n && isNumberMissingC(runes[pos]) {
+			return pos + 1
+		}
 	}
-	b.WriteString(text[last:])
+	return -1
+}
+
+func isNumberMissingA(r rune) bool {
+	// [а-яїієґА-ЯІЇЄҐ'-]
+	if r == '\'' || r == '-' {
+		return true
+	}
+	return isUKCyrLetter(r)
+}
+
+func isNumberMissingB(r rune) bool {
+	// [а-яїієґ']
+	if r == '\'' {
+		return true
+	}
+	return isNumberMissingC(r)
+}
+
+func isNumberMissingC(r rune) bool {
+	// [а-яїієґ] lowercase Ukrainian
+	switch {
+	case r >= 'а' && r <= 'я':
+		return true
+	case r == 'і' || r == 'ї' || r == 'є' || r == 'ґ':
+		return true
+	}
+	return false
+}
+
+// matchNumberMissingGroup2 ports [0-9]+(?![а-яіїєґА-ЯІЇЄҐa-zA-Z»"“]).
+// Returns end index (exclusive) of matched digits, or -1.
+// Faithful to Java: greedy digits then backtrack until negative lookahead passes.
+// Lookahead does NOT consume the following character.
+func matchNumberMissingGroup2(runes []rune, i int) int {
+	if i >= len(runes) || runes[i] < '0' || runes[i] > '9' {
+		return -1
+	}
+	j := i
+	for j < len(runes) && runes[j] >= '0' && runes[j] <= '9' {
+		j++
+	}
+	// try full run down to one digit
+	for end := j; end > i; end-- {
+		if end < len(runes) && isNumberMissingLookaheadBlocked(runes[end]) {
+			continue
+		}
+		return end
+	}
+	return -1
+}
+
+func isNumberMissingLookaheadBlocked(r rune) bool {
+	// chars that make (?![а-яіїєґА-ЯІЇЄҐa-zA-Z»"“]) fail
+	if isUKCyrLetter(r) || isLatinLetter(r) {
+		return true
+	}
+	switch r {
+	case '»', '"', '“':
+		return true
+	}
+	return false
+}
+
+// replaceWebEntities ports Java WEB_ENTITIES:
+// ([а-яіїєґ])\.(НЕТ|net|Інфо|Info|City|Life|UA|юа|лі|media|com|фм|ru|ру|орг)\b
+// with CASE_INSENSITIVE|UNICODE_CHARACTER_CLASS.
+func replaceWebEntities(text string) string {
+	runes := []rune(text)
+	var b strings.Builder
+	i := 0
+	for i < len(runes) {
+		// need cyr letter + '.'
+		if i+1 < len(runes) && isUKCyrLetter(runes[i]) && runes[i+1] == '.' {
+			// read TLD word chars after dot
+			k := i + 2
+			for k < len(runes) && isUnicodeWordChar(runes[k]) {
+				k++
+			}
+			if k > i+2 {
+				tld := string(runes[i+2 : k])
+				if webEntityTLDsLower[strings.ToLower(tld)] {
+					// Java \b with UNICODE_CHARACTER_CLASS after TLD
+					atBoundary := k == len(runes) || !isUnicodeWordChar(runes[k])
+					// also left of TLD is '.' which is non-word, so start of TLD is always a boundary;
+					// we only need the right edge (Java \b after the alternative).
+					if atBoundary {
+						// $1.\uE120$2
+						b.WriteRune(runes[i])
+						b.WriteByte('.')
+						b.WriteString(nonBreakingPlaceholder2)
+						b.WriteString(tld)
+						i = k
+						continue
+					}
+				}
+			}
+		}
+		b.WriteRune(runes[i])
+		i++
+	}
 	return b.String()
+}
+
+func isUnicodeWordChar(r rune) bool {
+	// Java UNICODE_CHARACTER_CLASS \w ≈ letter | digit | connector (underscore)
+	return unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_'
 }
 
 // replaceAbbrDot2Small ports Java ABBR_DOT_2_SMALL_LETTERS_PATTERN +
 // replaceAll("$1.\uE120\uE110$2.\uE120\uE110") with (?![смкд]?м\.) on the second group.
+// Meter exclusion is only [смкд]?м\. — freestanding "мк" is NOT excluded.
 func replaceAbbrDot2Small(text string) string {
 	var b strings.Builder
 	last := 0
 	for _, loc := range abbrDot2Small.FindAllStringSubmatchIndex(text, -1) {
-		// groups: full, $1 prefix, $2 first abbr, $3 second abbr (with optional spaces)
+		// groups: full, $1 prefix, $2 first abbr, $3 second abbr (with optional \h*)
 		full0, full1 := loc[0], loc[1]
 		g3 := text[loc[6]:loc[7]]
-		// Java (?![смкд]?м\.) — skip when second token is a meter unit
-		if abbrDot2SmallMeterSecond.MatchString(g3) {
+		// Java (?![смкд]?м\.) checked after \h* before matching letters —
+		// equivalent once letters are matched: letters ∈ {м, см, км, дм, мм}
+		if isAbbrDot2SmallMeterSecond(g3) {
 			continue
 		}
 		b.WriteString(text[last:full0])
@@ -397,6 +577,23 @@ func replaceAbbrDot2Small(text string) string {
 	}
 	b.WriteString(text[last:])
 	return b.String()
+}
+
+// isAbbrDot2SmallMeterSecond reports whether g3 (\h* + letters) is a meter unit
+// excluded by Java (?![смкд]?м\.) — i.e. letters are м/см/км/дм/мм, not мк.
+func isAbbrDot2SmallMeterSecond(g3 string) bool {
+	rr := []rune(g3)
+	i := 0
+	for i < len(rr) && isJavaH(rr[i]) {
+		i++
+	}
+	letters := string(rr[i:])
+	switch letters {
+	case "м", "см", "км", "дм", "мм":
+		return true
+	default:
+		return false
+	}
 }
 
 // replaceAbbrNonEnding ports Java ABBR_DOT_NON_ENDING_PATTERN with
@@ -472,32 +669,41 @@ func isDotsThenEnd(rest string) bool {
 
 func protectSpacedNumbers(text string) string {
 	// Java: (?<=^|[\h\v(])\d{1,3}([\h][\d]{3})+(?=[\h\v(]|$)
-	// Scan only at valid left boundaries so "01.01.42 400 000" still protects "400 000".
-	re := regexp.MustCompile(`^\d{1,3}(?:[\s\x{00A0}\x{202F}]\d{3})+`)
-	var b strings.Builder
+	// Inner separators are \h only; left/right boundaries are \h|\v|(.
+	// Replace only ' ', NBSP, NNBSP with NON_BREAKING_SPACE_SUBST (same as Java —
+	// other \h like EN SPACE U+2002 still split later via SPLIT_CHARS).
 	runes := []rune(text)
+	var b strings.Builder
 	i := 0
 	for i < len(runes) {
-		atBoundary := i == 0 || isSpaceLike(runes[i-1]) || runes[i-1] == '('
+		atBoundary := i == 0 || isJavaHOrVSpace(runes[i-1]) || runes[i-1] == '('
 		if atBoundary && runes[i] >= '0' && runes[i] <= '9' {
-			// try match from byte offset
-			byteOff := len(string(runes[:i]))
-			if loc := re.FindStringIndex(text[byteOff:]); loc != nil && loc[0] == 0 {
-				endByte := byteOff + loc[1]
-				// right boundary
-				okRight := endByte == len(text)
-				if !okRight {
-					next, _ := utf8.DecodeRuneInString(text[endByte:])
-					okRight = isSpaceLike(next) || next == '('
-				}
+			start := i
+			// \d{1,3}
+			j := i
+			for j < len(runes) && j-i < 3 && runes[j] >= '0' && runes[j] <= '9' {
+				j++
+			}
+			// ([\h][\d]{3})+
+			k := j
+			groups := 0
+			for k+3 < len(runes) && isJavaH(runes[k]) &&
+				runes[k+1] >= '0' && runes[k+1] <= '9' &&
+				runes[k+2] >= '0' && runes[k+2] <= '9' &&
+				runes[k+3] >= '0' && runes[k+3] <= '9' {
+				k += 4
+				groups++
+			}
+			if groups > 0 {
+				// (?=[\h\v(]|$)
+				okRight := k == len(runes) || isJavaHOrVSpace(runes[k]) || runes[k] == '('
 				if okRight {
-					m := text[byteOff:endByte]
+					m := string(runes[start:k])
 					out := strings.ReplaceAll(m, " ", string(nonBreakingSpaceSubst))
 					out = strings.ReplaceAll(out, "\u00A0", string(nonBreakingSpaceSubst))
 					out = strings.ReplaceAll(out, "\u202F", string(nonBreakingSpaceSubst))
 					b.WriteString(out)
-					// advance i by rune count of m
-					i += len([]rune(m))
+					i = k
 					continue
 				}
 			}
@@ -604,22 +810,39 @@ func followedByConjunctionHV(rest string) bool {
 	return false
 }
 
-// isJavaHOrVSpace approximates Java Pattern \h (horizontal) | \v (vertical) whitespace.
-func isJavaHOrVSpace(r rune) bool {
+// isJavaH ports Java Pattern \h (horizontal whitespace):
+// [ \t\xA0\u1680\u180e\u2000-\u200a\u202f\u205f\u3000]
+func isJavaH(r rune) bool {
 	switch r {
-	case '\t', '\n', '\v', '\f', '\r', ' ', '\u00A0', '\u1680', '\u180E',
+	case '\t', ' ', '\u00A0', '\u1680', '\u180E',
 		'\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006',
-		'\u2007', '\u2008', '\u2009', '\u200A', '\u200B', // ZWSP appears in some \h tables
-		'\u2028', '\u2029', // line/paragraph separator (\v)
+		'\u2007', '\u2008', '\u2009', '\u200A',
 		'\u202F', '\u205F', '\u3000':
 		return true
 	default:
-		return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
+		return false
 	}
 }
 
+// isJavaV ports Java Pattern \v (vertical whitespace):
+// [\n\x0B\f\r\x85\u2028\u2029]
+func isJavaV(r rune) bool {
+	switch r {
+	case '\n', '\v', '\f', '\r', '\u0085', '\u2028', '\u2029':
+		return true
+	default:
+		return false
+	}
+}
+
+// isJavaHOrVSpace ports Java [\h\v].
+func isJavaHOrVSpace(r rune) bool {
+	return isJavaH(r) || isJavaV(r)
+}
+
+// isSpaceLike is used for apostrophe/signed-number boundaries — same as Java [\h\v].
 func isSpaceLike(r rune) bool {
-	return r == ' ' || r == '\t' || r == '\n' || r == '\r' || r == '\u00A0' || r == '\u202F'
+	return isJavaHOrVSpace(r)
 }
 
 func splitBeginApostrophe(text string) string {

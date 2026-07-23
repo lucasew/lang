@@ -54,6 +54,14 @@ func TestUkrainianWordTokenizer_Numbers(t *testing.T) {
 	// Java commented: "+400C"
 	assertTok(t, "відбулася 17.8.1245", "відбулася", " ", "17.8.1245")
 	assertTok(t, "1814.03.09", "1814.03.09")
+	// Java DECIMAL_SPACE uses [\h] between digit groups (EN SPACE U+2002 etc).
+	// Java only substitutes ' ', NBSP, NNBSP — so U+2002 still splits via SPLIT_CHARS.
+	// Match must still accept full \h (left boundary after EN SPACE protects regular spaces).
+	assertTok(t, "2\u2002000 тон", "2", "\u2002", "000", " ", "тон")
+	assertTok(t, "надійшло 12\u2002000\u2002000 тон",
+		"надійшло", " ", "12", "\u2002", "000", "\u2002", "000", " ", "тон")
+	// After EN SPACE left boundary, regular thin groups still protect:
+	assertTok(t, "x\u200212 000 y", "x", "\u2002", "12 000", " ", "y")
 }
 
 func TestUkrainianWordTokenizer_NumbersMissingSpace(t *testing.T) {
@@ -65,6 +73,13 @@ func TestUkrainianWordTokenizer_NumbersMissingSpace(t *testing.T) {
 	assertTok(t, "км2", "км", "2")
 	assertTok(t, "Мі17", "Мі", "17")
 	assertTok(t, "000ххх000", "000ххх000")
+	// Java NUMBER_MISSING_SPACE: [0-9]+(?![letter…]) — lookahead does not consume.
+	// Greedy+backtrack: "до14а" matches digits "1" only (next "4" is non-letter), tokens "до","14а".
+	// Must not invent ([0-9]+(?:$|[^letter])) which consumes non-letters/digits.
+	assertTok(t, "до14а", "до", "14а")
+	assertTok(t, "а12б", "а", "12б")
+	assertTok(t, "аб2в", "аб2в") // single digit before letter: lookahead fails, no split
+	assertTok(t, "тест99тест", "тест", "99тест")
 }
 
 func TestUkrainianWordTokenizer_Plus(t *testing.T) {
@@ -136,6 +151,12 @@ func TestUkrainianWordTokenizer_Abbreviations(t *testing.T) {
 	assertTok(t, "до н.е.", "до", " ", "н.", "е.")
 	assertTok(t, "в. о. начальника", "в.", " ", "о.", " ", "начальника")
 	assertTok(t, "в.о. начальника", "в.", "о.", " ", "начальника")
+	// Java ABBR_DOT_2_SMALL meter exclusion is only (?![смкд]?м\.) — freestanding "мк" is allowed.
+	assertTok(t, "до к.мк. щось", "до", " ", "к.", "мк.", " ", "щось")
+	assertTok(t, " н.мк.", " ", "н.", "мк.")
+	// meter second units excluded from dual-abbr glue; "к." still protected via NON_ENDING list
+	assertTok(t, " к.м. x", " ", "к.", "м", ".", " ", "x")
+	assertTok(t, " к.см. x", " ", "к.", "см", ".", " ", "x")
 	// Java ABBR_DOT_NON_ENDING has dead в(?!\.+): bare mid-sentence/BOS "в."/"В." split (not one token)
 	assertTok(t, "слово в. слово", "слово", " ", "в", ".", " ", "слово")
 	assertTok(t, "в. слово", "в", ".", " ", "слово")
@@ -334,4 +355,9 @@ func TestUkrainianWordTokenizer_TokenizeWebEntities(t *testing.T) {
 	for _, e := range entities {
 		assertTok(t, e, e)
 	}
+	// Java WEB_ENTITIES: CASE_INSENSITIVE|UNICODE_CHARACTER_CLASS — full Cyrillic/Latin case fold
+	assertTok(t, "Паляниця.ІНФО", "Паляниця.ІНФО")
+	assertTok(t, "Цензор.НеТ", "Цензор.НеТ")
+	assertTok(t, "сайт.ОРГ", "сайт.ОРГ")
+	assertTok(t, "тест.нет", "тест.нет")
 }
