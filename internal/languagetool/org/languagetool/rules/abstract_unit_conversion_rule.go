@@ -643,9 +643,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					continue
 				}
 			}
-			if hasNearbyMetricInText(text, fullEnd) {
-				continue
-			}
+			// Java: no soft "nearby metric" skip — only convertedPatterns parentheticals.
 			equivs := r.GetMetricEquivalent(val, sp.unit)
 			if len(equivs) == 0 {
 				continue
@@ -727,10 +725,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					// already metric, no parenthetical → nothing to suggest
 					continue
 				}
-				// Skip when metric unit already appears nearby.
-				if hasNearbyMetricInText(text, loc[1]) {
-					continue
-				}
+				// Java: no soft "nearby metric" skip — only convertedPatterns parentheticals.
 				equivs := r.GetMetricEquivalent(val, up.unit)
 				if len(equivs) == 0 {
 					continue
@@ -1015,31 +1010,4 @@ func unitHitByAntiPattern(text string, from, to int, anti []*regexp.Regexp) bool
 	return false
 }
 
-// hasNearbyMetricInText reports metric unit tokens shortly after pos (parenthetical equivalents).
-func hasNearbyMetricInText(text string, pos int) bool {
-	if pos < 0 || pos >= len(text) {
-		return false
-	}
-	end := pos + 40
-	if end > len(text) {
-		end = len(text)
-	}
-	window := strings.ToLower(text[pos:end])
-	// strip non-breaking spaces
-	window = strings.ReplaceAll(window, "\u00a0", " ")
-	metrics := []string{
-		" m)", " m ", " m.", " meter", " metre", " km", "kilometer", "kilometre",
-		" kg", "kilogramm", " tonne", " tonnen", " m²", " m2", "quadratmeter",
-		" cm", " mm", " °c", " celsius",
-	}
-	for _, m := range metrics {
-		if strings.Contains(window, m) {
-			return true
-		}
-	}
-	// bare (1,82 m) style
-	if strings.Contains(window, "(") && (strings.Contains(window, " m)") || strings.Contains(window, "m)")) {
-		return true
-	}
-	return false
-}
+

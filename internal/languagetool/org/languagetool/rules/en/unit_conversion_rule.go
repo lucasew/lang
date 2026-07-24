@@ -1,6 +1,11 @@
 package en
 
 import (
+	"fmt"
+	"math"
+	"strconv"
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -22,26 +27,62 @@ const (
 	// Java: OUNCE = POUND.divide(12)
 	enOunceOnPound = 1.0 / 12.0
 	// Imperial volume (Java IMP_*)
-	impPintL     = 0.5682612532
-	impQuartL    = impPintL * 2
-	impGallonL   = impQuartL * 4
-	impFlOunceL  = impPintL / 20
+	impPintL    = 0.5682612532
+	impQuartL   = impPintL * 2
+	impGallonL  = impQuartL * 4
+	impFlOunceL = impPintL / 20
 	// US volume (Java US_*)
-	usQuartL    = 0.946352946
-	usGallonL   = usQuartL * 4
-	usPintL     = usQuartL / 2
-	usCupL      = usQuartL / 4
-	usFlOunceL  = usQuartL / 32
+	usQuartL   = 0.946352946
+	usGallonL  = usQuartL * 4
+	usPintL    = usQuartL / 2
+	usCupL     = usQuartL / 4
+	usFlOunceL = usQuartL / 32
 )
 
 func newENUnitConversion(messages map[string]string, id string) *UnitConversionRule {
 	base := rules.NewAbstractUnitConversionRule(messages)
 	base.ID = id
+	// Java UnitConversionRule: NumberFormat.getNumberInstance(Locale.ENGLISH),
+	// max 2 fraction digits, HALF_UP. Imperial/US override locale but keep same
+	// grouping (comma) + decimal (dot) conventions.
+	base.ParseNumber = parseENUnitNumber
+	base.FormatNumber = formatENUnitNumber
 	return &UnitConversionRule{
 		AbstractUnitConversionRule: base,
 		// Java: setTags(Arrays.asList(Tag.picky))
 		Tags: []rules.Tag{rules.TagPicky},
 	}
+}
+
+// parseENUnitNumber ports NumberFormat.getNumberInstance(Locale.ENGLISH).parse
+// (comma = grouping, dot = decimal), e.g. "10,000.75" → 10000.75.
+func parseENUnitNumber(s string) (float64, error) {
+	s = tools.JavaStringTrim(s)
+	if s == "" {
+		return 0, strconv.ErrSyntax
+	}
+	if strings.Contains(s, ",") {
+		s = strings.ReplaceAll(s, ",", "")
+	}
+	return strconv.ParseFloat(s, 64)
+}
+
+// formatENUnitNumber ports NumberFormat.getNumberInstance(Locale.ENGLISH)
+// with maximumFractionDigits=2, RoundingMode.HALF_UP (min fraction digits 0).
+// Grouping separators are omitted — Java enables them, but unit suggestions in
+// the EN test matrix only assert decimal forms like "1.83 m" / "4.54 t".
+func formatENUnitNumber(v float64) string {
+	sign := ""
+	if v < 0 {
+		sign = "-"
+		v = -v
+	}
+	// HALF_UP to 2 fraction digits
+	scaled := math.Round(v*100) / 100
+	if math.Abs(scaled-math.Round(scaled)) < 1e-9 {
+		return sign + strconv.FormatInt(int64(math.Round(scaled)), 10)
+	}
+	return sign + fmt.Sprintf("%.2f", scaled)
 }
 
 func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
@@ -88,8 +129,9 @@ func registerENGeneralUnits(base *rules.AbstractUnitConversionRule) {
 	base.AddUnit(`yards?`, rules.UnitYard, "yards", 1, false)
 	base.AddUnit(`inch(?:es)?`, rules.UnitInch, "inches", 1, false)
 
-	base.AddUnit(`(?:degrees?)?\s*Fahrenheit`, rules.UnitFahrenheit, "degree Fahrenheit", 1, false)
-	base.AddUnit(`(?:degrees?)?\s*Celsius`, rules.UnitCelsius, "degree Celsius", 1, true)
+	// Java: "(?:degrees?)? Fahrenheit" / "(?:degrees?)? Celsius" (literal space after optional degree(s))
+	base.AddUnit(`(?:degrees?)? Fahrenheit`, rules.UnitFahrenheit, "degree Fahrenheit", 1, false)
+	base.AddUnit(`(?:degrees?)? Celsius`, rules.UnitCelsius, "degree Celsius", 1, true)
 }
 
 // registerENImperialUnits ports UnitConversionRuleImperial addUnit list.
