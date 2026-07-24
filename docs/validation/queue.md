@@ -199,7 +199,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.6-RussianChunker | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/chunking/RussianChunker.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/chunking/Chunker.java | internal/languagetool/org/languagetool/chunking/ | 332c0dbbc6096ae17947f0e6862b0e1caefd0df6 | 0 | 0 |  |  | 2026-07-23T23:52:30Z |
 
 ---
-| docs/faithful-port-checklist.md#3.A.1-GermanCompoundTokenizer | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tokenizers/de/GermanCompoundTokenizer.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/tokenizers/de/GermanCompoundTokenizerTest.java; de.danielnaber.jwordsplitter (EmbeddedGermanDictionary + GermanWordSplitter) | internal/languagetool/org/languagetool/tokenizers/de/ | 4f88d4da8ef923f17159b8759c700097ae698873 | 0 | 0 |  |  | 2026-07-24T00:48:23Z |
+| docs/faithful-port-checklist.md#3.A.1-GermanCompoundTokenizer | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tokenizers/de/GermanCompoundTokenizer.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/tokenizers/de/GermanCompoundTokenizerTest.java; de.danielnaber.jwordsplitter (EmbeddedGermanDictionary + GermanWordSplitter) | internal/languagetool/org/languagetool/tokenizers/de/ | 4f88d4da8ef923f17159b8759c700097ae698873 | 0 | 0 |  |  | 2026-07-24T00:59:07Z |
 
 ## Human inbox
 
@@ -209,7 +209,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.A.1-GermanCompoundTokenizer @ 4f88d4da (jWordSplitter 4.5 1:1; parent green). FR/zh blocked. |
+| Notes | ACCEPT 3.A.1-GermanCompoundTokenizer @ 4f88d4da (validator + parent green; jWordSplitter 4.5). FR/zh blocked. |
 
 ---
 
@@ -817,3 +817,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T00:24:39Z ACCEPT: 3.A.1-UkrainianWordTokenizer @ b60bd81b (validator + parent green reconfirm; attempt=2 r1 invent fixed)
 - 2026-07-24T00:36:12Z implement: 3.A.1-GermanCompoundTokenizer (jWordSplitter EmbeddedGermanDictionary + GermanWordSplitter 1:1; full Java test twin)
 - 2026-07-24T00:48:23Z ready: 3.A.1-GermanCompoundTokenizer @ 4f88d4da (implementer report; parent green reconfirm)
+- 2026-07-24T00:53:46Z validating: 3.A.1-GermanCompoundTokenizer @ 4f88d4da
+- 2026-07-24T00:59:07Z ACCEPT: 3.A.1-GermanCompoundTokenizer @ 4f88d4da (validator + parent green reconfirm; official wordsGerman 64559)
