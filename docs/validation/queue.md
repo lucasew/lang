@@ -221,7 +221,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-AdvancedWordRepeatRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AdvancedWordRepeatRule.java | internal/languagetool/org/languagetool/rules/ | 0abf28c5223364d19bda9268128dbbd23caeb13d | 0 | 0 |  |  | 2026-07-24T05:26:38Z |
 | docs/faithful-port-checklist.md#3.C.1-AbstractSpaceBeforeRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractSpaceBeforeRule.java | internal/languagetool/org/languagetool/rules/ | 7dbc16839e1a1db751e501686ad566d95e87a1eb | 1 | 0 |  |  | 2026-07-24T05:56:03Z |
 | docs/faithful-port-checklist.md#3.C.1-AbstractPunctuationCheckRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractPunctuationCheckRule.java | internal/languagetool/org/languagetool/rules/ | 802d05e6726ed7c077873d33f86bb8c468db955b | 0 | 0 |  |  | 2026-07-24T06:05:49Z |
-| docs/faithful-port-checklist.md#3.C.1-WhitespaceCheckFilter | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhitespaceCheckFilter.java | internal/languagetool/org/languagetool/rules/ | 7b32b920a196dd11b23565bb9bf2fe6f91cd088e | 0 | 0 |  |  | 2026-07-24T06:13:05Z |
+| docs/faithful-port-checklist.md#3.C.1-WhitespaceCheckFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhitespaceCheckFilter.java | internal/languagetool/org/languagetool/rules/ | 7b32b920a196dd11b23565bb9bf2fe6f91cd088e | 0 | 0 |  |  | 2026-07-24T06:16:19Z |
 
 ## Human inbox
 
@@ -231,7 +231,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-WhitespaceCheckFilter @ 7b32b920 (acceptRuleMatch twin; invent Accept deleted; parent green). FR/zh blocked. |
+| Notes | ACCEPT 3.C.1-WhitespaceCheckFilter @ 7b32b920. FR/zh blocked. |
 
 ---
 
@@ -935,3 +935,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T06:05:49Z ACCEPT: 3.C.1-AbstractPunctuationCheckRule @ 802d05e6 (validator + parent green reconfirm)
 - 2026-07-24T06:09:00Z implement: 3.C.1-WhitespaceCheckFilter (acceptRuleMatch outcome twin; core layout 3.C.1 leaf)
 - 2026-07-24T06:13:05Z ready: 3.C.1-WhitespaceCheckFilter @ 7b32b920 (implementer report; parent green reconfirm)
+- 2026-07-24T06:13:48Z validating: 3.C.1-WhitespaceCheckFilter @ 7b32b920
+- 2026-07-24T06:16:19Z ACCEPT: 3.C.1-WhitespaceCheckFilter @ 7b32b920 (validator + parent green reconfirm)
