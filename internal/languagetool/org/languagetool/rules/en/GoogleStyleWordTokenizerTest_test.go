@@ -7,12 +7,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestGoogleStyleWordTokenizer_Tokenize ports GoogleStyleWordTokenizerTest.testTokenize.
 func TestGoogleStyleWordTokenizer_Tokenize(t *testing.T) {
-	w := NewGoogleStyleWordTokenizer()
-	require.Equal(t, []string{"foo", " ", "bar"}, w.Tokenize("foo bar"))
-	require.Equal(t, []string{"foo", "-", "bar"}, w.Tokenize("foo-bar"))
-	require.Equal(t, []string{"I", "'m", " ", "here", "."}, w.Tokenize("I'm here."))
-	require.Equal(t, []string{"I", "'ll", " ", "do", " ", "that"}, w.Tokenize("I'll do that"))
-	require.Equal(t, []string{"You", "'re", " ", "here"}, w.Tokenize("You're here"))
-	require.Equal(t, []string{"You", "'ve", " ", "done", " ", "that"}, w.Tokenize("You've done that"))
+	// Java: GoogleStyleWordTokenizer tokenizer = new GoogleStyleWordTokenizer();
+	tokenizer := NewGoogleStyleWordTokenizer()
+	// assertThat(tokenizer.tokenize(...), is(Arrays.asList(...)));
+	require.Equal(t, []string{"foo", " ", "bar"}, tokenizer.Tokenize("foo bar"))
+	require.Equal(t, []string{"foo", "-", "bar"}, tokenizer.Tokenize("foo-bar"))
+	require.Equal(t, []string{"I", "'m", " ", "here", "."}, tokenizer.Tokenize("I'm here."))
+	require.Equal(t, []string{"I", "'ll", " ", "do", " ", "that"}, tokenizer.Tokenize("I'll do that"))
+	require.Equal(t, []string{"You", "'re", " ", "here"}, tokenizer.Tokenize("You're here"))
+	require.Equal(t, []string{"You", "'ve", " ", "done", " ", "that"}, tokenizer.Tokenize("You've done that"))
 }
