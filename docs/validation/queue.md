@@ -219,6 +219,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-ParagraphRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ParagraphRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | baf442057c7020a58aa9e6c7fe2130d05862928f | 0 | 0 |  |  | 2026-07-24T04:55:22Z |
 | docs/faithful-port-checklist.md#3.C.1-WordRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | d17b8514163aece863fbdfcc1e5708645c86faa6 | 0 | 0 |  |  | 2026-07-24T05:12:42Z |
 | docs/faithful-port-checklist.md#3.C.1-AdvancedWordRepeatRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AdvancedWordRepeatRule.java | internal/languagetool/org/languagetool/rules/ | 0abf28c5223364d19bda9268128dbbd23caeb13d | 0 | 0 |  |  | 2026-07-24T05:26:38Z |
+| docs/faithful-port-checklist.md#3.C.1-AbstractSpaceBeforeRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractSpaceBeforeRule.java | internal/languagetool/org/languagetool/rules/ | eee748ef55fa2a14200f19fd3b6b89162cf7060b | 0 | 0 |  |  | 2026-07-24T05:33:22Z |
 
 ## Human inbox
 
@@ -228,7 +229,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.1-AdvancedWordRepeatRule @ 0abf28c5. FR/zh blocked. Next: more 3.C.1 core leaves. |
+| Notes | ready 3.C.1-AbstractSpaceBeforeRule @ eee748ef (hand-built twin; parent green). FR/zh blocked. |
 
 ---
 
@@ -918,3 +919,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T05:21:40Z ready: 3.C.1-AdvancedWordRepeatRule @ 0abf28c5 (implementer report; parent green reconfirm)
 - 2026-07-24T05:23:49Z validating: 3.C.1-AdvancedWordRepeatRule @ 0abf28c5 (strict invent re-audit vs Java AdvancedWordRepeatRule)
 - 2026-07-24T05:26:38Z ACCEPT: 3.C.1-AdvancedWordRepeatRule @ 0abf28c5 (validator + parent green reconfirm)
+- 2026-07-24T05:29:17Z implement: 3.C.1-AbstractSpaceBeforeRule (Match outcome twin; conjunction test double; core layout 3.C.1 leaf)
+- 2026-07-24T05:33:22Z ready: 3.C.1-AbstractSpaceBeforeRule @ eee748ef (implementer report; parent green reconfirm)
