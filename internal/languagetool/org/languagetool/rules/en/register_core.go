@@ -246,7 +246,8 @@ func RegisterEnglishVariantExtraRules(lt *languagetool.JLanguageTool) {
 		return
 	default:
 		// AmericanEnglish default (en, en-US, …).
-		us := NewAmericanReplaceRule(nil)
+		// Java AmericanEnglish: new AmericanReplaceRule(messages, "/en/en-US/replace.txt")
+		us := NewAmericanReplaceRule(nil, AmericanReplaceFilePath)
 		lt.AddRuleChecker(us.GetID(), rules.AsSentenceCheckerSimple(us.Match))
 		usU := NewUnitConversionRuleUS(nil)
 		lt.AddRuleChecker(usU.GetID(), rules.AsSentenceCheckerSimple(usU.Match))
