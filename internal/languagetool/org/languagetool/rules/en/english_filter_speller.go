@@ -92,14 +92,11 @@ func FilterDictIsMisspelled(word string) bool {
 }
 
 // FilterDictSuggest ports FindSuggestionsFilter.getSpellingSuggestions:
-// MorfologikSpeller.findSimilarWords(token) on /en/english.dict when wired.
-// Falls back to the misspell filter dict if only that is present (host wiring).
-// Without any dict, returns nil (fail-closed — do not invent similar words).
+// MorfologikSpeller.findSimilarWords(token) on /en/english.dict only
+// (Java DICT_FILENAME; null speller / NPE path when resource missing — fail-closed).
+// Do not fall back to filterDict (locale hunspell en_US used by NumberInWord/isMisspelled).
 func FilterDictSuggest(word string) []string {
 	d := getFindSuggestionsDict()
-	if d == nil {
-		d = getFilterDict()
-	}
 	if d == nil || word == "" {
 		return nil
 	}
@@ -113,7 +110,8 @@ func FilterDictAvailable() bool {
 }
 
 // FilterFindSuggestionsAvailable reports whether FindSuggestions can call findSimilarWords
-// (english.dict and/or filter dict wired). Java: speller non-null when resourceExists.
+// on /en/english.dict. Java: speller non-null only when resourceExists(DICT_FILENAME).
+// Locale filterDict (en_US hunspell) is a different speller — never substitute.
 func FilterFindSuggestionsAvailable() bool {
-	return getFindSuggestionsDict() != nil || getFilterDict() != nil
+	return getFindSuggestionsDict() != nil
 }

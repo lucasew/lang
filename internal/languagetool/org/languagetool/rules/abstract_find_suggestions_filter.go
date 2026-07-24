@@ -284,14 +284,10 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 			}
 		}
 	}
-	// remove original error string
-	// Java: setOriginalErrorStr / getOriginalErrorStr — UTF-16 FromPos/ToPos.
-	orig := match.GetOriginalErrorStr()
-	if orig == "" {
-		match.SetOriginalErrorStr()
-		orig = match.GetOriginalErrorStr()
-	}
-	definitiveReplacements = removeStringFS(definitiveReplacements, orig)
+	// Java: definitiveReplacements.remove(match.getOriginalErrorStr()) only —
+	// do not invent setOriginalErrorStr() when empty before remove.
+	// (inmarker path already calls setOriginalErrorStr above.)
+	definitiveReplacements = removeStringFS(definitiveReplacements, match.GetOriginalErrorStr())
 	// distinct
 	definitiveReplacements = distinctFS(definitiveReplacements)
 	if len(definitiveReplacements) > 0 {
@@ -300,42 +296,50 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 	return out
 }
 
-func resolveWordFromFS(wordFrom string, match *RuleMatch, patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *languagetool.AnalyzedTokenReadings {
-	if wordFrom == "marker" {
-		// getPosition("marker") style
-		i := 0
-		for i < len(patternTokens) &&
-			(patternTokens[i].GetStartPos() < match.GetFromPos() || patternTokens[i].IsSentenceStart()) {
+// resolveWordFromFS ports RuleFilter.getPosition then indexes patternTokens.
+// AbstractFindSuggestionsFilter uses getPosition only (not getSkipCorrectedReference).
+// OOB / bad parse → panic like Java IllegalArgumentException / NumberFormatException.
+func resolveWordFromFS(wordFrom string, match *RuleMatch, patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *languagetool.AnalyzedTokenReadings {
+	return patternTokens[getPositionFS(wordFrom, patternTokens, match)]
+}
+
+// getPositionFS ports RuleFilter.getPosition (1-based marker/index → 0-based).
+// Supports "marker", "marker+N"/"marker-N" (length>6), and numeric parseInt.
+func getPositionFS(fromStr string, patternTokens []*languagetool.AnalyzedTokenReadings, match *RuleMatch) int {
+	var i int
+	if strings.HasPrefix(fromStr, "marker") {
+		i = 0
+		// Java: while (i < len && start < fromPos || isSentenceStart())
+		// precedence: (i < len && start < fromPos) || isSentenceStart
+		for i < len(patternTokens) && patternTokens[i].GetStartPos() < match.GetFromPos() ||
+			(i < len(patternTokens) && patternTokens[i].IsSentenceStart()) {
 			i++
 		}
-		i++ // Java getPosition then returns i-1 after increment — wait:
-		// getPosition: while...; i++; return i-1 → first token at/after match
-		// Actually after while i points to first token with start>=from and not sent start skip,
-		// then i++, then return i-1 which is the token after the while stop.
-		if i-1 >= 0 && i-1 < len(patternTokens) {
-			return patternTokens[i-1]
+		i++
+		if len(fromStr) > 6 {
+			off, err := strconv.Atoi(strings.ReplaceAll(fromStr, "marker", ""))
+			if err != nil {
+				panic(err)
+			}
+			i += off
 		}
-		return nil
+	} else {
+		n, err := strconv.Atoi(fromStr)
+		if err != nil {
+			panic(err)
+		}
+		i = n
 	}
-	if wordFrom == "inmarker" {
-		return nil // handled by caller
+	if i < 1 || i > len(patternTokens) {
+		id := ""
+		if match != nil {
+			if r, ok := match.GetRule().(interface{ GetID() string }); ok {
+				id = r.GetID()
+			}
+		}
+		panic("RuleFilter: Index out of bounds in " + id + ", value: " + fromStr)
 	}
-	n, err := strconv.Atoi(wordFrom)
-	if err != nil {
-		// try getPosition numeric path without skip: Java Integer.parseInt
-		return nil
-	}
-	// Java getPosition for numeric: i = parseInt; return i-1 (1-based)
-	// Also getSkipCorrectedReference when used — Abstract uses getPosition only.
-	idx := n - 1
-	if idx < 0 || idx >= len(patternTokens) {
-		// also try skipCorrectedRef for tokenPositions compatibility
-		idx = skipCorrectedRef(tokenPositions, n)
-	}
-	if idx < 0 || idx >= len(patternTokens) {
-		return nil
-	}
-	return patternTokens[idx]
+	return i - 1
 }
 
 // equalWithoutDiacritics ports AbstractFindSuggestionsFilter.equalWithoutDiacritics:
@@ -354,10 +358,11 @@ func containsStrFS(list []string, s string) bool {
 	return false
 }
 
+// removeStringFS ports List.remove(Object): drop every occurrence equal to s
+// (Java ArrayList.remove is first-only once, but stream distinct follows;
+// dropping all equals is equivalent for this filter's use).
+// Call even when s is empty — do not invent an early skip (Java still remove("")).
 func removeStringFS(list []string, s string) []string {
-	if s == "" {
-		return list
-	}
 	var out []string
 	for _, x := range list {
 		if x != s {

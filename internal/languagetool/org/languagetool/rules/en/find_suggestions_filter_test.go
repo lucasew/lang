@@ -255,6 +255,94 @@ func TestFindSuggestionsFilter_WordFromMarker(t *testing.T) {
 	require.Equal(t, []string{"running"}, out.GetSuggestedReplacements())
 }
 
+func TestFindSuggestionsFilter_WordFromMarkerPlusOne(t *testing.T) {
+	// Java getPosition("marker+1"): marker walk then +1 offset.
+	ClearEnglishFilterSpeller()
+	ClearEnglishFindSuggestionsSpeller()
+	f := NewFindSuggestionsFilter()
+	f.SetSpellingSuggestions(func(atr *languagetool.AnalyzedTokenReadings) []string {
+		require.Equal(t, "runing", atr.GetToken())
+		return []string{"running"}
+	})
+	f.Tag = func(word string) *languagetool.AnalyzedTokenReadings {
+		if word == "running" {
+			return languagetool.NewAnalyzedTokenReadings(
+				languagetool.NewAnalyzedToken(word, ptrFS("VBG"), nil))
+		}
+		return languagetool.NewAnalyzedTokenReadings(
+			languagetool.NewAnalyzedToken(word, ptrFS("UNKNOWN"), nil))
+	}
+	// match FromPos on "the"; marker → "the", marker+1 → "runing"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		fsTok("the", 0, ptrFS("DT")),
+		fsTok("runing", 4, ptrFS("UNKNOWN")),
+	}
+	m := rules.NewRuleMatch(rules.NewFakeRule("F"), nil, 0, 3, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"wordFrom": "marker+1", "desiredPostag": "VB.*",
+	}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.Equal(t, []string{"running"}, out.GetSuggestedReplacements())
+}
+
+func TestFindSuggestionsFilter_WordFromOOBPanics(t *testing.T) {
+	// Java getPosition OOB → IllegalArgumentException (panic in Go), not soft nil.
+	ClearEnglishFilterSpeller()
+	ClearEnglishFindSuggestionsSpeller()
+	f := NewFindSuggestionsFilter()
+	f.SetSpellingSuggestions(func(atr *languagetool.AnalyzedTokenReadings) []string {
+		return []string{"running"}
+	})
+	f.Tag = func(word string) *languagetool.AnalyzedTokenReadings {
+		return languagetool.NewAnalyzedTokenReadings(
+			languagetool.NewAnalyzedToken(word, ptrFS("VBG"), nil))
+	}
+	tok := fsTok("runing", 0, ptrFS("UNKNOWN"))
+	m := rules.NewRuleMatch(rules.NewFakeRule("F"), nil, 0, 6, "msg")
+	require.Panics(t, func() {
+		_ = f.AcceptRuleMatch(m, map[string]string{
+			"wordFrom": "9", "desiredPostag": "VB.*",
+		}, 0, []*languagetool.AnalyzedTokenReadings{tok}, nil)
+	})
+}
+
+func TestFindSuggestionsFilter_OriginalErrorStrRemoveOnly(t *testing.T) {
+	// Java: definitiveReplacements.remove(match.getOriginalErrorStr()) — no invent set.
+	// Pre-seed non-template match suggestions so remove is observable.
+	ClearEnglishFilterSpeller()
+	ClearEnglishFindSuggestionsSpeller()
+	f := NewFindSuggestionsFilter()
+	f.SetSpellingSuggestions(func(atr *languagetool.AnalyzedTokenReadings) []string {
+		return []string{"running"}
+	})
+	f.Tag = func(word string) *languagetool.AnalyzedTokenReadings {
+		return languagetool.NewAnalyzedTokenReadings(
+			languagetool.NewAnalyzedToken(word, ptrFS("VBG"), nil))
+	}
+	tok := fsTok("runing", 0, ptrFS("UNKNOWN"))
+	m := rules.NewRuleMatch(rules.NewFakeRule("F"), nil, 0, 6, "msg")
+	m.SetSuggestedReplacements([]string{"runing", "also"})
+	// OriginalErrorStr empty: remove("") must not invent setOriginalErrorStr from span
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"wordFrom": "1", "desiredPostag": "VB.*",
+	}, 0, []*languagetool.AnalyzedTokenReadings{tok}, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetSuggestedReplacements(), "runing")
+	require.Contains(t, out.GetSuggestedReplacements(), "also")
+	require.Equal(t, "", m.GetOriginalErrorStr())
+
+	m2 := rules.NewRuleMatch(rules.NewFakeRule("F"), nil, 0, 6, "msg")
+	m2.OriginalErrorStr = "runing"
+	m2.SetSuggestedReplacements([]string{"runing", "also"})
+	out2 := f.AcceptRuleMatch(m2, map[string]string{
+		"wordFrom": "1", "desiredPostag": "VB.*",
+	}, 0, []*languagetool.AnalyzedTokenReadings{tok}, nil)
+	require.NotNil(t, out2)
+	require.NotContains(t, out2.GetSuggestedReplacements(), "runing")
+	require.Contains(t, out2.GetSuggestedReplacements(), "also")
+	require.Contains(t, out2.GetSuggestedReplacements(), "running")
+}
+
 func TestFindSuggestionsFilter_SuppressMatchEmpty(t *testing.T) {
 	// Java: suppressMatch=true and no replacements → null
 	ClearEnglishFilterSpeller()
@@ -392,4 +480,35 @@ func TestFindSuggestionsFilter_ProcessWideWireFromTagger(t *testing.T) {
 	require.True(t, WireEnglishFilterTagger(pos))
 	require.True(t, FilterFindSuggestionsAvailable(), "tagger wire must install findSimilarWords dict")
 	require.Contains(t, FilterDictSuggest("seperate"), "separate")
+}
+
+func TestFindSuggestionsFilter_NoFallbackToLocaleHunspell(t *testing.T) {
+	// Java FindSuggestionsFilter uses only /en/english.dict — never locale en_US hunspell.
+	// Wiring filterDict alone must leave FindSuggestions unavailable / fail-closed.
+	ClearEnglishFilterSpeller()
+	ClearEnglishFindSuggestionsSpeller()
+	ClearEnglishFilterTagger()
+	t.Cleanup(func() {
+		ClearEnglishFilterSpeller()
+		ClearEnglishFindSuggestionsSpeller()
+		ClearEnglishFilterTagger()
+	})
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../../"))
+	enUS := filepath.Join(root, "third_party/english-pos-dict/org/languagetool/resource/en/hunspell/en_US.dict")
+	if st, err := os.Stat(enUS); err != nil || st.IsDir() {
+		t.Skipf("en_US.dict missing: %s", enUS)
+	}
+	require.True(t, WireEnglishFilterSpeller(enUS))
+	require.True(t, FilterDictAvailable(), "locale misspell dict wired")
+	require.False(t, FilterFindSuggestionsAvailable(),
+		"must not treat en_US.dict as FindSuggestions english.dict")
+	require.Nil(t, FilterDictSuggest("runing"),
+		"FilterDictSuggest must not fall back to locale hunspell")
+	f := NewFindSuggestionsFilter()
+	tok := fsTok("runing", 0, ptrFS("UNKNOWN"))
+	m := rules.NewRuleMatch(rules.NewFakeRule("F"), nil, 0, 6, "msg")
+	require.Nil(t, f.AcceptRuleMatch(m, map[string]string{
+		"wordFrom": "1", "desiredPostag": "VB.*",
+	}, 0, []*languagetool.AnalyzedTokenReadings{tok}, nil))
 }
