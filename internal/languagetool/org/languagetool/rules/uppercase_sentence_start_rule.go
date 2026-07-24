@@ -18,8 +18,12 @@ var (
 	containsDigitRE     = regexp.MustCompile(`\d`)
 	onlyLowercaseStart  = regexp.MustCompile(`^[a-z][A-Z]`)
 	whitespaceOrQuote   = regexp.MustCompile(`^[ "'„«»‘’“”\n]$`)
-	digitDot            = regexp.MustCompile(`^\d+\. .*`)
-	linebreakDigitDot   = regexp.MustCompile(`\n\d+\. `)
+	// Java DIGIT_DOT: Pattern.compile("\\d+\\. .*") + Matcher.matches() (full string).
+	// Default `.` does not match line terminators → equivalent [^\n\r]*.
+	digitDot = regexp.MustCompile(`^\d+\. [^\n\r]*$`)
+	// Java LINEBREAK_DIGIT_DOT: Pattern.compile(".*\n\\d+\\. ") + Matcher.matches().
+	// Default `.` is not DOTALL → single-line prefix, then exactly "\n\d+. " to end.
+	linebreakDigitDot = regexp.MustCompile(`^[^\n]*\n\d+\. $`)
 	uppercaseExceptions = map[string]bool{
 		"n": true, "w": true, "x86": true, "ⓒ": true, "ø": true,
 		"cc": true, "pH": true, "heylogin": true,
