@@ -220,7 +220,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-WordRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | d17b8514163aece863fbdfcc1e5708645c86faa6 | 0 | 0 |  |  | 2026-07-24T05:12:42Z |
 | docs/faithful-port-checklist.md#3.C.1-AdvancedWordRepeatRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AdvancedWordRepeatRule.java | internal/languagetool/org/languagetool/rules/ | 0abf28c5223364d19bda9268128dbbd23caeb13d | 0 | 0 |  |  | 2026-07-24T05:26:38Z |
 | docs/faithful-port-checklist.md#3.C.1-AbstractSpaceBeforeRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractSpaceBeforeRule.java | internal/languagetool/org/languagetool/rules/ | 7dbc16839e1a1db751e501686ad566d95e87a1eb | 1 | 0 |  |  | 2026-07-24T05:56:03Z |
-| docs/faithful-port-checklist.md#3.C.1-AbstractPunctuationCheckRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractPunctuationCheckRule.java | internal/languagetool/org/languagetool/rules/ | 802d05e6726ed7c077873d33f86bb8c468db955b | 0 | 0 |  |  | 2026-07-24T06:03:08Z |
+| docs/faithful-port-checklist.md#3.C.1-AbstractPunctuationCheckRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractPunctuationCheckRule.java | internal/languagetool/org/languagetool/rules/ | 802d05e6726ed7c077873d33f86bb8c468db955b | 0 | 0 |  |  | 2026-07-24T06:05:49Z |
 
 ## Human inbox
 
@@ -230,7 +230,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-AbstractPunctuationCheckRule @ 802d05e6 (hand-built twin; invent deleted; parent green). FR/zh blocked. |
+| Notes | ACCEPT 3.C.1-AbstractPunctuationCheckRule @ 802d05e6. FR/zh blocked. Next: more 3.C.1 core leaves. |
 
 ---
 
@@ -930,3 +930,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T05:56:03Z ACCEPT: 3.C.1-AbstractSpaceBeforeRule @ 7dbc1683 (validator + parent green; r1 Matcher.matches fix)
 - 2026-07-24T05:59:08Z implement: 3.C.1-AbstractPunctuationCheckRule (Match outcome twin; joinOk/isPunct hooks; core layout 3.C.1 leaf)
 - 2026-07-24T06:03:08Z ready: 3.C.1-AbstractPunctuationCheckRule @ 802d05e6 (implementer report; parent green reconfirm)
+- 2026-07-24T06:03:48Z validating: 3.C.1-AbstractPunctuationCheckRule @ 802d05e6 (strict invent re-audit vs Java AbstractPunctuationCheckRule)
+- 2026-07-24T06:05:49Z ACCEPT: 3.C.1-AbstractPunctuationCheckRule @ 802d05e6 (validator + parent green reconfirm)
