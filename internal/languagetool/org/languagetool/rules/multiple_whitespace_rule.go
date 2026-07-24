@@ -1,11 +1,12 @@
 package rules
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// MultipleWhitespaceRule ports org.languagetool.rules.MultipleWhitespaceRule.
 // MultipleWhitespaceRule ports org.languagetool.rules.MultipleWhitespaceRule.
 // Java: TYPOGRAPHY, Whitespace.
 type MultipleWhitespaceRule struct {
@@ -14,6 +15,8 @@ type MultipleWhitespaceRule struct {
 	IssueType ITSIssueType
 }
 
+// NewMultipleWhitespaceRule ports MultipleWhitespaceRule(ResourceBundle, Language).
+// Language is unused in Java match; messages drive description and match text.
 func NewMultipleWhitespaceRule(messages map[string]string) *MultipleWhitespaceRule {
 	return &MultipleWhitespaceRule{
 		Messages:  messages,
@@ -51,52 +54,40 @@ func (r *MultipleWhitespaceRule) GetLocQualityIssueType() ITSIssueType {
 // MinToCheckParagraph ports MultipleWhitespaceRule.minToCheckParagraph (Java returns 0).
 func (r *MultipleWhitespaceRule) MinToCheckParagraph() int { return 0 }
 
+// isFirstWhite ports MultipleWhitespaceRule.isFirstWhite:
+// whitespace or NBSP, not linebreak, and not containing ZWSP/BOM/WJ.
 func isFirstWhite(token *languagetool.AnalyzedTokenReadings) bool {
 	t := token.GetToken()
 	return (token.IsWhitespace() || tools.IsNonBreakingWhitespace(t)) &&
 		!token.IsLinebreak() &&
-		!containsAny(t, "\u200B", "\uFEFF", "\u2060")
+		!strings.Contains(t, "\u200B") && !strings.Contains(t, "\uFEFF") && !strings.Contains(t, "\u2060")
 }
 
+// isRemovableWhite ports MultipleWhitespaceRule.isRemovableWhite:
+// same as isFirstWhite but also excludes tabs.
 func isRemovableWhite(token *languagetool.AnalyzedTokenReadings) bool {
 	t := token.GetToken()
 	return (token.IsWhitespace() || tools.IsNonBreakingWhitespace(t)) &&
 		!token.IsLinebreak() && t != "\t" &&
-		!containsAny(t, "\u200B", "\uFEFF", "\u2060")
+		!strings.Contains(t, "\u200B") && !strings.Contains(t, "\uFEFF") && !strings.Contains(t, "\u2060")
 }
 
-func containsAny(s string, subs ...string) bool {
-	for _, sub := range subs {
-		if len(sub) > 0 && containsSubstr(s, sub) {
-			return true
-		}
-	}
-	return false
-}
-
-func containsSubstr(s, sub string) bool {
-	return len(s) >= len(sub) && (s == sub || len(sub) == 0 || indexOfByte(s, sub) >= 0)
-}
-
-func indexOfByte(s, sub string) int {
-	for i := 0; i+len(sub) <= len(s); i++ {
-		if s[i:i+len(sub)] == sub {
-			return i
-		}
-	}
-	return -1
-}
-
-// Match ports TextLevelRule match over sentences.
+// Match ports TextLevelRule match(List<AnalyzedSentence>).
+// Control flow mirrors Java including the linebreak branch that advances i without i--.
 func (r *MultipleWhitespaceRule) Match(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
 	pos := 0
-	msg := r.Messages["whitespace_repetition"]
+	msg := ""
+	if r != nil && r.Messages != nil {
+		msg = r.Messages["whitespace_repetition"]
+	}
 	if msg == "" {
 		msg = "Possible typo: you repeated a whitespace"
 	}
 	for _, sentence := range sentences {
 		tokens := sentence.GetTokens()
+		// note: we start from token 1
+		// token no. 0 is guaranteed to be SENT_START
 		for i := 1; i < len(tokens); i++ {
 			if isFirstWhite(tokens[i]) {
 				nFirst := i
