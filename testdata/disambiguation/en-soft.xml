@@ -1,0 +1,6690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+  <!-- Soft POS filter: modal/to + verb; marker on verb = Java FILTER fromPos -->
+  <rule id="SOFT_WILL_RUN_VB" name="will run → VB">
+    <pattern>
+      <token>will</token>
+      <token marker="yes">run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_WOULD_RUN_VB" name="would run → VB">
+    <pattern>
+      <token>would</token>
+      <token marker="yes">run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_CAN_CAN_VB" name="can can → second VB">
+    <pattern>
+      <token>can</token>
+      <token marker="yes">can</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_WILL_BOOK_VB" name="will book → VB">
+    <pattern>
+      <token>will</token>
+      <token marker="yes">book</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MAY_BOOK_VB" name="may book → VB">
+    <pattern>
+      <token>may</token>
+      <token marker="yes">book</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_SHOULD_RUN_VB" name="should run → VB">
+    <pattern>
+      <token>should</token>
+      <token marker="yes">run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_COULD_RUN_VB" name="could run → VB">
+    <pattern>
+      <token>could</token>
+      <token marker="yes">run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MIGHT_RUN_VB" name="might run → VB">
+    <pattern>
+      <token>might</token>
+      <token marker="yes">run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MUST_BOOK_VB" name="must book → VB">
+    <pattern>
+      <token>must</token>
+      <token marker="yes">book</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_WILL_READ_VB" name="will read → VB">
+    <pattern>
+      <token>will</token>
+      <token marker="yes">read</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_CAN_READ_VB" name="can read → VB">
+    <pattern>
+      <token>can</token>
+      <token marker="yes">read</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <!-- Soft general: modal + common ambiguous verbs → VB (marker = fromPos) -->
+  <rule id="SOFT_MODAL_MAKE_VB" name="modal make → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">make</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_TAKE_VB" name="modal take → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">take</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_SET_VB" name="modal set → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">set</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_PLAY_VB" name="modal play → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">play</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_WORK_VB" name="modal work → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">work</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <!-- Soft replace: force NNP on LanguageTool brand token -->
+  <rule id="SOFT_LANGUAGETOOL_NNP" name="LanguageTool → NNP">
+    <pattern>
+      <token>LanguageTool</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="SOFT_OPENAI_NNP" name="OpenAI → NNP">
+    <pattern>
+      <token>OpenAI</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <!-- Soft immunize abbreviations / short forms (speller also skips immunized) -->
+  <rule id="SOFT_IMMUNIZE_ASAP" name="immunize asap">
+    <pattern>
+      <token>asap</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FYI" name="immunize fyi">
+    <pattern>
+      <token>fyi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IMO" name="immunize imo">
+    <pattern>
+      <token>imo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TLDR" name="immunize tldr">
+    <pattern>
+      <token>tldr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BTW" name="immunize btw">
+    <pattern>
+      <token>btw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IDC" name="immunize idc">
+    <pattern>
+      <token>idc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IRL" name="immunize irl">
+    <pattern>
+      <token>irl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OMG" name="immunize omg">
+    <pattern>
+      <token>omg</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBH" name="immunize tbh">
+    <pattern>
+      <token>tbh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IMO_CAPS" name="immunize IMO">
+    <pattern>
+      <token>IMO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOL" name="immunize lol">
+    <pattern>
+      <token>lol</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BRB" name="immunize brb">
+    <pattern>
+      <token>brb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVM" name="immunize nvm">
+    <pattern>
+      <token>nvm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SMH" name="immunize smh">
+    <pattern>
+      <token>smh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IDK" name="immunize idk">
+    <pattern>
+      <token>idk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TTYL" name="immunize ttyl">
+    <pattern>
+      <token>ttyl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_LOOK_VB" name="modal look → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">look</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_HELP_VB" name="modal help → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">help</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_SHOW_VB" name="modal show → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">show</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_KEEP_VB" name="modal keep → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">keep</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_LEAVE_VB" name="modal leave → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">leave</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_FIND_VB" name="modal find → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">find</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_GIVE_VB" name="modal give → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">give</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_GET_VB" name="modal get → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">get</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_COME_VB" name="modal come → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">come</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_RUN" name="to run → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_MAKE" name="to make → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">make</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_FIND" name="to find → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">find</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_GET" name="to get → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">get</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_GIVE" name="to give → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">give</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_KEEP" name="to keep → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">keep</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FOMO" name="immunize fomo">
+    <pattern>
+      <token>fomo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YOLO" name="immunize yolo">
+    <pattern>
+      <token>yolo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIL" name="immunize til">
+    <pattern>
+      <token>til</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AFAIK" name="immunize afaik">
+    <pattern>
+      <token>afaik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ICYMI" name="immunize icymi">
+    <pattern>
+      <token>icymi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBF" name="immunize tbf">
+    <pattern>
+      <token>tbf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IYKYK" name="immunize iykyk">
+    <pattern>
+      <token>iykyk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FTW" name="immunize ftw">
+    <pattern>
+      <token>ftw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IMO_LOWER" name="immunize imho">
+    <pattern>
+      <token>imho</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_TELL_VB" name="modal tell → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">tell</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_CALL_VB" name="modal call → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">call</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_MOVE_VB" name="modal move → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">move</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_START_VB" name="modal start → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">start</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_TELL" name="to tell → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">tell</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_CALL" name="to call → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">call</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_START" name="to start → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">start</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_MOVE" name="to move → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">move</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_HELP" name="to help → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">help</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_XAI_NNP" name="xAI → NNP">
+    <pattern>
+      <token>xAI</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="SOFT_GROK_NNP" name="Grok → NNP">
+    <pattern>
+      <token>Grok</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RN" name="immunize rn">
+    <pattern>
+      <token>rn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FR" name="immunize fr">
+    <pattern>
+      <token>fr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NGL" name="immunize ngl">
+    <pattern>
+      <token>ngl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISTG" name="immunize istg">
+    <pattern>
+      <token>istg</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IDGAF" name="immunize idgaf">
+    <pattern>
+      <token>idgaf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_TRY_VB" name="modal try → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">try</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_NEED_VB" name="modal need → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">need</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_TRY" name="to try → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">try</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_NEED" name="to need → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">need</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_USE" name="to use → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">use</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_USE_VB" name="modal use → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">use</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_WANT_VB" name="modal want → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">want</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_SEEM_VB" name="modal seem → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">seem</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_WANT" name="to want → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">want</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_SEEM" name="to seem → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">seem</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_WORK" name="to work → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">work</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GG" name="immunize gg">
+    <pattern>
+      <token>gg</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WP" name="immunize wp">
+    <pattern>
+      <token>wp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LMAO" name="immunize lmao">
+    <pattern>
+      <token>lmao</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROFL" name="immunize rofl">
+    <pattern>
+      <token>rofl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OMW" name="immunize omw">
+    <pattern>
+      <token>omw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AFAIR" name="immunize afair">
+    <pattern>
+      <token>afair</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IIRC" name="immunize iirc">
+    <pattern>
+      <token>iirc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FWIW" name="immunize fwiw">
+    <pattern>
+      <token>fwiw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TLDR_CAPS" name="immunize TLDR">
+    <pattern>
+      <token>TLDR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_ASK_VB" name="modal ask → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token marker="yes">ask</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_ASK" name="to ask → VB">
+    <pattern>
+      <token>to</token>
+      <token marker="yes">ask</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LGTM" name="immunize lgtm">
+    <pattern>
+      <token>lgtm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SGTM" name="immunize sgtm">
+    <pattern>
+      <token>sgtm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WFH" name="immunize wfh">
+    <pattern>
+      <token>wfh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EOD" name="immunize eod">
+    <pattern>
+      <token>eod</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WIP" name="immunize wip">
+    <pattern>
+      <token>wip</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRN" name="immunize prn">
+    <pattern>
+      <token>prn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ETA" name="immunize eta">
+    <pattern>
+      <token>eta</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ETC_CAPS" name="immunize ETA">
+    <pattern>
+      <token>ETA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POC" name="immunize poc">
+    <pattern>
+      <token>poc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MVP" name="immunize mvp">
+    <pattern>
+      <token>mvp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OKR" name="immunize okr">
+    <pattern>
+      <token>okr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KPI" name="immunize kpi">
+    <pattern>
+      <token>kpi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLA" name="immunize sla">
+    <pattern>
+      <token>sla</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLA_CAPS" name="immunize SLA">
+    <pattern>
+      <token>SLA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RCA" name="immunize rca">
+    <pattern>
+      <token>rca</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RCA_CAPS" name="immunize RCA">
+    <pattern>
+      <token>RCA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_P0" name="immunize p0">
+    <pattern>
+      <token>p0</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_P1" name="immunize p1">
+    <pattern>
+      <token>p1</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBD" name="immunize tbd">
+    <pattern>
+      <token>tbd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBD_CAPS" name="immunize TBD">
+    <pattern>
+      <token>TBD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBC" name="immunize tbc">
+    <pattern>
+      <token>tbc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBC_CAPS" name="immunize TBC">
+    <pattern>
+      <token>TBC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NYI" name="immunize nyi">
+    <pattern>
+      <token>nyi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WIP_CAPS" name="immunize WIP">
+    <pattern>
+      <token>WIP</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RFC" name="immunize rfc">
+    <pattern>
+      <token>rfc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RFC_CAPS" name="immunize RFC">
+    <pattern>
+      <token>RFC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ADR" name="immunize adr">
+    <pattern>
+      <token>adr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ADR_CAPS" name="immunize ADR">
+    <pattern>
+      <token>ADR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TLDR2" name="immunize tldr lower">
+    <pattern>
+      <token>tldr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NFR" name="immunize nfr">
+    <pattern>
+      <token>nfr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NFR_CAPS" name="immunize NFR">
+    <pattern>
+      <token>NFR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SRE" name="immunize sre">
+    <pattern>
+      <token>sre</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SRE_CAPS" name="immunize SRE">
+    <pattern>
+      <token>SRE</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLO" name="immunize slo">
+    <pattern>
+      <token>slo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLO_CAPS" name="immunize SLO">
+    <pattern>
+      <token>SLO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JWT" name="immunize jwt">
+    <pattern>
+      <token>jwt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JWT_CAPS" name="immunize JWT">
+    <pattern>
+      <token>JWT</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UUID" name="immunize uuid">
+    <pattern>
+      <token>uuid</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UUID_CAPS" name="immunize UUID">
+    <pattern>
+      <token>UUID</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K8S" name="immunize k8s">
+    <pattern>
+      <token>k8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K8S_CAPS" name="immunize K8s">
+    <pattern>
+      <token>K8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OAUTH" name="immunize oauth">
+    <pattern>
+      <token>oauth</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OAUTH_MIXED" name="immunize OAuth">
+    <pattern>
+      <token>OAuth</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRD" name="immunize prd">
+    <pattern>
+      <token>prd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRD_CAPS" name="immunize PRD">
+    <pattern>
+      <token>PRD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRPC" name="immunize grpc">
+    <pattern>
+      <token>grpc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRPC_MIXED" name="immunize gRPC">
+    <pattern>
+      <token>gRPC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HELM" name="immunize helm">
+    <pattern>
+      <token>helm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HELM_CAPS" name="immunize Helm">
+    <pattern>
+      <token>Helm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KAFKA" name="immunize kafka">
+    <pattern>
+      <token>kafka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KAFKA_CAPS" name="immunize Kafka">
+    <pattern>
+      <token>Kafka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDIS" name="immunize redis">
+    <pattern>
+      <token>redis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDIS_CAPS" name="immunize Redis">
+    <pattern>
+      <token>Redis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAFORM" name="immunize terraform">
+    <pattern>
+      <token>terraform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAFORM_CAPS" name="immunize Terraform">
+    <pattern>
+      <token>Terraform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NGINX" name="immunize nginx">
+    <pattern>
+      <token>nginx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NGINX_CAPS" name="immunize Nginx">
+    <pattern>
+      <token>Nginx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRES" name="immunize postgres">
+    <pattern>
+      <token>postgres</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRES_CAPS" name="immunize Postgres">
+    <pattern>
+      <token>Postgres</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGO" name="immunize mongo">
+    <pattern>
+      <token>mongo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGO_CAPS" name="immunize Mongo">
+    <pattern>
+      <token>Mongo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHQL" name="immunize graphql">
+    <pattern>
+      <token>graphql</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHQL_CAPS" name="immunize GraphQL">
+    <pattern>
+      <token>GraphQL</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEBPACK" name="immunize webpack">
+    <pattern>
+      <token>webpack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEBPACK_CAPS" name="immunize Webpack">
+    <pattern>
+      <token>Webpack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ESLINT" name="immunize eslint">
+    <pattern>
+      <token>eslint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ESLINT_CAPS" name="immunize ESLint">
+    <pattern>
+      <token>ESLint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRISMA" name="immunize prisma">
+    <pattern>
+      <token>prisma</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRISMA_CAPS" name="immunize Prisma">
+    <pattern>
+      <token>Prisma</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCKER" name="immunize docker">
+    <pattern>
+      <token>docker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCKER_CAPS" name="immunize Docker">
+    <pattern>
+      <token>Docker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SDD" name="immunize sdd">
+    <pattern>
+      <token>sdd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SDD_CAPS" name="immunize SDD">
+    <pattern>
+      <token>SDD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITE" name="immunize vite">
+    <pattern>
+      <token>vite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITE_CAPS" name="immunize Vite">
+    <pattern>
+      <token>Vite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUN" name="immunize bun">
+    <pattern>
+      <token>bun</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUN_CAPS" name="immunize Bun">
+    <pattern>
+      <token>Bun</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DENO" name="immunize deno">
+    <pattern>
+      <token>deno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DENO_CAPS" name="immunize Deno">
+    <pattern>
+      <token>Deno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLAYWRIGHT" name="immunize playwright">
+    <pattern>
+      <token>playwright</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLAYWRIGHT_CAPS" name="immunize Playwright">
+    <pattern>
+      <token>Playwright</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CYPRESS" name="immunize cypress">
+    <pattern>
+      <token>cypress</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CYPRESS_CAPS" name="immunize Cypress">
+    <pattern>
+      <token>Cypress</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTJS" name="immunize nextjs">
+    <pattern>
+      <token>nextjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTJS_CAPS" name="immunize Nextjs">
+    <pattern>
+      <token>Nextjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JEST" name="immunize jest">
+    <pattern>
+      <token>jest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JEST_CAPS" name="immunize Jest">
+    <pattern>
+      <token>Jest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITEST" name="immunize vitest">
+    <pattern>
+      <token>vitest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITEST_CAPS" name="immunize Vitest">
+    <pattern>
+      <token>Vitest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURBO" name="immunize turbo">
+    <pattern>
+      <token>turbo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURBO_CAPS" name="immunize Turbo">
+    <pattern>
+      <token>Turbo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WASM" name="immunize wasm">
+    <pattern>
+      <token>wasm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WASM_CAPS" name="immunize Wasm">
+    <pattern>
+      <token>Wasm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIX" name="immunize nix">
+    <pattern>
+      <token>nix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIX_CAPS" name="immunize Nix">
+    <pattern>
+      <token>Nix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUSTC" name="immunize rustc">
+    <pattern>
+      <token>rustc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUSTC_CAPS" name="immunize Rustc">
+    <pattern>
+      <token>Rustc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MISE" name="immunize mise">
+    <pattern>
+      <token>mise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MISE_CAPS" name="immunize Mise">
+    <pattern>
+      <token>Mise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GOLANG" name="immunize golang">
+    <pattern>
+      <token>golang</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GOLANG_CAPS" name="immunize Golang">
+    <pattern>
+      <token>Golang</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUE" name="immunize cue">
+    <pattern>
+      <token>cue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUE_CAPS" name="immunize Cue">
+    <pattern>
+      <token>Cue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BAZEL" name="immunize bazel">
+    <pattern>
+      <token>bazel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BAZEL_CAPS" name="immunize Bazel">
+    <pattern>
+      <token>Bazel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PODMAN" name="immunize podman">
+    <pattern>
+      <token>podman</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PODMAN_CAPS" name="immunize Podman">
+    <pattern>
+      <token>Podman</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CMAKE" name="immunize cmake">
+    <pattern>
+      <token>cmake</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CMAKE_CAPS" name="immunize CMake">
+    <pattern>
+      <token>CMake</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SKAFFOLD" name="immunize skaffold">
+    <pattern>
+      <token>skaffold</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SKAFFOLD_CAPS" name="immunize Skaffold">
+    <pattern>
+      <token>Skaffold</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZE" name="immunize kustomize">
+    <pattern>
+      <token>kustomize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZE_CAPS" name="immunize Kustomize">
+    <pattern>
+      <token>Kustomize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ANSIBLE" name="immunize ansible">
+    <pattern>
+      <token>ansible</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ANSIBLE_CAPS" name="immunize Ansible">
+    <pattern>
+      <token>Ansible</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAGRANT" name="immunize vagrant">
+    <pattern>
+      <token>vagrant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAGRANT_CAPS" name="immunize Vagrant">
+    <pattern>
+      <token>Vagrant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONSUL" name="immunize consul">
+    <pattern>
+      <token>consul</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONSUL_CAPS" name="immunize Consul">
+    <pattern>
+      <token>Consul</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PACKER" name="immunize packer">
+    <pattern>
+      <token>packer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PACKER_CAPS" name="immunize Packer">
+    <pattern>
+      <token>Packer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NOMAD" name="immunize nomad">
+    <pattern>
+      <token>nomad</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NOMAD_CAPS" name="immunize Nomad">
+    <pattern>
+      <token>Nomad</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAULT" name="immunize vault">
+    <pattern>
+      <token>vault</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAULT_CAPS" name="immunize Vault">
+    <pattern>
+      <token>Vault</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WAYPOINT" name="immunize waypoint">
+    <pattern>
+      <token>waypoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WAYPOINT_CAPS" name="immunize Waypoint">
+    <pattern>
+      <token>Waypoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JQ" name="immunize jq">
+    <pattern>
+      <token>jq</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JQ_CAPS" name="immunize JQ">
+    <pattern>
+      <token>JQ</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BOUNDARY" name="immunize boundary">
+    <pattern>
+      <token>boundary</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BOUNDARY_CAPS" name="immunize Boundary">
+    <pattern>
+      <token>Boundary</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SKOPEO" name="immunize skopeo">
+    <pattern>
+      <token>skopeo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SKOPEO_CAPS" name="immunize Skopeo">
+    <pattern>
+      <token>Skopeo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUILDAH" name="immunize buildah">
+    <pattern>
+      <token>buildah</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUILDAH_CAPS" name="immunize Buildah">
+    <pattern>
+      <token>Buildah</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRIO" name="immunize crio">
+    <pattern>
+      <token>crio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRIO_CAPS" name="immunize CriO">
+    <pattern>
+      <token>CriO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NERDCTL" name="immunize nerdctl">
+    <pattern>
+      <token>nerdctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NERDCTL_CAPS" name="immunize Nerdctl">
+    <pattern>
+      <token>Nerdctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTAINERD" name="immunize containerd">
+    <pattern>
+      <token>containerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTAINERD_CAPS" name="immunize Containerd">
+    <pattern>
+      <token>Containerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNC" name="immunize runc">
+    <pattern>
+      <token>runc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNC_CAPS" name="immunize Runc">
+    <pattern>
+      <token>Runc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CADDY" name="immunize caddy">
+    <pattern>
+      <token>caddy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CADDY_CAPS" name="immunize Caddy">
+    <pattern>
+      <token>Caddy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRAEFIK" name="immunize traefik">
+    <pattern>
+      <token>traefik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRAEFIK_CAPS" name="immunize Traefik">
+    <pattern>
+      <token>Traefik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ENVOY" name="immunize envoy">
+    <pattern>
+      <token>envoy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ENVOY_CAPS" name="immunize Envoy">
+    <pattern>
+      <token>Envoy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINKERD" name="immunize linkerd">
+    <pattern>
+      <token>linkerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINKERD_CAPS" name="immunize Linkerd">
+    <pattern>
+      <token>Linkerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISTIO" name="immunize istio">
+    <pattern>
+      <token>istio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISTIO_CAPS" name="immunize Istio">
+    <pattern>
+      <token>Istio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CILIUM" name="immunize cilium">
+    <pattern>
+      <token>cilium</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CILIUM_CAPS" name="immunize Cilium">
+    <pattern>
+      <token>Cilium</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTOUR" name="immunize contour">
+    <pattern>
+      <token>contour</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTOUR_CAPS" name="immunize Contour">
+    <pattern>
+      <token>Contour</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KONG" name="immunize kong">
+    <pattern>
+      <token>kong</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KONG_CAPS" name="immunize Kong">
+    <pattern>
+      <token>Kong</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HAPROXY" name="immunize haproxy">
+    <pattern>
+      <token>haproxy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HAPROXY_CAPS" name="immunize HAProxy">
+    <pattern>
+      <token>HAProxy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUX" name="immunize flux">
+    <pattern>
+      <token>flux</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUX_CAPS" name="immunize Flux">
+    <pattern>
+      <token>Flux</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARGOCD" name="immunize argocd">
+    <pattern>
+      <token>argocd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARGOCD_CAPS" name="immunize ArgoCD">
+    <pattern>
+      <token>ArgoCD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HELMFILE" name="immunize helmfile">
+    <pattern>
+      <token>helmfile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HELMFILE_CAPS" name="immunize Helmfile">
+    <pattern>
+      <token>Helmfile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOPS" name="immunize sops">
+    <pattern>
+      <token>sops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOPS_CAPS" name="immunize Sops">
+    <pattern>
+      <token>Sops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PULUMI" name="immunize pulumi">
+    <pattern>
+      <token>pulumi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PULUMI_CAPS" name="immunize Pulumi">
+    <pattern>
+      <token>Pulumi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAGRUNT" name="immunize terragrunt">
+    <pattern>
+      <token>terragrunt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAGRUNT_CAPS" name="immunize Terragrunt">
+    <pattern>
+      <token>Terragrunt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CROSSPLANE" name="immunize crossplane">
+    <pattern>
+      <token>crossplane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CROSSPLANE_CAPS" name="immunize Crossplane">
+    <pattern>
+      <token>Crossplane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNO" name="immunize kyverno">
+    <pattern>
+      <token>kyverno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNO_CAPS" name="immunize Kyverno">
+    <pattern>
+      <token>Kyverno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GATEKEEPER" name="immunize gatekeeper">
+    <pattern>
+      <token>gatekeeper</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GATEKEEPER_CAPS" name="immunize Gatekeeper">
+    <pattern>
+      <token>Gatekeeper</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FALCO" name="immunize falco">
+    <pattern>
+      <token>falco</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FALCO_CAPS" name="immunize Falco">
+    <pattern>
+      <token>Falco</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRIVY" name="immunize trivy">
+    <pattern>
+      <token>trivy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRIVY_CAPS" name="immunize Trivy">
+    <pattern>
+      <token>Trivy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRYPE" name="immunize grype">
+    <pattern>
+      <token>grype</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRYPE_CAPS" name="immunize Grype">
+    <pattern>
+      <token>Grype</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPA" name="immunize opa">
+    <pattern>
+      <token>opa</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPA_CAPS" name="immunize OPA">
+    <pattern>
+      <token>OPA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSIGN" name="immunize cosign">
+    <pattern>
+      <token>cosign</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSIGN_CAPS" name="immunize Cosign">
+    <pattern>
+      <token>Cosign</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SYFT" name="immunize syft">
+    <pattern>
+      <token>syft</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SYFT_CAPS" name="immunize Syft">
+    <pattern>
+      <token>Syft</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ORAS" name="immunize oras">
+    <pattern>
+      <token>oras</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ORAS_CAPS" name="immunize ORAS">
+    <pattern>
+      <token>ORAS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRANE" name="immunize crane">
+    <pattern>
+      <token>crane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRANE_CAPS" name="immunize Crane">
+    <pattern>
+      <token>Crane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCTL" name="immunize regctl">
+    <pattern>
+      <token>regctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCTL_CAPS" name="immunize Regctl">
+    <pattern>
+      <token>Regctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STEAMPIPE" name="immunize steampipe">
+    <pattern>
+      <token>steampipe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STEAMPIPE_CAPS" name="immunize Steampipe">
+    <pattern>
+      <token>Steampipe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GITLEAKS" name="immunize gitleaks">
+    <pattern>
+      <token>gitleaks</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GITLEAKS_CAPS" name="immunize Gitleaks">
+    <pattern>
+      <token>Gitleaks</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEMGREP" name="immunize semgrep">
+    <pattern>
+      <token>semgrep</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEMGREP_CAPS" name="immunize Semgrep">
+    <pattern>
+      <token>Semgrep</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHECKOV" name="immunize checkov">
+    <pattern>
+      <token>checkov</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHECKOV_CAPS" name="immunize Checkov">
+    <pattern>
+      <token>Checkov</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRASCAN" name="immunize terrascan">
+    <pattern>
+      <token>terrascan</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRASCAN_CAPS" name="immunize Terrascan">
+    <pattern>
+      <token>Terrascan</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRUFFLEHOG" name="immunize trufflehog">
+    <pattern>
+      <token>trufflehog</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRUFFLEHOG_CAPS" name="immunize TruffleHog">
+    <pattern>
+      <token>TruffleHog</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUBEVAL" name="immunize kubeval">
+    <pattern>
+      <token>kubeval</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUBEVAL_CAPS" name="immunize Kubeval">
+    <pattern>
+      <token>Kubeval</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUBECONFORM" name="immunize kubeconform">
+    <pattern>
+      <token>kubeconform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUBECONFORM_CAPS" name="immunize Kubeconform">
+    <pattern>
+      <token>Kubeconform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLARIS" name="immunize polaris">
+    <pattern>
+      <token>polaris</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLARIS_CAPS" name="immunize Polaris">
+    <pattern>
+      <token>Polaris</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONFTEST" name="immunize conftest">
+    <pattern>
+      <token>conftest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONFTEST_CAPS" name="immunize Conftest">
+    <pattern>
+      <token>Conftest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STARLARK" name="immunize starlark">
+    <pattern>
+      <token>starlark</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STARLARK_CAPS" name="immunize Starlark">
+    <pattern>
+      <token>Starlark</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNOCTL" name="immunize kyvernoctl">
+    <pattern>
+      <token>kyvernoctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNOCTL_CAPS" name="immunize Kyvernoctl">
+    <pattern>
+      <token>Kyvernoctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUECTL" name="immunize cuectl">
+    <pattern>
+      <token>cuectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUECTL_CAPS" name="immunize Cuectl">
+    <pattern>
+      <token>Cuectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCLIENT" name="immunize regclient">
+    <pattern>
+      <token>regclient</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCLIENT_CAPS" name="immunize Regclient">
+    <pattern>
+      <token>Regclient</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZECTL" name="immunize kustomizectl">
+    <pattern>
+      <token>kustomizectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZECTL_CAPS" name="immunize Kustomizectl">
+    <pattern>
+      <token>Kustomizectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K3D" name="immunize k3d">
+    <pattern>
+      <token>k3d</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K3D_CAPS" name="immunize K3d">
+    <pattern>
+      <token>K3d</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MINIKUBE" name="immunize minikube">
+    <pattern>
+      <token>minikube</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MINIKUBE_CAPS" name="immunize Minikube">
+    <pattern>
+      <token>Minikube</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K0S" name="immunize k0s">
+    <pattern>
+      <token>k0s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K0S_CAPS" name="immunize K0s">
+    <pattern>
+      <token>K0s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MICROK8S" name="immunize microk8s">
+    <pattern>
+      <token>microk8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MICROK8S_CAPS" name="immunize MicroK8s">
+    <pattern>
+      <token>MicroK8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K3S" name="immunize k3s">
+    <pattern>
+      <token>k3s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K3S_CAPS" name="immunize K3s">
+    <pattern>
+      <token>K3s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KIND" name="immunize kind">
+    <pattern>
+      <token>kind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KIND_CAPS" name="immunize Kind">
+    <pattern>
+      <token>Kind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TALOS" name="immunize talos">
+    <pattern>
+      <token>talos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TALOS_CAPS" name="immunize Talos">
+    <pattern>
+      <token>Talos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KOPS" name="immunize kops">
+    <pattern>
+      <token>kops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KOPS_CAPS" name="immunize Kops">
+    <pattern>
+      <token>Kops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EKSCTL" name="immunize eksctl">
+    <pattern>
+      <token>eksctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EKSCTL_CAPS" name="immunize Eksctl">
+    <pattern>
+      <token>Eksctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERCTL" name="immunize clusterctl">
+    <pattern>
+      <token>clusterctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERCTL_CAPS" name="immunize Clusterctl">
+    <pattern>
+      <token>Clusterctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERAWSADM" name="immunize clusterawsadm">
+    <pattern>
+      <token>clusterawsadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERAWSADM_CAPS" name="immunize Clusterawsadm">
+    <pattern>
+      <token>Clusterawsadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CAPI" name="immunize capi">
+    <pattern>
+      <token>capi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CAPI_CAPS" name="immunize CAPI">
+    <pattern>
+      <token>CAPI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VELERO" name="immunize velero">
+    <pattern>
+      <token>velero</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VELERO_CAPS" name="immunize Velero">
+    <pattern>
+      <token>Velero</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTIC" name="immunize restic">
+    <pattern>
+      <token>restic</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTIC_CAPS" name="immunize Restic">
+    <pattern>
+      <token>Restic</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K10" name="immunize k10">
+    <pattern>
+      <token>k10</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K10_CAPS" name="immunize K10">
+    <pattern>
+      <token>K10</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LONGHORN" name="immunize longhorn">
+    <pattern>
+      <token>longhorn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LONGHORN_CAPS" name="immunize Longhorn">
+    <pattern>
+      <token>Longhorn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENEBS" name="immunize openebs">
+    <pattern>
+      <token>openebs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENEBS_CAPS" name="immunize OpenEBS">
+    <pattern>
+      <token>OpenEBS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROOK" name="immunize rook">
+    <pattern>
+      <token>rook</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROOK_CAPS" name="immunize Rook">
+    <pattern>
+      <token>Rook</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CEPH" name="immunize ceph">
+    <pattern>
+      <token>ceph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CEPH_CAPS" name="immunize Ceph">
+    <pattern>
+      <token>Ceph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINSTOR" name="immunize linstor">
+    <pattern>
+      <token>linstor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINSTOR_CAPS" name="immunize Linstor">
+    <pattern>
+      <token>Linstor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MAYASTOR" name="immunize mayastor">
+    <pattern>
+      <token>mayastor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MAYASTOR_CAPS" name="immunize Mayastor">
+    <pattern>
+      <token>Mayastor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MINIO" name="immunize minio">
+    <pattern>
+      <token>minio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MINIO_CAPS" name="immunize MinIO">
+    <pattern>
+      <token>MinIO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEAWEEDFS" name="immunize seaweedfs">
+    <pattern>
+      <token>seaweedfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEAWEEDFS_CAPS" name="immunize SeaweedFS">
+    <pattern>
+      <token>SeaweedFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GARAGE" name="immunize garage">
+    <pattern>
+      <token>garage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GARAGE_CAPS" name="immunize Garage">
+    <pattern>
+      <token>Garage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JUICEFS" name="immunize juicefs">
+    <pattern>
+      <token>juicefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JUICEFS_CAPS" name="immunize JuiceFS">
+    <pattern>
+      <token>JuiceFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALLUXIO" name="immunize alluxio">
+    <pattern>
+      <token>alluxio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALLUXIO_CAPS" name="immunize Alluxio">
+    <pattern>
+      <token>Alluxio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUBEFS" name="immunize cubefs">
+    <pattern>
+      <token>cubefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUBEFS_CAPS" name="immunize CubeFS">
+    <pattern>
+      <token>CubeFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLUSTER" name="immunize gluster">
+    <pattern>
+      <token>gluster</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLUSTER_CAPS" name="immunize Gluster">
+    <pattern>
+      <token>Gluster</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LUSTRE" name="immunize lustre">
+    <pattern>
+      <token>lustre</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LUSTRE_CAPS" name="immunize Lustre">
+    <pattern>
+      <token>Lustre</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEEGFS" name="immunize beegfs">
+    <pattern>
+      <token>beegfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEEGFS_CAPS" name="immunize BeeGFS">
+    <pattern>
+      <token>BeeGFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOOSEFS" name="immunize moosefs">
+    <pattern>
+      <token>moosefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOOSEFS_CAPS" name="immunize MooseFS">
+    <pattern>
+      <token>MooseFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ORANGEFS" name="immunize orangefs">
+    <pattern>
+      <token>orangefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ORANGEFS_CAPS" name="immunize OrangeFS">
+    <pattern>
+      <token>OrangeFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CEPHFS" name="immunize cephfs">
+    <pattern>
+      <token>cephfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CEPHFS_CAPS" name="immunize CephFS">
+    <pattern>
+      <token>CephFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LVM" name="immunize lvm">
+    <pattern>
+      <token>lvm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LVM_CAPS" name="immunize LVM">
+    <pattern>
+      <token>LVM</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDADM" name="immunize mdadm">
+    <pattern>
+      <token>mdadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDADM_CAPS" name="immunize Mdadm">
+    <pattern>
+      <token>Mdadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEKA" name="immunize weka">
+    <pattern>
+      <token>weka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEKA_CAPS" name="immunize Weka">
+    <pattern>
+      <token>Weka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZFS" name="immunize zfs">
+    <pattern>
+      <token>zfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZFS_CAPS" name="immunize ZFS">
+    <pattern>
+      <token>ZFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BTRFS" name="immunize btrfs">
+    <pattern>
+      <token>btrfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BTRFS_CAPS" name="immunize Btrfs">
+    <pattern>
+      <token>Btrfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XFS" name="immunize xfs">
+    <pattern>
+      <token>xfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XFS_CAPS" name="immunize XFS">
+    <pattern>
+      <token>XFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NFS" name="immunize nfs">
+    <pattern>
+      <token>nfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NFS_CAPS" name="immunize NFS">
+    <pattern>
+      <token>NFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CIFS" name="immunize cifs">
+    <pattern>
+      <token>cifs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CIFS_CAPS" name="immunize CIFS">
+    <pattern>
+      <token>CIFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FUSE" name="immunize fuse">
+    <pattern>
+      <token>fuse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FUSE_CAPS" name="immunize Fuse">
+    <pattern>
+      <token>Fuse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISCSI" name="immunize iscsi">
+    <pattern>
+      <token>iscsi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISCSI_MIXED" name="immunize iSCSI">
+    <pattern>
+      <token>iSCSI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SMB" name="immunize smb">
+    <pattern>
+      <token>smb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SMB_CAPS" name="immunize SMB">
+    <pattern>
+      <token>SMB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AFP" name="immunize afp">
+    <pattern>
+      <token>afp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AFP_CAPS" name="immunize AFP">
+    <pattern>
+      <token>AFP</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NBD" name="immunize nbd">
+    <pattern>
+      <token>nbd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NBD_CAPS" name="immunize NBD">
+    <pattern>
+      <token>NBD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVME" name="immunize nvme">
+    <pattern>
+      <token>nvme</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVME_CAPS" name="immunize NVMe">
+    <pattern>
+      <token>NVMe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVMF" name="immunize nvmf">
+    <pattern>
+      <token>nvmf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVMF_CAPS" name="immunize NVMeF">
+    <pattern>
+      <token>NVMeF</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SPDK" name="immunize spdk">
+    <pattern>
+      <token>spdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SPDK_CAPS" name="immunize SPDK">
+    <pattern>
+      <token>SPDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOURING" name="immunize iouring">
+    <pattern>
+      <token>iouring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOURING_MIXED" name="immunize io_uring">
+    <pattern>
+      <token>io_uring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING" name="immunize uring">
+    <pattern>
+      <token>uring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING_CAPS" name="immunize Uring">
+    <pattern>
+      <token>Uring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DPDK" name="immunize dpdk">
+    <pattern>
+      <token>dpdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DPDK_CAPS" name="immunize DPDK">
+    <pattern>
+      <token>DPDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBAIO" name="immunize libaio">
+    <pattern>
+      <token>libaio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBAIO_CAPS" name="immunize Libaio">
+    <pattern>
+      <token>Libaio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING2" name="immunize uring2">
+    <pattern>
+      <token>uring2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING2_CAPS" name="immunize Uring2">
+    <pattern>
+      <token>Uring2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RDMA" name="immunize rdma">
+    <pattern>
+      <token>rdma</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RDMA_CAPS" name="immunize RDMA">
+    <pattern>
+      <token>RDMA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROCE" name="immunize roce">
+    <pattern>
+      <token>roce</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROCE_MIXED" name="immunize RoCE">
+    <pattern>
+      <token>RoCE</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IBVERBS" name="immunize ibverbs">
+    <pattern>
+      <token>ibverbs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IBVERBS_CAPS" name="immunize Ibverbs">
+    <pattern>
+      <token>Ibverbs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VHOST" name="immunize vhost">
+    <pattern>
+      <token>vhost</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VHOST_CAPS" name="immunize Vhost">
+    <pattern>
+      <token>Vhost</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VFIO" name="immunize vfio">
+    <pattern>
+      <token>vfio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VFIO_CAPS" name="immunize VFIO">
+    <pattern>
+      <token>VFIO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UIO" name="immunize uio">
+    <pattern>
+      <token>uio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UIO_CAPS" name="immunize UIO">
+    <pattern>
+      <token>UIO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VIRTIO" name="immunize virtio">
+    <pattern>
+      <token>virtio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VIRTIO_CAPS" name="immunize Virtio">
+    <pattern>
+      <token>Virtio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VHOST_USER" name="immunize vhost-user">
+    <pattern>
+      <token>vhost-user</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VHOSTUSER" name="immunize vhostuser">
+    <pattern>
+      <token>vhostuser</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDEV" name="immunize mdev">
+    <pattern>
+      <token>mdev</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDEV_CAPS" name="immunize Mdev">
+    <pattern>
+      <token>Mdev</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QCOW2" name="immunize qcow2">
+    <pattern>
+      <token>qcow2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QCOW2_CAPS" name="immunize QCOW2">
+    <pattern>
+      <token>QCOW2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VMDK" name="immunize vmdk">
+    <pattern>
+      <token>vmdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VMDK_CAPS" name="immunize VMDK">
+    <pattern>
+      <token>VMDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VDI" name="immunize vdi">
+    <pattern>
+      <token>vdi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VDI_CAPS" name="immunize VDI">
+    <pattern>
+      <token>VDI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OVA" name="immunize ova">
+    <pattern>
+      <token>ova</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OVA_CAPS" name="immunize OVA">
+    <pattern>
+      <token>OVA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OVF" name="immunize ovf">
+    <pattern>
+      <token>ovf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OVF_CAPS" name="immunize OVF">
+    <pattern>
+      <token>OVF</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QED" name="immunize qed">
+    <pattern>
+      <token>qed</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QED_CAPS" name="immunize QED">
+    <pattern>
+      <token>QED</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMI" name="immunize ami">
+    <pattern>
+      <token>ami</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMI_CAPS" name="immunize AMI">
+    <pattern>
+      <token>AMI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EBS" name="immunize ebs">
+    <pattern>
+      <token>ebs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EBS_CAPS" name="immunize EBS">
+    <pattern>
+      <token>EBS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNAPSHOT" name="immunize snapshot">
+    <pattern>
+      <token>snapshot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNAPSHOT_CAPS" name="immunize Snapshot">
+    <pattern>
+      <token>Snapshot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_S3" name="immunize s3">
+    <pattern>
+      <token>s3</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_S3_CAPS" name="immunize S3">
+    <pattern>
+      <token>S3</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RDS" name="immunize rds">
+    <pattern>
+      <token>rds</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RDS_CAPS" name="immunize RDS">
+    <pattern>
+      <token>RDS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLACIER" name="immunize glacier">
+    <pattern>
+      <token>glacier</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLACIER_CAPS" name="immunize Glacier">
+    <pattern>
+      <token>Glacier</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DYNAMODB" name="immunize dynamodb">
+    <pattern>
+      <token>dynamodb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DYNAMODB_CAPS" name="immunize DynamoDB">
+    <pattern>
+      <token>DynamoDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDSHIFT" name="immunize redshift">
+    <pattern>
+      <token>redshift</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDSHIFT_CAPS" name="immunize Redshift">
+    <pattern>
+      <token>Redshift</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ATHENA" name="immunize athena">
+    <pattern>
+      <token>athena</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ATHENA_CAPS" name="immunize Athena">
+    <pattern>
+      <token>Athena</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KINESIS" name="immunize kinesis">
+    <pattern>
+      <token>kinesis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KINESIS_CAPS" name="immunize Kinesis">
+    <pattern>
+      <token>Kinesis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SQS" name="immunize sqs">
+    <pattern>
+      <token>sqs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SQS_CAPS" name="immunize SQS">
+    <pattern>
+      <token>SQS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNS" name="immunize sns">
+    <pattern>
+      <token>sns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNS_CAPS" name="immunize SNS">
+    <pattern>
+      <token>SNS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LAMBDA" name="immunize lambda">
+    <pattern>
+      <token>lambda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LAMBDA_CAPS" name="immunize Lambda">
+    <pattern>
+      <token>Lambda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FARGATE" name="immunize fargate">
+    <pattern>
+      <token>fargate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FARGATE_CAPS" name="immunize Fargate">
+    <pattern>
+      <token>Fargate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ECR" name="immunize ecr">
+    <pattern>
+      <token>ecr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ECR_CAPS" name="immunize ECR">
+    <pattern>
+      <token>ECR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ECS" name="immunize ecs">
+    <pattern>
+      <token>ecs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ECS_CAPS" name="immunize ECS">
+    <pattern>
+      <token>ECS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFRONT" name="immunize cloudfront">
+    <pattern>
+      <token>cloudfront</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFRONT_CAPS" name="immunize CloudFront">
+    <pattern>
+      <token>CloudFront</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDWATCH" name="immunize cloudwatch">
+    <pattern>
+      <token>cloudwatch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDWATCH_CAPS" name="immunize CloudWatch">
+    <pattern>
+      <token>CloudWatch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICACHE" name="immunize elasticache">
+    <pattern>
+      <token>elasticache</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICACHE_CAPS" name="immunize ElastiCache">
+    <pattern>
+      <token>ElastiCache</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEPTUNE" name="immunize neptune">
+    <pattern>
+      <token>neptune</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEPTUNE_CAPS" name="immunize Neptune">
+    <pattern>
+      <token>Neptune</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCUMENTDB" name="immunize documentdb">
+    <pattern>
+      <token>documentdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCUMENTDB_CAPS" name="immunize DocumentDB">
+    <pattern>
+      <token>DocumentDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EMR" name="immunize emr">
+    <pattern>
+      <token>emr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EMR_CAPS" name="immunize EMR">
+    <pattern>
+      <token>EMR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COGNITO" name="immunize cognito">
+    <pattern>
+      <token>cognito</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COGNITO_CAPS" name="immunize Cognito">
+    <pattern>
+      <token>Cognito</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KMS" name="immunize kms">
+    <pattern>
+      <token>kms</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KMS_CAPS" name="immunize KMS">
+    <pattern>
+      <token>KMS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLUE" name="immunize glue">
+    <pattern>
+      <token>glue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLUE_CAPS" name="immunize Glue">
+    <pattern>
+      <token>Glue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEDROCK" name="immunize bedrock">
+    <pattern>
+      <token>bedrock</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEDROCK_CAPS" name="immunize Bedrock">
+    <pattern>
+      <token>Bedrock</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SAGEMAKER" name="immunize sagemaker">
+    <pattern>
+      <token>sagemaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SAGEMAKER_CAPS" name="immunize SageMaker">
+    <pattern>
+      <token>SageMaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BATCH" name="immunize batch">
+    <pattern>
+      <token>batch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BATCH_CAPS" name="immunize Batch">
+    <pattern>
+      <token>Batch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EVENTBRIDGE" name="immunize eventbridge">
+    <pattern>
+      <token>eventbridge</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EVENTBRIDGE_CAPS" name="immunize EventBridge">
+    <pattern>
+      <token>EventBridge</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFY" name="immunize amplify">
+    <pattern>
+      <token>amplify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFY_CAPS" name="immunize Amplify">
+    <pattern>
+      <token>Amplify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPSYNC" name="immunize appsync">
+    <pattern>
+      <token>appsync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPSYNC_CAPS" name="immunize AppSync">
+    <pattern>
+      <token>AppSync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAM" name="immunize timestream">
+    <pattern>
+      <token>timestream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAM_CAPS" name="immunize Timestream">
+    <pattern>
+      <token>Timestream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTSAIL" name="immunize lightsail">
+    <pattern>
+      <token>lightsail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTSAIL_CAPS" name="immunize Lightsail">
+    <pattern>
+      <token>Lightsail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCH" name="immunize opensearch">
+    <pattern>
+      <token>opensearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCH_CAPS" name="immunize OpenSearch">
+    <pattern>
+      <token>OpenSearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEBUILD" name="immunize codebuild">
+    <pattern>
+      <token>codebuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEBUILD_CAPS" name="immunize CodeBuild">
+    <pattern>
+      <token>CodeBuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEPIPELINE" name="immunize codepipeline">
+    <pattern>
+      <token>codepipeline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEPIPELINE_CAPS" name="immunize CodePipeline">
+    <pattern>
+      <token>CodePipeline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODECOMMIT" name="immunize codecommit">
+    <pattern>
+      <token>codecommit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODECOMMIT_CAPS" name="immunize CodeCommit">
+    <pattern>
+      <token>CodeCommit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEDEPLOY" name="immunize codedeploy">
+    <pattern>
+      <token>codedeploy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEDEPLOY_CAPS" name="immunize CodeDeploy">
+    <pattern>
+      <token>CodeDeploy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDTRAIL" name="immunize cloudtrail">
+    <pattern>
+      <token>cloudtrail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDTRAIL_CAPS" name="immunize CloudTrail">
+    <pattern>
+      <token>CloudTrail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPCONFIG" name="immunize appconfig">
+    <pattern>
+      <token>appconfig</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPCONFIG_CAPS" name="immunize AppConfig">
+    <pattern>
+      <token>AppConfig</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XRAY" name="immunize xray">
+    <pattern>
+      <token>xray</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XRAY_CAPS" name="immunize XRay">
+    <pattern>
+      <token>XRay</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFORMATION" name="immunize cloudformation">
+    <pattern>
+      <token>cloudformation</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFORMATION_CAPS" name="immunize CloudFormation">
+    <pattern>
+      <token>CloudFormation</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKSPACES" name="immunize workspaces">
+    <pattern>
+      <token>workspaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKSPACES_CAPS" name="immunize WorkSpaces">
+    <pattern>
+      <token>WorkSpaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKDOCS" name="immunize workdocs">
+    <pattern>
+      <token>workdocs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKDOCS_CAPS" name="immunize WorkDocs">
+    <pattern>
+      <token>WorkDocs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONFIGSERVICE" name="immunize configservice">
+    <pattern>
+      <token>configservice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONFIGSERVICE_CAPS" name="immunize ConfigService">
+    <pattern>
+      <token>ConfigService</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUICKSIGHT" name="immunize quicksight">
+    <pattern>
+      <token>quicksight</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUICKSIGHT_CAPS" name="immunize QuickSight">
+    <pattern>
+      <token>QuickSight</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKMAIL" name="immunize workmail">
+    <pattern>
+      <token>workmail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKMAIL_CAPS" name="immunize WorkMail">
+    <pattern>
+      <token>WorkMail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GUARDDUTY" name="immunize guardduty">
+    <pattern>
+      <token>guardduty</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GUARDDUTY_CAPS" name="immunize GuardDuty">
+    <pattern>
+      <token>GuardDuty</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MACIE" name="immunize macie">
+    <pattern>
+      <token>macie</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MACIE_CAPS" name="immunize Macie">
+    <pattern>
+      <token>Macie</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_INSPECTOR" name="immunize inspector">
+    <pattern>
+      <token>inspector</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_INSPECTOR_CAPS" name="immunize Inspector">
+    <pattern>
+      <token>Inspector</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DETECTIVE" name="immunize detective">
+    <pattern>
+      <token>detective</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DETECTIVE_CAPS" name="immunize Detective">
+    <pattern>
+      <token>Detective</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SECURITYHUB" name="immunize securityhub">
+    <pattern>
+      <token>securityhub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SECURITYHUB_CAPS" name="immunize SecurityHub">
+    <pattern>
+      <token>SecurityHub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHIELD" name="immunize shield">
+    <pattern>
+      <token>shield</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHIELD_CAPS" name="immunize Shield">
+    <pattern>
+      <token>Shield</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WAFV2" name="immunize wafv2">
+    <pattern>
+      <token>wafv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WAFV2_CAPS" name="immunize WAFv2">
+    <pattern>
+      <token>WAFv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NETWORKFIREWALL" name="immunize networkfirewall">
+    <pattern>
+      <token>networkfirewall</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NETWORKFIREWALL_CAPS" name="immunize NetworkFirewall">
+    <pattern>
+      <token>NetworkFirewall</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIREWALLMANAGER" name="immunize firewallmanager">
+    <pattern>
+      <token>firewallmanager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIREWALLMANAGER_CAPS" name="immunize FirewallManager">
+    <pattern>
+      <token>FirewallManager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSCRIBE" name="immunize transcribe">
+    <pattern>
+      <token>transcribe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSCRIBE_CAPS" name="immunize Transcribe">
+    <pattern>
+      <token>Transcribe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REKOGNITION" name="immunize rekognition">
+    <pattern>
+      <token>rekognition</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REKOGNITION_CAPS" name="immunize Rekognition">
+    <pattern>
+      <token>Rekognition</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEXTRACT" name="immunize textract">
+    <pattern>
+      <token>textract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEXTRACT_CAPS" name="immunize Textract">
+    <pattern>
+      <token>Textract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLLY" name="immunize polly">
+    <pattern>
+      <token>polly</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLLY_CAPS" name="immunize Polly">
+    <pattern>
+      <token>Polly</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSLATE" name="immunize translate">
+    <pattern>
+      <token>translate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSLATE_CAPS" name="immunize Translate">
+    <pattern>
+      <token>Translate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COMPREHEND" name="immunize comprehend">
+    <pattern>
+      <token>comprehend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COMPREHEND_CAPS" name="immunize Comprehend">
+    <pattern>
+      <token>Comprehend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FORECAST" name="immunize forecast">
+    <pattern>
+      <token>forecast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FORECAST_CAPS" name="immunize Forecast">
+    <pattern>
+      <token>Forecast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PERSONALIZE" name="immunize personalize">
+    <pattern>
+      <token>personalize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PERSONALIZE_CAPS" name="immunize Personalize">
+    <pattern>
+      <token>Personalize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINT" name="immunize pinpoint">
+    <pattern>
+      <token>pinpoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINT_CAPS" name="immunize Pinpoint">
+    <pattern>
+      <token>Pinpoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LEX" name="immunize lex">
+    <pattern>
+      <token>lex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LEX_CAPS" name="immunize Lex">
+    <pattern>
+      <token>Lex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIACONVERT" name="immunize mediaconvert">
+    <pattern>
+      <token>mediaconvert</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIACONVERT_CAPS" name="immunize MediaConvert">
+    <pattern>
+      <token>MediaConvert</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIALIVE" name="immunize medialive">
+    <pattern>
+      <token>medialive</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIALIVE_CAPS" name="immunize MediaLive">
+    <pattern>
+      <token>MediaLive</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIAPACKAGE" name="immunize mediapackage">
+    <pattern>
+      <token>mediapackage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIAPACKAGE_CAPS" name="immunize MediaPackage">
+    <pattern>
+      <token>MediaPackage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KINESISVIDEO" name="immunize kinesisvideo">
+    <pattern>
+      <token>kinesisvideo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KINESISVIDEO_CAPS" name="immunize KinesisVideo">
+    <pattern>
+      <token>KinesisVideo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPSTREAM" name="immunize appstream">
+    <pattern>
+      <token>appstream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPSTREAM_CAPS" name="immunize AppStream">
+    <pattern>
+      <token>AppStream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICBEANSTALK" name="immunize elasticbeanstalk">
+    <pattern>
+      <token>elasticbeanstalk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICBEANSTALK_CAPS" name="immunize ElasticBeanstalk">
+    <pattern>
+      <token>ElasticBeanstalk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEARTIFACT" name="immunize codeartifact">
+    <pattern>
+      <token>codeartifact</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEARTIFACT_CAPS" name="immunize CodeArtifact">
+    <pattern>
+      <token>CodeArtifact</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEGURU" name="immunize codeguru">
+    <pattern>
+      <token>codeguru</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEGURU_CAPS" name="immunize CodeGuru">
+    <pattern>
+      <token>CodeGuru</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEWHISPERER" name="immunize codewhisperer">
+    <pattern>
+      <token>codewhisperer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEWHISPERER_CAPS" name="immunize CodeWhisperer">
+    <pattern>
+      <token>CodeWhisperer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUD9" name="immunize cloud9">
+    <pattern>
+      <token>cloud9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUD9_CAPS" name="immunize Cloud9">
+    <pattern>
+      <token>Cloud9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDSHELL" name="immunize cloudshell">
+    <pattern>
+      <token>cloudshell</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDSHELL_CAPS" name="immunize CloudShell">
+    <pattern>
+      <token>CloudShell</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPFLOW" name="immunize appflow">
+    <pattern>
+      <token>appflow</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPFLOW_CAPS" name="immunize AppFlow">
+    <pattern>
+      <token>AppFlow</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPMESH" name="immunize appmesh">
+    <pattern>
+      <token>appmesh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPMESH_CAPS" name="immunize AppMesh">
+    <pattern>
+      <token>AppMesh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MSK" name="immunize msk">
+    <pattern>
+      <token>msk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MSK_CAPS" name="immunize MSK">
+    <pattern>
+      <token>MSK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MQ" name="immunize mq">
+    <pattern>
+      <token>mq</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MQ_CAPS" name="immunize MQ">
+    <pattern>
+      <token>MQ</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STEPFUNCTIONS" name="immunize stepfunctions">
+    <pattern>
+      <token>stepfunctions</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STEPFUNCTIONS_CAPS" name="immunize StepFunctions">
+    <pattern>
+      <token>StepFunctions</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DMS" name="immunize dms">
+    <pattern>
+      <token>dms</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DMS_CAPS" name="immunize DMS">
+    <pattern>
+      <token>DMS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMORYDB" name="immunize memorydb">
+    <pattern>
+      <token>memorydb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMORYDB_CAPS" name="immunize MemoryDB">
+    <pattern>
+      <token>MemoryDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DAX" name="immunize dax">
+    <pattern>
+      <token>dax</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DAX_CAPS" name="immunize DAX">
+    <pattern>
+      <token>DAX</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KEYSPACES" name="immunize keyspaces">
+    <pattern>
+      <token>keyspaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KEYSPACES_CAPS" name="immunize Keyspaces">
+    <pattern>
+      <token>Keyspaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QLDB" name="immunize qldb">
+    <pattern>
+      <token>qldb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QLDB_CAPS" name="immunize QLDB">
+    <pattern>
+      <token>QLDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AURORA" name="immunize aurora">
+    <pattern>
+      <token>aurora</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AURORA_CAPS" name="immunize Aurora">
+    <pattern>
+      <token>Aurora</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FSX" name="immunize fsx">
+    <pattern>
+      <token>fsx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FSX_CAPS" name="immunize FSx">
+    <pattern>
+      <token>FSx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STORAGEGATEWAY" name="immunize storagegateway">
+    <pattern>
+      <token>storagegateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STORAGEGATEWAY_CAPS" name="immunize StorageGateway">
+    <pattern>
+      <token>StorageGateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BACKUP" name="immunize backup">
+    <pattern>
+      <token>backup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BACKUP_CAPS" name="immunize Backup">
+    <pattern>
+      <token>Backup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DATASYNC" name="immunize datasync">
+    <pattern>
+      <token>datasync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DATASYNC_CAPS" name="immunize DataSync">
+    <pattern>
+      <token>DataSync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWBALL" name="immunize snowball">
+    <pattern>
+      <token>snowball</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWBALL_CAPS" name="immunize Snowball">
+    <pattern>
+      <token>Snowball</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWCONE" name="immunize snowcone">
+    <pattern>
+      <token>snowcone</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWCONE_CAPS" name="immunize Snowcone">
+    <pattern>
+      <token>Snowcone</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWMOBILE" name="immunize snowmobile">
+    <pattern>
+      <token>snowmobile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWMOBILE_CAPS" name="immunize Snowmobile">
+    <pattern>
+      <token>Snowmobile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIASTORE" name="immunize mediastore">
+    <pattern>
+      <token>mediastore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIASTORE_CAPS" name="immunize MediaStore">
+    <pattern>
+      <token>MediaStore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICTRANSCODER" name="immunize elastictranscoder">
+    <pattern>
+      <token>elastictranscoder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICTRANSCODER_CAPS" name="immunize ElasticTranscoder">
+    <pattern>
+      <token>ElasticTranscoder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSFERFAMILY" name="immunize transferfamily">
+    <pattern>
+      <token>transferfamily</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSFERFAMILY_CAPS" name="immunize TransferFamily">
+    <pattern>
+      <token>TransferFamily</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELEMENTAL" name="immunize elemental">
+    <pattern>
+      <token>elemental</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELEMENTAL_CAPS" name="immunize Elemental">
+    <pattern>
+      <token>Elemental</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IVS" name="immunize ivs">
+    <pattern>
+      <token>ivs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IVS_CAPS" name="immunize IVS">
+    <pattern>
+      <token>IVS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHIME" name="immunize chime">
+    <pattern>
+      <token>chime</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHIME_CAPS" name="immunize Chime">
+    <pattern>
+      <token>Chime</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECT" name="immunize connect">
+    <pattern>
+      <token>connect</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECT_CAPS" name="immunize Connect">
+    <pattern>
+      <token>Connect</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHIMESDK" name="immunize chimesdk">
+    <pattern>
+      <token>chimesdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHIMESDK_CAPS" name="immunize ChimeSDK">
+    <pattern>
+      <token>ChimeSDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCASES" name="immunize connectcases">
+    <pattern>
+      <token>connectcases</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCASES_CAPS" name="immunize ConnectCases">
+    <pattern>
+      <token>ConnectCases</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WISDOM" name="immunize wisdom">
+    <pattern>
+      <token>wisdom</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WISDOM_CAPS" name="immunize Wisdom">
+    <pattern>
+      <token>Wisdom</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTVOICE" name="immunize connectvoice">
+    <pattern>
+      <token>connectvoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTVOICE_CAPS" name="immunize ConnectVoice">
+    <pattern>
+      <token>ConnectVoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPINTEGRATIONS" name="immunize appintegrations">
+    <pattern>
+      <token>appintegrations</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPINTEGRATIONS_CAPS" name="immunize AppIntegrations">
+    <pattern>
+      <token>AppIntegrations</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCUSTOMERPROFILES" name="immunize connectcustomerprofiles">
+    <pattern>
+      <token>connectcustomerprofiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCUSTOMERPROFILES_CAPS" name="immunize ConnectCustomerProfiles">
+    <pattern>
+      <token>ConnectCustomerProfiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCAMPAIGNS" name="immunize connectcampaigns">
+    <pattern>
+      <token>connectcampaigns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCAMPAIGNS_CAPS" name="immunize ConnectCampaigns">
+    <pattern>
+      <token>ConnectCampaigns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTPARTICIPANT" name="immunize connectparticipant">
+    <pattern>
+      <token>connectparticipant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTPARTICIPANT_CAPS" name="immunize ConnectParticipant">
+    <pattern>
+      <token>ConnectParticipant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUSTOMERPROFILES" name="immunize customerprofiles">
+    <pattern>
+      <token>customerprofiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUSTOMERPROFILES_CAPS" name="immunize CustomerProfiles">
+    <pattern>
+      <token>CustomerProfiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SESV2" name="immunize sesv2">
+    <pattern>
+      <token>sesv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SESV2_CAPS" name="immunize SESv2">
+    <pattern>
+      <token>SESv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICE" name="immunize pinpointsmsvoice">
+    <pattern>
+      <token>pinpointsmsvoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICE_CAPS" name="immunize PinpointSMSVoice">
+    <pattern>
+      <token>PinpointSMSVoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTACTLENS" name="immunize contactlens">
+    <pattern>
+      <token>contactlens</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTACTLENS_CAPS" name="immunize ContactLens">
+    <pattern>
+      <token>ContactLens</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICEV2" name="immunize pinpointsmsvoicev2">
+    <pattern>
+      <token>pinpointsmsvoicev2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICEV2_CAPS" name="immunize PinpointSMSVoiceV2">
+    <pattern>
+      <token>PinpointSMSVoiceV2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOCIALMESSAGING" name="immunize socialmessaging">
+    <pattern>
+      <token>socialmessaging</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOCIALMESSAGING_CAPS" name="immunize SocialMessaging">
+    <pattern>
+      <token>SocialMessaging</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTEMAIL" name="immunize pinpointemail">
+    <pattern>
+      <token>pinpointemail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTEMAIL_CAPS" name="immunize PinpointEmail">
+    <pattern>
+      <token>PinpointEmail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTAPP" name="immunize pinpointapp">
+    <pattern>
+      <token>pinpointapp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTAPP_CAPS" name="immunize PinpointApp">
+    <pattern>
+      <token>PinpointApp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILETARGETING" name="immunize mobiletargeting">
+    <pattern>
+      <token>mobiletargeting</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILETARGETING_CAPS" name="immunize MobileTargeting">
+    <pattern>
+      <token>MobileTargeting</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILEANALYTICS" name="immunize mobileanalytics">
+    <pattern>
+      <token>mobileanalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILEANALYTICS_CAPS" name="immunize MobileAnalytics">
+    <pattern>
+      <token>MobileAnalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DEVICEFARM" name="immunize devicefarm">
+    <pattern>
+      <token>devicefarm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DEVICEFARM_CAPS" name="immunize DeviceFarm">
+    <pattern>
+      <token>DeviceFarm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYADMIN" name="immunize amplifyadmin">
+    <pattern>
+      <token>amplifyadmin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYADMIN_CAPS" name="immunize AmplifyAdmin">
+    <pattern>
+      <token>AmplifyAdmin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYBACKEND" name="immunize amplifybackend">
+    <pattern>
+      <token>amplifybackend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYBACKEND_CAPS" name="immunize AmplifyBackend">
+    <pattern>
+      <token>AmplifyBackend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYUIBUILDER" name="immunize amplifyuibuilder">
+    <pattern>
+      <token>amplifyuibuilder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYUIBUILDER_CAPS" name="immunize AmplifyUIBuilder">
+    <pattern>
+      <token>AmplifyUIBuilder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GEOFENCE" name="immunize geofence">
+    <pattern>
+      <token>geofence</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GEOFENCE_CAPS" name="immunize Geofence">
+    <pattern>
+      <token>Geofence</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOCATIONSERVICE" name="immunize locationservice">
+    <pattern>
+      <token>locationservice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOCATIONSERVICE_CAPS" name="immunize LocationService">
+    <pattern>
+      <token>LocationService</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCORE" name="immunize iotcore">
+    <pattern>
+      <token>iotcore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCORE_CAPS" name="immunize IoTCore">
+    <pattern>
+      <token>IoTCore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEVENTS" name="immunize iotevents">
+    <pattern>
+      <token>iotevents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEVENTS_CAPS" name="immunize IoTEvents">
+    <pattern>
+      <token>IoTEvents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GREENGRASS" name="immunize greengrass">
+    <pattern>
+      <token>greengrass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GREENGRASS_CAPS" name="immunize Greengrass">
+    <pattern>
+      <token>Greengrass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTANALYTICS" name="immunize iotanalytics">
+    <pattern>
+      <token>iotanalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTANALYTICS_CAPS" name="immunize IoTAnalytics">
+    <pattern>
+      <token>IoTAnalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSITEWISE" name="immunize iotsitewise">
+    <pattern>
+      <token>iotsitewise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSITEWISE_CAPS" name="immunize IoTSiteWise">
+    <pattern>
+      <token>IoTSiteWise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTHINGSGRAPH" name="immunize iotthingsgraph">
+    <pattern>
+      <token>iotthingsgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTHINGSGRAPH_CAPS" name="immunize IoTThingsGraph">
+    <pattern>
+      <token>IoTThingsGraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTDEVICEADVISOR" name="immunize iotdeviceadvisor">
+    <pattern>
+      <token>iotdeviceadvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTDEVICEADVISOR_CAPS" name="immunize IoTDeviceAdvisor">
+    <pattern>
+      <token>IoTDeviceAdvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB" name="immunize iotfleethub">
+    <pattern>
+      <token>iotfleethub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB_CAPS" name="immunize IoTFleetHub">
+    <pattern>
+      <token>IoTFleetHub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTWIRELESS" name="immunize iotwireless">
+    <pattern>
+      <token>iotwireless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTWIRELESS_CAPS" name="immunize IoTWireless">
+    <pattern>
+      <token>IoTWireless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FREERTOS" name="immunize freertos">
+    <pattern>
+      <token>freertos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FREERTOS_CAPS" name="immunize FreeRTOS">
+    <pattern>
+      <token>FreeRTOS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTJOBSDATAPLANE" name="immunize iotjobsdataplane">
+    <pattern>
+      <token>iotjobsdataplane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTJOBSDATAPLANE_CAPS" name="immunize IoTJobsDataPlane">
+    <pattern>
+      <token>IoTJobsDataPlane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSECUREDTUNNELING" name="immunize iotsecuredtunneling">
+    <pattern>
+      <token>iotsecuredtunneling</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSECUREDTUNNELING_CAPS" name="immunize IoTSecureTunneling">
+    <pattern>
+      <token>IoTSecureTunneling</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETWISE" name="immunize iotfleetwise">
+    <pattern>
+      <token>iotfleetwise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETWISE_CAPS" name="immunize IoTFleetWise">
+    <pattern>
+      <token>IoTFleetWise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTROBORUNNER" name="immunize iotroborunner">
+    <pattern>
+      <token>iotroborunner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTROBORUNNER_CAPS" name="immunize IoTRoboRunner">
+    <pattern>
+      <token>IoTRoboRunner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCOREDEVICEADVISOR" name="immunize iotcoredeviceadvisor">
+    <pattern>
+      <token>iotcoredeviceadvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCOREDEVICEADVISOR_CAPS" name="immunize IoTCoreDeviceAdvisor">
+    <pattern>
+      <token>IoTCoreDeviceAdvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEXPRESSLINK" name="immunize iotexpresslink">
+    <pattern>
+      <token>iotexpresslink</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEXPRESSLINK_CAPS" name="immunize IoTExpressLink">
+    <pattern>
+      <token>IoTExpressLink</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTWINMAKER" name="immunize iottwinmaker">
+    <pattern>
+      <token>iottwinmaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTWINMAKER_CAPS" name="immunize IoTTwinMaker">
+    <pattern>
+      <token>IoTTwinMaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB_V2" name="immunize iotfleethubv2">
+    <pattern>
+      <token>iotfleethubv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB_V2_CAPS" name="immunize IoTFleetHubV2">
+    <pattern>
+      <token>IoTFleetHubV2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMQUERY" name="immunize timestreamquery">
+    <pattern>
+      <token>timestreamquery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMQUERY_CAPS" name="immunize TimestreamQuery">
+    <pattern>
+      <token>TimestreamQuery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMWRITE" name="immunize timestreamwrite">
+    <pattern>
+      <token>timestreamwrite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMWRITE_CAPS" name="immunize TimestreamWrite">
+    <pattern>
+      <token>TimestreamWrite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAIN" name="immunize managedblockchain">
+    <pattern>
+      <token>managedblockchain</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAIN_CAPS" name="immunize ManagedBlockchain">
+    <pattern>
+      <token>ManagedBlockchain</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QLDBSESSION" name="immunize qldbsession">
+    <pattern>
+      <token>qldbsession</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QLDBSESSION_CAPS" name="immunize QLDBSession">
+    <pattern>
+      <token>QLDBSession</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAINQUERY" name="immunize managedblockchainquery">
+    <pattern>
+      <token>managedblockchainquery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAINQUERY_CAPS" name="immunize ManagedBlockchainQuery">
+    <pattern>
+      <token>ManagedBlockchainQuery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMETHEUS" name="immunize prometheus">
+    <pattern>
+      <token>prometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMETHEUS_CAPS" name="immunize Prometheus">
+    <pattern>
+      <token>Prometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFANA" name="immunize grafana">
+    <pattern>
+      <token>grafana</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFANA_CAPS" name="immunize Grafana">
+    <pattern>
+      <token>Grafana</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCHSERVERLESS" name="immunize opensearchserverless">
+    <pattern>
+      <token>opensearchserverless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCHSERVERLESS_CAPS" name="immunize OpenSearchServerless">
+    <pattern>
+      <token>OpenSearchServerless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMAZONMANAGEDPROMETHEUS" name="immunize amazonmanagedprometheus">
+    <pattern>
+      <token>amazonmanagedprometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMAZONMANAGEDPROMETHEUS_CAPS" name="immunize AmazonManagedPrometheus">
+    <pattern>
+      <token>AmazonManagedPrometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JAEGER" name="immunize jaeger">
+    <pattern>
+      <token>jaeger</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JAEGER_CAPS" name="immunize Jaeger">
+    <pattern>
+      <token>Jaeger</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEMPO" name="immunize tempo">
+    <pattern>
+      <token>tempo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEMPO_CAPS" name="immunize Tempo">
+    <pattern>
+      <token>Tempo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOKI" name="immunize loki">
+    <pattern>
+      <token>loki</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOKI_CAPS" name="immunize Loki">
+    <pattern>
+      <token>Loki</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MIMIR" name="immunize mimir">
+    <pattern>
+      <token>mimir</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MIMIR_CAPS" name="immunize Mimir">
+    <pattern>
+      <token>Mimir</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THANOS" name="immunize thanos">
+    <pattern>
+      <token>thanos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THANOS_CAPS" name="immunize Thanos">
+    <pattern>
+      <token>Thanos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CORTEX" name="immunize cortex">
+    <pattern>
+      <token>cortex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CORTEX_CAPS" name="immunize Cortex">
+    <pattern>
+      <token>Cortex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VICTORIAMETRICS" name="immunize victoriametrics">
+    <pattern>
+      <token>victoriametrics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VICTORIAMETRICS_CAPS" name="immunize VictoriaMetrics">
+    <pattern>
+      <token>VictoriaMetrics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALERTMANAGER" name="immunize alertmanager">
+    <pattern>
+      <token>alertmanager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALERTMANAGER_CAPS" name="immunize Alertmanager">
+    <pattern>
+      <token>Alertmanager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PUSHGATEWAY" name="immunize pushgateway">
+    <pattern>
+      <token>pushgateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PUSHGATEWAY_CAPS" name="immunize Pushgateway">
+    <pattern>
+      <token>Pushgateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CADVISOR" name="immunize cadvisor">
+    <pattern>
+      <token>cadvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CADVISOR_CAPS" name="immunize cAdvisor">
+    <pattern>
+      <token>cAdvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMTAIL" name="immunize promtail">
+    <pattern>
+      <token>promtail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMTAIL_CAPS" name="immunize Promtail">
+    <pattern>
+      <token>Promtail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZIPKIN" name="immunize zipkin">
+    <pattern>
+      <token>zipkin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZIPKIN_CAPS" name="immunize Zipkin">
+    <pattern>
+      <token>Zipkin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTBIT" name="immunize fluentbit">
+    <pattern>
+      <token>fluentbit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTBIT_CAPS" name="immunize FluentBit">
+    <pattern>
+      <token>FluentBit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTD" name="immunize fluentd">
+    <pattern>
+      <token>fluentd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTD_CAPS" name="immunize Fluentd">
+    <pattern>
+      <token>Fluentd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TELEGRAF" name="immunize telegraf">
+    <pattern>
+      <token>telegraf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TELEGRAF_CAPS" name="immunize Telegraf">
+    <pattern>
+      <token>Telegraf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_INFLUXDB" name="immunize influxdb">
+    <pattern>
+      <token>influxdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_INFLUXDB_CAPS" name="immunize InfluxDB">
+    <pattern>
+      <token>InfluxDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALEDB" name="immunize timescaledb">
+    <pattern>
+      <token>timescaledb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALEDB_CAPS" name="immunize TimescaleDB">
+    <pattern>
+      <token>TimescaleDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLICKHOUSE" name="immunize clickhouse">
+    <pattern>
+      <token>clickhouse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLICKHOUSE_CAPS" name="immunize ClickHouse">
+    <pattern>
+      <token>ClickHouse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUESTDB" name="immunize questdb">
+    <pattern>
+      <token>questdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUESTDB_CAPS" name="immunize QuestDB">
+    <pattern>
+      <token>QuestDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COLLECTD" name="immunize collectd">
+    <pattern>
+      <token>collectd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COLLECTD_CAPS" name="immunize Collectd">
+    <pattern>
+      <token>Collectd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STATSD" name="immunize statsd">
+    <pattern>
+      <token>statsd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STATSD_CAPS" name="immunize StatsD">
+    <pattern>
+      <token>StatsD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUXCD" name="immunize fluxcd">
+    <pattern>
+      <token>fluxcd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUXCD_CAPS" name="immunize FluxCD">
+    <pattern>
+      <token>FluxCD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COREDNS" name="immunize coredns">
+    <pattern>
+      <token>coredns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COREDNS_CAPS" name="immunize CoreDNS">
+    <pattern>
+      <token>CoreDNS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ETCD" name="immunize etcd">
+    <pattern>
+      <token>etcd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ETCD_CAPS" name="immunize Etcd">
+    <pattern>
+      <token>Etcd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KANIKO" name="immunize kaniko">
+    <pattern>
+      <token>kaniko</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KANIKO_CAPS" name="immunize Kaniko">
+    <pattern>
+      <token>Kaniko</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CALICO" name="immunize calico">
+    <pattern>
+      <token>calico</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CALICO_CAPS" name="immunize Calico">
+    <pattern>
+      <token>Calico</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLANNEL" name="immunize flannel">
+    <pattern>
+      <token>flannel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLANNEL_CAPS" name="immunize Flannel">
+    <pattern>
+      <token>Flannel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHITE" name="immunize graphite">
+    <pattern>
+      <token>graphite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHITE_CAPS" name="immunize Graphite">
+    <pattern>
+      <token>Graphite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DRUID" name="immunize druid">
+    <pattern>
+      <token>druid</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DRUID_CAPS" name="immunize Druid">
+    <pattern>
+      <token>Druid</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINOT" name="immunize pinot">
+    <pattern>
+      <token>pinot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINOT_CAPS" name="immunize Pinot">
+    <pattern>
+      <token>Pinot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRINO" name="immunize trino">
+    <pattern>
+      <token>trino</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRINO_CAPS" name="immunize Trino">
+    <pattern>
+      <token>Trino</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRESTO" name="immunize presto">
+    <pattern>
+      <token>presto</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRESTO_CAPS" name="immunize Presto">
+    <pattern>
+      <token>Presto</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIFI" name="immunize nifi">
+    <pattern>
+      <token>nifi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIFI_CAPS" name="immunize NiFi">
+    <pattern>
+      <token>NiFi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PULSAR" name="immunize pulsar">
+    <pattern>
+      <token>pulsar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PULSAR_CAPS" name="immunize Pulsar">
+    <pattern>
+      <token>Pulsar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RABBITMQ" name="immunize rabbitmq">
+    <pattern>
+      <token>rabbitmq</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RABBITMQ_CAPS" name="immunize RabbitMQ">
+    <pattern>
+      <token>RabbitMQ</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMCACHED" name="immunize memcached">
+    <pattern>
+      <token>memcached</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMCACHED_CAPS" name="immunize Memcached">
+    <pattern>
+      <token>Memcached</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HAZELCAST" name="immunize hazelcast">
+    <pattern>
+      <token>hazelcast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HAZELCAST_CAPS" name="immunize Hazelcast">
+    <pattern>
+      <token>Hazelcast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SCYLLA" name="immunize scylla">
+    <pattern>
+      <token>scylla</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SCYLLA_CAPS" name="immunize Scylla">
+    <pattern>
+      <token>Scylla</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COCKROACHDB" name="immunize cockroachdb">
+    <pattern>
+      <token>cockroachdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COCKROACHDB_CAPS" name="immunize CockroachDB">
+    <pattern>
+      <token>CockroachDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YUGABYTE" name="immunize yugabyte">
+    <pattern>
+      <token>yugabyte</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YUGABYTE_CAPS" name="immunize Yugabyte">
+    <pattern>
+      <token>Yugabyte</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIDB" name="immunize tidb">
+    <pattern>
+      <token>tidb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIDB_CAPS" name="immunize TiDB">
+    <pattern>
+      <token>TiDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITESS" name="immunize vitess">
+    <pattern>
+      <token>vitess</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITESS_CAPS" name="immunize Vitess">
+    <pattern>
+      <token>Vitess</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NATS" name="immunize nats">
+    <pattern>
+      <token>nats</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NATS_CAPS" name="immunize NATS">
+    <pattern>
+      <token>NATS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEILISEARCH" name="immunize meilisearch">
+    <pattern>
+      <token>meilisearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEILISEARCH_CAPS" name="immunize Meilisearch">
+    <pattern>
+      <token>Meilisearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPESENSE" name="immunize typesense">
+    <pattern>
+      <token>typesense</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPESENSE_CAPS" name="immunize Typesense">
+    <pattern>
+      <token>Typesense</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CASSANDRA" name="immunize cassandra">
+    <pattern>
+      <token>cassandra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CASSANDRA_CAPS" name="immunize Cassandra">
+    <pattern>
+      <token>Cassandra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGODB" name="immunize mongodb">
+    <pattern>
+      <token>mongodb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGODB_CAPS" name="immunize MongoDB">
+    <pattern>
+      <token>MongoDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICSEARCH" name="immunize elasticsearch">
+    <pattern>
+      <token>elasticsearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICSEARCH_CAPS" name="immunize Elasticsearch">
+    <pattern>
+      <token>Elasticsearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEO4J" name="immunize neo4j">
+    <pattern>
+      <token>neo4j</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEO4J_CAPS" name="immunize Neo4j">
+    <pattern>
+      <token>Neo4j</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DGRAPH" name="immunize dgraph">
+    <pattern>
+      <token>dgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DGRAPH_CAPS" name="immunize Dgraph">
+    <pattern>
+      <token>Dgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JANUSGRAPH" name="immunize janusgraph">
+    <pattern>
+      <token>janusgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JANUSGRAPH_CAPS" name="immunize JanusGraph">
+    <pattern>
+      <token>JanusGraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOLR" name="immunize solr">
+    <pattern>
+      <token>solr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOLR_CAPS" name="immunize Solr">
+    <pattern>
+      <token>Solr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSMOSDB" name="immunize cosmosdb">
+    <pattern>
+      <token>cosmosdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSMOSDB_CAPS" name="immunize CosmosDB">
+    <pattern>
+      <token>CosmosDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIRESTORE" name="immunize firestore">
+    <pattern>
+      <token>firestore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIRESTORE_CAPS" name="immunize Firestore">
+    <pattern>
+      <token>Firestore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BIGTABLE" name="immunize bigtable">
+    <pattern>
+      <token>bigtable</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BIGTABLE_CAPS" name="immunize Bigtable">
+    <pattern>
+      <token>Bigtable</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SPANNER" name="immunize spanner">
+    <pattern>
+      <token>spanner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SPANNER_CAPS" name="immunize Spanner">
+    <pattern>
+      <token>Spanner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHBASE" name="immunize couchbase">
+    <pattern>
+      <token>couchbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHBASE_CAPS" name="immunize Couchbase">
+    <pattern>
+      <token>Couchbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENTELEMETRY" name="immunize opentelemetry">
+    <pattern>
+      <token>opentelemetry</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENTELEMETRY_CAPS" name="immunize OpenTelemetry">
+    <pattern>
+      <token>OpenTelemetry</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHDB" name="immunize couchdb">
+    <pattern>
+      <token>couchdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHDB_CAPS" name="immunize CouchDB">
+    <pattern>
+      <token>CouchDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RETHINKDB" name="immunize rethinkdb">
+    <pattern>
+      <token>rethinkdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RETHINKDB_CAPS" name="immunize RethinkDB">
+    <pattern>
+      <token>RethinkDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SUPABASE" name="immunize supabase">
+    <pattern>
+      <token>supabase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SUPABASE_CAPS" name="immunize Supabase">
+    <pattern>
+      <token>Supabase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLANETSCALE" name="immunize planetscale">
+    <pattern>
+      <token>planetscale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLANETSCALE_CAPS" name="immunize PlanetScale">
+    <pattern>
+      <token>PlanetScale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FAUNA" name="immunize fauna">
+    <pattern>
+      <token>fauna</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FAUNA_CAPS" name="immunize Fauna">
+    <pattern>
+      <token>Fauna</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEON" name="immunize neon">
+    <pattern>
+      <token>neon</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEON_CAPS" name="immunize Neon">
+    <pattern>
+      <token>Neon</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURSO" name="immunize turso">
+    <pattern>
+      <token>turso</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURSO_CAPS" name="immunize Turso">
+    <pattern>
+      <token>Turso</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SURREALDB" name="immunize surrealdb">
+    <pattern>
+      <token>surrealdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SURREALDB_CAPS" name="immunize SurrealDB">
+    <pattern>
+      <token>SurrealDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EDGEDB" name="immunize edgedb">
+    <pattern>
+      <token>edgedb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EDGEDB_CAPS" name="immunize EdgeDB">
+    <pattern>
+      <token>EdgeDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBSQL" name="immunize libsql">
+    <pattern>
+      <token>libsql</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBSQL_CAPS" name="immunize LibSQL">
+    <pattern>
+      <token>LibSQL</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALE" name="immunize timescale">
+    <pattern>
+      <token>timescale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALE_CAPS" name="immunize Timescale">
+    <pattern>
+      <token>Timescale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DRIZZLE" name="immunize drizzle">
+    <pattern>
+      <token>drizzle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DRIZZLE_CAPS" name="immunize Drizzle">
+    <pattern>
+      <token>Drizzle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEORM" name="immunize typeorm">
+    <pattern>
+      <token>typeorm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEORM_CAPS" name="immunize TypeORM">
+    <pattern>
+      <token>TypeORM</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEQUELIZE" name="immunize sequelize">
+    <pattern>
+      <token>sequelize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEQUELIZE_CAPS" name="immunize Sequelize">
+    <pattern>
+      <token>Sequelize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HASURA" name="immunize hasura">
+    <pattern>
+      <token>hasura</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HASURA_CAPS" name="immunize Hasura">
+    <pattern>
+      <token>Hasura</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGREST" name="immunize postgrest">
+    <pattern>
+      <token>postgrest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGREST_CAPS" name="immunize PostgREST">
+    <pattern>
+      <token>PostgREST</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KNEX" name="immunize knex">
+    <pattern>
+      <token>knex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KNEX_CAPS" name="immunize Knex">
+    <pattern>
+      <token>Knex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MIKROORM" name="immunize mikroorm">
+    <pattern>
+      <token>mikroorm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MIKROORM_CAPS" name="immunize MikroORM">
+    <pattern>
+      <token>MikroORM</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WATERLINE" name="immunize waterline">
+    <pattern>
+      <token>waterline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WATERLINE_CAPS" name="immunize Waterline">
+    <pattern>
+      <token>Waterline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEGOOSE" name="immunize typegoose">
+    <pattern>
+      <token>typegoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEGOOSE_CAPS" name="immunize Typegoose">
+    <pattern>
+      <token>Typegoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYSELY" name="immunize kysely">
+    <pattern>
+      <token>kysely</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYSELY_CAPS" name="immunize Kysely">
+    <pattern>
+      <token>Kysely</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLONIK" name="immunize slonik">
+    <pattern>
+      <token>slonik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLONIK_CAPS" name="immunize Slonik">
+    <pattern>
+      <token>Slonik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZAPATOS" name="immunize zapatos">
+    <pattern>
+      <token>zapatos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZAPATOS_CAPS" name="immunize Zapatos">
+    <pattern>
+      <token>Zapatos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGOOSE" name="immunize mongoose">
+    <pattern>
+      <token>mongoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGOOSE_CAPS" name="immunize Mongoose">
+    <pattern>
+      <token>Mongoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRAPHILE" name="immunize postgraphile">
+    <pattern>
+      <token>postgraphile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRAPHILE_CAPS" name="immunize PostGraphile">
+    <pattern>
+      <token>PostGraphile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFBASE" name="immunize grafbase">
+    <pattern>
+      <token>grafbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFBASE_CAPS" name="immunize Grafbase">
+    <pattern>
+      <token>Grafbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PGTYPED" name="immunize pgtyped">
+    <pattern>
+      <token>pgtyped</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PGTYPED_CAPS" name="immunize PgTyped">
+    <pattern>
+      <token>PgTyped</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PGPROMISE" name="immunize pgpromise">
+    <pattern>
+      <token>pgpromise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PGPROMISE_CAPS" name="immunize pg-promise">
+    <pattern>
+      <token>pg-promise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRPC" name="immunize trpc">
+    <pattern>
+      <token>trpc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRPC_CAPS" name="immunize tRPC">
+    <pattern>
+      <token>tRPC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URQL" name="immunize urql">
+    <pattern>
+      <token>urql</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URQL_CAPS" name="immunize URQL">
+    <pattern>
+      <token>URQL</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWR" name="immunize swr">
+    <pattern>
+      <token>swr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWR_CAPS" name="immunize SWR">
+    <pattern>
+      <token>SWR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TANSTACK" name="immunize tanstack">
+    <pattern>
+      <token>tanstack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TANSTACK_CAPS" name="immunize TanStack">
+    <pattern>
+      <token>TanStack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZOD" name="immunize zod">
+    <pattern>
+      <token>zod</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZOD_CAPS" name="immunize Zod">
+    <pattern>
+      <token>Zod</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VALIBOT" name="immunize valibot">
+    <pattern>
+      <token>valibot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VALIBOT_CAPS" name="immunize Valibot">
+    <pattern>
+      <token>Valibot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEBOX" name="immunize typebox">
+    <pattern>
+      <token>typebox</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEBOX_CAPS" name="immunize TypeBox">
+    <pattern>
+      <token>TypeBox</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARKTYPE" name="immunize arktype">
+    <pattern>
+      <token>arktype</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARKTYPE_CAPS" name="immunize ArkType">
+    <pattern>
+      <token>ArkType</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SUPERSTRUCT" name="immunize superstruct">
+    <pattern>
+      <token>superstruct</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SUPERSTRUCT_CAPS" name="immunize Superstruct">
+    <pattern>
+      <token>Superstruct</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNTYPES" name="immunize runtypes">
+    <pattern>
+      <token>runtypes</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNTYPES_CAPS" name="immunize Runtypes">
+    <pattern>
+      <token>Runtypes</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YUP" name="immunize yup">
+    <pattern>
+      <token>yup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YUP_CAPS" name="immunize Yup">
+    <pattern>
+      <token>Yup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JOI" name="immunize joi">
+    <pattern>
+      <token>joi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JOI_CAPS" name="immunize Joi">
+    <pattern>
+      <token>Joi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLASSVALIDATOR" name="immunize classvalidator">
+    <pattern>
+      <token>classvalidator</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLASSVALIDATOR_CAPS" name="immunize class-validator">
+    <pattern>
+      <token>class-validator</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NESTJS" name="immunize nestjs">
+    <pattern>
+      <token>nestjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NESTJS_CAPS" name="immunize NestJS">
+    <pattern>
+      <token>NestJS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FASTIFY" name="immunize fastify">
+    <pattern>
+      <token>fastify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FASTIFY_CAPS" name="immunize Fastify">
+    <pattern>
+      <token>Fastify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HONO" name="immunize hono">
+    <pattern>
+      <token>hono</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HONO_CAPS" name="immunize Hono">
+    <pattern>
+      <token>Hono</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELYSIA" name="immunize elysia">
+    <pattern>
+      <token>elysia</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELYSIA_CAPS" name="immunize Elysia">
+    <pattern>
+      <token>Elysia</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SVELTEKIT" name="immunize sveltekit">
+    <pattern>
+      <token>sveltekit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SVELTEKIT_CAPS" name="immunize SvelteKit">
+    <pattern>
+      <token>SvelteKit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTRO" name="immunize astro">
+    <pattern>
+      <token>astro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTRO_CAPS" name="immunize Astro">
+    <pattern>
+      <token>Astro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REMIX" name="immunize remix">
+    <pattern>
+      <token>remix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REMIX_CAPS" name="immunize Remix">
+    <pattern>
+      <token>Remix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXT" name="immunize nuxt">
+    <pattern>
+      <token>nuxt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXT_CAPS" name="immunize Nuxt">
+    <pattern>
+      <token>Nuxt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QWIK" name="immunize qwik">
+    <pattern>
+      <token>qwik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QWIK_CAPS" name="immunize Qwik">
+    <pattern>
+      <token>Qwik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GATSBY" name="immunize gatsby">
+    <pattern>
+      <token>gatsby</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GATSBY_CAPS" name="immunize Gatsby">
+    <pattern>
+      <token>Gatsby</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOLIDSTART" name="immunize solidstart">
+    <pattern>
+      <token>solidstart</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOLIDSTART_CAPS" name="immunize SolidStart">
+    <pattern>
+      <token>SolidStart</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURBOPACK" name="immunize turbopack">
+    <pattern>
+      <token>turbopack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURBOPACK_CAPS" name="immunize Turbopack">
+    <pattern>
+      <token>Turbopack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROLLUP" name="immunize rollup">
+    <pattern>
+      <token>rollup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROLLUP_CAPS" name="immunize Rollup">
+    <pattern>
+      <token>Rollup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ESBUILD" name="immunize esbuild">
+    <pattern>
+      <token>esbuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ESBUILD_CAPS" name="immunize esbuild tool">
+    <pattern>
+      <token>Esbuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RSPACK" name="immunize rspack">
+    <pattern>
+      <token>rspack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RSPACK_CAPS" name="immunize Rspack">
+    <pattern>
+      <token>Rspack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PARCEL" name="immunize parcel">
+    <pattern>
+      <token>parcel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PARCEL_CAPS" name="immunize Parcel">
+    <pattern>
+      <token>Parcel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWC" name="immunize swc">
+    <pattern>
+      <token>swc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWC_CAPS" name="immunize SWC">
+    <pattern>
+      <token>SWC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BIOME" name="immunize biome">
+    <pattern>
+      <token>biome</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BIOME_CAPS" name="immunize Biome">
+    <pattern>
+      <token>Biome</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OXC" name="immunize oxc">
+    <pattern>
+      <token>oxc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OXC_CAPS" name="immunize Oxc">
+    <pattern>
+      <token>Oxc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UNOCSS" name="immunize unocss">
+    <pattern>
+      <token>unocss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UNOCSS_CAPS" name="immunize UnoCSS">
+    <pattern>
+      <token>UnoCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTCSS" name="immunize postcss">
+    <pattern>
+      <token>postcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTCSS_CAPS" name="immunize PostCSS">
+    <pattern>
+      <token>PostCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEX" name="immunize stylex">
+    <pattern>
+      <token>stylex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEX_CAPS" name="immunize StyleX">
+    <pattern>
+      <token>StyleX</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STITCHES" name="immunize stitches">
+    <pattern>
+      <token>stitches</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STITCHES_CAPS" name="immunize Stitches">
+    <pattern>
+      <token>Stitches</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTNINGCSS" name="immunize lightningcss">
+    <pattern>
+      <token>lightningcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTNINGCSS_CAPS" name="immunize LightningCSS">
+    <pattern>
+      <token>LightningCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VANILLAEXTRACT" name="immunize vanillaextract">
+    <pattern>
+      <token>vanillaextract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VANILLAEXTRACT_CAPS" name="immunize VanillaExtract">
+    <pattern>
+      <token>VanillaExtract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINARIA" name="immunize linaria">
+    <pattern>
+      <token>linaria</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINARIA_CAPS" name="immunize Linaria">
+    <pattern>
+      <token>Linaria</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDA" name="immunize panda">
+    <pattern>
+      <token>panda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDA_CAPS" name="immunize Panda">
+    <pattern>
+      <token>Panda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRIFFEL" name="immunize griffel">
+    <pattern>
+      <token>griffel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRIFFEL_CAPS" name="immunize Griffel">
+    <pattern>
+      <token>Griffel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GOOBER" name="immunize goober">
+    <pattern>
+      <token>goober</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GOOBER_CAPS" name="immunize Goober">
+    <pattern>
+      <token>Goober</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TAMAGUI" name="immunize tamagui">
+    <pattern>
+      <token>tamagui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TAMAGUI_CAPS" name="immunize Tamagui">
+    <pattern>
+      <token>Tamagui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NATIVEWIND" name="immunize nativewind">
+    <pattern>
+      <token>nativewind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NATIVEWIND_CAPS" name="immunize NativeWind">
+    <pattern>
+      <token>NativeWind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLETRON" name="immunize styletron">
+    <pattern>
+      <token>styletron</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLETRON_CAPS" name="immunize Styletron">
+    <pattern>
+      <token>Styletron</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTROTURF" name="immunize astroturf">
+    <pattern>
+      <token>astroturf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTROTURF_CAPS" name="immunize Astroturf">
+    <pattern>
+      <token>Astroturf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WINDICSS" name="immunize windicss">
+    <pattern>
+      <token>windicss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WINDICSS_CAPS" name="immunize WindiCSS">
+    <pattern>
+      <token>WindiCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APHRODITE" name="immunize aphrodite">
+    <pattern>
+      <token>aphrodite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APHRODITE_CAPS" name="immunize Aphrodite">
+    <pattern>
+      <token>Aphrodite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FELA" name="immunize fela">
+    <pattern>
+      <token>fela</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FELA_CAPS" name="immunize Fela">
+    <pattern>
+      <token>Fela</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CSSMODULES" name="immunize cssmodules">
+    <pattern>
+      <token>cssmodules</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CSSMODULES_CAPS" name="immunize CSSModules">
+    <pattern>
+      <token>CSSModules</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLAMOR" name="immunize glamor">
+    <pattern>
+      <token>glamor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLAMOR_CAPS" name="immunize Glamor">
+    <pattern>
+      <token>Glamor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDCOMPONENTS" name="immunize styledcomponents">
+    <pattern>
+      <token>styledcomponents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDCOMPONENTS_CAPS" name="immunize StyledComponents">
+    <pattern>
+      <token>StyledComponents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TWINMACRO" name="immunize twinmacro">
+    <pattern>
+      <token>twinmacro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TWINMACRO_CAPS" name="immunize TwinMacro">
+    <pattern>
+      <token>TwinMacro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COMPILEDCSS" name="immunize compiledcss">
+    <pattern>
+      <token>compiledcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COMPILEDCSS_CAPS" name="immunize CompiledCSS">
+    <pattern>
+      <token>CompiledCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLE9" name="immunize style9">
+    <pattern>
+      <token>style9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLE9_CAPS" name="immunize Style9">
+    <pattern>
+      <token>Style9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XSTYLED" name="immunize xstyled">
+    <pattern>
+      <token>xstyled</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XSTYLED_CAPS" name="immunize XStyled">
+    <pattern>
+      <token>XStyled</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EMOTIONCSS" name="immunize emotioncss">
+    <pattern>
+      <token>emotioncss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EMOTIONCSS_CAPS" name="immunize EmotionCSS">
+    <pattern>
+      <token>EmotionCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TREATCSS" name="immunize treatcss">
+    <pattern>
+      <token>treatcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TREATCSS_CAPS" name="immunize TreatCSS">
+    <pattern>
+      <token>TreatCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTYLE" name="immunize restyle">
+    <pattern>
+      <token>restyle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTYLE_CAPS" name="immunize Restyle">
+    <pattern>
+      <token>Restyle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CSSPROP" name="immunize cssprop">
+    <pattern>
+      <token>cssprop</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CSSPROP_CAPS" name="immunize CSSProp">
+    <pattern>
+      <token>CSSProp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THEMEUI" name="immunize themeui">
+    <pattern>
+      <token>themeui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THEMEUI_CAPS" name="immunize ThemeUI">
+    <pattern>
+      <token>ThemeUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REBASS" name="immunize rebass">
+    <pattern>
+      <token>rebass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REBASS_CAPS" name="immunize Rebass">
+    <pattern>
+      <token>Rebass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHAKRA" name="immunize chakra">
+    <pattern>
+      <token>chakra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHAKRA_CAPS" name="immunize Chakra">
+    <pattern>
+      <token>Chakra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDSYSTEM" name="immunize styledsystem">
+    <pattern>
+      <token>styledsystem</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDSYSTEM_CAPS" name="immunize StyledSystem">
+    <pattern>
+      <token>StyledSystem</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PARKUI" name="immunize parkui">
+    <pattern>
+      <token>parkui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PARKUI_CAPS" name="immunize ParkUI">
+    <pattern>
+      <token>ParkUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZAGJS" name="immunize zagjs">
+    <pattern>
+      <token>zagjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZAGJS_CAPS" name="immunize ZagJS">
+    <pattern>
+      <token>ZagJS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARKUI" name="immunize arkui">
+    <pattern>
+      <token>arkui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARKUI_CAPS" name="immunize ArkUI">
+    <pattern>
+      <token>ArkUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDACSS" name="immunize pandacss">
+    <pattern>
+      <token>pandacss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDACSS_CAPS" name="immunize PandaCSS">
+    <pattern>
+      <token>PandaCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANTINE" name="immunize mantine">
+    <pattern>
+      <token>mantine</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANTINE_CAPS" name="immunize Mantine">
+    <pattern>
+      <token>Mantine</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ANTD" name="immunize antd">
+    <pattern>
+      <token>antd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ANTD_CAPS" name="immunize AntD">
+    <pattern>
+      <token>AntD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HEADLESSUI" name="immunize headlessui">
+    <pattern>
+      <token>headlessui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HEADLESSUI_CAPS" name="immunize HeadlessUI">
+    <pattern>
+      <token>HeadlessUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RADIXUI" name="immunize radixui">
+    <pattern>
+      <token>radixui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RADIXUI_CAPS" name="immunize RadixUI">
+    <pattern>
+      <token>RadixUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHADCN" name="immunize shadcn">
+    <pattern>
+      <token>shadcn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHADCN_CAPS" name="immunize Shadcn">
+    <pattern>
+      <token>Shadcn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DAISYUI" name="immunize daisyui">
+    <pattern>
+      <token>daisyui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DAISYUI_CAPS" name="immunize DaisyUI">
+    <pattern>
+      <token>DaisyUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLOWBITE" name="immunize flowbite">
+    <pattern>
+      <token>flowbite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLOWBITE_CAPS" name="immunize Flowbite">
+    <pattern>
+      <token>Flowbite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRELINE" name="immunize preline">
+    <pattern>
+      <token>preline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRELINE_CAPS" name="immunize Preline">
+    <pattern>
+      <token>Preline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTUI" name="immunize nextui">
+    <pattern>
+      <token>nextui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTUI_CAPS" name="immunize NextUI">
+    <pattern>
+      <token>NextUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HEROUI" name="immunize heroui">
+    <pattern>
+      <token>heroui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HEROUI_CAPS" name="immunize HeroUI">
+    <pattern>
+      <token>HeroUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BITSUI" name="immunize bitsui">
+    <pattern>
+      <token>bitsui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BITSUI_CAPS" name="immunize BitsUI">
+    <pattern>
+      <token>BitsUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MELTUI" name="immunize meltui">
+    <pattern>
+      <token>meltui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MELTUI_CAPS" name="immunize MeltUI">
+    <pattern>
+      <token>MeltUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CAPSIZE" name="immunize capsize">
+    <pattern>
+      <token>capsize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CAPSIZE_CAPS" name="immunize Capsize">
+    <pattern>
+      <token>Capsize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXTUI" name="immunize nuxtui">
+    <pattern>
+      <token>nuxtui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXTUI_CAPS" name="immunize NuxtUI">
+    <pattern>
+      <token>NuxtUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUASAR" name="immunize quasar">
+    <pattern>
+      <token>quasar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUASAR_CAPS" name="immunize Quasar">
+    <pattern>
+      <token>Quasar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+</rules>

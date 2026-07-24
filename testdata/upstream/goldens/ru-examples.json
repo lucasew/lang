@@ -1,0 +1,589 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "ru",
+  "cases": [
+    {
+      "rule": "KAVITCHKI",
+      "text": "Газета “Правда”.",
+      "suggestion": "„",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_podnjal_tost",
+      "text": "Он поднял тост за встречу.",
+      "suggestion": "произнёс тост",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_samij_gigantskij",
+      "text": "самый гигантский",
+      "suggestion": "самый большой",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_segodnyashnij_den",
+      "text": "Ситуация на сегодняшний день.",
+      "suggestion": "сегодня",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_uluchshenie_otmechennih_nedostatkov",
+      "text": "Сессия приняла решение, направленное на улучшение отмеченных недостатков.",
+      "suggestion": "устранение отмеченных недостатков",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Missing_punct_colon",
+      "text": "Сокрытие сложности во многом основано на более общем принципе согласно ему выполнение сложной задачи (которая не может быть выполнена сразу и целиком) разбивается на несколько подзадач.",
+      "suggestion": "принципе: согласно",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "NEUJTO",
+      "text": "Не уж то ты побрился.",
+      "suggestion": "Неужто",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "NI_CHTO_NE",
+      "text": "Ни что не идеально.",
+      "suggestion": "Ничто не",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Punct_skazano_sdelano",
+      "text": "cказано сделано",
+      "suggestion": "cказано – сделано",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Style_imeet_vid",
+      "text": "Результат вычисления целевой функции получается в виде скаляра.",
+      "suggestion": "имеет вид",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "TAK_JE_KAK",
+      "text": "Мы, так же, как и наши товарищи, любим заниматься спортом.",
+      "suggestion": "так же как",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_neskolko_pobistree",
+      "text": "несколько побыстрее",
+      "suggestion": "побыстрее",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Teper_tak_kak",
+      "text": "Теперь, так как.",
+      "suggestion": "Теперь так как",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Three_dot",
+      "text": "Продолжение следует...",
+      "suggestion": "…",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_etoj_svyazy",
+      "text": "в этой связи",
+      "suggestion": "в связи с этим",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "drug_s_drugom",
+      "text": "Они равноправны друг другу.",
+      "suggestion": "равноправны друг с другом",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "kak_ni_stranno",
+      "text": "как не странно",
+      "suggestion": "как ни странно",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "odin_za_odnim",
+      "text": "один за одним",
+      "suggestion": "один за другим",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "perehodny_peshehod",
+      "text": "переходный пешеход",
+      "suggestion": "пешеходный переход",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "plohoj_den",
+      "text": "плахой день",
+      "suggestion": "плохой день",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "zadat_test",
+      "text": "задать тест",
+      "suggestion": "предложить тест",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "ABREV_DOT",
+      "text": "Стоимость работ составила 10 тыс рублей.",
+      "suggestion": "тыс.",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Adj_NN_number_Software",
+      "text": "С помощью коммерчески доступного программных обеспечения, основанного на разных методах.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Comma_before_kak",
+      "text": "Извивалась, как верёвка.",
+      "suggestion": "как верёвка.",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "DEFIS_COMMA",
+      "text": "Здорово живешь, соседка -, поздоровался Иван.",
+      "suggestion": ", -",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_letters",
+      "text": "Bне леса шумно.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_letters",
+      "text": "Kо мне приехали.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_letters",
+      "text": "Буду cо своими шутками.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_letters",
+      "text": "Книга прo Львов.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "B ee голосе появилась горькая нотка.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "B лесу тихо.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "K тебе приехали.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "Буду c подарками.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "Книга o Львове.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Linguistics_hrabry",
+      "text": "Это храбрая идея.",
+      "suggestion": "смелая идея",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_biographia_gizni",
+      "text": "Биографии жизни различных людей.",
+      "suggestion": "Биографии",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_govorite_vopros",
+      "text": "Говорите вопрос!",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_kurica_nasijivaet_jajca",
+      "text": "курица высиживает яйца",
+      "suggestion": "курица насиживает яйца",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_kurica_nasijivaet_jajca",
+      "text": "курица высиживала яйца",
+      "suggestion": "курица насиживала яйца",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_prignul_s_parashuta",
+      "text": "Он прыгнул с парашюта.",
+      "suggestion": "прыгнул с парашютом",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_sobiratsya_vmeste",
+      "text": "Мы здесь собираемся вместе.",
+      "suggestion": "собираемся",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_sochetatsja_vmeste",
+      "text": "Эти три букета хорошо сочетаются вместе.",
+      "suggestion": "сочетаются",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_sosedstvovat_drug_s_drugom",
+      "text": "Они соседствовали друг с другом на фотографии.",
+      "suggestion": "соседствовали",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_svoja_avtobiographija",
+      "text": "Автор написал свою автобиографию.",
+      "suggestion": "автобиографию",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_vidajuschijsja_as",
+      "text": "Этот лётчик - выдающийся ас.",
+      "suggestion": "ас",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "NE_VB_NN_NN",
+      "text": "Мы не дождались решение комиссии.",
+      "suggestion": "не дождались решения комиссии",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "OPREDELENIA",
+      "text": "Они пошли к реке, по которой плавала лодка, которая была окрашена в белый цвет.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "PARTICLE_JE_J",
+      "text": "Иван ж не приехал.",
+      "suggestion": "Иван же не",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "PREP_NA_VS_V",
+      "text": "Он пошёл в концерт.",
+      "suggestion": "на концерт",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "PREP_V_VS_NA",
+      "text": "Он идёт на кино.",
+      "suggestion": "в кино",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "PT_BI",
+      "text": "Спит ум, может быть получивший бы внезапный родник великих свойств.",
+      "suggestion": "получивший",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Slovosoch_interesnaja_kniga",
+      "text": "купил интересую книгу",
+      "suggestion": "купил интересную книгу",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Style_gipoteza_ssno_kotoroj",
+      "text": "Обнаруженная закономерность позволила сформулировать гипотезу, что для создания маскирующего покрытия достаточно использовать всего два материала.",
+      "suggestion": "гипотезу, согласно которой",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "TYPO_BOLE",
+      "text": "боле высокие результаты",
+      "suggestion": "более высокие",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_adres_mestojitelstva",
+      "text": "адрес местожительства",
+      "suggestion": "местожительства",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_bespolezno_propadajut",
+      "text": "бесполезно пропадают",
+      "suggestion": "пропадают",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_demobilizovatsja_iz_armii",
+      "text": "демобилизоваться из армии",
+      "suggestion": "демобилизоваться",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_glavnij_lejtmotiv",
+      "text": "главный лейтмотив",
+      "suggestion": "лейтмотив",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_kivnul_golovoj",
+      "text": "кивнул головой",
+      "suggestion": "кивнул",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_kollega_po_professii",
+      "text": "коллега по профессии",
+      "suggestion": "коллега",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_landshaft_mestnosti",
+      "text": "ландшафт местности",
+      "suggestion": "ландшафт",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_mahina",
+      "text": "огромная махина",
+      "suggestion": "махина",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_marshrut_sledovanija",
+      "text": "маршрут следования",
+      "suggestion": "маршрут",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_mestnij_aborigen",
+      "text": "Нас окружили местные аборигены.",
+      "suggestion": "аборигены",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_nebolshaja_gorstka",
+      "text": "небольшая горстка",
+      "suggestion": "горстка",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_plani_na_budushee",
+      "text": "планы на будущее",
+      "suggestion": "планы",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_polnostju_zavershil",
+      "text": "полностью завершил",
+      "suggestion": "завершил",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_prejskurant_cen",
+      "text": "прейскурант цен",
+      "suggestion": "прейскурант",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_prostaivat_bez_dela",
+      "text": "простаивать без дела",
+      "suggestion": "простаивать",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_samij_edinstvennij",
+      "text": "самый единственный",
+      "suggestion": "единственный",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_tyomnij_mrak",
+      "text": "тёмный мрак",
+      "suggestion": "мрак",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_upal_vniz",
+      "text": "упал вниз",
+      "suggestion": "упал",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_upal_vniz",
+      "text": "упасть вниз",
+      "suggestion": "упасть",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_v_xx_mesjatse",
+      "text": "в феврале месяце",
+      "suggestion": "в феврале",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_vernutsja_obratno",
+      "text": "вернуться обратно",
+      "suggestion": "вернуться",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_vremenno_priostanovlen",
+      "text": "временно приостановлены",
+      "suggestion": "приостановлены",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tire_and_two",
+      "text": "А гений и злодейство две вещи несовместные.",
+      "suggestion": "гений и злодейство — две",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_TECHENII",
+      "text": "Там в течение реки много изгибов.",
+      "suggestion": "в течении реки",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_sortimente",
+      "text": "Товары в сортименте.",
+      "suggestion": "в ассортименте.",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_sortimente",
+      "text": "Товары в широком сортименте.",
+      "suggestion": "в широком ассортименте.",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "WRONG_INN",
+      "text": "ИНН 123456789025",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "WRONG_INN",
+      "text": "ИНН: 1234567890",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "YEAR_20001",
+      "text": "Моя поездка на море запланирована на май 20014 г.",
+      "suggestion": "май 2014",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "ZASEDANIJE_ZAJEDANIJE",
+      "text": "Заедание суда перенесено на завтра.",
+      "suggestion": "Заседание суда",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "dlya_togo_chtoby_2",
+      "text": "Для того, чтобы желе застыло, нужно его около часа подержать в холодильнике.",
+      "suggestion": "Для того чтобы",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "dlya_togo_chtoby_2",
+      "text": "Для того, чтобы капуста оставалась хрустящей, не стоит слишком сильно перетирать её с солью.",
+      "suggestion": "Для того чтобы",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "grammar_nemnogo_blednovat",
+      "text": "Мальчик немного бледноват.",
+      "suggestion": "бледноват",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "grammar_poshel_k",
+      "text": "Я пошёл речке.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "grammar_s_dnem_rojdenja",
+      "text": "Поздравляю с днём рожденья!",
+      "suggestion": "с днём рождения",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "plit_lodkoj",
+      "text": "плыть лодкой",
+      "suggestion": "плыть на лодке",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "prosit_proshenija",
+      "text": "Он просил прощение.",
+      "suggestion": "просил прощения",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "razvevatsja_razvivatsja",
+      "text": "развевалась болезнь",
+      "suggestion": "развивалась болезнь",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "skuchat_za",
+      "text": "Скучаю за другом.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "sovestnij_sovmestnij",
+      "text": "совестное предприятие",
+      "suggestion": "совместное предприятие",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "takim_obrazom_chto",
+      "text": "Это сделано таким образом что и не найти.",
+      "suggestion": "таким образом, что",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "translate_carreer_diplomat",
+      "text": "Карьерный дипломат – это человек, получивший специальное дипломатическое образование.",
+      "suggestion": "Профессиональный дипломат",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "zakonchit_shkolu",
+      "text": "В этом году он закончил университет.",
+      "suggestion": "окончил университет",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    }
+  ]
+}

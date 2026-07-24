@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="da">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="DA_SOFT_AF_AF" name="af af">
+      <pattern>
+        <token>af</token>
+        <token>af</token>
+      </pattern>
+      <message>Mulig gentagelse af "af".</message>
+      <short>af af</short>
+    </rule>
+    <rule id="DA_SOFT_OG_OG" name="og og">
+      <pattern>
+        <token>og</token>
+        <token>og</token>
+      </pattern>
+      <message>Mulig gentagelse af "og".</message>
+      <short>og og</short>
+    </rule>
+    <rule id="DA_SOFT_FORDI_AT" name="fordi at">
+      <pattern>
+        <token>fordi</token>
+        <token>at</token>
+      </pattern>
+      <message>Ofte er "fordi" nok (uden "at").</message>
+      <short>fordi at</short>
+    </rule>
+    <rule id="DA_SOFT_STORRE_END" name="større end">
+      <pattern>
+        <token>større</token>
+        <token>som</token>
+      </pattern>
+      <message>Mente du "større end"?</message>
+      <short>end/som</short>
+    </rule>
+    <rule id="DA_SOFT_HUN_HAR" name="dem har">
+      <pattern>
+        <token>dem</token>
+        <token>har</token>
+      </pattern>
+      <message>Mente du "de har"?</message>
+      <short>dem/de</short>
+    </rule>
+    <rule id="DA_SOFT_IKKE_IKKE" name="ikke ikke">
+      <pattern>
+        <token>ikke</token>
+        <token>ikke</token>
+      </pattern>
+      <message>Mulig gentagelse af "ikke".</message>
+      <short>ikke ikke</short>
+    </rule>
+    <rule id="DA_SOFT_DEM_ER" name="dem er">
+      <pattern>
+        <token>dem</token>
+        <token>er</token>
+      </pattern>
+      <message>Mente du "de er"?</message>
+      <short>dem/de</short>
+    </rule>
+    <rule id="DA_SOFT_MINDRE_SOM" name="mindre som">
+      <pattern>
+        <token>mindre</token>
+        <token>som</token>
+      </pattern>
+      <message>Mente du "mindre end"?</message>
+      <short>end/som</short>
+    </rule>
+    <rule id="DA_SOFT_FORDI_FORDI" name="fordi fordi">
+      <pattern>
+        <token>fordi</token>
+        <token>fordi</token>
+      </pattern>
+      <message>Mulig gentagelse af "fordi".</message>
+      <short>fordi fordi</short>
+    </rule>
+    <rule id="DA_SOFT_AT_AT" name="at at">
+      <pattern>
+        <token>at</token>
+        <token>at</token>
+      </pattern>
+      <message>Mulig gentagelse af "at".</message>
+      <short>at at</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografi">
+    <rule id="DA_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Et spørgsmålstegn er ofte nok: "?"</message>
+      <short>tegnsætning</short>
+    </rule>
+    <rule id="DA_SOFT_DOUBLE_BANG" name="dobbelt udråbstegn">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ét udråbstegn er ofte nok: "!"</message>
+      <short>tegnsætning</short>
+    </rule>
+  </category>
+</rules>

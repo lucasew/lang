@@ -1,0 +1,21 @@
+package language
+
+// BelarusianRelevantRuleIDs ports Belarusian.getRelevantRules rule IDs (class getId only).
+func BelarusianRelevantRuleIDs() []string {
+	return []string{
+		"COMMA_PARENTHESIS_WHITESPACE",
+		"DOUBLE_PUNCTUATION",
+		"MORFOLOGIK_RULE_BE_BY",
+		"UPPERCASE_SENTENCE_START",
+		"WHITESPACE_RULE",
+		"SENTENCE_WHITESPACE",
+		"WHITESPACE_PARAGRAPH",
+		"WHITESPACE_PARAGRAPH_BEGIN",
+		"TOO_LONG_SENTENCE",
+		"TOO_LONG_PARAGRAPH",
+		"PARAGRAPH_REPEAT_BEGINNING_RULE",
+		"PUNCTUATION_PARAGRAPH_END2",
+		"BE_SIMPLE_REPLACE",
+		"BE_SPECIFIC_CASE",
+	}
+}

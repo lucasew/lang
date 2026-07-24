@@ -1,0 +1,185 @@
+package uk
+
+import (
+	"regexp"
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+)
+
+// TokenAgreementVerbNounExceptionHelper anchors the Java twin; logic is package funcs.
+type TokenAgreementVerbNounExceptionHelper struct{}
+
+func NewTokenAgreementVerbNounExceptionHelper() *TokenAgreementVerbNounExceptionHelper {
+	return &TokenAgreementVerbNounExceptionHelper{}
+}
+
+// Exception reports IsVerbNounException for ATR tokens.
+func (h *TokenAgreementVerbNounExceptionHelper) Exception(tokens []*languagetool.AnalyzedTokenReadings, verbPos, nounPos int) bool {
+	return IsVerbNounException(tokens, verbPos, nounPos)
+}
+
+// partsCantSkip ports PARTS_CANT_SKIP for isExceptionSkip.
+var partsCantSkipRE = regexp.MustCompile(
+	`^(?:і|й|та|чи|або|але|як|де|куди|наче|ніби|хоч|навіщо|немов|вдвічі|дедалі|щойно|наскільки)$`)
+
+// IsVerbNounHardAdjNoun returns skip count (>=0) or -1 (Java isExceptionHardAdjNoun).
+// Used when scanning after a verb; for pair-checker, treat skip>=0 as exception.
+func IsVerbNounHardAdjNoun(tokens []*languagetool.AnalyzedTokenReadings, i int, verbPos int) int {
+	if tokens == nil || i < 0 || i >= len(tokens) || tokens[i] == nil {
+		return -1
+	}
+	clean := CleanTokenLower(tokens[i])
+	if regexp.MustCompile(`^(?:[0-9]{4}-.+|нікому|нічому|нічого|нікого|нічим|решту|ніщо)$`).MatchString(clean) {
+		return 1
+	}
+	if HasLemmaTokenAny(tokens[i], []string{"сам", "самий", "себе", "один"}) {
+		return 1
+	}
+	if i < len(tokens)-1 {
+		next := CleanTokenLower(tokens[i+1])
+		if HasPosTagRE(tokens[i], regexp.MustCompile(`adj:m:v_rod.*`)) &&
+			regexp.MustCompile(`^(?:роду|разу|типу|штибу|розміру)$`).MatchString(next) {
+			return 1
+		}
+		if HasPosTagRE(tokens[i], regexp.MustCompile(`(?:adj|numr):[mp]:v_oru.*`)) &&
+			regexp.MustCompile(`^(?:чином|способом|робом|ходом|шляхом|коштом)$`).MatchString(next) {
+			return 1
+		}
+		if verbPos >= 0 && verbPos < len(tokens) && HasPosTagStart(tokens[verbPos], "advp") &&
+			strings.EqualFold(tokens[i].GetCleanToken(), "тим") &&
+			strings.EqualFold(tokens[i+1].GetCleanToken(), "самим") {
+			return 1
+		}
+		if HasPosTagRE(tokens[i], regexp.MustCompile(`adj:f:v_oru.*`)) && next == "мірою" {
+			return 1
+		}
+		if HasPosTagRE(tokens[i], regexp.MustCompile(`adj:f:v_rod.*`)) &&
+			regexp.MustCompile(`^(?:якості|свіжості)$`).MatchString(next) {
+			return 1
+		}
+		if next == "темпами" {
+			return 1
+		}
+	}
+
+	// fixed multi-token phrases: Java mNow == i+len-1 style returns skip length
+	phrases := []struct {
+		line string
+		skip int
+	}{
+		{"не те щоб", 3},
+		{"не те що", 3},
+		{"не останньою чергою", 3},
+		{"не те , що", 4},
+		{"світ за очі", 3},
+		{"ні світ ні", 3},
+		{"куди очі", 3},
+		{"станом на", 3},
+		{"страх як", 3},
+		{"жах як", 3},
+	}
+	for _, p := range phrases {
+		if NewSearchMatch(p.line).MNowATR(tokens, i) >= 0 {
+			return p.skip
+		}
+	}
+
+	if i > 0 && tokens[i-1] != nil && tokens[i-1].GetCleanToken() == "не" &&
+		regexp.MustCompile(`^(?:указ|варіант|рідкість)$`).MatchString(clean) {
+		return 0
+	}
+	return -1
+}
+
+// IsVerbNounExceptionSkip returns skip count or -1 (Java isExceptionSkip).
+func IsVerbNounExceptionSkip(tokens []*languagetool.AnalyzedTokenReadings, i int) int {
+	if tokens == nil || i < 0 || i >= len(tokens) || tokens[i] == nil {
+		return -1
+	}
+	clean := CleanTokenLower(tokens[i])
+	if hasPosTagAllPartAdv(tokens[i]) &&
+		!AdvQuantPattern.MatchString(clean) &&
+		!partsCantSkipRE.MatchString(clean) {
+		return 0
+	}
+	if HasPosTagRE(tokens[i], regexp.MustCompile(`^part`)) &&
+		hasPosTagAllPartConjAdv(tokens[i]) &&
+		!partsCantSkipRE.MatchString(clean) {
+		return 0
+	}
+	return -1
+}
+
+// hasPosTagAllPartAdv ports hasPosTagAll(…, (part|adv).*) — every morph tag starts with part|adv.
+func hasPosTagAllPartAdv(tok *languagetool.AnalyzedTokenReadings) bool {
+	return HasPosTagAll(tok, regexp.MustCompile(`^(?:part|adv).*`))
+}
+
+// hasPosTagAllPartConjAdv ports hasPosTagAll(…, (part|conj|adv).*).
+func hasPosTagAllPartConjAdv(tok *languagetool.AnalyzedTokenReadings) bool {
+	return HasPosTagAll(tok, regexp.MustCompile(`^(?:part|conj|adv).*`))
+}
+
+// GetExceptionVerb ports isExceptionVerb (RuleException: exception clears state; skip keeps).
+func GetExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) RuleException {
+	if tokens == nil || i < 0 || i >= len(tokens) || tokens[i] == nil {
+		return NewRuleException(RuleExceptionNone)
+	}
+	if HasLemmaToken(tokens[i], "мусити") {
+		return NewRuleException(RuleExceptionException)
+	}
+	clean := CleanTokenLower(tokens[i])
+	if clean == "може" {
+		return NewRuleException(RuleExceptionException)
+	}
+	// як є / як могти
+	if i > 1 && tokens[i-1] != nil && (clean == "є" || HasLemmaToken(tokens[i], "могти")) &&
+		strings.EqualFold(tokens[i-1].GetCleanToken(), "як") {
+		return NewRuleException(RuleExceptionException)
+	}
+	// будь то
+	if i < len(tokens)-2 && clean == "будь" && tokens[i+1] != nil &&
+		strings.EqualFold(tokens[i+1].GetCleanToken(), "то") {
+		return NewRuleException(RuleExceptionException)
+	}
+	// вкласти спати — Type.skip (keep prior verb state, do not install спати)
+	if i > 1 && i < len(tokens)-1 && clean == "спати" && tokens[i-1] != nil &&
+		HasLemmaTokenRE(tokens[i-1], regexp.MustCompile(`^(?:по|в)?кла(?:сти|вши)$`)) {
+		return NewRuleException(RuleExceptionSkip)
+	}
+	// pluperfect: розпочав був — RuleException(0) skip
+	if i > 1 && tokens[i-1] != nil {
+		if regexp.MustCompile(`^(?:був|було)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:m.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		if regexp.MustCompile(`^(?:були|було)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:p.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		if clean == "було" && HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:n.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		if regexp.MustCompile(`^(?:була|було)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:f.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		// чути/проголошено було
+		if regexp.MustCompile(`^(?:було|буде)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*(?:impers|predic).*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+	}
+	return NewRuleException(RuleExceptionNone)
+}
+
+// IsExceptionVerb reports verb-side soft exception (Java isExceptionVerb Type.exception).
+func IsExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	return GetExceptionVerb(tokens, i).Type == RuleExceptionException
+}
+
+// IsExceptionVerbSkip reports verb-side skip patterns (спати after класти, pluperfect був).
+func IsExceptionVerbSkip(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	return GetExceptionVerb(tokens, i).Type == RuleExceptionSkip
+}

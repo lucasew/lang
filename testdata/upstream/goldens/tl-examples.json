@@ -1,0 +1,331 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "tl",
+  "cases": [
+    {
+      "rule": "ANG_ANG",
+      "text": "Maganda ang ang tanawin.",
+      "suggestion": "ang mga",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "CAKE",
+      "text": "Kumain kami ng cake kagabi.",
+      "suggestion": "keyk",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "JEEP",
+      "text": "Pumara ka ng jeep.",
+      "suggestion": "dyip",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "LAGGING",
+      "text": "Kapag lagging kapiling kita, sumasaya ako.",
+      "suggestion": "laging",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "LIQUID",
+      "text": "Bakit may liquid?",
+      "suggestion": "likido",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "MGA_MGA",
+      "text": "Maganda mga mga tanawin.",
+      "suggestion": "ang mga",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "NAGGING",
+      "text": "Siya ay nagging aso.",
+      "suggestion": "naging",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "NG_NG",
+      "text": "Pinalakad ng ng abogado si Maria.",
+      "suggestion": "ng mga",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "RESEARCH",
+      "text": "Gumawa tayo ng research.",
+      "suggestion": "riserts",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "SCORE",
+      "text": "Ano na ang score?",
+      "suggestion": "iskor",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "WHERE",
+      "text": "Ano ba, where na kayo?",
+      "suggestion": "nasaan",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "YOU",
+      "text": "Ano ba, nasaan na you?",
+      "suggestion": "ikaw",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-C_COMMON_NOUN",
+      "text": "Baka ang tingin mo ay asul mata ang meron siya.",
+      "suggestion": "asul na mata",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-N_COMMON_NOUN",
+      "text": "Siya ay isang madasalin bata.",
+      "suggestion": "madasaling bata",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-PL_AKO",
+      "text": "Magaganda ako.",
+      "suggestion": "kami",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-PL_AKONG",
+      "text": "Magaganda akong bata.",
+      "suggestion": "kaming",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-PL_KA",
+      "text": "Magaganda ka.",
+      "suggestion": "kayo",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-PL_KANG",
+      "text": "Magaganda kang bata.",
+      "suggestion": "kayong",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-PL_SI",
+      "text": "Magaganda si Maria.",
+      "suggestion": "sina",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-PL_SIYA",
+      "text": "Magaganda siya.",
+      "suggestion": "sila",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-PL_SIYANG",
+      "text": "Magaganda siyang bata.",
+      "suggestion": "silang",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-V_COMMON_NOUN",
+      "text": "Siya ay isang mababa bata.",
+      "suggestion": "mababang bata",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE_PROPER_NOUN",
+      "text": "Matalino Maria.",
+      "suggestion": "Matalino si Maria",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ANG_COMMON_NOUN_ADJECTIVE",
+      "text": "Ang ibon maganda.",
+      "suggestion": "ibon ay maganda",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ANG_LAST_WORD_MISSING",
+      "text": "Maganda ang.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "DAAN",
+      "text": "Nasa apat na daan ang dumating.",
+      "suggestion": "raan",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "DAAN",
+      "text": "Nasa apat na daang tao ang dumating.",
+      "suggestion": "raang",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "D_WORDS",
+      "text": "Baka ang tingin mo ay talo ka din.",
+      "suggestion": "rin",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "D_WORDS",
+      "text": "Baka ang tingin mo doon ay bahay ko.",
+      "suggestion": "roon",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "D_WORDS",
+      "text": "Iniwan ko diyan ang pantasa.",
+      "suggestion": "riyan",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "D_WORDS",
+      "text": "Kinuha ko ito dito.",
+      "suggestion": "rito",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "D_WORDS",
+      "text": "Natalo ka daw sa pustahan.",
+      "suggestion": "raw",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "KAY_COMMON_NOUN",
+      "text": "Pinalakad kay abogado ang lupa.",
+      "suggestion": "sa abogado",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "MGA_COMMON_NOUN_ADJECTIVE",
+      "text": "Ang mga ibon maganda.",
+      "suggestion": "ibon ay maganda",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "MGA_LAST_WORD_MISSING",
+      "text": "Maganda ang mga.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "NAG-",
+      "text": "Ang dentista ay nagbunot ng ngipin.",
+      "suggestion": "bumunot",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "NAG-_SS",
+      "text": "Nagbunot ng ngipin ang dentista.",
+      "suggestion": "Bumunot",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "NI_COMMON_NOUN",
+      "text": "Pinalakad ni abogado si Maria.",
+      "suggestion": "ng abogado",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "PROPER_NOUN_SI_PUNCT",
+      "text": "Maganda Maria si.",
+      "suggestion": "si Maria",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "RAAN",
+      "text": "Nasa tatlong raan ang dumating.",
+      "suggestion": "daan",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "RAAN",
+      "text": "Nasa tatlong raang tao ang dumating.",
+      "suggestion": "daang",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "RAID",
+      "text": "May nagraid daw dito kagabi?",
+      "suggestion": "nagreyd",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "R_WORDS",
+      "text": "Baka ang tingin mo ay pangit rin ikaw.",
+      "suggestion": "din",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "R_WORDS",
+      "text": "Baka ang tingin mo ay roon ang papunta sa bahay nila.",
+      "suggestion": "doon",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "R_WORDS",
+      "text": "Iniwan ko ang lapis riyan.",
+      "suggestion": "diyan",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "R_WORDS",
+      "text": "Kinuha ko itong lapis rito.",
+      "suggestion": "dito",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "R_WORDS",
+      "text": "Matapang raw ikaw.",
+      "suggestion": "daw",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "SI_COMMON_NOUN",
+      "text": "Pinalakad ni Maria si abogado.",
+      "suggestion": "ang abogado",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "SI_LAST_WORD_MISSING",
+      "text": "Maganda si.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "SI_PROPER_NOUN_ADJECTIVE",
+      "text": "Si Maria maganda.",
+      "suggestion": "Maria ay maganda",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "SI_PROPER_NOUN_VERB",
+      "text": "Si Maria kumakain.",
+      "suggestion": "Maria ay kumakain",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "VERB_NG_ADVERB",
+      "text": "Kumain ng maayos.",
+      "suggestion": "nang maayos",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "VERB_NG_DI_ADVERB",
+      "text": "Kumain ng di gaanong maayos.",
+      "suggestion": "nang di gaanong",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "VERB_NG_DI_ADVERB2",
+      "text": "Kumain ng 'di gaanong maayos.",
+      "suggestion": "nang 'di gaanong",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    }
+  ]
+}

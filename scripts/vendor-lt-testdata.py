@@ -1,0 +1,1307 @@
+#!/usr/bin/env python3
+"""Vendor LanguageTool resources into testdata/upstream and derive soft packs.
+
+Source of truth: inspiration/languagetool (git submodule).
+Does NOT invent rules or golden cases — only copies and filters upstream XML
+to the soft pattern-loader subset (plain surface <token> sequences).
+
+Usage:
+  python3 scripts/vendor-lt-testdata.py
+  python3 scripts/vendor-lt-testdata.py --langs en,de,fr
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import shutil
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+LT = ROOT / "inspiration" / "languagetool"
+OUT = ROOT / "testdata" / "upstream"
+SOFT_OUT = ROOT / "testdata" / "grammar"
+DIS_OUT = ROOT / "testdata" / "disambiguation"
+GOLDEN_OUT = ROOT / "testdata" / "upstream" / "goldens"
+
+RE_ENTITY = re.compile(
+    r'<!ENTITY\s+([A-Za-z_][\w.-]*)\s+("([^"]*)"|\'([^\']*)\')\s*>'
+)
+PREDEF = {"amp", "lt", "gt", "quot", "apos"}
+
+
+def die(msg: str, code: int = 1) -> None:
+    print(f"error: {msg}", file=sys.stderr)
+    raise SystemExit(code)
+
+
+def local(tag: str | None) -> str:
+    if not tag:
+        return ""
+    return tag.split("}")[-1]
+
+
+def load_entity_file(path: Path) -> dict[str, str]:
+    """Parse <!ENTITY name "val"> definitions from an entities.ent file."""
+    if not path.is_file():
+        return {}
+    text = path.read_text(encoding="utf-8", errors="replace")
+    out: dict[str, str] = {}
+    for m in RE_ENTITY.finditer(text):
+        name = m.group(1)
+        val = m.group(3) if m.group(3) is not None else m.group(4)
+        out[name] = val
+    return out
+
+
+def expand_entities(raw: str, base_dir: Path | None = None) -> str:
+    entities: dict[str, str] = {}
+    # Resolve parameter-entity SYSTEM includes before stripping DOCTYPE
+    # (e.g. <!ENTITY % entities SYSTEM "../../resource/es/entities.ent">).
+    # Walk up from base_dir so variant packs (pt/pt-PT/grammar.xml) still find
+    # resource/pt/entities/*.ent when the relative path is written for parent rules/.
+    if base_dir is not None:
+        for m in re.finditer(
+            r'<!ENTITY\s+%\s+([A-Za-z_][\w.-]*)\s+SYSTEM\s+"([^"]+)"\s*>',
+            raw,
+        ):
+            rel = m.group(2)
+            ent_path = None
+            cur = base_dir
+            for _ in range(8):
+                cand = (cur / rel).resolve()
+                if cand.is_file():
+                    ent_path = cand
+                    break
+                if cur.parent == cur:
+                    break
+                cur = cur.parent
+            if ent_path is not None:
+                entities.update(load_entity_file(ent_path))
+    for m in RE_ENTITY.finditer(raw):
+        name = m.group(1)
+        val = m.group(3) if m.group(3) is not None else m.group(4)
+        entities[name] = val
+
+    def expand(s: str, depth: int = 0) -> str:
+        if depth > 30:
+            return s
+
+        def repl(m: re.Match[str]) -> str:
+            n = m.group(1)
+            if n in PREDEF:
+                return m.group(0)
+            if n in entities:
+                return expand(entities[n], depth + 1)
+            # Upstream XML sometimes references entities from external DTD
+            # includes; drop unresolved ones so soft extract can continue.
+            return ""
+
+        return re.sub(r"&([A-Za-z_][\w.-]*);", repl, s)
+
+    # expand entity values for nested refs
+    for _ in range(8):
+        changed = False
+        for k, v in list(entities.items()):
+            nv = expand(v)
+            if nv != v:
+                entities[k] = nv
+                changed = True
+        if not changed:
+            break
+
+    if "<!DOCTYPE" in raw:
+        i = raw.index("<!DOCTYPE")
+        j = raw.find("]>", i)
+        if j < 0:
+            die("unclosed DOCTYPE")
+        raw = raw[:i] + raw[j + 2 :]
+    raw = re.sub(r"<\?xml-stylesheet[^?]*\?>", "", raw)
+    return expand(raw)
+
+
+def parse_rules_xml(path: Path) -> ET.Element:
+    raw = path.read_text(encoding="utf-8", errors="replace")
+    raw = expand_entities(raw, base_dir=path.parent)
+    try:
+        return ET.fromstring(raw.encode("utf-8"))
+    except ET.ParseError as e:
+        raise RuntimeError(f"parse {path}: {e}") from e
+
+
+# Soft PatternRuleLoader supports these token attributes (see pattern_rule_loader.go).
+SOFT_TOKEN_ATTRS = {
+    "regexp",
+    "case_sensitive",
+    "negate",
+    "inflected",
+    "min",
+    "max",
+    "skip",
+    "postag",
+    "postag_regexp",
+    "spacebefore",  # Java PatternToken.setWhitespaceBefore (yes/no)
+    "chunk",  # Java PatternToken.setChunkTag
+    "chunk_re",  # Java ChunkTag regexp
+}
+
+
+def token_is_soft(tok: ET.Element) -> bool:
+    """True if token is loadable by the soft Go pattern loader."""
+    if local(tok.tag) != "token":
+        return False
+    # Allow simple <exception> children only (no and/or/unify/phraseref).
+    # Surface and/or postag exceptions are serialised (Java PatternToken). Negate
+    # exceptions are still skipped at serialize time. Token stays loadable even
+    # when only postag exceptions are present (e.g. DT_JJ_NN NN.* exception).
+    for child in list(tok):
+        if local(child.tag) != "exception":
+            return False
+        if list(child):
+            return False
+        for k in child.attrib:
+            if k not in (
+                "regexp",
+                "negate",
+                "case_sensitive",
+                "inflected",
+                "postag",
+                "postag_regexp",
+                "scope",  # previous|next|current
+            ):
+                return False
+    for k in tok.attrib:
+        if k not in SOFT_TOKEN_ATTRS:
+            return False
+    text = (tok.text or "").strip()
+    has_postag = bool((tok.get("postag") or "").strip())
+    has_chunk = bool((tok.get("chunk") or tok.get("chunk_re") or "").strip())
+    if not text and not has_postag and not has_chunk:
+        return False
+    if "&" in text:
+        return False
+    # Go RE2 (regexp package) does not support lookaround; skip such soft tokens.
+    if "regexp" in {k.lower() for k in tok.attrib} or (tok.get("regexp") or "").lower() == "yes":
+        if "(?" in text and any(x in text for x in ("?!", "?=", "?<", "?>")):
+            return False
+    return True
+
+
+def serialize_token(tok: ET.Element) -> dict:
+    d: dict = {"text": (tok.text or "").strip()}
+    for k in SOFT_TOKEN_ATTRS:
+        v = tok.get(k)
+        if v is not None and str(v).strip() != "":
+            d[k] = v
+    excs = []
+    prev_exc = None
+    next_exc = None
+    for child in tok:
+        if local(child.tag) != "exception":
+            continue
+        if (child.get("negate") or "").lower() == "yes":
+            continue
+        scope = (child.get("scope") or "").lower()
+        text = (child.text or "").strip()
+        postag = (child.get("postag") or "").strip()
+        # Java exceptions: surface and/or postag. POS-only is valid (e.g. DT_JJ_NN
+        # <exception postag="NN.*|VBN"/>). Without a tagger POS-only never matches
+        # untagged soft readings, so it does not over-exclude pure soft languages.
+        if not text and not postag:
+            continue
+        e: dict = {}
+        if text:
+            e["text"] = text
+        for k in ("regexp", "case_sensitive", "postag", "postag_regexp"):
+            v = child.get(k)
+            if v is not None and str(v).strip() != "":
+                e[k] = v
+        if scope == "previous":
+            # previous/next soft subset: surface only
+            if text and prev_exc is None:
+                pe = {"text": text}
+                for k in ("regexp", "case_sensitive"):
+                    v = child.get(k)
+                    if v is not None and str(v).strip() != "":
+                        pe[k] = v
+                prev_exc = pe
+            continue
+        if scope == "next":
+            if text and next_exc is None:
+                ne = {"text": text}
+                for k in ("regexp", "case_sensitive"):
+                    v = child.get(k)
+                    if v is not None and str(v).strip() != "":
+                        ne[k] = v
+                next_exc = ne
+            continue
+        if not excs:
+            excs.append(e)
+    if excs:
+        d["exceptions"] = excs
+    if prev_exc is not None:
+        d["previous_exception"] = prev_exc
+    if next_exc is not None:
+        d["next_exception"] = next_exc
+    return d
+
+
+def match_to_backref(el: ET.Element) -> str:
+    """Map LT <match no="N"/> (and optional postag attrs ignored) to soft \\N."""
+    no = (el.get("no") or "1").strip()
+    if not no.isdigit():
+        no = "1"
+    return "\\" + no
+
+
+def serialize_soft_inline(el: ET.Element) -> str:
+    """Flatten an element tree, turning <match no="N"/> into \\N backrefs."""
+    chunks: list[str] = []
+    if el.text:
+        chunks.append(el.text)
+    for ch in el:
+        if local(ch.tag) == "match":
+            chunks.append(match_to_backref(ch))
+        else:
+            chunks.append(serialize_soft_inline(ch))
+        if ch.tail:
+            chunks.append(ch.tail)
+    return "".join(chunks)
+
+
+def collapse_and(and_el: ET.Element) -> dict | None:
+    """Collapse simple <and> into one soft token (+ optional and_group members).
+
+    LT <and> requires all children to match the same token position. Soft path:
+      - one surface-bearing token + zero or more postag-only tokens
+      - or two+ postag-only tokens (first is base, rest are and_group)
+    Java and-group: each member must match *some* reading of that token.
+    """
+    surface = None
+    postags: list[dict] = []
+    for t in and_el:
+        if local(t.tag) != "token":
+            return None
+        if not token_is_soft(t):
+            return None
+        st = serialize_token(t)
+        has_surface = bool(st.get("text"))
+        has_pos = bool(st.get("postag"))
+        if has_surface and has_pos:
+            if surface is not None:
+                return None
+            surface = st
+            continue
+        if has_surface and not has_pos:
+            if surface is not None:
+                return None
+            surface = st
+            continue
+        if has_pos and not has_surface:
+            postags.append(st)
+            continue
+        return None
+    if surface is None:
+        if len(postags) < 2:
+            return None
+        # postag-only and-group: first base, remaining and_group
+        main = dict(postags[0])
+        main["and_group"] = [dict(p) for p in postags[1:]]
+        return main
+    if postags:
+        # first postag merges into surface POS; further ones are and-group
+        surface = dict(surface)
+        surface["postag"] = postags[0]["postag"]
+        if postags[0].get("postag_regexp"):
+            surface["postag_regexp"] = postags[0]["postag_regexp"]
+        if len(postags) > 1:
+            surface["and_group"] = [dict(p) for p in postags[1:]]
+    return surface
+
+
+def collapse_or(or_el: ET.Element) -> dict | None:
+    """Collapse a simple <or> of plain surface tokens into one soft regexp token."""
+    alts: list[str] = []
+    for t in or_el:
+        if local(t.tag) != "token":
+            return None
+        # plain surface only inside or (no attrs/exceptions/postag)
+        if list(t) or t.attrib:
+            return None
+        s = (t.text or "").strip()
+        if not s or "&" in s:
+            return None
+        alts.append(s)
+    if len(alts) < 2:
+        return None
+    # Escape for RE; join as non-capturing alternation
+    body = "|".join(re.escape(a) for a in alts)
+    return {"text": body, "regexp": "yes"}
+
+
+def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
+    toks, _ = pattern_is_simple_ex(pattern)
+    return toks
+
+
+def pattern_is_simple_ex(
+    pattern: ET.Element,
+    *,
+    allow_postag_only: bool = False,
+) -> tuple[list[dict] | None, list[str]]:
+    """Like pattern_is_simple, plus Java <unify><feature id="…"/> features.
+
+    allow_postag_only: when True, accept sequences with no surface (all tokens
+    have postag). Used for ADDCHUNK/FILTERALL/UNIFY under a real tagger; still
+    rejected for soft FILTER/REPLACE that would flood without tags.
+    """
+    toks: list[dict] = []
+    features: list[str] = []
+    # Java: pattern case_sensitive inherits to tokens/exceptions when not set
+    # on the child (PatternRuleHandler / XMLRuleHandler finalizeExceptions).
+    pat_cs = (pattern.get("case_sensitive") or "").strip().lower()
+
+    def inherit_case_sensitive(tok: dict) -> dict:
+        if not isinstance(tok, dict) or pat_cs != "yes":
+            return tok
+        if not tok.get("case_sensitive"):
+            tok = {**tok, "case_sensitive": "yes"}
+        excs = tok.get("exceptions") or []
+        if excs:
+            new_excs = []
+            for e in excs:
+                if isinstance(e, dict) and not e.get("case_sensitive"):
+                    e = {**e, "case_sensitive": "yes"}
+                new_excs.append(e)
+            tok = {**tok, "exceptions": new_excs}
+        return tok
+
+    def add_child(child: ET.Element, *, inside_marker: bool = False) -> bool:
+        tag = local(child.tag)
+        if tag == "token":
+            if not token_is_soft(child):
+                return False
+            st = inherit_case_sensitive(serialize_token(child))
+            # Java <marker> selects which tokens REPLACE/FILTER act on.
+            if inside_marker and isinstance(st, dict):
+                st = {**st, "marker": "yes"}
+            toks.append(st)
+            return True
+        if tag == "or":
+            collapsed = collapse_or(child)
+            if collapsed is None:
+                return False
+            st = inherit_case_sensitive(collapsed)
+            if inside_marker and isinstance(st, dict):
+                st = {**st, "marker": "yes"}
+            toks.append(st)
+            return True
+        if tag == "and":
+            collapsed = collapse_and(child)
+            if collapsed is None:
+                return False
+            st = inherit_case_sensitive(collapsed)
+            if inside_marker and isinstance(st, dict):
+                st = {**st, "marker": "yes"}
+            toks.append(st)
+            return True
+        if tag == "unify":
+            # Java <unify>: collect features and flatten soft tokens inside.
+            for c in child:
+                ct = local(c.tag)
+                if ct == "feature":
+                    fid = (c.get("id") or "").strip()
+                    if fid and fid not in features:
+                        features.append(fid)
+                    continue
+                if not add_child(c, inside_marker=inside_marker):
+                    return False
+            return True
+        return False
+
+    for child in pattern:
+        tag = local(child.tag)
+        if tag == "marker":
+            for t in child:
+                if not add_child(t, inside_marker=True):
+                    return None, []
+            continue
+        if not add_child(child):
+            return None, []
+    if not toks:
+        return None, []
+    # Soft path has no POS tagger: pure postag-only patterns (e.g. DT+PRP$)
+    # match almost any token sequence and flood false positives. Require at
+    # least one surface/regexp token (SENT_START/END alone is not enough).
+    # Exception: unify rules often use postag-only sequences with a tagger;
+    # still require surface for soft unless features present and every token
+    # has postag (DE NP unify with determiner surface usually has text).
+    has_surface = False
+    for t in toks:
+        text = (t.get("text") or "").strip() if isinstance(t, dict) else str(t).strip()
+        if text:
+            has_surface = True
+            break
+    if not has_surface:
+        if not allow_postag_only:
+            return None, []
+        # every token must carry a postag and/or chunk for tagger/chunker paths
+        for t in toks:
+            if not isinstance(t, dict):
+                return None, []
+            if not (
+                (t.get("postag") or "").strip()
+                or (t.get("chunk") or "").strip()
+                or (t.get("chunk_re") or "").strip()
+            ):
+                return None, []
+    return toks, features
+
+
+def strip_markers(s: str) -> str:
+    s = re.sub(r"</?marker>", "", s)
+    return " ".join(s.split())
+
+
+def example_text(ex: ET.Element) -> str:
+    # prefer full string with markers stripped
+    parts: list[str] = []
+    if ex.text:
+        parts.append(ex.text)
+    for c in ex:
+        if c.text:
+            parts.append(c.text)
+        if c.tail:
+            parts.append(c.tail)
+    raw = "".join(parts) if parts else ("".join(ex.itertext()) if ex is not None else "")
+    return strip_markers(raw)
+
+
+
+def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
+    """Extract soft-loadable disambiguation rules (filter/replace+postag, immunize, ignore_spelling)."""
+    out: list[dict] = []
+    seen: set[str] = set()
+    anon_n = 0
+    for el in root.iter():
+        if local(el.tag) != "rule":
+            continue
+        rid = (el.get("id") or "").strip()
+        # Java allows anonymous rules (often inside rulegroups). Soft assigns a
+        # stable synthetic id so ADDCHUNK/FILTERALL packs are not dropped.
+        if not rid:
+            anon_n += 1
+            rid = f"_SOFT_ANON_{anon_n}"
+        if rid in seen:
+            continue
+        pat = None
+        dis = None
+        for c in el:
+            t = local(c.tag)
+            if t == "pattern" and pat is None:
+                pat = c
+            elif t == "disambig" and dis is None:
+                dis = c
+        if pat is None or dis is None:
+            continue
+        action = (dis.get("action") or "replace").lower()
+        postag = (dis.get("postag") or "").strip()
+        # Soft ADD/REMOVE/REPLACE/ADDCHUNK: <wd pos="…" lemma="…"/> (Java ca/n't MD,
+        # multi-NNP, Catalan PTime chunks, …)
+        add_wds: list[dict] = []
+        if action in ("add", "remove", "replace", "addchunk"):
+            for c in dis:
+                if local(c.tag) != "wd":
+                    continue
+                wd_pos = (c.get("pos") or "").strip()
+                wd_lemma = (c.get("lemma") or "").strip()
+                wd_text = (c.text or "").strip()
+                if not wd_pos and not wd_lemma and not wd_text:
+                    continue
+                add_wds.append({"pos": wd_pos, "lemma": wd_lemma, "text": wd_text})
+            if action in ("add", "addchunk") and not add_wds:
+                continue
+            # remove/replace may use postag only or <wd> list (Java REPLACE with wd)
+            if action in ("remove", "replace") and not add_wds and not postag:
+                continue
+        elif action not in ("filter", "filterall", "immunize", "ignore_spelling", "unify"):
+            continue
+        if action == "filter" and not postag:
+            continue
+        if action == "replace" and not postag and not add_wds:
+            continue
+        # unify: no postag; features come from <unify><feature> in the pattern
+        # filterall uses each pattern token's postag (Java FILTERALL); no disambig postag required
+        if action == "filterall" and postag:
+            # ignore spurious postag on filterall elements
+            postag = ""
+        if list(dis) and action in ("filter", "filterall"):
+            # nested children not soft-loaded for filter/filterall
+            continue
+        if list(dis) and action == "replace" and not add_wds:
+            # replace with non-wd children (e.g. match) not soft-loaded
+            continue
+        # Prefer surface-anchored patterns. Retry postag/chunk-only for
+        # addchunk/filterall/unify and any pattern that uses chunk gates.
+        toks, unify_feats = pattern_is_simple_ex(pat, allow_postag_only=False)
+        if not toks:
+            toks, unify_feats = pattern_is_simple_ex(pat, allow_postag_only=True)
+            if toks and action in ("filter", "replace"):
+                has_surface = any(
+                    (t.get("text") if isinstance(t, dict) else str(t) or "").strip()
+                    for t in toks
+                )
+                has_chunk = any(
+                    isinstance(t, dict) and (t.get("chunk") or t.get("chunk_re"))
+                    for t in toks
+                )
+                # pure postag-only filter/replace floods soft without surface
+                if not has_surface and not has_chunk:
+                    toks = None
+        if not toks:
+            continue
+        if action == "unify" and not unify_feats:
+            continue
+        simple_toks = soft_disambig_tokens(toks)
+        if not simple_toks:
+            continue
+        # Java keepByDisambig: simple soft-loadable <antipattern> sequences.
+        antipatterns: list[list[dict]] = []
+        for c in el:
+            if local(c.tag) != "antipattern":
+                continue
+            ap_toks = pattern_is_simple(c)
+            if not ap_toks:
+                continue
+            ap_simple = soft_disambig_tokens(ap_toks)
+            if ap_simple:
+                antipatterns.append(ap_simple)
+        seen.add(rid)
+        # Preserve ignore_spelling vs immunize: ignore_spelling only affects
+        # the speller (Java), while immunize skips pattern matching entirely.
+        entry = {
+            "id": rid,
+            "name": el.get("name") or rid,
+            "tokens": simple_toks,
+            "action": action,
+            "postag": postag,
+            "source": source,
+        }
+        if add_wds:
+            entry["add_wds"] = add_wds
+        if antipatterns:
+            entry["antipatterns"] = antipatterns
+        if unify_feats:
+            entry["unify_features"] = unify_feats
+        out.append(entry)
+    return out
+
+
+def extract_unifications(root: ET.Element) -> list[dict]:
+    """Extract Java <unification feature="…"><equivalence type="…"> blocks."""
+    out: list[dict] = []
+    for el in root:
+        if local(el.tag) != "unification":
+            continue
+        feat = (el.get("feature") or "").strip()
+        if not feat:
+            continue
+        eqs: list[dict] = []
+        for eq in el:
+            if local(eq.tag) != "equivalence":
+                continue
+            typ = (eq.get("type") or "").strip()
+            if not typ:
+                continue
+            # Soft: first simple token under equivalence (Java one PatternToken).
+            tok_el = None
+            for c in eq:
+                if local(c.tag) == "token":
+                    tok_el = c
+                    break
+            if tok_el is None or not token_is_soft(tok_el):
+                continue
+            st = serialize_token(tok_el)
+            eqs.append({"type": typ, "token": st})
+        if eqs:
+            out.append({"feature": feat, "equivalences": eqs})
+    return out
+
+
+def soft_disambig_tokens(toks: list) -> list[dict] | None:
+    """Normalize pattern_is_simple tokens for soft disambig XML/loader."""
+    simple_toks: list[dict] = []
+    for t in toks:
+        if isinstance(t, str):
+            simple_toks.append({"text": t})
+            continue
+        st = {"text": t.get("text") or ""}
+        for k in (
+            "regexp",
+            "case_sensitive",
+            "inflected",
+            "negate",
+            "postag",
+            "postag_regexp",
+            "marker",
+            "spacebefore",
+            "min",
+            "max",
+            "skip",
+            "chunk",
+            "chunk_re",
+        ):
+            if t.get(k):
+                st[k] = t[k]
+        if t.get("exceptions"):
+            st["exceptions"] = t["exceptions"]
+        if t.get("previous_exception"):
+            st["previous_exception"] = t["previous_exception"]
+        if t.get("next_exception"):
+            st["next_exception"] = t["next_exception"]
+        if t.get("and_group"):
+            # Nested soft and-group members (postag-only PatternTokens).
+            st["and_group"] = t["and_group"]
+        if (
+            not st["text"]
+            and not st.get("postag")
+            and not st.get("regexp")
+            and not st.get("chunk")
+            and not st.get("chunk_re")
+        ):
+            return None
+        simple_toks.append(st)
+    return simple_toks or None
+
+
+def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "      ") -> None:
+    """Emit soft <token> lines (shared by pattern and antipattern)."""
+    for t in tokens:
+        attrs = []
+        if isinstance(t, dict):
+            for k in (
+                "regexp",
+                "case_sensitive",
+                "inflected",
+                "negate",
+                "postag",
+                "postag_regexp",
+                "marker",
+                "spacebefore",
+                "min",
+                "max",
+                "skip",
+                "chunk",
+                "chunk_re",
+            ):
+                if t.get(k):
+                    attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
+        attr_s = (" " + " ".join(attrs)) if attrs else ""
+        body = xml_esc(t.get("text") if isinstance(t, dict) else t)
+        excs = t.get("exceptions") if isinstance(t, dict) else None
+        and_group = t.get("and_group") if isinstance(t, dict) else None
+        prev_e = t.get("previous_exception") if isinstance(t, dict) else None
+        next_e = t.get("next_exception") if isinstance(t, dict) else None
+        has_nested = bool(excs) or bool(and_group) or (
+            isinstance(prev_e, dict) and bool(prev_e.get("text"))
+        ) or (isinstance(next_e, dict) and bool(next_e.get("text")))
+        if not has_nested:
+            lines.append(f"{indent}<token{attr_s}>{body}</token>")
+        else:
+            lines.append(f"{indent}<token{attr_s}>{body}")
+            for e in excs or []:
+                if not isinstance(e, dict):
+                    continue
+                ea = []
+                for k in ("regexp", "case_sensitive", "negate", "postag", "postag_regexp"):
+                    if e.get(k):
+                        ea.append(f'{k}="{xml_esc(str(e[k]))}"')
+                eas = (" " + " ".join(ea)) if ea else ""
+                etext = e.get("text") or ""
+                # POS-only exception: self-closing-style empty body is fine.
+                lines.append(f"{indent}  <exception{eas}>{xml_esc(etext)}</exception>")
+            # Soft <and_token> = Java and-group member (same token position).
+            for ag in and_group or []:
+                if not isinstance(ag, dict):
+                    continue
+                aa = []
+                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp"):
+                    if ag.get(k):
+                        aa.append(f'{k}="{xml_esc(str(ag[k]))}"')
+                aas = (" " + " ".join(aa)) if aa else ""
+                abody = xml_esc(ag.get("text") or "")
+                lines.append(f"{indent}  <and_token{aas}>{abody}</and_token>")
+            if isinstance(prev_e, dict) and prev_e.get("text"):
+                ea = ['scope="previous"']
+                for k in ("regexp", "case_sensitive"):
+                    if prev_e.get(k):
+                        ea.append(f'{k}="{xml_esc(str(prev_e[k]))}"')
+                eas = " " + " ".join(ea)
+                lines.append(
+                    f'{indent}  <exception{eas}>{xml_esc(prev_e.get("text") or "")}</exception>'
+                )
+            if isinstance(next_e, dict) and next_e.get("text"):
+                ea = ['scope="next"']
+                for k in ("regexp", "case_sensitive"):
+                    if next_e.get(k):
+                        ea.append(f'{k}="{xml_esc(str(next_e[k]))}"')
+                eas = " " + " ".join(ea)
+                lines.append(
+                    f'{indent}  <exception{eas}>{xml_esc(next_e.get("text") or "")}</exception>'
+                )
+            lines.append(f"{indent}</token>")
+
+
+def write_disambig_soft_xml(
+    path: Path,
+    lang: str,
+    rules: list[dict],
+    unifications: list[dict] | None = None,
+) -> None:
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        "<!-- GENERATED by scripts/vendor-lt-testdata.py from upstream disambiguation.xml -->",
+        f'<rules lang="{lang}">',
+    ]
+    for u in unifications or []:
+        feat = u.get("feature") or ""
+        lines.append(f'  <unification feature="{xml_esc(feat)}">')
+        for eq in u.get("equivalences") or []:
+            lines.append(f'    <equivalence type="{xml_esc(eq.get("type") or "")}">')
+            t = eq.get("token") or {}
+            attrs = []
+            for k in (
+                "regexp",
+                "case_sensitive",
+                "inflected",
+                "negate",
+                "postag",
+                "postag_regexp",
+            ):
+                if t.get(k):
+                    attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
+            attr_s = (" " + " ".join(attrs)) if attrs else ""
+            body = xml_esc(t.get("text") or "")
+            lines.append(f"      <token{attr_s}>{body}</token>")
+            lines.append("    </equivalence>")
+        lines.append("  </unification>")
+    for r in rules:
+        lines.append(f'  <rule id="{xml_esc(r["id"])}" name="{xml_esc(r["name"])}">')
+        # Java: antipatterns precede pattern; keepByDisambig suppresses overlapping matches.
+        for ap in r.get("antipatterns") or []:
+            lines.append("    <antipattern>")
+            write_disambig_token_lines(lines, ap)
+            lines.append("    </antipattern>")
+        lines.append("    <pattern>")
+        write_disambig_token_lines(lines, r["tokens"])
+        lines.append("    </pattern>")
+        act = r.get("action") or "replace"
+        if act in ("add", "remove", "replace", "addchunk") and r.get("add_wds"):
+            open_tag = f'    <disambig action="{xml_esc(act)}"'
+            if act == "remove" and r.get("postag"):
+                open_tag += f' postag="{xml_esc(r["postag"])}"'
+            open_tag += ">"
+            lines.append(open_tag)
+            for wd in r["add_wds"]:
+                attrs = []
+                if wd.get("pos"):
+                    attrs.append(f'pos="{xml_esc(wd["pos"])}"')
+                if wd.get("lemma"):
+                    attrs.append(f'lemma="{xml_esc(wd["lemma"])}"')
+                attr_s = (" " + " ".join(attrs)) if attrs else ""
+                body = xml_esc(wd.get("text") or "")
+                if body:
+                    lines.append(f"      <wd{attr_s}>{body}</wd>")
+                else:
+                    lines.append(f"      <wd{attr_s}/>")
+            lines.append("    </disambig>")
+        elif act == "remove" and r.get("postag"):
+            lines.append(f'    <disambig action="remove" postag="{xml_esc(r["postag"])}"/>')
+        elif act in ("filter", "replace") and r.get("postag"):
+            lines.append(f'    <disambig action="{xml_esc(act)}" postag="{xml_esc(r["postag"])}"/>')
+        elif act == "filterall":
+            lines.append('    <disambig action="filterall"/>')
+        elif act == "unify":
+            feats = r.get("unify_features") or []
+            if feats:
+                lines.append(
+                    f'    <disambig action="unify" features="{xml_esc(",".join(feats))}"/>'
+                )
+            else:
+                lines.append('    <disambig action="unify"/>')
+        else:
+            lines.append(f'    <disambig action="{xml_esc(act)}"/>')
+        lines.append("  </rule>")
+    lines.append("</rules>")
+    lines.append("")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+def extract_simple_rules(root: ET.Element, source: str) -> tuple[list[dict], list[dict]]:
+    """Return (soft_rules, golden_cases) from upstream rules root."""
+    rules_out: list[dict] = []
+    goldens: list[dict] = []
+    seen_ids: set[str] = set()
+
+    def walk_rule(el: ET.Element, cat_id: str, cat_name: str) -> None:
+        rid = el.get("id") or ""
+        if not rid or rid in seen_ids:
+            return
+        pattern = None
+        message = ""
+        short = ""
+        for c in el:
+            t = local(c.tag)
+            if t == "pattern" and pattern is None:
+                pattern = c
+            elif t == "message":
+                message = "".join(c.itertext()).strip()
+                # keep suggestion tags in serialized soft XML separately
+            elif t == "short":
+                short = "".join(c.itertext()).strip()
+        if pattern is None:
+            return
+        toks = pattern_is_simple(pattern)
+        if toks is None:
+            return
+        # message element for soft XML: keep suggestion children if present
+        msg_el = None
+        for c in el:
+            if local(c.tag) == "message":
+                msg_el = c
+                break
+        msg_xml = ""
+        if msg_el is not None:
+            # rebuild simple message with suggestion tags; <match no="N"/> → \N
+            # for soft backref expansion at runtime.
+            chunks: list[str] = []
+            if msg_el.text:
+                chunks.append(msg_el.text)
+            for ch in msg_el:
+                if local(ch.tag) == "suggestion":
+                    chunks.append(
+                        "<suggestion>" + serialize_soft_inline(ch) + "</suggestion>"
+                    )
+                elif local(ch.tag) == "match":
+                    chunks.append(match_to_backref(ch))
+                else:
+                    chunks.append("".join(ch.itertext()))
+                if ch.tail:
+                    chunks.append(ch.tail)
+            msg_xml = "".join(chunks).strip()
+        else:
+            msg_xml = message
+        # Upstream often puts <suggestion> as sibling of <message>, not nested.
+        # Soft loader only reads suggestions inside the message text.
+        if "<suggestion>" not in msg_xml:
+            for c in el:
+                if local(c.tag) == "suggestion":
+                    body = serialize_soft_inline(c).strip()
+                    if body:
+                        msg_xml = (msg_xml + " <suggestion>" + body + "</suggestion>").strip()
+                        break
+
+        examples = []
+        for c in el:
+            if local(c.tag) != "example":
+                continue
+            corr = c.get("correction")
+            if corr is None:
+                continue  # correct example — skip for positive golden
+            text = example_text(c)
+            if not text:
+                continue
+            # first correction alternative
+            sug = corr.split("|")[0].strip()
+            examples.append({"text": text, "suggestion": sug})
+
+        if not examples:
+            return
+
+        seen_ids.add(rid)
+        soft_id = rid if rid.startswith("EN_") or "_" in rid else rid
+        rules_out.append(
+            {
+                "id": soft_id,
+                "name": el.get("name") or soft_id,
+                "category_id": cat_id or "GRAMMAR",
+                "category_name": cat_name or "Grammar",
+                "tokens": toks,
+                "message": msg_xml or f"Did you mean a correction for {soft_id}?",
+                "short": short or soft_id,
+                "source": source,
+                "default": (el.get("default") or "").strip().lower(),
+            }
+        )
+        for ex in examples:
+            goldens.append(
+                {
+                    "rule": soft_id,
+                    "text": ex["text"],
+                    "suggestion": ex["suggestion"],
+                    "source": source,
+                }
+            )
+
+    # categories
+    for cat in root:
+        if local(cat.tag) != "category":
+            continue
+        cid, cname = cat.get("id") or "GRAMMAR", cat.get("name") or "Grammar"
+        for child in cat:
+            t = local(child.tag)
+            if t == "rule":
+                walk_rule(child, cid, cname)
+            elif t == "rulegroup":
+                for r in child:
+                    if local(r.tag) == "rule":
+                        # prefer rule id; fall back to group id + index handled by walk
+                        if not r.get("id") and child.get("id"):
+                            # anonymous rule in group — skip (needs synthetic id)
+                            continue
+                        walk_rule(r, cid, cname)
+
+    # top-level rules
+    for child in root:
+        if local(child.tag) == "rule":
+            walk_rule(child, "GRAMMAR", "Grammar")
+
+    return rules_out, goldens
+
+
+def write_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
+    # group by category
+    cats: dict[tuple[str, str], list[dict]] = {}
+    for r in rules:
+        key = (r["category_id"], r["category_name"])
+        cats.setdefault(key, []).append(r)
+
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        f"<!-- GENERATED by scripts/vendor-lt-testdata.py — do not invent rules. -->",
+        f"<!-- Source: upstream LanguageTool simple token patterns only. -->",
+        f'<rules lang="{lang}">',
+    ]
+    for (cid, cname), rs in cats.items():
+        lines.append(f'  <category id="{xml_esc(cid)}" name="{xml_esc(cname)}">')
+        for r in rs:
+            def_attr = ""
+            dflt = (r.get("default") or "").lower()
+            if dflt in ("off", "temp_off", "on"):
+                def_attr = f' default="{dflt}"'
+            lines.append(f'    <rule id="{xml_esc(r["id"])}" name="{xml_esc(r["name"])}"{def_attr}>')
+            lines.append("      <pattern>")
+            # Reuse disambig token writer: exceptions, previous/next, and_token, chunk.
+            write_disambig_token_lines(lines, r["tokens"], indent="        ")
+            lines.append("      </pattern>")
+            lines.append(f"      <message>{r['message']}</message>")  # may contain <suggestion>
+            lines.append(f"      <short>{xml_esc(r['short'])}</short>")
+            lines.append("    </rule>")
+        lines.append("  </category>")
+    lines.append("</rules>")
+    lines.append("")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def xml_esc(s: str) -> str:
+    return (
+        s.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def copy_file(src: Path, dst: Path) -> None:
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
+    print(f"  copy {src.relative_to(ROOT)} -> {dst.relative_to(ROOT)}")
+
+
+def vendor_lang(lang: str) -> dict:
+    stats = {"lang": lang, "rules": 0, "goldens": 0, "copied": 0}
+    mod = LT / "languagetool-language-modules" / lang
+    if not mod.is_dir():
+        print(f"skip {lang}: no module")
+        return stats
+
+    rules_base = mod / "src/main/resources/org/languagetool/rules" / lang
+    res_base = mod / "src/main/resources/org/languagetool/resource" / lang
+
+    # raw copies
+    for rel in [
+        "grammar.xml",
+        "style.xml",
+    ]:
+        src = rules_base / rel
+        if src.is_file():
+            copy_file(src, OUT / lang / "rules" / rel)
+            stats["copied"] += 1
+
+    # regional grammar packs
+    if rules_base.is_dir():
+        for p in sorted(rules_base.glob("*/grammar.xml")):
+            copy_file(p, OUT / lang / "rules" / p.parent.name / "grammar.xml")
+            stats["copied"] += 1
+
+    for rel in [
+        "disambiguation.xml",
+        "multiwords.txt",
+        "confusion_sets.txt",
+        "confusion_sets_extended.txt",
+        "compounds.txt",
+        "specific_case.txt",
+        "uncountable.txt",
+        "partlycountable.txt",
+        "added.txt",
+        "removed.txt",
+    ]:
+        src = res_base / rel
+        if src.is_file():
+            copy_file(src, OUT / lang / "resource" / rel)
+            stats["copied"] += 1
+
+    # All rule-data tables under rules/<lang>/ (txt only; no invented content).
+    # Covers replace*, diacritics, coherency, synonyms, regional packs, etc.
+    rules_data = LT / "languagetool-language-modules" / lang / "src/main/resources/org/languagetool/rules" / lang
+    if rules_data.is_dir():
+        for src in sorted(rules_data.rglob("*.txt")):
+            if not src.is_file():
+                continue
+            rel = src.relative_to(rules_data)
+            copy_file(src, OUT / lang / "rules" / rel)
+            stats["copied"] += 1
+
+    # Extra resource tables not covered by the fixed list above (common_words,
+    # ignore/prohibit, multitoken lists, …) — still plain upstream copies only.
+    if res_base.is_dir():
+        skip_names = {
+            # already handled or binary/large dicts not useful as testdata text
+        }
+        for src in sorted(res_base.rglob("*.txt")):
+            if not src.is_file():
+                continue
+            rel = src.relative_to(res_base)
+            # skip huge flat wordlists that are dictionary dumps (>2 MiB)
+            if src.stat().st_size > 2 * 1024 * 1024:
+                print(f"  skip large {rel} ({src.stat().st_size}b)")
+                continue
+            dst = OUT / lang / "resource" / rel
+            if dst.is_file() and dst.stat().st_size == src.stat().st_size:
+                continue  # already copied via fixed list
+            copy_file(src, dst)
+            stats["copied"] += 1
+        del skip_names
+
+    # derive soft pack + goldens from main grammar (+ style) and regional packs
+    all_rules: list[dict] = []
+    all_goldens: list[dict] = []
+    extract_paths: list[Path] = []
+    for name in ("grammar.xml", "style.xml"):
+        src = rules_base / name
+        if src.is_file():
+            extract_paths.append(src)
+    if rules_base.is_dir():
+        for p in sorted(rules_base.glob("*/grammar.xml")):
+            extract_paths.append(p)
+    for src in extract_paths:
+        print(f"  extract simple patterns from {src.relative_to(ROOT)}")
+        try:
+            root = parse_rules_xml(src)
+        except RuntimeError as e:
+            print(f"  WARN skip {src.relative_to(ROOT)}: {e}")
+            continue
+        rules, goldens = extract_simple_rules(root, str(src.relative_to(LT)))
+        all_rules.extend(rules)
+        all_goldens.extend(goldens)
+
+    # de-dupe rules by id (first wins)
+    seen: set[str] = set()
+    deduped = []
+    for r in all_rules:
+        if r["id"] in seen:
+            continue
+        seen.add(r["id"])
+        deduped.append(r)
+    all_rules = deduped
+
+    def is_plain(r: dict) -> bool:
+        for t in r["tokens"]:
+            if isinstance(t, str):
+                continue
+            if any(k in t for k in ("regexp", "postag", "postag_regexp", "negate", "inflected", "min", "max", "skip", "exceptions")):
+                return False
+        return True
+
+    # Prefer plain surface rules first (soft engine is most reliable here).
+    all_rules.sort(key=lambda r: (0 if is_plain(r) else 1, r["id"]))
+    plain_ids = {r["id"] for r in all_rules if is_plain(r)}
+
+    # goldens only for kept rules; plain examples first for sample suites
+    keep = {r["id"] for r in all_rules}
+    all_goldens = [g for g in all_goldens if g["rule"] in keep]
+    all_goldens.sort(key=lambda g: (0 if g["rule"] in plain_ids else 1, g["rule"], g["text"]))
+
+    if all_rules:
+        on_rules = [r for r in all_rules if (r.get("default") or "") not in ("off", "temp_off")]
+        off_rules = [r for r in all_rules if (r.get("default") or "") in ("off", "temp_off")]
+        soft_path = OUT / lang / f"{lang}-from-upstream-soft.xml"
+        write_soft_xml(soft_path, lang, on_rules if on_rules else all_rules)
+        install = SOFT_OUT / f"{lang}-upstream-soft.xml"
+        write_soft_xml(install, lang, on_rules if on_rules else all_rules)
+        print(f"  soft rules: {len(on_rules) if on_rules else len(all_rules)} -> {install.relative_to(ROOT)}")
+        stats["rules"] = len(on_rules) if on_rules else len(all_rules)
+        if off_rules:
+            opt = SOFT_OUT / f"{lang}-optional-upstream-soft.xml"
+            write_soft_xml(opt, lang, off_rules)
+            write_soft_xml(OUT / lang / f"{lang}-optional-from-upstream-soft.xml", lang, off_rules)
+            print(f"  optional (default=off): {len(off_rules)} -> {opt.relative_to(ROOT)}")
+            stats["optional"] = len(off_rules)
+
+    if all_goldens:
+        GOLDEN_OUT.mkdir(parents=True, exist_ok=True)
+        gpath = GOLDEN_OUT / f"{lang}-examples.json"
+        gpath.write_text(
+            json.dumps(
+                {
+                    "source": "inspiration/languagetool",
+                    "note": "Generated from upstream <example correction> only; do not invent.",
+                    "language": lang,
+                    "cases": all_goldens,
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        print(f"  goldens: {len(all_goldens)} -> {gpath.relative_to(ROOT)}")
+        stats["goldens"] = len(all_goldens)
+
+    # multiwords into disambiguation as upstream copy (not invented soft mesa names)
+    mw = res_base / "multiwords.txt"
+    if mw.is_file():
+        copy_file(mw, DIS_OUT / f"{lang}-multiwords-upstream.txt")
+
+    # hunspell spelling extensions → soft ignore-spelling word list
+    for spell_name in ("spelling.txt",):
+        sp = res_base / "hunspell" / spell_name
+        if sp.is_file():
+            copy_file(sp, OUT / lang / "resource" / "hunspell" / spell_name)
+            # install as one-token-per-line ignore list (strip comments already in load)
+            copy_file(sp, DIS_OUT / f"{lang}-spelling-upstream.txt")
+
+    # soft-compatible disambiguation extract
+    dis_src = res_base / "disambiguation.xml"
+    if dis_src.is_file():
+        try:
+            droot = parse_rules_xml(dis_src)
+            drules = extract_disambig_soft(droot, str(dis_src.relative_to(LT)))
+            dunif = extract_unifications(droot)
+        except RuntimeError as e:
+            print(f"  WARN disambig skip: {e}")
+            drules = []
+            dunif = []
+        if drules:
+            write_disambig_soft_xml(
+                OUT / lang / f"{lang}-disambiguation-from-upstream-soft.xml",
+                lang,
+                drules,
+                unifications=dunif,
+            )
+            install_d = DIS_OUT / f"{lang}-disambiguation-upstream-soft.xml"
+            write_disambig_soft_xml(install_d, lang, drules, unifications=dunif)
+            print(f"  disambig soft: {len(drules)} -> {install_d.relative_to(ROOT)}")
+            stats["disambig"] = len(drules)
+
+    return stats
+
+
+def vendor_core_fixtures() -> int:
+    n = 0
+    xx = LT / "languagetool-core/src/test/resources/org/languagetool/rules/xx"
+    if xx.is_dir():
+        for p in sorted(xx.glob("*.xml")):
+            copy_file(p, OUT / "xx" / p.name)
+            n += 1
+    ff = LT / "languagetool-core/src/main/resources/org/languagetool/rules/false-friends.xml"
+    if ff.is_file():
+        copy_file(ff, OUT / "false-friends.xml")
+        n += 1
+        # Soft FF loader cannot use external DTD; write a stripped copy.
+        raw = ff.read_text(encoding="utf-8", errors="replace")
+        raw = re.sub(r"<\?xml-stylesheet[^?]*\?>", "", raw)
+        if "<!DOCTYPE" in raw:
+            i = raw.index("<!DOCTYPE")
+            j = raw.find(">", i)
+            if j >= 0:
+                raw = raw[:i] + raw[j + 1 :]
+        nodtd = OUT / "false-friends-nodtd.xml"
+        nodtd.write_text(raw, encoding="utf-8")
+        print(f"  write {nodtd.relative_to(ROOT)}")
+        n += 1
+    return n
+
+
+def write_readme() -> None:
+    text = """# Vendored LanguageTool testdata
+
+**Source of truth:** `inspiration/languagetool` (upstream submodule).
+
+Regenerate:
+
+```bash
+python3 scripts/vendor-lt-testdata.py
+```
+
+| Path | Meaning |
+|------|---------|
+| `testdata/upstream/<lang>/rules/` | Copies of upstream `grammar.xml` / `style.xml` / regional packs + all rule `*.txt` tables |
+| `testdata/upstream/<lang>/resource/` | Copies of `disambiguation.xml`, `multiwords.txt`, and other resource `*.txt` (≤2 MiB) |
+| `testdata/upstream/goldens/<lang>-examples.json` | Official `<example correction>` cases only |
+| `testdata/grammar/<lang>-upstream-soft.xml` | Soft-loader subset: plain surface token patterns extracted from upstream |
+
+**Policy (SPEC §3.3–3.4):** do not invent kitchen-sink rules or golden strings.
+Goldens come from upstream examples. Soft packs are filters of upstream XML,
+not original content.
+
+Hand-written `*-soft.xml` packs elsewhere under `testdata/grammar/` are legacy
+scaffolding; prefer `*-upstream-soft.xml` and full upstream files going forward.
+"""
+    (OUT / "README.md").write_text(text, encoding="utf-8")
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--langs",
+        default="en",
+        help="comma-separated language module codes (default: en)",
+    )
+    args = ap.parse_args()
+    if not LT.is_dir():
+        die(f"missing {LT}; git submodule update --init")
+
+    langs = [x.strip() for x in args.langs.split(",") if x.strip()]
+    print(f"vendoring from {LT.relative_to(ROOT)}")
+    OUT.mkdir(parents=True, exist_ok=True)
+    write_readme()
+    n_core = vendor_core_fixtures()
+    print(f"core fixtures: {n_core} files")
+    totals = {"rules": 0, "goldens": 0, "copied": 0}
+    for lang in langs:
+        print(f"lang {lang}:")
+        st = vendor_lang(lang)
+        for k in totals:
+            totals[k] += st.get(k, 0)
+    print(
+        f"done: copied={totals['copied']} simple_rules={totals['rules']} "
+        f"golden_cases={totals['goldens']}"
+    )
+
+
+if __name__ == "__main__":
+    main()

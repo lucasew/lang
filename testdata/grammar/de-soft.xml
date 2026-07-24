@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="de">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="DE_SOFT_DAS_DASS" name="das/dass">
+      <pattern>
+        <token>Ich</token>
+        <token>denke</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "Ich denke, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_GLAUBE_DAS" name="glaube das">
+      <pattern>
+        <token>glaube</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "glaube, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_WEISS_DAS" name="weiß das">
+      <pattern>
+        <token>weiß</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "weiß, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_SEIT_SEID" name="seit/seid">
+      <pattern>
+        <token>seit</token>
+        <token>ihr</token>
+      </pattern>
+      <message>Meinten Sie "seid ihr"?</message>
+      <short>seit/seid</short>
+    </rule>
+    <rule id="DE_SOFT_WIDER_WIEDER" name="wider/wieder">
+      <pattern>
+        <token>wider</token>
+        <token>sehen</token>
+      </pattern>
+      <message>Meinten Sie "wiedersehen"?</message>
+      <short>wider/wieder</short>
+    </rule>
+    <rule id="DE_SOFT_ALS_WIE" name="größer als wie">
+      <pattern>
+        <token>größer</token>
+        <token>als</token>
+        <token>wie</token>
+      </pattern>
+      <message>Meinten Sie "größer als"?</message>
+      <short>als/wie</short>
+    </rule>
+    <rule id="DE_SOFT_WEGEN_DEM" name="wegen dem">
+      <pattern>
+        <token>wegen</token>
+        <token>dem</token>
+      </pattern>
+      <message>Standardsprachlich oft "wegen des" (Genitiv).</message>
+      <short>wegen</short>
+    </rule>
+    <rule id="DE_SOFT_TROTZ_DEM" name="trotz dem">
+      <pattern>
+        <token>trotz</token>
+        <token>dem</token>
+      </pattern>
+      <message>Standardsprachlich oft "trotz des" (Genitiv).</message>
+      <short>trotz</short>
+    </rule>
+    <rule id="DE_SOFT_DAS_SELBE" name="das selbe">
+      <pattern>
+        <token>das</token>
+        <token>selbe</token>
+      </pattern>
+      <message>Meinten Sie "dasselbe"?</message>
+      <short>dasselbe</short>
+    </rule>
+    <rule id="DE_SOFT_DAS_GLEICHE" name="das gleiche">
+      <pattern>
+        <token>das</token>
+        <token>gleiche</token>
+      </pattern>
+      <message>Meinten Sie "dasselbe" (Identität) oder "das Gleiche" (Gleichheit)?</message>
+      <short>dasselbe</short>
+    </rule>
+    <rule id="DE_SOFT_STANDART" name="Standart">
+      <pattern>
+        <token>Standart</token>
+      </pattern>
+      <message>Meinten Sie "Standard"?</message>
+      <short>Standart</short>
+    </rule>
+    <rule id="DE_SOFT_DENSELBEN" name="den selben">
+      <pattern>
+        <token>den</token>
+        <token>selben</token>
+      </pattern>
+      <message>Meinten Sie "denselben"?</message>
+      <short>denselben</short>
+    </rule>
+    <rule id="DE_SOFT_SAGT_DAS" name="sagt das">
+      <pattern>
+        <token>sagt</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "sagt, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_MEINT_DAS" name="meint das">
+      <pattern>
+        <token>meint</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "meint, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_HOFFEN_DAS" name="hoffe das">
+      <pattern>
+        <token>hoffe</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "hoffe, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_LAUT_DEM" name="laut dem">
+      <pattern>
+        <token>laut</token>
+        <token>dem</token>
+      </pattern>
+      <message>Standardsprachlich oft "laut des" oder "laut" + Dativ-Name.</message>
+      <short>laut</short>
+    </rule>
+    <rule id="DE_SOFT_ANSTATT_DAS" name="anstatt das">
+      <pattern>
+        <token>anstatt</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "anstatt dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_OHNE_DAS" name="ohne das">
+      <pattern>
+        <token>ohne</token>
+        <token>das</token>
+        <token>zu</token>
+      </pattern>
+      <message>Meinten Sie "ohne dass" (Nebensatz) oder "ohne zu"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_SOWIE_SO" name="sowie so">
+      <pattern>
+        <token>sowie</token>
+        <token>so</token>
+      </pattern>
+      <message>Meinten Sie "sowieso"?</message>
+      <short>sowieso</short>
+    </rule>
+    <rule id="DE_SOFT_ZUFRIEDE" name="zufriede">
+      <pattern>
+        <token>zufriede</token>
+      </pattern>
+      <message>Meinten Sie "zufrieden"?</message>
+      <short>Tippfehler</short>
+    </rule>
+    <rule id="DE_SOFT_BESSER_WIE" name="besser wie">
+      <pattern>
+        <token>besser</token>
+        <token>wie</token>
+      </pattern>
+      <message>Meinten Sie "besser als"?</message>
+      <short>wie/als</short>
+    </rule>
+    <rule id="DE_SOFT_KLEINER_WIE" name="kleiner wie">
+      <pattern>
+        <token>kleiner</token>
+        <token>wie</token>
+      </pattern>
+      <message>Meinten Sie "kleiner als"?</message>
+      <short>wie/als</short>
+    </rule>
+    <rule id="DE_SOFT_DENN_DANN" name="denn/dann">
+      <pattern>
+        <token>und</token>
+        <token>denn</token>
+      </pattern>
+      <message>Prüfen Sie "denn" (denn/weil) vs "dann" (zeitlich).</message>
+      <short>denn/dann</short>
+    </rule>
+    <rule id="DE_SOFT_DAS_DASS_DENKE" name="denke das">
+      <pattern>
+        <token>denke</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "denke, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_WEGEN_DEN" name="wegen den">
+      <pattern>
+        <token>wegen</token>
+        <token>den</token>
+      </pattern>
+      <message>Standardsprachlich oft "wegen der/des" (Genitiv).</message>
+      <short>wegen</short>
+    </rule>
+    <rule id="DE_SOFT_ZUFRIDEN" name="zufriden">
+      <pattern>
+        <token>zufriden</token>
+      </pattern>
+      <message>Meinten Sie "zufrieden"?</message>
+      <short>Tippfehler</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografie">
+    <rule id="DE_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Oft genügt ein Fragezeichen: "?"</message>
+      <short>Zeichensetzung</short>
+    </rule>
+    <rule id="DE_SOFT_DOUBLE_BANG" name="doppeltes Ausrufezeichen">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ein Ausrufezeichen genügt oft: "!"</message>
+      <short>Zeichensetzung</short>
+    </rule>
+  </category>
+</rules>

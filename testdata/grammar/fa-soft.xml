@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="fa">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="FA_SOFT_VA_VA" name="و و">
+      <pattern>
+        <token>و</token>
+        <token>و</token>
+      </pattern>
+      <message>تکرار احتمالی «و».</message>
+      <short>و و</short>
+    </rule>
+    <rule id="FA_SOFT_DAR_DAR" name="در در">
+      <pattern>
+        <token>در</token>
+        <token>در</token>
+      </pattern>
+      <message>تکرار احتمالی «در».</message>
+      <short>در در</short>
+    </rule>
+    <rule id="FA_SOFT_AZ_AZ" name="از از">
+      <pattern>
+        <token>از</token>
+        <token>از</token>
+      </pattern>
+      <message>تکرار احتمالی «از».</message>
+      <short>از از</short>
+    </rule>
+    <rule id="FA_SOFT_BE_BE" name="به به">
+      <pattern>
+        <token>به</token>
+        <token>به</token>
+      </pattern>
+      <message>تکرار احتمالی «به».</message>
+      <short>به به</short>
+    </rule>
+    <rule id="FA_SOFT_RA_RA" name="را را">
+      <pattern>
+        <token>را</token>
+        <token>را</token>
+      </pattern>
+      <message>تکرار احتمالی «را».</message>
+      <short>را را</short>
+    </rule>
+    <rule id="FA_SOFT_KE_KE" name="که که">
+      <pattern>
+        <token>که</token>
+        <token>که</token>
+      </pattern>
+      <message>تکرار احتمالی «که».</message>
+      <short>که که</short>
+    </rule>
+    <rule id="FA_SOFT_IN_IN" name="این این">
+      <pattern>
+        <token>این</token>
+        <token>این</token>
+      </pattern>
+      <message>تکرار احتمالی «این».</message>
+      <short>این این</short>
+    </rule>
+    <rule id="FA_SOFT_AN_AN" name="آن آن">
+      <pattern>
+        <token>آن</token>
+        <token>آن</token>
+      </pattern>
+      <message>تکرار احتمالی «آن».</message>
+      <short>آن آن</short>
+    </rule>
+    <rule id="FA_SOFT_BA_BA" name="با با">
+      <pattern>
+        <token>با</token>
+        <token>با</token>
+      </pattern>
+      <message>تکرار احتمالی «با».</message>
+      <short>با با</short>
+    </rule>
+    <rule id="FA_SOFT_NA_NA" name="نه نه">
+      <pattern>
+        <token>نه</token>
+        <token>نه</token>
+      </pattern>
+      <message>تکرار احتمالی «نه».</message>
+      <short>نه نه</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="FA_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="FA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>اغلب یک علامت تعجب کافی است: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

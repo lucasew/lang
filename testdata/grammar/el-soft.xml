@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="el">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="EL_SOFT_KAI_KAI" name="και και">
+      <pattern>
+        <token>και</token>
+        <token>και</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "και".</message>
+      <short>και και</short>
+    </rule>
+    <rule id="EL_SOFT_TO_TO" name="το το">
+      <pattern>
+        <token>το</token>
+        <token>το</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "το".</message>
+      <short>το το</short>
+    </rule>
+    <rule id="EL_SOFT_NA_NA" name="να να">
+      <pattern>
+        <token>να</token>
+        <token>να</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "να".</message>
+      <short>να να</short>
+    </rule>
+    <rule id="EL_SOFT_SE_SE" name="σε σε">
+      <pattern>
+        <token>σε</token>
+        <token>σε</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "σε".</message>
+      <short>σε σε</short>
+    </rule>
+    <rule id="EL_SOFT_ME_ME" name="με με">
+      <pattern>
+        <token>με</token>
+        <token>με</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "με".</message>
+      <short>με με</short>
+    </rule>
+    <rule id="EL_SOFT_GIA_GIA" name="για για">
+      <pattern>
+        <token>για</token>
+        <token>για</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "για".</message>
+      <short>για για</short>
+    </rule>
+    <rule id="EL_SOFT_DEN_DEN" name="δεν δεν">
+      <pattern>
+        <token>δεν</token>
+        <token>δεν</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "δεν".</message>
+      <short>δεν δεν</short>
+    </rule>
+    <rule id="EL_SOFT_POU_POU" name="που που">
+      <pattern>
+        <token>που</token>
+        <token>που</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "που".</message>
+      <short>που που</short>
+    </rule>
+    <rule id="EL_SOFT_THA_THA" name="θα θα">
+      <pattern>
+        <token>θα</token>
+        <token>θα</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "θα".</message>
+      <short>θα θα</short>
+    </rule>
+    <rule id="EL_SOFT_OXI_OXI" name="όχι όχι">
+      <pattern>
+        <token>όχι</token>
+        <token>όχι</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "όχι".</message>
+      <short>όχι όχι</short>
+    </rule>
+    <rule id="EL_SOFT_APO_APO" name="από από">
+      <pattern>
+        <token>από</token>
+        <token>από</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "από".</message>
+      <short>από από</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="EL_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Συχνά αρκεί ένα ερωτηματικό: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="EL_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Συχνά αρκεί ένα θαυμαστικό: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

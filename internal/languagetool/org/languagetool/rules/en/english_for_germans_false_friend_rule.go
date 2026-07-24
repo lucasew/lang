@@ -1,0 +1,4 @@
+package en
+
+// EnglishForGermansFalseFriendRule is constructed via NewEnglishForGermansFalseFriendRule.
+type EnglishForGermansFalseFriendRule = EnglishForL2SpeakersFalseFriendRule

@@ -1,0 +1,155 @@
+package uk
+
+import (
+	"bufio"
+	"io"
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
+
+// ExtraDictionaryLoader ports org.languagetool.rules.uk.ExtraDictionaryLoader.
+// Methods take an io.Reader instead of a resource path (pluggable data).
+type ExtraDictionaryLoader struct{}
+
+// LoadSet loads non-comment lines into a set.
+func LoadSet(r io.Reader) (map[string]struct{}, error) {
+	out := map[string]struct{}{}
+	sc := bufio.NewScanner(r)
+	for sc.Scan() {
+		line := sc.Text()
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+		out[line] = struct{}{}
+	}
+	return out, sc.Err()
+}
+
+// LoadMap loads lines as "key value..." maps (first space-separated field → rest or "").
+// Java: str.trim().split(" ") then x[0] → x.length > 1 ? x[1] : "".
+func LoadMap(r io.Reader) (map[string]string, error) {
+	set, err := LoadSet(r)
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[string]string, len(set))
+	for line := range set {
+		line = tools.JavaStringTrim(line)
+		if line == "" {
+			continue
+		}
+		parts := strings.Split(line, " ")
+		if len(parts) > 1 {
+			m[parts[0]] = parts[1]
+		} else {
+			m[parts[0]] = ""
+		}
+	}
+	return m, nil
+}
+
+// LoadSpacedLists loads "key a b|c" → key → [a,b,c] (space or | separators after key).
+// Java: !line.trim().isEmpty(); line.replaceFirst("#.*", "").trim(); split(" |\\|").
+func LoadSpacedLists(r io.Reader) (map[string][]string, error) {
+	result := map[string][]string{}
+	sc := bufio.NewScanner(r)
+	for sc.Scan() {
+		line := sc.Text()
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
+			continue
+		}
+		if i := strings.Index(line, "#"); i >= 0 {
+			line = line[:i]
+		}
+		line = tools.JavaStringTrim(line)
+		// split on space or |
+		fields := splitSpaceOrPipe(line)
+		if len(fields) == 0 {
+			continue
+		}
+		if len(fields) == 1 {
+			result[fields[0]] = nil
+			continue
+		}
+		result[fields[0]] = append([]string(nil), fields[1:]...)
+	}
+	return result, sc.Err()
+}
+
+// LoadLists loads "key = a|b|c" (or key=a|b) from a rules-dir style stream.
+// Java: !line.trim().isEmpty(); line.split(" *= *|\\|").
+func LoadLists(r io.Reader) (map[string][]string, error) {
+	result := map[string][]string{}
+	sc := bufio.NewScanner(r)
+	for sc.Scan() {
+		line := sc.Text()
+		if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
+			continue
+		}
+		// split on " *= *" or "|"
+		parts := splitListLine(line)
+		if len(parts) == 0 {
+			continue
+		}
+		if len(parts) == 1 {
+			result[parts[0]] = nil
+			continue
+		}
+		result[parts[0]] = append([]string(nil), parts[1:]...)
+	}
+	return result, sc.Err()
+}
+
+func splitSpaceOrPipe(line string) []string {
+	// Java: line.split(" |\\|") with default limit 0 (trailing empties dropped; mid empties kept).
+	var out []string
+	var b strings.Builder
+	for _, r := range line {
+		if r == ' ' || r == '|' {
+			out = append(out, b.String())
+			b.Reset()
+			continue
+		}
+		b.WriteRune(r)
+	}
+	out = append(out, b.String())
+	for len(out) > 0 && out[len(out)-1] == "" {
+		out = out[:len(out)-1]
+	}
+	return out
+}
+
+func splitListLine(line string) []string {
+	// Java: line.split(" *= *|\\|")
+	// First find " = " style or "=" with optional spaces
+	var parts []string
+	// replace = surrounded by spaces as separator, and |
+	rest := line
+	// Find first = as key separator if present
+	if idx := indexEqualsSep(rest); idx >= 0 {
+		key := tools.JavaStringTrim(rest[:idx])
+		rest = tools.JavaStringTrim(rest[idx+1:])
+		parts = append(parts, key)
+		// rest split on |
+		if rest == "" {
+			return parts
+		}
+		for _, p := range strings.Split(rest, "|") {
+			parts = append(parts, p) // Java keeps empty? Split keeps empties; trim not in Java for |
+		}
+		return parts
+	}
+	// no = : split only on |
+	return strings.Split(line, "|")
+}
+
+func indexEqualsSep(s string) int {
+	// match " *= *" — find '=' and allow spaces around
+	for i, r := range s {
+		if r == '=' {
+			return i
+		}
+	}
+	return -1
+}

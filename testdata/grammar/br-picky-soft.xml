@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft BR (Breton) pack loaded only when level is picky. -->
+<rules lang="br">
+  <category id="STYLE" name="Style">
+    <rule id="BR_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Gwelloc'h "emvod" pe "koulzad".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BR_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Gwelloc'h "disoc'h" pe "ali".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BR_SOFT_PICKY_KALZ_KALZ" name="kalz kalz soft picky">
+      <pattern>
+        <token>kalz</token>
+        <token>kalz</token>
+      </pattern>
+      <message>Kreñvaat gwan; gwelloc'h un anv-gwan kreñvoc'h.</message>
+      <short>style</short>
+    </rule>
+    <rule id="BR_SOFT_PICKY_TRAOU" name="kalz traoù soft picky">
+      <pattern>
+        <token>kalz</token>
+        <token>traoù</token>
+      </pattern>
+      <message>Gwelloc'h un anv resisoc'h eget "traoù".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BR_SOFT_PICKY_E_FIN_AN_DEIZ" name="e fin an deiz soft picky">
+      <pattern>
+        <token>e</token>
+        <token>fin</token>
+        <token>an</token>
+        <token>deiz</token>
+      </pattern>
+      <message>Gwelloc'h "a-benn ar fin" pe "da ziwezhañ".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft PT pack loaded only when level is picky. -->
+<rules lang="pt">
+  <category id="STYLE" name="Style">
+    <rule id="PT_SOFT_PICKY_NO_QUE_DIZ_RESPEITO" name="no que diz respeito soft picky">
+      <pattern>
+        <token>no</token>
+        <token>que</token>
+        <token>diz</token>
+        <token>respeito</token>
+        <token>a</token>
+      </pattern>
+      <message>Prefira "quanto a" ou "sobre".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_PICKY_A_NIVEL_DE" name="a nível de soft picky">
+      <pattern>
+        <token>a</token>
+        <token>nível</token>
+        <token>de</token>
+      </pattern>
+      <message>Expressão vaga; prefira "em" ou "quanto a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Prefira "retorno" ou "comentários".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_PICKY_CHALLENGE" name="challenge soft picky">
+      <pattern>
+        <token>challenge</token>
+      </pattern>
+      <message>Prefira "desafio".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_PICKY_MUITO_MUITO" name="muito muito soft picky">
+      <pattern>
+        <token>muito</token>
+        <token>muito</token>
+      </pattern>
+      <message>Intensificação fraca; prefira um adjetivo mais forte.</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_PICKY_COISAS" name="coisas soft picky">
+      <pattern>
+        <token>muitas</token>
+        <token>coisas</token>
+      </pattern>
+      <message>Prefira um substantivo mais concreto que "coisas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_PICKY_NO_FINAL_DO_DIA" name="no final do dia soft picky">
+      <pattern>
+        <token>no</token>
+        <token>final</token>
+        <token>do</token>
+        <token>dia</token>
+      </pattern>
+      <message>Prefira "em suma" ou "finalmente".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_PICKY_ETC_ETC" name="etc etc soft picky">
+      <pattern>
+        <token>etc</token>
+        <token>etc</token>
+      </pattern>
+      <message>Possível repetição de "etc".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

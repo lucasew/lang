@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ast">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="AST_SOFT_Y_Y" name="y y">
+      <pattern>
+        <token>y</token>
+        <token>y</token>
+      </pattern>
+      <message>Posible repetición de "y".</message>
+      <short>y y</short>
+    </rule>
+    <rule id="AST_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Posible repetición de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="AST_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Posible repetición de "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="AST_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Posible repetición de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="AST_SOFT_CON_CON" name="con con">
+      <pattern>
+        <token>con</token>
+        <token>con</token>
+      </pattern>
+      <message>Posible repetición de "con".</message>
+      <short>con con</short>
+    </rule>
+    <rule id="AST_SOFT_POR_POR" name="por por">
+      <pattern>
+        <token>por</token>
+        <token>por</token>
+      </pattern>
+      <message>Posible repetición de "por".</message>
+      <short>por por</short>
+    </rule>
+    <rule id="AST_SOFT_NON_NON" name="non non">
+      <pattern>
+        <token>non</token>
+        <token>non</token>
+      </pattern>
+      <message>Posible repetición de "non".</message>
+      <short>non non</short>
+    </rule>
+    <rule id="AST_SOFT_QUE_QUE" name="que que">
+      <pattern>
+        <token>que</token>
+        <token>que</token>
+      </pattern>
+      <message>Posible repetición de "que".</message>
+      <short>que que</short>
+    </rule>
+    <rule id="AST_SOFT_PA_PA" name="pa pa">
+      <pattern>
+        <token>pa</token>
+        <token>pa</token>
+      </pattern>
+      <message>Posible repetición de "pa".</message>
+      <short>pa pa</short>
+    </rule>
+    <rule id="AST_SOFT_A_EL" name="a el">
+      <pattern>
+        <token>a</token>
+        <token>el</token>
+      </pattern>
+      <message>Quiciabes "al"?</message>
+      <short>a/al</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="AST_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="AST_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>A menudo basta un signo d'esclamación: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

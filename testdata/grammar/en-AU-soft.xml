@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EN-AU spelling/style pack (loaded for en-AU). -->
+<rules lang="en-AU">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="EN_SOFT_COLOR_AU" name="color soft AU">
+      <pattern>
+        <token>color</token>
+      </pattern>
+      <message>In Australian English, "colour" is often preferred.</message>
+      <short>color</short>
+    </rule>
+    <rule id="EN_SOFT_FAVORITE_AU" name="favorite soft AU">
+      <pattern>
+        <token>favorite</token>
+      </pattern>
+      <message>In Australian English, "favourite" is often preferred.</message>
+      <short>favorite</short>
+    </rule>
+    <rule id="EN_SOFT_CENTER_AU" name="center soft AU">
+      <pattern>
+        <token>center</token>
+      </pattern>
+      <message>In Australian English, "centre" is often preferred.</message>
+      <short>center</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZE_AU" name="organize soft AU">
+      <pattern>
+        <token>organize</token>
+      </pattern>
+      <message>In Australian English, "organise" is often preferred.</message>
+      <short>organize</short>
+    </rule>
+    <rule id="EN_SOFT_REALIZE_AU" name="realize soft AU">
+      <pattern>
+        <token>realize</token>
+      </pattern>
+      <message>In Australian English, "realise" is often preferred.</message>
+      <short>realize</short>
+    </rule>
+    <rule id="EN_SOFT_TRAVELED_AU" name="traveled soft AU">
+      <pattern>
+        <token>traveled</token>
+      </pattern>
+      <message>In Australian English, "travelled" is often preferred.</message>
+      <short>traveled</short>
+    </rule>
+    <rule id="EN_SOFT_CANCELED_AU" name="canceled soft AU">
+      <pattern>
+        <token>canceled</token>
+      </pattern>
+      <message>In Australian English, "cancelled" is often preferred.</message>
+      <short>canceled</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSE_AU" name="license soft AU">
+      <pattern>
+        <token>license</token>
+      </pattern>
+      <message>In Australian English, "licence" is often preferred for the noun.</message>
+      <short>license</short>
+    </rule>
+    <rule id="EN_SOFT_TIRE_AU" name="tire soft AU">
+      <pattern>
+        <token>tire</token>
+      </pattern>
+      <message>In Australian English, "tyre" is preferred for vehicle wheels.</message>
+      <short>tire</short>
+    </rule>
+    <rule id="EN_SOFT_ALUMINUM_AU" name="aluminum soft AU">
+      <pattern>
+        <token>aluminum</token>
+      </pattern>
+      <message>In Australian English, "aluminium" is preferred.</message>
+      <short>aluminum</short>
+    </rule>
+    <rule id="EN_SOFT_COLOR_VERB_AU" name="favor soft AU">
+      <pattern>
+        <token>favor</token>
+      </pattern>
+      <message>In Australian English, "favour" is often preferred.</message>
+      <short>favor</short>
+    </rule>
+  </category>
+</rules>

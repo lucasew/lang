@@ -1,0 +1,1879 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "es",
+  "cases": [
+    {
+      "rule": "ADEMAS",
+      "text": "Ademas de inglés, habla francés.",
+      "suggestion": "Además",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "AGUSTO",
+      "text": "¿Estás agusto?",
+      "suggestion": "a gusto",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ALREDEDOR",
+      "text": "Vino a alrededor de las cinco.",
+      "suggestion": "alrededor",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ALTO_CARGO",
+      "text": "La alta cargo del gobierno.",
+      "suggestion": "alto cargo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "APARTE",
+      "text": "Debates a parte, tomemos una decisión.",
+      "suggestion": "aparte",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "APARTE",
+      "text": "Deja indefensos a parte de los vecinos.",
+      "suggestion": "aparte",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "APESAR",
+      "text": "Apesar de todo, lo comprendo.",
+      "suggestion": "A pesar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "AVECES",
+      "text": "Aveces pienso lo mismo.",
+      "suggestion": "A veces",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "AVER_A_VER",
+      "text": "Voy aver qué pasa.",
+      "suggestion": "a ver",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "A_CONTRAPIE",
+      "text": "Me pilló a contra pie",
+      "suggestion": "a contrapié",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "A_FINALES",
+      "text": "Al finales del siglo XX.",
+      "suggestion": "A finales",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "A_FINES",
+      "text": "Al fines de año vendré.",
+      "suggestion": "A fines",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "A_TRAVES",
+      "text": "Se fue campo través.",
+      "suggestion": "a través",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "A_TRAVES",
+      "text": "Trata los datos obtenidos través de las cookies.",
+      "suggestion": "a través",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "BOCABAJO",
+      "text": "Se quedó boca bajo.",
+      "suggestion": "bocabajo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CIRCULO",
+      "text": "En un amplio circulo a Madrid.",
+      "suggestion": "círculo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_MAS",
+      "text": "Seguro que contra más estudias, más aprendes",
+      "suggestion": "cuanto más",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CON_O_SIN",
+      "text": "¿Lo quiere con a sin leche?",
+      "suggestion": "o",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DADO_A_QUE",
+      "text": "Hay que esperar turno, dado a que en muchas ciudades la oferta es menor.",
+      "suggestion": "dado que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DANES",
+      "text": "El perro de mi vecina es un gran danes.",
+      "suggestion": "danés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DEBIDO_AUN",
+      "text": "Fue debido aun problema eléctrico.",
+      "suggestion": "a un",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DEBIDO_QUE",
+      "text": "No lo trajeron debido que no estaba acabado.",
+      "suggestion": "debido a que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DEL_LA",
+      "text": "Vivía en el centro del la ciudad.",
+      "suggestion": "de la",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DESDE",
+      "text": "Des de otra parte.",
+      "suggestion": "Desde",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DESDE_EL",
+      "text": "Des del otro lado.",
+      "suggestion": "Desde el",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DESDE_ERA",
+      "text": "Lo sabe desde era niño.",
+      "suggestion": "desde que era",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DE_GRATIS",
+      "text": "El agua es de gratis.",
+      "suggestion": "gratis",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DURANTE_A",
+      "text": "Pasó durante a primera mitad del siglo.",
+      "suggestion": "durante la",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DURANTE_AL",
+      "text": "Pasó durante al día 30.",
+      "suggestion": "durante la",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EMPECE",
+      "text": "Empece a pensarlo.",
+      "suggestion": "Empecé",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENMEDIO",
+      "text": "Enmedio de la plaza.",
+      "suggestion": "En medio",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENMEDIO",
+      "text": "Está enmedio.",
+      "suggestion": "en medio",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENSERIO",
+      "text": "¿Lo dices enserio?",
+      "suggestion": "en serio",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_BASE_AL",
+      "text": "Se puede regresar a la zona en base al documento.",
+      "suggestion": "basándonos en el",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_RELACION_A",
+      "text": "Es muy austero en relación a su indumentaria",
+      "suggestion": "en relación con",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_RELACION_AL",
+      "text": "Es muy austero en relación al vestir.",
+      "suggestion": "en relación con el",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTABAMOS",
+      "text": "Está vamos muy contentos.",
+      "suggestion": "Estábamos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EXCESO_DE_AFORO",
+      "text": "Hubo un exceso de aforo.",
+      "suggestion": "exceso de asistentes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "FRIO",
+      "text": "No tengo ni frio ni calor",
+      "suggestion": "frío",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "GOOGLE_DOC",
+      "text": "Tengo un problema con Google Doc.",
+      "suggestion": "Google Docs",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "HICO",
+      "text": "Se hico un lío con las respuestas.",
+      "suggestion": "hizo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INGLES",
+      "text": "Alumnos de ingles.",
+      "suggestion": "inglés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INGLES",
+      "text": "Corrección en castellano, ingles y otros idiomas.",
+      "suggestion": "inglés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INGLES",
+      "text": "Curso de ingles americano.",
+      "suggestion": "inglés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INGLES",
+      "text": "Curso de ingles básico.",
+      "suggestion": "inglés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INGLES",
+      "text": "Me gusta mucho el ingles.",
+      "suggestion": "inglés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INGLES",
+      "text": "Mi ingles no es muy bueno.",
+      "suggestion": "inglés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INGLES",
+      "text": "Tu ingles es muy bueno.",
+      "suggestion": "inglés",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "JAMAS",
+      "text": "Jamas dije eso.",
+      "suggestion": "Jamás",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "JANE_AUSTEN",
+      "text": "Jean austen.",
+      "suggestion": "Jane Austen",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "JANE_FONDA",
+      "text": "Jean Fonda.",
+      "suggestion": "Jane Fonda",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LAQUE",
+      "text": "Dame laque quieras.",
+      "suggestion": "la que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LARDO_LARGO",
+      "text": "A lo lardo de la década.",
+      "suggestion": "largo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LAS_PASO",
+      "text": "El precandidato cerró su gira nacional antes de las PASOS.",
+      "suggestion": "PASO",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LA_MATRICULA",
+      "text": "La matricula ha aumentado.",
+      "suggestion": "matrícula",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LIDERES",
+      "text": "Lideres del campeonato.",
+      "suggestion": "Líderes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LIO",
+      "text": "¡Menudo lio!",
+      "suggestion": "lío",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MARQUES",
+      "text": "Marques de Utrillo.",
+      "suggestion": "Marqués",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MB",
+      "text": "Es de 64 Mb.",
+      "suggestion": "MB",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "NUMERO",
+      "text": "El numero 4.",
+      "suggestion": "número",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "NUMERO",
+      "text": "Tengo un numero de lotería.",
+      "suggestion": "número",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "OBEDIENCIA_DEBIDA",
+      "text": "La obediencia de vida es una situación en la que una persona tiene la obligación de obedecer a otra.",
+      "suggestion": "obediencia debida",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "OJALA",
+      "text": "¡Ojala vengas hoy!",
+      "suggestion": "Ojalá",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "O_NO_TILDE",
+      "text": "Son 15 ó 16 casos.",
+      "suggestion": "o",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PARA_MI_ERA",
+      "text": "Para mi era el mejor.",
+      "suggestion": "mí",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PIO",
+      "text": "Es un personaje muy pio.",
+      "suggestion": "pío",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "POR_TAL_DE",
+      "text": "Por tal de no verlo.",
+      "suggestion": "Con tal de",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PUNTOS_SUSPENSIVOS",
+      "text": "Ahora mismo...",
+      "suggestion": "…",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "REP_ANTES",
+      "text": "Antes lo arreglaremos.",
+      "suggestion": "Previamente",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_DESPUES",
+      "text": "Después lo arreglaremos.",
+      "suggestion": "Posteriormente",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_USO",
+      "text": "Están tratando de fomentar el uso del transporte público.",
+      "suggestion": "utilización",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_YA_QUE",
+      "text": "La solución era buena, ya que gustaba a todos.",
+      "suggestion": "porque",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "SAO_PAULO",
+      "text": "Vengo de Sao Paulo.",
+      "suggestion": "São Paulo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SERIAN",
+      "text": "Estos serian los más apropiados.",
+      "suggestion": "serían",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SERIAN",
+      "text": "Serian los más apropiados.",
+      "suggestion": "Serían",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SE_A",
+      "text": "No se a quién pertenece.",
+      "suggestion": "sé",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SIN_EMBRAGO",
+      "text": "Sin embrago, me gusta.",
+      "suggestion": "Sin embargo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SIN_ENCAMBIO",
+      "text": "Imagino que sin en cambio está de acuerdo.",
+      "suggestion": "en cambio",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SI_QUIERA",
+      "text": "Imagino que ni si quiera está de acuerdo.",
+      "suggestion": "siquiera",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SOLO",
+      "text": "Y sólo tiene tres.",
+      "suggestion": "solo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TV",
+      "text": "A veces se abrevia como tv.",
+      "suggestion": "TV",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ULTIMO",
+      "text": "El ultimo de la fila.",
+      "suggestion": "último",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ULTIMO",
+      "text": "El ultimo los cogerá.",
+      "suggestion": "último",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ULTIMO",
+      "text": "Es mi ultimo día.",
+      "suggestion": "último",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ULTIMO",
+      "text": "Lo ultimo que quiero es esto.",
+      "suggestion": "último",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "U_NO",
+      "text": "U no de los casos más habituales.",
+      "suggestion": "Uno",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "VARIA",
+      "text": "Actualmente el IVA varia entre un 15 y un 21%.",
+      "suggestion": "varía",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "VIVIDAMENTE",
+      "text": "Lo sentimos vividamente.",
+      "suggestion": "vívidamente",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ADOLECER_CARECER",
+      "text": "Adolecía de los recursos adecuados.",
+      "suggestion": "Carecía",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ADOLECER_CARECER",
+      "text": "El programa de ayuda adolece de los medios necesarios.",
+      "suggestion": "carece",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ADOLECER_CARECER",
+      "text": "Han adolecido de financiación.",
+      "suggestion": "carecido",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ADVERBIO_MENTE",
+      "text": "Sucedió posterior mente.",
+      "suggestion": "posteriormente",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "AFORO",
+      "text": "El aforo fue de 5000 personas.",
+      "suggestion": "afluencia",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "AFRENTAR_DIFICULTADES",
+      "text": "Tuvo que afrentar muchos problemas con la mudanza.",
+      "suggestion": "afrontar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "AH_HA",
+      "text": "Te eh mandado un correo.",
+      "suggestion": "he",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "AH_INF",
+      "text": "Voy ah hablar con ella.",
+      "suggestion": "a hablar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ANIMO",
+      "text": "Daría animo a todos.",
+      "suggestion": "ánimo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ANIMO",
+      "text": "Daría también animo a los demás.",
+      "suggestion": "ánimo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ANY20011_2011",
+      "text": "Es de 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ANY20011_2011",
+      "text": "Es del año 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "APARTES",
+      "text": "Apartes de esto, tomemos una decisión.",
+      "suggestion": "Aparte de",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ARANA",
+      "text": "He visto una arana.",
+      "suggestion": "araña",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ASIENDO_HACIENDO",
+      "text": "Estoy asiendo los deberes.",
+      "suggestion": "haciendo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ASIENDO_HACIENDO",
+      "text": "Me divierto mucho asiéndolos.",
+      "suggestion": "haciéndolos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "BARBRA_STREISAND",
+      "text": "Barbara Streisand.",
+      "suggestion": "Barbra Streisand",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "BIEN_VENIDO",
+      "text": "¡Bien venidos a la fiesta!",
+      "suggestion": "Bienvenidos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CASETE",
+      "text": "Un videocassette.",
+      "suggestion": "videocasete",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CASETE",
+      "text": "Varios cassettes.",
+      "suggestion": "casetes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CASETE",
+      "text": "Varios videocasettes.",
+      "suggestion": "videocasetes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CENYO",
+      "text": "Entonces frunció el seño.",
+      "suggestion": "ceño",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "COLERA",
+      "text": "El colera hizo estragos",
+      "suggestion": "cólera",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "COMMA_PERO",
+      "text": "La alianza suma bastantes escaños pero no son suficientes.",
+      "suggestion": ", pero",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "COMMA_PERO",
+      "text": "Son mayoritarios pero no tienen derecho a voto en las elecciones comunales, ni tampoco pueden ser presidentes.",
+      "suggestion": ", pero",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "COMO_COMPARATIVO",
+      "text": "Páginas con nombres ridículos cómo esta.",
+      "suggestion": "como",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "COMPLEJIZAR",
+      "text": "Se complejizó.",
+      "suggestion": "complicó",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "CONFUSION_I_EXCLAMACION",
+      "text": "iHemos llegado!",
+      "suggestion": "¡Hemos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CUATRO_PUNTOS",
+      "text": "Eran....",
+      "suggestion": "...",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CUIDAD_CIUDAD",
+      "text": "En el centro de la cuidad.",
+      "suggestion": "ciudad",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CUIDAD_CIUDAD",
+      "text": "En la cuidad.",
+      "suggestion": "ciudad",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CUIDAD_CIUDAD",
+      "text": "En mi cuidad.",
+      "suggestion": "ciudad",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CUIDAD_CIUDAD",
+      "text": "En nuestra cuidad.",
+      "suggestion": "ciudad",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CUOTA_COTA",
+      "text": "La cuota de nieve está en 2000 metros.",
+      "suggestion": "cota",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "CURRICULUM",
+      "text": "Los currículums vitae.",
+      "suggestion": "curriculum vitae",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DAR_ABASTO",
+      "text": "No dábamos nunca a basto.",
+      "suggestion": "abasto",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DAR_A_LUGAR",
+      "text": "Lo cual daría a lugar a varios cambios.",
+      "suggestion": "lugar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DEJA_VU",
+      "text": "dejà-vu.",
+      "suggestion": "déjà vu",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DENUDO",
+      "text": "Dos personas denudas.",
+      "suggestion": "desnudas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DEPENDER_DE",
+      "text": "Esto depende en si te gusta o no",
+      "suggestion": "de",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DESTORNILLAR_RISA",
+      "text": "Con ese chiste, se destornilló de risa.",
+      "suggestion": "desternilló",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DES_DE",
+      "text": "Son objeto des discusión.",
+      "suggestion": "de",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "La ama se fue.",
+      "suggestion": "El ama",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "La Ática es una región griega.",
+      "suggestion": "El Ática",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "Le dieron la alta en el hospital.",
+      "suggestion": "el alta",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "Le dieron la alta médica en el hospital.",
+      "suggestion": "el alta",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "Me gusta la agua que hay ahí.",
+      "suggestion": "el agua",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DE_BASA",
+      "text": "De basa en otra solución.",
+      "suggestion": "Se basa",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DE_LA",
+      "text": "La situación del a inspección.",
+      "suggestion": "de la",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DE_LAS",
+      "text": "Al as excluidas.",
+      "suggestion": "A las excluidas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DE_LAS",
+      "text": "La situación del as personas.",
+      "suggestion": "de las personas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DHONDT",
+      "text": "La regla d'Hondt.",
+      "suggestion": "D'Hondt",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DHONDT",
+      "text": "La regla d'Hont.",
+      "suggestion": "D'Hondt",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DHONDT",
+      "text": "La regla de Hondt.",
+      "suggestion": "D'Hondt",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_00",
+      "text": "Lineas de actuación.",
+      "suggestion": "Líneas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_01",
+      "text": "Capitulo 3.",
+      "suggestion": "Capítulo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_01",
+      "text": "El legitimo heredero.",
+      "suggestion": "legítimo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_01",
+      "text": "Sus pretensiones, si no legitimas, por lo menos eran pintorescas.",
+      "suggestion": "legítimas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EL_AGRAVANTE",
+      "text": "En este caso concurre el atenuante del pronto pago.",
+      "suggestion": "la atenuante",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EL_AGRAVANTE",
+      "text": "Se hizo con el agravante de nocturnidad.",
+      "suggestion": "la agravante",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENFRENTARSE_ANTE",
+      "text": "Se enfrentó ante las autoridades.",
+      "suggestion": "a",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENFRENTARSE_ANTE",
+      "text": "Se enfrentó siempre ante las autoridades.",
+      "suggestion": "a",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENFRENTARSE_ANTE",
+      "text": "Tuvo que enfrentarse ante las autoridades.",
+      "suggestion": "a",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENSENAR",
+      "text": "Le ensenaba los resultados.",
+      "suggestion": "enseñaba",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ENSENAR",
+      "text": "Me ensenó cómo hacerlo.",
+      "suggestion": "enseñó",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_LA_MEDIDA_EN_QUE",
+      "text": "Tiene sentido en la medida de que se entienda.",
+      "suggestion": "en la medida en que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_LA_MEDIDA_EN_QUE",
+      "text": "Tiene sentido en medida de que se entienda.",
+      "suggestion": "en la medida en que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_LA_MEDIDA_EN_QUE",
+      "text": "Tiene sentido en medida en que se entienda.",
+      "suggestion": "en la medida en que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_LA_MEDIDA_EN_QUE",
+      "text": "Tiene sentido en medida que se entienda.",
+      "suggestion": "en la medida en que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EN_TANTO",
+      "text": "En tanto heredera de la monarquía.",
+      "suggestion": "En cuanto",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EQUIVALENTE_A",
+      "text": "Bailar es equivalente caminar deprisa.",
+      "suggestion": "equivalente a",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EQUIVALENTE_A",
+      "text": "La multiplicación no es equivalente la división.",
+      "suggestion": "equivalente a",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESO",
+      "text": "En la eso lo aprobó todo.",
+      "suggestion": "ESO",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTE_ESE_AQUEL_NOTILDE",
+      "text": "Aquél es el camino.",
+      "suggestion": "Aquel",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTE_ESE_AQUEL_NOTILDE",
+      "text": "En relación con aquéllos.",
+      "suggestion": "aquellos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTE_ESE_AQUEL_NOTILDE",
+      "text": "En relación con ésa.",
+      "suggestion": "esa",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTE_ESE_AQUEL_NOTILDE",
+      "text": "En relación con éste.",
+      "suggestion": "este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTE_ESE_AQUEL_NOTILDE",
+      "text": "Éste es el camino.",
+      "suggestion": "Este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTO_ESTE",
+      "text": "En esto campo es el mejor.",
+      "suggestion": "este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTO_ESTE",
+      "text": "En esto momento no puedo responderle.",
+      "suggestion": "este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTO_ESTE",
+      "text": "En esto ámbito es el mejor.",
+      "suggestion": "este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTO_ESTE",
+      "text": "Es con esto deseo que lo solicito.",
+      "suggestion": "este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTO_ESTE",
+      "text": "Estoy viviendo en esto momento en Rusia",
+      "suggestion": "este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ESTO_ESTE",
+      "text": "Por esto motivo, las ciudades se encuentran en declive.",
+      "suggestion": "este",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ES_DATE_WEEKDAY_CURRENTYEAR",
+      "text": "Lunes 7 de octubre",
+      "suggestion": "Martes 7",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ES_DATE_WEEKDAY_CURRENTYEAR",
+      "text": "Lunes, 7 de octubre",
+      "suggestion": "Martes, 7",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ETA_ESTA",
+      "text": "Eta situación es insostenible.",
+      "suggestion": "Esta",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EX_ALTO_CARGO",
+      "text": "Condenados a cadena perpetua por corrupción unos exaltos cargos del Ejército chino.",
+      "suggestion": "ex altos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EX_ALTO_CARGO",
+      "text": "Nombra a un exalto mando de finanzas como nuevo embajador en Colombia",
+      "suggestion": "ex alto",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "EX_ALTO_CARGO",
+      "text": "Un exalto cargo de Rabat, detenido por apropiación de relojes",
+      "suggestion": "ex alto",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "E_PARTICIPIO",
+      "text": "E invitado a un amigo.",
+      "suggestion": "He",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "E_PARTICIPIO",
+      "text": "Siempre e comido bien.",
+      "suggestion": "he",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "E_PARTICIPIO",
+      "text": "Siempre e ido al cine.",
+      "suggestion": "he",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "FITOZOOSANITARIO",
+      "text": "Directivas fito-zoo-sanitarias.",
+      "suggestion": "fitozoosanitarias",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "GRAFICO",
+      "text": "La tarjeta grafica.",
+      "suggestion": "gráfica",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "GROSSO_MODO",
+      "text": "Las cifras indican a grosso modo que la gestión es correcta.",
+      "suggestion": "grosso modo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "HAZMERREIR",
+      "text": "Son el hazme reír del país.",
+      "suggestion": "hazmerreír",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "HEMO_HEMOS",
+      "text": "Hemo visto algunas mejoras.",
+      "suggestion": "Hemos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "HE_HA",
+      "text": "He ha dicho que sí",
+      "suggestion": "Me",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INDOCHINA",
+      "text": "La guerra de Indo-China.",
+      "suggestion": "Indochina",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INSISTIR_DE",
+      "text": "No insistas de que vayamos al cine",
+      "suggestion": "en que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "INSISTIR_DE",
+      "text": "No insistas más de que vayamos al cine",
+      "suggestion": "en que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "JOHNS_HOPKINS",
+      "text": "John Hopkins University.",
+      "suggestion": "Johns Hopkins",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "KATHARINE_HEPBURN",
+      "text": "Katherine Hepburn.",
+      "suggestion": "Katharine Hepburn",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LAMINE_YAMAL",
+      "text": "Yamine Lamal.",
+      "suggestion": "Lamine Yamal",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LAS_MILES",
+      "text": "De las miles de personas que vinieron.",
+      "suggestion": "los miles",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LAS_MILES",
+      "text": "De las millares de personas que vinieron.",
+      "suggestion": "los millares",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LA_A",
+      "text": "No entiendo la a propuesta.",
+      "suggestion": "la propuesta",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LIBREOFFICE",
+      "text": "Puedes instalar LanguageTool en Libre-Office.",
+      "suggestion": "LibreOffice",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LIQUIDA",
+      "text": "Eso quiere decir liquido.",
+      "suggestion": "líquido",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LIQUIDA",
+      "text": "Liquida quiere decir cuantificable.",
+      "suggestion": "Líquida",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LITROS_POR_METRO",
+      "text": "10 litros por metros cuadrados",
+      "suggestion": "metro cuadrado",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LITROS_POR_METRO",
+      "text": "10 mililitros por centímetros cúbicos",
+      "suggestion": "centímetro cúbico",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LITROS_POR_METRO",
+      "text": "1000 habitantes por kilómetros cuadrados",
+      "suggestion": "kilómetro cuadrado",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LLEVAR_ACABO",
+      "text": "Hay que llevarlo acabo con solvencia.",
+      "suggestion": "a cabo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LLEVAR_ACABO",
+      "text": "Lo llevó acabo con solvencia.",
+      "suggestion": "a cabo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LOOR",
+      "text": "Entraron en loor de multitudes",
+      "suggestion": "olor de multitudes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LOS_MAPUCHE",
+      "text": "Algunos mapuche.",
+      "suggestion": "mapuches",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LOS_NUMBER_FEMALE",
+      "text": "Cumplir dos de los tres preguntas.",
+      "suggestion": "las",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "LOS_NUMBER_FEMALE",
+      "text": "Puede dar los cinco ideas nuevas.",
+      "suggestion": "las",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MALO_AMIGO_MAL_AMIGO",
+      "text": "Gracias por ayudarme, eres un bueno amigo.",
+      "suggestion": "buen",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MALO_AMIGO_MAL_AMIGO",
+      "text": "La vida es demasiado corta para beber malo vino.",
+      "suggestion": "mal",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MANA_MAMA",
+      "text": "De cáncer de mana.",
+      "suggestion": "cáncer de mama",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MANDELA",
+      "text": "Mandela a nuestra dirección de correo.",
+      "suggestion": "Mándela",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MAS_BUENA",
+      "text": "Este pan está más bueno que el otro",
+      "suggestion": "mejor",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "MAS_MALA",
+      "text": "Este pan está más malo que el otro",
+      "suggestion": "peor",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "MAY_ABREVIATURA",
+      "text": "Ha venido la sra. García.",
+      "suggestion": "Sra",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MENAGE_A_TROIS",
+      "text": "Ménagé-â-trois.",
+      "suggestion": "Ménage à trois",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MENAGE_A_TROIS",
+      "text": "Un menage a trois.",
+      "suggestion": "ménage à trois",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MENAGE_A_TROIS",
+      "text": "Un ménage a tróis.",
+      "suggestion": "ménage à trois",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MEXICO",
+      "text": "Son mejicanas.",
+      "suggestion": "mexicanas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "MEXICO",
+      "text": "Soy de Méjico.",
+      "suggestion": "México",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "MIN_DIAS_SEMANA",
+      "text": "Todos los Lunes son tristes.",
+      "suggestion": "lunes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MONTANA",
+      "text": "húmedas montanas por encima de los 3000 m.",
+      "suggestion": "montañas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MONTANA",
+      "text": "¿Subimos a la montana?",
+      "suggestion": "montaña",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MONTANERO",
+      "text": "Él es un montanero experimentado.",
+      "suggestion": "montañero",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MONTANISMO",
+      "text": "Es un experto en montanismo.",
+      "suggestion": "montañismo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MONTANISTA",
+      "text": "Es un experto montanista.",
+      "suggestion": "montañista",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MOTO_GP",
+      "text": "Participa en la categoría de moto gp.",
+      "suggestion": "MotoGP",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MUCHO_NF",
+      "text": "Cuídate mucho tía.",
+      "suggestion": "mucho, tía",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MUCHO_NF",
+      "text": "Os quiero mucho tías.",
+      "suggestion": "mucho, tías",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "MUY_GRAVISIMO",
+      "text": "Esto es muy gravísimo.",
+      "suggestion": "gravísimo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "NADIE",
+      "text": "naide",
+      "suggestion": "nadie",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "NUMBERS_IN_WORDS",
+      "text": "¡Buen0s días!",
+      "suggestion": "Buenos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "NUNEZ_FEIJOO",
+      "text": "Nuñez Fejioo.",
+      "suggestion": "Núñez Feijóo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ORDENES",
+      "text": "Ordenes del general.",
+      "suggestion": "Órdenes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ORDINAL_CHAR",
+      "text": "El 9° clasificado",
+      "suggestion": "9.º",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ORIGINAL_ORIGINAR",
+      "text": "Podría original problemas.",
+      "suggestion": "originar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PAGINA",
+      "text": "Copia las paginas 3 y 4.",
+      "suggestion": "páginas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PAGINA",
+      "text": "Pagina 34.",
+      "suggestion": "Página",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PANO",
+      "text": "Todos los panos están tendidos.",
+      "suggestion": "paños",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PA_PARA",
+      "text": "Pa preparar la sopa, necesitas cebollas.",
+      "suggestion": "Para",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "PA_PARA",
+      "text": "¿Pa qué lo quieres?",
+      "suggestion": "Para",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "PEARL_HARBOR",
+      "text": "El ataque a Perl Harbor.",
+      "suggestion": "Pearl Harbor",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PEARL_HARBOR",
+      "text": "El ataque a pearl harbor.",
+      "suggestion": "Pearl Harbor",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PESTANA",
+      "text": "Me ha caído una pestana.",
+      "suggestion": "pestaña",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PLASMA_CONVALECIENTE",
+      "text": "El plasma convaleciente.",
+      "suggestion": "plasma de convaleciente",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PLURALS",
+      "text": "Verifica los establecimiento s de la compra.",
+      "suggestion": "establecimientos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "POR_CIERTO",
+      "text": "Por cierto Valeria está preciosa.",
+      "suggestion": "cierto,",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "POR_NO",
+      "text": "Me siento mal porno haberlo dicho antes.",
+      "suggestion": "por no",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PP_SE",
+      "text": "¡Como te agarre, te se cae el pelo!",
+      "suggestion": "se te",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PRACTICA",
+      "text": "Practica núm. 12",
+      "suggestion": "Práctica",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PRACTICA",
+      "text": "Practicas",
+      "suggestion": "Prácticas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PRACTICA",
+      "text": "Teoría y practica.",
+      "suggestion": "práctica",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PREFIJOS_JUNTOS_EN_DICCIONARIO",
+      "text": "Es muy anti occidental.",
+      "suggestion": "antioccidental",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PREFIJOS_JUNTOS_EN_DICCIONARIO",
+      "text": "Las aportaciones greco romanas al arte.",
+      "suggestion": "grecorromanas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PREFIJO_CUASI",
+      "text": "Descubrieron nuevas cuasi-partículas.",
+      "suggestion": "cuasipartículas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PREFIJO_CUASI",
+      "text": "Hacía un tiempo cuasi veraniego.",
+      "suggestion": "cuasiveraniego",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PREFIJO_POST",
+      "text": "En el pos-operatorio.",
+      "suggestion": "posoperatorio",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PRESA_PRENSA",
+      "text": "Hable con el Departamento de Presa.",
+      "suggestion": "Prensa",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PRET_A_PORTER",
+      "text": "El pret-a porter.",
+      "suggestion": "prêt-à-porter",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PRET_A_PORTER",
+      "text": "El prèt a porté.",
+      "suggestion": "prêt-à-porter",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "PRET_A_PORTER",
+      "text": "El prêt- à-porter.",
+      "suggestion": "prêt-à-porter",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "P_EJ",
+      "text": "(p .e. el campo).",
+      "suggestion": "p. ej.",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "P_EJ",
+      "text": "(p .ej. el campo).",
+      "suggestion": "p. ej.",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "P_EJ",
+      "text": "P .ej . el campo.",
+      "suggestion": "P. ej.",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "P_EJ",
+      "text": "P .ej. el campo.",
+      "suggestion": "P. ej.",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "P_EJ",
+      "text": "P ej . el campo.",
+      "suggestion": "P. ej.",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "P_EJ",
+      "text": "P.ej. el campo.",
+      "suggestion": "P. ej.",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "QUIEN_TILDE",
+      "text": "¿Pero para quien es?",
+      "suggestion": "quién",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "QUIEN_TILDE",
+      "text": "¿Quienes son?",
+      "suggestion": "Quiénes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "REPUBLICA",
+      "text": "Republica Checa",
+      "suggestion": "República",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "REP_COMPROBAR",
+      "text": "En primer lugar, se deben comprobar los documentos manualmente.",
+      "suggestion": "revisar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_CREAR",
+      "text": "Estas son algunas ideas para crear tu primera campaña.",
+      "suggestion": "generar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_CREER",
+      "text": "Creo que tienes razón.",
+      "suggestion": "Pienso",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_POR_LO_TANTO",
+      "text": "Por lo tanto, ganó el partido.",
+      "suggestion": "En consecuencia",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_REVISAR",
+      "text": "En primer lugar, se deben revisar los documentos manualmente.",
+      "suggestion": "comprobar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REP_VERIFICAR",
+      "text": "En primer lugar, se deben verificar los documentos manualmente.",
+      "suggestion": "revisar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
+    },
+    {
+      "rule": "REVERTIR_REVESTIR",
+      "text": "Esto revertía gravedad.",
+      "suggestion": "revestía",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "REVERTIR_REVESTIR",
+      "text": "Esto revierte mucha importancia.",
+      "suggestion": "reviste",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "REVERTIR_REVESTIR",
+      "text": "Esto revierte una gran gravedad.",
+      "suggestion": "reviste",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SE_HALLA_SE_HAYA",
+      "text": "La causa de que se halla castellanizado.",
+      "suggestion": "se haya",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SE_HALLA_SE_HAYA",
+      "text": "Nadie dice que se halla casado con ella.",
+      "suggestion": "se haya",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SE_HALLA_SE_HAYA",
+      "text": "No parece que se halla comprado nada.",
+      "suggestion": "se haya",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SE_HALLA_SE_HAYA",
+      "text": "una situación singular que se halla llevado a cabo.",
+      "suggestion": "se haya",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SE_LO_ENTREGADA",
+      "text": "Me pidió que te lo entregada.",
+      "suggestion": "entregara",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SHAMPOO_CHAMPU",
+      "text": "Me compré un shampoo.",
+      "suggestion": "champú",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SHAMPOO_CHAMPU",
+      "text": "SHAMPOOS BARATOS.",
+      "suggestion": "CHAMPÚS",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SIN_ECUANIME",
+      "text": "Para aprobar, la condición sin ecuánime es obtener un 5.",
+      "suggestion": "condición sine qua non",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SON_CON",
+      "text": "El gobierno cumple son su función.",
+      "suggestion": "con",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "SURGIR_EFECTO",
+      "text": "No surgió efecto.",
+      "suggestion": "surtió efecto",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TAJO_TRAJO",
+      "text": "Se lo tajo del Japón.",
+      "suggestion": "trajo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TAL_ES_ASI",
+      "text": "Tal es así que los resultados fueron positivos.",
+      "suggestion": "Tanto es así que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TARTA_TRATA",
+      "text": "Se tarta de otro tema.",
+      "suggestion": "trata",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TE_NO",
+      "text": "Si te no mienten, vendrán mañana.",
+      "suggestion": "no te",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TIK_TOK",
+      "text": "Tik tok es un servicio para compartir vídeos.",
+      "suggestion": "TikTok",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TIRA_AFLOJA",
+      "text": "los tiras y aflojas",
+      "suggestion": "los tira y afloja",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TOCARIA",
+      "text": "Tocaria hacerlo.",
+      "suggestion": "Tocaría",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TODO_LO",
+      "text": "De toda lo grande que ha pasado.",
+      "suggestion": "todo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TODO_LO",
+      "text": "Todos lo dulce me gusta.",
+      "suggestion": "Todo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ULTIMA",
+      "text": "Es mi ultima oferta.",
+      "suggestion": "última",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "ULTIMA",
+      "text": "Son las ultimas estimaciones.",
+      "suggestion": "últimas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "UNUSUAL_WITHOUT_ACCENT",
+      "text": "Durante mucho tiempo convivio con sus padres.",
+      "suggestion": "convivió",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "UNUSUAL_WITHOUT_ACCENT",
+      "text": "Prometio que lo haría.",
+      "suggestion": "Prometió",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "USO_HUSO",
+      "text": "En el uso horario de las Canarias.",
+      "suggestion": "huso",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "USO_HUSO",
+      "text": "En otros usos horarios.",
+      "suggestion": "husos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "VEMOS_HEMOS",
+      "text": "Nos vemos visto obligados a hacerlo.",
+      "suggestion": "hemos",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "VE_LE",
+      "text": "No ve vale este resultado.",
+      "suggestion": "le",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "VOY_HA_INF",
+      "text": "Voy ha hablar con ella.",
+      "suggestion": "Voy a hablar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "VOY_INF",
+      "text": "Voy contárselo todo.",
+      "suggestion": "Voy a contárselo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "VOY_INF",
+      "text": "Voy hablar con ella.",
+      "suggestion": "Voy a hablar",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "WRONG_DASH",
+      "text": "Es él ─dijo.",
+      "suggestion": "—",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "WRONG_DASH",
+      "text": "Es él ㅡdijo.",
+      "suggestion": "—dijo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "YOGURT_YOGUR",
+      "text": "No se ha comido todo el yogurt.",
+      "suggestion": "yogur",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    }
+  ]
+}

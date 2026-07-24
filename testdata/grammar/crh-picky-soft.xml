@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft CRH pack loaded only when level is picky. -->
+<rules lang="crh">
+  <category id="STYLE" name="Style">
+    <rule id="CRH_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>«toplantı» ya da «keneş» tercih etiñiz.</message>
+      <short>style</short>
+    </rule>
+    <rule id="CRH_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>«keri bildiri» ya da «yorum» tercih etiñiz.</message>
+      <short>style</short>
+    </rule>
+    <rule id="CRH_SOFT_PICKY_ÇOK_ÇOK" name="çok çok soft picky">
+      <pattern>
+        <token>çok</token>
+        <token>çok</token>
+      </pattern>
+      <message>Zayıf vurğu; daha küçlü sıfat qullanıñız.</message>
+      <short>style</short>
+    </rule>
+    <rule id="CRH_SOFT_PICKY_ŞEYLER" name="çoq şey soft picky">
+      <pattern>
+        <token>çoq</token>
+        <token>şey</token>
+      </pattern>
+      <message>«şey» yerine daha somut isim tercih etiñiz.</message>
+      <short>style</short>
+    </rule>
+    <rule id="CRH_SOFT_PICKY_SOÑUNDA" name="soñunda soft picky">
+      <pattern>
+        <token>soñunda</token>
+      </pattern>
+      <message>«niayet» ya da «ahırda» da qullanıla bilir.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="pl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="PL_SOFT_W_W" name="w w">
+      <pattern>
+        <token>w</token>
+        <token>w</token>
+      </pattern>
+      <message>Możliwe powtórzenie "w".</message>
+      <short>w w</short>
+    </rule>
+    <rule id="PL_SOFT_I_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Możliwe powtórzenie "i".</message>
+      <short>i i</short>
+    </rule>
+    <rule id="PL_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Możliwe powtórzenie "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="PL_SOFT_ZE_ZE" name="że że">
+      <pattern>
+        <token>że</token>
+        <token>że</token>
+      </pattern>
+      <message>Możliwe powtórzenie "że".</message>
+      <short>że że</short>
+    </rule>
+    <rule id="PL_SOFT_WE_WE" name="we we">
+      <pattern>
+        <token>we</token>
+        <token>we</token>
+      </pattern>
+      <message>Możliwe powtórzenie "we".</message>
+      <short>we we</short>
+    </rule>
+    <rule id="PL_SOFT_Z_Z" name="z z">
+      <pattern>
+        <token>z</token>
+        <token>z</token>
+      </pattern>
+      <message>Możliwe powtórzenie "z".</message>
+      <short>z z</short>
+    </rule>
+    <rule id="PL_SOFT_NIE_NIE" name="nie nie">
+      <pattern>
+        <token>nie</token>
+        <token>nie</token>
+      </pattern>
+      <message>Możliwe powtórzenie "nie".</message>
+      <short>nie nie</short>
+    </rule>
+    <rule id="PL_SOFT_ZEBY_ZEBY" name="żeby żeby">
+      <pattern>
+        <token>żeby</token>
+        <token>żeby</token>
+      </pattern>
+      <message>Możliwe powtórzenie "żeby".</message>
+      <short>żeby żeby</short>
+    </rule>
+    <rule id="PL_SOFT_JUZ_JUZ" name="już już">
+      <pattern>
+        <token>już</token>
+        <token>już</token>
+      </pattern>
+      <message>Możliwe powtórzenie "już".</message>
+      <short>już już</short>
+    </rule>
+    <rule id="PL_SOFT_SIE_SIE" name="się się">
+      <pattern>
+        <token>się</token>
+        <token>się</token>
+      </pattern>
+      <message>Możliwe powtórzenie "się".</message>
+      <short>się się</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografia">
+    <rule id="PL_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Często wystarczy jeden znak zapytania: "?"</message>
+      <short>interpunkcja</short>
+    </rule>
+    <rule id="PL_SOFT_DOUBLE_BANG" name="podwójny wykrzyknik">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Często wystarczy jeden wykrzyknik: "!"</message>
+      <short>interpunkcja</short>
+    </rule>
+  </category>
+</rules>

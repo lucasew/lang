@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="fr">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="FR_SOFT_A_LA" name="à la">
+      <pattern>
+        <token>a</token>
+        <token>la</token>
+      </pattern>
+      <message>Peut-être "à la"?</message>
+      <short>a/à</short>
+    </rule>
+    <rule id="FR_SOFT_A_LE" name="a le">
+      <pattern>
+        <token>a</token>
+        <token>le</token>
+      </pattern>
+      <message>Peut-être "au"?</message>
+      <short>a/au</short>
+    </rule>
+    <rule id="FR_SOFT_ET_EST" name="et/est">
+      <pattern>
+        <token>il</token>
+        <token>et</token>
+      </pattern>
+      <message>Peut-être "il est"?</message>
+      <short>et/est</short>
+    </rule>
+    <rule id="FR_SOFT_CA_SA" name="ca va">
+      <pattern>
+        <token>ca</token>
+        <token>va</token>
+      </pattern>
+      <message>Peut-être "ça va"?</message>
+      <short>ca/ça</short>
+    </rule>
+    <rule id="FR_SOFT_OU_OU" name="ou où">
+      <pattern>
+        <token>ou</token>
+        <token>es</token>
+        <token>tu</token>
+      </pattern>
+      <message>Peut-être "où es-tu"?</message>
+      <short>ou/où</short>
+    </rule>
+    <rule id="FR_SOFT_SON_SONT" name="son/sont">
+      <pattern>
+        <token>ils</token>
+        <token>son</token>
+      </pattern>
+      <message>Peut-être "ils sont"?</message>
+      <short>son/sont</short>
+    </rule>
+    <rule id="FR_SOFT_ELLE_ET" name="elle et">
+      <pattern>
+        <token>elle</token>
+        <token>et</token>
+      </pattern>
+      <message>Peut-être "elle est"?</message>
+      <short>et/est</short>
+    </rule>
+    <rule id="FR_SOFT_PARCE_QUE" name="parceque">
+      <pattern>
+        <token>parceque</token>
+      </pattern>
+      <message>Peut-être "parce que"?</message>
+      <short>parce que</short>
+    </rule>
+    <rule id="FR_SOFT_ON_A" name="on a">
+      <pattern>
+        <token>on</token>
+        <token>a</token>
+        <token>eu</token>
+      </pattern>
+      <message>Peut-être "on a eu" est correct; vérifiez "on a" vs "on n'a".</message>
+      <short>on a</short>
+    </rule>
+    <rule id="FR_SOFT_MALGRE_QUE" name="malgré que">
+      <pattern>
+        <token>malgré</token>
+        <token>que</token>
+      </pattern>
+      <message>Préférez souvent "bien que" ou "malgré" + nom.</message>
+      <short>malgré que</short>
+    </rule>
+    <rule id="FR_SOFT_AU_JOURD" name="au jour d aujourd hui">
+      <pattern>
+        <token>au</token>
+        <token>jour</token>
+        <token>d</token>
+        <token>aujourd</token>
+      </pattern>
+      <message>Préférez "aujourd'hui".</message>
+      <short>pléonasme</short>
+    </rule>
+    <rule id="FR_SOFT_COMME_MEME" name="comme même">
+      <pattern>
+        <token>comme</token>
+        <token>même</token>
+      </pattern>
+      <message>Peut-être "quand même"?</message>
+      <short>comme même</short>
+    </rule>
+    <rule id="FR_SOFT_A_PART" name="a part">
+      <pattern>
+        <token>a</token>
+        <token>part</token>
+      </pattern>
+      <message>Peut-être "à part"?</message>
+      <short>a/à</short>
+    </rule>
+    <rule id="FR_SOFT_LA_OU" name="la ou">
+      <pattern>
+        <token>la</token>
+        <token>ou</token>
+      </pattern>
+      <message>Peut-être "là où"?</message>
+      <short>la/là</short>
+    </rule>
+    <rule id="FR_SOFT_CEST_SA" name="cest sa">
+      <pattern>
+        <token>cest</token>
+      </pattern>
+      <message>Peut-être "c'est"?</message>
+      <short>cest</short>
+    </rule>
+    <rule id="FR_SOFT_PLUTOT_QUE" name="plutot que">
+      <pattern>
+        <token>plutot</token>
+      </pattern>
+      <message>Peut-être "plutôt"?</message>
+      <short>plutot</short>
+    </rule>
+    <rule id="FR_SOFT_PEUTETRE" name="peutetre">
+      <pattern>
+        <token>peutetre</token>
+      </pattern>
+      <message>Peut-être "peut-être"?</message>
+      <short>peut-être</short>
+    </rule>
+    <rule id="FR_SOFT_AUJOURDUI" name="aujourdui">
+      <pattern>
+        <token>aujourdui</token>
+      </pattern>
+      <message>Peut-être "aujourd'hui"?</message>
+      <short>aujourd'hui</short>
+    </rule>
+    <rule id="FR_SOFT_QUELQUE_UN" name="quelque un">
+      <pattern>
+        <token>quelque</token>
+        <token>un</token>
+      </pattern>
+      <message>Peut-être "quelqu'un"?</message>
+      <short>quelqu'un</short>
+    </rule>
+    <rule id="FR_SOFT_QUELQUE_CHOSE" name="quelque chose ok">
+      <pattern>
+        <token>quelque</token>
+        <token>choses</token>
+      </pattern>
+      <message>Peut-être "quelque chose" (singulier)?</message>
+      <short>quelque chose</short>
+    </rule>
+    <rule id="FR_SOFT_SA_CA" name="sa va">
+      <pattern>
+        <token>sa</token>
+        <token>va</token>
+      </pattern>
+      <message>Peut-être "ça va"?</message>
+      <short>sa/ça</short>
+    </rule>
+    <rule id="FR_SOFT_ON_ON" name="on on">
+      <pattern>
+        <token>on</token>
+        <token>on</token>
+      </pattern>
+      <message>Possible répétition de "on".</message>
+      <short>on on</short>
+    </rule>
+    <rule id="FR_SOFT_NE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Possible répétition de "ne".</message>
+      <short>ne ne</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typographie">
+    <rule id="FR_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Un seul point d'interrogation suffit souvent: "?"</message>
+      <short>ponctuation</short>
+    </rule>
+    <rule id="FR_SOFT_DOUBLE_BANG" name="double point d'exclamation">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Un seul point d'exclamation suffit souvent: "!"</message>
+      <short>ponctuation</short>
+    </rule>
+  </category>
+</rules>

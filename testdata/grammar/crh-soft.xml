@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="crh">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="CRH_SOFT_VE_VE" name="ve ve">
+      <pattern>
+        <token>ve</token>
+        <token>ve</token>
+      </pattern>
+      <message>Possible repeated "ve".</message>
+      <short>ve ve</short>
+    </rule>
+    <rule id="CRH_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possible repeated "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="CRH_SOFT_DA_DA" name="da da">
+      <pattern>
+        <token>da</token>
+        <token>da</token>
+      </pattern>
+      <message>Possible repeated "da".</message>
+      <short>da da</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_BIR" name="bir bir">
+      <pattern>
+        <token>bir</token>
+        <token>bir</token>
+      </pattern>
+      <message>Possible repeated "bir".</message>
+      <short>bir bir</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_ICUN" name="içün içün">
+      <pattern>
+        <token>içün</token>
+        <token>içün</token>
+      </pattern>
+      <message>Possible repeated "içün".</message>
+      <short>içün içün</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_VE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Possible repeated "ne".</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_BU" name="bu bu">
+      <pattern>
+        <token>bu</token>
+        <token>bu</token>
+      </pattern>
+      <message>«bu» tekrarlanğan ola bilir.</message>
+      <short>bu bu</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_O" name="o o">
+      <pattern>
+        <token>o</token>
+        <token>o</token>
+      </pattern>
+      <message>«o» tekrarlanğan ola bilir.</message>
+      <short>o o</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_ICIN" name="için için">
+      <pattern>
+        <token>için</token>
+        <token>için</token>
+      </pattern>
+      <message>«için» tekrarlanğan ola bilir.</message>
+      <short>için için</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_ILE" name="ile ile">
+      <pattern>
+        <token>ile</token>
+        <token>ile</token>
+      </pattern>
+      <message>«ile» tekrarlanğan ola bilir.</message>
+      <short>ile ile</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="CRH_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="CRH_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Often one exclamation mark is enough: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

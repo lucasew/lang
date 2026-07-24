@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft ML pack loaded only when level is picky. Space-tokenized. -->
+<rules lang="ml">
+  <category id="STYLE" name="Style">
+    <rule id="ML_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>«യോഗം» അല്ലെങ്കിൽ «കൂടിക്കാഴ്ച» പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ML_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>«അഭിപ്രായം» അല്ലെങ്കിൽ «പ്രതികരണം» പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ML_SOFT_PICKY_VALARE_VALARE" name="വളരെ വളരെ soft picky">
+      <pattern>
+        <token>വളരെ</token>
+        <token>വളരെ</token>
+      </pattern>
+      <message>ദുർബലമായ ഊന്നൽ; ശക്തമായ വിശേഷണം പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ML_SOFT_PICKY_KARYANGAL" name="പല കാര്യങ്ങൾ soft picky">
+      <pattern>
+        <token>പല</token>
+        <token>കാര്യങ്ങൾ</token>
+      </pattern>
+      <message>«കാര്യങ്ങൾ» ക്ക് പകരം കൂടുതൽ കൃത്യമായ നാമം പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ML_SOFT_PICKY_AVASANAM" name="അവസാനം soft picky">
+      <pattern>
+        <token>അവസാനം</token>
+      </pattern>
+      <message>«ഒടുവിൽ» പോലുള്ളവ പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

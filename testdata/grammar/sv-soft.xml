@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="sv">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="SV_SOFT_DE_DOM" name="de/dom">
+      <pattern>
+        <token>dom</token>
+        <token>är</token>
+      </pattern>
+      <message>Menade du "de är"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_DOM_VAR" name="dom var">
+      <pattern>
+        <token>dom</token>
+        <token>var</token>
+      </pattern>
+      <message>Menade du "de var"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_OCH_OCH" name="och och">
+      <pattern>
+        <token>och</token>
+        <token>och</token>
+      </pattern>
+      <message>Möjlig upprepning av "och".</message>
+      <short>och och</short>
+    </rule>
+    <rule id="SV_SOFT_VARAN" name="varan">
+      <pattern>
+        <token>en</token>
+        <token>varan</token>
+      </pattern>
+      <message>Menade du "en vara"?</message>
+      <short>varan</short>
+    </rule>
+    <rule id="SV_SOFT_DOM_HAR" name="dom har">
+      <pattern>
+        <token>dom</token>
+        <token>har</token>
+      </pattern>
+      <message>Menade du "de har"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_STORRE_AN" name="större än">
+      <pattern>
+        <token>större</token>
+        <token>som</token>
+      </pattern>
+      <message>Menade du "större än"?</message>
+      <short>än/som</short>
+    </rule>
+    <rule id="SV_SOFT_MEDANS" name="medans">
+      <pattern>
+        <token>medans</token>
+      </pattern>
+      <message>Menade du "medan"?</message>
+      <short>medans</short>
+    </rule>
+    <rule id="SV_SOFT_DOM_SKA" name="dom ska">
+      <pattern>
+        <token>dom</token>
+        <token>ska</token>
+      </pattern>
+      <message>Menade du "de ska"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_DOM_KAN" name="dom kan">
+      <pattern>
+        <token>dom</token>
+        <token>kan</token>
+      </pattern>
+      <message>Menade du "de kan"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_DOM_VILL" name="dom vill">
+      <pattern>
+        <token>dom</token>
+        <token>vill</token>
+      </pattern>
+      <message>Menade du "de vill"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_MINDRE_SOM" name="mindre som">
+      <pattern>
+        <token>mindre</token>
+        <token>som</token>
+      </pattern>
+      <message>Menade du "mindre än"?</message>
+      <short>än/som</short>
+    </rule>
+    <rule id="SV_SOFT_INTE_INTE" name="inte inte">
+      <pattern>
+        <token>inte</token>
+        <token>inte</token>
+      </pattern>
+      <message>Möjlig upprepning av "inte".</message>
+      <short>inte inte</short>
+    </rule>
+    <rule id="SV_SOFT_ATT_ATT" name="att att">
+      <pattern>
+        <token>att</token>
+        <token>att</token>
+      </pattern>
+      <message>Möjlig upprepning av "att".</message>
+      <short>att att</short>
+    </rule>
+    <rule id="SV_SOFT_EFTERSOM_ATT" name="eftersom att">
+      <pattern>
+        <token>eftersom</token>
+        <token>att</token>
+      </pattern>
+      <message>Ofta räcker "eftersom" utan "att".</message>
+      <short>eftersom att</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografi">
+    <rule id="SV_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Ett frågetecken räcker ofta: "?"</message>
+      <short>interpunktion</short>
+    </rule>
+    <rule id="SV_SOFT_DOUBLE_BANG" name="dubbelt utropstecken">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ett utropstecken räcker ofta: "!"</message>
+      <short>interpunktion</short>
+    </rule>
+  </category>
+</rules>

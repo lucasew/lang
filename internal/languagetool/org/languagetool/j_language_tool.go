@@ -1,0 +1,1970 @@
+package languagetool
+
+import (
+	"fmt"
+	"math"
+	"regexp"
+	"sort"
+	"strings"
+	"unicode"
+	"unicode/utf16"
+	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
+
+// Constants and enums from org.languagetool.JLanguageTool.
+
+const (
+	SentenceStartTagName = "SENT_START"
+	SentenceEndTagName   = "SENT_END"
+	ParagraphEndTagName  = "PARA_END"
+
+	PatternFile                 = "grammar.xml"
+	StyleFile                   = "style.xml"
+	CustomPatternFile           = "grammar_custom.xml"
+	FalseFriendFile             = "false-friends.xml"
+	MessageBundleName           = "org.languagetool.MessagesBundle"
+	DictionaryFilenameExtension = ".dict"
+)
+
+// Mode ports JLanguageTool.Mode.
+type Mode string
+
+const (
+	ModeAll             Mode = "ALL"
+	ModeTextLevelOnly   Mode = "TEXTLEVEL_ONLY"
+	ModeAllButTextLevel Mode = "ALL_BUT_TEXTLEVEL_ONLY"
+)
+
+// ParagraphHandling ports JLanguageTool.ParagraphHandling.
+type ParagraphHandling string
+
+const (
+	ParagraphNormal      ParagraphHandling = "NORMAL"
+	ParagraphOnlyPara    ParagraphHandling = "ONLYPARA"
+	ParagraphOnlyNonPara ParagraphHandling = "ONLYNONPARA"
+)
+
+// CheckCancelledCallback ports JLanguageTool.CheckCancelledCallback.
+type CheckCancelledCallback func() bool
+
+// SentenceData ports JLanguageTool.SentenceData (package-private in Java).
+type SentenceData struct {
+	Analyzed    *AnalyzedSentence
+	Text        string
+	StartOffset int
+	StartLine   int
+	StartColumn int
+	WordCount   int
+}
+
+// NewSentenceData ports SentenceData constructor.
+func NewSentenceData(analyzed *AnalyzedSentence, text string, startOffset, startLine, startColumn int) SentenceData {
+	wc := 0
+	if analyzed != nil {
+		wc = len(analyzed.GetTokensWithoutWhitespace())
+	}
+	return SentenceData{
+		Analyzed: analyzed, Text: text,
+		StartOffset: startOffset, StartLine: startLine, StartColumn: startColumn,
+		WordCount: wc,
+	}
+}
+
+// ComputeSentenceData ports JLanguageTool.computeSentenceData.
+// Java starts columnCount at 1; charCount/line/column use UTF-16 code units
+// (String.length / countLineBreaks / processColumnChange).
+// singleLineBreaksMarksPara is language.getSentenceTokenizer().singleLineBreaksMarksPara().
+func ComputeSentenceData(analyzed []*AnalyzedSentence, texts []string, singleLineBreaksMarksPara bool) []SentenceData {
+	if len(texts) == 0 {
+		return nil
+	}
+	charCount := 0
+	lineCount := 0
+	columnCount := 1
+	result := make([]SentenceData, 0, len(texts))
+	for i, sentence := range texts {
+		var a *AnalyzedSentence
+		if i < len(analyzed) {
+			a = analyzed[i]
+		}
+		result = append(result, NewSentenceData(a, sentence, charCount, lineCount, columnCount))
+		charCount += utf16Len(sentence)
+		lineCount += CountLineBreaks(sentence)
+		columnCount = ProcessColumnChangePara(columnCount, sentence, singleLineBreaksMarksPara)
+	}
+	return result
+}
+
+// BuildExtendedSentenceRange ports TextCheckCallable's per-sentence range:
+//
+//	if (sentence.text.startsWith(" ", 1)) {
+//	  whitespaceFix = text.length() - text.stripLeading().length();
+//	}
+//	new ExtendedSentenceRange(start + fix, start + fix + text.trim().length(), lang)
+//
+// Offsets are UTF-16 code units (Java String indices).
+func BuildExtendedSentenceRange(sd SentenceData, languageCode string) ExtendedSentenceRange {
+	text := sd.Text
+	whitespaceFix := 0
+	// Java String.startsWith(" ", 1) — char at UTF-16 index 1 is ' '.
+	if utf16CharAt(text, 1) == ' ' {
+		stripped := stripLeadingJava(text)
+		whitespaceFix = utf16Len(text) - utf16Len(stripped)
+	}
+	from := sd.StartOffset + whitespaceFix
+	// Java String.trim() removes code units ≤ U+0020 only.
+	to := from + utf16Len(javaTrim(text))
+	return NewExtendedSentenceRange(from, to, languageCode)
+}
+
+// utf16CharAt returns the UTF-16 code unit at index i, or -1 if out of range.
+func utf16CharAt(s string, i int) rune {
+	if i < 0 {
+		return -1
+	}
+	u := 0
+	for _, ch := range s {
+		if ch >= 0x10000 {
+			if u == i {
+				v := ch - 0x10000
+				return rune(0xD800 + (v >> 10))
+			}
+			if u+1 == i {
+				v := ch - 0x10000
+				return rune(0xDC00 + (v & 0x3FF))
+			}
+			u += 2
+			continue
+		}
+		if u == i {
+			return ch
+		}
+		u++
+	}
+	return -1
+}
+
+// stripLeadingJava ports String.stripLeading (Character.isWhitespace).
+func stripLeadingJava(s string) string {
+	i := 0
+	for i < len(s) {
+		r, size := utf8.DecodeRuneInString(s[i:])
+		if size <= 0 {
+			break
+		}
+		if !tools.CharacterIsWhitespace(r) {
+			break
+		}
+		i += size
+	}
+	return s[i:]
+}
+
+// javaTrim ports String.trim(): strip UTF-16 units ≤ U+0020 from both ends.
+func javaTrim(s string) string {
+	return tools.JavaStringTrim(s)
+}
+
+// LocalMatch is a cycle-free rule-match surface for JLanguageTool.Check
+// (avoids importing rules package into languagetool).
+type LocalMatch struct {
+	FromPos, ToPos int
+	Message        string
+	ShortMessage   string
+	RuleID         string
+	Suggestions    []string
+	// Optional rule metadata (from the rule or RuleMeta fallback for known Java families).
+	Description  string
+	CategoryID   string
+	CategoryName string
+	IssueType    string
+	// URL ports RuleMatch.getUrl / Rule.getUrl (match-level overrides rule-level).
+	URL string
+	// OriginalErrorStr ports RuleMatch.getOriginalErrorStr (surface under marker).
+	// Empty when not set; SwissGerman AI ss→ß drop uses this when present.
+	OriginalErrorStr string
+	// SentenceText is the analyzed sentence plain text when known (Check fills it).
+	// Used by German.filterRuleMatches period-drop (Java getSentence().getText())
+	// and CleanOverlappingFilter.isPunctuationOnlyChange sentence fallback.
+	// Empty when not set — filters must fail closed without invent.
+	SentenceText string
+	// FromPosSentence/ToPosSentence port RuleMatch sentencePosition (-1/unset or
+	// To<=From means unset). Check fills from pre-remap FromPos/ToPos when unset.
+	// CleanOverlapping isPunctuationOnlyChange prefers these over document FromPos.
+	FromPosSentence int
+	ToPosSentence   int
+	// Priority used by CleanOverlappingLocalMatches (higher wins).
+	Priority int
+	// EstimateContextForSureMatch ports Rule.estimateContextForSureMatch (Java default 0;
+	// TextLevelRule always -1). Not invented from ITS issue type.
+	EstimateContextForSureMatch int
+	// IsPicky ports Rule tags containing Tag.picky (Java CleanOverlappingFilter demotion
+	// and German.filterRuleMatches picky-equality for AI_DE_GGEC merge).
+	IsPicky bool
+	// Tags ports Rule.getTags() string names (e.g. "picky") for JSON rule.tags / CLI Tags.
+	// Empty when the rule has no tags; IsPicky remains the demotion flag derived from picky.
+	Tags []string
+	// TempOff ports Rule.isDefaultTempOff for JSON rule.tempOff.
+	TempOff bool
+	// IncludedInErrorsCorrectedAllAtOnce ports Rule.isIncludedInErrorsCorrectedAllAtOnce
+	// (Java CleanOverlappingFilter punctuation-only preference).
+	IncludedInErrorsCorrectedAllAtOnce bool
+	// IsPremium ports Premium.isPremiumRule when known (ToLocalMatches / explicit inject).
+	// When false, CleanOverlapping still treats RuleID containing "PREMIUM" as premium
+	// (Java CleanOverlappingFilter default id heuristic).
+	IsPremium bool
+	// EnabledRules ports the enabledRules Set passed to Language.filterRuleMatches /
+	// adjust*RuleMatch (French APOS_TYP, Catalan EXIGEIX_*/APOSTROF_*). Check stamps
+	// JLanguageTool.EnabledRules onto each match before the language filter. Nil/empty
+	// → filters fail closed for gated branches (same as empty set).
+	EnabledRules map[string]struct{}
+	// HasTypographicApostropheInSentence ports anyMatch(token.hasTypographicApostrophe)
+	// on the analyzed sentence (Catalan.adjustCatalanMatch). Check stamps from tokens.
+	HasTypographicApostropheInSentence bool
+	// Line/EndLine/Column/EndColumn port RuleMatch line/column after adjustRuleMatchPos
+	// (zero-based; default -1 when unset).
+	Line, EndLine     int
+	Column, EndColumn int
+	// PatternFromPos/PatternToPos port RuleMatch patternPosition (document-relative after adjust).
+	PatternFromPos, PatternToPos int
+	// NewLanguageMatches ports RuleMatch.newLanguageMatches (lang code → confidence).
+	// When non-empty, TextCheckCallable adds ignore Ranges + updates ExtendedSentenceRange rates.
+	NewLanguageMatches map[string]float32
+	// ToneTags ports Rule.getToneTags (empty = no tone restriction).
+	ToneTags []ToneTag
+	// GoalSpecific ports Rule.isGoalSpecific (used with ALL_WITHOUT_GOAL_SPECIFIC).
+	GoalSpecific bool
+}
+
+// SentenceChecker returns matches for one analyzed sentence (offsets relative to sentence text).
+type SentenceChecker func(sentence *AnalyzedSentence) []LocalMatch
+
+// TextLevelChecker returns matches across all sentences (document-relative offsets).
+type TextLevelChecker func(sentences []*AnalyzedSentence) []LocalMatch
+
+// JLanguageTool is a minimal façade for pure-Go check orchestration (growing).
+// Full Java parity is not attempted here.
+type JLanguageTool struct {
+	LanguageCode string
+	Mode         Mode
+	Level        Level
+	// sentenceMatchers reserved for MultiThreaded error surface.
+	sentenceMatchers []func(sentence *AnalyzedSentence) error
+	// checkers are pluggable sentence rules for Check.
+	checkers []SentenceChecker
+	// textLevelCheckers are multi-sentence rules (e.g. word-repeat-beginning).
+	textLevelCheckers []struct {
+		id string
+		fn TextLevelChecker
+	}
+	// activeRuleIDs tracks rule IDs registered via AddRuleChecker (order preserved).
+	activeRuleIDs []string
+	// DisabledRuleIDs soft-disable matches / registration filtering.
+	DisabledRuleIDs map[string]struct{}
+	// EnabledRules tracks rule IDs known to be enabled for language filter hooks
+	// (Java Set<String> enabledRules in filterRuleMatches). Populated by EnableRule
+	// and variant default enabled lists. Incomplete vs Java full active-rule set —
+	// only explicitly tracked IDs (not invent full registry scan).
+	EnabledRules map[string]struct{}
+	// DefaultOffRuleIDs are rules that registered with XML default="off" (optional packs).
+	// Level/picky flags re-enable these (Java default="off"); no soft invent packs.
+	DefaultOffRuleIDs map[string]struct{}
+	// DefaultTempOffRuleIDs are rules with XML default="temp_off" (Java Rule.defaultTempOff).
+	// Also in DefaultOffRuleIDs; re-enabled by EnableTempOffRules (Tools.selectRules enableTempOff).
+	DefaultTempOffRuleIDs map[string]struct{}
+	// DefaultOffCategoryIDs ports Category.isDefaultOff (XML category default="off").
+	// Used by ignoreRule: category disabled unless EnableCategory / enabledRuleCategories.
+	DefaultOffCategoryIDs map[string]struct{}
+	// DisabledCategoryIDs ports disabledRuleCategories (user/CLI -c).
+	DisabledCategoryIDs map[string]struct{}
+	// EnabledCategoryIDs ports enabledRuleCategories (overrides default-off + disabled).
+	EnabledCategoryIDs map[string]struct{}
+	// Cancelled optional early exit for Check.
+	Cancelled CheckCancelledCallback
+	// ListUnknownWords enables GetUnknownWords population during Check/AnalyzeUnknown.
+	ListUnknownWords bool
+	// IsKnownWord optional dictionary probe for unknown-word listing.
+	IsKnownWord func(token string) bool
+	// TagWord optional POS/lemma inject used by Analyze (MapWordTagger-friendly).
+	TagWord func(token string) []TokenTag
+	// Disambiguator optional post-tag sentence filter (multiword chunker / XML rules).
+	Disambiguator SentenceDisambiguator
+	// Chunker ports Java Language.getChunker(); runs on tagged tokens before
+	// disambiguation (JLanguageTool.getRawAnalyzedSentence).
+	// Interface lives here to avoid import cycles with package chunking.
+	Chunker SentenceChunker
+	// PostDisambiguationChunker ports Language.getPostDisambiguationChunker();
+	// runs after disambiguation when set.
+	PostDisambiguationChunker SentenceChunker
+	// IgnoreWords soft user-dictionary / spell-ignore set (surface forms).
+	IgnoreWords map[string]struct{}
+	// UserConfig optional user preferences (accepted phrases, speller words).
+	UserConfig *UserConfig
+	// PriorityForId ports Language.getPriorityForId when set (e.g. GermanPriorityForId).
+	// Applied in Check via applyRulePriorities (Java getRulePriority: rule id then category id).
+	PriorityForId func(id string) int
+	// DefaultRulePriorityForStyle ports Language.getDefaultRulePriorityForStyle
+	// (English/Catalan return -50; base Language returns 0).
+	// Applied when rule/category priority is 0 and IssueType is style.
+	DefaultRulePriorityForStyle int
+	// FilterRuleMatches ports Language.filterRuleMatches when set (e.g. German AI_DE_GGEC merge).
+	// Runs before CleanOverlappingLocalMatches (Java LanguageDependentRuleMatchFilter order).
+	FilterRuleMatches func(matches []LocalMatch) []LocalMatch
+	// FilterRuleMatchesAfterOverlapping ports Language.filterRuleMatchesAfterOverlapping.
+	// Runs after CleanOverlappingLocalMatches. Nil = identity.
+	FilterRuleMatchesAfterOverlapping func(matches []LocalMatch) []LocalMatch
+	// CleanOverlapping when false skips CleanOverlappingLocalMatches (Java setCleanOverlappingMatches).
+	// Zero value false means enabled by default via cleanOverlappingEnabled().
+	// Use DisableCleanOverlapping to turn off.
+	disableCleanOverlapping bool
+	// IgnoredCharacters ports Language.getIgnoredCharactersRegex (applied per word token
+	// after tokenize, Java replaceSoftHyphens). Nil = no strip. German uses [\u00AD].
+	IgnoredCharacters *regexp.Regexp
+	// Cache ports JLanguageTool ResultCache for getAnalyzedSentence (SimpleInputSentence keys).
+	// Nil = caching disabled (Java null cache).
+	Cache *ResultCache
+	// MaxErrorsPerWordRate ports JLanguageTool.maxErrorsPerWordRate (0 = disabled).
+	// TextCheckCallable throws ErrorRateTooHighException when exceeded after >25 words.
+	MaxErrorsPerWordRate float64
+	// AltLanguageCodes ports JLanguageTool.altLanguages (short/long codes).
+	// Java: words accepted if in an alternative language and not similar to main lang;
+	// also part of InputSentence cache key and getRelevantRules(…, altLanguages).
+	// Empty/nil is valid (Java requireNonNull but empty list OK).
+	AltLanguageCodes []string
+	// LanguageName used in ErrorRateTooHighException message (Java language.getName()).
+	LanguageName string
+	// ParaMode ports ParagraphHandling passed into TextCheckCallable / checkAnalyzedSentence.
+	// Zero value "" is treated as ParagraphNormal.
+	ParaMode ParagraphHandling
+	// MatchListener ports RuleMatchListener passed into TextCheckCallable (matchFound per match).
+	MatchListener RuleMatchListener
+	// ToneTags ports Set<ToneTag> passed into checkInternal / TextCheckCallable.
+	// Nil/empty → ALL_WITHOUT_GOAL_SPECIFIC filter behavior (Java).
+	ToneTags map[ToneTag]struct{}
+	unknown  map[string]struct{}
+}
+
+// SetToneTags replaces the active tone tag set for level/tone match filtering.
+func (lt *JLanguageTool) SetToneTags(tags ...ToneTag) {
+	if lt == nil {
+		return
+	}
+	lt.ToneTags = make(map[ToneTag]struct{}, len(tags))
+	for _, t := range tags {
+		lt.ToneTags[t] = struct{}{}
+	}
+}
+
+// SetRuleMatchListener ports check(..., RuleMatchListener, ...).
+func (lt *JLanguageTool) SetRuleMatchListener(l RuleMatchListener) {
+	if lt != nil {
+		lt.MatchListener = l
+	}
+}
+
+// notifyMatchFound ports listener.matchFound when MatchListener is set.
+func (lt *JLanguageTool) notifyMatchFound(m LocalMatch) {
+	if lt != nil && lt.MatchListener != nil {
+		lt.MatchListener.MatchFound(m)
+	}
+}
+
+// paraModeOrNormal returns ParaMode or ParagraphNormal when unset.
+func (lt *JLanguageTool) paraModeOrNormal() ParagraphHandling {
+	if lt == nil || lt.ParaMode == "" {
+		return ParagraphNormal
+	}
+	return lt.ParaMode
+}
+
+// SetParagraphHandling ports callers that pass ParagraphHandling into check.
+func (lt *JLanguageTool) SetParagraphHandling(p ParagraphHandling) {
+	if lt != nil {
+		lt.ParaMode = p
+	}
+}
+
+// SetMaxErrorsPerWordRate ports JLanguageTool.setMaxErrorsPerWordRate.
+func (lt *JLanguageTool) SetMaxErrorsPerWordRate(v float64) {
+	if lt != nil {
+		lt.MaxErrorsPerWordRate = v
+	}
+}
+
+// CheckErrorRate ports TextCheckCallable's maxErrorsPerWordRate gate:
+// if rate > 0 && errors/words > rate && wordCounter > 25 → ErrorRateTooHighException.
+// plainTextLen is annotatedText.getPlainText().length() (UTF-16) for the message.
+func CheckErrorRate(matchCount, wordCounter int, maxErrorsPerWordRate float64, languageName string, plainTextLen int) error {
+	if maxErrorsPerWordRate <= 0 || wordCounter <= 25 {
+		return nil
+	}
+	if wordCounter == 0 {
+		return nil
+	}
+	errorsPerWord := float64(matchCount) / float64(wordCounter)
+	if errorsPerWord <= maxErrorsPerWordRate {
+		return nil
+	}
+	// Java: String.format("%.0f", maxErrorsPerWordRate * 100)
+	pct := int(maxErrorsPerWordRate*100 + 0.5)
+	if languageName == "" {
+		languageName = "?"
+	}
+	msg := fmt.Sprintf(
+		"Text checking was stopped due to too many errors (more than %d%% of words seem to have an error). Are you sure you have set the correct text language? Language set: %s, text length: %d",
+		pct, languageName, plainTextLen,
+	)
+	return NewErrorRateTooHighException(msg)
+}
+
+// DisableCleanOverlapping ports JLanguageTool.setCleanOverlappingMatches(false).
+func (lt *JLanguageTool) DisableCleanOverlapping() {
+	if lt != nil {
+		lt.disableCleanOverlapping = true
+	}
+}
+
+// EnableCleanOverlapping ports JLanguageTool.setCleanOverlappingMatches(true).
+func (lt *JLanguageTool) EnableCleanOverlapping() {
+	if lt != nil {
+		lt.disableCleanOverlapping = false
+	}
+}
+
+// SentenceDisambiguator filters/augments POS on an analyzed sentence (soft LT disambiguator hook).
+type SentenceDisambiguator interface {
+	Disambiguate(input *AnalyzedSentence) *AnalyzedSentence
+}
+
+// SentenceChunker ports org.languagetool.chunking.Chunker for Analyze wiring.
+type SentenceChunker interface {
+	AddChunkTags(tokens []*AnalyzedTokenReadings)
+}
+
+// FilterFrenchRuleMatchesHook ports French.filterRuleMatches for Check wiring.
+// Set by package language init (avoids import cycle: rules/fr ↔ language tests).
+var FilterFrenchRuleMatchesHook func(matches []LocalMatch) []LocalMatch
+
+// FilterSpanishRuleMatchesHook ports Spanish.filterRuleMatches for Check wiring.
+// Set by package language init (same cycle-avoidance pattern as French).
+var FilterSpanishRuleMatchesHook func(matches []LocalMatch) []LocalMatch
+
+// FilterEnglishRuleMatchesHook ports English.filterRuleMatches for Check wiring.
+var FilterEnglishRuleMatchesHook func(matches []LocalMatch) []LocalMatch
+
+// FrenchPriorityForIdHook ports French.getPriorityForId for Check wiring
+// (set by package language init; avoids rules/fr ↔ language test import cycle).
+var FrenchPriorityForIdHook func(id string) int
+
+// EnglishPriorityForIdHook ports English.getPriorityForId for Check wiring
+// (set by package language init).
+var EnglishPriorityForIdHook func(id string) int
+
+// EnglishPriorityForIdForCodeHook selects BritishEnglish vs English by lang code
+// (set by package language init).
+var EnglishPriorityForIdForCodeHook func(langCode string) func(id string) int
+
+// FilterCatalanRuleMatchesHook ports Catalan.filterRuleMatches for Check wiring.
+var FilterCatalanRuleMatchesHook func(matches []LocalMatch) []LocalMatch
+
+// FilterCatalanRuleMatchesAfterOverlappingHook ports Catalan.filterRuleMatchesAfterOverlapping.
+var FilterCatalanRuleMatchesAfterOverlappingHook func(matches []LocalMatch) []LocalMatch
+
+// VariantDefaultRulesHook ports Language.getDefaultEnabled/DisabledRulesForVariant
+// lookup by short code. Set by package language init (avoids import cycle).
+var VariantDefaultRulesHook func(langCode string) (enabled, disabled []string)
+
+// LanguageAdaptSuggestionByCode maps language short codes (e.g. "ca", "es") to
+// Language.adaptSuggestion. Set by package language / RegisterCore* (Java AdaptSuggestionsFilter).
+// Lookups use the primary subtag (ca-ES → ca). Nil entry → identity.
+var LanguageAdaptSuggestionByCode = map[string]func(replacement, originalError string) string{}
+
+// AdaptSuggestionForLanguage returns Language.adaptSuggestion for langCode, or nil (identity).
+func AdaptSuggestionForLanguage(langCode string) func(replacement, originalError string) string {
+	if langCode == "" {
+		return nil
+	}
+	// exact then primary subtag
+	if f, ok := LanguageAdaptSuggestionByCode[langCode]; ok {
+		return f
+	}
+	base := langCode
+	for i := 0; i < len(langCode); i++ {
+		if langCode[i] == '-' || langCode[i] == '_' {
+			base = langCode[:i]
+			break
+		}
+	}
+	if f, ok := LanguageAdaptSuggestionByCode[base]; ok {
+		return f
+	}
+	// case-insensitive primary
+	lower := ""
+	for i := 0; i < len(base); i++ {
+		c := base[i]
+		if c >= 'A' && c <= 'Z' {
+			c += 'a' - 'A'
+		}
+		lower += string(c)
+	}
+	return LanguageAdaptSuggestionByCode[lower]
+}
+
+func NewJLanguageTool(languageCode string) *JLanguageTool {
+	return NewJLanguageToolWithCache(languageCode, nil)
+}
+
+// NewJLanguageToolWithCache ports JLanguageTool(Language, ResultCache) constructors.
+// cache may be nil to disable sentence analysis caching (Java null cache).
+func NewJLanguageToolWithCache(languageCode string, cache *ResultCache) *JLanguageTool {
+	lt := &JLanguageTool{
+		LanguageCode:    languageCode,
+		Mode:            ModeAll,
+		Level:           LevelDefault,
+		DisabledRuleIDs: map[string]struct{}{},
+		EnabledRules:    map[string]struct{}{},
+		Cache:           cache,
+	}
+	// Java activateDefaultPatternRules: apply variant default on/off lists.
+	lt.applyVariantDefaultRules()
+	return lt
+}
+
+// applyVariantDefaultRules ports JLanguageTool.activateDefaultPatternRules enabled/disabled
+// lists from Language.getDefaultEnabledRulesForVariant / getDefaultDisabledRulesForVariant.
+// Maps Java setDefaultOn → EnableRule (clears Disabled + DefaultOff); setDefaultOff → MarkDefaultOff.
+// Call again after pattern rules load (RegisterGrammar*) so default-off XML rules can be turned on.
+func (lt *JLanguageTool) applyVariantDefaultRules() {
+	if lt == nil || VariantDefaultRulesHook == nil {
+		return
+	}
+	enabled, disabled := VariantDefaultRulesHook(lt.LanguageCode)
+	for _, id := range disabled {
+		// Java patternRule.setDefaultOff()
+		lt.MarkDefaultOff(id)
+	}
+	for _, id := range enabled {
+		// Java patternRule.setDefaultOn() — re-enable even if XML default="off"
+		lt.EnableRule(id)
+	}
+}
+
+// ApplyVariantDefaultRules is the public re-entry after grammar registration
+// (Java activates defaults after getPatternRules()).
+func (lt *JLanguageTool) ApplyVariantDefaultRules() {
+	lt.applyVariantDefaultRules()
+}
+
+// enabledRulesForFilters builds the Set passed to Language.filterRuleMatches.
+// Java: currently enabled rule IDs. Go: explicit EnabledRules plus registered
+// active (not disabled) rule IDs — incomplete vs every pattern rule instance
+// default-on state beyond DisableRule tracking (no invent of unregistered IDs).
+func (lt *JLanguageTool) enabledRulesForFilters() map[string]struct{} {
+	if lt == nil {
+		return nil
+	}
+	out := make(map[string]struct{})
+	for id := range lt.EnabledRules {
+		if id != "" && !lt.isRuleDisabled(id) {
+			out[id] = struct{}{}
+		}
+	}
+	for _, id := range lt.activeRuleIDs {
+		if id != "" && !lt.isRuleDisabled(id) {
+			out[id] = struct{}{}
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+func (lt *JLanguageTool) GetLanguageCode() string { return lt.LanguageCode }
+func (lt *JLanguageTool) GetMode() Mode           { return lt.Mode }
+func (lt *JLanguageTool) SetMode(m Mode)          { lt.Mode = m }
+func (lt *JLanguageTool) GetLevel() Level         { return lt.Level }
+func (lt *JLanguageTool) SetLevel(l Level)        { lt.Level = l }
+
+// AddChecker registers a sentence-level rule for Check.
+func (lt *JLanguageTool) AddChecker(c SentenceChecker) {
+	if lt == nil || c == nil {
+		return
+	}
+	lt.checkers = append(lt.checkers, c)
+}
+
+// AddRuleChecker registers a checker and records its rule ID for enable/disable.
+func (lt *JLanguageTool) AddRuleChecker(ruleID string, c SentenceChecker) {
+	if lt == nil || c == nil {
+		return
+	}
+	if ruleID != "" {
+		lt.activeRuleIDs = append(lt.activeRuleIDs, ruleID)
+	}
+	id := ruleID
+	lt.checkers = append(lt.checkers, func(s *AnalyzedSentence) []LocalMatch {
+		if id != "" && lt.isRuleDisabled(id) {
+			return nil
+		}
+		return c(s)
+	})
+}
+
+// AddTextLevelRuleChecker registers a multi-sentence rule (document-relative offsets).
+func (lt *JLanguageTool) AddTextLevelRuleChecker(ruleID string, c TextLevelChecker) {
+	if lt == nil || c == nil {
+		return
+	}
+	if ruleID != "" {
+		lt.activeRuleIDs = append(lt.activeRuleIDs, ruleID)
+	}
+	lt.textLevelCheckers = append(lt.textLevelCheckers, struct {
+		id string
+		fn TextLevelChecker
+	}{id: ruleID, fn: c})
+}
+
+// DisableRule ports disableRule.
+func (lt *JLanguageTool) DisableRule(ruleID string) {
+	if lt == nil || ruleID == "" {
+		return
+	}
+	if lt.DisabledRuleIDs == nil {
+		lt.DisabledRuleIDs = map[string]struct{}{}
+	}
+	lt.DisabledRuleIDs[ruleID] = struct{}{}
+}
+
+// MarkDefaultOff records that ruleID was registered with XML/Java default="off"
+// and disables it until EnableRule (Java Rule.setDefaultOff + startup state).
+func (lt *JLanguageTool) MarkDefaultOff(ruleID string) {
+	if lt == nil || ruleID == "" {
+		return
+	}
+	if lt.DefaultOffRuleIDs == nil {
+		lt.DefaultOffRuleIDs = map[string]struct{}{}
+	}
+	lt.DefaultOffRuleIDs[ruleID] = struct{}{}
+	lt.DisableRule(ruleID)
+}
+
+// MarkDefaultTempOff ports Rule.setDefaultTempOff for a registered rule id:
+// defaultOff + defaultTempOff tracking, then disable (Java activateDefaultPatternRules).
+func (lt *JLanguageTool) MarkDefaultTempOff(ruleID string) {
+	if lt == nil || ruleID == "" {
+		return
+	}
+	lt.MarkDefaultOff(ruleID)
+	if lt.DefaultTempOffRuleIDs == nil {
+		lt.DefaultTempOffRuleIDs = map[string]struct{}{}
+	}
+	lt.DefaultTempOffRuleIDs[ruleID] = struct{}{}
+}
+
+// GetDefaultOffRuleIDs returns rule IDs registered with default="off".
+func (lt *JLanguageTool) GetDefaultOffRuleIDs() []string {
+	if lt == nil || len(lt.DefaultOffRuleIDs) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(lt.DefaultOffRuleIDs))
+	for id := range lt.DefaultOffRuleIDs {
+		out = append(out, id)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// GetDefaultTempOffRuleIDs returns rule IDs registered with default="temp_off".
+func (lt *JLanguageTool) GetDefaultTempOffRuleIDs() []string {
+	if lt == nil || len(lt.DefaultTempOffRuleIDs) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(lt.DefaultTempOffRuleIDs))
+	for id := range lt.DefaultTempOffRuleIDs {
+		out = append(out, id)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// EnableTempOffRules ports Tools.selectRules enableTempOff=true: enable every
+// rule that was registered with default="temp_off" (Java isDefaultTempOff).
+func (lt *JLanguageTool) EnableTempOffRules() {
+	if lt == nil || len(lt.DefaultTempOffRuleIDs) == 0 {
+		return
+	}
+	ids := make([]string, 0, len(lt.DefaultTempOffRuleIDs))
+	for id := range lt.DefaultTempOffRuleIDs {
+		ids = append(ids, id)
+	}
+	for _, id := range ids {
+		lt.EnableRule(id)
+	}
+}
+
+// MarkCategoryDefaultOff records XML category default="off" (Java Category onByDefault=false).
+func (lt *JLanguageTool) MarkCategoryDefaultOff(categoryID string) {
+	if lt == nil || categoryID == "" {
+		return
+	}
+	if lt.DefaultOffCategoryIDs == nil {
+		lt.DefaultOffCategoryIDs = map[string]struct{}{}
+	}
+	lt.DefaultOffCategoryIDs[strings.ToUpper(categoryID)] = struct{}{}
+}
+
+// DisableCategory ports disableCategory (adds to disabledRuleCategories).
+func (lt *JLanguageTool) DisableCategory(categoryID string) {
+	if lt == nil || categoryID == "" {
+		return
+	}
+	if lt.DisabledCategoryIDs == nil {
+		lt.DisabledCategoryIDs = map[string]struct{}{}
+	}
+	lt.DisabledCategoryIDs[strings.ToUpper(categoryID)] = struct{}{}
+}
+
+// EnableCategory ports enableRuleCategory (enabledRuleCategories; overrides default-off).
+func (lt *JLanguageTool) EnableCategory(categoryID string) {
+	if lt == nil || categoryID == "" {
+		return
+	}
+	key := strings.ToUpper(categoryID)
+	if lt.DisabledCategoryIDs != nil {
+		delete(lt.DisabledCategoryIDs, key)
+	}
+	if lt.EnabledCategoryIDs == nil {
+		lt.EnabledCategoryIDs = map[string]struct{}{}
+	}
+	lt.EnabledCategoryIDs[key] = struct{}{}
+}
+
+// ignoreLocalMatch ports JLanguageTool.ignoreRule for LocalMatch surfaces.
+// Category default-off / disabled, unless category or rule is explicitly enabled.
+func (lt *JLanguageTool) ignoreLocalMatch(m LocalMatch) bool {
+	if lt == nil {
+		return false
+	}
+	catKey := strings.ToUpper(tools.JavaStringTrim(m.CategoryID))
+	if catKey == "" {
+		catKey, _, _, _ = RuleMeta(m.RuleID)
+		catKey = strings.ToUpper(catKey)
+	}
+	_, catDis := lt.DisabledCategoryIDs[catKey]
+	_, catDefOff := lt.DefaultOffCategoryIDs[catKey]
+	_, catEn := lt.EnabledCategoryIDs[catKey]
+	isCategoryDisabled := (catDis || catDefOff) && !catEn
+
+	isRuleDisabled := lt.isRuleDisabled(m.RuleID)
+	// Java: rule.isDefaultOff && !enabledRules — covered by DisabledRuleIDs after MarkDefaultOff
+	// and EnableRule clearing DisabledRuleIDs + tracking EnabledRules.
+	if isCategoryDisabled {
+		// Explicit rule enable overrides category disable (Java ignoreRule).
+		if lt.EnabledRules != nil {
+			if _, en := lt.EnabledRules[m.RuleID]; en {
+				return false
+			}
+		}
+		return true
+	}
+	return isRuleDisabled
+}
+
+// EnableRule ports enableRule / AbstractPatternRule.setDefaultOn:
+// re-enables a disabled rule, clears DefaultOff tracking, and tracks the ID in
+// EnabledRules for language filter hooks (APOS_TYP, EXIGEIX_*, …).
+func (lt *JLanguageTool) EnableRule(ruleID string) {
+	if lt == nil || ruleID == "" {
+		return
+	}
+	if lt.DisabledRuleIDs != nil {
+		delete(lt.DisabledRuleIDs, ruleID)
+	}
+	if lt.DefaultOffRuleIDs != nil {
+		delete(lt.DefaultOffRuleIDs, ruleID)
+	}
+	// Keep DefaultTempOffRuleIDs so rule.tempOff / isDefaultTempOff stay true after enable.
+	if lt.EnabledRules == nil {
+		lt.EnabledRules = map[string]struct{}{}
+	}
+	lt.EnabledRules[ruleID] = struct{}{}
+}
+
+// IsRuleEnabled reports whether ruleID is tracked as enabled (EnabledRules) and
+// not in DisabledRuleIDs. Incomplete vs Java full active set — only tracked IDs.
+func (lt *JLanguageTool) IsRuleEnabled(ruleID string) bool {
+	if lt == nil || ruleID == "" {
+		return false
+	}
+	if lt.isRuleDisabled(ruleID) {
+		return false
+	}
+	if lt.EnabledRules == nil {
+		return false
+	}
+	_, ok := lt.EnabledRules[ruleID]
+	return ok
+}
+
+// GetAllRegisteredRuleIDs returns every rule ID registered via AddRuleChecker / AddTextLevelRuleChecker.
+func (lt *JLanguageTool) GetAllRegisteredRuleIDs() []string {
+	if lt == nil {
+		return nil
+	}
+	return append([]string(nil), lt.activeRuleIDs...)
+}
+
+// GetAllActiveRuleIDs returns registered rule IDs that are not disabled.
+func (lt *JLanguageTool) GetAllActiveRuleIDs() []string {
+	if lt == nil {
+		return nil
+	}
+	var out []string
+	for _, id := range lt.activeRuleIDs {
+		if !lt.isRuleDisabled(id) {
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+func (lt *JLanguageTool) isRuleDisabled(id string) bool {
+	if lt == nil || lt.DisabledRuleIDs == nil {
+		return false
+	}
+	_, ok := lt.DisabledRuleIDs[id]
+	return ok
+}
+
+// IsRuleDisabled reports whether ruleID is in DisabledRuleIDs.
+func (lt *JLanguageTool) IsRuleDisabled(ruleID string) bool {
+	return lt.isRuleDisabled(ruleID)
+}
+
+// SetListUnknownWords ports setListUnknownWords.
+func (lt *JLanguageTool) SetListUnknownWords(v bool) {
+	if lt != nil {
+		lt.ListUnknownWords = v
+	}
+}
+
+// GetUnknownWords ports getUnknownWords (sorted unique).
+func (lt *JLanguageTool) GetUnknownWords() []string {
+	if lt == nil || len(lt.unknown) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(lt.unknown))
+	for w := range lt.unknown {
+		out = append(out, w)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// SentenceTokenize ports JLanguageTool.sentenceTokenize:
+// language.getSentenceTokenizer().tokenize(text) (SRX).
+func (lt *JLanguageTool) SentenceTokenize(text string) []string {
+	lang := "en"
+	if lt != nil && lt.LanguageCode != "" {
+		lang = lt.LanguageCode
+	}
+	parts := tokenizers.NewSRXSentenceTokenizer(lang).Tokenize(text)
+	if len(parts) == 0 && text != "" {
+		return []string{text}
+	}
+	return parts
+}
+
+// Analyze splits text into sentences (SRX) and analyzes each part like Java
+// TextCheckCallable sentence loop (getAnalyzedSentence per sentence string).
+func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
+	parts := lt.SentenceTokenize(text)
+	if len(parts) == 0 {
+		return nil
+	}
+	out := make([]*AnalyzedSentence, 0, len(parts))
+	for _, p := range parts {
+		if s := lt.GetAnalyzedSentence(p); s != nil {
+			out = append(out, s)
+		}
+	}
+	return out
+}
+
+// ProfileRulesOnLine ports Tools.profileRulesOnLine for a single SentenceChecker:
+// sum of match counts over sentenceTokenize + getAnalyzedSentence + checker.
+// Java uses Rule.match; here ruleID selects a registered sentence checker when
+// ruleCheck is nil, otherwise ruleCheck runs on each analyzed sentence.
+func (lt *JLanguageTool) ProfileRulesOnLine(contents string, ruleCheck SentenceChecker) int {
+	if lt == nil || ruleCheck == nil {
+		return 0
+	}
+	count := 0
+	for _, sentence := range lt.SentenceTokenize(contents) {
+		analyzed := lt.GetAnalyzedSentence(sentence)
+		count += len(ruleCheck(analyzed))
+	}
+	return count
+}
+
+// GetRawAnalyzedSentence ports JLanguageTool.getRawAnalyzedSentence:
+// word-tokenize + tag (+ chunker) + SENT_END — no disambiguator.
+// The input is treated as a single sentence (no SRX re-split), matching Java.
+func (lt *JLanguageTool) GetRawAnalyzedSentence(sentence string) *AnalyzedSentence {
+	if lt == nil {
+		return AnalyzePlain(sentence)
+	}
+	wt := WordTokenizerForLanguage(lt.LanguageCode)
+	// Java PolishWordTokenizer.setTagger: hyphen compounds split using POS.
+	attachPolishHyphenTagger(wt, lt.TagWord)
+	var ignore *regexp.Regexp
+	ignore = lt.IgnoredCharacters
+	var s *AnalyzedSentence
+	if lt.TagWord != nil {
+		s = AnalyzeWithTaggerTokenizerAndIgnore(sentence, lt.TagWord, wt, ignore)
+	} else {
+		s = AnalyzeWithTokenizerAndIgnore(sentence, wt, ignore)
+	}
+	// Java getRawAnalyzedSentence: tagger then language.getChunker().
+	if s != nil && lt.Chunker != nil {
+		lt.Chunker.AddChunkTags(s.GetTokens())
+	}
+	return s
+}
+
+// GetAnalyzedSentence ports JLanguageTool.getAnalyzedSentence:
+// getRawAnalyzedSentence + disambiguator + preDisambig tokens + post chunker.
+// Does not SRX-split the string (callers that need multi-sentence use Analyze).
+// When Cache is set, uses SimpleInputSentence(text, language) like Java ResultCache.
+func (lt *JLanguageTool) GetAnalyzedSentence(sentence string) *AnalyzedSentence {
+	lang := ""
+	if lt != nil {
+		lang = lt.LanguageCode
+	}
+	if lt != nil && lt.Cache != nil && lang != "" {
+		key := NewSimpleInputSentence(sentence, lang)
+		if cached, ok := lt.Cache.GetSentenceIfPresent(key); ok && cached != nil {
+			return cached
+		}
+	}
+	raw := lt.GetRawAnalyzedSentence(sentence)
+	if raw == nil {
+		return nil
+	}
+	// Preserve pre-disambiguation tokens for pattern raw_pos="yes"
+	// (Java: new AnalyzedSentence(disambig.getTokens(), raw.getTokens())).
+	preDisambig := cloneAnalyzedTokenSlice(raw.GetTokens())
+	s := raw
+	if lt != nil && lt.Disambiguator != nil {
+		if d := lt.Disambiguator.Disambiguate(s); d != nil {
+			s = d
+		}
+	}
+	if preDisambig != nil {
+		s = NewAnalyzedSentenceFull(s.GetTokens(), preDisambig)
+	}
+	// Java getAnalyzedSentence: optional post-disambiguation chunker.
+	if s != nil && lt != nil && lt.PostDisambiguationChunker != nil {
+		lt.PostDisambiguationChunker.AddChunkTags(s.GetTokens())
+	}
+	if s != nil && lt != nil && lt.Cache != nil && lang != "" {
+		lt.Cache.PutSentence(NewSimpleInputSentence(sentence, lang), s)
+	}
+	return s
+}
+
+// sentenceHasTypographicApostrophe ports Java stream anyMatch(hasTypographicApostrophe).
+func sentenceHasTypographicApostrophe(s *AnalyzedSentence) bool {
+	if s == nil {
+		return false
+	}
+	for _, tok := range s.GetTokensWithoutWhitespace() {
+		if tok != nil && tok.HasTypographicApostrophe() {
+			return true
+		}
+	}
+	return false
+}
+
+// sentenceDataFromAnalyzed builds SentenceData like Java performCheck → computeSentenceData.
+// singleLineBreaksMarksPara defaults false (SRX default).
+func sentenceDataFromAnalyzed(sents []*AnalyzedSentence) []SentenceData {
+	texts := make([]string, len(sents))
+	for i, s := range sents {
+		if s != nil {
+			texts[i] = s.GetText()
+		}
+	}
+	return ComputeSentenceData(sents, texts, false)
+}
+
+// mapOriginalFn ports AnnotatedText.getOriginalTextPositionFor when non-nil.
+type mapOriginalFn func(pos int, isToPos bool) int
+
+// remapLocalMatchToDocument ports TextCheckCallable adjustRuleMatchPos for one match.
+// mapOriginal is optional (nil = plain-text document positions).
+func remapLocalMatchToDocument(m LocalMatch, sd SentenceData, typoApos bool, mapOriginal mapOriginalFn) LocalMatch {
+	m = AdjustLocalMatchPos(m, sd.StartOffset, sd.StartColumn, sd.StartLine, sd.Text, mapOriginal)
+	m.HasTypographicApostropheInSentence = typoApos
+	return m
+}
+
+// Check runs registered checkers over analyzed sentences and returns document-offset matches.
+// Sentence-local → document remap follows Java TextCheckCallable (computeSentenceData +
+// adjustRuleMatchPos): UTF-16 StartOffset/line/column on each match.
+func (lt *JLanguageTool) Check(text string) []LocalMatch {
+	return lt.checkInternal(text, nil)
+}
+
+// CheckAnalyzedSentence ports JLanguageTool.checkAnalyzedSentence for one pre-analyzed
+// sentence (ParagraphHandling.NORMAL, checkRemoteRules ignored — remote rules not in wall).
+// Java: skip TextLevelRule; filter ignoreRule on matches; SameRuleGroupFilter.
+// Used by Tools.checkBitext for target monolingual rules before bitext matches.
+func (lt *JLanguageTool) CheckAnalyzedSentence(sentence *AnalyzedSentence) []LocalMatch {
+	if lt == nil || sentence == nil {
+		return nil
+	}
+	// Java ONLYPARA → empty (sentence rules skipped).
+	if lt.paraModeOrNormal() == ParagraphOnlyPara {
+		return nil
+	}
+	if lt.Mode == ModeTextLevelOnly {
+		return nil
+	}
+	var out []LocalMatch
+	sentTypoApos := sentenceHasTypographicApostrophe(sentence)
+	for _, c := range lt.checkers {
+		if c == nil {
+			continue
+		}
+		for _, m := range c(sentence) {
+			m.HasTypographicApostropheInSentence = sentTypoApos
+			// Single-sentence document: FromPos already sentence-local (Java getText offsets).
+			out = append(out, m)
+		}
+	}
+	if len(out) == 0 {
+		return out
+	}
+	// Java second pass: filter ignoreRule on match rule IDs.
+	kept := out[:0]
+	for _, m := range out {
+		if lt.ignoreLocalMatch(m) {
+			continue
+		}
+		kept = append(kept, m)
+	}
+	out = kept
+	out = FilterMatchesForLevelAndToneTags(out, lt.Level, lt.ToneTags)
+	out = lt.applyRulePriorities(out)
+	out = CleanSameRuleGroupLocalMatches(out)
+	return out
+}
+
+// checkInternal is shared by Check (plain) and CheckAnnotated (with original mapping).
+func (lt *JLanguageTool) checkInternal(text string, mapOriginal mapOriginalFn) []LocalMatch {
+	if lt == nil {
+		return nil
+	}
+	if lt.Cancelled != nil && lt.Cancelled() {
+		return nil
+	}
+	lt.unknown = map[string]struct{}{}
+	sents := lt.Analyze(text)
+	var out []LocalMatch
+	// Mode ports JLanguageTool.Mode; ParaMode ports ParagraphHandling:
+	// ONLYPARA → checkAnalyzedSentence returns empty (no sentence rules);
+	// ONLYNONPARA → getTextLevelRuleMatches skips text-level rules.
+	runSentence := lt.Mode != ModeTextLevelOnly && lt.paraModeOrNormal() != ParagraphOnlyPara
+	runTextLevel := lt.Mode != ModeAllButTextLevel && lt.paraModeOrNormal() != ParagraphOnlyNonPara
+	// Shared SentenceData for sentence remap + text-level line/column (TextCheckCallable).
+	data := sentenceDataFromAnalyzed(sents)
+
+	if runSentence {
+		for _, sd := range data {
+			if lt.Cancelled != nil && lt.Cancelled() {
+				break
+			}
+			s := sd.Analyzed
+			if s == nil {
+				continue
+			}
+			if lt.ListUnknownWords {
+				lt.collectUnknown(s)
+			}
+			// Java Catalan.adjustCatalanMatch: any token hasTypographicApostrophe().
+			sentTypoApos := sentenceHasTypographicApostrophe(s)
+			for _, c := range lt.checkers {
+				for _, m := range c(s) {
+					adapted := remapLocalMatchToDocument(m, sd, sentTypoApos, mapOriginal)
+					lt.notifyMatchFound(adapted)
+					out = append(out, adapted)
+				}
+			}
+		}
+	} else if lt.ListUnknownWords {
+		for _, s := range sents {
+			lt.collectUnknown(s)
+		}
+	}
+
+	if runTextLevel && len(lt.textLevelCheckers) > 0 {
+		if lt.Cancelled == nil || !lt.Cancelled() {
+			for _, tc := range lt.textLevelCheckers {
+				if tc.id != "" && lt.isRuleDisabled(tc.id) {
+					continue
+				}
+				for _, m := range tc.fn(sents) {
+					// getTextLevelRuleMatches: findLineColumn + optional annotated mapping
+					adapted := AdaptTextLevelLocalMatch(m, data, mapOriginal)
+					lt.notifyMatchFound(adapted)
+					out = append(out, adapted)
+				}
+			}
+		}
+	}
+	// Java performCheck/checkAnalyzedSentence: filter ignoreRule (category + default-off).
+	if len(out) > 0 {
+		kept := out[:0]
+		for _, m := range out {
+			if lt.ignoreLocalMatch(m) {
+				continue
+			}
+			kept = append(kept, m)
+		}
+		out = kept
+	}
+	// Java filterMatches: isRuleActiveForLevelAndToneTags then SameRuleGroupFilter …
+	out = FilterMatchesForLevelAndToneTags(out, lt.Level, lt.ToneTags)
+	// Java filterMatches order:
+	// SameRuleGroupFilter → LanguageDependentRuleMatchFilter (filterRuleMatches)
+	// → CleanOverlappingFilter → filterRuleMatchesAfterOverlapping
+	out = lt.applyRulePriorities(out)
+	out = CleanSameRuleGroupLocalMatches(out)
+	// Stamp enabled rule set for language filters (Java filterRuleMatches(..., enabledRules)).
+	if en := lt.enabledRulesForFilters(); len(en) > 0 {
+		for i := range out {
+			out[i].EnabledRules = en
+		}
+	}
+	if lt.FilterRuleMatches != nil {
+		out = lt.FilterRuleMatches(out)
+	}
+	// Default cleanOverlappingMatches is true in Java JLanguageTool.
+	if lt == nil || !lt.disableCleanOverlapping {
+		hidePremium := lt != nil && lt.UserConfig != nil && lt.UserConfig.HidePremiumMatches
+		out = CleanOverlappingLocalMatchesOpts(out, CleanOverlapOpts{HidePremiumMatches: hidePremium})
+	}
+	if lt != nil && lt.FilterRuleMatchesAfterOverlapping != nil {
+		out = lt.FilterRuleMatchesAfterOverlapping(out)
+	}
+	// filterMatchesByIgnore uses plain-text positions for ignore words; when mapOriginal
+	// is set, FromPos is original/markup space — use plain-text sentence spans via
+	// FromPosSentence when available (sentence-local). Ignore filter matches on surface
+	// via OriginalErrorStr / sentence text when possible; keep plain-text filter on text.
+	return lt.filterMatchesByIgnore(text, out)
+}
+
+// applyRulePriorities ports Language.getRulePriority for each match when PriorityForId is set
+// (or DefaultRulePriorityForStyle is non-zero).
+// Java order: rule id priority → rule.getPriority (LocalMatch.Priority inject) →
+// category id priority → getDefaultRulePriorityForStyle if ITS Style → 0.
+// Leaves Priority unchanged when already non-zero (explicit inject / rule priority).
+func (lt *JLanguageTool) applyRulePriorities(ms []LocalMatch) []LocalMatch {
+	if lt == nil || len(ms) == 0 {
+		return ms
+	}
+	if lt.PriorityForId == nil && lt.DefaultRulePriorityForStyle == 0 {
+		return ms
+	}
+	for i := range ms {
+		if ms[i].Priority != 0 {
+			continue
+		}
+		if lt.PriorityForId != nil {
+			if id := ms[i].RuleID; id != "" {
+				if p := lt.PriorityForId(id); p != 0 {
+					ms[i].Priority = p
+					continue
+				}
+			}
+			if cat := ms[i].CategoryID; cat != "" {
+				if p := lt.PriorityForId(cat); p != 0 {
+					ms[i].Priority = p
+					continue
+				}
+			}
+		}
+		// Java: getDefaultRulePriorityForStyle when ITSIssueType.Style
+		if lt.DefaultRulePriorityForStyle != 0 && isStyleIssueType(ms[i].IssueType) {
+			ms[i].Priority = lt.DefaultRulePriorityForStyle
+		}
+	}
+	return ms
+}
+
+func isStyleIssueType(it string) bool {
+	return strings.EqualFold(tools.JavaStringTrim(it), "style")
+}
+
+// collectUnknown ports JLanguageTool.rememberUnknownWords:
+// if (!reading.isTagged()) unknownWords.add(reading.getToken()).
+// Incomplete without a real tagger: Java always tags via language tagger.
+// IsKnownWord is an optional inject for tests without Morphy (exact surface only —
+// not a soft invent lexicon). Without TagWord and without IsKnownWord, list nothing
+// (fail closed — do not invent unknown lists from every untagged surface).
+// Do not skip IsSentenceEnd — Java attaches SENT_END on the last content token
+// (hasNoTag), and still lists that surface when untagged (e.g. "description").
+func (lt *JLanguageTool) collectUnknown(s *AnalyzedSentence) {
+	for _, tok := range s.GetTokensWithoutWhitespace() {
+		if tok == nil || tok.IsSentenceStart() {
+			continue
+		}
+		w := tok.GetToken()
+		if w == "" || !hasLetterLocal(w) {
+			continue
+		}
+		// Java: only untagged tokens are unknown.
+		if tok.IsTagged() {
+			continue
+		}
+		// Optional inject dict: treat exact surface as known when no real POS.
+		if lt.IsKnownWord != nil && lt.IsKnownWord(w) {
+			continue
+		}
+		// Without TagWord and without IsKnownWord, listing everything untagged would
+		// spam every token — require inject dict or real tags (Java always has tagger).
+		if lt.IsKnownWord == nil && lt.TagWord == nil {
+			continue
+		}
+		lt.unknown[w] = struct{}{}
+	}
+}
+
+func hasLetterLocal(s string) bool {
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			return true
+		}
+	}
+	return false
+}
+
+func indexRunesFrom(haystack, needle []rune, from int) int {
+	if len(needle) == 0 {
+		return from
+	}
+	if from < 0 {
+		from = 0
+	}
+	for i := from; i+len(needle) <= len(haystack); i++ {
+		match := true
+		for j := 0; j < len(needle); j++ {
+			if haystack[i+j] != needle[j] {
+				match = false
+				break
+			}
+		}
+		if match {
+			return i
+		}
+	}
+	return -1
+}
+
+// cleanOverlappingPickyDemotion ports Java CleanOverlappingFilter.negativeConstant
+// (Integer.MIN_VALUE + 10000) applied when the rule has Tag.picky.
+const cleanOverlappingPickyDemotion = math.MinInt32 + 10000
+
+// CleanOverlapOpts ports CleanOverlappingFilter constructor flags used by Check.
+type CleanOverlapOpts struct {
+	// HidePremiumMatches demotes premium matches to MinInt32 (Java hidePremiumMatches).
+	HidePremiumMatches bool
+}
+
+// CleanOverlappingLocalMatches ports CleanOverlappingFilter for LocalMatch with default opts.
+func CleanOverlappingLocalMatches(matches []LocalMatch) []LocalMatch {
+	return CleanOverlappingLocalMatchesOpts(matches, CleanOverlapOpts{})
+}
+
+// CleanOverlappingLocalMatchesOpts ports CleanOverlappingFilter for LocalMatch:
+// sort by FromPos, walk sequentially; on overlap keep higher effective priority;
+// on equal priority keep the longer span; on still equal keep the later match.
+// Juxtaposed (non-overlapping) matches are both kept.
+// Picky matches are demoted by cleanOverlappingPickyDemotion (Java).
+// When both matches are punctuation-only changes (letters/digits unchanged), prefer
+// IncludedInErrorsCorrectedAllAtOnce like Java.
+// When HidePremiumMatches, premium rules get priority MinInt32 (Java).
+func CleanOverlappingLocalMatchesOpts(matches []LocalMatch, opts CleanOverlapOpts) []LocalMatch {
+	if len(matches) <= 1 {
+		return matches
+	}
+	sorted := append([]LocalMatch(nil), matches...)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return sorted[i].FromPos < sorted[j].FromPos
+	})
+	var cleanList []LocalMatch
+	var prev LocalMatch
+	havePrev := false
+	for _, cur := range sorted {
+		if !havePrev {
+			prev = cur
+			havePrev = true
+			continue
+		}
+		// Java requires non-decreasing FromPos (guaranteed by sort).
+		isDupSug := cleanOverlapDuplicateSuggestion(prev, cur)
+		// no overlapping (juxtaposed errors are not removed)
+		if cur.FromPos >= prev.ToPos && !isDupSug {
+			cleanList = append(cleanList, prev)
+			prev = cur
+			continue
+		}
+		// overlapping — compare effective priorities
+		curP := cleanOverlapEffectivePriority(cur, opts.HidePremiumMatches)
+		prevP := cleanOverlapEffectivePriority(prev, opts.HidePremiumMatches)
+		// Java: both punctuation-only → prefer isIncludedInErrorsCorrectedAllAtOnce.
+		if cleanOverlapIsPunctuationOnly(cur) && cleanOverlapIsPunctuationOnly(prev) {
+			curAll := cur.IncludedInErrorsCorrectedAllAtOnce
+			prevAll := prev.IncludedInErrorsCorrectedAllAtOnce
+			if curAll != prevAll {
+				if curAll {
+					if curP < prevP {
+						curP = prevP + 1
+					}
+				} else if prevP < curP {
+					prevP = curP + 1
+				}
+			}
+		}
+		if curP == prevP {
+			// take the longest error
+			curP = cur.ToPos - cur.FromPos
+			prevP = prev.ToPos - prev.FromPos
+		}
+		if curP == prevP {
+			curP++ // take the last one
+		}
+		if curP > prevP {
+			prev = cur
+		}
+	}
+	if havePrev {
+		cleanList = append(cleanList, prev)
+	}
+	return cleanList
+}
+
+func cleanOverlapEffectivePriority(m LocalMatch, hidePremium bool) int {
+	p := m.Priority
+	if hidePremium && cleanOverlapIsPremium(m) {
+		p = math.MinInt32
+	}
+	if m.IsPicky && p != math.MinInt32 {
+		p += cleanOverlappingPickyDemotion
+	}
+	return p
+}
+
+// cleanOverlapIsPremium ports CleanOverlappingFilter.isPremiumRule:
+//  1. explicit LocalMatch.IsPremium (ToLocalMatches / inject)
+//  2. DefaultPremium.IsPremiumRule(ruleID) — Java Premium.get().isPremiumRule(rule)
+//  3. RuleID contains "PREMIUM" — LocalMatch fallback when no Premium registry
+//     and the rule id itself encodes premium (open-source PremiumOff is always false)
+func cleanOverlapIsPremium(m LocalMatch) bool {
+	if m.IsPremium {
+		return true
+	}
+	if DefaultPremium != nil && DefaultPremium.IsPremiumRule(m.RuleID) {
+		return true
+	}
+	return strings.Contains(m.RuleID, "PREMIUM")
+}
+
+// cleanOverlapIsPunctuationOnly ports CleanOverlappingFilter.isPunctuationOnlyChange:
+// first suggestion vs original surface; letters+digits equal ⇒ punctuation-only change.
+// Original surface via LocalMatch.OriginalSurface (Java getOriginalErrorStr / sentence).
+// Without surface or suggestions → false (fail-closed).
+func cleanOverlapIsPunctuationOnly(m LocalMatch) bool {
+	if len(m.Suggestions) == 0 {
+		return false
+	}
+	replacement := m.Suggestions[0]
+	original := m.OriginalSurface()
+	if original == "" {
+		return false
+	}
+	if replacement == original {
+		return false
+	}
+	return cleanOverlapKeepLettersAndDigits(original) == cleanOverlapKeepLettersAndDigits(replacement)
+}
+
+// OriginalSurface ports marked-error text used by CleanOverlappingFilter and
+// SwissGerman.filterRuleMatches: OriginalErrorStr when set, else
+// SentenceText[from:to] with sentence positions first then document positions
+// (Java getOriginalErrorStr / sentence.substring(from,to) — UTF-16 indices).
+// Empty when unknown — filters must fail closed without invent.
+func (m LocalMatch) OriginalSurface() string {
+	if m.OriginalErrorStr != "" {
+		return m.OriginalErrorStr
+	}
+	st := m.SentenceText
+	if st == "" {
+		return ""
+	}
+	// Prefer sentence-relative span (Java fromPosSentence / Check pre-remap).
+	if s := localMatchUTF16Span(st, m.FromPosSentence, m.ToPosSentence); s != "" {
+		return s
+	}
+	// Java SwissGerman / CleanOverlapping second branch: fromPos/toPos on sentence text.
+	return localMatchUTF16Span(st, m.FromPos, m.ToPos)
+}
+
+// TrimMatchEnds ports RuleMatch.trimMatchEnds: while all suggestions share a
+// leading/trailing space-separated token with OriginalSurface, strip that token
+// from suggestions and shrink FromPos/ToPos (and sentence spans) accordingly.
+// Position deltas use Java String.length (UTF-16 code units); string slices use
+// Go UTF-8 byte indices (faithful to Java substring + length).
+// Unchanged when no suggestions or no surface (fail-closed).
+func (m LocalMatch) TrimMatchEnds() LocalMatch {
+	if len(m.Suggestions) == 0 {
+		return m
+	}
+	errorStr := m.OriginalSurface()
+	if errorStr == "" {
+		return m
+	}
+	fromPos, toPos := m.FromPos, m.ToPos
+	fromSent, toSent := m.FromPosSentence, m.ToPosSentence
+	repls := append([]string(nil), m.Suggestions...)
+	origFrom, origTo := fromPos, toPos
+	changed := true
+	for changed {
+		changed = false
+		// Try trimming from the end
+		lastSpaceIdx := strings.LastIndex(errorStr, " ")
+		if lastSpaceIdx > 0 {
+			lastToken := errorStr[lastSpaceIdx+1:]
+			endSuffix := " " + lastToken
+			allEnd := true
+			for _, r := range repls {
+				if !strings.HasSuffix(r, endSuffix) {
+					allEnd = false
+					break
+				}
+			}
+			if allEnd {
+				// Java: errorStr.length() - lastSpaceIdx (UTF-16 units of " "+lastToken)
+				errorTrimLen := localMatchUTF16Len(errorStr[lastSpaceIdx:])
+				for i := range repls {
+					repls[i] = repls[i][:len(repls[i])-len(endSuffix)]
+				}
+				toPos -= errorTrimLen
+				if toSent >= 0 {
+					toSent -= errorTrimLen
+				}
+				errorStr = errorStr[:lastSpaceIdx]
+				changed = true
+			}
+		}
+		// Try trimming from the beginning
+		firstSpaceIdx := strings.Index(errorStr, " ")
+		if firstSpaceIdx > 0 {
+			firstToken := errorStr[:firstSpaceIdx]
+			startPrefix := firstToken + " "
+			allStart := true
+			for _, r := range repls {
+				if !strings.HasPrefix(r, startPrefix) {
+					allStart = false
+					break
+				}
+			}
+			if allStart {
+				// Java: firstSpaceIdx + 1 as UTF-16 length of firstToken+" "
+				errorTrimLen := localMatchUTF16Len(startPrefix)
+				for i := range repls {
+					repls[i] = repls[i][len(startPrefix):]
+				}
+				fromPos += errorTrimLen
+				if fromSent >= 0 {
+					fromSent += errorTrimLen
+				}
+				// Advance errorStr by Go byte length of the same prefix.
+				errorStr = errorStr[len(startPrefix):]
+				changed = true
+			}
+		}
+	}
+	if fromPos == origFrom && toPos == origTo {
+		return m
+	}
+	out := m
+	out.FromPos = fromPos
+	out.ToPos = toPos
+	out.FromPosSentence = fromSent
+	out.ToPosSentence = toSent
+	out.Suggestions = repls
+	out.OriginalErrorStr = errorStr
+	return out
+}
+
+// localMatchUTF16Span slices sentence text by Java UTF-16 code-unit indices.
+func localMatchUTF16Span(st string, from, to int) string {
+	if from < 0 || to < 0 || from >= to {
+		return ""
+	}
+	if to > localMatchUTF16Len(st) {
+		return ""
+	}
+	return localMatchUTF16Substring(st, from, to)
+}
+
+func localMatchUTF16Len(s string) int {
+	n := 0
+	for _, r := range s {
+		if r >= 0x10000 {
+			n += 2
+		} else {
+			n++
+		}
+	}
+	return n
+}
+
+func localMatchUTF16Substring(s string, from, to int) string {
+	u := make([]uint16, 0, len(s))
+	for _, r := range s {
+		if r >= 0x10000 {
+			r -= 0x10000
+			u = append(u, uint16(0xD800+(r>>10)), uint16(0xDC00+(r&0x3FF)))
+		} else {
+			u = append(u, uint16(r))
+		}
+	}
+	if from < 0 {
+		from = 0
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	var runes []rune
+	for i := from; i < to; {
+		r := rune(u[i])
+		if r >= 0xD800 && r <= 0xDBFF && i+1 < to {
+			r2 := rune(u[i+1])
+			if r2 >= 0xDC00 && r2 <= 0xDFFF {
+				runes = append(runes, 0x10000+((r-0xD800)<<10)|(r2-0xDC00))
+				i += 2
+				continue
+			}
+		}
+		runes = append(runes, r)
+		i++
+	}
+	return string(runes)
+}
+
+func cleanOverlapKeepLettersAndDigits(s string) string {
+	var b strings.Builder
+	for _, ch := range s {
+		if unicode.IsLetter(ch) || unicode.IsDigit(ch) {
+			b.WriteRune(ch)
+		}
+	}
+	return b.String()
+}
+
+// cleanOverlapDuplicateSuggestion ports Java CleanOverlappingFilter juxtaposed
+// duplicate-comma / split-suggestion detection (treated as overlap).
+func cleanOverlapDuplicateSuggestion(prev, cur LocalMatch) bool {
+	if len(prev.Suggestions) == 0 || len(cur.Suggestions) == 0 {
+		return false
+	}
+	sug, prevSug := cur.Suggestions[0], prev.Suggestions[0]
+	if cur.FromPos == prev.ToPos {
+		if strings.HasSuffix(prevSug, ",") && strings.HasPrefix(sug, ", ") {
+			return true
+		}
+	}
+	// Java: indexOf(" ") > 0 — space must not be at index 0
+	if strings.Index(sug, " ") > 0 && strings.Index(prevSug, " ") > 0 &&
+		cur.FromPos == prev.ToPos+1 {
+		parts := strings.Split(sug, " ")
+		partsPrev := strings.Split(prevSug, " ")
+		if len(partsPrev) > 1 && len(parts) > 1 && partsPrev[1] == parts[0] {
+			return true
+		}
+	}
+	return false
+}
+
+func spansOverlap(a0, a1, b0, b1 int) bool {
+	return a0 < b1 && b0 < a1
+}
+
+// CleanSameRuleGroupLocalMatches ports SameRuleGroupFilter for LocalMatch:
+// sort by FromPos; keep first of overlapping matches with the same RuleID.
+func CleanSameRuleGroupLocalMatches(matches []LocalMatch) []LocalMatch {
+	if len(matches) <= 1 {
+		return matches
+	}
+	sorted := append([]LocalMatch(nil), matches...)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return sorted[i].FromPos < sorted[j].FromPos
+	})
+	var filtered []LocalMatch
+	for i := 0; i < len(sorted); i++ {
+		match := sorted[i]
+		for i < len(sorted)-1 &&
+			sameRuleGroupOverlapLocal(match, sorted[i+1]) {
+			i++ // skip next match (Java SameRuleGroupFilter)
+		}
+		filtered = append(filtered, match)
+	}
+	return filtered
+}
+
+func sameRuleGroupOverlapLocal(match, next LocalMatch) bool {
+	if match.RuleID == "" || match.RuleID != next.RuleID {
+		return false
+	}
+	// Java RuleMatch overlaps: fromPos <= next.toPos && toPos >= next.fromPos
+	return match.FromPos <= next.ToPos && match.ToPos >= next.FromPos
+}
+
+// PreferredWordRepeatFactory is set by package rules to WordRepeatRule when available.
+// When nil, SimpleWordRepeatChecker uses an in-package Java-faithful fallback
+// (equalsIgnoreCase + isWord + name exceptions) — no soft case-sensitive invent.
+var PreferredWordRepeatFactory func(ruleID string) SentenceChecker
+
+// SimpleWordRepeatChecker flags consecutive word tokens (Java WordRepeatRule).
+func SimpleWordRepeatChecker(ruleID string) SentenceChecker {
+	if PreferredWordRepeatFactory != nil {
+		return PreferredWordRepeatFactory(ruleID)
+	}
+	return simpleWordRepeatFallback(ruleID)
+}
+
+// simpleWordRepeatFallback ports WordRepeatRule.match without importing rules
+// (avoids package cycle). Same semantics as org.languagetool.rules.WordRepeatRule.
+func simpleWordRepeatFallback(ruleID string) SentenceChecker {
+	if ruleID == "" {
+		ruleID = "WORD_REPEAT_RULE"
+	}
+	// Java WordRepeatRule.ignore name exceptions
+	ignoreNames := map[string]struct{}{
+		"Phi": {}, "Li": {}, "Xiao": {}, "Duran": {}, "Wagga": {},
+		"Abdullah": {}, "Nwe": {}, "Pago": {}, "Cao": {},
+	}
+	return func(sentence *AnalyzedSentence) []LocalMatch {
+		if sentence == nil {
+			return nil
+		}
+		toks := sentence.GetTokensWithoutWhitespace()
+		var out []LocalMatch
+		prevToken := ""
+		for i := 1; i < len(toks); i++ {
+			if toks[i] == nil {
+				continue
+			}
+			if toks[i].IsImmunized() {
+				prevToken = ""
+				continue
+			}
+			token := toks[i].GetToken()
+			if isWordRepeatToken(token) && strings.EqualFold(prevToken, token) {
+				// ignore name doubles (exact case like Java wordRepetitionOf)
+				if _, ok := ignoreNames[token]; ok && prevToken == token {
+					prevToken = token
+					continue
+				}
+				prevPos := toks[i-1].GetStartPos()
+				pos := toks[i].GetStartPos()
+				// Java: end = pos + prevToken.length() (UTF-16)
+				end := pos
+				for _, r := range prevToken {
+					if r >= 0x10000 {
+						end += 2
+					} else {
+						end++
+					}
+				}
+				out = append(out, LocalMatch{
+					FromPos:      prevPos,
+					ToPos:        end,
+					Message:      "Word repetition",
+					ShortMessage: "Word repetition",
+					RuleID:       ruleID,
+					Suggestions:  []string{prevToken},
+				})
+			}
+			prevToken = token
+		}
+		return out
+	}
+}
+
+func isWordRepeatToken(token string) bool {
+	if token == "" {
+		return false
+	}
+	// Java StringTools.isEmoji / isNumericSpace simplified: no pure digits/punct
+	runes := []rune(token)
+	if len(runes) == 1 && !unicode.IsLetter(runes[0]) {
+		return false
+	}
+	// pure numeric
+	allDigit := true
+	for _, r := range runes {
+		if !unicode.IsDigit(r) && r != ' ' {
+			allDigit = false
+			break
+		}
+	}
+	if allDigit {
+		return false
+	}
+	return true
+}
+
+// KnownWordSet builds an IsKnownWord from a set of dictionary forms (case-sensitive).
+// Exact surface only — no soft lowercase invent (callers list both cases when needed).
+func KnownWordSet(words ...string) func(string) bool {
+	m := map[string]struct{}{}
+	for _, w := range words {
+		m[w] = struct{}{}
+	}
+	return func(tok string) bool {
+		_, ok := m[tok]
+		return ok
+	}
+}
+
+// SimpleMapSpellerChecker flags letter tokens not in known; optional suggestion map.
+// Known lookup is exact surface only (no soft lowercase invent — list both cases in
+// known when needed). Does not invent edit-distance peers from the known set
+// (pass nearestKnown via SimplePredicateSpellerChecker when a real dict SuggestEdits
+// path is wired).
+func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestions map[string][]string) SentenceChecker {
+	isKnown := func(w string) bool {
+		_, ok := known[w]
+		return ok
+	}
+	return SimplePredicateSpellerChecker(ruleID, isKnown, suggestions, nil, nil)
+}
+
+// SimplePredicateSpellerChecker flags letter tokens rejected by isKnown.
+// nearestKnown is optional (edit-distance peers when non-nil and small).
+// suggestFn is optional (e.g. CFSA2 edit-candidate Contains); tried after the map.
+func SimplePredicateSpellerChecker(ruleID string, isKnown func(string) bool, suggestions map[string][]string, nearestKnown map[string]struct{}, suggestFn func(string) []string) SentenceChecker {
+	if ruleID == "" {
+		ruleID = "MORFOLOGIK_RULE"
+	}
+	if isKnown == nil {
+		isKnown = func(string) bool { return true }
+	}
+	return func(sentence *AnalyzedSentence) []LocalMatch {
+		if sentence == nil {
+			return nil
+		}
+		var out []LocalMatch
+		for _, tok := range sentence.GetTokensWithoutWhitespace() {
+			// Skip pure SENT_START marker (empty token). Do not skip content that
+			// also carries SENT_END — Java spell-checks the last word of the sentence.
+			if tok == nil || tok.IsSentenceStart() {
+				continue
+			}
+			// multiword chunker / disambiguator IGNORE_SPELLING / IMMUNIZE
+			if tok.IsIgnoredBySpeller() || tok.IsImmunized() {
+				continue
+			}
+			w := tok.GetToken()
+			// Java SpellingCheckRule.isUrl / isEMail (WordTokenizer)
+			if tokenizers.IsURL(w) || tokenizers.IsEMail(w) {
+				continue
+			}
+			if w == "" || !hasLetterLocal(w) {
+				continue
+			}
+			if isKnown(w) {
+				continue
+			}
+			m := LocalMatch{
+				FromPos:      tok.GetStartPos(),
+				ToPos:        tok.GetEndPos(),
+				Message:      "Possible spelling mistake",
+				ShortMessage: "Spelling mistake",
+				RuleID:       ruleID,
+			}
+			if suggestions != nil {
+				// Exact surface key only — no soft lowercase invent on suggestion maps.
+				if s, ok := suggestions[w]; ok {
+					m.Suggestions = append([]string(nil), s...)
+				}
+			}
+			if len(m.Suggestions) == 0 && suggestFn != nil {
+				m.Suggestions = suggestFn(w)
+			}
+			if len(m.Suggestions) == 0 && nearestKnown != nil {
+				m.Suggestions = nearestKnownWords(w, nearestKnown, 2, 5)
+			}
+			out = append(out, m)
+		}
+		return out
+	}
+}
+
+// nearestKnownWords returns up to maxN dictionary words within maxDist edit distance.
+func nearestKnownWords(word string, known map[string]struct{}, maxDist, maxN int) []string {
+	if word == "" || known == nil || len(known) == 0 || len(known) > 10000 || maxN <= 0 {
+		return nil
+	}
+	type cand struct {
+		w    string
+		dist int
+	}
+	var cands []cand
+	low := strings.ToLower(word)
+	seen := map[string]struct{}{}
+	for k := range known {
+		kl := strings.ToLower(k)
+		if _, ok := seen[kl]; ok {
+			continue
+		}
+		d := runeLevenshtein(low, kl)
+		if d > 0 && d <= maxDist {
+			seen[kl] = struct{}{}
+			// Keep dictionary surface form (no soft lowercase invent of suggestions).
+			cands = append(cands, cand{w: k, dist: d})
+		}
+	}
+	// sort by distance then alphabetically (stable, no import sort for tiny N)
+	for i := 0; i < len(cands); i++ {
+		for j := i + 1; j < len(cands); j++ {
+			if cands[j].dist < cands[i].dist || (cands[j].dist == cands[i].dist && cands[j].w < cands[i].w) {
+				cands[i], cands[j] = cands[j], cands[i]
+			}
+		}
+	}
+	if len(cands) > maxN {
+		cands = cands[:maxN]
+	}
+	out := make([]string, 0, len(cands))
+	for _, c := range cands {
+		out = append(out, c.w)
+	}
+	return out
+}
+
+func runeLevenshtein(a, b string) int {
+	ar, br := []rune(a), []rune(b)
+	if len(ar) == 0 {
+		return len(br)
+	}
+	if len(br) == 0 {
+		return len(ar)
+	}
+	// band optimization for short words
+	if absInt(len(ar)-len(br)) > 4 {
+		return absInt(len(ar) - len(br))
+	}
+	prev := make([]int, len(br)+1)
+	cur := make([]int, len(br)+1)
+	for j := range prev {
+		prev[j] = j
+	}
+	for i := 1; i <= len(ar); i++ {
+		cur[0] = i
+		for j := 1; j <= len(br); j++ {
+			cost := 1
+			if ar[i-1] == br[j-1] {
+				cost = 0
+			}
+			del := prev[j] + 1
+			ins := cur[j-1] + 1
+			sub := prev[j-1] + cost
+			m := del
+			if ins < m {
+				m = ins
+			}
+			if sub < m {
+				m = sub
+			}
+			cur[j] = m
+		}
+		prev, cur = cur, prev
+	}
+	return prev[len(br)]
+}
+
+func absInt(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
+// PreferredAvsAnChecker is set by package en (init/register) to the faithful AvsAnRule
+// path with DT inject. When nil, SimpleAvsAnChecker fails closed (no soft invent lexicon).
+var PreferredAvsAnChecker SentenceChecker
+
+// SimpleAvsAnChecker returns the faithful EN_A_VS_AN checker when en has registered it.
+// Soft phonetic invent maps were removed — do not invent a/an exceptions here.
+func SimpleAvsAnChecker() SentenceChecker {
+	if PreferredAvsAnChecker != nil {
+		return PreferredAvsAnChecker
+	}
+	// Fail closed without wired AvsAnRule (package en sets PreferredAvsAnChecker).
+	return func(*AnalyzedSentence) []LocalMatch { return nil }
+}
+
+// CorrectTextFromLocalMatches ports Tools.correctTextFromMatches (UTF-16 positions).
+// Same algorithm as tools.CorrectTextFromMatches; kept here to avoid import cycles.
+// Match order is caller order (Java does not re-sort).
+func CorrectTextFromLocalMatches(contents string, matches []LocalMatch) string {
+	if len(matches) == 0 {
+		return contents
+	}
+	sb := utf16.Encode([]rune(contents))
+	var errors []string
+	for _, rm := range matches {
+		if len(rm.Suggestions) == 0 {
+			continue
+		}
+		if rm.FromPos < 0 || rm.ToPos > len(sb) || rm.FromPos > rm.ToPos {
+			errors = append(errors, "")
+			continue
+		}
+		errors = append(errors, string(utf16.Decode(sb[rm.FromPos:rm.ToPos])))
+	}
+	offset := 0
+	counter := 0
+	for _, rm := range matches {
+		if len(rm.Suggestions) == 0 {
+			continue
+		}
+		repl := rm.Suggestions[0]
+		from := rm.FromPos - offset
+		to := rm.ToPos - offset
+		if from >= 0 && to >= from && to <= len(sb) &&
+			counter < len(errors) && errors[counter] == string(utf16.Decode(sb[from:to])) {
+			replU := utf16.Encode([]rune(repl))
+			nb := make([]uint16, 0, len(sb)-(to-from)+len(replU))
+			nb = append(nb, sb[:from]...)
+			nb = append(nb, replU...)
+			nb = append(nb, sb[to:]...)
+			sb = nb
+			offset += (rm.ToPos - rm.FromPos) - len(replU)
+		}
+		counter++
+	}
+	return string(utf16.Decode(sb))
+}

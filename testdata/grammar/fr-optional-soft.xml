@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft FR optional rules: default off until -e. -->
+<rules lang="fr">
+  <category id="STYLE" name="Style">
+    <rule id="FR_SOFT_OPT_DANS_LE_CADRE" name="dans le cadre soft optional" default="off">
+      <pattern>
+        <token>dans</token>
+        <token>le</token>
+        <token>cadre</token>
+        <token>de</token>
+      </pattern>
+      <message>Préférez "pour" ou "lors de" si plus clair.</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_OPT_IL_CONVIENT" name="il convient soft optional" default="off">
+      <pattern>
+        <token>il</token>
+        <token>convient</token>
+        <token>de</token>
+      </pattern>
+      <message>Préférez "il faut" ou un impératif.</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_OPT_AU_PREALABLE" name="au préalable soft optional" default="off">
+      <pattern>
+        <token>au</token>
+        <token>préalable</token>
+      </pattern>
+      <message>Préférez "avant" ou "d'abord".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_OPT_EN_L_OCCURRENCE" name="en l occurrence soft optional" default="off">
+      <pattern>
+        <token>en</token>
+        <token>l</token>
+        <token>occurrence</token>
+      </pattern>
+      <message>Préférez "ici" ou "dans ce cas".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

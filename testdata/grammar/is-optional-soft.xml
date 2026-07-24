@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft IS optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="is">
+  <category id="STYLE" name="Style">
+    <rule id="IS_SOFT_OPT_I_SAMBANDI" name="í sambandi við soft optional" default="off">
+      <pattern>
+        <token>í</token>
+        <token>sambandi</token>
+        <token>við</token>
+      </pattern>
+      <message>Íhugið "varðandi" eða "um".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IS_SOFT_OPT_MEÐ_TILLITI" name="með tilliti til soft optional" default="off">
+      <pattern>
+        <token>með</token>
+        <token>tilliti</token>
+        <token>til</token>
+      </pattern>
+      <message>Íhugið "vegna" eða "sökum".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IS_SOFT_OPT_I_TILGANGI" name="í tilgangi soft optional" default="off">
+      <pattern>
+        <token>í</token>
+        <token>tilgangi</token>
+      </pattern>
+      <message>Íhugið "til að".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

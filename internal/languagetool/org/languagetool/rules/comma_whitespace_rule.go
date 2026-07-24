@@ -1,0 +1,304 @@
+package rules
+
+import (
+	"regexp"
+	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
+
+// CommaWhitespaceRule ports org.languagetool.rules.CommaWhitespaceRule.
+// Java: TYPOGRAPHY, Whitespace.
+type CommaWhitespaceRule struct {
+	Messages              map[string]string
+	QuotesWhitespaceCheck bool
+	// CommaCharacter is the punctuation checked for spacing ("," default; Arabic "،"/"؛"/"؟").
+	CommaCharacter string
+	// RuleID overrides GetID when set (language-specific wrappers).
+	RuleID string
+	// Category ports Rule.category (Java TYPOGRAPHY).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Whitespace).
+	IssueType ITSIssueType
+	// IsException skips a candidate match at token index i (language-specific).
+	IsException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
+	// DefaultOff ports Rule.setDefaultOff (e.g. PersianCommaWhitespaceRule).
+	DefaultOff bool
+	fileExt    *regexp.Regexp
+	domain     *regexp.Regexp
+}
+
+func NewCommaWhitespaceRule(messages map[string]string) *CommaWhitespaceRule {
+	return &CommaWhitespaceRule{
+		Messages:              messages,
+		QuotesWhitespaceCheck: true,
+		CommaCharacter:        ",",
+		Category:              CatTypography.GetCategory(messages),
+		IssueType:             ITSWhitespace,
+		fileExt:               regexp.MustCompile(`^([a-z]{3,4}|[A-Z]{3,4}|ai|mp[34]|MP[34])(-.+)?$`),
+		domain:                regexp.MustCompile(`(?i)^(com|org|net|int|edu|gov|mil|[a-z]{2})$`),
+	}
+}
+
+func (r *CommaWhitespaceRule) GetID() string {
+	if r.RuleID != "" {
+		return r.RuleID
+	}
+	return "COMMA_PARENTHESIS_WHITESPACE"
+}
+
+// IsDefaultOff ports Rule.isDefaultOff.
+func (r *CommaWhitespaceRule) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
+}
+
+// GetDescription ports getDescription (desc_comma_whitespace).
+func (r *CommaWhitespaceRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_comma_whitespace"]; s != "" {
+			return s
+		}
+	}
+	return "Spacing around commas and parentheses"
+}
+
+func (r *CommaWhitespaceRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *CommaWhitespaceRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSWhitespace
+	}
+	return r.IssueType
+}
+func (r *CommaWhitespaceRule) GetCommaCharacter() string {
+	if r.CommaCharacter != "" {
+		return r.CommaCharacter
+	}
+	return ","
+}
+
+func (r *CommaWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
+	var ruleMatches []*RuleMatch
+	tokens := sentence.GetTokens()
+	prevToken, prevPrevToken := "", ""
+	prevWhite := false
+	for i := 0; i < len(tokens); i++ {
+		token := tokens[i].GetToken()
+		isWhitespace := isWhitespaceToken(tokens[i])
+		twoSuggestions := false
+		var msg, suggestionText string
+		msgSet := false
+
+		if isWhitespace && isLeftBracket(prevToken) {
+			isException := i+1 < len(tokens) && prevToken == "[" && token == " " && tokens[i+1].GetToken() == "]"
+			if !isException {
+				msg = r.msg("no_space_after", "Don't put a space after this")
+				suggestionText = prevToken
+				msgSet = true
+			}
+		} else if isWhitespace && isQuote(prevToken) && r.QuotesWhitespaceCheck && prevPrevToken == " " {
+			msg = r.msg("no_space_around_quotes", "Don't put spaces around quotes")
+			suggestionText = prevToken
+			twoSuggestions = true
+			msgSet = true
+		} else if !isWhitespace && prevToken == r.GetCommaCharacter() &&
+			!isQuote(token) && !isHyphenOrComma(token) &&
+			!containsDigit(prevPrevToken) && !containsDigit(token) && prevPrevToken != "," {
+			msg = r.msg("missing_space_after_comma", "Put a space after the comma")
+			suggestionText = r.GetCommaCharacter() + " " + tokens[i].GetToken()
+			msgSet = true
+		} else if prevWhite {
+			if isRightBracket(token) {
+				isException := token == "]" && prevToken == " " && prevPrevToken == "["
+				if !isException {
+					msg = r.msg("no_space_before", "Don't put a space before this")
+					suggestionText = token
+					msgSet = true
+				}
+			} else if token == r.GetCommaCharacter() {
+				msg = r.msg("space_after_comma", "Don't put a space before the comma")
+				suggestionText = r.GetCommaCharacter()
+				msgSet = true
+				if i+1 < len(tokens) && tokens[i+1].GetToken() == r.GetCommaCharacter() {
+					msgSet = false
+					msg = ""
+				}
+				if i+1 < len(tokens) && !tokens[i+1].IsWhitespace() {
+					suggestionText = r.GetCommaCharacter() + " "
+				}
+			} else if token == "." && !r.isDomain(tokens, i+1) && !r.isFileExtension(tokens, i+1) {
+				msg = r.msg("no_space_before_dot", "Don't put a space before the period")
+				suggestionText = "."
+				msgSet = true
+				if i+1 < len(tokens) && isDigitOrDot(tokens[i+1].GetToken()) {
+					msgSet = false
+					msg = ""
+				} else if i+2 < len(tokens) && tokens[i+1].GetToken() == "/" {
+					// ./validate.sh
+					next := tokens[i+2].GetToken()
+					ok, _ := regexp.MatchString(`^[a-zA-Z]+$`, next)
+					if ok {
+						msgSet = false
+						msg = ""
+					}
+				}
+			}
+		}
+
+		if msgSet && msg != "" && !tokens[i].IsImmunized() && (r.IsException == nil || !r.IsException(tokens, i)) {
+			fromPos := tokens[i-1].GetStartPos()
+			if twoSuggestions {
+				fromPos = tokens[i-2].GetStartPos()
+			}
+			toPos := tokens[i].GetEndPos()
+			text := sentence.GetText()
+			// Java: if (toPos < text.length()) { marked = text.substring(fromPos, toPos); ... }
+			// text.length() is UTF-16; only skip when marked already equals the suggestion
+			// and the match is not at the end of the string (strict <).
+			if toPos < utf16Len(text) {
+				marked := utf16Substring(text, fromPos, toPos)
+				if marked == suggestionText && !twoSuggestions {
+					prevPrevToken = prevToken
+					prevToken = token
+					prevWhite = isWhitespace && !tokens[i].IsFieldCode()
+					continue
+				}
+			}
+			rm := NewRuleMatch(r, sentence, fromPos, toPos, msg)
+			if twoSuggestions {
+				rm.SuggestedReplacements = []string{suggestionText + " ", " " + suggestionText}
+			} else {
+				rm.SetSuggestedReplacement(suggestionText)
+			}
+			ruleMatches = append(ruleMatches, rm)
+		}
+		prevPrevToken = prevToken
+		prevToken = token
+		prevWhite = isWhitespace && !tokens[i].IsFieldCode()
+	}
+	return ruleMatches
+}
+
+func (r *CommaWhitespaceRule) msg(key, def string) string {
+	if r.Messages != nil {
+		if s, ok := r.Messages[key]; ok && s != "" {
+			return s
+		}
+	}
+	return def
+}
+
+func (r *CommaWhitespaceRule) isDomain(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	return i < len(tokens) && r.domain.MatchString(tokens[i].GetToken())
+}
+
+func (r *CommaWhitespaceRule) isFileExtension(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	return i < len(tokens) && r.fileExt.MatchString(tokens[i].GetToken())
+}
+
+func isWhitespaceToken(token *languagetool.AnalyzedTokenReadings) bool {
+	t := token.GetToken()
+	return (token.IsWhitespace() || tools.IsNonBreakingWhitespace(t) || token.IsFieldCode()) && t != "\u200B"
+}
+
+func isQuote(str string) bool {
+	// Java: str.length() == 1 (UTF-16 code units)
+	if utf16Len(str) != 1 {
+		return false
+	}
+	c := []rune(str)[0]
+	return c == '\'' || c == '"' || c == '’' || c == '”' || c == '“' || c == '«' || c == '»'
+}
+
+func isHyphenOrComma(str string) bool {
+	// Java: str.length() == 1
+	if utf16Len(str) != 1 {
+		return false
+	}
+	c := []rune(str)[0]
+	return c == '-' || c == ','
+}
+
+func isDigitOrDot(str string) bool {
+	// Java: isEmpty / charAt(0)
+	if str == "" {
+		return false
+	}
+	c := []rune(str)[0]
+	return c == '.' || unicode.IsDigit(c)
+}
+
+func isLeftBracket(str string) bool {
+	// Java: isEmpty / charAt(0) == '('
+	if str == "" {
+		return false
+	}
+	return []rune(str)[0] == '('
+}
+
+func isRightBracket(str string) bool {
+	if str == "" {
+		return false
+	}
+	return []rune(str)[0] == ')'
+}
+
+func containsDigit(str string) bool {
+	// Java: Character.isDigit(str.charAt(i)) over UTF-16 units
+	for _, r := range str {
+		if unicode.IsDigit(r) {
+			return true
+		}
+	}
+	return false
+}
+
+// UTF16Substring ports Java String.substring(from, to) with UTF-16 indices.
+// Use for RuleMatch FromPos/ToPos and AnalyzedTokenReadings start/end spans.
+func UTF16Substring(s string, from, to int) string {
+	return utf16Substring(s, from, to)
+}
+
+// utf16Substring ports Java String.substring(from, to) with UTF-16 indices.
+func utf16Substring(s string, from, to int) string {
+	u := []uint16{}
+	for _, r := range s {
+		if r >= 0x10000 {
+			r -= 0x10000
+			u = append(u, uint16(0xD800+(r>>10)), uint16(0xDC00+(r&0x3FF)))
+		} else {
+			u = append(u, uint16(r))
+		}
+	}
+	if from < 0 {
+		from = 0
+	}
+	if to > len(u) {
+		to = len(u)
+	}
+	if from >= to {
+		return ""
+	}
+	// decode back
+	var runes []rune
+	for i := from; i < to; {
+		r := rune(u[i])
+		if r >= 0xD800 && r <= 0xDBFF && i+1 < to {
+			r2 := rune(u[i+1])
+			if r2 >= 0xDC00 && r2 <= 0xDFFF {
+				runes = append(runes, 0x10000+((r-0xD800)<<10)|(r2-0xDC00))
+				i += 2
+				continue
+			}
+		}
+		runes = append(runes, r)
+		i++
+	}
+	return string(runes)
+}

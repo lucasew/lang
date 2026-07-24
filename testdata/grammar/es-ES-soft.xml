@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="es-ES">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="ES_SOFT_COMPUTADORA_ES" name="computadora soft ES">
+      <pattern>
+        <token>computadora</token>
+      </pattern>
+      <message>En el español de España, "ordenador" es frecuente.</message>
+      <short>computadora</short>
+    </rule>
+    <rule id="ES_SOFT_CELULAR_ES" name="celular soft ES">
+      <pattern>
+        <token>celular</token>
+      </pattern>
+      <message>En el español de España, "móvil" es frecuente.</message>
+      <short>celular</short>
+    </rule>
+    <rule id="ES_SOFT_JUGO_ES" name="jugo soft ES">
+      <pattern>
+        <token>jugo</token>
+      </pattern>
+      <message>En el español de España, "zumo" es frecuente.</message>
+      <short>jugo</short>
+    </rule>
+    <rule id="ES_SOFT_CARRO_ES" name="carro soft ES">
+      <pattern>
+        <token>carro</token>
+      </pattern>
+      <message>En el español de España, "coche" es frecuente.</message>
+      <short>carro</short>
+    </rule>
+    <rule id="ES_SOFT_MANEJAR_ES" name="manejar soft ES">
+      <pattern>
+        <token>manejar</token>
+      </pattern>
+      <message>En el español de España, "conducir" es frecuente (vehículo).</message>
+      <short>manejar</short>
+    </rule>
+    <rule id="ES_SOFT_DEPARTAMENTO_ES" name="departamento soft ES">
+      <pattern>
+        <token>departamento</token>
+      </pattern>
+      <message>En el español de España, "piso" o "apartamento" son frecuentes (vivienda).</message>
+      <short>departamento</short>
+    </rule>
+    <rule id="ES_SOFT_PLUMA_ES" name="pluma soft ES">
+      <pattern>
+        <token>pluma</token>
+      </pattern>
+      <message>En el español de España, "bolígrafo" es frecuente (instrumento de escritura).</message>
+      <short>pluma</short>
+    </rule>
+    <rule id="ES_SOFT_LAPTOP_ES" name="laptop soft ES">
+      <pattern>
+        <token>laptop</token>
+      </pattern>
+      <message>En el español de España, "portátil" es frecuente.</message>
+      <short>laptop</short>
+    </rule>
+    <rule id="ES_SOFT_DURAZNO_ES" name="durazno soft ES">
+      <pattern>
+        <token>durazno</token>
+      </pattern>
+      <message>En el español de España, "melocotón" es frecuente.</message>
+      <short>durazno</short>
+    </rule>
+    <rule id="ES_SOFT_TRASTES_ES" name="trastes soft ES">
+      <pattern>
+        <token>trastes</token>
+      </pattern>
+      <message>En el español de España, "platos" o "vajilla" son frecuentes.</message>
+      <short>trastes</short>
+    </rule>
+  </category>
+</rules>

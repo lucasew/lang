@@ -1,0 +1,31 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "crh",
+  "cases": [
+    {
+      "rule": "EXODIVE_VERB_ADVB_COLLOCATION",
+      "text": "Kelgen soñ.",
+      "suggestion": "Kelgenden",
+      "source": "languagetool-language-modules/crh/src/main/resources/org/languagetool/rules/crh/grammar.xml"
+    },
+    {
+      "rule": "REASON_PARTICLE_CASE_COLLOCATION",
+      "text": "Şu sebepten içün.",
+      "suggestion": "sebepniñ",
+      "source": "languagetool-language-modules/crh/src/main/resources/org/languagetool/rules/crh/grammar.xml"
+    },
+    {
+      "rule": "TENSE_PARTICLE_CASE_COLLOCATION",
+      "text": "O yılnıñ evel.",
+      "suggestion": "yıldan",
+      "source": "languagetool-language-modules/crh/src/main/resources/org/languagetool/rules/crh/grammar.xml"
+    },
+    {
+      "rule": "THANKFULLNESS_COLLOQUIAL",
+      "text": "Saña sağ ol.",
+      "suggestion": "Sen",
+      "source": "languagetool-language-modules/crh/src/main/resources/org/languagetool/rules/crh/grammar.xml"
+    }
+  ]
+}

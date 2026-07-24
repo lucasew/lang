@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft ZH pack loaded only when level is picky. -->
+<rules lang="zh">
+  <category id="STYLE" name="Style">
+    <rule id="ZH_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>建议使用「会议」或「会面」。</message>
+      <short>style</short>
+    </rule>
+    <rule id="ZH_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>建议使用「反馈」或「意见」。</message>
+      <short>style</short>
+    </rule>
+    <rule id="ZH_SOFT_PICKY_FEICHANG_FEICHANG" name="非常非常 soft picky">
+      <pattern>
+        <token>非常</token>
+        <token>非常</token>
+      </pattern>
+      <message>语气偏弱；可考虑更有力的表达。</message>
+      <short>style</short>
+    </rule>
+    <rule id="ZH_SOFT_PICKY_DONGXI" name="很多东西 soft picky">
+      <pattern>
+        <token>很多</token>
+        <token>东西</token>
+      </pattern>
+      <message>建议使用更具体的名词，而不是「东西」。</message>
+      <short>style</short>
+    </rule>
+    <rule id="ZH_SOFT_PICKY_DAO_TOU_LAI" name="到头来 soft picky">
+      <pattern>
+        <token>到头来</token>
+      </pattern>
+      <message>可考虑「最终」或「最后」。</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

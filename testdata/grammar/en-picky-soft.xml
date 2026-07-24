@@ -1,0 +1,4304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EN pack loaded only when level is picky (CLI or server). -->
+<rules lang="en">
+  <category id="STYLE" name="Style">
+    <rule id="EN_SOFT_PICKY_UTILIZE" name="utilize soft picky">
+      <pattern>
+        <token>utilize</token>
+      </pattern>
+      <message>Prefer "use" in plain style.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UTILISE" name="utilise soft picky">
+      <pattern>
+        <token>utilise</token>
+      </pattern>
+      <message>Prefer "use" in plain style.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FACILITATE" name="facilitate soft picky">
+      <pattern>
+        <token>facilitate</token>
+      </pattern>
+      <message>Consider "help" or "make easier".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEVERAGE" name="leverage soft picky">
+      <pattern>
+        <token>leverage</token>
+      </pattern>
+      <message>Consider "use" instead of corporate "leverage".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IMPACTFUL" name="impactful soft picky">
+      <pattern>
+        <token>impactful</token>
+      </pattern>
+      <message>Consider "effective" or "powerful".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACTIONABLE" name="actionable soft picky">
+      <pattern>
+        <token>actionable</token>
+      </pattern>
+      <message>Consider "practical" or "usable".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNERGY" name="synergy soft picky">
+      <pattern>
+        <token>synergy</token>
+      </pattern>
+      <message>Corporate jargon; consider plain wording.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_BACK" name="circle back soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>back</token>
+      </pattern>
+      <message>Consider "follow up" or "return to".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOUCH_BASE" name="touch base soft picky">
+      <pattern>
+        <token>touch</token>
+        <token>base</token>
+      </pattern>
+      <message>Consider "talk" or "check in".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AT_THE_END_OF_THE_DAY" name="at the end of the day soft picky">
+      <pattern>
+        <token>at</token>
+        <token>the</token>
+        <token>end</token>
+        <token>of</token>
+        <token>the</token>
+        <token>day</token>
+      </pattern>
+      <message>Consider "ultimately" or "finally".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GOING_FORWARD" name="going forward soft picky">
+      <pattern>
+        <token>going</token>
+        <token>forward</token>
+      </pattern>
+      <message>Consider "in the future" or "from now on".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VERY_VERY" name="very very picky">
+      <pattern>
+        <token>very</token>
+        <token>very</token>
+      </pattern>
+      <message>Possible weak intensification; consider a stronger word.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINGS" name="things soft picky">
+      <pattern>
+        <token>a</token>
+        <token>lot</token>
+        <token>of</token>
+        <token>things</token>
+      </pattern>
+      <message>Consider a more specific noun than "things".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STUFF" name="stuff soft picky">
+      <pattern>
+        <token>and</token>
+        <token>stuff</token>
+      </pattern>
+      <message>Vague "and stuff"; consider a clearer ending.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PREVENTATIVE" name="preventative soft picky">
+      <pattern>
+        <token>preventative</token>
+      </pattern>
+      <message>Prefer "preventive" in many style guides.</message>
+      <short>style</short>
+    </rule>
+
+    <rule id="EN_SOFT_PICKY_BANDWIDTH" name="bandwidth soft picky">
+      <pattern>
+        <token>bandwidth</token>
+      </pattern>
+      <message>Corporate jargon for capacity; consider "time" or "capacity".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOW_HANGING" name="low hanging fruit soft picky">
+      <pattern>
+        <token>low</token>
+        <token>hanging</token>
+        <token>fruit</token>
+      </pattern>
+      <message>Cliché; consider "easy wins" or name the tasks.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOVE_THE_NEEDLE" name="move the needle soft picky">
+      <pattern>
+        <token>move</token>
+        <token>the</token>
+        <token>needle</token>
+      </pattern>
+      <message>Cliché; consider "make a difference" or "improve results".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEEP_DIVE" name="deep dive soft picky">
+      <pattern>
+        <token>deep</token>
+        <token>dive</token>
+      </pattern>
+      <message>Consider "detailed look" or "thorough review".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TAKEAWAY" name="key takeaway soft picky">
+      <pattern>
+        <token>key</token>
+        <token>takeaway</token>
+      </pattern>
+      <message>Consider "main point" or "conclusion".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IDEATE" name="ideate soft picky">
+      <pattern>
+        <token>ideate</token>
+      </pattern>
+      <message>Consider "brainstorm" or "think of ideas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNERGIZE" name="synergize soft picky">
+      <pattern>
+        <token>synergize</token>
+      </pattern>
+      <message>Consider "work together" or "combine efforts".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARADIGM_SHIFT" name="paradigm shift soft picky">
+      <pattern>
+        <token>paradigm</token>
+        <token>shift</token>
+      </pattern>
+      <message>Cliché; consider "major change" or name the change.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BEST_OF_BREED" name="best of breed soft picky">
+      <pattern>
+        <token>best</token>
+        <token>of</token>
+        <token>breed</token>
+      </pattern>
+      <message>Jargon; consider "best" or "leading".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_ADD" name="value-add soft picky">
+      <pattern>
+        <token>value-add</token>
+      </pattern>
+      <message>Consider "benefit" or "extra value".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WIN_WIN" name="win-win soft picky">
+      <pattern>
+        <token>win-win</token>
+      </pattern>
+      <message>Cliché; consider "mutually beneficial".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOIL_THE_OCEAN" name="boil the ocean soft picky">
+      <pattern>
+        <token>boil</token>
+        <token>the</token>
+        <token>ocean</token>
+      </pattern>
+      <message>Cliché; consider "overly ambitious" or name the scope problem.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REACH_OUT" name="reach out soft picky">
+      <pattern>
+        <token>reach</token>
+        <token>out</token>
+      </pattern>
+      <message>Consider "contact" or "email" when more specific.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THOUGHT_LEADERSHIP" name="thought leadership soft picky">
+      <pattern>
+        <token>thought</token>
+        <token>leadership</token>
+      </pattern>
+      <message>Jargon; consider "expertise" or "ideas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DRILL_DOWN" name="drill down soft picky">
+      <pattern>
+        <token>drill</token>
+        <token>down</token>
+      </pattern>
+      <message>Consider "examine" or "look into".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ALIGN_ON" name="align on soft picky">
+      <pattern>
+        <token>align</token>
+        <token>on</token>
+      </pattern>
+      <message>Consider "agree on" or "decide".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUSHBACK" name="pushback soft picky">
+      <pattern>
+        <token>pushback</token>
+      </pattern>
+      <message>Consider "resistance" or "objections".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OFFLINE" name="take offline soft picky">
+      <pattern>
+        <token>take</token>
+        <token>this</token>
+        <token>offline</token>
+      </pattern>
+      <message>Consider "discuss separately" or "follow up later".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUNWAY" name="runway soft picky">
+      <pattern>
+        <token>runway</token>
+      </pattern>
+      <message>Corporate "runway" for cash; consider "cash runway" or "months of funding" if unclear.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NORTH_STAR" name="north star soft picky">
+      <pattern>
+        <token>north</token>
+        <token>star</token>
+        <token>metric</token>
+      </pattern>
+      <message>Jargon; consider "primary metric" or name the measure.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOUBLE_CLICK" name="double-click soft picky">
+      <pattern>
+        <token>double-click</token>
+      </pattern>
+      <message>Consider "examine" or "look closely" outside UI contexts.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNC_UP" name="sync up soft picky">
+      <pattern>
+        <token>sync</token>
+        <token>up</token>
+      </pattern>
+      <message>Consider "meet" or "catch up".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_BACK_ON" name="circle back on soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>back</token>
+        <token>on</token>
+      </pattern>
+      <message>Consider "revisit" or "follow up on".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOOP_IN" name="loop in soft picky">
+      <pattern>
+        <token>loop</token>
+        <token>in</token>
+      </pattern>
+      <message>Consider "include" or "inform".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TABLE_THIS" name="table this soft picky">
+      <pattern>
+        <token>table</token>
+        <token>this</token>
+      </pattern>
+      <message>Ambiguous US/UK; prefer "postpone" or "put on the agenda".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACTION_ITEMS" name="action items soft picky">
+      <pattern>
+        <token>action</token>
+        <token>items</token>
+      </pattern>
+      <message>Consider "tasks" or "next steps".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_NEW" name="net new soft picky">
+      <pattern>
+        <token>net</token>
+        <token>new</token>
+      </pattern>
+      <message>Consider "new" or "additional".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HARD_STOP" name="hard stop soft picky">
+      <pattern>
+        <token>hard</token>
+        <token>stop</token>
+      </pattern>
+      <message>Consider "deadline" or "must end by".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOVE_THE_GOALPOSTS" name="move the goalposts soft picky">
+      <pattern>
+        <token>move</token>
+        <token>the</token>
+        <token>goalposts</token>
+      </pattern>
+      <message>Cliché; consider "change the criteria" or name the change.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUT_A_PIN" name="put a pin in soft picky">
+      <pattern>
+        <token>put</token>
+        <token>a</token>
+        <token>pin</token>
+        <token>in</token>
+      </pattern>
+      <message>Consider "pause" or "revisit later".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEVEL_SET" name="level set soft picky">
+      <pattern>
+        <token>level</token>
+        <token>set</token>
+      </pattern>
+      <message>Consider "align" or "agree on the facts".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IN_THE_WEEDS" name="in the weeds soft picky">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>weeds</token>
+      </pattern>
+      <message>Cliché; consider "in the details" or "bogged down".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HERDING_CATS" name="herding cats soft picky">
+      <pattern>
+        <token>herding</token>
+        <token>cats</token>
+      </pattern>
+      <message>Cliché; consider "coordinating" or name the difficulty.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CLOSE_THE_LOOP" name="close the loop soft picky">
+      <pattern>
+        <token>close</token>
+        <token>the</token>
+        <token>loop</token>
+      </pattern>
+      <message>Consider "follow up" or "confirm completion".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FAIL_FAST" name="fail fast soft picky">
+      <pattern>
+        <token>fail</token>
+        <token>fast</token>
+      </pattern>
+      <message>Buzzword; consider "detect errors early" or name the practice.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIFT_LEFT" name="shift left soft picky">
+      <pattern>
+        <token>shift</token>
+        <token>left</token>
+      </pattern>
+      <message>Jargon; consider "test earlier" or "move checks earlier".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUT_OF_POCKET" name="out of pocket soft picky">
+      <pattern>
+        <token>out</token>
+        <token>of</token>
+        <token>pocket</token>
+      </pattern>
+      <message>Ambiguous jargon; consider "unavailable" or "paying myself".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOUBLE_DOWN" name="double down soft picky">
+      <pattern>
+        <token>double</token>
+        <token>down</token>
+      </pattern>
+      <message>Cliché; consider "commit further" or name the bet.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEAN_IN" name="lean in soft picky">
+      <pattern>
+        <token>lean</token>
+        <token>in</token>
+      </pattern>
+      <message>Buzzword; consider "engage" or "focus more".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WHEELHOUSE" name="wheelhouse soft picky">
+      <pattern>
+        <token>wheelhouse</token>
+      </pattern>
+      <message>Jargon; consider "expertise" or "strengths".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UNPACK" name="unpack soft picky">
+      <pattern>
+        <token>unpack</token>
+      </pattern>
+      <message>Buzzword; consider "analyze" or "discuss".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SKILL_SET" name="skill set soft picky">
+      <pattern>
+        <token>skill</token>
+        <token>set</token>
+      </pattern>
+      <message>Consider "skills" when "set" adds little.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SOCIALIZE" name="socialize soft picky">
+      <pattern>
+        <token>socialize</token>
+      </pattern>
+      <message>Corporate jargon; consider "share" or "discuss with".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BIAS_FOR_ACTION" name="bias for action soft picky">
+      <pattern>
+        <token>bias</token>
+        <token>for</token>
+        <token>action</token>
+      </pattern>
+      <message>Buzzword; consider "act promptly" or name the decision habit.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FUTURE_PROOF" name="future proof soft picky">
+      <pattern>
+        <token>future</token>
+        <token>proof</token>
+      </pattern>
+      <message>Vague claim; say how it stays maintainable.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BAKE_IN" name="bake in soft picky">
+      <pattern>
+        <token>bake</token>
+        <token>in</token>
+      </pattern>
+      <message>Jargon; consider "include" or "build in".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RIGHT_SIZE" name="right size soft picky">
+      <pattern>
+        <token>right</token>
+        <token>size</token>
+      </pattern>
+      <message>Jargon; consider "scale" or "adjust to need".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOVE_FORWARD" name="move forward soft picky">
+      <pattern>
+        <token>move</token>
+        <token>forward</token>
+      </pattern>
+      <message>Filler; consider "continue" or name the next step.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RAISE_THE_BAR" name="raise the bar soft picky">
+      <pattern>
+        <token>raise</token>
+        <token>the</token>
+        <token>bar</token>
+      </pattern>
+      <message>Cliché; consider "raise standards" or name the higher bar.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINK_OUTSIDE" name="think outside soft picky">
+      <pattern>
+        <token>think</token>
+        <token>outside</token>
+      </pattern>
+      <message>Cliché; consider "think creatively" or name the constraint.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIP_IT" name="ship it soft picky">
+      <pattern>
+        <token>ship</token>
+        <token>it</token>
+      </pattern>
+      <message>Vague slogan; name the release criteria.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OWN_IT" name="own it soft picky">
+      <pattern>
+        <token>own</token>
+        <token>it</token>
+      </pattern>
+      <message>Vague; consider "take responsibility" or name the owner.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_THE_WAGONS" name="circle the wagons soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>the</token>
+        <token>wagons</token>
+      </pattern>
+      <message>Cliché; consider "defend" or "unite under pressure".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HIT_THE_GROUND_RUNNING" name="hit the ground running soft picky">
+      <pattern>
+        <token>hit</token>
+        <token>the</token>
+        <token>ground</token>
+        <token>running</token>
+      </pattern>
+      <message>Cliché; consider "start productively" or name the ramp-up.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PEEL_THE_ONION" name="peel the onion soft picky">
+      <pattern>
+        <token>peel</token>
+        <token>the</token>
+        <token>onion</token>
+      </pattern>
+      <message>Cliché; consider "dig deeper" or "layer by layer".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARK_THAT" name="park that soft picky">
+      <pattern>
+        <token>park</token>
+        <token>that</token>
+      </pattern>
+      <message>Jargon; consider "defer" or "revisit later".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TABLE_THAT" name="table that soft picky">
+      <pattern>
+        <token>table</token>
+        <token>that</token>
+      </pattern>
+      <message>Ambiguous jargon; consider "postpone" or "put forward".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CLOSE_OF_PLAY" name="close of play soft picky">
+      <pattern>
+        <token>close</token>
+        <token>of</token>
+        <token>play</token>
+      </pattern>
+      <message>Jargon; consider "end of day" or name the deadline.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GAME_CHANGER" name="game changer soft picky">
+      <pattern>
+        <token>game</token>
+        <token>changer</token>
+      </pattern>
+      <message>Cliché; name the concrete impact instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUSH_THE_ENVELOPE" name="push the envelope soft picky">
+      <pattern>
+        <token>push</token>
+        <token>the</token>
+        <token>envelope</token>
+      </pattern>
+      <message>Cliché; consider "stretch limits" or name the risk.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SKIN_IN_THE_GAME" name="skin in the game soft picky">
+      <pattern>
+        <token>skin</token>
+        <token>in</token>
+        <token>the</token>
+        <token>game</token>
+      </pattern>
+      <message>Cliché; consider "shared risk" or name the stake.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ELEPHANT_IN_THE_ROOM" name="elephant in the room soft picky">
+      <pattern>
+        <token>elephant</token>
+        <token>in</token>
+        <token>the</token>
+        <token>room</token>
+      </pattern>
+      <message>Cliché; name the awkward issue directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BALLPARK_FIGURE" name="ballpark figure soft picky">
+      <pattern>
+        <token>ballpark</token>
+        <token>figure</token>
+      </pattern>
+      <message>Jargon; consider "rough estimate" or give a range.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ON_THE_SAME_PAGE" name="on the same page soft picky">
+      <pattern>
+        <token>on</token>
+        <token>the</token>
+        <token>same</token>
+        <token>page</token>
+      </pattern>
+      <message>Cliché; consider "aligned" or name the shared goal.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DRINK_THE_KOOL_AID" name="drink the kool-aid soft picky">
+      <pattern>
+        <token>drink</token>
+        <token>the</token>
+        <token>kool-aid</token>
+      </pattern>
+      <message>Cliché; consider "accept uncritically" or name the belief.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WIN_WIN_SITUATION" name="win-win situation soft picky">
+      <pattern>
+        <token>win-win</token>
+        <token>situation</token>
+      </pattern>
+      <message>Cliché; name the mutual benefit instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINK_OUTSIDE_THE_BOX" name="think outside the box soft picky">
+      <pattern>
+        <token>think</token>
+        <token>outside</token>
+        <token>the</token>
+        <token>box</token>
+      </pattern>
+      <message>Cliché; consider "think creatively" or name the constraint.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NO_BRAINER" name="no-brainer soft picky">
+      <pattern>
+        <token>no-brainer</token>
+      </pattern>
+      <message>Cliché; consider "obvious choice" or name why it is easy.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GET_AFTER_IT" name="get after it soft picky">
+      <pattern>
+        <token>get</token>
+        <token>after</token>
+        <token>it</token>
+      </pattern>
+      <message>Vague slogan; consider "start now" or name the next step.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_NET" name="net-net soft picky">
+      <pattern>
+        <token>net-net</token>
+      </pattern>
+      <message>Jargon; consider "bottom line" or state the outcome.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CORE_COMPETENCY" name="core competency soft picky">
+      <pattern>
+        <token>core</token>
+        <token>competency</token>
+      </pattern>
+      <message>Jargon; consider "strength" or name the skill.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_PROPOSITION" name="value proposition soft picky">
+      <pattern>
+        <token>value</token>
+        <token>proposition</token>
+      </pattern>
+      <message>Jargon; consider "benefit" or name the offer.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TAKE_THIS_OFFLINE" name="take this offline soft picky">
+      <pattern>
+        <token>take</token>
+        <token>this</token>
+        <token>offline</token>
+      </pattern>
+      <message>Jargon; consider "discuss later" or "handle separately".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STAKEHOLDER_MANAGEMENT" name="stakeholder management soft picky">
+      <pattern>
+        <token>stakeholder</token>
+        <token>management</token>
+      </pattern>
+      <message>Jargon; consider "working with stakeholders" or name the work.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SINGLE_SOURCE_OF_TRUTH" name="single source of truth soft picky">
+      <pattern>
+        <token>single</token>
+        <token>source</token>
+        <token>of</token>
+        <token>truth</token>
+      </pattern>
+      <message>Jargon; name the canonical system instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NORTH_STAR_METRIC" name="north star metric soft picky">
+      <pattern>
+        <token>north</token>
+        <token>star</token>
+        <token>metric</token>
+      </pattern>
+      <message>Jargon; name the primary metric instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BEST_PRACTICE" name="best practice soft picky">
+      <pattern>
+        <token>best</token>
+        <token>practice</token>
+      </pattern>
+      <message>Vague; name the concrete practice or standard.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAIN_POINT" name="pain point soft picky">
+      <pattern>
+        <token>pain</token>
+        <token>point</token>
+      </pattern>
+      <message>Jargon; name the problem directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEARNINGS" name="learnings soft picky">
+      <pattern>
+        <token>learnings</token>
+      </pattern>
+      <message>Consider "lessons" or "what we learned".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEEP_DIVE_INTO" name="deep dive into soft picky">
+      <pattern>
+        <token>deep</token>
+        <token>dive</token>
+        <token>into</token>
+      </pattern>
+      <message>Jargon; consider "examine" or "investigate".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_BACK_LATER" name="circle back later soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>back</token>
+        <token>later</token>
+      </pattern>
+      <message>Jargon; consider "revisit later" or name when.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BANDWIDTH_CONSTRAINED" name="bandwidth constrained soft picky">
+      <pattern>
+        <token>bandwidth</token>
+        <token>constrained</token>
+      </pattern>
+      <message>Jargon; consider "short on time" or "at capacity".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GO_TO_MARKET" name="go to market soft picky">
+      <pattern>
+        <token>go</token>
+        <token>to</token>
+        <token>market</token>
+      </pattern>
+      <message>Jargon; name the launch plan instead of "GTM".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PRODUCT_MARKET_FIT" name="product market fit soft picky">
+      <pattern>
+        <token>product</token>
+        <token>market</token>
+        <token>fit</token>
+      </pattern>
+      <message>Jargon; name the evidence of demand instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TIME_TO_MARKET" name="time to market soft picky">
+      <pattern>
+        <token>time</token>
+        <token>to</token>
+        <token>market</token>
+      </pattern>
+      <message>Jargon; name the launch timeline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MINIMUM_VIABLE_PRODUCT" name="minimum viable product soft picky">
+      <pattern>
+        <token>minimum</token>
+        <token>viable</token>
+        <token>product</token>
+      </pattern>
+      <message>Jargon; name the smallest useful release instead of "MVP".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROOF_OF_CONCEPT" name="proof of concept soft picky">
+      <pattern>
+        <token>proof</token>
+        <token>of</token>
+        <token>concept</token>
+      </pattern>
+      <message>Jargon; name what is being validated instead of "PoC".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RETURN_ON_INVESTMENT" name="return on investment soft picky">
+      <pattern>
+        <token>return</token>
+        <token>on</token>
+        <token>investment</token>
+      </pattern>
+      <message>Jargon; name the benefit or payback instead of "ROI".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOTAL_COST_OF_OWNERSHIP" name="total cost of ownership soft picky">
+      <pattern>
+        <token>total</token>
+        <token>cost</token>
+        <token>of</token>
+        <token>ownership</token>
+      </pattern>
+      <message>Jargon; name the full cost model instead of "TCO".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KEY_PERFORMANCE_INDICATOR" name="key performance indicator soft picky">
+      <pattern>
+        <token>key</token>
+        <token>performance</token>
+        <token>indicator</token>
+      </pattern>
+      <message>Jargon; name the metric instead of "KPI".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_JOURNEY" name="customer journey soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>journey</token>
+      </pattern>
+      <message>Jargon; describe the user path or steps instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_USER_PERSONA" name="user persona soft picky">
+      <pattern>
+        <token>user</token>
+        <token>persona</token>
+      </pattern>
+      <message>Jargon; describe the real user segment instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_JOBS_TO_BE_DONE" name="jobs to be done soft picky">
+      <pattern>
+        <token>jobs</token>
+        <token>to</token>
+        <token>be</token>
+        <token>done</token>
+      </pattern>
+      <message>Jargon; name the user job or outcome instead of "JTBD".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VOICE_OF_THE_CUSTOMER" name="voice of the customer soft picky">
+      <pattern>
+        <token>voice</token>
+        <token>of</token>
+        <token>the</token>
+        <token>customer</token>
+      </pattern>
+      <message>Jargon; cite the feedback or source instead of "VoC".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DESIGN_THINKING" name="design thinking soft picky">
+      <pattern>
+        <token>design</token>
+        <token>thinking</token>
+      </pattern>
+      <message>Jargon; name the design method or steps instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROWTH_HACKING" name="growth hacking soft picky">
+      <pattern>
+        <token>growth</token>
+        <token>hacking</token>
+      </pattern>
+      <message>Jargon; name the growth tactic instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOONSHOT" name="moonshot soft picky">
+      <pattern>
+        <token>moonshot</token>
+      </pattern>
+      <message>Buzzword; name the ambitious goal concretely.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLITZSCALING" name="blitzscaling soft picky">
+      <pattern>
+        <token>blitzscaling</token>
+      </pattern>
+      <message>Buzzword; name the growth strategy and tradeoffs.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TENX_ENGINEER" name="10x engineer soft picky">
+      <pattern>
+        <token>10x</token>
+        <token>engineer</token>
+      </pattern>
+      <message>Myth jargon; describe concrete skills or impact instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FAIL_FORWARD" name="fail forward soft picky">
+      <pattern>
+        <token>fail</token>
+        <token>forward</token>
+      </pattern>
+      <message>Buzzword; name the learning or recovery plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WORKING_BACKWARDS" name="working backwards soft picky">
+      <pattern>
+        <token>working</token>
+        <token>backwards</token>
+      </pattern>
+      <message>Jargon; describe the reverse-planning steps instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_OBSESSION" name="customer obsession soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>obsession</token>
+      </pattern>
+      <message>Slogan; name the concrete customer outcome instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIP_EARLY" name="ship early soft picky">
+      <pattern>
+        <token>ship</token>
+        <token>early</token>
+      </pattern>
+      <message>Vague slogan; name the release criteria instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TWO_PIZZA_TEAM" name="two pizza team soft picky">
+      <pattern>
+        <token>two</token>
+        <token>pizza</token>
+        <token>team</token>
+      </pattern>
+      <message>Jargon; name the team size limit instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINK_BIG" name="think big soft picky">
+      <pattern>
+        <token>think</token>
+        <token>big</token>
+      </pattern>
+      <message>Slogan; name the ambitious scope instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DAY_ONE" name="day one soft picky">
+      <pattern>
+        <token>day</token>
+        <token>one</token>
+      </pattern>
+      <message>Slogan; describe the startup mindset concretely.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DISAGREE_AND_COMMIT" name="disagree and commit soft picky">
+      <pattern>
+        <token>disagree</token>
+        <token>and</token>
+        <token>commit</token>
+      </pattern>
+      <message>Leadership slogan; name the decision process instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EARN_TRUST" name="earn trust soft picky">
+      <pattern>
+        <token>earn</token>
+        <token>trust</token>
+      </pattern>
+      <message>Slogan; name how trust is built instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DIVE_DEEP" name="dive deep soft picky">
+      <pattern>
+        <token>dive</token>
+        <token>deep</token>
+      </pattern>
+      <message>Jargon; consider "investigate thoroughly" or name the topic.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INSIST_ON_HIGH_STANDARDS" name="insist on high standards soft picky">
+      <pattern>
+        <token>insist</token>
+        <token>on</token>
+        <token>high</token>
+        <token>standards</token>
+      </pattern>
+      <message>Leadership slogan; name the quality bar instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HAVE_BACKBONE" name="have backbone soft picky">
+      <pattern>
+        <token>have</token>
+        <token>backbone</token>
+      </pattern>
+      <message>Slogan; name the hard tradeoff instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DELIVER_RESULTS" name="deliver results soft picky">
+      <pattern>
+        <token>deliver</token>
+        <token>results</token>
+      </pattern>
+      <message>Vague slogan; name the outcome metrics instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OWNERSHIP_MINDSET" name="ownership mindset soft picky">
+      <pattern>
+        <token>ownership</token>
+        <token>mindset</token>
+      </pattern>
+      <message>Jargon; name who owns the work and how.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_CENTRIC" name="customer centric soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>centric</token>
+      </pattern>
+      <message>Jargon; name the customer outcome instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACT_SMALL" name="act small soft picky">
+      <pattern>
+        <token>act</token>
+        <token>small</token>
+      </pattern>
+      <message>Slogan; name the incremental action instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_FIRST" name="customer first soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>first</token>
+      </pattern>
+      <message>Slogan; name the customer outcome instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DATA_DRIVEN" name="data driven soft picky">
+      <pattern>
+        <token>data</token>
+        <token>driven</token>
+      </pattern>
+      <message>Jargon; name the metric or evidence instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FULL_STACK" name="full stack soft picky">
+      <pattern>
+        <token>full</token>
+        <token>stack</token>
+      </pattern>
+      <message>Vague label; name the concrete skills or layers.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ZERO_TRUST" name="zero trust soft picky">
+      <pattern>
+        <token>zero</token>
+        <token>trust</token>
+      </pattern>
+      <message>Jargon; name the access controls instead of the slogan.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLATFORM_ENGINEERING" name="platform engineering soft picky">
+      <pattern>
+        <token>platform</token>
+        <token>engineering</token>
+      </pattern>
+      <message>Jargon; name the platform capabilities instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUTCOME_ORIENTED" name="outcome oriented soft picky">
+      <pattern>
+        <token>outcome</token>
+        <token>oriented</token>
+      </pattern>
+      <message>Jargon; name the measurable outcome instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEVELOPER_EXPERIENCE" name="developer experience soft picky">
+      <pattern>
+        <token>developer</token>
+        <token>experience</token>
+      </pattern>
+      <message>Jargon; name the concrete developer friction or fix.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAVED_ROAD" name="paved road soft picky">
+      <pattern>
+        <token>paved</token>
+        <token>road</token>
+      </pattern>
+      <message>Jargon; name the standard path or defaults instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GOLDEN_PATH" name="golden path soft picky">
+      <pattern>
+        <token>golden</token>
+        <token>path</token>
+      </pattern>
+      <message>Jargon; name the recommended workflow instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INNER_SOURCE" name="inner source soft picky">
+      <pattern>
+        <token>inner</token>
+        <token>source</token>
+      </pattern>
+      <message>Jargon; describe the internal open collaboration model.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIFT_LEFT_TESTING" name="shift left testing soft picky">
+      <pattern>
+        <token>shift</token>
+        <token>left</token>
+        <token>testing</token>
+      </pattern>
+      <message>Jargon; name earlier test gates instead of the slogan.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_YOU_BUILD_IT_YOU_RUN_IT" name="you build it you run it soft picky">
+      <pattern>
+        <token>you</token>
+        <token>build</token>
+        <token>it</token>
+        <token>you</token>
+        <token>run</token>
+        <token>it</token>
+      </pattern>
+      <message>Slogan; name ownership of build and operations explicitly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COGNITIVE_LOAD" name="cognitive load soft picky">
+      <pattern>
+        <token>cognitive</token>
+        <token>load</token>
+      </pattern>
+      <message>Jargon; name what is hard to keep in mind instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEAM_TOPOLOGIES" name="team topologies soft picky">
+      <pattern>
+        <token>team</token>
+        <token>topologies</token>
+      </pattern>
+      <message>Jargon; name the team interaction model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHARED_NOTHING" name="shared nothing soft picky">
+      <pattern>
+        <token>shared</token>
+        <token>nothing</token>
+      </pattern>
+      <message>Jargon; name the isolation boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STREAM_ALIGNED" name="stream aligned soft picky">
+      <pattern>
+        <token>stream</token>
+        <token>aligned</token>
+      </pattern>
+      <message>Jargon; name the value-stream ownership instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ENABLING_TEAM" name="enabling team soft picky">
+      <pattern>
+        <token>enabling</token>
+        <token>team</token>
+      </pattern>
+      <message>Jargon; name how the team unblocks others instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINNEST_VIABLE_PLATFORM" name="thinnest viable platform soft picky">
+      <pattern>
+        <token>thinnest</token>
+        <token>viable</token>
+        <token>platform</token>
+      </pattern>
+      <message>Jargon; name the minimal platform capabilities instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMPLICATED_SUBSYSTEM" name="complicated subsystem soft picky">
+      <pattern>
+        <token>complicated</token>
+        <token>subsystem</token>
+      </pattern>
+      <message>Jargon; name the specialized domain ownership instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLATFORM_AS_A_PRODUCT" name="platform as a product soft picky">
+      <pattern>
+        <token>platform</token>
+        <token>as</token>
+        <token>a</token>
+        <token>product</token>
+      </pattern>
+      <message>Jargon; name platform users, roadmap, and SLAs instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INVERSE_CONWAY" name="inverse conway soft picky">
+      <pattern>
+        <token>inverse</token>
+        <token>conway</token>
+      </pattern>
+      <message>Jargon; name the org-structure change and target architecture.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ERROR_BUDGET" name="error budget soft picky">
+      <pattern>
+        <token>error</token>
+        <token>budget</token>
+      </pattern>
+      <message>Jargon; name the reliability allowance and policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SERVICE_OWNERSHIP" name="service ownership soft picky">
+      <pattern>
+        <token>service</token>
+        <token>ownership</token>
+      </pattern>
+      <message>Jargon; name who runs the service and on-call duties.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RELIABILITY_DRIVEN" name="reliability driven soft picky">
+      <pattern>
+        <token>reliability</token>
+        <token>driven</token>
+      </pattern>
+      <message>Jargon; name the objective and burn-rate policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOIL_REDUCTION" name="toil reduction soft picky">
+      <pattern>
+        <token>toil</token>
+        <token>reduction</token>
+      </pattern>
+      <message>Jargon; name the manual work being automated instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLAMELESS_POSTMORTEM" name="blameless postmortem soft picky">
+      <pattern>
+        <token>blameless</token>
+        <token>postmortem</token>
+      </pattern>
+      <message>Jargon; name the learning goals of the review instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INCIDENT_COMMANDER" name="incident commander soft picky">
+      <pattern>
+        <token>incident</token>
+        <token>commander</token>
+      </pattern>
+      <message>Jargon; name the response role and duties instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUNBOOK_DRIVEN" name="runbook driven soft picky">
+      <pattern>
+        <token>runbook</token>
+        <token>driven</token>
+      </pattern>
+      <message>Jargon; name the operational procedure instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUS_FACTOR_OF_ONE" name="bus factor of one soft picky">
+      <pattern>
+        <token>bus</token>
+        <token>factor</token>
+        <token>of</token>
+        <token>one</token>
+      </pattern>
+      <message>Jargon; name the single point of knowledge risk instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEAM_API" name="team api soft picky">
+      <pattern>
+        <token>team</token>
+        <token>api</token>
+      </pattern>
+      <message>Jargon; name the team interface and collaboration contract.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ON_CALL_ROTATION" name="on call rotation soft picky">
+      <pattern>
+        <token>on</token>
+        <token>call</token>
+        <token>rotation</token>
+      </pattern>
+      <message>Jargon; name the paging schedule and ownership instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FOLLOW_THE_SUN" name="follow the sun soft picky">
+      <pattern>
+        <token>follow</token>
+        <token>the</token>
+        <token>sun</token>
+      </pattern>
+      <message>Jargon; name the multi-region handoff model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUS_FACTOR_OF_TWO" name="bus factor of two soft picky">
+      <pattern>
+        <token>bus</token>
+        <token>factor</token>
+        <token>of</token>
+        <token>two</token>
+      </pattern>
+      <message>Jargon; name the knowledge-sharing risk instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHAOS_ENGINEERING" name="chaos engineering soft picky">
+      <pattern>
+        <token>chaos</token>
+        <token>engineering</token>
+      </pattern>
+      <message>Jargon; name the failure-injection experiment instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEAN_TIME_TO_RECOVER" name="mean time to recover soft picky">
+      <pattern>
+        <token>mean</token>
+        <token>time</token>
+        <token>to</token>
+        <token>recover</token>
+      </pattern>
+      <message>Jargon; name the recovery metric (MTTR) concretely.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEAN_TIME_TO_DETECT" name="mean time to detect soft picky">
+      <pattern>
+        <token>mean</token>
+        <token>time</token>
+        <token>to</token>
+        <token>detect</token>
+      </pattern>
+      <message>Jargon; name the detection metric (MTTD) concretely.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GAME_DAY" name="game day soft picky">
+      <pattern>
+        <token>game</token>
+        <token>day</token>
+      </pattern>
+      <message>Jargon; name the reliability exercise instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TABLETOP_EXERCISE" name="tabletop exercise soft picky">
+      <pattern>
+        <token>tabletop</token>
+        <token>exercise</token>
+      </pattern>
+      <message>Jargon; name the scenario walkthrough instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DISASTER_RECOVERY_DRILL" name="disaster recovery drill soft picky">
+      <pattern>
+        <token>disaster</token>
+        <token>recovery</token>
+        <token>drill</token>
+      </pattern>
+      <message>Jargon; name the recovery test objectives instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WAR_ROOM" name="war room soft picky">
+      <pattern>
+        <token>war</token>
+        <token>room</token>
+      </pattern>
+      <message>Jargon; name the incident coordination space instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BRIDGE_CALL" name="bridge call soft picky">
+      <pattern>
+        <token>bridge</token>
+        <token>call</token>
+      </pattern>
+      <message>Jargon; name the incident conference call instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUS_FACTOR_OF_THREE" name="bus factor of three soft picky">
+      <pattern>
+        <token>bus</token>
+        <token>factor</token>
+        <token>of</token>
+        <token>three</token>
+      </pattern>
+      <message>Jargon; name the knowledge-sharing coverage instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CANARY_DEPLOYMENT" name="canary deployment soft picky">
+      <pattern>
+        <token>canary</token>
+        <token>deployment</token>
+      </pattern>
+      <message>Jargon; name the progressive rollout plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HOT_SPARE" name="hot spare soft picky">
+      <pattern>
+        <token>hot</token>
+        <token>spare</token>
+      </pattern>
+      <message>Jargon; name the standby capacity instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COLD_SPARE" name="cold spare soft picky">
+      <pattern>
+        <token>cold</token>
+        <token>spare</token>
+      </pattern>
+      <message>Jargon; name the offline reserve capacity instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLUE_GREEN_DEPLOYMENT" name="blue green deployment soft picky">
+      <pattern>
+        <token>blue</token>
+        <token>green</token>
+        <token>deployment</token>
+      </pattern>
+      <message>Jargon; name the dual-environment cutover plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ROLLING_UPDATE" name="rolling update soft picky">
+      <pattern>
+        <token>rolling</token>
+        <token>update</token>
+      </pattern>
+      <message>Jargon; name the phased rollout strategy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FEATURE_FLAG" name="feature flag soft picky">
+      <pattern>
+        <token>feature</token>
+        <token>flag</token>
+      </pattern>
+      <message>Jargon; name the toggle and rollout criteria instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DARK_LAUNCH" name="dark launch soft picky">
+      <pattern>
+        <token>dark</token>
+        <token>launch</token>
+      </pattern>
+      <message>Jargon; name the hidden production exposure plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHADOW_TRAFFIC" name="shadow traffic soft picky">
+      <pattern>
+        <token>shadow</token>
+        <token>traffic</token>
+      </pattern>
+      <message>Jargon; name the mirrored production load plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROGRESSIVE_DELIVERY" name="progressive delivery soft picky">
+      <pattern>
+        <token>progressive</token>
+        <token>delivery</token>
+      </pattern>
+      <message>Jargon; name the staged release controls instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TRAFFIC_SPLITTING" name="traffic splitting soft picky">
+      <pattern>
+        <token>traffic</token>
+        <token>splitting</token>
+      </pattern>
+      <message>Jargon; name the routing percentages instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HOLDOUT_GROUP" name="holdout group soft picky">
+      <pattern>
+        <token>holdout</token>
+        <token>group</token>
+      </pattern>
+      <message>Jargon; name the control cohort and purpose instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FEATURE_FREEZE" name="feature freeze soft picky">
+      <pattern>
+        <token>feature</token>
+        <token>freeze</token>
+      </pattern>
+      <message>Jargon; name the change-control window instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KILL_SWITCH" name="kill switch soft picky">
+      <pattern>
+        <token>kill</token>
+        <token>switch</token>
+      </pattern>
+      <message>Jargon; name the emergency disable control instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCUIT_BREAKER" name="circuit breaker soft picky">
+      <pattern>
+        <token>circuit</token>
+        <token>breaker</token>
+      </pattern>
+      <message>Jargon; name the failure isolation policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BULKHEAD_PATTERN" name="bulkhead pattern soft picky">
+      <pattern>
+        <token>bulkhead</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the resource isolation boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RETRY_STORM" name="retry storm soft picky">
+      <pattern>
+        <token>retry</token>
+        <token>storm</token>
+      </pattern>
+      <message>Jargon; name the cascading retry overload instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THUNDERING_HERD" name="thundering herd soft picky">
+      <pattern>
+        <token>thundering</token>
+        <token>herd</token>
+      </pattern>
+      <message>Jargon; name the synchronized wake/retry pileup instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BACKOFF_STRATEGY" name="backoff strategy soft picky">
+      <pattern>
+        <token>backoff</token>
+        <token>strategy</token>
+      </pattern>
+      <message>Jargon; name the retry delay policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RATE_LIMITING" name="rate limiting soft picky">
+      <pattern>
+        <token>rate</token>
+        <token>limiting</token>
+      </pattern>
+      <message>Jargon; name the throughput cap and policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOAD_SHEDDING" name="load shedding soft picky">
+      <pattern>
+        <token>load</token>
+        <token>shedding</token>
+      </pattern>
+      <message>Jargon; name which work is dropped under pressure.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GRACEFUL_DEGRADATION" name="graceful degradation soft picky">
+      <pattern>
+        <token>graceful</token>
+        <token>degradation</token>
+      </pattern>
+      <message>Jargon; name which features reduce under failure.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IDEMPOTENCY_KEY" name="idempotency key soft picky">
+      <pattern>
+        <token>idempotency</token>
+        <token>key</token>
+      </pattern>
+      <message>Jargon; name the dedupe token and scope instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EXACTLY_ONCE" name="exactly once soft picky">
+      <pattern>
+        <token>exactly</token>
+        <token>once</token>
+      </pattern>
+      <message>Jargon; name the delivery guarantee and limits instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AT_LEAST_ONCE" name="at least once soft picky">
+      <pattern>
+        <token>at</token>
+        <token>least</token>
+        <token>once</token>
+      </pattern>
+      <message>Jargon; name the delivery guarantee and retry policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEAD_LETTER_QUEUE" name="dead letter queue soft picky">
+      <pattern>
+        <token>dead</token>
+        <token>letter</token>
+        <token>queue</token>
+      </pattern>
+      <message>Jargon; name the failed-message holding queue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_POISON_PILL" name="poison pill soft picky">
+      <pattern>
+        <token>poison</token>
+        <token>pill</token>
+      </pattern>
+      <message>Jargon; name the terminal/bad message pattern instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUTBOX_PATTERN" name="outbox pattern soft picky">
+      <pattern>
+        <token>outbox</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the transactional publish design instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SAGA_PATTERN" name="saga pattern soft picky">
+      <pattern>
+        <token>saga</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the multi-step compensation workflow instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EVENT_SOURCING" name="event sourcing soft picky">
+      <pattern>
+        <token>event</token>
+        <token>sourcing</token>
+      </pattern>
+      <message>Jargon; name the append-only state model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CQRS_PATTERN" name="cqrs pattern soft picky">
+      <pattern>
+        <token>cqrs</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the split read/write model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STRANGLER_FIG" name="strangler fig soft picky">
+      <pattern>
+        <token>strangler</token>
+        <token>fig</token>
+      </pattern>
+      <message>Jargon; name the incremental replacement approach instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ANTI_CORRUPTION_LAYER" name="anti corruption layer soft picky">
+      <pattern>
+        <token>anti</token>
+        <token>corruption</token>
+        <token>layer</token>
+      </pattern>
+      <message>Jargon; name the integration translation boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOUNDED_CONTEXT" name="bounded context soft picky">
+      <pattern>
+        <token>bounded</token>
+        <token>context</token>
+      </pattern>
+      <message>Jargon; name the domain model boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTEXT_MAP" name="context map soft picky">
+      <pattern>
+        <token>context</token>
+        <token>map</token>
+      </pattern>
+      <message>Jargon; name the domain relationship diagram instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UBIQUITOUS_LANGUAGE" name="ubiquitous language soft picky">
+      <pattern>
+        <token>ubiquitous</token>
+        <token>language</token>
+      </pattern>
+      <message>Jargon; name the shared domain vocabulary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOMAIN_EVENT" name="domain event soft picky">
+      <pattern>
+        <token>domain</token>
+        <token>event</token>
+      </pattern>
+      <message>Jargon; name the business fact being recorded instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AGGREGATE_ROOT" name="aggregate root soft picky">
+      <pattern>
+        <token>aggregate</token>
+        <token>root</token>
+      </pattern>
+      <message>Jargon; name the consistency boundary object instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_OBJECT" name="value object soft picky">
+      <pattern>
+        <token>value</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name the immutable domain value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ENTITY_SERVICE" name="entity service soft picky">
+      <pattern>
+        <token>entity</token>
+        <token>service</token>
+      </pattern>
+      <message>Jargon; name the CRUD-centric service risk instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HEXAGONAL_ARCHITECTURE" name="hexagonal architecture soft picky">
+      <pattern>
+        <token>hexagonal</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name the ports-and-adapters structure instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PORTS_AND_ADAPTERS" name="ports and adapters soft picky">
+      <pattern>
+        <token>ports</token>
+        <token>and</token>
+        <token>adapters</token>
+      </pattern>
+      <message>Jargon; name the boundary interfaces and drivers instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHARED_KERNEL" name="shared kernel soft picky">
+      <pattern>
+        <token>shared</token>
+        <token>kernel</token>
+      </pattern>
+      <message>Jargon; name the shared model and ownership rules instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CLEAN_ARCHITECTURE" name="clean architecture soft picky">
+      <pattern>
+        <token>clean</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name the dependency-rule layering instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ONION_ARCHITECTURE" name="onion architecture soft picky">
+      <pattern>
+        <token>onion</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name the concentric domain layering instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SCREAMING_ARCHITECTURE" name="screaming architecture soft picky">
+      <pattern>
+        <token>screaming</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name package structure that reveals the domain.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEPENDENCY_INVERSION" name="dependency inversion soft picky">
+      <pattern>
+        <token>dependency</token>
+        <token>inversion</token>
+      </pattern>
+      <message>Jargon; name the abstraction-depends-on rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INTERFACE_SEGREGATION" name="interface segregation soft picky">
+      <pattern>
+        <token>interface</token>
+        <token>segregation</token>
+      </pattern>
+      <message>Jargon; name the narrow interface split instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SINGLE_RESPONSIBILITY" name="single responsibility soft picky">
+      <pattern>
+        <token>single</token>
+        <token>responsibility</token>
+      </pattern>
+      <message>Jargon; name the one-reason-to-change rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OPEN_CLOSED_PRINCIPLE" name="open closed principle soft picky">
+      <pattern>
+        <token>open</token>
+        <token>closed</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the open-for-extension rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LISKOV_SUBSTITUTION" name="liskov substitution soft picky">
+      <pattern>
+        <token>liskov</token>
+        <token>substitution</token>
+      </pattern>
+      <message>Jargon; name the subtype contract rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMPOSITION_OVER_INHERITANCE" name="composition over inheritance soft picky">
+      <pattern>
+        <token>composition</token>
+        <token>over</token>
+        <token>inheritance</token>
+      </pattern>
+      <message>Jargon; name the prefer-has-a design guidance instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LAW_OF_DEMETER" name="law of demeter soft picky">
+      <pattern>
+        <token>law</token>
+        <token>of</token>
+        <token>demeter</token>
+      </pattern>
+      <message>Jargon; name the only-talk-to-friends rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TELL_DONT_ASK" name="tell dont ask soft picky">
+      <pattern>
+        <token>tell</token>
+        <token>dont</token>
+        <token>ask</token>
+      </pattern>
+      <message>Jargon; name command-over-query object design instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEPARATION_OF_CONCERNS" name="separation of concerns soft picky">
+      <pattern>
+        <token>separation</token>
+        <token>of</token>
+        <token>concerns</token>
+      </pattern>
+      <message>Jargon; name distinct responsibility boundaries instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INFORMATION_HIDING" name="information hiding soft picky">
+      <pattern>
+        <token>information</token>
+        <token>hiding</token>
+      </pattern>
+      <message>Jargon; name encapsulating internal details instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_YAGNI" name="yagni soft picky">
+      <pattern>
+        <token>yagni</token>
+      </pattern>
+      <message>Jargon; name the avoid-unused-features rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HOLLYWOOD_PRINCIPLE" name="hollywood principle soft picky">
+      <pattern>
+        <token>hollywood</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the dont-call-us inversion instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DRY_PRINCIPLE" name="dry principle soft picky">
+      <pattern>
+        <token>dry</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the avoid-duplication rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KISS_PRINCIPLE" name="kiss principle soft picky">
+      <pattern>
+        <token>kiss</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the keep-it-simple rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOY_SCOUT_RULE" name="boy scout rule soft picky">
+      <pattern>
+        <token>boy</token>
+        <token>scout</token>
+        <token>rule</token>
+      </pattern>
+      <message>Jargon; name leave-the-code-cleaner instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BROKEN_WINDOWS" name="broken windows soft picky">
+      <pattern>
+        <token>broken</token>
+        <token>windows</token>
+      </pattern>
+      <message>Jargon; name fix small defects early instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CAP_THEOREM" name="cap theorem soft picky">
+      <pattern>
+        <token>cap</token>
+        <token>theorem</token>
+      </pattern>
+      <message>Jargon; name the consistency-availability tradeoff instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RULE_OF_THREE" name="rule of three soft picky">
+      <pattern>
+        <token>rule</token>
+        <token>of</token>
+        <token>three</token>
+      </pattern>
+      <message>Jargon; name wait-for-three-examples before abstracting.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EVENTUAL_CONSISTENCY" name="eventual consistency soft picky">
+      <pattern>
+        <token>eventual</token>
+        <token>consistency</token>
+      </pattern>
+      <message>Jargon; name delayed-convergence data model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACID_PROPERTIES" name="acid properties soft picky">
+      <pattern>
+        <token>acid</token>
+        <token>properties</token>
+      </pattern>
+      <message>Jargon; name atomic durable transaction guarantees instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TWO_GENERALS" name="two generals soft picky">
+      <pattern>
+        <token>two</token>
+        <token>generals</token>
+      </pattern>
+      <message>Jargon; name the unreliable-link consensus problem instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BYZANTINE_FAULT" name="byzantine fault soft picky">
+      <pattern>
+        <token>byzantine</token>
+        <token>fault</token>
+      </pattern>
+      <message>Jargon; name arbitrary-failure consensus risk instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FLAKY_TEST" name="flaky test soft picky">
+      <pattern>
+        <token>flaky</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a nondeterministic failing test instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GOLDEN_MASTER" name="golden master soft picky">
+      <pattern>
+        <token>golden</token>
+        <token>master</token>
+      </pattern>
+      <message>Jargon; name characterization snapshot testing instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHARACTERIZATION_TEST" name="characterization test soft picky">
+      <pattern>
+        <token>characterization</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name lock-down existing behavior tests instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROPERTY_BASED" name="property based soft picky">
+      <pattern>
+        <token>property</token>
+        <token>based</token>
+      </pattern>
+      <message>Jargon; name generative invariant testing instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MUTATION_TESTING" name="mutation testing soft picky">
+      <pattern>
+        <token>mutation</token>
+        <token>testing</token>
+      </pattern>
+      <message>Jargon; name deliberate-fault test quality checks instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACT_TEST" name="contract test soft picky">
+      <pattern>
+        <token>contract</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name consumer-provider API compatibility checks instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SMOKE_TEST" name="smoke test soft picky">
+      <pattern>
+        <token>smoke</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a shallow health check suite instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FUZZ_TESTING" name="fuzz testing soft picky">
+      <pattern>
+        <token>fuzz</token>
+        <token>testing</token>
+      </pattern>
+      <message>Jargon; name random-input robustness testing instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REGRESSION_TEST" name="regression test soft picky">
+      <pattern>
+        <token>regression</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a check that old bugs stay fixed instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOAD_TEST" name="load test soft picky">
+      <pattern>
+        <token>load</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a capacity under expected traffic check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STRESS_TEST" name="stress test soft picky">
+      <pattern>
+        <token>stress</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a beyond-capacity resilience check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_END_TO_END" name="end to end soft picky">
+      <pattern>
+        <token>end</token>
+        <token>to</token>
+        <token>end</token>
+      </pattern>
+      <message>Jargon; name a full-path user journey check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INTEGRATION_TEST" name="integration test soft picky">
+      <pattern>
+        <token>integration</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a multi-component boundary check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UNIT_TEST" name="unit test soft picky">
+      <pattern>
+        <token>unit</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a single-function isolation check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACCEPTANCE_TEST" name="acceptance test soft picky">
+      <pattern>
+        <token>acceptance</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a stakeholder criteria check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PERFORMANCE_TEST" name="performance test soft picky">
+      <pattern>
+        <token>performance</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a latency and throughput check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PENETRATION_TEST" name="penetration test soft picky">
+      <pattern>
+        <token>penetration</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name an authorized security attack drill instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SANITY_TEST" name="sanity test soft picky">
+      <pattern>
+        <token>sanity</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a basic post-change smoke check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BENCHMARK_TEST" name="benchmark test soft picky">
+      <pattern>
+        <token>benchmark</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a timed comparative performance run instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_USABILITY_TEST" name="usability test soft picky">
+      <pattern>
+        <token>usability</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a real-user task success study instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMPATIBILITY_TEST" name="compatibility test soft picky">
+      <pattern>
+        <token>compatibility</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a cross-version interop check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACCESSIBILITY_TEST" name="accessibility test soft picky">
+      <pattern>
+        <token>accessibility</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name an assistive-tech usability check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SECURITY_TEST" name="security test soft picky">
+      <pattern>
+        <token>security</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name an adversarial control validation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RELIABILITY_TEST" name="reliability test soft picky">
+      <pattern>
+        <token>reliability</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a sustained uptime failure check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RESILIENCE_TEST" name="resilience test soft picky">
+      <pattern>
+        <token>resilience</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a recovery-under-stress check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMPLIANCE_TEST" name="compliance test soft picky">
+      <pattern>
+        <token>compliance</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a policy and regulation evidence check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEST_PYRAMID" name="test pyramid soft picky">
+      <pattern>
+        <token>test</token>
+        <token>pyramid</token>
+      </pattern>
+      <message>Jargon; name a many-unit few-e2e test mix instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEST_DOUBLE" name="test double soft picky">
+      <pattern>
+        <token>test</token>
+        <token>double</token>
+      </pattern>
+      <message>Jargon; name a stand-in collaborator in tests instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOCK_OBJECT" name="mock object soft picky">
+      <pattern>
+        <token>mock</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a behavior-verifying test stand-in instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STUB_OBJECT" name="stub object soft picky">
+      <pattern>
+        <token>stub</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a canned-response test stand-in instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FAKE_OBJECT" name="fake object soft picky">
+      <pattern>
+        <token>fake</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a working lightweight stand-in instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPY_OBJECT" name="spy object soft picky">
+      <pattern>
+        <token>spy</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a partial real-object test wrapper instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FACTORY_METHOD" name="factory method soft picky">
+      <pattern>
+        <token>factory</token>
+        <token>method</token>
+      </pattern>
+      <message>Jargon; name a creation-via-function pattern instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUILDER_PATTERN" name="builder pattern soft picky">
+      <pattern>
+        <token>builder</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a stepwise construction API instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OBJECT_MOTHER" name="object mother soft picky">
+      <pattern>
+        <token>object</token>
+        <token>mother</token>
+      </pattern>
+      <message>Jargon; name a test fixture factory instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NULL_OBJECT" name="null object soft picky">
+      <pattern>
+        <token>null</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a no-op default collaborator instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ABSTRACT_FACTORY" name="abstract factory soft picky">
+      <pattern>
+        <token>abstract</token>
+        <token>factory</token>
+      </pattern>
+      <message>Jargon; name a family of related creators instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STRATEGY_PATTERN" name="strategy pattern soft picky">
+      <pattern>
+        <token>strategy</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name interchangeable algorithm objects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OBSERVER_PATTERN" name="observer pattern soft picky">
+      <pattern>
+        <token>observer</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name publish-subscribe event listeners instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ADAPTER_PATTERN" name="adapter pattern soft picky">
+      <pattern>
+        <token>adapter</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name an interface-translation wrapper instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DECORATOR_PATTERN" name="decorator pattern soft picky">
+      <pattern>
+        <token>decorator</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name layered behavior wrapping instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FACADE_PATTERN" name="facade pattern soft picky">
+      <pattern>
+        <token>facade</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a simplified subsystem API instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROXY_PATTERN" name="proxy pattern soft picky">
+      <pattern>
+        <token>proxy</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a stand-in access control object instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SINGLETON_PATTERN" name="singleton pattern soft picky">
+      <pattern>
+        <token>singleton</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a single-instance lifetime design instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMPOSITE_PATTERN" name="composite pattern soft picky">
+      <pattern>
+        <token>composite</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a tree of uniform part-whole objects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BRIDGE_PATTERN" name="bridge pattern soft picky">
+      <pattern>
+        <token>bridge</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a split of abstraction and implementation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMMAND_PATTERN" name="command pattern soft picky">
+      <pattern>
+        <token>command</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name an encapsulate-the-request object instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STATE_PATTERN" name="state pattern soft picky">
+      <pattern>
+        <token>state</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name behavior-by-current-mode objects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEMPLATE_METHOD" name="template method soft picky">
+      <pattern>
+        <token>template</token>
+        <token>method</token>
+      </pattern>
+      <message>Jargon; name a fixed-steps overridable skeleton instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FLYWEIGHT_PATTERN" name="flyweight pattern soft picky">
+      <pattern>
+        <token>flyweight</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name shared fine-grained immutable data instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHAIN_OF_RESPONSIBILITY" name="chain of responsibility soft picky">
+      <pattern>
+        <token>chain</token>
+        <token>of</token>
+        <token>responsibility</token>
+      </pattern>
+      <message>Jargon; name a pass-along handler pipeline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEMENTO_PATTERN" name="memento pattern soft picky">
+      <pattern>
+        <token>memento</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a capture-and-restore snapshot instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VISITOR_PATTERN" name="visitor pattern soft picky">
+      <pattern>
+        <token>visitor</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name an external double-dispatch operation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEDIATOR_PATTERN" name="mediator pattern soft picky">
+      <pattern>
+        <token>mediator</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a central coordination object instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ITERATOR_PATTERN" name="iterator pattern soft picky">
+      <pattern>
+        <token>iterator</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a sequential access cursor instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROTOTYPE_PATTERN" name="prototype pattern soft picky">
+      <pattern>
+        <token>prototype</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name clone-based object creation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REPOSITORY_PATTERN" name="repository pattern soft picky">
+      <pattern>
+        <token>repository</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a collection-like data access boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UNIT_OF_WORK" name="unit of work soft picky">
+      <pattern>
+        <token>unit</token>
+        <token>of</token>
+        <token>work</token>
+      </pattern>
+      <message>Jargon; name a tracked transactional change set instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPECIFICATION_PATTERN" name="specification pattern soft picky">
+      <pattern>
+        <token>specification</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name composable business predicate objects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OPEN_HOST_SERVICE" name="open host service soft picky">
+      <pattern>
+        <token>open</token>
+        <token>host</token>
+        <token>service</token>
+      </pattern>
+      <message>Jargon; name a published integration API boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUBLISHED_LANGUAGE" name="published language soft picky">
+      <pattern>
+        <token>published</token>
+        <token>language</token>
+      </pattern>
+      <message>Jargon; name a shared integration schema instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_SUPPLIER" name="customer supplier soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>supplier</token>
+      </pattern>
+      <message>Jargon; name a directed team dependency relationship instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONFORMIST" name="conformist soft picky">
+      <pattern>
+        <token>conformist</token>
+      </pattern>
+      <message>Jargon; name adopting an upstream model unchanged instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARTNERSHIP" name="partnership soft picky">
+      <pattern>
+        <token>partnership</token>
+      </pattern>
+      <message>Jargon; name a mutual model-alignment relationship instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEPARATE_WAYS" name="separate ways soft picky">
+      <pattern>
+        <token>separate</token>
+        <token>ways</token>
+      </pattern>
+      <message>Jargon; name abandoning shared model integration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BIG_BALL_OF_MUD" name="big ball of mud soft picky">
+      <pattern>
+        <token>big</token>
+        <token>ball</token>
+        <token>of</token>
+        <token>mud</token>
+      </pattern>
+      <message>Jargon; name an unstructured tangled codebase instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CORE_DOMAIN" name="core domain soft picky">
+      <pattern>
+        <token>core</token>
+        <token>domain</token>
+      </pattern>
+      <message>Jargon; name the differentiating business problem instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SUPPORTING_DOMAIN" name="supporting domain soft picky">
+      <pattern>
+        <token>supporting</token>
+        <token>domain</token>
+      </pattern>
+      <message>Jargon; name necessary but non-differentiating work instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GENERIC_SUBDOMAIN" name="generic subdomain soft picky">
+      <pattern>
+        <token>generic</token>
+        <token>subdomain</token>
+      </pattern>
+      <message>Jargon; name commodity supporting capability instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DISTILLATION" name="distillation soft picky">
+      <pattern>
+        <token>distillation</token>
+      </pattern>
+      <message>Jargon; name extracting the pure domain model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EVENT_STORMING" name="event storming soft picky">
+      <pattern>
+        <token>event</token>
+        <token>storming</token>
+      </pattern>
+      <message>Jargon; name collaborative domain discovery workshop instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOMAIN_STORY" name="domain story soft picky">
+      <pattern>
+        <token>domain</token>
+        <token>story</token>
+      </pattern>
+      <message>Jargon; name pictorial actor-workobject narrative instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTEXT_MAPPING" name="context mapping soft picky">
+      <pattern>
+        <token>context</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name drawing bounded-context relationships instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MODEL_DRIVEN_DESIGN" name="model driven design soft picky">
+      <pattern>
+        <token>model</token>
+        <token>driven</token>
+        <token>design</token>
+      </pattern>
+      <message>Jargon; name code that reflects an explicit domain model.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EVENT_MODELING" name="event modeling soft picky">
+      <pattern>
+        <token>event</token>
+        <token>modeling</token>
+      </pattern>
+      <message>Jargon; name timeline-based system design sessions instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EXAMPLE_MAPPING" name="example mapping soft picky">
+      <pattern>
+        <token>example</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name rule-example-question backlog refinement instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STORY_MAPPING" name="story mapping soft picky">
+      <pattern>
+        <token>story</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name backbone-and-walking-skeleton backlog layout instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IMPACT_MAPPING" name="impact mapping soft picky">
+      <pattern>
+        <token>impact</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name goal-actor-impact-deliverable planning instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPECIFICATION_BY_EXAMPLE" name="specification by example soft picky">
+      <pattern>
+        <token>specification</token>
+        <token>by</token>
+        <token>example</token>
+      </pattern>
+      <message>Jargon; name living documentation from concrete examples instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_USER_STORY_MAPPING" name="user story mapping soft picky">
+      <pattern>
+        <token>user</token>
+        <token>story</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name narrative backlog layout for releases instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GIVEN_WHEN_THEN" name="given when then soft picky">
+      <pattern>
+        <token>given</token>
+        <token>when</token>
+        <token>then</token>
+      </pattern>
+      <message>Jargon; name a structured scenario outline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THREE_AMIGOS" name="three amigos soft picky">
+      <pattern>
+        <token>three</token>
+        <token>amigos</token>
+      </pattern>
+      <message>Jargon; name a three-role refinement conversation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACCEPTANCE_CRITERIA" name="acceptance criteria soft picky">
+      <pattern>
+        <token>acceptance</token>
+        <token>criteria</token>
+      </pattern>
+      <message>Jargon; name explicit done conditions for a story instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFINITION_OF_DONE" name="definition of done soft picky">
+      <pattern>
+        <token>definition</token>
+        <token>of</token>
+        <token>done</token>
+      </pattern>
+      <message>Jargon; name a shared quality checklist for finished work.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFINITION_OF_READY" name="definition of ready soft picky">
+      <pattern>
+        <token>definition</token>
+        <token>of</token>
+        <token>ready</token>
+      </pattern>
+      <message>Jargon; name a shared checklist before work starts instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SMART_GOALS" name="smart goals soft picky">
+      <pattern>
+        <token>smart</token>
+        <token>goals</token>
+      </pattern>
+      <message>Jargon; name specific measurable objective framing instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOSCOW_METHOD" name="moscow method soft picky">
+      <pattern>
+        <token>moscow</token>
+        <token>method</token>
+      </pattern>
+      <message>Jargon; name must-should-could-wont prioritization instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RICE_SCORE" name="rice score soft picky">
+      <pattern>
+        <token>rice</token>
+        <token>score</token>
+      </pattern>
+      <message>Jargon; name reach-impact-confidence-effort scoring instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WSJF" name="wsjf soft picky">
+      <pattern>
+        <token>wsjf</token>
+      </pattern>
+      <message>Jargon; name weighted shortest job first ranking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KANO_MODEL" name="kano model soft picky">
+      <pattern>
+        <token>kano</token>
+        <token>model</token>
+      </pattern>
+      <message>Jargon; name basic-performance-delight feature categories instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COST_OF_DELAY" name="cost of delay soft picky">
+      <pattern>
+        <token>cost</token>
+        <token>of</token>
+        <token>delay</token>
+      </pattern>
+      <message>Jargon; name value lost by waiting to deliver instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_VS_EFFORT" name="value vs effort soft picky">
+      <pattern>
+        <token>value</token>
+        <token>vs</token>
+        <token>effort</token>
+      </pattern>
+      <message>Jargon; name a simple benefit-cost priority plot instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUY_A_FEATURE" name="buy a feature soft picky">
+      <pattern>
+        <token>buy</token>
+        <token>a</token>
+        <token>feature</token>
+      </pattern>
+      <message>Jargon; name a budget-based prioritization exercise instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HUNDRED_DOLLAR_TEST" name="hundred dollar test soft picky">
+      <pattern>
+        <token>hundred</token>
+        <token>dollar</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a fixed-budget preference allocation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OPPORTUNITY_SCORING" name="opportunity scoring soft picky">
+      <pattern>
+        <token>opportunity</token>
+        <token>scoring</token>
+      </pattern>
+      <message>Jargon; name importance-satisfaction gap ranking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLANNING_POKER" name="planning poker soft picky">
+      <pattern>
+        <token>planning</token>
+        <token>poker</token>
+      </pattern>
+      <message>Jargon; name consensus relative-size estimation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TSHIRT_SIZING" name="tshirt sizing soft picky">
+      <pattern>
+        <token>tshirt</token>
+        <token>sizing</token>
+      </pattern>
+      <message>Jargon; name coarse relative effort buckets instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AFFINITY_ESTIMATION" name="affinity estimation soft picky">
+      <pattern>
+        <token>affinity</token>
+        <token>estimation</token>
+      </pattern>
+      <message>Jargon; name silent group relative sizing instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUCKET_SYSTEM" name="bucket system soft picky">
+      <pattern>
+        <token>bucket</token>
+        <token>system</token>
+      </pattern>
+      <message>Jargon; name size-bucket estimation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOT_VOTING" name="dot voting soft picky">
+      <pattern>
+        <token>dot</token>
+        <token>voting</token>
+      </pattern>
+      <message>Jargon; name sticker-based multi-vote prioritization instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RELATIVE_MASS" name="relative mass soft picky">
+      <pattern>
+        <token>relative</token>
+        <token>mass</token>
+      </pattern>
+      <message>Jargon; name comparative bulk estimation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STORY_POINTS" name="story points soft picky">
+      <pattern>
+        <token>story</token>
+        <token>points</token>
+      </pattern>
+      <message>Jargon; name relative effort units instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VELOCITY_CHART" name="velocity chart soft picky">
+      <pattern>
+        <token>velocity</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name completed-points trend tracking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FIBONACCI_SIZING" name="fibonacci sizing soft picky">
+      <pattern>
+        <token>fibonacci</token>
+        <token>sizing</token>
+      </pattern>
+      <message>Jargon; name nonlinear relative estimate scale instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BURNDOWN_CHART" name="burndown chart soft picky">
+      <pattern>
+        <token>burndown</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name remaining-work trend tracking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BURNUP_CHART" name="burnup chart soft picky">
+      <pattern>
+        <token>burnup</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name completed-work cumulative trend instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUMULATIVE_FLOW" name="cumulative flow soft picky">
+      <pattern>
+        <token>cumulative</token>
+        <token>flow</token>
+      </pattern>
+      <message>Jargon; name work-in-state stacked trend tracking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CYCLE_TIME" name="cycle time soft picky">
+      <pattern>
+        <token>cycle</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name start-to-finish work duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEAD_TIME" name="lead time soft picky">
+      <pattern>
+        <token>lead</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name request-to-delivery elapsed time instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KANBAN_BOARD" name="kanban board soft picky">
+      <pattern>
+        <token>kanban</token>
+        <token>board</token>
+      </pattern>
+      <message>Jargon; name a visual pull-based work board instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THROUGHPUT_CHART" name="throughput chart soft picky">
+      <pattern>
+        <token>throughput</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name items-completed-over-time tracking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FLOW_EFFICIENCY" name="flow efficiency soft picky">
+      <pattern>
+        <token>flow</token>
+        <token>efficiency</token>
+      </pattern>
+      <message>Jargon; name active-work versus wait-time ratio instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SERVICE_LEVEL" name="service level soft picky">
+      <pattern>
+        <token>service</token>
+        <token>level</token>
+      </pattern>
+      <message>Jargon; name a delivery reliability target instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOUCH_TIME" name="touch time soft picky">
+      <pattern>
+        <token>touch</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name active value-adding work duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QUEUE_TIME" name="queue time soft picky">
+      <pattern>
+        <token>queue</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name waiting-in-backlog duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROCESS_TIME" name="process time soft picky">
+      <pattern>
+        <token>process</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name hands-on work duration excluding waits.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WAIT_TIME" name="wait time soft picky">
+      <pattern>
+        <token>wait</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name idle delay between work steps instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLOCKED_TIME" name="blocked time soft picky">
+      <pattern>
+        <token>blocked</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name duration stuck on external dependencies.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_STREAM" name="value stream soft picky">
+      <pattern>
+        <token>value</token>
+        <token>stream</token>
+      </pattern>
+      <message>Jargon; name end-to-end delivery flow mapping instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REACTION_TIME" name="reaction time soft picky">
+      <pattern>
+        <token>reaction</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name delay before work starts after a signal.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IDLE_TIME" name="idle time soft picky">
+      <pattern>
+        <token>idle</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name unused capacity waiting duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SETUP_TIME" name="setup time soft picky">
+      <pattern>
+        <token>setup</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name changeover preparation duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TAKT_TIME" name="takt time soft picky">
+      <pattern>
+        <token>takt</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name customer-demand pace duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LITTLE_LAW" name="little law soft picky">
+      <pattern>
+        <token>little</token>
+        <token>law</token>
+      </pattern>
+      <message>Jargon; name WIP equals throughput times cycle time.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THEORY_OF_CONSTRAINTS" name="theory of constraints soft picky">
+      <pattern>
+        <token>theory</token>
+        <token>of</token>
+        <token>constraints</token>
+      </pattern>
+      <message>Jargon; name bottleneck-focused system improvement instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FIVE_WHYS" name="five whys soft picky">
+      <pattern>
+        <token>five</token>
+        <token>whys</token>
+      </pattern>
+      <message>Jargon; name iterative root-cause questioning instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FISHBONE" name="fishbone soft picky">
+      <pattern>
+        <token>fishbone</token>
+      </pattern>
+      <message>Jargon; name cause-and-effect diagramming instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARETO_CHART" name="pareto chart soft picky">
+      <pattern>
+        <token>pareto</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name ranked frequency contribution chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_A3_REPORT" name="a3 report soft picky">
+      <pattern>
+        <token>a3</token>
+        <token>report</token>
+      </pattern>
+      <message>Jargon; name a one-page problem-solving brief instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PDCA" name="pdca soft picky">
+      <pattern>
+        <token>pdca</token>
+      </pattern>
+      <message>Jargon; name plan-do-check-act improvement cycle instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KAIZEN" name="kaizen soft picky">
+      <pattern>
+        <token>kaizen</token>
+      </pattern>
+      <message>Jargon; name continuous incremental improvement practice instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DMAIC" name="dmaic soft picky">
+      <pattern>
+        <token>dmaic</token>
+      </pattern>
+      <message>Jargon; name define-measure-analyze-improve-control cycle instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SIPOC" name="sipoc soft picky">
+      <pattern>
+        <token>sipoc</token>
+      </pattern>
+      <message>Jargon; name suppliers-inputs-process-outputs-customers map instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GEMBA" name="gemba soft picky">
+      <pattern>
+        <token>gemba</token>
+      </pattern>
+      <message>Jargon; name go-and-see the real place of work instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ROOT_CAUSE" name="root cause soft picky">
+      <pattern>
+        <token>root</token>
+        <token>cause</token>
+      </pattern>
+      <message>Jargon; name the underlying reason a problem happens instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTROL_CHART" name="control chart soft picky">
+      <pattern>
+        <token>control</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name a process variation monitoring chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SCATTER_PLOT" name="scatter plot soft picky">
+      <pattern>
+        <token>scatter</token>
+        <token>plot</token>
+      </pattern>
+      <message>Jargon; name a two-variable relationship chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HISTOGRAM" name="histogram soft picky">
+      <pattern>
+        <token>histogram</token>
+      </pattern>
+      <message>Jargon; name a frequency distribution bar chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUN_CHART" name="run chart soft picky">
+      <pattern>
+        <token>run</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name a time-ordered process trend chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOX_PLOT" name="box plot soft picky">
+      <pattern>
+        <token>box</token>
+        <token>plot</token>
+      </pattern>
+      <message>Jargon; name a quartile distribution chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FMEA" name="fmea soft picky">
+      <pattern>
+        <token>fmea</token>
+      </pattern>
+      <message>Jargon; name failure mode and effects analysis instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPC" name="spc soft picky">
+      <pattern>
+        <token>spc</token>
+      </pattern>
+      <message>Jargon; name statistical process control instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CPK" name="cpk soft picky">
+      <pattern>
+        <token>cpk</token>
+      </pattern>
+      <message>Jargon; name process capability index instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MSA" name="msa soft picky">
+      <pattern>
+        <token>msa</token>
+      </pattern>
+      <message>Jargon; name measurement system analysis instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOE" name="doe soft picky">
+      <pattern>
+        <token>doe</token>
+      </pattern>
+      <message>Jargon; name design of experiments instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DESIGN_OF_EXPERIMENTS" name="design of experiments soft picky">
+      <pattern>
+        <token>design</token>
+        <token>of</token>
+        <token>experiments</token>
+      </pattern>
+      <message>Jargon; name structured experimental factor testing instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MUDA" name="muda soft picky">
+      <pattern>
+        <token>muda</token>
+      </pattern>
+      <message>Jargon; name wasteful non-value-adding work instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MURA" name="mura soft picky">
+      <pattern>
+        <token>mura</token>
+      </pattern>
+      <message>Jargon; name unevenness or irregular workload instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MURI" name="muri soft picky">
+      <pattern>
+        <token>muri</token>
+      </pattern>
+      <message>Jargon; name overburden of people or equipment instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_JIDOKA" name="jidoka soft picky">
+      <pattern>
+        <token>jidoka</token>
+      </pattern>
+      <message>Jargon; name automation with human oversight to stop defects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HEIJUNKA" name="heijunka soft picky">
+      <pattern>
+        <token>heijunka</token>
+      </pattern>
+      <message>Jargon; name production leveling for steady flow instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_POKA_YOKE" name="poka yoke soft picky">
+      <pattern>
+        <token>poka</token>
+        <token>yoke</token>
+      </pattern>
+      <message>Jargon; name mistake-proofing safeguards instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SMED" name="smed soft picky">
+      <pattern>
+        <token>smed</token>
+      </pattern>
+      <message>Jargon; name single-minute exchange of die changeover instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OEE" name="oee soft picky">
+      <pattern>
+        <token>oee</token>
+      </pattern>
+      <message>Jargon; name overall equipment effectiveness instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TPM" name="tpm soft picky">
+      <pattern>
+        <token>tpm</token>
+      </pattern>
+      <message>Jargon; name total productive maintenance instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RACI" name="raci soft picky">
+      <pattern>
+        <token>raci</token>
+      </pattern>
+      <message>Jargon; name responsible-accountable-consulted-informed matrix instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SWOT" name="swot soft picky">
+      <pattern>
+        <token>swot</token>
+      </pattern>
+      <message>Jargon; name strengths-weaknesses-opportunities-threats analysis instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CTQ" name="ctq soft picky">
+      <pattern>
+        <token>ctq</token>
+      </pattern>
+      <message>Jargon; name critical-to-quality requirement instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BANT" name="bant soft picky">
+      <pattern>
+        <token>bant</token>
+      </pattern>
+      <message>Jargon; name budget-authority-need-timeline qualification instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEDDIC" name="meddic soft picky">
+      <pattern>
+        <token>meddic</token>
+      </pattern>
+      <message>Jargon; name metrics-economic buyer-decision criteria sales process instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NPS" name="nps soft picky">
+      <pattern>
+        <token>nps</token>
+      </pattern>
+      <message>Jargon; name net promoter score instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CSAT" name="csat soft picky">
+      <pattern>
+        <token>csat</token>
+      </pattern>
+      <message>Jargon; name customer satisfaction score instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MRR" name="mrr soft picky">
+      <pattern>
+        <token>mrr</token>
+      </pattern>
+      <message>Jargon; name monthly recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ARR" name="arr soft picky">
+      <pattern>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TAM" name="tam soft picky">
+      <pattern>
+        <token>tam</token>
+      </pattern>
+      <message>Jargon; name total addressable market instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LTV" name="ltv soft picky">
+      <pattern>
+        <token>ltv</token>
+      </pattern>
+      <message>Jargon; name customer lifetime value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CAC" name="cac soft picky">
+      <pattern>
+        <token>cac</token>
+      </pattern>
+      <message>Jargon; name customer acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GMV" name="gmv soft picky">
+      <pattern>
+        <token>gmv</token>
+      </pattern>
+      <message>Jargon; name gross merchandise value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AOV" name="aov soft picky">
+      <pattern>
+        <token>aov</token>
+      </pattern>
+      <message>Jargon; name average order value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ROAS" name="roas soft picky">
+      <pattern>
+        <token>roas</token>
+      </pattern>
+      <message>Jargon; name return on ad spend instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MAU" name="mau soft picky">
+      <pattern>
+        <token>mau</token>
+      </pattern>
+      <message>Jargon; name monthly active users instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DAU" name="dau soft picky">
+      <pattern>
+        <token>dau</token>
+      </pattern>
+      <message>Jargon; name daily active users instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ARPU" name="arpu soft picky">
+      <pattern>
+        <token>arpu</token>
+      </pattern>
+      <message>Jargon; name average revenue per user instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WAU" name="wau soft picky">
+      <pattern>
+        <token>wau</token>
+      </pattern>
+      <message>Jargon; name weekly active users instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NRR" name="nrr soft picky">
+      <pattern>
+        <token>nrr</token>
+      </pattern>
+      <message>Jargon; name net revenue retention instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GRR" name="grr soft picky">
+      <pattern>
+        <token>grr</token>
+      </pattern>
+      <message>Jargon; name gross revenue retention instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QPS" name="qps soft picky">
+      <pattern>
+        <token>qps</token>
+      </pattern>
+      <message>Jargon; name queries per second instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RPS" name="rps soft picky">
+      <pattern>
+        <token>rps</token>
+      </pattern>
+      <message>Jargon; name requests per second instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SLI" name="sli soft picky">
+      <pattern>
+        <token>sli</token>
+      </pattern>
+      <message>Jargon; name service level indicator instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MTTR" name="mttr soft picky">
+      <pattern>
+        <token>mttr</token>
+      </pattern>
+      <message>Jargon; name mean time to recover instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MTBF" name="mtbf soft picky">
+      <pattern>
+        <token>mtbf</token>
+      </pattern>
+      <message>Jargon; name mean time between failures instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RTO" name="rto soft picky">
+      <pattern>
+        <token>rto</token>
+      </pattern>
+      <message>Jargon; name recovery time objective instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RPO" name="rpo soft picky">
+      <pattern>
+        <token>rpo</token>
+      </pattern>
+      <message>Jargon; name recovery point objective instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TTL" name="ttl soft picky">
+      <pattern>
+        <token>ttl</token>
+      </pattern>
+      <message>Jargon; name time to live instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TPS" name="tps soft picky">
+      <pattern>
+        <token>tps</token>
+      </pattern>
+      <message>Jargon; name transactions per second instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ANDON" name="andon soft picky">
+      <pattern>
+        <token>andon</token>
+      </pattern>
+      <message>Jargon; name a stop-the-line visual alert system instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_APDEX" name="apdex soft picky">
+      <pattern>
+        <token>apdex</token>
+      </pattern>
+      <message>Jargon; name application performance index instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOIL" name="toil soft picky">
+      <pattern>
+        <token>toil</token>
+      </pattern>
+      <message>Jargon; name manual repetitive operational work instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_POSTMORTEM" name="postmortem soft picky">
+      <pattern>
+        <token>postmortem</token>
+      </pattern>
+      <message>Jargon; name an incident learning review instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUNBOOK" name="runbook soft picky">
+      <pattern>
+        <token>runbook</token>
+      </pattern>
+      <message>Jargon; name a step-by-step operational procedure guide instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLAYBOOK" name="playbook soft picky">
+      <pattern>
+        <token>playbook</token>
+      </pattern>
+      <message>Jargon; name a standard response procedure guide instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROCESS_CAPABILITY" name="process capability soft picky">
+      <pattern>
+        <token>process</token>
+        <token>capability</token>
+      </pattern>
+      <message>Jargon; name how well a process meets specification limits instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLAMELESS" name="blameless soft picky">
+      <pattern>
+        <token>blameless</token>
+      </pattern>
+      <message>Jargon; name a learning-focused non-punitive review instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ONCALL" name="oncall soft picky">
+      <pattern>
+        <token>oncall</token>
+      </pattern>
+      <message>Jargon; name the rotation for incident response duty instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CANARY" name="canary soft picky">
+      <pattern>
+        <token>canary</token>
+      </pattern>
+      <message>Jargon; name a small progressive production rollout instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ROLLBACK" name="rollback soft picky">
+      <pattern>
+        <token>rollback</token>
+      </pattern>
+      <message>Jargon; name reverting to a prior known-good release instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLUE_GREEN" name="blue green soft picky">
+      <pattern>
+        <token>blue</token>
+        <token>green</token>
+      </pattern>
+      <message>Jargon; name dual-environment cutover deployment instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHADOW" name="shadow soft picky">
+      <pattern>
+        <token>shadow</token>
+      </pattern>
+      <message>Jargon; name dual-path production traffic mirroring instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SOAK_TEST" name="soak test soft picky">
+      <pattern>
+        <token>soak</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a long-running endurance reliability test instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FEATURE_TOGGLE" name="feature toggle soft picky">
+      <pattern>
+        <token>feature</token>
+        <token>toggle</token>
+      </pattern>
+      <message>Jargon; name a runtime switch for enabling product behavior instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BAKE_TIME" name="bake time soft picky">
+      <pattern>
+        <token>bake</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name a post-deploy observation wait window instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNTHETIC_MONITORING" name="synthetic monitoring soft picky">
+      <pattern>
+        <token>synthetic</token>
+        <token>monitoring</token>
+      </pattern>
+      <message>Jargon; name scripted proactive availability checks instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RING_DEPLOYMENT" name="ring deployment soft picky">
+      <pattern>
+        <token>ring</token>
+        <token>deployment</token>
+      </pattern>
+      <message>Jargon; name staged rollout rings of increasing exposure instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TRAFFIC_SHIFTING" name="traffic shifting soft picky">
+      <pattern>
+        <token>traffic</token>
+        <token>shifting</token>
+      </pattern>
+      <message>Jargon; name gradual request redistribution between versions instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AUTOSCALING" name="autoscaling soft picky">
+      <pattern>
+        <token>autoscaling</token>
+      </pattern>
+      <message>Jargon; name automatic capacity adjustment based on load instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FINOPS" name="finops soft picky">
+      <pattern>
+        <token>finops</token>
+      </pattern>
+      <message>Jargon; name cloud cost operations practice instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RIGHTSIZING" name="rightsizing soft picky">
+      <pattern>
+        <token>rightsizing</token>
+      </pattern>
+      <message>Jargon; name matching capacity to actual demand instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHOWBACK" name="showback soft picky">
+      <pattern>
+        <token>showback</token>
+      </pattern>
+      <message>Jargon; name reporting shared cloud costs to teams without charging instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHARGEBACK" name="chargeback soft picky">
+      <pattern>
+        <token>chargeback</token>
+      </pattern>
+      <message>Jargon; name allocating shared cloud costs back to teams instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPOT_INSTANCES" name="spot instances soft picky">
+      <pattern>
+        <token>spot</token>
+        <token>instances</token>
+      </pattern>
+      <message>Jargon; name interruptible discounted cloud capacity instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RESERVED_INSTANCES" name="reserved instances soft picky">
+      <pattern>
+        <token>reserved</token>
+        <token>instances</token>
+      </pattern>
+      <message>Jargon; name prepaid long-term cloud capacity discounts instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SAVINGS_PLAN" name="savings plan soft picky">
+      <pattern>
+        <token>savings</token>
+        <token>plan</token>
+      </pattern>
+      <message>Jargon; name a commit-based cloud spend discount plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UNIT_ECONOMICS" name="unit economics soft picky">
+      <pattern>
+        <token>unit</token>
+        <token>economics</token>
+      </pattern>
+      <message>Jargon; name per-customer contribution margins instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BURN_RATE" name="burn rate soft picky">
+      <pattern>
+        <token>burn</token>
+        <token>rate</token>
+      </pattern>
+      <message>Jargon; name how fast cash is spent each month instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_MARGIN" name="gross margin soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>margin</token>
+      </pattern>
+      <message>Jargon; name revenue left after direct costs instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COGS" name="cogs soft picky">
+      <pattern>
+        <token>cogs</token>
+      </pattern>
+      <message>Jargon; name cost of goods sold instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RULE_OF_40" name="rule of 40 soft picky">
+      <pattern>
+        <token>rule</token>
+        <token>of</token>
+        <token>40</token>
+      </pattern>
+      <message>Jargon; name growth-rate-plus-profitability SaaS benchmark instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_DOLLAR_RETENTION" name="net dollar retention soft picky">
+      <pattern>
+        <token>net</token>
+        <token>dollar</token>
+        <token>retention</token>
+      </pattern>
+      <message>Jargon; name expansion-adjusted recurring revenue retention instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QUICK_RATIO" name="quick ratio soft picky">
+      <pattern>
+        <token>quick</token>
+        <token>ratio</token>
+      </pattern>
+      <message>Jargon; name cash plus receivables over current liabilities instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAYBACK_PERIOD" name="payback period soft picky">
+      <pattern>
+        <token>payback</token>
+        <token>period</token>
+      </pattern>
+      <message>Jargon; name months to recover customer acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRIBUTION_MARGIN" name="contribution margin soft picky">
+      <pattern>
+        <token>contribution</token>
+        <token>margin</token>
+      </pattern>
+      <message>Jargon; name revenue after variable costs per unit instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHURN_RATE" name="churn rate soft picky">
+      <pattern>
+        <token>churn</token>
+        <token>rate</token>
+      </pattern>
+      <message>Jargon; name the share of customers lost in a period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CAC_PAYBACK" name="cac payback soft picky">
+      <pattern>
+        <token>cac</token>
+        <token>payback</token>
+      </pattern>
+      <message>Jargon; name months to recover acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MAGIC_NUMBER" name="magic number soft picky">
+      <pattern>
+        <token>magic</token>
+        <token>number</token>
+      </pattern>
+      <message>Jargon; name net-new ARR over sales-and-marketing spend instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EXPANSION_REVENUE" name="expansion revenue soft picky">
+      <pattern>
+        <token>expansion</token>
+        <token>revenue</token>
+      </pattern>
+      <message>Jargon; name upsell and cross-sell recurring revenue growth instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACTION_REVENUE" name="contraction revenue soft picky">
+      <pattern>
+        <token>contraction</token>
+        <token>revenue</token>
+      </pattern>
+      <message>Jargon; name downgrade-related recurring revenue loss instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_REVENUE_RETENTION" name="net revenue retention soft picky">
+      <pattern>
+        <token>net</token>
+        <token>revenue</token>
+        <token>retention</token>
+      </pattern>
+      <message>Jargon; name expansion-adjusted recurring revenue retention instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOGO_CHURN" name="logo churn soft picky">
+      <pattern>
+        <token>logo</token>
+        <token>churn</token>
+      </pattern>
+      <message>Jargon; name the share of customer accounts lost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REVENUE_CHURN" name="revenue churn soft picky">
+      <pattern>
+        <token>revenue</token>
+        <token>churn</token>
+      </pattern>
+      <message>Jargon; name the share of recurring revenue lost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEAT_EXPANSION" name="seat expansion soft picky">
+      <pattern>
+        <token>seat</token>
+        <token>expansion</token>
+      </pattern>
+      <message>Jargon; name growth from more seats on existing accounts instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_REVENUE_RETENTION" name="gross revenue retention soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>revenue</token>
+        <token>retention</token>
+      </pattern>
+      <message>Jargon; name recurring revenue kept before expansion credits instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LTV_CAC" name="ltv cac soft picky">
+      <pattern>
+        <token>ltv</token>
+        <token>cac</token>
+      </pattern>
+      <message>Jargon; name lifetime value over acquisition cost ratio instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAYBACK_MONTHS" name="payback months soft picky">
+      <pattern>
+        <token>payback</token>
+        <token>months</token>
+      </pattern>
+      <message>Jargon; name months needed to recover acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ARR_GROWTH" name="arr growth soft picky">
+      <pattern>
+        <token>arr</token>
+        <token>growth</token>
+      </pattern>
+      <message>Jargon; name year-over-year annual recurring revenue increase instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MRR_GROWTH" name="mrr growth soft picky">
+      <pattern>
+        <token>mrr</token>
+        <token>growth</token>
+      </pattern>
+      <message>Jargon; name month-over-month recurring revenue increase instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFERRED_REVENUE" name="deferred revenue soft picky">
+      <pattern>
+        <token>deferred</token>
+        <token>revenue</token>
+      </pattern>
+      <message>Jargon; name prepaid revenue not yet recognized instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PIPELINE_COVERAGE" name="pipeline coverage soft picky">
+      <pattern>
+        <token>pipeline</token>
+        <token>coverage</token>
+      </pattern>
+      <message>Jargon; name open-opportunity value over quota instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WIN_RATE" name="win rate soft picky">
+      <pattern>
+        <token>win</token>
+        <token>rate</token>
+      </pattern>
+      <message>Jargon; name share of closed-won deals among closed deals instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFERRED_BOOKINGS" name="deferred bookings soft picky">
+      <pattern>
+        <token>deferred</token>
+        <token>bookings</token>
+      </pattern>
+      <message>Jargon; name contracted value not yet billable instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACV" name="acv soft picky">
+      <pattern>
+        <token>acv</token>
+      </pattern>
+      <message>Jargon; name average contract value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TCV" name="tcv soft picky">
+      <pattern>
+        <token>tcv</token>
+      </pattern>
+      <message>Jargon; name total contract value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ASP" name="asp soft picky">
+      <pattern>
+        <token>asp</token>
+      </pattern>
+      <message>Jargon; name average selling price instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOOKINGS" name="bookings soft picky">
+      <pattern>
+        <token>bookings</token>
+      </pattern>
+      <message>Jargon; name contracted sales value in a period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BILLINGS" name="billings soft picky">
+      <pattern>
+        <token>billings</token>
+      </pattern>
+      <message>Jargon; name invoiced amounts in a period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QUOTA_ATTAINMENT" name="quota attainment soft picky">
+      <pattern>
+        <token>quota</token>
+        <token>attainment</token>
+      </pattern>
+      <message>Jargon; name share of sales target achieved instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMMITTED_ARR" name="committed arr soft picky">
+      <pattern>
+        <token>committed</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name contracted annual recurring revenue not yet live instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ENDING_ARR" name="ending arr soft picky">
+      <pattern>
+        <token>ending</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period end instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BEGINNING_ARR" name="beginning arr soft picky">
+      <pattern>
+        <token>beginning</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period start instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EXPANSION_ARR" name="expansion arr soft picky">
+      <pattern>
+        <token>expansion</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from upsells and cross-sells instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHURNED_ARR" name="churned arr soft picky">
+      <pattern>
+        <token>churned</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to cancellations instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_NEW_ARR" name="net new arr soft picky">
+      <pattern>
+        <token>net</token>
+        <token>new</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name net change in annual recurring revenue for the period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REACTIVATED_ARR" name="reactivated arr soft picky">
+      <pattern>
+        <token>reactivated</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue recovered from churned customers instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACTION_ARR" name="contraction arr soft picky">
+      <pattern>
+        <token>contraction</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to downgrades instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_NEW_ARR" name="gross new arr soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>new</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name total new annual recurring revenue before churn instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RENEWAL_ARR" name="renewal arr soft picky">
+      <pattern>
+        <token>renewal</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from contract renewals instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFERRED_ARR" name="deferred arr soft picky">
+      <pattern>
+        <token>deferred</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue recognized in a later period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUN_RATE_ARR" name="run rate arr soft picky">
+      <pattern>
+        <token>run</token>
+        <token>rate</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annualized run-rate of recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RECURRING_ARR" name="recurring arr soft picky">
+      <pattern>
+        <token>recurring</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name ongoing annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BILLED_ARR" name="billed arr soft picky">
+      <pattern>
+        <token>billed</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue already invoiced instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOOKED_ARR" name="booked arr soft picky">
+      <pattern>
+        <token>booked</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from closed deals instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RECOGNIZED_ARR" name="recognized arr soft picky">
+      <pattern>
+        <token>recognized</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue recognized in the period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PIPELINED_ARR" name="pipelined arr soft picky">
+      <pattern>
+        <token>pipelined</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue still in the sales pipeline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FOOTPRINT_ARR" name="footprint arr soft picky">
+      <pattern>
+        <token>footprint</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name total annual recurring revenue footprint instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BACKLOG_ARR" name="backlog arr soft picky">
+      <pattern>
+        <token>backlog</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue still in backlog instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACTED_ARR" name="contracted arr soft picky">
+      <pattern>
+        <token>contracted</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue under signed contracts instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RETAINED_ARR" name="retained arr soft picky">
+      <pattern>
+        <token>retained</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue retained over the period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PIPELINE_ARR" name="pipeline arr soft picky">
+      <pattern>
+        <token>pipeline</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue in the sales pipeline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QUOTA_ARR" name="quota arr soft picky">
+      <pattern>
+        <token>quota</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue quota instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOST_ARR" name="lost arr soft picky">
+      <pattern>
+        <token>lost</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost in the period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACTIVE_ARR" name="active arr soft picky">
+      <pattern>
+        <token>active</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name currently active annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STARTING_ARR" name="starting arr soft picky">
+      <pattern>
+        <token>starting</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period start instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CLOSING_ARR" name="closing arr soft picky">
+      <pattern>
+        <token>closing</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period close instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOTAL_ARR" name="total arr soft picky">
+      <pattern>
+        <token>total</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name total annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INCREMENTAL_ARR" name="incremental arr soft picky">
+      <pattern>
+        <token>incremental</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name incremental annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ORGANIC_ARR" name="organic arr soft picky">
+      <pattern>
+        <token>organic</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name organically acquired annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INBOUND_ARR" name="inbound arr soft picky">
+      <pattern>
+        <token>inbound</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name inbound annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUTBOUND_ARR" name="outbound arr soft picky">
+      <pattern>
+        <token>outbound</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name outbound annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UPSELL_ARR" name="upsell arr soft picky">
+      <pattern>
+        <token>upsell</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from upsells instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CROSSSELL_ARR" name="crosssell arr soft picky">
+      <pattern>
+        <token>crosssell</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from cross-sells instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOWNSELL_ARR" name="downsell arr soft picky">
+      <pattern>
+        <token>downsell</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to downsells instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARTNER_ARR" name="partner arr soft picky">
+      <pattern>
+        <token>partner</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name partner-sourced annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHANNEL_ARR" name="channel arr soft picky">
+      <pattern>
+        <token>channel</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name channel-sourced annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RENEWED_ARR" name="renewed arr soft picky">
+      <pattern>
+        <token>renewed</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name renewed annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CANCELED_ARR" name="canceled arr soft picky">
+      <pattern>
+        <token>canceled</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to cancellations instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_ARR" name="gross arr soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name gross annual recurring revenue before deductions instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DIRECT_ARR" name="direct arr soft picky">
+      <pattern>
+        <token>direct</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name direct-sourced annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SELFSERVE_ARR" name="selfserve arr soft picky">
+      <pattern>
+        <token>selfserve</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name self-serve annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PRODUCT_ARR" name="product arr soft picky">
+      <pattern>
+        <token>product</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name product-level annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEGMENT_ARR" name="segment arr soft picky">
+      <pattern>
+        <token>segment</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name segment-level annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COHORT_ARR" name="cohort arr soft picky">
+      <pattern>
+        <token>cohort</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name cohort annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ENTERPRISE_ARR" name="enterprise arr soft picky">
+      <pattern>
+        <token>enterprise</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name enterprise annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MIDMARKET_ARR" name="midmarket arr soft picky">
+      <pattern>
+        <token>midmarket</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name mid-market annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REGIONAL_ARR" name="regional arr soft picky">
+      <pattern>
+        <token>regional</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name regional annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VERTICAL_ARR" name="vertical arr soft picky">
+      <pattern>
+        <token>vertical</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name vertical-market annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLATFORM_ARR" name="platform arr soft picky">
+      <pattern>
+        <token>platform</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name platform annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TERRITORY_ARR" name="territory arr soft picky">
+      <pattern>
+        <token>territory</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name territory annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

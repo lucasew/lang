@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="br">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="BR_SOFT_HA_HA" name="ha ha">
+      <pattern>
+        <token>ha</token>
+        <token>ha</token>
+      </pattern>
+      <message>Adlavar posubl eus "ha".</message>
+      <short>ha ha</short>
+    </rule>
+    <rule id="BR_SOFT_HA_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Adlavar posubl eus "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="BR_SOFT_HA_E" name="e e">
+      <pattern>
+        <token>e</token>
+        <token>e</token>
+      </pattern>
+      <message>Adlavar posubl eus "e".</message>
+      <short>e e</short>
+    </rule>
+    <rule id="BR_SOFT_HA_DA" name="da da">
+      <pattern>
+        <token>da</token>
+        <token>da</token>
+      </pattern>
+      <message>Adlavar posubl eus "da".</message>
+      <short>da da</short>
+    </rule>
+    <rule id="BR_SOFT_HA_WAR" name="war war">
+      <pattern>
+        <token>war</token>
+        <token>war</token>
+      </pattern>
+      <message>Adlavar posubl eus "war".</message>
+      <short>war war</short>
+    </rule>
+    <rule id="BR_SOFT_HA_GANT" name="gant gant">
+      <pattern>
+        <token>gant</token>
+        <token>gant</token>
+      </pattern>
+      <message>Adlavar posubl eus "gant".</message>
+      <short>gant gant</short>
+    </rule>
+    <rule id="BR_SOFT_HA_HA_HA" name="hag hag">
+      <pattern>
+        <token>hag</token>
+        <token>hag</token>
+      </pattern>
+      <message>Adkrog posubl eus "hag".</message>
+      <short>hag hag</short>
+    </rule>
+    <rule id="BR_SOFT_NE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Adkrog posubl eus "ne".</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="BR_SOFT_EVIT_EVIT" name="evit evit">
+      <pattern>
+        <token>evit</token>
+        <token>evit</token>
+      </pattern>
+      <message>Adkrog posubl eus "evit".</message>
+      <short>evit evit</short>
+    </rule>
+    <rule id="BR_SOFT_UR_UR" name="ur ur">
+      <pattern>
+        <token>ur</token>
+        <token>ur</token>
+      </pattern>
+      <message>Adkrog posubl eus "ur".</message>
+      <short>ur ur</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="BR_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="BR_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>A-wechoù trawalc'h eo un unanenn: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

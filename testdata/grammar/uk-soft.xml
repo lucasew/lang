@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="uk">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="UK_SOFT_V_V" name="в в">
+      <pattern>
+        <token>в</token>
+        <token>в</token>
+      </pattern>
+      <message>Можливе повторення "в".</message>
+      <short>в в</short>
+    </rule>
+    <rule id="UK_SOFT_I_I" name="і і">
+      <pattern>
+        <token>і</token>
+        <token>і</token>
+      </pattern>
+      <message>Можливе повторення "і".</message>
+      <short>і і</short>
+    </rule>
+    <rule id="UK_SOFT_NA_NA" name="на на">
+      <pattern>
+        <token>на</token>
+        <token>на</token>
+      </pattern>
+      <message>Можливе повторення "на".</message>
+      <short>на на</short>
+    </rule>
+    <rule id="UK_SOFT_NE_NE" name="не не">
+      <pattern>
+        <token>не</token>
+        <token>не</token>
+      </pattern>
+      <message>Можливе повторення "не".</message>
+      <short>не не</short>
+    </rule>
+    <rule id="UK_SOFT_Z_Z" name="з з">
+      <pattern>
+        <token>з</token>
+        <token>з</token>
+      </pattern>
+      <message>Можливе повторення "з".</message>
+      <short>з з</short>
+    </rule>
+    <rule id="UK_SOFT_TA_TA" name="та та">
+      <pattern>
+        <token>та</token>
+        <token>та</token>
+      </pattern>
+      <message>Можливе повторення "та".</message>
+      <short>та та</short>
+    </rule>
+    <rule id="UK_SOFT_TSE_TSE" name="це це">
+      <pattern>
+        <token>це</token>
+        <token>це</token>
+      </pattern>
+      <message>Можливе повторення "це".</message>
+      <short>це це</short>
+    </rule>
+    <rule id="UK_SOFT_SHCHO_SHCHO" name="що що">
+      <pattern>
+        <token>що</token>
+        <token>що</token>
+      </pattern>
+      <message>Можливе повторення "що".</message>
+      <short>що що</short>
+    </rule>
+    <rule id="UK_SOFT_YAK_YAK" name="як як">
+      <pattern>
+        <token>як</token>
+        <token>як</token>
+      </pattern>
+      <message>Можливе повторення "як".</message>
+      <short>як як</short>
+    </rule>
+    <rule id="UK_SOFT_CHEREZ_TE" name="через те що">
+      <pattern>
+        <token>із</token>
+        <token>за</token>
+      </pattern>
+      <message>Можливо "через" або "із-за"?</message>
+      <short>із-за</short>
+    </rule>
+    <rule id="UK_SOFT_VZAGALI" name="взагалі">
+      <pattern>
+        <token>вобщем</token>
+      </pattern>
+      <message>Можливо "взагалі" або "загалом"?</message>
+      <short>вобщем</short>
+    </rule>
+    <rule id="UK_SOFT_TAK_SAMO" name="так само">
+      <pattern>
+        <token>так</token>
+        <token>само</token>
+        <token>як</token>
+      </pattern>
+      <message>Перевірте "так само" (порівняння) vs "також".</message>
+      <short>також</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Типографіка">
+    <rule id="UK_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Часто достатньо одного знака: "?"</message>
+      <short>пунктуація</short>
+    </rule>
+    <rule id="UK_SOFT_DOUBLE_BANG" name="подвійний знак оклику">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Часто достатньо одного знака: "!"</message>
+      <short>пунктуація</short>
+    </rule>
+  </category>
+</rules>

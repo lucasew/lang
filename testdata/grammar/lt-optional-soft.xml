@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft LT optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="lt">
+  <category id="STYLE" name="Style">
+    <rule id="LT_SOFT_OPT_PAGAL" name="pagal context soft optional" default="off">
+      <pattern>
+        <token>remiantis</token>
+        <token>tuo</token>
+      </pattern>
+      <message>Apsvarstykite "pagal" arba "remiantis".</message>
+      <short>style</short>
+    </rule>
+    <rule id="LT_SOFT_OPT_TIKSLU" name="tikslu soft optional" default="off">
+      <pattern>
+        <token>tikslu</token>
+      </pattern>
+      <message>Apsvarstykite "kad" arba "norint".</message>
+      <short>style</short>
+    </rule>
+    <rule id="LT_SOFT_OPT_ATZVILGIU" name="atžvilgiu soft optional" default="off">
+      <pattern>
+        <token>atžvilgiu</token>
+      </pattern>
+      <message>Apsvarstykite "dėl" arba "apie".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

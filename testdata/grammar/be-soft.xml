@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="be">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="BE_SOFT_I_I" name="і і">
+      <pattern>
+        <token>і</token>
+        <token>і</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "і".</message>
+      <short>і і</short>
+    </rule>
+    <rule id="BE_SOFT_NA_NA" name="на на">
+      <pattern>
+        <token>на</token>
+        <token>на</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "на".</message>
+      <short>на на</short>
+    </rule>
+    <rule id="BE_SOFT_U_U" name="у у">
+      <pattern>
+        <token>у</token>
+        <token>у</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "у".</message>
+      <short>у у</short>
+    </rule>
+    <rule id="BE_SOFT_Z_Z" name="з з">
+      <pattern>
+        <token>з</token>
+        <token>з</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "з".</message>
+      <short>з з</short>
+    </rule>
+    <rule id="BE_SOFT_NE_NE" name="не не">
+      <pattern>
+        <token>не</token>
+        <token>не</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "не".</message>
+      <short>не не</short>
+    </rule>
+    <rule id="BE_SOFT_PA_PA" name="па па">
+      <pattern>
+        <token>па</token>
+        <token>па</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "па".</message>
+      <short>па па</short>
+    </rule>
+    <rule id="BE_SOFT_SHTO_SHTO" name="што што">
+      <pattern>
+        <token>што</token>
+        <token>што</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "што".</message>
+      <short>што што</short>
+    </rule>
+    <rule id="BE_SOFT_YAK_YAK" name="як як">
+      <pattern>
+        <token>як</token>
+        <token>як</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "як".</message>
+      <short>як як</short>
+    </rule>
+    <rule id="BE_SOFT_DA_DA" name="да да">
+      <pattern>
+        <token>да</token>
+        <token>да</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "да".</message>
+      <short>да да</short>
+    </rule>
+    <rule id="BE_SOFT_ABO_ABO" name="або або">
+      <pattern>
+        <token>або</token>
+        <token>або</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "або".</message>
+      <short>або або</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="BE_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="BE_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Часта хапае аднаго клічніка: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

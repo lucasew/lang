@@ -1,0 +1,79 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "ast",
+  "cases": [
+    {
+      "rule": "APARTE",
+      "text": "Púnxose a parte.",
+      "suggestion": "aparte",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_MAS_CUANTES",
+      "text": "Ye peor contra más anecies.",
+      "suggestion": "cuantes más",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_MAS_CUANTO",
+      "text": "Ye peor contra más anecies.",
+      "suggestion": "cuanto más",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "HAIGA_HAYA",
+      "text": "Qu’a lo menos haiga delles opciones.",
+      "suggestion": "haya",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "HAIGA_HEBA",
+      "text": "Qu’a lo menos haiga delles opciones.",
+      "suggestion": "heba",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "SI_QUIER",
+      "text": "Nun vieno naide, nin si quier Nel.",
+      "suggestion": "nin siquier",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "ASGAYA",
+      "text": "Tien perres asgaya.",
+      "suggestion": "a esgaya",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "ASGAYA",
+      "text": "Tien perres esgaya.",
+      "suggestion": "a esgaya",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "DIR_A_INF",
+      "text": "Xuan va a garrar l’autobús.",
+      "suggestion": "va garrar",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "EN_EL_CONTR",
+      "text": "Enfotóse en él.",
+      "suggestion": "nél",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "EN_ESTI_CONTR",
+      "text": "Ta metíu en esti chigre.",
+      "suggestion": "nesti",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "EN_UN_CONTR",
+      "text": "Metióse en un chigre.",
+      "suggestion": "nun",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    }
+  ]
+}

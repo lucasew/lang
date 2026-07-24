@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft NL pack loaded only when level is picky. -->
+<rules lang="nl">
+  <category id="STYLE" name="Style">
+    <rule id="NL_SOFT_PICKY_QUA" name="qua soft picky">
+      <pattern>
+        <token>qua</token>
+      </pattern>
+      <message>Overweeg "als" of "wat betreft".</message>
+      <short>style</short>
+    </rule>
+    <rule id="NL_SOFT_PICKY_INZAKE" name="inzake soft picky">
+      <pattern>
+        <token>inzake</token>
+      </pattern>
+      <message>Overweeg "over" of "betreffende".</message>
+      <short>style</short>
+    </rule>
+    <rule id="NL_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Overweeg "vergadering" of "overleg".</message>
+      <short>style</short>
+    </rule>
+    <rule id="NL_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Overweeg "terugkoppeling" of "reactie".</message>
+      <short>style</short>
+    </rule>
+    <rule id="NL_SOFT_PICKY_HEEL_HEEL" name="heel heel soft picky">
+      <pattern>
+        <token>heel</token>
+        <token>heel</token>
+      </pattern>
+      <message>Zwakke versterking; overweeg een sterker bijvoeglijk naamwoord.</message>
+      <short>style</short>
+    </rule>
+    <rule id="NL_SOFT_PICKY_DINGEN" name="dingen soft picky">
+      <pattern>
+        <token>veel</token>
+        <token>dingen</token>
+      </pattern>
+      <message>Overweeg een concreter zelfstandig naamwoord dan "dingen".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

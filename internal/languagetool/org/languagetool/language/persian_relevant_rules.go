@@ -1,0 +1,18 @@
+package language
+
+// PersianRelevantRuleIDs ports Persian.getRelevantRules rule IDs (class getId only).
+func PersianRelevantRuleIDs() []string {
+	return []string{
+		"COMMA_PARENTHESIS_WHITESPACE",
+		"DOUBLE_PUNCTUATION",
+		"WHITESPACE_RULE",
+		"TOO_LONG_SENTENCE",
+		"PERSIAN_COMMA_PARENTHESIS_WHITESPACE",
+		"PERSIAN_DOUBLE_PUNCTUATION",
+		"PERSIAN_WORD_REPEAT_BEGINNING_RULE",
+		"PERSIAN_WORD_REPEAT_RULE",
+		"FA_SIMPLE_REPLACE",
+		"FA_SPACE_BEFORE_CONJUNCTION",
+		"FA_WORD_COHERENCY",
+	}
+}

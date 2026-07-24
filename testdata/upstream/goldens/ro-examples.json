@@ -1,0 +1,2257 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "ro",
+  "cases": [
+    {
+      "rule": "AL_DOUASPREZECELEA",
+      "text": "Irinel a ieșit al douăsprezecelea.",
+      "suggestion": "al doisprezecelea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AMANDOI_IMPREUNA",
+      "text": "Au lucrat amândoi împreună.",
+      "suggestion": "amândoi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ANI_DE_ZILE",
+      "text": "El s-a întors după doi ani de zile.",
+      "suggestion": "ani",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ANUL_NOU",
+      "text": "L-am invitat de Anul nou la noi.",
+      "suggestion": "Anul Nou",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "APOI_A_URMAT",
+      "text": "Apoi a urmat o mică petrecere.",
+      "suggestion": "A urmat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ASA",
+      "text": "Nu este asa cum spui.",
+      "suggestion": "așa",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ASADAR_SI_PRIN_URMARE",
+      "text": "Așadar și prin urmare a plecat.",
+      "suggestion": "Așadar",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ASUPRA_CE",
+      "text": "Nu sunt dubii asupra ce va face.",
+      "suggestion": "asupra a ce",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ASUPRA_CE",
+      "text": "Nu știu asupra ce elemente vrei să te oprești.",
+      "suggestion": "asupra a ce",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ATENTIE_SI_CONCENTRARE",
+      "text": "Examenul necesită multă atenție și concentrare.",
+      "suggestion": "atenție",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AZINOAPTE",
+      "text": "A venit azinoapte, pe la trei.",
+      "suggestion": "azi-noapte",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_CINCIA",
+      "text": "A cincia lucrare era a lui.",
+      "suggestion": "A cincea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_DOISPREZECEA",
+      "text": "A doisprezecea lucrare era a lui.",
+      "suggestion": "A douăsprezecea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BUNA_STARE",
+      "text": "A arătat bună-stare.",
+      "suggestion": "bunăstare",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BUNA_VESTIRE",
+      "text": "L-am invitat de Buna vestire la noi.",
+      "suggestion": "Buna Vestire",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CA_DREPT_RASPLATA",
+      "text": "I-a oferit ca drept răsplată o carte.",
+      "suggestion": "ca răsplată",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CI_DIMPOTRIVA",
+      "text": "Nu a plecat ci dimpotrivă a rămas.",
+      "suggestion": "ci",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COMPETENTE_COMPETENTE",
+      "text": "El are multe aptitudini și competente.",
+      "suggestion": "aptitudini și competențe",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CONCLUZIE_FINALA",
+      "text": "Ideea sa a venit ca o concluzie finală.",
+      "suggestion": "concluzie",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CONTRABANDA_ILEGALA",
+      "text": "El a fost acuzat de contrabandă ilegală.",
+      "suggestion": "contrabandă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COPIE_XEXOX",
+      "text": "Aici este necesară o copie xerox.",
+      "suggestion": "copie",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREAZA_CREEAZA",
+      "text": "Acum el crează prototipul mașinii.",
+      "suggestion": "creează",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREEATA_CREATA",
+      "text": "Opera a fost creeată cu mult timp în urmă.",
+      "suggestion": "creată",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREEAT_CREAT",
+      "text": "Opusul a fost creeat cu mult timp în urmă.",
+      "suggestion": "creat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREEM_CREAM",
+      "text": "Acum noi creem prototipul mașinii.",
+      "suggestion": "creăm",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DAR_INSA",
+      "text": "L-am auzit, dar însă nu l-am înțeles.",
+      "suggestion": "dar",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DAR_IN_SCHIMB",
+      "text": "A fost bine dar în schimb nu am putut rămâne mult.",
+      "suggestion": "dar",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DECAT_NUMAI",
+      "text": "Să vorbești decât numai cu persoanele cunoscute.",
+      "suggestion": "decât",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DE_PREFERABIL",
+      "text": "Este de preferabil să vii mai devreme.",
+      "suggestion": "preferabil",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DINTRADINS",
+      "text": "Sunt sigur că a făcut dintradins.",
+      "suggestion": "dintr-adins",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DINTRODATA",
+      "text": "A plecat dintrodată.",
+      "suggestion": "dintr-odată",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DIN_NOU_IARASI",
+      "text": "A venit din nou iarăși la noi.",
+      "suggestion": "din nou",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DIRECT_NEMIJLOCIT",
+      "text": "Contact direct nemijlocit.",
+      "suggestion": "direct",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DIRECT_PE_SLEAU",
+      "text": "Le-a spus direct pe șleau tot ce avea de spus.",
+      "suggestion": "direct",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DREAPTA_RECTILINIE",
+      "text": "A trasat o dreaptă rectilinie.",
+      "suggestion": "dreaptă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ETC_ETC",
+      "text": "A spus etc. etc.",
+      "suggestion": "etc.",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GHILIMELE_DUBLE_INTERIOR_INCEPUT",
+      "text": "<<un alt test»",
+      "suggestion": "«",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GHILIMELE_DUBLE_INTERIOR_INCEPUT",
+      "text": "Un <<prim test».",
+      "suggestion": "«",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GHILIMELE_DUBLE_INTERIOR_SFARSIT",
+      "text": "Un «test>> oarecare.",
+      "suggestion": "»",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GHILIMELE_DUBLE_INTERIOR_SFARSIT",
+      "text": "„Un «test>> oarecare.”",
+      "suggestion": "»",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ICRE_DE_PESTE",
+      "text": "El a cerut icre de pește.",
+      "suggestion": "icre",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "IDENTIC_LA_FEL",
+      "text": "Avea o căciulă identic la fel cu a mea.",
+      "suggestion": "la fel",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INCLUSIV_SI",
+      "text": "El a folosit tot, inclusiv și vechile materiale.",
+      "suggestion": "inclusiv",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "JUMATATI_EGALE",
+      "text": "A împărțit mărul în două jumătăți egale.",
+      "suggestion": "jumătăți",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "LA_FEL_CA_SI",
+      "text": "Marte, la fel ca și Venus, este format din...",
+      "suggestion": "ca și",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MAI_MULTI",
+      "text": "Cei mai multi cumpărători preferă aceste produse.",
+      "suggestion": "mai mulți",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MI-AR_PLACEA",
+      "text": "Mi-ar place să vii.",
+      "suggestion": "plăcea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MIAU",
+      "text": "Nu miau spus tot.",
+      "suggestion": "mi-au",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MIJLOCUL_CENTRULUI",
+      "text": "Jucătorii s-au întreptat către mijlocul centrului.",
+      "suggestion": "mijloc",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MUNCA_LABORIOASA",
+      "text": "Este o muncă laborioasă.",
+      "suggestion": "muncă grea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "OM_UMANOID",
+      "text": "A descoperit un om umanoid.",
+      "suggestion": "om",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ORA_UNA",
+      "text": "S-au întâlnit la ora una.",
+      "suggestion": "ora unu",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "O_SUTELEA",
+      "text": "El era al o sutelea pe listă.",
+      "suggestion": "o sutălea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PENTRU_CA_SA",
+      "text": "A plecat pentru ca să îl anunțe.",
+      "suggestion": "ca să",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "RAMAI_SI_NU_PLECA",
+      "text": "Rămâi și nu pleca!",
+      "suggestion": "Rămâi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "REFERIT_DESPRE",
+      "text": "M-am referit despre cum au jucat ei.",
+      "suggestion": "referit la",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SAMD_SAMD",
+      "text": "A spus șamd. șamd.",
+      "suggestion": "șamd.",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "VASAZICA",
+      "text": "Va să zică a plecat...",
+      "suggestion": "Vasăzică",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "VIRGULA_ETC",
+      "text": "A adus mere, pere, prune , etc.",
+      "suggestion": "etc",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "VIRUSUL_HIV",
+      "text": "Multe persoane au fost infectate cu virusul HIV.",
+      "suggestion": "HIV",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ACEASTA_SF_ACEASTA_SF",
+      "text": "Această cartea este a mea.",
+      "suggestion": "carte",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ACORD_COMUN",
+      "text": "Au ajuns la un acord comun.",
+      "suggestion": "acord",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ACORD_COMUN",
+      "text": "Pe baza acordului comun...",
+      "suggestion": "acordului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ADAUGA_UN_SPOR",
+      "text": "El a adăugat un spor.",
+      "suggestion": "sporit",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALCOOLIC_CRONIC",
+      "text": "Cu timpul, el a devenit un alcoolic cronic.",
+      "suggestion": "alcoolic",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALCOOLIC_CRONIC",
+      "text": "Ea a devenit cu timpul o alcoolică cronică.",
+      "suggestion": "alcoolică",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALEGERI_ELECTORALE",
+      "text": "Ei prezintă informații despre alegerile electorale din acel oraș.",
+      "suggestion": "alegerile",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALEGERI_ELECTORALE",
+      "text": "Ei prezintă informații despre desfășurarea alegerilor electorale.",
+      "suggestion": "alegerilor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALE_CEEA_CE",
+      "text": "Consecințele ale ceea ce a făcut.",
+      "suggestion": "a",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALTRUIST_CU_ALTUL",
+      "text": "Este în firea ei să fie altruistă cu ceilalți.",
+      "suggestion": "altruistă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALTRUIST_CU_ALTUL",
+      "text": "Este în firea lui să fie altruist cu alții.",
+      "suggestion": "altruist",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ALTRUIST_CU_ALTUL",
+      "text": "Este în firea noastră să fim altruiști cu ceilalți.",
+      "suggestion": "altruiști",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AL_DOUAZECI_SI_UNU",
+      "text": "Era al cincizeci și unu pe listă.",
+      "suggestion": "al cincizeci și unulea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AL_DOUAZECI_SI_UNU",
+      "text": "Irinel a ieșit al douăzeci și unu.",
+      "suggestion": "al douăzeci și unulea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AL_OPTELEA",
+      "text": "A optelea caiet era a lui.",
+      "suggestion": "Al optulea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AMBELE_DOUA",
+      "text": "A trimis scrisoarea ambilor amândoi foști colegi.",
+      "suggestion": "ambilor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AMBELE_DOUA",
+      "text": "A trimis scrisoarea ambilor doi foști colegi.",
+      "suggestion": "ambilor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AMBELE_DOUA",
+      "text": "A trimis scrisoarea către ambele două surori.",
+      "suggestion": "ambele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "APROPE_CVASI___",
+      "text": "Acest artist este aproape cvasicunoscut.",
+      "suggestion": "cvasicunoscut",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "APROPE_CVASI___",
+      "text": "Acest artist este aproape cvasinecunoscut.",
+      "suggestion": "cvasinecunoscut",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "APROPE_CVASI___",
+      "text": "Acest artist este cam cvasicunoscut.",
+      "suggestion": "cvasicunoscut",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "APROPE_CVASI___",
+      "text": "Acest artist este cam cvasinecunoscut.",
+      "suggestion": "cvasinecunoscut",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "APROPO_DE_ASTA",
+      "text": "Și apropo de asta, ce părere ai?",
+      "suggestion": "apropo",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AS_AVEA",
+      "text": "Nu as dori nimic altceva.",
+      "suggestion": "aș dori",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AUTORITATE_COMPETENTA",
+      "text": "A anunțat autoritățile competente.",
+      "suggestion": "autoritățile",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AUTORITATE_COMPETENTA",
+      "text": "A anunțat autoritățile oficiale.",
+      "suggestion": "autoritățile",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AUTORITATE_COMPETENTA",
+      "text": "Care este autoritatea competentă în materie de drept civil?",
+      "suggestion": "autoritatea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "AVERSE_DE_PLOAIE",
+      "text": "Mâine vor cădea averse de ploaie și va fi ceață.",
+      "suggestion": "averse",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_ADAUGA_O_COMPLETARE",
+      "text": "A adăuga o completare.",
+      "suggestion": "completa",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_ADAUGA_O_COMPLETARE",
+      "text": "Ei adăugaseră o completare.",
+      "suggestion": "completaseră",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_ADAUGA_O_COMPLETARE",
+      "text": "Ei adăugaseră unele completări.",
+      "suggestion": "completaseră",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_ANEXA_ALATURI",
+      "text": "El a anexat alături o copie după buletin.",
+      "suggestion": "anexat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_ANEXA_ALATURI",
+      "text": "El a găsit anexate alături o copie după buletin.",
+      "suggestion": "anexate",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_ANEXA_ALATURI",
+      "text": "El rezolvat problema anexând alături o carte de vizită.",
+      "suggestion": "anexând",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_AVANSA_INAINTE",
+      "text": "A avansa înainte.",
+      "suggestion": "avansa",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_AVANSA_INAINTE",
+      "text": "Avansasem înainte repede.",
+      "suggestion": "Avansasem",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_AVANSA_INAINTE",
+      "text": "Să avansăm înainte repede.",
+      "suggestion": "avansăm",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_COEXISTA_IMPREUNA",
+      "text": "A coexista împreună.",
+      "suggestion": "coexista",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_COEXISTA_IMPREUNA",
+      "text": "Acestea coexistau împreună.",
+      "suggestion": "coexistau",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_COLABORA_IMPREUNA",
+      "text": "Au reușit doar colaborând împreună la acel proiect.",
+      "suggestion": "colaborând",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_COLABORA_IMPREUNA",
+      "text": "Ei au colaborat împreună la acest proiect.",
+      "suggestion": "colaborat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_COLABORA_IMPREUNA",
+      "text": "Ei urmează să colaboreze împreună la acest proiect.",
+      "suggestion": "colaboreze",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_COLABORA_IMPREUNA",
+      "text": "Ei vor colabora împreună la acest proiect.",
+      "suggestion": "colabora",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_COLABORA_IMPREUNA",
+      "text": "Reușita se datorează colaborării împreună la acel proiect.",
+      "suggestion": "colaborării",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_CONLOCUI_LAOLALTA",
+      "text": "Ei conlocuiesc laolaltă cu multe alte persoane.",
+      "suggestion": "conlocuiesc",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_CONLUCRA_IMPREUNA",
+      "text": "Ei au conlucrat împreună la acel proiect.",
+      "suggestion": "conlucrat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_CONTINE_IN_CUPRINS",
+      "text": "Cartea conținea în cuprins multe capitole.",
+      "suggestion": "conținea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_CONTINE_IN_CUPRINS",
+      "text": "Cartea va conține în cuprins multe capitole.",
+      "suggestion": "conține",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_CONVIETUI_LAOLALTA",
+      "text": "Ei conviețuiau laolaltă acolo.",
+      "suggestion": "conviețuiau",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_CONVIETUI_LAOLALTA",
+      "text": "Ei conviețuiesc laolaltă.",
+      "suggestion": "conviețuiesc",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_EPILA_PARUL",
+      "text": "Uneori este necesară epilarea părului.",
+      "suggestion": "epilarea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_EXMATRICULA_DIN_SCOALA",
+      "text": "El a fost exmatriculat din școală.",
+      "suggestion": "exmatriculat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_IESI_AFARA",
+      "text": "El a ieșit afară.",
+      "suggestion": "ieșit",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_IESI_AFARA",
+      "text": "L-am văzut ieșind afară.",
+      "suggestion": "ieșind",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INDOI_IN_DOUA",
+      "text": "A îndoi în două.",
+      "suggestion": "îndoi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INDOI_IN_DOUA",
+      "text": "A îndoit în două.",
+      "suggestion": "îndoit",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INGHETA_DE_FRIG",
+      "text": "Am găsit-o înghețată de frig.",
+      "suggestion": "înghețată",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INGHETA_DE_FRIG",
+      "text": "L-am găsit înghețat de frig.",
+      "suggestion": "înghețat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INGHETA_DE_FRIG",
+      "text": "Ne plângeam că înghețăm de frig.",
+      "suggestion": "înghețăm",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INGHETA_DE_FRIG",
+      "text": "Se plângeau că îngheață de frig.",
+      "suggestion": "îngheață",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INTRA_INAUNTRU",
+      "text": "A intrat înăuntru fără să spună un cuvânt.",
+      "suggestion": "intrat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_INTRA_INAUNTRU",
+      "text": "A introdus înăuntru o monedă.",
+      "suggestion": "introdus",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_POPOSI_PENTRU_ODIHNA",
+      "text": "Apoi el poposi pentru odihnă la han.",
+      "suggestion": "poposi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_PRECIZA_CU_EXACTITATE",
+      "text": "El m-a impresionat plăcut precizând cu exactitate problemele apărute.",
+      "suggestion": "precizând",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_PRECIZA_CU_EXACTITATE",
+      "text": "El preciza cu exactitate problemele apărute.",
+      "suggestion": "preciza",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_PRECIZA_CU_EXACTITATE",
+      "text": "El precizase cu exactitate problemele apărute.",
+      "suggestion": "precizase",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_PRECIZA_CU_EXACTITATE",
+      "text": "Se vor preciza cu exactitate intervalele orare.",
+      "suggestion": "preciza",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_PRILEJUIT_OCAZIA",
+      "text": "Aceasta a prilejuit ocazia afirmării.",
+      "suggestion": "oferit ocazia",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_RAMANE_IN_CONTINUARE",
+      "text": "A rămas în continuare acolo.",
+      "suggestion": "rămas",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_RELUA_DIN_NOU",
+      "text": "A plictisit auditoriul reluând din nou aceeași temă.",
+      "suggestion": "reluând",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_RELUA_DIN_NOU",
+      "text": "El a reluat din nou aceeași temă.",
+      "suggestion": "reluat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_RELUA_DIN_NOU",
+      "text": "Până să-l opresc, reluase din nou aceeași idee.",
+      "suggestion": "reluase",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_RETURNA_INAPOI",
+      "text": "A returnat înapoi cartea.",
+      "suggestion": "returnat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_RETURNA_INAPOI",
+      "text": "Returnând înapoi cartea, nu a mai rămas nimic de spus.",
+      "suggestion": "Returnând",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_REVENI_DIN_NOU",
+      "text": "A reveni din nou.",
+      "suggestion": "reveni",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_REVENI_DIN_NOU",
+      "text": "L-a văzut revenind din nou acolo.",
+      "suggestion": "revenind",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_REVENI_IAR",
+      "text": "Știrea revenise iarăși în actualitate.",
+      "suggestion": "revenise",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_REVENI_IAR",
+      "text": "Știrea revine iar în actualitate.",
+      "suggestion": "revine",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_REVENI_IAR",
+      "text": "Știrea revine înapoi în actualitate.",
+      "suggestion": "revine",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_SOPTI_INCET",
+      "text": "Atunci el șopti încet temerile sale.",
+      "suggestion": "șopti",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_SOPTI_INCET",
+      "text": "Atunci el, șoptind încet, expuse temerile sale.",
+      "suggestion": "șoptind",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "A_URMA_IN_CONTINUARE",
+      "text": "A urmat în continuare o prezentare a produsului.",
+      "suggestion": "urmat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BABA_BATRANA",
+      "text": "Am dat câteva ceva babelor bătrâne.",
+      "suggestion": "babelor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BABA_BATRANA",
+      "text": "Am văzut câteva babe bătrâne.",
+      "suggestion": "babe",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BABA_BATRANA",
+      "text": "Am văzut o babă bătrână.",
+      "suggestion": "babă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BICICLETA_CU_DOUA_ROTI",
+      "text": "El nu a vrut să folosescă o bicicletă cu două roți.",
+      "suggestion": "bicicletă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BICICLETA_CU_DOUA_ROTI",
+      "text": "Nu a vrut să dea drumul bicicletei cu două roți.",
+      "suggestion": "bicicletei",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BIFURCA_IN_DOUA",
+      "text": "Drumul se bifurcă în două.",
+      "suggestion": "bifurcă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "BLAZON_DE_NOBLETE",
+      "text": "El nu a arătat respectul cuvenit blazonului de noblețe vechile materiale.",
+      "suggestion": "blazonului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CA",
+      "text": "Aceasta este o politică care enervează electoratul.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CA",
+      "text": "Această mică camilă este foarte frumoasă.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CA",
+      "text": "De data asta pleca către exterior.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CA",
+      "text": "Mica carte este foarte frumoasă.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CA",
+      "text": "Mica cămilă este foarte frumoasă.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CI_CI",
+      "text": "Nu a fost el ci cineva din afară.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CI_CI",
+      "text": "Trebuie ca cineva să răspundă.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CO_CO",
+      "text": "Bunica cunoscuse multă lume",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CO_CO",
+      "text": "Ca consilier are noi responsabilități.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CO_CO",
+      "text": "Nico colaborase cu toți",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CO_CO",
+      "text": "Regret că colegii mei nu sunt de acord.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CU_CU",
+      "text": "Mă privește cu curiozitate.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__CU_RU",
+      "text": "Am venit cu rugămintea de a-mi motiva absențele.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__DE",
+      "text": "Știu unde depune Maria cererea.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__LA",
+      "text": "Astăzi facem ora de chimie la laborator.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__PUL_A",
+      "text": "Cu timpul a înțeles toate problemele.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__PUL_A",
+      "text": "Tipul acela nu-mi place.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__PUL_A",
+      "text": "În timpul acesta vorbea profesorul.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__TA_TA",
+      "text": "Fata ta nu este aici.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CACOFONIE__VA",
+      "text": "Undeva valea se îngusta.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CARE_PE_CARE__BINELE_CARE_MI_L_AI",
+      "text": "Binele care mi l-ai făcut nu poate fi uitat.",
+      "suggestion": "pe care mi l-ai",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CARE_PE_CARE__CAIETUL_CARE_IL-DESCHID",
+      "text": "Caietul care îl citesc este al meu.",
+      "suggestion": "pe care îl",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CARE_PE_CARE__CAIETUL_CARE_L-AM",
+      "text": "Votul care l-am dat ieri a fost anulat",
+      "suggestion": "pe care l-am",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CARE_PE_CARE__CARTEA_CARE_TI-AM",
+      "text": "Cartea care ți-am dat-o.",
+      "suggestion": "pe care",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CARE_PE_CARE__CARTEA_CARE_TI-AM",
+      "text": "Ea nu intră decât pe ușa care i-am deschis-o.",
+      "suggestion": "pe care",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CEA_MAI_SUBST_ART",
+      "text": "Aceasta este cea mai buna carte.",
+      "suggestion": "cea mai bună",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CEA_MAI_SUBST_ART",
+      "text": "Această deltă este cea mai noua din lume.",
+      "suggestion": "cea mai nouă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CERE_O_SOLICITARE",
+      "text": "El a cerut o solicitare.",
+      "suggestion": "făcut o solicitare",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CERE_O_SOLICITARE",
+      "text": "El nu a vrut să ceară o solicitare scrisă.",
+      "suggestion": "facă o solicitare",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CE_X_SI_CE_Y_SE_STIU",
+      "text": "Ce facem și ce vorbim se știu.",
+      "suggestion": "se știe",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CE_X_SI_CE_Y_SE_STIU",
+      "text": "Ce faceți și ce vorbiți se știu.",
+      "suggestion": "se știe",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CE_X_SI_CE_Y_SE_STIU",
+      "text": "Ce faci și ce vorbești se știu.",
+      "suggestion": "se știe",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CHIAR_EL_INSUSI",
+      "text": "A intervenit chiar el însuși.",
+      "suggestion": "chiar el",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CHIAR_EL_INSUSI",
+      "text": "Au intervenit chiar ele însele.",
+      "suggestion": "chiar ele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CINSTE_SI_ONOARE",
+      "text": "A dat dovadă de cinste și onoare.",
+      "suggestion": "cinste",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CINSTE_SI_ONOARE",
+      "text": "Ține foarte mult la cinstea și onoarea sa.",
+      "suggestion": "cinstea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COASOCIAT",
+      "text": "A trimis vorbă coasociatului.",
+      "suggestion": "asociatului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COASOCIAT",
+      "text": "I-a fost coasociat.",
+      "suggestion": "asociat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COBAI_DE_EXPERIENTA",
+      "text": "A folosit cobaii de experiență.",
+      "suggestion": "cobaii",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COBAI_DE_EXPERIENTA",
+      "text": "Acest hamster este doar un cobai de experiență.",
+      "suggestion": "cobai",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COLABORARE_SI_COOPERARE",
+      "text": "Aceasta a fost în scopul colaborării și cooperării.",
+      "suggestion": "colaborării",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COLABORARE_SI_COOPERARE",
+      "text": "Relația s-a bazat pe colaborare și cooperare.",
+      "suggestion": "colaborare",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CONSENS_DE_OPINII",
+      "text": "Au ajuns la un consens de opinii.",
+      "suggestion": "consens",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CONSENS_DE_OPINII",
+      "text": "Au ajuns la un consens de păreri.",
+      "suggestion": "consens",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CONTINUITATE_NEINTRERUPTA",
+      "text": "Aceste documente atestă o continuitate neîntreruptă în acest areal.",
+      "suggestion": "continuitate",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CONTINUITATE_NEINTRERUPTA",
+      "text": "S-a bazat pe continuitatea neîntreruptă în acest areal.",
+      "suggestion": "continuitatea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COPARTAS",
+      "text": "A trimis vorbă copărtașului.",
+      "suggestion": "părtașului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COPARTAS",
+      "text": "I-a fost copărtaș.",
+      "suggestion": "părtaș",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COPARTENER",
+      "text": "A trimis vorbă copartenerului.",
+      "suggestion": "partenerului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COPARTENER",
+      "text": "I-a fost copartener.",
+      "suggestion": "partener",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COROBORA_COMPARATIV",
+      "text": "Aceste date coroborate comparativ vor oferi soluția.",
+      "suggestion": "coroborate",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COROBORA_COMPARATIV",
+      "text": "În cazul în care coroborăm comparativ aceste informații aflăm soluția.",
+      "suggestion": "coroborăm",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COTIDIANA_DE_ZI_CU_ZI",
+      "text": "Activitatea cotidiană de zi cu zi este plictisitoare.",
+      "suggestion": "cotidiană",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "COTIDIAN_ZILNIC",
+      "text": "Activitatea cotidiană zilnică este plictisitoare.",
+      "suggestion": "cotidiană",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREDE_IN_SINEA_LUI",
+      "text": "El a crezut în sinea lui că este bine.",
+      "suggestion": "crezut",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREDE_IN_SINEA_LUI",
+      "text": "Eu credeam în sinea mea că este bine.",
+      "suggestion": "credeam",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREDE_IN_SINEA_LUI",
+      "text": "Voi credeați în sinea voastră că este bine.",
+      "suggestion": "credeați",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREIAM",
+      "text": "El/Ea creia ceva.",
+      "suggestion": "crea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREIAM",
+      "text": "Eu creiam ceva.",
+      "suggestion": "cream",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREIAM",
+      "text": "Noi creiam ceva.",
+      "suggestion": "cream",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREIAM",
+      "text": "Noi creiaserăm ceva.",
+      "suggestion": "creaserăm",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREIAM",
+      "text": "Tu creiai ceva.",
+      "suggestion": "creai",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREIAM",
+      "text": "Voi creiau ceva.",
+      "suggestion": "creau",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "CREIAM",
+      "text": "Voi creiați ceva.",
+      "suggestion": "creați",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DAINUI_PERMANENT",
+      "text": "Amintirea sa va dăinui permanent.",
+      "suggestion": "dăinui",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DEMOCRATIE_POPULARA",
+      "text": "Este vorba de o democrație populară străveche.",
+      "suggestion": "democrație",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DEMOCRATIE_POPULARA",
+      "text": "Schimbarea s-a datorat democrației populare străvechi.",
+      "suggestion": "democrației",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DESCHIDEREA_VERNISAJULUI",
+      "text": "A participat la deschiderea vernisajului de la sala Dales.",
+      "suggestion": "vernisajul",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DESCHIDEREA_VERNISAJULUI",
+      "text": "S-au întâlnit cu ocazia deschiderii vernisajului de la sala Dales.",
+      "suggestion": "vernisajului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DE_MILIOANE",
+      "text": "Meciul a fost super de milioane.",
+      "suggestion": "de milioane",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DIN_CALE_AFARA",
+      "text": "Meciul a fost super din cale-afară de interesant.",
+      "suggestion": "din cale-afară",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DIRECT_SI_NEMIJLOCIT",
+      "text": "El a ales o cale directă și nemijlocită de a pătrunde în instituție.",
+      "suggestion": "directă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DIRECT_SI_NEMIJLOCIT",
+      "text": "El a discutat direct și nemijlocit cu oficialitățile.",
+      "suggestion": "direct",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DIRECT_SI_NEMIJLOCIT",
+      "text": "Operațiunea s-a desfășurat sub directa și nemijlocita supraveghere a directorului.",
+      "suggestion": "directa",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "DOUA_SUTALEA",
+      "text": "El era al două sutălea pe listă.",
+      "suggestion": "două sutelea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ECHIDISTANTA_EGALA",
+      "text": "A fost lansată chiar de ziua echidistant egală din punct de vedere temporal între cele momente.",
+      "suggestion": "echidistant",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ECRANIZA_UN_FILM",
+      "text": "A ecranizat un film nou.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "EL_INSUSI_IN_PERSOANA",
+      "text": "A intervenit el însuși în persoană.",
+      "suggestion": "el însuși",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "EL_INSUSI_IN_PERSOANA",
+      "text": "Au intervenit ele însele în persoană.",
+      "suggestion": "ele însele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_BINE_CA_SA_SIGURANTA",
+      "text": "E bine ca să plecați mâine.",
+      "suggestion": "să plecați",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_BINE_CA_SA_SIGURANTA",
+      "text": "E bine ca să plece mâine.",
+      "suggestion": "să plece",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_BINE_CA_SA_SIGURANTA",
+      "text": "E bine ca să pleci mâine.",
+      "suggestion": "să pleci",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_BINE_CA_SA_SIGURANTA",
+      "text": "E bine ca să plecăm mâine.",
+      "suggestion": "să plecăm",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_BINE_CA_SA_SIGURANTA",
+      "text": "Este esențial ca să contribui.",
+      "suggestion": "să contribui",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_BINE_CA_SA_SIGURANTA",
+      "text": "Este necesar ca să existe un înalt nivel de dezvolare.",
+      "suggestion": "să existe",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_BINE_CA_SA_SIGURANTA",
+      "text": "Este suficient ca să poată fi categorisită.",
+      "suggestion": "să poată",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ESTE_CU_SIGURANTA",
+      "text": "E cu siguranță că va veni.",
+      "suggestion": "E sigur că",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ETICA_SI_MORALA",
+      "text": "A scris un tratat asupra eticii și moralei.",
+      "suggestion": "eticii",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ETICA_SI_MORALA",
+      "text": "A scris un tratat despre etică și morală.",
+      "suggestion": "etică",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ETICA_SI_MORALA",
+      "text": "Etica și morala crestină sunt considerate temelia societății.",
+      "suggestion": "Etica",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "EXCLUSIV_NUMAI",
+      "text": "Am primit exclusiv numai rebuturi.",
+      "suggestion": "exclusiv",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "EXEMPLE_ILUSTRATIVE",
+      "text": "Acesta este doar un exemplu ilustrativ.",
+      "suggestion": "exemplu",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "EXEMPLE_ILUSTRATIVE",
+      "text": "Acestea sunt doar câteva exemple ilustrative.",
+      "suggestion": "exemple",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "EXPERIENTA_TRECUTA",
+      "text": "Știu toate acestea din experiențele trecute.",
+      "suggestion": "experință",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "FAPTA_FACUTA",
+      "text": "Fapta făcută este condamnabilă.",
+      "suggestion": "Fapta",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "FIRESC_SI_NATURAL",
+      "text": "Soluția a fost firească și naturală.",
+      "suggestion": "firească",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "FIRESC_SI_NATURAL",
+      "text": "Soluția a venit firesc și natural.",
+      "suggestion": "firesc",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GEAM_DE_STICLA",
+      "text": "E a spart geamul de sticlă.",
+      "suggestion": "geamul",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GENUNCHIUL_PICIORULUI",
+      "text": "S-a lovit la genunchiul piciorului dar nu l-a durut.",
+      "suggestion": "genunchi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GENUNCHIUL_PICIORULUI",
+      "text": "S-a lovit la genunchiul piciorului.",
+      "suggestion": "genunchi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GHILIMELE_DUBLE_INCEPUT",
+      "text": "\"Un test\".",
+      "suggestion": "„",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GOALE_SI_FARA_SENS",
+      "text": "A inșirat fraze goale și fără sens.",
+      "suggestion": "goale",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GOALE_SI_FARA_SENS",
+      "text": "Fraza părea goală și fără sens.",
+      "suggestion": "goală",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GREU_SI_DIFICIL",
+      "text": "Calea a fost grea și dificilă.",
+      "suggestion": "grea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "GREU_SI_DIFICIL",
+      "text": "Drumul a fost greu și dificil.",
+      "suggestion": "greu",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "HEMOGLOBINA_DIN_SANGE",
+      "text": "Blocarea totală a hemoglobinei din sânge este periculoasă.",
+      "suggestion": "hemoglobinei",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ILUSTRAT_CU_EXEMPLE",
+      "text": "A ilustrat prin exemple ceea ce avea de spus.",
+      "suggestion": "exemplificat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ILUSTRAT_CU_EXEMPLE",
+      "text": "Doresc să ilustrez cu exemple ceea ce am de spus.",
+      "suggestion": "exemplific",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "IMPARTIT_IN_DOUA_SEMESTRE",
+      "text": "Anul școlar a fost împărțit în două semestre.",
+      "suggestion": "împărțit în semestre",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "IMPARTIT_IN_DOUA_SEMESTRE",
+      "text": "Perioadele a fost împărțite în două semestre.",
+      "suggestion": "împărțite în semestre",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "IMPARTIT_IN_TREI_TRIMESTERE",
+      "text": "Anul școlar a fost împărțit în trei trimestre.",
+      "suggestion": "împărțit în trimestre",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "IMPARTIT_IN_TREI_TRIMESTERE",
+      "text": "Perioadele a fost împărțite în trei trimestre.",
+      "suggestion": "împărțite în trimestre",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INCORSETARE_RIGIDA",
+      "text": "Se simte rău deoarece a fost încorsetată rigid.",
+      "suggestion": "încorsetată",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INCORSETARE_RIGIDA",
+      "text": "Se simte rău din cauza încorsetării rigide.",
+      "suggestion": "încorsetării",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INFATISARE_CU_ASPECT",
+      "text": "Avea o înfățișare cu aspect neîngrijit.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INTOARCE_TE_INAPOI",
+      "text": "Hei, întoarce-te înapoi!",
+      "suggestion": "întoarce-te",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INTOARCE_TE_INAPOI",
+      "text": "Hei, întoarceți-vă înapoi!",
+      "suggestion": "întoarceți-vă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INTRODUCERE_PRELIMINARA",
+      "text": "Aș dori să fac o introducere preliminară.",
+      "suggestion": "introducere",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "INTRODUCERE_PRELIMINARA",
+      "text": "În ceea ce privește introducerea preliminară făcută de el, nu sunt de acord.",
+      "suggestion": "introducerea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "IN_PRIMA_AUDITIE",
+      "text": "Astăzi am ascultat în primă audiție o compoziție a sa.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "LIMITA_NUMAI_LA",
+      "text": "La limitează numai la câteva noțiuni.",
+      "suggestion": "limitează la",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MAI_ITI_ESTE",
+      "text": "Mai le era cald?",
+      "suggestion": "Le mai era",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MAI_ITI_ESTE",
+      "text": "Mai îți este foame?",
+      "suggestion": "Îți mai este",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MENTINE_IN_CONTINUARE",
+      "text": "A dorit să mențină în continuare acea stare.",
+      "suggestion": "mențină",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MENTINE_IN_CONTINUARE",
+      "text": "A menținut în continuare acea stare.",
+      "suggestion": "menținut",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MENTINE_IN_CONTINUARE",
+      "text": "L-am surprins menținând în continuare acea stare.",
+      "suggestion": "menținând",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MIGRENA_DE_CAP",
+      "text": "Ea are o migrenă de cap.",
+      "suggestion": "migrenă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MIGRENA_DE_CAP",
+      "text": "Nu a putut veni din cauza migrenei de cap.",
+      "suggestion": "migrenei",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MIJLOACE_MASS-MEDIA",
+      "text": "Au fost influențați prin mijloace mass-media.",
+      "suggestion": "mass-media",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MIJLOACE_MASS-MEDIA",
+      "text": "S-a datorat mijloacelor mass-media de atunci.",
+      "suggestion": "mass-media",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MOS_BATRAN",
+      "text": "Am dat cartea moșneagului bătrân.",
+      "suggestion": "moșneagului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MOS_BATRAN",
+      "text": "Am dat cartea moșului bătrân.",
+      "suggestion": "moșului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MOS_BATRAN",
+      "text": "Am dat cărțile moșilor bătrâni.",
+      "suggestion": "moșilor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MOS_BATRAN",
+      "text": "Am văzut un moș bătrân.",
+      "suggestion": "moș",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "MUTUAL_SI_RECIPROC",
+      "text": "S-a bazat pe un ajutor mutual și reciproc.",
+      "suggestion": "mutual",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NEVASTA_DE_AL_DOILEA",
+      "text": "Casa este a nevestei de-a doua.",
+      "suggestion": "nevestei de-al doilea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NEVASTA_DE_AL_DOILEA",
+      "text": "Și-a luat nevastă de-a doua.",
+      "suggestion": "nevastă de-al doilea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NEVASTA_DE_AL_DOILEA",
+      "text": "Și-a luat soție de-a doua.",
+      "suggestion": "soție de-al doilea",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NE_RESPECTA_Sb_NOASTRA",
+      "text": "Ei ne respectau munca noastră.",
+      "suggestion": "ne respectau munca",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NE_RESPECTA_Sb_NOASTRA",
+      "text": "El ne respectă munca noastră.",
+      "suggestion": "ne respectă munca",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NUL_SI_NEAVENIT",
+      "text": "Actul este considerat nul și neavenit.",
+      "suggestion": "nul",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NUL_SI_NEAVENIT",
+      "text": "Dovada este considerată nulă și neavenită.",
+      "suggestion": "nulă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "NUMEROASE_POLITRAUMATISME",
+      "text": "Cinci răniţi sunt internaţi cu numeroase politraumatisme.",
+      "suggestion": "politraumatism",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "OMORAT_DEFINITIV",
+      "text": "Partenerul său a fost omorât definitiv.",
+      "suggestion": "omorât",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "OMORAT_DEFINITIV",
+      "text": "Partenerul său a fost ucis definitiv.",
+      "suggestion": "ucis",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "ORTOGRAFIE_CORECTA",
+      "text": "El a ținut cont de ortografia corectă.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "O_PERECHE_DE___",
+      "text": "Și-a cumpărat o pereche de doi porumbei.",
+      "suggestion": "doi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "O_PERECHE_DE___",
+      "text": "Și-a cumpărat o pereche de pijamale.",
+      "suggestion": "pijamale",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PANACEU_UNIVERSAL",
+      "text": "Nici medicina alopată nu este panaceu universal.",
+      "suggestion": "panaceu",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PANACEU_UNIVERSAL",
+      "text": "S-au oprit asupra panaceului universal descoperit recent.",
+      "suggestion": "panaceului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PAUZA_TEMPORARA",
+      "text": "Au făcut multe pauze temporară.",
+      "suggestion": "pauze",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PAUZA_TEMPORARA",
+      "text": "Au făcut o pauză temporară.",
+      "suggestion": "pauză",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PERSPECTIVE_DE_VIITOR",
+      "text": "Este îngrijorat în privința perspectivelor de viitor.",
+      "suggestion": "perspectivelor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PERSPECTIVE_DE_VIITOR",
+      "text": "O analiză asupra perspectivelor de viitor oferite.",
+      "suggestion": "perspectivelor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PERSPECTIVE_DE_VIITOR",
+      "text": "Serviciul îi oferă multe perspective de viitor.",
+      "suggestion": "perspective",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "POATE_FI_ADMISIBIL",
+      "text": "Aceasta nu poate fi admisibilă.",
+      "suggestion": "este admisibilă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "POATE_FI_ADMISIBIL",
+      "text": "Așa ceva nu poate fi admisibil.",
+      "suggestion": "este admisibil",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "POATE_FI_POSIBIL",
+      "text": "Aceasta nu poate fi posibilă.",
+      "suggestion": "este posibilă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "POATE_FI_POSIBIL",
+      "text": "Așa ceva nu poate fi posibil.",
+      "suggestion": "este posibil",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "POATE_FI_UTILIZABIL",
+      "text": "Aceast obiect poate fi utilizabil.",
+      "suggestion": "poate fi utilizat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "POATE_FI_UTILIZABIL",
+      "text": "Aceaste piese pot fi utilizabile.",
+      "suggestion": "pot fi utilizate",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "POATE_FI_UTILIZABIL",
+      "text": "Această piesă poate fi utilizabilă.",
+      "suggestion": "poate fi utilizată",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PREFERA_MAI_BINE",
+      "text": "Au plecat, preferând mai bine să nu vadă ce se întâmplă.",
+      "suggestion": "preferând",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PREFERA_MAI_BINE",
+      "text": "Eu prefer mai bine să rămân.",
+      "suggestion": "prefer",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PREVAZUT_IN_VEDEREA",
+      "text": "Aceasta a fost prevăzută în vederea extinderii funcționalități.",
+      "suggestion": "prevăzută în scopul",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PREVAZUT_IN_VEDEREA",
+      "text": "Acestea au fost prevăzute în vederea extinderii funcționalități.",
+      "suggestion": "prevăzute în scopul",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PUBELE_DE_GUNOI",
+      "text": "A mers pe uma pubelelor de gunoi.",
+      "suggestion": "pubelelor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PUBELE_DE_GUNOI",
+      "text": "Au adus alte pubele de gunoi.",
+      "suggestion": "pubele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "PUBELE_DE_GUNOI",
+      "text": "Au adus altă pubelă de gunoi.",
+      "suggestion": "pubelă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SALVAMONTISTI_MONTANI",
+      "text": "A scăpat cu viață datorită salvamontiștilor montani.",
+      "suggestion": "salvamontiștilor",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SANTIER_IN_LUCRU",
+      "text": "În partea dreaptă se află un șantier în lucru.",
+      "suggestion": "șantier",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SANTIER_IN_LUCRU",
+      "text": "În partea dreaptă se află șantierul în lucru.",
+      "suggestion": "șantierul",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SCHIMB_RECIPROC",
+      "text": "Acestea sunt notițele din timpul schimbului reciproc de idei.",
+      "suggestion": "schimbului",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SCHIMB_RECIPROC",
+      "text": "Au făcut un schimb reciproc de idei.",
+      "suggestion": "schimb",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SCURTA_ALOCUTIUNE",
+      "text": "E a ținut o scurtă alocuțiune.",
+      "suggestion": "alocuțiune",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SCURTA_ALOCUTIUNE",
+      "text": "Gestul lui a urmat unei scurte alocuțiuni a colegului.",
+      "suggestion": "alocuțiuni",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SEDUS_SI_PACALIT",
+      "text": "Abia atunci și-a dat seama că fusese sedus și păcălit.",
+      "suggestion": "sedus",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SEDUS_SI_PACALIT",
+      "text": "Abia atunci și-a dat seama că fusese sedusă și păcălită.",
+      "suggestion": "sedusă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PESTE",
+      "text": "Avionul survolează peste case.",
+      "suggestion": "survolează casele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PESTE",
+      "text": "Avionul survolează peste casele orașului.",
+      "suggestion": "survolează casele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PESTE",
+      "text": "Avionul survolează peste munți.",
+      "suggestion": "survolează munții",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PESTE",
+      "text": "Avionul survolează peste munții patriei.",
+      "suggestion": "survolează munții",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PESTE",
+      "text": "Avionul survolează peste orașe.",
+      "suggestion": "survolează orașele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PESTE",
+      "text": "Avionul survolează peste orașele patriei.",
+      "suggestion": "survolează orașele",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PRIN_AER",
+      "text": "Avionul survola prin aer.",
+      "suggestion": "survola",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SERVOLEAZA_PRIN_AER",
+      "text": "Avionul survolează prin aer.",
+      "suggestion": "survolează",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SE_POT_OFERI_SA",
+      "text": "Se pot oferi sa facă multe.",
+      "suggestion": "să",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SFN_ESTE_A",
+      "text": "Carte este a mea.",
+      "suggestion": "Carta",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SIMPLA_SI_NESOFISTICATA",
+      "text": "El a folosit o abordare simplă și nesofisticată.",
+      "suggestion": "simplă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SIMPLA_SI_NESOFISTICATA",
+      "text": "El are un stil simplu și nesofisticat.",
+      "suggestion": "simplu",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SINE_INSUSI",
+      "text": "A păstrat totul în sine însuși.",
+      "suggestion": "sine",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SINE_INSUSI",
+      "text": "Au păstrat totul în sine însele.",
+      "suggestion": "sine",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SINUCIS_SINGUR",
+      "text": "Se povestește că dorea să se sinucidă singur.",
+      "suggestion": "sinucidă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SINUCIS_SINGUR",
+      "text": "Se povestește că doreau să se sinucidă singure.",
+      "suggestion": "sinucidă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SINUCIS_SINGUR",
+      "text": "Se povestește că s-a sinucis singur.",
+      "suggestion": "sinucis",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SINUCIS_SINGUR",
+      "text": "Se povestește că se sinucisese singur.",
+      "suggestion": "sinucisese",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SPECTACOL_ARTISTIC",
+      "text": "Formația a susținut o reprezentație artistică.",
+      "suggestion": "reprezentație",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SPECTACOL_ARTISTIC",
+      "text": "Formația a susținut un spectacol artistic.",
+      "suggestion": "spectacol",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "STARE_CIVILA",
+      "text": "L-am trimis la STAREA CIVILA.",
+      "suggestion": "STAREA CIVILĂ",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "STARE_CIVILA",
+      "text": "L-am trimis la Starea Civila.",
+      "suggestion": "Starea Civilă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "STARE_CIVILA",
+      "text": "L-am întrebat de starea civila.",
+      "suggestion": "starea civilă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SUBSTITUIT_IN_LOCUL",
+      "text": "X nu se poate substitui în locul lui Y.",
+      "suggestion": "substitui",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "SUBSTITUIT_IN_LOCUL",
+      "text": "X poate fi substituit în locul lui Y.",
+      "suggestion": "substituit",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "TENTATIVA_DE_INCERCARE",
+      "text": "A avut mai multe tentative de încercări în acest sens dar a renunțat.",
+      "suggestion": "tentative",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "TENTATIVA_DE_INCERCARE",
+      "text": "A avut o tentativă de încercare în acest sens dar a renunțat.",
+      "suggestion": "tentativă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "TRECUT_IN_NEFIINTA",
+      "text": "A trecuse în neființă destul de devreme.",
+      "suggestion": "trecuse la cele veșnice",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "TRECUT_IN_NEFIINTA",
+      "text": "Trece în neființă la vârsta de 39 de ani.",
+      "suggestion": "Trece la cele veșnice",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "TRICICLETA_CU_TREI_ROTI",
+      "text": "El nu a vrut să folosescă o tricicletă cu trei roți.",
+      "suggestion": "tricicletă",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "TRICICLETA_CU_TREI_ROTI",
+      "text": "Nu a vrut să dea drumul tricicletei cu trei roți.",
+      "suggestion": "tricicletei",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "TRIUMVIRAT_TREI",
+      "text": "Regiunea era sub influența unui triumvirat din trei persoane importante.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UNOR_AAG_UNOR_SN",
+      "text": "Acesta se datorează unor bețelor anume.",
+      "suggestion": "bețe",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UNOR_AAG_UNOR_SN",
+      "text": "Acesta se trimite unor angajatelor noi.",
+      "suggestion": "angajate",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UNOR_AAG_UNOR_SN",
+      "text": "Acesta se trimite unor oamenilor potriviți.",
+      "suggestion": "oameni",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UNUI_SAG_UN_SNEART",
+      "text": "Acesta se trimite unui angajatului nou.",
+      "suggestion": "angajat",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UNUI_SAG_UN_SNEART",
+      "text": "Acesta se trimite unui omului potrivit.",
+      "suggestion": "om",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UN_CUPLU_DE_DOI",
+      "text": "Ne-am întâlnit cu un cuplu de doi italieni.",
+      "suggestion": "cuplu de",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UN_CUPLU_DE_DOI",
+      "text": "Veriga este un cuplu de două utilaje între care se stabilește o relație...",
+      "suggestion": "cuplu de",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UN_NUMAR_DE_X",
+      "text": "Acolo se aflau un număr de douăzeci și trei de persoane.",
+      "suggestion": "douăzeci",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UN_NUMAR_DE_X",
+      "text": "El are un număr de 20 de mere.",
+      "suggestion": "20",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UN_NUMAR_DE_X",
+      "text": "El are un număr de cinci mere.",
+      "suggestion": "cinci",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "UN_NUMAR_DE_X",
+      "text": "Un număr de cinci persoane au lipsit.",
+      "suggestion": "Cinci",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "VESTIGII_TRECUTE",
+      "text": "Se uita cu melancolie la vestigiile trecute.",
+      "suggestion": "vestigii",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "VOR_SA_FACA_MULTE",
+      "text": "Vor sa facă multe.",
+      "suggestion": "să",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "VREA_SA_FACA_MULTE",
+      "text": "Vrea sa facă multe.",
+      "suggestion": "să",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "X_ZECI_SI_Y",
+      "text": "Au mai rămas cinci zeci și șase de zile.",
+      "suggestion": "cincizeci și șase",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    },
+    {
+      "rule": "X_ZECI_SI_Y",
+      "text": "Mai are încă două zeci și doi de lei.",
+      "suggestion": "douăzeci și doi",
+      "source": "languagetool-language-modules/ro/src/main/resources/org/languagetool/rules/ro/grammar.xml"
+    }
+  ]
+}

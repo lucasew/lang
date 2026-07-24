@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft IT pack loaded only when level is picky. -->
+<rules lang="it">
+  <category id="STYLE" name="Style">
+    <rule id="IT_SOFT_PICKY_A_LIVELLO_DI" name="a livello di soft picky">
+      <pattern>
+        <token>a</token>
+        <token>livello</token>
+        <token>di</token>
+      </pattern>
+      <message>Giro vago; preferisca "in" o "quanto a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_PICKY_IN_TERMINI_DI" name="in termini di soft picky">
+      <pattern>
+        <token>in</token>
+        <token>termini</token>
+        <token>di</token>
+      </pattern>
+      <message>Preferisca "in fatto di" o "per".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_PICKY_CHALLENGE" name="challenge soft picky">
+      <pattern>
+        <token>challenge</token>
+      </pattern>
+      <message>Preferisca "sfida" o "obiettivo".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Preferisca "riunione".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_PICKY_MOLTO_MOLTO" name="molto molto soft picky">
+      <pattern>
+        <token>molto</token>
+        <token>molto</token>
+      </pattern>
+      <message>Intensificazione debole; preferisca un aggettivo più forte.</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_PICKY_COSE" name="cose soft picky">
+      <pattern>
+        <token>tante</token>
+        <token>cose</token>
+      </pattern>
+      <message>Preferisca un sostantivo più concreto di "cose".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_PICKY_ALLA_FINE_DELLA_GIORNATA" name="alla fine della giornata soft picky">
+      <pattern>
+        <token>alla</token>
+        <token>fine</token>
+        <token>della</token>
+        <token>giornata</token>
+      </pattern>
+      <message>Preferisca "in definitiva" o "alla fine".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Preferisca "riscontro" o "opinione".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,223 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "ta",
+  "cases": [
+    {
+      "rule": "illaamal",
+      "text": "திட்டியதோடு மட்டும் இல்லாமல் அடிக்கவும் செய்தான்.",
+      "suggestion": "மட்டுமில்லாமல்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "mattil",
+      "text": "அவரைப் பொறுத்த மட்டில் பிரச்சனை முடிந்தது.",
+      "suggestion": "பொறுத்தமட்டில்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "ERRa",
+      "text": "உழைப்புக்கேற்ற ஊதியம்.",
+      "suggestion": "உழைப்புக்கு ஏற்ற",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "illai2",
+      "text": "அவன் இன்னும் வீட்டுக்கு வர இல்லை.",
+      "suggestion": "வரவில்லை",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "kaattilum",
+      "text": "அவர்கள் நம்மைக்காட்டிலும் வசதி படைத்தவர்கள்.",
+      "suggestion": "நம்மைக் காட்டிலும்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "kuudaadhu",
+      "text": "அங்கே போகக்கூடாது.",
+      "suggestion": "போகக் கூடாது",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "maathiraththil",
+      "text": "வீட்டைப் பார்த்தமாத்திரத்தில் பிடித்துவிட்டது.",
+      "suggestion": "பார்த்த மாத்திரத்தில்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "maattu",
+      "text": "நாளை நான் வேளைக்கு வர மாட்டேன்.",
+      "suggestion": "வரமாட்டேன்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "mattum",
+      "text": "இந்தக் கதை படித்த மட்டும் அருமை.",
+      "suggestion": "படித்தமட்டும்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "mayam",
+      "text": "அவருடைய பேட்டி முழுவதும் குற்றச்சாட்டு மயமாக இருந்தது.",
+      "suggestion": "குற்றச்சாட்டுமயமாக",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "mugamaaga",
+      "text": "கப்பலைப் பார்க்க வந்த முகமாக இருக்கிறார்கள்.",
+      "suggestion": "வந்தமுகமாக",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "noun_suffix_1A",
+      "text": "காஸ்ட்ரோ ஆட்சியின்கீழ் கியூபா வந்தது.",
+      "suggestion": "ஆட்சியின் கீழ்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "noun_suffix_1B",
+      "text": "இந்த நாளைக்குறித்த ஒரு புரிதல் அவர்களிடம் இல்லை.",
+      "suggestion": "நாளைக் குறித்த",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "noun_suffix_1C",
+      "text": "அவர்களைக்குறித்து எழுதிய தலைப்பு.",
+      "suggestion": "அவர்களைக் குறித்து",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "noun_suffix_1E",
+      "text": "அரசு அழைப்பின்பேரில் வந்திருக்கிறார்.",
+      "suggestion": "அழைப்பின் பேரில்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "ozhiya",
+      "text": "அவர் நேராக வந்தால் ஒழிய நடக்கப் போவதில்லை.",
+      "suggestion": "வந்தாலொழிய",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "paarkilum",
+      "text": "வெயிலைப்பார்க்கிலும் குளிர் தாங்கிக் கொள்ளக்கூடியதே.",
+      "suggestion": "வெயிலைப் பார்க்கிலும்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "piRagu",
+      "text": "அவர் போன பிறகு என்ன செய்தாய்?",
+      "suggestion": "போனபிறகு",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "pin",
+      "text": "அவருடன் பேசிய பின் என்னை அழை.",
+      "suggestion": "பேசியபின்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "polum",
+      "text": "அது அவரின் சொந்த வீடுபோலும்.",
+      "suggestion": "வீடு போலும்.",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "pondRa",
+      "text": "அவரைப்போன்ற கருமி யாரும் இல்லை.",
+      "suggestion": "அவரைப் போன்ற",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "pondRu",
+      "text": "அவரைப்போன்று பேசக் கூடியவர் ஒருவரும் இல்லை.",
+      "suggestion": "அவரைப் போன்று",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "poorvamaaka",
+      "text": "அவரது உணர்வு பூர்வமான விவாதம் எனக்குப் பிடித்திருந்தது.",
+      "suggestion": "உணர்வுபூர்வமான",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "pothilum",
+      "text": "அடிபட்ட போதிலும் அவன் விடவில்லை.",
+      "suggestion": "அடிபட்டபோதிலும்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "puthithil",
+      "text": "ஊருக்கு வந்தபுதிதில் இது நடந்தது.",
+      "suggestion": "வந்த புதிதில்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "thagaadha",
+      "text": "பேசத்தகாத சொற்கள்.",
+      "suggestion": "பேசத் தகாத",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "thaguntha",
+      "text": "படிக்கத்தகுந்த நூல்.",
+      "suggestion": "படிக்கத் தகுந்த",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "thakka",
+      "text": "போற்றத்தக்க மனிதர்.",
+      "suggestion": "போற்றத் தக்க",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "udan",
+      "text": "நான் நாளை திரும்பிய உடன் சந்தித்துப் பேசுவோம்.",
+      "suggestion": "திரும்பியவுடன்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "uriya",
+      "text": "பெண்களுக்கு உரிய மரியாதையைத் தா!",
+      "suggestion": "பெண்களுக்குரிய",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "uudaaga",
+      "text": "ஜன்னல் கம்பிகளின் ஊடே உருவம் தெரிந்தது.",
+      "suggestion": "கம்பிகளினூடே",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "vaakkil",
+      "text": "நீள வாக்கில் மடி.",
+      "suggestion": "நீளவாக்கில்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "vannam",
+      "text": "வாழ்த்துத் தந்திகள் வந்த வண்ணம் இருக்கின்றன.",
+      "suggestion": "வந்தவண்ணம்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "varai",
+      "text": "காலைமுதல் மாலை வரை கோயிலில் பூஜை.",
+      "suggestion": "மாலைவரை",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "vegu",
+      "text": "காந்தாரி வெகு காலம் கர்ப்பமாக இருந்தாள்.",
+      "suggestion": "வெகுகாலம்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "vida",
+      "text": "அசுரகளின் ஆற்றல் மனிதர்களின் ஆற்றலை விட அதிகம்.",
+      "suggestion": "ஆற்றலைவிட",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    }
+  ]
+}

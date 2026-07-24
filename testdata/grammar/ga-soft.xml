@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ga">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="GA_SOFT_AGUS_AGUS" name="agus agus">
+      <pattern>
+        <token>agus</token>
+        <token>agus</token>
+      </pattern>
+      <message>Athrá féideartha ar "agus".</message>
+      <short>agus agus</short>
+    </rule>
+    <rule id="GA_SOFT_AN_AN" name="an an">
+      <pattern>
+        <token>an</token>
+        <token>an</token>
+      </pattern>
+      <message>Athrá féideartha ar "an".</message>
+      <short>an an</short>
+    </rule>
+    <rule id="GA_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Athrá féideartha ar "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="GA_SOFT_AR_AR" name="ar ar">
+      <pattern>
+        <token>ar</token>
+        <token>ar</token>
+      </pattern>
+      <message>Athrá féideartha ar "ar".</message>
+      <short>ar ar</short>
+    </rule>
+    <rule id="GA_SOFT_LE_LE" name="le le">
+      <pattern>
+        <token>le</token>
+        <token>le</token>
+      </pattern>
+      <message>Athrá féideartha ar "le".</message>
+      <short>le le</short>
+    </rule>
+    <rule id="GA_SOFT_GO_GO" name="go go">
+      <pattern>
+        <token>go</token>
+        <token>go</token>
+      </pattern>
+      <message>Athrá féideartha ar "go".</message>
+      <short>go go</short>
+    </rule>
+    <rule id="GA_SOFT_IS_IS" name="is is">
+      <pattern>
+        <token>is</token>
+        <token>is</token>
+      </pattern>
+      <message>Athrá féideartha de "is".</message>
+      <short>is is</short>
+    </rule>
+    <rule id="GA_SOFT_DO_DO" name="do do">
+      <pattern>
+        <token>do</token>
+        <token>do</token>
+      </pattern>
+      <message>Athrá féideartha de "do".</message>
+      <short>do do</short>
+    </rule>
+    <rule id="GA_SOFT_NI_NI" name="ní ní">
+      <pattern>
+        <token>ní</token>
+        <token>ní</token>
+      </pattern>
+      <message>Athrá féideartha de "ní".</message>
+      <short>ní ní</short>
+    </rule>
+    <rule id="GA_SOFT_NO_NO" name="nó nó">
+      <pattern>
+        <token>nó</token>
+        <token>nó</token>
+      </pattern>
+      <message>Athrá féideartha de "nó".</message>
+      <short>nó nó</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="GA_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="GA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Is minic leor comhartha amháin: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

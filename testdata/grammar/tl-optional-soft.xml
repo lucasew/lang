@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft TL optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="tl">
+  <category id="STYLE" name="Style">
+    <rule id="TL_SOFT_OPT_KAUGNAY_SA" name="kaugnay sa soft optional" default="off">
+      <pattern>
+        <token>kaugnay</token>
+        <token>sa</token>
+      </pattern>
+      <message>Isaalang-alang ang "tungkol sa" o "hinggil sa".</message>
+      <short>style</short>
+    </rule>
+    <rule id="TL_SOFT_OPT_UPANG" name="upang soft optional" default="off">
+      <pattern>
+        <token>upang</token>
+      </pattern>
+      <message>Isaalang-alang ang "para" kung mas simple.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TL_SOFT_OPT_SA_PAMAMAGITAN" name="sa pamamagitan ng soft optional" default="off">
+      <pattern>
+        <token>sa</token>
+        <token>pamamagitan</token>
+        <token>ng</token>
+      </pattern>
+      <message>Isaalang-alang ang "sa" o "gamit ang".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

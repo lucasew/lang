@@ -1,0 +1,3 @@
+package en
+
+type EnglishForFrenchFalseFriendRule = EnglishForL2SpeakersFalseFriendRule

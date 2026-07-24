@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft JA pack loaded only when level is picky. Space-tokenized soft matching. -->
+<rules lang="ja">
+  <category id="STYLE" name="Style">
+    <rule id="JA_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>「会議」や「ミーティング」を検討してください。</message>
+      <short>style</short>
+    </rule>
+    <rule id="JA_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>「フィードバック」や「意見」を検討してください。</message>
+      <short>style</short>
+    </rule>
+    <rule id="JA_SOFT_PICKY_TOTTEMO_TOTTEMO" name="とてもとても soft picky">
+      <pattern>
+        <token>とても</token>
+        <token>とても</token>
+      </pattern>
+      <message>弱い強調です。より強い表現を検討してください。</message>
+      <short>style</short>
+    </rule>
+    <rule id="JA_SOFT_PICKY_IROIRO" name="いろいろ soft picky">
+      <pattern>
+        <token>いろいろ</token>
+        <token>な</token>
+        <token>こと</token>
+      </pattern>
+      <message>より具体的な名詞を検討してください。</message>
+      <short>style</short>
+    </rule>
+    <rule id="JA_SOFT_PICKY_KEKKYOKU" name="結局 soft picky">
+      <pattern>
+        <token>結局</token>
+      </pattern>
+      <message>文脈によっては「最終的に」なども検討してください。</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

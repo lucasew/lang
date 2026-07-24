@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft UK pack loaded only when level is picky. -->
+<rules lang="uk">
+  <category id="STYLE" name="Style">
+    <rule id="UK_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Краще "зустріч" або "нарада".</message>
+      <short>style</short>
+    </rule>
+    <rule id="UK_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Краще "відгук" або "зворотний зв'язок".</message>
+      <short>style</short>
+    </rule>
+    <rule id="UK_SOFT_PICKY_DUZHE_DUZHE" name="дуже дуже soft picky">
+      <pattern>
+        <token>дуже</token>
+        <token>дуже</token>
+      </pattern>
+      <message>Слабке підсилення; розгляньте сильніший прикметник.</message>
+      <short>style</short>
+    </rule>
+    <rule id="UK_SOFT_PICKY_RECHI" name="речі soft picky">
+      <pattern>
+        <token>багато</token>
+        <token>речей</token>
+      </pattern>
+      <message>Розгляньте більш конкретний іменник, ніж "речей".</message>
+      <short>style</short>
+    </rule>
+    <rule id="UK_SOFT_PICKY_V_RECHTI_RECHT" name="в кінці кінців soft picky">
+      <pattern>
+        <token>в</token>
+        <token>кінці</token>
+        <token>кінців</token>
+      </pattern>
+      <message>Розгляньте "нарешті" або "врешті".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

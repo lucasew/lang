@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="de-AT">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="DE_SOFT_JANUAR_AT" name="Januar soft AT">
+      <pattern>
+        <token>Januar</token>
+      </pattern>
+      <message>In Österreich ist "Jänner" üblich.</message>
+      <short>Januar</short>
+    </rule>
+    <rule id="DE_SOFT_KARTOFFELN_AT" name="Kartoffeln soft AT">
+      <pattern>
+        <token>Kartoffeln</token>
+      </pattern>
+      <message>In Österreich sind "Erdäpfel" üblich.</message>
+      <short>Kartoffeln</short>
+    </rule>
+    <rule id="DE_SOFT_TOMATEN_AT" name="Tomaten soft AT">
+      <pattern>
+        <token>Tomaten</token>
+      </pattern>
+      <message>In Österreich sind "Paradeiser" üblich.</message>
+      <short>Tomaten</short>
+    </rule>
+    <rule id="DE_SOFT_BROETCHEN_AT" name="Brötchen soft AT">
+      <pattern>
+        <token>Brötchen</token>
+      </pattern>
+      <message>In Österreich ist "Semmel" üblich.</message>
+      <short>Brötchen</short>
+    </rule>
+    <rule id="DE_SOFT_HAEHNCHEN_AT" name="Hähnchen soft AT">
+      <pattern>
+        <token>Hähnchen</token>
+      </pattern>
+      <message>In Österreich ist "Hendl" üblich.</message>
+      <short>Hähnchen</short>
+    </rule>
+    <rule id="DE_SOFT_QUARK_AT" name="Quark soft AT">
+      <pattern>
+        <token>Quark</token>
+      </pattern>
+      <message>In Österreich ist "Topfen" üblich.</message>
+      <short>Quark</short>
+    </rule>
+    <rule id="DE_SOFT_SCHORNSTEIN_AT" name="Schornstein soft AT">
+      <pattern>
+        <token>Schornstein</token>
+      </pattern>
+      <message>In Österreich ist "Rauchfang" üblich.</message>
+      <short>Schornstein</short>
+    </rule>
+    <rule id="DE_SOFT_TREPPE_AT" name="Treppe soft AT">
+      <pattern>
+        <token>Treppe</token>
+      </pattern>
+      <message>In Österreich ist "Stiege" üblich.</message>
+      <short>Treppe</short>
+    </rule>
+  </category>
+</rules>

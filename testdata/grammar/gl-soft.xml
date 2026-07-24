@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="gl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="GL_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Posible repetición de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="GL_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Posible repetición de "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="GL_SOFT_E_E" name="e e">
+      <pattern>
+        <token>e</token>
+        <token>e</token>
+      </pattern>
+      <message>Posible repetición de "e".</message>
+      <short>e e</short>
+    </rule>
+    <rule id="GL_SOFT_A_O" name="a/ao">
+      <pattern>
+        <token>a</token>
+        <token>o</token>
+      </pattern>
+      <message>Quizais "ao"?</message>
+      <short>a/ao</short>
+    </rule>
+    <rule id="GL_SOFT_DE_O" name="de/do">
+      <pattern>
+        <token>de</token>
+        <token>o</token>
+      </pattern>
+      <message>Quizais "do"?</message>
+      <short>de/do</short>
+    </rule>
+    <rule id="GL_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Posible repetición de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="GL_SOFT_POR_POR" name="por por">
+      <pattern>
+        <token>por</token>
+        <token>por</token>
+      </pattern>
+      <message>Posible repetición de "por".</message>
+      <short>por por</short>
+    </rule>
+    <rule id="GL_SOFT_EM_A" name="em a">
+      <pattern>
+        <token>en</token>
+        <token>a</token>
+      </pattern>
+      <message>Quizais "na"?</message>
+      <short>en/na</short>
+    </rule>
+    <rule id="GL_SOFT_EM_O" name="em o">
+      <pattern>
+        <token>en</token>
+        <token>o</token>
+      </pattern>
+      <message>Quizais "no"?</message>
+      <short>en/no</short>
+    </rule>
+    <rule id="GL_SOFT_POR_A" name="por a">
+      <pattern>
+        <token>por</token>
+        <token>a</token>
+      </pattern>
+      <message>Quizais "pola"?</message>
+      <short>por/pola</short>
+    </rule>
+    <rule id="GL_SOFT_NON_NON" name="non non">
+      <pattern>
+        <token>non</token>
+        <token>non</token>
+      </pattern>
+      <message>Posible repetición de "non".</message>
+      <short>non non</short>
+    </rule>
+    <rule id="GL_SOFT_MAIS_MAIS" name="mais mais">
+      <pattern>
+        <token>mais</token>
+        <token>mais</token>
+      </pattern>
+      <message>Posible repetición de "mais".</message>
+      <short>mais mais</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="GL_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>A miúdo abonda un signo de interrogación: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="GL_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>A miúdo abonda un signo de exclamación: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

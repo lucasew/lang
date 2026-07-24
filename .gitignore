@@ -1,0 +1,13 @@
+/bin/
+/dist/
+*.exe
+*.test
+*.out
+/coverage.out
+/.idea/
+*.iml
+.DS_Store
+
+# scratch
+*.test
+internal/ltgolden/testdata/

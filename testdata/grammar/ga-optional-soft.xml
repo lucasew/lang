@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft GA optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="ga">
+  <category id="STYLE" name="Style">
+    <rule id="GA_SOFT_OPT_MAIDIR_LE" name="maidir le soft optional" default="off">
+      <pattern>
+        <token>maidir</token>
+        <token>le</token>
+      </pattern>
+      <message>Breathnaigh ar "faoi" nó "i dtaobh".</message>
+      <short>style</short>
+    </rule>
+    <rule id="GA_SOFT_OPT_CHUN" name="chun go soft optional" default="off">
+      <pattern>
+        <token>chun</token>
+        <token>go</token>
+      </pattern>
+      <message>Breathnaigh ar fhrásaí níos gonta nuair is féidir.</message>
+      <short>style</short>
+    </rule>
+    <rule id="GA_SOFT_OPT_I_DTAOBH" name="i dtaobh soft optional" default="off">
+      <pattern>
+        <token>i</token>
+        <token>dtaobh</token>
+      </pattern>
+      <message>Breathnaigh ar "faoi" nuair is simplí é.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

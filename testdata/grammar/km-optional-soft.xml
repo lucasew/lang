@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft KM optional rules: default off until -e or SOFT_OPTIONAL. Space-tokenized. -->
+<rules lang="km">
+  <category id="STYLE" name="Style">
+    <rule id="KM_SOFT_OPT_TEANG_NUNG" name="ទាក់ទងនឹង soft optional" default="off">
+      <pattern>
+        <token>ទាក់ទង</token>
+        <token>នឹង</token>
+      </pattern>
+      <message>ពិចារណា «អំពី» ប្រសិនបើខ្លីជាង។</message>
+      <short>style</short>
+    </rule>
+    <rule id="KM_SOFT_OPT_DABOY" name="ដើម្បី soft optional" default="off">
+      <pattern>
+        <token>ដើម្បី</token>
+      </pattern>
+      <message>ពិចារណាពាក្យគោលបំណងខ្លីជាង បើសម។</message>
+      <short>style</short>
+    </rule>
+    <rule id="KM_SOFT_OPT_KNOUN_KROM" name="ក្នុងក្រប soft optional" default="off">
+      <pattern>
+        <token>ក្នុង</token>
+        <token>ក្រប</token>
+      </pattern>
+      <message>ពិចារណា «ក្នុង» ឬ «កំឡុង»។</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

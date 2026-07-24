@@ -1,0 +1,49 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "fa",
+  "cases": [
+    {
+      "rule": "Complex_Color_Word",
+      "text": "قرمز فام",
+      "suggestion": "قرمزفام",
+      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
+    },
+    {
+      "rule": "Complex_Family_Name",
+      "text": "شاهرخ نژاد",
+      "suggestion": "شاهرخ‌نژاد",
+      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
+    },
+    {
+      "rule": "Complex_Number_Word",
+      "text": "یک گانه",
+      "suggestion": "یک‌گانه",
+      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
+    },
+    {
+      "rule": "Complex_Past_Verbs",
+      "text": "می ایستادند",
+      "suggestion": "می‌ایستادند",
+      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
+    },
+    {
+      "rule": "Complex_Present_Verbs",
+      "text": "می ورزند",
+      "suggestion": "می‌ورزند",
+      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
+    },
+    {
+      "rule": "PluralFix",
+      "text": "واژه های",
+      "suggestion": "واژه‌های",
+      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
+    },
+    {
+      "rule": "Tar_Tarin_Fix",
+      "text": "سرشناس تر",
+      "suggestion": "سرشناس‌تر",
+      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
+    }
+  ]
+}
