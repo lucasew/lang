@@ -38,8 +38,14 @@ type AbstractCompoundRule struct {
 	correctExamples   []CorrectExample
 	// SentenceStartsWithUpperCase uncapitalizes the first word when matching after SENT_START.
 	SentenceStartsWithUpperCase bool
-	SubRuleSpecificIDs          bool
-	Data                        *CompoundRuleData
+	// SubRuleSpecificIDs ports useSubRuleSpecificIds() → SpecificIdRule per match.
+	SubRuleSpecificIDs bool
+	// LanguageCode ports Language.getShortCode for StringTools.toId when SubRuleSpecificIDs.
+	LanguageCode string
+	// Premium / Tags port Rule.isPremium / getTags for SpecificIdRule.
+	Premium bool
+	Tags    []Tag
+	Data    *CompoundRuleData
 	// IsMisspelled optional; default treats all as correctly spelled (Java returns false).
 	IsMisspelled func(word string) bool
 }
@@ -134,6 +140,24 @@ func (r *AbstractCompoundRule) UseSubRuleSpecificIDs() {
 	r.SubRuleSpecificIDs = true
 }
 
+// GetTags ports Rule.getTags (used by SpecificIdRule when SubRuleSpecificIDs).
+func (r *AbstractCompoundRule) GetTags() []Tag {
+	if r == nil {
+		return nil
+	}
+	return r.Tags
+}
+
+// IsPremium ports Rule.isPremium.
+func (r *AbstractCompoundRule) IsPremium() bool {
+	return r != nil && r.Premium
+}
+
+// EstimateContextForSureMatch ports AbstractCompoundRule.estimateContextForSureMatch → 1.
+func (r *AbstractCompoundRule) EstimateContextForSureMatch() int {
+	return 1
+}
+
 // Match ports AbstractCompoundRule.match.
 func (r *AbstractCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
 	if r.Data == nil {
@@ -163,6 +187,7 @@ func (r *AbstractCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []
 			prevTokens = addToCompoundQueue(token, prevTokens)
 			continue
 		} else if token.IsImmunized() {
+			// Java: continue without addToQueue — immunized tokens break the window.
 			continue
 		}
 
@@ -223,16 +248,23 @@ func (r *AbstractCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []
 			to := atr.GetEndPos()
 			// original covered text for filter
 			origCovered := sentence.GetText()
-			// Use UTF-16-safe substring via token text rebuild when GetText spans full sentence.
 			// Java: sentence.getText().substring(firstMatchToken.getStartPos(), atr.getEndPos())
-			// Our positions are UTF-16; GetText is UTF-8. Prefer joining tokens when available.
+			// Positions are UTF-16 code units (Java String indices).
 			covered := utf16Slice(origCovered, from, to)
 			replacement = r.filterReplacements(replacement, covered)
 			if len(replacement) == 0 {
 				break
 			}
 
-			ruleMatch := NewRuleMatch(r, sentence, from, to, msg)
+			// Java: if (subRuleSpecificIds) SpecificIdRule(toId(getId()+"_"+stringToCheck, lang),
+			// getDescription().replace("$match", origStringToCheck), …)
+			var rule any = r
+			if r.SubRuleSpecificIDs {
+				id := tools.ToId(r.GetID()+"_"+stringToCheck, r.LanguageCode)
+				desc := strings.ReplaceAll(r.GetDescription(), "$match", origStringToCheck)
+				rule = NewSpecificIdRule(id, desc, r.IsPremium(), r.GetCategory(), r.GetLocQualityIssueType(), r.GetTags())
+			}
+			ruleMatch := NewRuleMatch(rule, sentence, from, to, msg)
 			ruleMatch.ShortMessage = r.ShortDesc
 			ruleMatch.SetSuggestedReplacements(replacement)
 

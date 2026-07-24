@@ -7,11 +7,13 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCompoundRule_Rule(t *testing.T) {
 	rule := NewCompoundRule(nil)
+	// Ports AbstractCompoundRuleTest.check — count + optional suggestions.
 	check := func(expectedErrors int, text string, expSuggestions ...string) {
 		t.Helper()
 		matches := rule.Match(languagetool.AnalyzePlain(text))
@@ -78,6 +80,30 @@ func TestCompoundRule_Rule(t *testing.T) {
 	check(0, "spring clean the house")
 }
 
+// Java CompoundRule.useSubRuleSpecificIds → SpecificIdRule per match:
+// id = toId(getId()+"_"+stringToCheck, lang), description replaces $match with orig.
+func TestCompoundRule_SubRuleSpecificIds(t *testing.T) {
+	rule := NewCompoundRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("case sensitive"))
+	require.Len(t, matches, 1)
+	idRule, ok := matches[0].GetRule().(*rules.SpecificIdRule)
+	require.True(t, ok, "match.rule must be SpecificIdRule when useSubRuleSpecificIds")
+	wantID := tools.ToId("EN_COMPOUNDS_"+"case sensitive", "en")
+	require.Equal(t, wantID, idRule.GetID())
+	require.Equal(t, "Hyphenated words: case sensitive", idRule.GetDescription())
+	require.Equal(t, "This word is normally spelled with a hyphen.", matches[0].GetMessage())
+	require.Equal(t, "Compound", matches[0].GetShortMessage())
+
+	// Capitalized orig surface keeps $match casing from origStringsToCheck.
+	matches = rule.Match(languagetool.AnalyzePlain("Night mare"))
+	require.Len(t, matches, 1)
+	idRule, ok = matches[0].GetRule().(*rules.SpecificIdRule)
+	require.True(t, ok)
+	// stringToCheck is uncapitalized after SENT_START → "night mare"
+	require.Equal(t, tools.ToId("EN_COMPOUNDS_"+"night mare", "en"), idRule.GetID())
+	require.Equal(t, "Hyphenated words: Night mare", idRule.GetDescription())
+}
+
 func TestCompoundRule_AntiPatternsCount(t *testing.T) {
 	// Java CompoundRule.ANTI_PATTERNS has 16 entries.
 	require.Equal(t, 16, len(CompoundRuleAntiPatterns), "Java ANTI_PATTERNS 16/16")
@@ -93,6 +119,10 @@ func TestCompoundRule_Metadata(t *testing.T) {
 	require.NotNil(t, rule.GetCategory())
 	require.Equal(t, "MISC", rule.GetCategory().GetID().String())
 	require.Equal(t, rules.ITSMisspelling, rule.GetLocQualityIssueType())
+	require.True(t, rule.SubRuleSpecificIDs)
+	require.Equal(t, "en", rule.LanguageCode)
+	require.Equal(t, 1, rule.EstimateContextForSureMatch())
+	require.Equal(t, 16, len(rule.GetAntiPatterns()))
 	inc := rule.GetIncorrectExamples()
 	require.Len(t, inc, 1)
 	require.Equal(t, "I now have a <marker>part time</marker> job.", inc[0].GetExample())

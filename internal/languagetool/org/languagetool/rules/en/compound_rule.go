@@ -42,6 +42,7 @@ type CompoundRule struct {
 }
 
 // NewCompoundRule constructs EN_COMPOUNDS.
+// Java: CompoundRule(messages, english, userConfig) — shortCode "en" for toId (en-US → en).
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
 		ID:                          "EN_COMPOUNDS",
@@ -51,7 +52,9 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		WithOrWithoutHyphenMessage:  "This expression is normally spelled as one or with a hyphen.",
 		ShortDesc:                   "Compound",
 		SentenceStartsWithUpperCase: true,
-		Data:                        loadCompoundData(),
+		// Java Language.getShortCode() for en-US is "en" (toId / makeAntiPatterns language).
+		LanguageCode: "en",
+		Data:         loadCompoundData(),
 	}
 	base.UseSubRuleSpecificIDs()
 	rules.InitCompoundRuleMeta(base, messages)
@@ -63,6 +66,7 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 	)
 	r := &CompoundRule{AbstractCompoundRule: base}
 	// Java CompoundRule.isMisspelled: english.getDefaultSpellingRule().isMisspelled(word)
+	// When SpellingIsMisspelled is nil, treat as correctly spelled (cannot invent a speller).
 	base.IsMisspelled = func(word string) bool {
 		if r.SpellingIsMisspelled == nil {
 			return false
@@ -73,12 +77,18 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 }
 
 // Match applies ANTI_PATTERNS immunization then AbstractCompoundRule.
-// Java: getSentenceWithImmunization(sentence) via getAntiPatterns().
+// Java AbstractCompoundRule.match: getSentenceWithImmunization(sentence) via getAntiPatterns().
 func (r *CompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	return r.AbstractCompoundRule.Match(getSentenceWithCompoundImmunization(sentence))
 }
 
+// GetAntiPatterns ports CompoundRule.getAntiPatterns.
+func (r *CompoundRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return compoundAntiPatterns()
+}
+
 // compoundAntiPatterns ports CompoundRule.getAntiPatterns (cached IMMUNIZE rules).
+// Java: makeAntiPatterns(..., AMERICAN_ENGLISH) with language shortCode "en".
 func compoundAntiPatterns() []*disambigrules.DisambiguationPatternRule {
 	compoundAntiOnce.Do(func() {
 		aps := CompoundRuleAntiPatterns
@@ -99,7 +109,7 @@ func compoundAntiPatterns() []*disambigrules.DisambiguationPatternRule {
 }
 
 // getSentenceWithCompoundImmunization ports Rule.getSentenceWithImmunization
-// for CompoundRule.ANTI_PATTERNS.
+// for CompoundRule.ANTI_PATTERNS (copy sentence, then IMMUNIZE via Replace).
 func getSentenceWithCompoundImmunization(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
 	if sentence == nil {
 		return nil
@@ -108,20 +118,15 @@ func getSentenceWithCompoundImmunization(sentence *languagetool.AnalyzedSentence
 	if len(aps) == 0 {
 		return sentence
 	}
-	src := sentence.GetTokens()
-	cloned := make([]*languagetool.AnalyzedTokenReadings, len(src))
-	for i, t := range src {
-		if t == nil {
-			continue
-		}
-		cloned[i] = languagetool.NewAnalyzedTokenReadingsFromOld(t, t.GetReadings(), "")
-	}
-	immunized := languagetool.NewAnalyzedSentence(cloned)
+	// Java: AnalyzedSentence immunizedSentence = sentence.copy(sentence);
+	immunized := sentence.Copy(sentence)
 	for _, ap := range aps {
 		if ap == nil {
 			continue
 		}
-		immunized = ap.Replace(immunized)
+		if next := ap.Replace(immunized); next != nil {
+			immunized = next
+		}
 	}
 	return immunized
 }
