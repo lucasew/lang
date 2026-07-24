@@ -224,6 +224,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-WhitespaceCheckFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhitespaceCheckFilter.java | internal/languagetool/org/languagetool/rules/ | 7b32b920a196dd11b23565bb9bf2fe6f91cd088e | 0 | 0 |  |  | 2026-07-24T06:16:19Z |
 | docs/faithful-port-checklist.md#3.C.1-ConvertToSentenceCaseFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ConvertToSentenceCaseFilter.java | internal/languagetool/org/languagetool/rules/ | 4d0f7ebfc4c89852545f344433eebe9cf8280f1d | 0 | 0 |  |  | 2026-07-24T06:30:43Z |
 | docs/faithful-port-checklist.md#3.C.1-UnderlineSpacesFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/UnderlineSpacesFilter.java | internal/languagetool/org/languagetool/rules/ | cee9482ea65720c881a70e855f6ebfd856199174 | 0 | 0 |  |  | 2026-07-24T06:45:42Z |
+| docs/faithful-port-checklist.md#3.C.1-NewLineMatchFilter | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/NewLineMatchFilter.java; inspiration/languagetool/languagetool-standalone/src/test/java/org/languagetool/rules/NewLineFilterTest.java | internal/languagetool/org/languagetool/rules/ | e42f080f9b5c0676037d27a869768024e8a39dac | 0 | 0 |  |  | 2026-07-24T06:51:58Z |
 
 ## Human inbox
 
@@ -233,7 +234,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.1-UnderlineSpacesFilter @ cee9482e. FR/zh blocked. |
+| Notes | ready 3.C.1-NewLineMatchFilter @ e42f080f (NewLineFilterTest twin; UTF-16 trim; parent green). FR/zh blocked. |
 
 ---
 
@@ -947,3 +948,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T06:38:27Z ready: 3.C.1-UnderlineSpacesFilter @ cee9482e (implementer report; parent green reconfirm)
 - 2026-07-24T06:43:43Z validating: 3.C.1-UnderlineSpacesFilter @ cee9482e (strict invent re-audit vs Java UnderlineSpacesFilter)
 - 2026-07-24T06:45:42Z ACCEPT: 3.C.1-UnderlineSpacesFilter @ cee9482e (validator + parent green reconfirm)
+- 2026-07-24T06:49:07Z implement: 3.C.1-NewLineMatchFilter (NewLineFilterTest full outcome twin; core layout 3.C.1 leaf)
+- 2026-07-24T06:51:58Z ready: 3.C.1-NewLineMatchFilter @ e42f080f (implementer report; parent green reconfirm)
