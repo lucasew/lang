@@ -11,3 +11,4 @@
 # scratch
 *.test
 internal/ltgolden/testdata/
+docs/validation/parent.lock
