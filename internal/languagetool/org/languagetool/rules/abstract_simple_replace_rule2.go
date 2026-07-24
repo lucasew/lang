@@ -111,12 +111,17 @@ func (r *AbstractSimpleReplaceRule2) LoadSimpleReplaceRule2Data(reader io.Reader
 		if len(parts) == 2 {
 			msg = parts[1]
 		}
+		// Java: confPair.split("="); suggestion only read when ruleHasSuggestions.
+		// Key-only lines (no '=') are valid only when setRuleHasSuggestions(false)
+		// (SimpleReplaceProfanityRule / replace_profanity.txt phrase-only list).
 		confPairParts := strings.SplitN(confPair, "=", 2)
-		// Key-only lines (no '=') are allowed for suggestion-less lists (e.g. profanity).
-		if len(confPairParts) < 2 {
-			confPairParts = []string{confPair, ""}
+		suggestion := ""
+		if r.hasSuggestions() {
+			if len(confPairParts) < 2 {
+				return fmt.Errorf("format error in file %s. Missing suggestion after character '='. Line: %s", path, line)
+			}
+			suggestion = confPairParts[1]
 		}
-		suggestion := confPairParts[1]
 		for _, wrongForm := range strings.Split(confPairParts[0], "|") {
 			searchKey := wrongForm
 			if r.CaseSens == CaseInsensitive {
