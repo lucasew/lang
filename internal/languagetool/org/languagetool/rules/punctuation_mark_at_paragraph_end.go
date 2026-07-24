@@ -11,35 +11,51 @@ import (
 )
 
 // PunctuationMarkAtParagraphEnd ports org.languagetool.rules.PunctuationMarkAtParagraphEnd.
-// Java: PUNCTUATION, Grammar; default ctor defaultActive=true (not default-off); Tag.picky.
+// Java: Categories.PUNCTUATION, ITSIssueType.Grammar; Tag.picky;
+// default ctor (messages, lang) → defaultActive true (not default-off).
+// Language is represented by SingleLineBreaksMarksPara for Tools.isParagraphEnd
+// (Demo/SRX SimpleSentenceTokenizer default false → need \n\n).
 type PunctuationMarkAtParagraphEnd struct {
 	Messages map[string]string
-	// SingleLineBreaksMarksPara matches Demo/SRX default false → need \n\n
+	// SingleLineBreaksMarksPara ports Language.getSentenceTokenizer().singleLineBreaksMarksPara()
+	// as used by Tools.isParagraphEnd.
 	SingleLineBreaksMarksPara bool
 	Category                  *Category
 	IssueType                 ITSIssueType
 	DefaultOff                bool
-	// Tags ports Rule.tags (Java picky).
+	// Tags ports Rule.tags (Java setTags(Collections.singletonList(Tag.picky))).
 	Tags []Tag
 }
 
+// Java PUNCTUATION_MARKS / QUOTATION_MARKS / P_NUMERIC / MAX_URL_LENGTH.
 var (
 	paraEndPunctMarks = []string{".", "!", "?", ":", ",", ";"}
 	paraEndQuoteMarks = []string{"„", "»", "«", "\"", "”", "″", "’", "‚", "‘", "›", "‹", "′", "'"}
 	paraEndNumericRE  = regexp.MustCompile(`^[0-9.]+$`)
 )
 
-const maxURLLength = 30
+const maxURLLength = 30 // Do not add punctuation after long URLs
 
+// NewPunctuationMarkAtParagraphEnd ports
+// PunctuationMarkAtParagraphEnd(ResourceBundle messages, Language lang)
+// → this(messages, lang, true).
 func NewPunctuationMarkAtParagraphEnd(messages map[string]string) *PunctuationMarkAtParagraphEnd {
-	// Java (messages, lang) → this(messages, lang, true) → defaultActive true → NOT setDefaultOff.
-	return &PunctuationMarkAtParagraphEnd{
-		Messages:   messages,
-		Category:   CatPunctuation.GetCategory(messages),
-		IssueType:  ITSGrammar,
-		DefaultOff: false,
-		Tags:       []Tag{TagPicky},
+	return NewPunctuationMarkAtParagraphEndDefaultActive(messages, true)
+}
+
+// NewPunctuationMarkAtParagraphEndDefaultActive ports
+// PunctuationMarkAtParagraphEnd(ResourceBundle messages, Language lang, boolean defaultActive).
+func NewPunctuationMarkAtParagraphEndDefaultActive(messages map[string]string, defaultActive bool) *PunctuationMarkAtParagraphEnd {
+	r := &PunctuationMarkAtParagraphEnd{
+		Messages:  messages,
+		Category:  CatPunctuation.GetCategory(messages),
+		IssueType: ITSGrammar,
+		Tags:      []Tag{TagPicky},
 	}
+	if !defaultActive {
+		r.DefaultOff = true
+	}
+	return r
 }
 
 func (r *PunctuationMarkAtParagraphEnd) GetID() string { return "PUNCTUATION_PARAGRAPH_END" }
@@ -70,7 +86,7 @@ func (r *PunctuationMarkAtParagraphEnd) GetLocQualityIssueType() ITSIssueType {
 
 func (r *PunctuationMarkAtParagraphEnd) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
-// GetTags ports Rule.getTags (Java Tag.picky).
+// GetTags ports Rule.getTags (Java Tag.picky unless cleared).
 func (r *PunctuationMarkAtParagraphEnd) GetTags() []Tag {
 	if r == nil || len(r.Tags) == 0 {
 		return nil
@@ -78,10 +94,36 @@ func (r *PunctuationMarkAtParagraphEnd) GetTags() []Tag {
 	return append([]Tag(nil), r.Tags...)
 }
 
+// SetTags ports Rule.setTags (empty/nil clears).
+func (r *PunctuationMarkAtParagraphEnd) SetTags(tags []Tag) {
+	if r == nil {
+		return
+	}
+	if len(tags) == 0 {
+		r.Tags = nil
+		return
+	}
+	r.Tags = append([]Tag(nil), tags...)
+}
+
+// HasTag ports Rule.hasTag.
+func (r *PunctuationMarkAtParagraphEnd) HasTag(tag Tag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
 // MinToCheckParagraph ports minToCheckParagraph (Java returns 0).
 func (r *PunctuationMarkAtParagraphEnd) MinToCheckParagraph() int { return 0 }
 
 func (r *PunctuationMarkAtParagraphEnd) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
+	// Java: Tools.isParagraphEnd(sentences, n, lang)
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
@@ -102,9 +144,11 @@ func isParaPunctuationMark(tk *languagetool.AnalyzedTokenReadings) bool {
 	return stringEqualsAny(tk.GetToken(), paraEndPunctMarks)
 }
 
+// isParaWord ports isWord: Character.isLetter(token.charAt(0)).
 func isParaWord(tk *languagetool.AnalyzedTokenReadings) bool {
 	tok := tk.GetToken()
 	if tok == "" {
+		// Java charAt(0) would throw; empty is not a word in practice.
 		return false
 	}
 	for _, r := range tok {
@@ -113,6 +157,7 @@ func isParaWord(tk *languagetool.AnalyzedTokenReadings) bool {
 	return false
 }
 
+// isParaNumeric ports isNumeric: P_NUMERIC.matcher(s.trim()).matches() with [0-9.]+.
 func isParaNumeric(s string) bool {
 	return paraEndNumericRE.MatchString(tools.JavaStringTrim(s))
 }
@@ -129,6 +174,7 @@ func (r *PunctuationMarkAtParagraphEnd) MatchList(sentences []*languagetool.Anal
 			if len(tokens) > 2 {
 				isFirstWord := (isParaWord(tokens[1]) && !isParaPunctuationMark(tokens[2])) ||
 					(len(tokens) > 3 && isParaQuotationMark(tokens[1]) && isParaWord(tokens[2]) && !isParaPunctuationMark(tokens[3]))
+				// ignore sentences like "2.2.2. This is an item" (two sentences, first only numbers)
 				ignoreSentence := false
 				if n == 1 && isParaNumeric(sentences[0].GetText()) {
 					ignoreSentence = true
@@ -136,7 +182,7 @@ func (r *PunctuationMarkAtParagraphEnd) MatchList(sentences []*languagetool.Anal
 				if n > 0 && isParaNumeric(sentences[n-1].GetText()) {
 					ignoreSentence = true
 				}
-				// paragraphs with fewer than two sentences excluded (headlines, listings)
+				// paragraphs containing less than two sentences (e.g. headlines, listings) are excluded
 				if n-lastPara > 1 && isFirstWord && !ignoreSentence {
 					lastNWToken := len(tokens) - 1
 					for lastNWToken > 0 && tokens[lastNWToken].IsLinebreak() {
@@ -146,7 +192,8 @@ func (r *PunctuationMarkAtParagraphEnd) MatchList(sentences []*languagetool.Anal
 					if len(tokens) >= 2 &&
 						strings.EqualFold(tokens[len(tokens)-2].GetToken(), ":") &&
 						tokenizers.IsURL(tokens[len(tokens)-1].GetToken()) {
-						// Java: lastPara=n; pos += getText().length(); continue (skip normal pos += corrected)
+						// Java: lastPara=n; pos += getText().length(); continue
+						// (skips normal pos += getCorrectedTextLength())
 						lastPara = n
 						pos += utf16Len(sentence.GetText())
 						continue
@@ -154,7 +201,7 @@ func (r *PunctuationMarkAtParagraphEnd) MatchList(sentences []*languagetool.Anal
 					lastToken := tokens[lastNWToken].GetToken()
 					low := strings.ToLower(lastToken)
 					// Java: length > MAX && http || ftp  (&& binds tighter than ||)
-					// Java continues without lastPara/pos update when long URL or ftp.
+					// continue without lastPara/pos update (Java quirk).
 					if (utf16Len(lastToken) > maxURLLength && strings.HasPrefix(low, "http")) ||
 						strings.HasPrefix(low, "ftp") {
 						continue
@@ -163,7 +210,7 @@ func (r *PunctuationMarkAtParagraphEnd) MatchList(sentences []*languagetool.Anal
 						(isParaQuotationMark(tokens[lastNWToken]) && lastNWToken > 0 && isParaWord(tokens[lastNWToken-1])) {
 						fromPos := pos + tokens[lastNWToken].GetStartPos()
 						toPos := pos + tokens[lastNWToken].GetEndPos()
-						msg := "Add a punctuation mark at paragraph end"
+						msg := "Please add a punctuation mark at the end of paragraph."
 						if r.Messages != nil {
 							if m := r.Messages["punctuation_mark_paragraph_end_msg"]; m != "" {
 								msg = m
