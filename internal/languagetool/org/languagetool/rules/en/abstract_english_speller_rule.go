@@ -7,6 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	tagen "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ner"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -80,6 +81,9 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 		base.FilterNoSuggestWordsFn = filterEnglishNoSuggestWords
 		// Java filterSuggestions CONTAINS_TOKEN arm after super.
 		base.FilterSuggestionsExtraFn = filterEnglishContainsToken
+		// Java SpellingCheckRule.isProperNoun → language.getTagger().tag (NNP).
+		// Needed so filterSuggestions rewrites "Julia s" → "Julia's" / "Julia" before EN CONTAINS_TOKEN drops "… s".
+		base.TagPOS = englishSpellerTagPOS
 		// Java getOnlySuggestions early-return in calcSpellerSuggestions.
 		base.GetOnlySuggestionsFn = EnglishOnlySuggestions
 		// Java getAdditionalTopSuggestions curated maps + ys→ies.
@@ -106,6 +110,30 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 		rules.Fixed("This <marker>sentence</marker> contains a spelling mistake."),
 	)
 	return r
+}
+
+// englishSpellerTagPOS ports SpellingCheckRule.isProperNoun's language.getTagger().tag
+// for English: EnglishTagger.INSTANCE (official english.dict). Fail-closed when missing.
+func englishSpellerTagPOS(word string) []string {
+	if word == "" {
+		return nil
+	}
+	tagen.EnsureDefaultEnglishTagger()
+	if tagen.DefaultEnglishTagger == nil {
+		return nil
+	}
+	atrs := tagen.DefaultEnglishTagger.Tag([]string{word})
+	if len(atrs) == 0 || atrs[0] == nil {
+		return nil
+	}
+	var out []string
+	for _, rd := range atrs[0].GetReadings() {
+		if rd == nil || rd.GetPOSTag() == nil {
+			continue
+		}
+		out = append(out, *rd.GetPOSTag())
+	}
+	return out
 }
 
 // englishSpellerSynthesizeFn ports language.getSynthesizer().synthesize(token, posTag)
