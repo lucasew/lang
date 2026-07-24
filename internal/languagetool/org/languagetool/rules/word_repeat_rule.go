@@ -138,10 +138,7 @@ func (r *WordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleM
 	}
 	tokens := work.GetTokensWithoutWhitespace()
 	prevToken := ""
-	msg := r.Messages["repetition"]
-	if msg == "" {
-		msg = "Word repetition"
-	}
+	// we start from token 1, token no. 0 is guaranteed to be SENT_START
 	for i := 1; i < len(tokens); i++ {
 		token := tokens[i].GetToken()
 		if tokens[i].IsImmunized() {
@@ -149,16 +146,17 @@ func (r *WordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleM
 			continue
 		}
 		if isWord(token) && strings.EqualFold(prevToken, token) && !r.Ignore(tokens, i) {
+			msg := ""
+			if r != nil && r.Messages != nil {
+				msg = r.Messages["repetition"]
+			}
 			prevPos := tokens[i-1].GetStartPos()
 			pos := tokens[i].GetStartPos()
 			var rm *RuleMatch
-			if r.CreateMatchFn != nil {
+			if r != nil && r.CreateMatchFn != nil {
 				rm = r.CreateMatchFn(r, sentence, prevToken, token, prevPos, pos, msg)
 			} else {
-				// Java createRuleMatch: shortMessage = messages.getString("desc_repetition_short")
-				rm = NewRuleMatch(r, sentence, prevPos, pos+utf16Len(prevToken), msg)
-				rm.ShortMessage = r.shortMessage()
-				rm.SetSuggestedReplacement(prevToken)
+				rm = r.CreateRuleMatch(prevToken, token, prevPos, pos, msg, sentence)
 			}
 			ruleMatches = append(ruleMatches, rm)
 		}
@@ -167,6 +165,19 @@ func (r *WordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleM
 	return ruleMatches
 }
 
+// CreateRuleMatch ports WordRepeatRule.createRuleMatch.
+// Java: new RuleMatch(this, sentence, prevPos, pos+prevToken.length(), msg, messages.getString("desc_repetition_short"))
+// then setSuggestedReplacement(prevToken). String.length() is UTF-16 code units.
+func (r *WordRepeatRule) CreateRuleMatch(prevToken, token string, prevPos, pos int, msg string, sentence *languagetool.AnalyzedSentence) *RuleMatch {
+	_ = token // Java signature keeps token for subclass overrides (e.g. Ukrainian І/і)
+	rm := NewRuleMatch(r, sentence, prevPos, pos+utf16Len(prevToken), msg)
+	rm.ShortMessage = r.shortMessage()
+	rm.SetSuggestedReplacement(prevToken)
+	return rm
+}
+
+// isWord ports WordRepeatRule.isWord — avoid "..." etc. to be matched.
+// Java token.length() is UTF-16 code units; Character.isLetter(char) on charAt(0).
 func isWord(token string) bool {
 	if tools.IsEmoji(token) {
 		return false
@@ -174,9 +185,10 @@ func isWord(token string) bool {
 	if tools.IsNumericSpace(token) {
 		return false
 	}
-	runes := []rune(token)
-	if len(runes) == 1 {
-		if !unicode.IsLetter(runes[0]) {
+	if utf16Len(token) == 1 {
+		// length 1 ⇒ single BMP code unit; charAt(0) / first rune agree
+		r := []rune(token)[0]
+		if !unicode.IsLetter(r) {
 			return false
 		}
 	}
