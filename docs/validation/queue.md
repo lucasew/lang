@@ -207,7 +207,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-SentenceWhitespaceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/SentenceWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | de93509beb8ffe486b7996df296bee35547400c7 | 0 | 0 | | | 2026-07-24T02:22:40Z |
 | docs/faithful-port-checklist.md#3.C.1-WhitespaceBeforePunctuationRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhitespaceBeforePunctuationRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WhitespaceBeforePunctuationRuleTest.java | internal/languagetool/org/languagetool/rules/ | 31710741a5a24130e1faaa7d227611f813a908fe | 0 | 0 | | | 2026-07-24T02:30:32Z |
 | docs/faithful-port-checklist.md#3.C.1-WordRepeatRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java | internal/languagetool/org/languagetool/rules/ | f4719f5e1cb4efdb7c3a6747b997438fae984214 | 0 | 0 | | | 2026-07-24T02:41:35Z |
-| docs/faithful-port-checklist.md#3.C.1-LongParagraphRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/LongParagraphRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/LongParagraphRuleTest.java | internal/languagetool/org/languagetool/rules/ | c2ce95d42b3e5a898deb4c27ba06ced9762727a3 | 0 | 0 | | | 2026-07-24T02:48:45Z |
+| docs/faithful-port-checklist.md#3.C.1-LongParagraphRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/LongParagraphRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/LongParagraphRuleTest.java | internal/languagetool/org/languagetool/rules/ | c2ce95d42b3e5a898deb4c27ba06ced9762727a3 | 0 | 0 | | | 2026-07-24T02:57:22Z |
 
 ## Human inbox
 
@@ -217,7 +217,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-LongParagraphRule @ c2ce95d4 (Demo Analyze twin; parent green). FR/zh blocked. |
+| Notes | ACCEPT 3.C.1-LongParagraphRule @ c2ce95d4. FR/zh blocked. Next: more 3.C.1 core layout leaves. |
 
 ---
 
@@ -861,3 +861,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T02:41:35Z ACCEPT: 3.C.1-WordRepeatRule @ f4719f5e (validator + parent green reconfirm)
 - 2026-07-24T02:43:56Z implement: 3.C.1-LongParagraphRule (LongParagraphRuleTest full outcome twin; core layout 3.C.1 leaf)
 - 2026-07-24T02:48:45Z ready: 3.C.1-LongParagraphRule @ c2ce95d4 (implementer report; parent green reconfirm)
+- 2026-07-24T02:53:53Z validating: 3.C.1-LongParagraphRule @ c2ce95d4 (strict invent re-audit vs Java LongParagraphRuleTest)
+- 2026-07-24T02:57:22Z ACCEPT: 3.C.1-LongParagraphRule @ c2ce95d4 (validator + parent green reconfirm)
