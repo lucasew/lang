@@ -1,23 +1,32 @@
 package implementation
 
-// DistanceAlgorithm selects the edit distance algorithm.
+// DistanceAlgorithm ports EditDistance.DistanceAlgorithm (nested Java enum).
+// Java only defines Damerau; other values panic in Compare like IllegalArgumentException.
 type DistanceAlgorithm int
 
 const (
-	// Damerau is the only algorithm currently supported (Java DistanceAlgorithm.Damerau).
+	// Damerau is DistanceAlgorithm.Damerau — the only algorithm in upstream.
 	Damerau DistanceAlgorithm = iota
 )
 
 // EditDistance ports org.languagetool.rules.spelling.symspell.implementation.EditDistance.
-// All indexing uses Java String length/charAt (UTF-16 code units).
+//
+// Null-string mapping (Go has no null String):
+//   - Java ctor empty base → baseString=null: Go sets baseNull=true and baseString="".
+//   - Java compare null base + null string2 → 0; null base + non-null → string2.length():
+//     Go empty string2 with baseNull → 0; non-empty → javaStringLen(string2).
+//   - Java null or empty string2 with non-null base → baseString.length():
+//     Go empty string2 → javaStringLen(baseString). Same outcome for null vs empty string2.
+// All indexing uses Java String.length/charAt (UTF-16 code units via javaChars).
 type EditDistance struct {
 	baseString string
-	// baseNull mirrors Java constructor setting baseString=null when empty input.
+	// baseNull is true when Java would hold baseString == null (ctor empty input).
 	baseNull  bool
 	algorithm DistanceAlgorithm
 	v0, v2    []int
 }
 
+// NewEditDistance ports EditDistance(String baseString, DistanceAlgorithm algorithm).
 func NewEditDistance(baseString string, algorithm DistanceAlgorithm) *EditDistance {
 	e := &EditDistance{baseString: baseString, algorithm: algorithm}
 	// Java: if (this.baseString.isEmpty()) { this.baseString = null; return; }
@@ -35,11 +44,9 @@ func NewEditDistance(baseString string, algorithm DistanceAlgorithm) *EditDistan
 	return e
 }
 
-// Compare returns edit distance or -1 if greater than maxDistance.
+// Compare ports EditDistance.compare(String string2, int maxDistance).
+// Unknown algorithm panics (Java: throw new IllegalArgumentException("unknown DistanceAlgorithm")).
 func (e *EditDistance) Compare(string2 string, maxDistance int) int {
-	if e == nil {
-		return -1
-	}
 	switch e.algorithm {
 	case Damerau:
 		return e.DamerauLevenshteinDistance(string2, maxDistance)
@@ -48,13 +55,13 @@ func (e *EditDistance) Compare(string2 string, maxDistance int) int {
 	}
 }
 
-// DamerauLevenshteinDistance ports the SymSpell optimized Damerau-Levenshtein
-// bug-for-bug with Java (UTF-16 charAt / length).
+// DamerauLevenshteinDistance ports EditDistance.DamerauLevenshteinDistance bug-for-bug
+// (optimized windowed Damerau–Levenshtein; UTF-16 length/charAt; -1 if maxDistance exceeded).
 func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance int) int {
 	// Java: if (baseString == null) return string2 == null ? 0 : string2.length();
+	// Go: empty string2 covers both Java null and empty (both length 0).
 	if e.baseNull {
 		if string2 == "" {
-			// Go has no null strings; empty is the only empty case.
 			return 0
 		}
 		return javaStringLen(string2)
@@ -63,6 +70,7 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 	if string2 == "" {
 		return javaStringLen(e.baseString)
 	}
+	// Java: if(maxDistance == 0) return baseString.equals(string2) ? 0 : -1;
 	if maxDistance == 0 {
 		if e.baseString == string2 {
 			return 0
@@ -73,7 +81,7 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 	base := javaChars(e.baseString)
 	other := javaChars(string2)
 
-	// ensure shorter is string1
+	// if strings of different lengths, ensure shorter string is in string1
 	var string1, string2c []uint16
 	if len(base) > len(other) {
 		string1, string2c = other, base
@@ -83,27 +91,29 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 	sLen := len(string1)
 	tLen := len(string2c)
 
-	// common suffix
+	// suffix common to both strings can be ignored
 	for sLen > 0 && string1[sLen-1] == string2c[tLen-1] {
 		sLen--
 		tLen--
 	}
 	start := 0
 	// Java: if ((string1.charAt(0) == string2.charAt(0)) || (sLen == 0))
-	// Note: when sLen==0 after suffix strip, charAt(0) is not evaluated in Java?
-	// Actually || short-circuits only if first is true; if sLen==0 and string1 empty after suffix
-	// from non-empty, string1 still has content. If original shorter was empty — not here.
-	// If sLen==0 because entire string was suffix, string1 may still be non-empty (common case).
-	// Edge: if string1 was empty from start — we already returned. Safe when sLen>0 or check length.
-	if sLen == 0 || (len(string1) > 0 && string1[0] == string2c[0]) {
+	// After empty early-outs both inputs were non-empty, so charAt(0) is always valid;
+	// evaluate sLen==0 first in Go to mirror short-circuit safety when sLen==0.
+	if (string1[0] == string2c[0]) || sLen == 0 {
+		// prefix common to both strings can be ignored
 		for start < sLen && string1[start] == string2c[start] {
 			start++
 		}
 		sLen -= start
 		tLen -= start
+
+		// if all of shorter string matches prefix and/or suffix of longer string, then
+		// edit distance is just the delete of additional characters present in longer string
 		if sLen == 0 {
 			return tLen
 		}
+
 		// Java: string2 = string2.substring(start, start + tLen)
 		string2c = string2c[start : start+tLen]
 	}
@@ -118,6 +128,7 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 		e.v0 = make([]int, tLen)
 		e.v2 = make([]int, tLen)
 	} else {
+		// Java: for(int i = 0; i < tLen; i++) v2[i] = 0;
 		for i := 0; i < tLen; i++ {
 			e.v2[i] = 0
 		}
@@ -138,12 +149,13 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 	current := 0
 	for i := 0; i < sLen; i++ {
 		prevsChar := sChar
-		// Java: sChar = string1.charAt(start+i) — string1 is unsliced original shorter
+		// Java: sChar = string1.charAt(start+i) — string1 is the unsliced shorter original
 		sChar = string1[start+i]
 		tChar := string2c[0]
 		left := i
 		current = left + 1
 		nextTransCost := 0
+		// no need to look beyond window of lower right / upper left diagonals ± maxDistance
 		if i > jStartOffset {
 			jStart++
 		}
@@ -154,23 +166,24 @@ func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance in
 			above := current
 			thisTransCost := nextTransCost
 			nextTransCost = e.v2[j]
+			// cost of diagonal (substitution)
 			current = left
 			e.v2[j] = current
-			left = e.v0[j]
+			left = e.v0[j] // left now equals current cost (diagonal at next iteration)
 			prevtChar := tChar
 			tChar = string2c[j]
 			if sChar != tChar {
 				if left < current {
-					current = left
+					current = left // insertion
 				}
 				if above < current {
-					current = above
+					current = above // deletion
 				}
 				current++
 				if i != 0 && j != 0 && sChar == prevtChar && prevsChar == tChar {
 					thisTransCost++
 					if thisTransCost < current {
-						current = thisTransCost
+						current = thisTransCost // transposition
 					}
 				}
 			}
