@@ -55,11 +55,15 @@ func TestNewYearDateRuleFilter(t *testing.T) {
 func TestNumberInWordAndFindSuggestionsFailClosed(t *testing.T) {
 	ClearEnglishFilterSpeller()
 	ClearEnglishFilterTagger()
+	// EnglishNumberInWordFilter uses static MorfologikAmericanSpellerRule (Java), not FilterDict.
+	// With official en_US.dict on classpath: "t0ken" → 0→o "token" accepted when known.
 	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.EnglishNumberInWordFilter")
-	m := rules.NewRuleMatch(nil, nil, 0, 4, "msg")
-	require.Nil(t, f.AcceptRuleMatch(m, map[string]string{"word": "t0ken"}, 0, nil, nil))
+	m := rules.NewRuleMatch(nil, nil, 0, 5, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{"word": "t0ken"}, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetSuggestedReplacements(), "token")
 	f2 := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.FindSuggestionsFilter")
-	// No speller dict → fail-closed (do not invent suggestions).
+	// FindSuggestions still uses FilterDict: no Wire → fail-closed (do not invent suggestions).
 	require.Nil(t, f2.AcceptRuleMatch(m, map[string]string{"wordFrom": "1", "desiredPostag": "VB"}, 0, nil, nil))
 }
 
@@ -71,14 +75,8 @@ func repoRoot(t *testing.T) string {
 }
 
 func TestNumberInWordWithOfficialDict(t *testing.T) {
-	root := repoRoot(t)
-	dict := filepath.Join(root, "third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict")
-	if st, err := os.Stat(dict); err != nil || st.IsDir() {
-		t.Skipf("en_US.dict missing: %s", dict)
-	}
-	require.True(t, WireEnglishFilterSpeller(dict))
-	t.Cleanup(ClearEnglishFilterSpeller)
-
+	// Java EnglishNumberInWordFilter always constructs MorfologikAmericanSpellerRule
+	// (en_US.dict via classpath) — no WireEnglishFilterSpeller inject path.
 	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.EnglishNumberInWordFilter")
 	m := rules.NewRuleMatch(nil, nil, 0, 5, "msg")
 	out := f.AcceptRuleMatch(m, map[string]string{"word": "H0use"}, 0, nil, nil)
