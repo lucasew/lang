@@ -114,14 +114,26 @@ func enDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter 
 }
 
 func enNewYearDateCore() *rules.NewYearDateFilterCore {
-	h := NewDateFilterHelper()
+	return enNewYearDateCoreWith(NewDateFilterHelper())
+}
+
+// enNewYearDateCoreWith wires AbstractNewYearDateFilter hooks via DateFilterHelper
+// (Java NewYearDateFilter.getMonth / getCalendar).
+func enNewYearDateCoreWith(h *DateFilterHelper) *rules.NewYearDateFilterCore {
+	if h == nil {
+		h = NewDateFilterHelper()
+	}
 	return &rules.NewYearDateFilterCore{
 		GetMonth: func(localized string) (int, error) {
+			// Java DateFilterHelper.getMonth throws RuntimeException on unknown month.
 			m, err := h.GetMonth(localized)
 			if err != nil {
 				return 0, err
 			}
 			return int(m), nil
+		},
+		GetCalendar: func() time.Time {
+			return h.GetCalendar()
 		},
 	}
 }
