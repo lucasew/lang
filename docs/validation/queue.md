@@ -238,7 +238,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-ChunkArray | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/ChunkArray.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/chunk_array.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/chunk_array_test.go | b14685ceb8e05d11c5d5fca3c7b948fa3305bc23 | 0 | 0 |  |  | 2026-07-24T08:59:37Z |
 | docs/faithful-port-checklist.md#3.C.2-SuggestionStage | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggestion_stage.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggestion_stage_test.go | b73d06575ca58b12ec05ab27da01b3d10a277f6b | 0 | 0 |  |  | 2026-07-24T09:11:40Z |
 | docs/faithful-port-checklist.md#3.C.2-SymSpell | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SymSpell.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_load.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_lookup_compound.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_word_segmentation.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_test.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_load_test.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_lookup_compound_test.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_word_segmentation_test.go | d19822b4a84edb5c9d848eb3e22317a064e01ba0 | 0 | 0 |  |  | 2026-07-24T09:34:38Z |
-| docs/faithful-port-checklist.md#3.C.2-SymSpellRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/SymSpellRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/SymSpellRuleTest.java | internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule.go; internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule_test.go; internal/languagetool/org/languagetool/rules/spelling/SymSpellRuleTest_test.go | 2cb93985ca6ea9623e2de0f50d57acea6c927e21 | 0 | 0 |  |  | 2026-07-24T09:45:13Z |
+| docs/faithful-port-checklist.md#3.C.2-SymSpellRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/SymSpellRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/SymSpellRuleTest.java | internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule.go; internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule_test.go; internal/languagetool/org/languagetool/rules/spelling/SymSpellRuleTest_test.go | 2cb93985ca6ea9623e2de0f50d57acea6c927e21 | 0 | 0 |  |  | 2026-07-24T09:52:14Z |
 
 ## Human inbox
 
@@ -248,7 +248,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-SymSpellRule @ 2cb93985 (caches/init/match; invent map-scan removed). FR/zh blocked. |
+| Notes | ACCEPT 3.C.2-SymSpellRule @ 2cb93985. Next: implement next 3.C.2 leaf (e.g. MultitokenSpellerFilter/VagueSpellChecker). FR/zh blocked. |
 
 ---
 
@@ -1020,3 +1020,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T09:34:38Z ACCEPT: 3.C.2-SymSpell @ d19822b4 (validator + parent green reconfirm)
 - 2026-07-24T09:39:14Z implement: 3.C.2-SymSpellRule (match/initDefaultDict/userDict/caches; isMisspelled; orderer experiment hook; outcome twins; delete invent)
 - 2026-07-24T09:45:13Z ready: 3.C.2-SymSpellRule @ 2cb93985 (implementer report; parent green reconfirm)
+- 2026-07-24T09:48:40Z validating: 3.C.2-SymSpellRule @ 2cb93985 (strict invent re-audit vs Java SymSpellRule)
+- 2026-07-24T09:52:14Z ACCEPT: 3.C.2-SymSpellRule @ 2cb93985 (validator + parent green reconfirm)

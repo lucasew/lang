@@ -458,7 +458,7 @@
 - [x] org/languagetool/rules/spelling/ForeignLanguageChecker.java::ForeignLanguageChecker
 - [x] org/languagetool/rules/spelling/RuleWithLanguage.java::RuleWithLanguage
 - [ ] org/languagetool/rules/spelling/SpellingCheckRule.java::SpellingCheckRule
-- [ ] org/languagetool/rules/spelling/SymSpellRule.java::SymSpellRule
+- [x] org/languagetool/rules/spelling/SymSpellRule.java::SymSpellRule
 - [ ] org/languagetool/rules/spelling/VagueSpellChecker.java::VagueSpellChecker
 - [ ] org/languagetool/rules/spelling/VagueSpellChecker.java::VagueSpellChecker.NonThreadSafeSpellRule
 - [ ] org/languagetool/rules/spelling/hunspell/CompoundAwareHunspellRule.java::CompoundAwareHunspellRule
