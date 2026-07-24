@@ -504,9 +504,9 @@
 - [x] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage
 - [x] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Node
 - [x] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Entry
-- [ ] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell
-- [ ] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell.Verbosity
-- [ ] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell.SegmentedSuggestion
+- [x] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell
+- [x] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell.Verbosity
+- [x] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell.SegmentedSuggestion
 - [ ] org/languagetool/rules/translation/DataSource.java::DataSource
 - [ ] org/languagetool/rules/translation/TranslationData.java::TranslationData
 - [ ] org/languagetool/rules/translation/TranslationEntry.java::TranslationEntry
