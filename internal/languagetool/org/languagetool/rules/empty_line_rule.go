@@ -1,11 +1,16 @@
 package rules
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 // EmptyLineRule ports org.languagetool.rules.EmptyLineRule.
 // Java: STYLE, Style; default ctor setDefaultOff (defaultActive=false); setOfficeDefaultOn(); minToCheckParagraph=1.
+//
+// SingleLineBreaksMarksPara ports Language.getSentenceTokenizer().singleLineBreaksMarksPara()
+// as used by Tools.isParagraphEnd and isSecondParagraphEndMark (Demo/SRX default false).
 type EmptyLineRule struct {
 	Messages                  map[string]string
 	SingleLineBreaksMarksPara bool
@@ -16,15 +21,25 @@ type EmptyLineRule struct {
 	OfficeDefaultOn bool
 }
 
+// NewEmptyLineRule ports EmptyLineRule(ResourceBundle messages, Language lang)
+// → defaultActive false → setDefaultOff(); setOfficeDefaultOn().
 func NewEmptyLineRule(messages map[string]string) *EmptyLineRule {
-	// Java EmptyLineRule(messages, lang) → defaultActive false → setDefaultOff(); setOfficeDefaultOn().
-	return &EmptyLineRule{
+	return NewEmptyLineRuleDefaultActive(messages, false)
+}
+
+// NewEmptyLineRuleDefaultActive ports
+// EmptyLineRule(ResourceBundle messages, Language lang, boolean defaultActive).
+func NewEmptyLineRuleDefaultActive(messages map[string]string, defaultActive bool) *EmptyLineRule {
+	r := &EmptyLineRule{
 		Messages:        messages,
 		Category:        CatStyle.GetCategory(messages),
 		IssueType:       ITSStyle,
-		DefaultOff:      true,
-		OfficeDefaultOn: true,
+		OfficeDefaultOn: true, // Java setOfficeDefaultOn() always
 	}
+	if !defaultActive {
+		r.DefaultOff = true // Java setDefaultOff()
+	}
+	return r
 }
 
 func (r *EmptyLineRule) GetID() string { return "EMPTY_LINE" }
@@ -61,39 +76,46 @@ func (r *EmptyLineRule) IsOfficeDefaultOn() bool { return r != nil && r.OfficeDe
 // MinToCheckParagraph ports EmptyLineRule.minToCheckParagraph (Java returns 1).
 func (r *EmptyLineRule) MinToCheckParagraph() int { return 1 }
 
+// isParagraphEnd ports Tools.isParagraphEnd(sentences, n, lang) with
+// lang.getSentenceTokenizer().singleLineBreaksMarksPara() = r.SingleLineBreaksMarksPara.
 func (r *EmptyLineRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
-func hasSuf(s, suf string) bool {
-	return len(s) >= len(suf) && s[len(s)-len(suf):] == suf
-}
-func hasPre(s, pre string) bool {
-	return len(s) >= len(pre) && s[:len(pre)] == pre
-}
-
+// isSecondParagraphEndMark ports EmptyLineRule.isSecondParagraphEndMark.
 func (r *EmptyLineRule) isSecondParagraphEndMark(sentence string) bool {
 	if r.SingleLineBreaksMarksPara {
-		return hasSuf(sentence, "\n\n") || hasSuf(sentence, "\n\r\n\r")
+		// Java: endsWith("\n\n") || endsWith("\n\r\n\r")
+		return strings.HasSuffix(sentence, "\n\n") || strings.HasSuffix(sentence, "\n\r\n\r")
 	}
-	return hasSuf(sentence, "\n\n\n\n") || hasSuf(sentence, "\n\r\n\r\n\r\n\r") || hasSuf(sentence, "\r\n\r\n\r\n\r\n")
+	// Java: endsWith("\n\n\n\n") || endsWith("\n\r\n\r\n\r\n\r") || endsWith("\r\n\r\n\r\n\r\n")
+	return strings.HasSuffix(sentence, "\n\n\n\n") ||
+		strings.HasSuffix(sentence, "\n\r\n\r\n\r\n\r") ||
+		strings.HasSuffix(sentence, "\r\n\r\n\r\n\r\n")
 }
 
-// MatchList ports match(List<AnalyzedSentence>).
+// MatchList ports EmptyLineRule.match(List<AnalyzedSentence>) bug-for-bug.
+// Loop n in 0..size-2; on paragraph end + second end mark + tokensWithoutWhitespace length > 1,
+// match last non-ws token span with pos accumulation via getCorrectedTextLength.
 func (r *EmptyLineRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
 	pos := 0
-	msg := r.Messages["empty_line_rule_msg"]
+	msg := ""
+	if r != nil && r.Messages != nil {
+		msg = r.Messages["empty_line_rule_msg"]
+	}
 	if msg == "" {
 		msg = "Empty line"
 	}
 	for n := 0; n < len(sentences)-1; n++ {
 		sentence := sentences[n]
+		// Java: if (Tools.isParagraphEnd(...)) { if (isSecondParagraphEndMark(...)) { ... } }
 		if r.isParagraphEnd(sentences, n) && r.isSecondParagraphEndMark(sentence.GetText()) {
 			tokens := sentence.GetTokensWithoutWhitespace()
 			if len(tokens) > 1 {
-				fromPos := pos + tokens[len(tokens)-1].GetStartPos()
-				toPos := pos + tokens[len(tokens)-1].GetEndPos()
+				last := tokens[len(tokens)-1]
+				fromPos := pos + last.GetStartPos()
+				toPos := pos + last.GetEndPos()
 				ruleMatches = append(ruleMatches, NewRuleMatch(r, sentence, fromPos, toPos, msg))
 			}
 		}
