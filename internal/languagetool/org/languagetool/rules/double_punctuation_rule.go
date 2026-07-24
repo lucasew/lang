@@ -92,7 +92,8 @@ func (r *DoublePunctuationRule) GetDescription() string {
 			return s
 		}
 	}
-	return "Two consecutive dots or commas"
+	// MessagesBundle_en.properties desc_double_punct
+	return "Use of two consecutive dots or commas"
 }
 
 func (r *DoublePunctuationRule) GetCommaCharacter() string {
