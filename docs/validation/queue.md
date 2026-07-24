@@ -295,7 +295,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-MorfologikSouthAfricanSpellerRule | accepted | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/MorfologikSouthAfricanSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikSouthAfricanSpellerRuleTest.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/AbstractEnglishSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/en-US-GB.txt; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/spelling_en-ZA.txt | internal/languagetool/org/languagetool/rules/en/ | 5c94754c144621a09872d2a7b6b4cc5dd94872b6 | 0 | 0 |  |  | 2026-07-24T23:16:34Z |
 
 | docs/faithful-port-checklist.md#3.C.3-SpellingCheckRuleTest | accepted | inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/SpellingCheckRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/MorfologikAmericanSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/AbstractEnglishSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/ignore.txt; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/multiwords.txt | internal/languagetool/org/languagetool/rules/en/SpellingCheckRuleTest_test.go; internal/languagetool/org/languagetool/rules/en/abstract_english_speller_rule.go | 62b1fd37adb3ee09ffcab29ef896ec77c299c666 | 0 | 0 | | | 2026-07-24T23:38:31Z |
-| docs/faithful-port-checklist.md#3.C.3-WordRepeatRuleTest | validating | inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/WordRepeatRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/en/WordRepeatRuleTest_test.go | 39391466135b75c87758b80950c397b2436de5f1 | 0 | 0 | | | 2026-07-24T23:48:46Z |
+| docs/faithful-port-checklist.md#3.C.3-WordRepeatRuleTest | accepted | inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/WordRepeatRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/en/WordRepeatRuleTest_test.go | 39391466135b75c87758b80950c397b2436de5f1 | 0 | 0 | | | 2026-07-24T23:50:01Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -304,7 +304,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | validating 3.C.3-WordRepeatRuleTest @ 39391466|
+| Notes | ACCEPT 3.C.3-WordRepeatRuleTest @ 39391466. Next EN leaf e.g. UppercaseSentenceStart EN, ConfusionProbability, UpperCaseNgram, LanguageSpecificSpellchecker|
 
 ---
 
@@ -1312,3 +1312,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T23:44:22Z implement: 3.C.3-WordRepeatRuleTest (EN WordRepeatRuleTest full twin; core WordRepeatRule + EN analysis; immunize side to side)
 - 2026-07-24T23:46:22Z ready: 3.C.3-WordRepeatRuleTest @ 39391466 (implementer report; parent green reconfirm TestWordRepeatRule_)
 - 2026-07-24T23:48:46Z validating: 3.C.3-WordRepeatRuleTest @ 39391466 (strict invent re-audit vs Java WordRepeatRuleTest + core WordRepeatRule)
+- 2026-07-24T23:50:01Z ACCEPT: 3.C.3-WordRepeatRuleTest @ 39391466 (validator + parent green reconfirm TestWordRepeatRule_)
