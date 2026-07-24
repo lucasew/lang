@@ -77,9 +77,12 @@ func TestVagueSpellChecker_SpanishCatalanOfficialPaths(t *testing.T) {
 	require.Equal(t, "/ca/ca-ES_spelling.dict", msCA.GetFileName())
 }
 
-func TestVagueSpellChecker_PureHunspellUsesHunspellRuleTwin(t *testing.T) {
-	// da/sv/eo/gl/km → HunspellRule twin; is → HunspellNoSuggestionRule twin.
-	// Must not use soft stem-map invent path.
+func TestVagueSpellChecker_PureHunspellBlockedNoInvent(t *testing.T) {
+	// Java: da/sv/eo/gl/km → HunspellRule; is → HunspellNoSuggestionRule via native
+	// hunspell.spell(.dic+.aff). Pure-Go FileHunspellDictionary does not expand affixes.
+	// Sector hard-fails on isMisspelled rather than claiming wrong isValidWord from dic-stem maps.
+	clearVagueSpellCheckerCaches()
+	t.Cleanup(clearVagueSpellCheckerCaches)
 	for _, tc := range []struct {
 		short, full string
 	}{
@@ -93,8 +96,15 @@ func TestVagueSpellChecker_PureHunspellUsesHunspellRuleTwin(t *testing.T) {
 		t.Run(tc.short, func(t *testing.T) {
 			lang := vagueLang{short: tc.short, full: tc.full, name: tc.short}
 			rule := getSpellingCheckRule(lang)
-			_, ok := rule.(*hunspellRuleForVague)
-			require.True(t, ok, "%s must be HunspellRule surface", tc.short)
+			h, ok := rule.(*hunspellRuleForVague)
+			require.True(t, ok, "%s must be HunspellRule surface (Java rule type)", tc.short)
+			msg := pureHunspellBlockedMsg(tc.full)
+			require.PanicsWithValue(t, msg, func() {
+				_ = h.IsMisspelled("x")
+			}, "%s isMisspelled must hard-fail (no affix engine)", tc.short)
+			require.PanicsWithValue(t, msg, func() {
+				_ = NewVagueSpellChecker().IsValidWord("x", lang)
+			})
 		})
 	}
 }
@@ -117,14 +127,16 @@ func TestVagueSpellChecker_DictClasspathHelpers(t *testing.T) {
 	require.Equal(t, "/pt/spelling/pt-BR.dict", portugueseMorfologikDictClasspath("pt-br"))
 }
 
-// Ensure soft invent helpers are gone (would not compile if reintroduced as API).
+// Ensure pure-Hunspell invent helpers stay gone; blocked panic names the dependency leaf.
 func TestVagueSpellChecker_NoSoftStemInventAPI(t *testing.T) {
-	// Pure-hunspell langs resolve through hunspell.NewHunspellRule twin; firstActive
-	// must not invent dic-only stem maps as a separate parallel path.
-	// Classpath assertion for Icelandic matches language-module twin is_IS.dic.
-	is := vagueLang{short: "is", full: "is", name: "Icelandic"}
-	rule := getSpellingCheckRule(is)
+	// firstActive must not invent dic-only stem maps. Pure-Hunspell hard-fails on
+	// isMisspelled with affix-engine missing message (Java needs hunspell.spell+.aff).
+	msg := pureHunspellBlockedMsg("da")
+	require.Contains(t, msg, "no affix expansion")
+	require.Contains(t, msg, "hunspell.spell")
+	da := vagueLang{short: "da", full: "da", name: "Danish"}
+	rule := getSpellingCheckRule(da)
 	h, ok := rule.(*hunspellRuleForVague)
 	require.True(t, ok)
-	require.NotNil(t, h.isMisspelledFn)
+	require.PanicsWithValue(t, msg, func() { _ = h.IsMisspelled("billetter") })
 }

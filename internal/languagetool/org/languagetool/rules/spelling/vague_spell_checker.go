@@ -7,7 +7,6 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"unicode"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -247,21 +246,15 @@ func firstActiveSpellingRuleFromLanguage(lang languagetool.Language) any {
 		return &morfologikSpellerRuleForVague{fileName: "/ru/hunspell/ru_RU.dict"}
 	case "uk":
 		return &morfologikSpellerRuleForVague{fileName: "/uk/hunspell/uk_UA.dict"}
-	case "da":
-		// Danish → HunspellRule (IsMisspelledWord + /da/hunspell/da_DK.dic)
-		return newHunspellRuleVague("da", "/da/hunspell/da_DK.dic")
-	case "sv":
-		return newHunspellRuleVague("sv", "/sv/hunspell/sv_SE.dic")
-	case "eo":
-		return newHunspellRuleVague("eo", "/eo/hunspell/eo.dic")
-	case "gl":
-		return newHunspellRuleVague("gl", "/gl/hunspell/gl_ES.dic")
-	case "km":
-		// KhmerHunspellRule extends HunspellRule (same isMisspelled)
-		return newHunspellRuleVague("km", "/km/hunspell/km_KH.dic")
-	case "is":
-		// Icelandic → HunspellNoSuggestionRule (isMisspelled from HunspellRule)
-		return newHunspellNoSuggestionVague("is", "/is/hunspell/is_IS.dic")
+	case "da", "sv", "eo", "gl", "km", "is":
+		// Java: da/sv/eo/gl/km → HunspellRule; is → HunspellNoSuggestionRule.
+		// Both call native hunspell.spell with full .dic+.aff expansion
+		// (HunspellRule.isMisspelled ~429–445).
+		// Pure-Go FileHunspellDictionary loads stems only (affix rules not expanded).
+		// Dic-stem maps as isValidWord would false-negative affix forms (e.g. Danish
+		// billetter/hunde/biler). No invent: hard-fail on isMisspelled until an
+		// affix-capable pure-Go HunspellDictionary leaf exists (no cgo).
+		return pureHunspellBlockedRule(full)
 	default:
 		// Unknown: no spelling rule surface (Java RuntimeException via getSpellingCheckRule)
 		return nil
@@ -312,168 +305,25 @@ func portugueseMorfologikDictClasspath(fullLower string) string {
 // (duplicated string — spelling cannot import hunspell subpackage: cycle).
 const vagueHunspellRuleID = "HUNSPELL_RULE"
 
-// newHunspellRuleVague wires HunspellRule.isMisspelled for pure-Hunspell languages
-// (da/sv/eo/gl/km) using the same control flow as hunspell.HunspellRule.IsMisspelledWord
-// and the same official .dic classpath Java HunspellRule.getDictFilenameInResources uses.
-//
-// Note: pure-Go FileHunspellDictionary also ignores affix expansion; this is the same
-// limitation as the language-pack HunspellRule twins (da/sv/…). No parallel weaker
-// stem invent that skips prohibit/ignore/punctuation gates.
-func newHunspellRuleVague(langCode, classpath string) *hunspellRuleForVague {
-	base := NewSpellingCheckRule(vagueHunspellRuleID, DescSpelling, langCode)
-	ApplyDefaultSpellingWordLists(base)
-	words := loadVagueHunspellDicMap(classpath) // nil if resource missing (fail closed)
+// pureHunspellBlockedMsg documents why VagueSpellChecker cannot serve pure-Hunspell
+// languages yet. Prefer panic over dic-stem invent that disagrees with Java polarity.
+func pureHunspellBlockedMsg(langFull string) string {
+	return fmt.Sprintf(
+		"VagueSpellChecker pure-Hunspell language %s blocked: pure-Go HunspellDictionary has no affix expansion; Java HunspellRule.isMisspelled requires hunspell.spell(.dic+.aff); dependency leaf missing (pure Go / no cgo)",
+		langFull,
+	)
+}
+
+// pureHunspellBlockedRule returns a HunspellRule surface (Java rule type) that hard-fails
+// on isMisspelled instead of inventing dic-stem polarity. Panic runs outside the
+// langToRule mutex (after cache store) so IsValidWord does not deadlock.
+func pureHunspellBlockedRule(langFull string) *hunspellRuleForVague {
+	msg := pureHunspellBlockedMsg(langFull)
 	return &hunspellRuleForVague{
-		isMisspelledFn: func(word string) bool {
-			return vagueHunspellIsMisspelledWord(base, words, word)
+		isMisspelledFn: func(string) bool {
+			panic(msg)
 		},
 	}
-}
-
-// newHunspellNoSuggestionVague ports HunspellNoSuggestionRule for Icelandic:
-// same isMisspelled as HunspellRule (getSuggestions empty is irrelevant for VagueSpellChecker).
-func newHunspellNoSuggestionVague(langCode, classpath string) *hunspellRuleForVague {
-	// ID differs in Java (HUNSPELL_NO_SUGGEST_RULE) but isMisspelled path is identical.
-	return newHunspellRuleVague(langCode, classpath)
-}
-
-// vagueHunspellIsMisspelledWord ports HunspellRule.isMisspelled (IsMisspelledWord).
-func vagueHunspellIsMisspelledWord(base *SpellingCheckRule, words map[string]struct{}, word string) bool {
-	// Java: isProhibited(cutOffDot(word)) forces misspell even when dict accepts.
-	if base != nil && base.IsProhibited(cutOffDotVague(word)) {
-		return true
-	}
-	if words == nil {
-		// Java hunspell null → not misspelled
-		return false
-	}
-	if word == "--" {
-		return false
-	}
-	// length==1 non-letter → not misspelled
-	if utf16LenVague(word) == 1 {
-		rns := []rune(word)
-		if len(rns) == 1 && !isLetterVague(rns[0]) {
-			return false
-		}
-	}
-	if vagueNonAlphabetic.MatchString(word) {
-		return false
-	}
-	if base != nil && base.IgnoreWord(word) {
-		return false
-	}
-	_, ok := words[word]
-	return !ok
-}
-
-var vagueNonAlphabetic = regexp.MustCompile(`^[^\p{L}]+$`)
-
-func utf16LenVague(s string) int {
-	// Java String.length is UTF-16 code units
-	n := 0
-	for _, r := range s {
-		n++
-		if r >= 0x10000 {
-			n++
-		}
-	}
-	return n
-}
-
-func isLetterVague(r rune) bool {
-	return unicode.IsLetter(r)
-}
-
-// loadVagueHunspellDicMap loads stems from official .dic (word before '/').
-// Same resource layout as hunspell.TryOpenFromClasspath / DiscoverHunspellDic.
-// Affix rules are not expanded (matches pure-Go FileHunspellDictionary twin).
-func loadVagueHunspellDicMap(classpath string) map[string]struct{} {
-	disk := discoverVagueResourceDic(classpath)
-	if disk == "" {
-		return nil
-	}
-	words, err := loadHunspellDicWords(disk)
-	if err != nil {
-		return nil
-	}
-	return words
-}
-
-func loadHunspellDicWords(path string) (map[string]struct{}, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	out := map[string]struct{}{}
-	lines := strings.Split(string(data), "\n")
-	start := 0
-	if len(lines) > 0 {
-		first := strings.TrimSpace(lines[0])
-		if first != "" {
-			allDigit := true
-			for _, r := range first {
-				if r < '0' || r > '9' {
-					allDigit = false
-					break
-				}
-			}
-			if allDigit {
-				start = 1
-			}
-		}
-	}
-	for _, line := range lines[start:] {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, "#") {
-			continue
-		}
-		w := line
-		if i := strings.IndexByte(line, '/'); i >= 0 {
-			w = line[:i]
-		}
-		if w != "" {
-			out[w] = struct{}{}
-		}
-	}
-	return out, nil
-}
-
-// discoverVagueResourceDic finds a Java resource-path Hunspell .dic on disk.
-func discoverVagueResourceDic(classpath string) string {
-	rel := strings.TrimPrefix(classpath, "/")
-	if rel == "" || !strings.HasSuffix(rel, ".dic") {
-		return ""
-	}
-	lang, rest, ok := strings.Cut(rel, "/")
-	if !ok || lang == "" || rest == "" {
-		return ""
-	}
-	wd, err := os.Getwd()
-	if err != nil {
-		return ""
-	}
-	dir := wd
-	for {
-		candidates := []string{
-			filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", lang,
-				"src", "main", "resources", "org", "languagetool", "resource", lang, rest),
-			filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", lang,
-				"src", "main", "resources", "org", "languagetool", "resource", rel),
-			filepath.Join(dir, "third_party", "languagetool-dicts", "org", "languagetool", "resource", rel),
-		}
-		for _, c := range candidates {
-			if st, err := os.Stat(c); err == nil && st.Mode().IsRegular() {
-				return c
-			}
-		}
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			break
-		}
-		dir = parent
-	}
-	return ""
 }
 
 // GermanSpellerRule.isMisspelled hard-case patterns (Java Pattern.matches → full string).
