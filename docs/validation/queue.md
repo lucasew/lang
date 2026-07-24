@@ -233,7 +233,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-CommonFileTypes | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CommonFileTypes.java | internal/languagetool/org/languagetool/rules/spelling/common_file_types.go; internal/languagetool/org/languagetool/rules/spelling/common_file_types_test.go | c43e5171766e6a272d60171a7817a4cb7255baac | 0 | 0 |  |  | 2026-07-24T08:06:27Z |
 | docs/faithful-port-checklist.md#3.C.2-CachingWordListLoader | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CachingWordListLoader.java | internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader.go; internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader_test.go | e88cdde6398af1ea6876165c74e4f3c696f02fc7 | 0 | 0 |  |  | 2026-07-24T08:16:28Z |
 | docs/faithful-port-checklist.md#3.C.2-ForeignLanguageChecker | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/ForeignLanguageChecker.java | internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker.go; internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker_test.go | 791b5a69a77a5cf239d9f407e9a140eb9b96cbec | 0 | 0 |  |  | 2026-07-24T08:30:36Z |
-| docs/faithful-port-checklist.md#3.C.2-SuggestItem | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item_test.go | 45a6aa45b5657c498d1262b37eecc44a04e48487 | 0 | 0 |  |  | 2026-07-24T08:36:38Z |
+| docs/faithful-port-checklist.md#3.C.2-SuggestItem | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item_test.go | 45a6aa45b5657c498d1262b37eecc44a04e48487 | 0 | 0 |  |  | 2026-07-24T08:39:54Z |
 
 ## Human inbox
 
@@ -243,7 +243,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-SuggestItem @ 45a6aa45 (CompareTo/Equals/HashCode/toString/clone). FR/zh blocked. |
+| Notes | last ACCEPT 3.C.2-SuggestItem @ 45a6aa45 (CompareTo/Equals/HashCode). FR/zh blocked. Next: more 3.C.2 spelling leaves. |
 
 ---
 
@@ -995,3 +995,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T08:30:36Z ACCEPT: 3.C.2-ForeignLanguageChecker @ 791b5a69 (validator + parent green reconfirm)
 - 2026-07-24T08:34:06Z implement: 3.C.2-SuggestItem (compareTo distance asc/count desc; equals/hashCode on term; toString; clone)
 - 2026-07-24T08:36:38Z ready: 3.C.2-SuggestItem @ 45a6aa45 (implementer report; parent green reconfirm)
+- 2026-07-24T08:38:44Z validating: 3.C.2-SuggestItem @ 45a6aa45 (strict invent re-audit vs Java SuggestItem)
+- 2026-07-24T08:39:54Z ACCEPT: 3.C.2-SuggestItem @ 45a6aa45 (validator + parent green reconfirm)

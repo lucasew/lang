@@ -500,7 +500,7 @@
 - [ ] org/languagetool/rules/spelling/symspell/implementation/ChunkArray.java::ChunkArray
 - [ ] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance
 - [ ] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance.DistanceAlgorithm
-- [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java::SuggestItem
+- [x] org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java::SuggestItem
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Node
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Entry
