@@ -1,83 +1,101 @@
 package implementation
 
-// SuggestionStage ports SymSpell SuggestionStage for staged dictionary building.
+// SuggestionStage ports org.languagetool.rules.spelling.symspell.implementation.SuggestionStage.
+// An intentionally opaque class used to temporarily stage dictionary data during the
+// adding of many words (significant time savings and reduced final memory usage).
 type SuggestionStage struct {
+	// Deletes ports public Map<Integer, Entry> deletes.
 	Deletes map[int]*StageEntry
-	Nodes   *ChunkArray[StageNode]
+	// Nodes ports public ChunkArray<Node> nodes.
+	Nodes *ChunkArray[StageNode]
 }
 
-// StageNode ports SuggestionStage.Node.
+// StageNode ports SuggestionStage.Node (nested static class).
 type StageNode struct {
+	// Suggestion ports public String suggestion.
 	Suggestion string
-	Next       int
+	// Next ports public int next.
+	Next int
 }
 
-// StageEntry ports SuggestionStage.Entry.
+// NewStageNode ports Node(String suggestion, int next).
+func NewStageNode(suggestion string, next int) StageNode {
+	return StageNode{Suggestion: suggestion, Next: next}
+}
+
+// StageEntry ports SuggestionStage.Entry (nested static class).
 type StageEntry struct {
+	// Count ports public int count.
 	Count int
+	// First ports public int first.
 	First int
 }
 
+// NewStageEntry ports Entry(int count, int first) (package-private in Java).
+func NewStageEntry(count, first int) *StageEntry {
+	return &StageEntry{Count: count, First: first}
+}
+
+// NewSuggestionStage ports SuggestionStage(int initialCapacity).
+// Java: deletes = new HashMap<>(initialCapacity); nodes = new ChunkArray<>(initialCapacity * 2).
+// Capacity is passed through (HashMap(0) is legal); no minimum invent.
 func NewSuggestionStage(initialCapacity int) *SuggestionStage {
-	if initialCapacity <= 0 {
-		initialCapacity = 16
-	}
 	return &SuggestionStage{
-		Deletes: map[int]*StageEntry{},
+		Deletes: make(map[int]*StageEntry, initialCapacity),
 		Nodes:   NewChunkArray[StageNode](initialCapacity * 2),
 	}
 }
 
+// DeleteCount ports deleteCount(): deletes.size().
 func (s *SuggestionStage) DeleteCount() int {
-	if s == nil {
-		return 0
-	}
 	return len(s.Deletes)
 }
 
+// NodeCount ports nodeCount(): nodes.count.
 func (s *SuggestionStage) NodeCount() int {
-	if s == nil || s.Nodes == nil {
-		return 0
-	}
 	return s.Nodes.Count
 }
 
+// Clear ports clear(): deletes.clear(); nodes.clear().
 func (s *SuggestionStage) Clear() {
-	if s == nil {
-		return
-	}
-	s.Deletes = map[int]*StageEntry{}
-	if s.Nodes != nil {
-		s.Nodes.Clear()
-	}
+	clear(s.Deletes)
+	s.Nodes.Clear()
 }
 
-// Add stages a suggestion under a delete-hash key.
+// Add ports void add(int deleteHash, String suggestion).
+// Linked list is LIFO: walk from first yields most recently added first.
 func (s *SuggestionStage) Add(deleteHash int, suggestion string) {
+	// Entry entry = deletes.getOrDefault(deleteHash, new Entry(0, -1));
 	entry, ok := s.Deletes[deleteHash]
 	if !ok {
-		entry = &StageEntry{Count: 0, First: -1}
-		s.Deletes[deleteHash] = entry
+		entry = NewStageEntry(0, -1)
 	}
 	next := entry.First
 	entry.Count++
 	entry.First = s.Nodes.Count
-	s.Nodes.Add(StageNode{Suggestion: suggestion, Next: next})
+	s.Deletes[deleteHash] = entry
+	s.Nodes.Add(NewStageNode(suggestion, next))
 }
 
-// CommitTo flushes staged data into permanentDeletes (deleteHash → suggestions).
+// CommitTo ports void commitTo(Map<Integer, String[]> permanentDeletes).
+// Existing permanent suggestions stay as prefix; staged append in LIFO walk order.
 func (s *SuggestionStage) CommitTo(permanentDeletes map[int][]string) {
-	if s == nil || permanentDeletes == nil {
-		return
-	}
 	for key, value := range s.Deletes {
-		suggestions := permanentDeletes[key]
-		i := len(suggestions)
-		// grow
-		newSug := make([]string, i+value.Count)
-		copy(newSug, suggestions)
-		permanentDeletes[key] = newSug
-		suggestions = newSug
+		var i int
+		var suggestions []string
+		if _, ok := permanentDeletes[key]; ok {
+			suggestions = permanentDeletes[key]
+			i = len(suggestions)
+			// Arrays.copyOf(suggestions, i + value.count)
+			newSuggestion := make([]string, i+value.Count)
+			copy(newSuggestion, suggestions)
+			permanentDeletes[key] = newSuggestion
+			suggestions = newSuggestion
+		} else {
+			i = 0
+			suggestions = make([]string, value.Count)
+			permanentDeletes[key] = suggestions
+		}
 		next := value.First
 		for next >= 0 {
 			node := s.Nodes.Get(next)
