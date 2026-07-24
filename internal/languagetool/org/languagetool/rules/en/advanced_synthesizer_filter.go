@@ -3,13 +3,17 @@ package en
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // AdvancedSynthesizerFilter ports org.languagetool.rules.en.AdvancedSynthesizerFilter
 // (empty subclass of AbstractAdvancedSynthesizerFilter).
 //
-// Java uses language.getSynthesizer().synthesize(token, desiredPostag, true).
-// Without a wired synthesizer, Accept fails closed (do not invent forms).
+// Java: language.getSynthesizer().synthesize(token, desiredPostag, true).
+// Go resolves synthesizer in order:
+//  1. SetSynthesize / WireDefaultSynthesize (tests / host inject)
+//  2. patterns.LanguageSynthesizer("en") when official EnglishSynthesizer is registered
+//  3. fail-closed (nil; do not invent surface forms)
 type AdvancedSynthesizerFilter struct {
 	*rules.AbstractAdvancedSynthesizerFilter
 }
@@ -32,9 +36,7 @@ func NewAdvancedSynthesizerFilter() *AdvancedSynthesizerFilter {
 	f := &AdvancedSynthesizerFilter{
 		AbstractAdvancedSynthesizerFilter: &rules.AbstractAdvancedSynthesizerFilter{},
 	}
-	if defaultSynth != nil {
-		f.Synthesize = resolveDefaultSynth
-	}
+	f.ensureSynth()
 	return f
 }
 
@@ -45,12 +47,46 @@ func resolveDefaultSynth(lemma, postag string) []string {
 	return defaultSynth(lemma, postag)
 }
 
+// synthesizeEnglishFromRegistry ports language.getSynthesizer().synthesize(token, postag, true)
+// via the official patterns.LanguageSynthesizer registry (EnglishSynthesizer when loaded).
+func synthesizeEnglishFromRegistry(lemma, postag string) []string {
+	s := patterns.LanguageSynthesizer("en")
+	if s == nil {
+		return nil
+	}
+	var posPtr *string
+	if postag != "" {
+		p := postag
+		posPtr = &p
+	}
+	var lemPtr *string
+	if lemma != "" {
+		l := lemma
+		lemPtr = &l
+	}
+	// Java: new AnalyzedToken("", desiredPostag, desiredLemma)
+	tok := languagetool.NewAnalyzedToken("", posPtr, lemPtr)
+	forms, err := s.SynthesizeRE(tok, postag, true)
+	if err != nil || len(forms) == 0 {
+		return nil
+	}
+	return forms
+}
+
 func (f *AdvancedSynthesizerFilter) ensureSynth() {
 	if f == nil || f.AbstractAdvancedSynthesizerFilter == nil {
 		return
 	}
-	if f.Synthesize == nil && defaultSynth != nil {
+	if f.Synthesize != nil {
+		return
+	}
+	if defaultSynth != nil {
 		f.Synthesize = resolveDefaultSynth
+		return
+	}
+	// Official path: English synthesizer registered for pattern <match postag> / filters.
+	if patterns.LanguageSynthesizer("en") != nil {
+		f.Synthesize = synthesizeEnglishFromRegistry
 	}
 }
 

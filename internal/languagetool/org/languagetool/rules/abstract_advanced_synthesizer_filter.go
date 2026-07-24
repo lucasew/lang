@@ -32,22 +32,33 @@ type AbstractAdvancedSynthesizerFilter struct {
 
 // AcceptRuleMatch requires lemmaFrom, postagFrom, lemmaSelect, postagSelect.
 // Optional: newLemma, postagReplace.
+//
+// Java order: getRequired args → resolve indices → readings → optional newLemma →
+// null lemma drop → undefined POS throw → postagReplace → synthesize.
+// Without a synthesizer hook Go fails closed (return nil; Java would NPE).
+// When synth yields zero forms, Java returns the original match (no invent).
 func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, args map[string]string,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *RuleMatch {
 	if f == nil || match == nil {
 		return nil
 	}
 	_ = tokenPositions
-	if f.Synthesize == nil {
-		// Without synthesizer cannot produce forms (fail-closed).
-		return nil
-	}
+	// Java getRequired before synth use — missing keys throw even if synth absent.
 	postagSelect := requireArg(args, "postagSelect")
 	lemmaSelect := requireArg(args, "lemmaSelect")
 	postagFromStr := requireArg(args, "postagFrom")
 	lemmaFromStr := requireArg(args, "lemmaFrom")
+	if f.Synthesize == nil {
+		// Without synthesizer cannot produce forms (fail-closed).
+		return nil
+	}
+	// Java: getOptional("newLemma", arguments, "") — missing key → "".
 	newLemma := args["newLemma"]
-	postagReplace := args["postagReplace"]
+	// Java: getOptional("postagReplace", arguments) — missing key → skip replace.
+	postagReplace, postagReplaceSet := args["postagReplace"]
+	if !postagReplaceSet {
+		postagReplace = ""
+	}
 
 	postagFrom := resolveIndex(postagFromStr, match, patternTokens)
 	lemmaFrom := resolveIndex(lemmaFromStr, match, patternTokens)
@@ -68,16 +79,16 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 	if lemmaTok.GetPOSTag() != nil {
 		originalPostag = *lemmaTok.GetPOSTag()
 	}
-	if desiredLemma == "" {
-		return nil
+	// desiredPostag before newLemma (Java); null POS throws after newLemma block.
+	desiredPostag := ""
+	if posTok != nil && posTok.GetPOSTag() != nil {
+		desiredPostag = *posTok.GetPOSTag()
 	}
-	if posTok == nil || posTok.GetPOSTag() == nil {
-		panic(fmt.Sprintf("AdvancedSynthesizerFilter: undefined POS tag with POS regex '%s'", postagSelect))
-	}
-	desiredPostag := *posTok.GetPOSTag()
+	// Java: if (!newLemma.isEmpty()) { … } then if (desiredLemma == null) return null
+	// newLemma can replace a null lemma when it does not start with "_".
 	if newLemma != "" {
 		if strings.HasPrefix(newLemma, "_") {
-			// Java: desiredLemma = getNewLemma(...); if null return null
+			// Java: desiredLemma = getNewLemma(...); base returns null → drop
 			if f.GetNewLemma != nil {
 				desiredLemma = f.GetNewLemma(desiredLemma, newLemma)
 			} else {
@@ -89,6 +100,9 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 	}
 	if desiredLemma == "" {
 		return nil
+	}
+	if desiredPostag == "" {
+		panic(fmt.Sprintf("AdvancedSynthesizerFilter: undefined POS tag with POS regex '%s'", postagSelect))
 	}
 	if postagReplace != "" {
 		if f.GetCompositePostag != nil {
@@ -109,6 +123,8 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 
 	out := NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
 	out.ShortMessage = match.ShortMessage
+	// Java: newMatch.setType(match.getType())
+	out.SetType(match.GetType())
 	var list []string
 	suggestionUsed := false
 	// Java: for (String r : match.getSuggestedReplacements()) — empty list means

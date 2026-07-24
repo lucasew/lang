@@ -121,3 +121,72 @@ func TestAbstractAdvancedSynthesizerFilter_NoSynth(t *testing.T) {
 		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "x", "postagSelect": "N",
 	}, nil, nil))
 }
+
+func TestAbstractAdvancedSynthesizerFilter_MissingRequiredArgPanics(t *testing.T) {
+	// Java getRequired → IllegalArgumentException even before synthesizer use.
+	f := &AbstractAdvancedSynthesizerFilter{}
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 1, "msg")
+	require.Panics(t, func() {
+		_ = f.AcceptRuleMatch(m, map[string]string{
+			"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "x",
+		}, nil, nil)
+	})
+}
+
+func TestAbstractAdvancedSynthesizerFilter_NewLemmaOverridesNullLemma(t *testing.T) {
+	// Java processes newLemma before desiredLemma == null drop.
+	f := &AbstractAdvancedSynthesizerFilter{
+		Synthesize: func(lemma, postag string) []string {
+			if lemma == "fixed" {
+				return []string{"fixed-form"}
+			}
+			return nil
+		},
+	}
+	pos1 := "VB"
+	t1 := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("x", &pos1, nil))
+	t1.SetStartPos(0)
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 1, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "VB", "postagSelect": "VB",
+		"newLemma": "fixed",
+	}, []*languagetool.AnalyzedTokenReadings{t1}, nil)
+	require.NotNil(t, out)
+	require.Equal(t, []string{"fixed-form"}, out.GetSuggestedReplacements())
+}
+
+func TestAbstractAdvancedSynthesizerFilter_EmptyFormsReturnsMatch(t *testing.T) {
+	f := &AbstractAdvancedSynthesizerFilter{
+		Synthesize: func(lemma, postag string) []string { return nil },
+	}
+	lemma := "go"
+	pos1 := "VB"
+	t1 := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("go", &pos1, &lemma))
+	t1.SetStartPos(0)
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 2, "msg")
+	m.SetSuggestedReplacements([]string{"keep"})
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "VB", "postagSelect": "VB",
+	}, []*languagetool.AnalyzedTokenReadings{t1}, nil)
+	require.Equal(t, m, out)
+	require.Equal(t, []string{"keep"}, out.GetSuggestedReplacements())
+}
+
+func TestAbstractAdvancedSynthesizerFilter_UnderscoreNewLemmaBaseDrops(t *testing.T) {
+	// Java base getNewLemma returns null → Accept returns null.
+	f := &AbstractAdvancedSynthesizerFilter{
+		Synthesize: func(lemma, postag string) []string {
+			return []string{"should-not-run"}
+		},
+	}
+	lemma := "go"
+	pos1 := "VB"
+	t1 := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("go", &pos1, &lemma))
+	t1.SetStartPos(0)
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 1, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"lemmaFrom": "1", "postagFrom": "1", "lemmaSelect": "VB", "postagSelect": "VB",
+		"newLemma": "_verb",
+	}, []*languagetool.AnalyzedTokenReadings{t1}, nil)
+	require.Nil(t, out)
+}
