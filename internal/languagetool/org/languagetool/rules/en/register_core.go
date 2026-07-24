@@ -234,7 +234,8 @@ func RegisterEnglishVariantExtraRules(lt *languagetool.JLanguageTool) {
 		imU := NewUnitConversionRuleImperial(nil)
 		lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
 	case strings.Contains(code, "nz"):
-		nz := NewNewZealandReplaceRule(nil)
+		// Java NewZealandEnglish: new NewZealandReplaceRule(messages, "/en/en-NZ/replace.txt")
+		nz := NewNewZealandReplaceRule(nil, NewZealandReplaceFilePath)
 		lt.AddRuleChecker(nz.GetID(), rules.AsSentenceCheckerSimple(nz.Match))
 		imU := NewUnitConversionRuleImperial(nil)
 		lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
