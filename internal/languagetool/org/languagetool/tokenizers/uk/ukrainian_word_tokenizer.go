@@ -104,7 +104,10 @@ var (
 	abbrNonEnding2 = regexp.MustCompile(`([^а-яіїєґА-ЯІЇЄҐ'-]м\.)([` + javaHVClass + `]*[А-ЯІЇЄҐ])`)
 
 	abbrNar1 = regexp.MustCompile(`(([0-9]|рік|[рp]\.|[-–—])[` + javaHVClass + `]+нар)\.`)
-	abbrNar2 = regexp.MustCompile(`(^|[^а-яіїєґА-ЯІЇЄҐ'])(нар)\.([` + javaHVClass + `]+[0-9а-яіїєґ])`)
+	// Java ABBR_DOT_NAR_PATTERN_2: \b(нар)\.([\h\v]+[0-9а-яіїєґ]) with UNICODE_CHARACTER_CLASS.
+	// RE2 has no Unicode \b — mirror abbrDotDash: BOS or previous char is not (letter|digit|_).
+	// Java groups $1=нар $2=rest; Go $1=boundary $2=нар $3=rest → re-emit $1$2.\uE120\uE110$3.
+	abbrNar2 = regexp.MustCompile(`(?:^|([^_\p{L}\p{N}]))(нар)\.([` + javaHVClass + `]+[0-9а-яіїєґ])`)
 
 	// ending abbreviations: Java case-sensitive; р|рр|РР (not case-fold of р).
 	// Java: ([^letter-](abbr))\. (?!\uE120) — left boundary char required (no BOS alone).
