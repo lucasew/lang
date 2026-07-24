@@ -232,7 +232,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-SuggestionsOrdererConfig | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/SuggestionsOrdererConfig.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config_test.go | ed961fc7b2684f60b856b1c7dcf96b18729e010d | 0 | 0 |  |  | 2026-07-24T07:55:24Z |
 | docs/faithful-port-checklist.md#3.C.2-CommonFileTypes | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CommonFileTypes.java | internal/languagetool/org/languagetool/rules/spelling/common_file_types.go; internal/languagetool/org/languagetool/rules/spelling/common_file_types_test.go | c43e5171766e6a272d60171a7817a4cb7255baac | 0 | 0 |  |  | 2026-07-24T08:06:27Z |
 | docs/faithful-port-checklist.md#3.C.2-CachingWordListLoader | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CachingWordListLoader.java | internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader.go; internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader_test.go | e88cdde6398af1ea6876165c74e4f3c696f02fc7 | 0 | 0 |  |  | 2026-07-24T08:16:28Z |
-| docs/faithful-port-checklist.md#3.C.2-ForeignLanguageChecker | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/ForeignLanguageChecker.java | internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker.go; internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker_test.go | 791b5a69a77a5cf239d9f407e9a140eb9b96cbec | 0 | 0 |  |  | 2026-07-24T08:23:29Z |
+| docs/faithful-port-checklist.md#3.C.2-ForeignLanguageChecker | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/ForeignLanguageChecker.java | internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker.go; internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker_test.go | 791b5a69a77a5cf239d9f407e9a140eb9b96cbec | 0 | 0 |  |  | 2026-07-24T08:30:36Z |
 
 ## Human inbox
 
@@ -242,7 +242,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-ForeignLanguageChecker @ 791b5a69 (LanguageIdentifierService.Scores; invent Detect removed). FR/zh blocked. |
+| Notes | last ACCEPT 3.C.2-ForeignLanguageChecker @ 791b5a69 (LanguageIdentifierService.Scores). FR/zh blocked. Next: more 3.C.2 spelling leaves. |
 
 ---
 
@@ -990,3 +990,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T08:16:28Z ACCEPT: 3.C.2-CachingWordListLoader @ e88cdde6 (validator + parent green reconfirm)
 - 2026-07-24T08:19:27Z implement: 3.C.2-ForeignLanguageChecker (faithful check() via LanguageIdentifierService; delete Detect invent)
 - 2026-07-24T08:23:29Z ready: 3.C.2-ForeignLanguageChecker @ 791b5a69 (implementer report; parent green reconfirm)
+- 2026-07-24T08:28:46Z validating: 3.C.2-ForeignLanguageChecker @ 791b5a69 (strict invent re-audit vs Java ForeignLanguageChecker)
+- 2026-07-24T08:30:36Z ACCEPT: 3.C.2-ForeignLanguageChecker @ 791b5a69 (validator + parent green reconfirm)

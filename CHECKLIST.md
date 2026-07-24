@@ -455,7 +455,7 @@
 - [ ] org/languagetool/rules/patterns/bitext/FalseFriendsAsBitextLoader.java::FalseFriendsAsBitextLoader
 - [x] org/languagetool/rules/spelling/CachingWordListLoader.java::CachingWordListLoader
 - [x] org/languagetool/rules/spelling/CommonFileTypes.java::CommonFileTypes
-- [ ] org/languagetool/rules/spelling/ForeignLanguageChecker.java::ForeignLanguageChecker
+- [x] org/languagetool/rules/spelling/ForeignLanguageChecker.java::ForeignLanguageChecker
 - [x] org/languagetool/rules/spelling/RuleWithLanguage.java::RuleWithLanguage
 - [ ] org/languagetool/rules/spelling/SpellingCheckRule.java::SpellingCheckRule
 - [ ] org/languagetool/rules/spelling/SymSpellRule.java::SymSpellRule
