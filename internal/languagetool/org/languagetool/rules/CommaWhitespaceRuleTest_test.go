@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,9 +31,12 @@ func commaRule() *CommaWhitespaceRule {
 // demoLT ports new JLanguageTool(TestTools.getDemoLanguage()) with Language base
 // ignoredCharactersRegex = [\u00AD] (soft hyphen). GermanIgnoredCharactersRegex is
 // the same pattern (Demo does not override getIgnoredCharactersRegex).
+// SentenceTokenizer: Demo inherits Language.createDefaultSentenceTokenizer →
+// SimpleSentenceTokenizer (segment-simple.srx), not full segment.srx for "xx".
 func demoLT() *languagetool.JLanguageTool {
 	lt := languagetool.NewJLanguageTool("xx")
 	lt.IgnoredCharacters = languagetool.GermanIgnoredCharactersRegex
+	lt.SentenceTokenizer = tokenizers.NewSimpleSentenceTokenizer()
 	return lt
 }
 

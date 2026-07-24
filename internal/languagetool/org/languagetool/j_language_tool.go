@@ -323,6 +323,11 @@ type JLanguageTool struct {
 	// IgnoredCharacters ports Language.getIgnoredCharactersRegex (applied per word token
 	// after tokenize, Java replaceSoftHyphens). Nil = no strip. German uses [\u00AD].
 	IgnoredCharacters *regexp.Regexp
+	// SentenceTokenizer ports Language.getSentenceTokenizer() used by sentenceTokenize.
+	// Nil → SRXSentenceTokenizer(LanguageCode) (typical language modules).
+	// Demo (Language.createDefaultSentenceTokenizer) uses SimpleSentenceTokenizer;
+	// demoLT() sets that explicitly.
+	SentenceTokenizer tokenizers.SentenceTokenizer
 	// Cache ports JLanguageTool ResultCache for getAnalyzedSentence (SimpleInputSentence keys).
 	// Nil = caching disabled (Java null cache).
 	Cache *ResultCache
@@ -866,13 +871,20 @@ func (lt *JLanguageTool) GetUnknownWords() []string {
 }
 
 // SentenceTokenize ports JLanguageTool.sentenceTokenize:
-// language.getSentenceTokenizer().tokenize(text) (SRX).
+// language.getSentenceTokenizer().tokenize(text).
+// When SentenceTokenizer is set (e.g. Demo → SimpleSentenceTokenizer), use it;
+// otherwise SRXSentenceTokenizer(LanguageCode) like language-module overrides.
 func (lt *JLanguageTool) SentenceTokenize(text string) []string {
-	lang := "en"
-	if lt != nil && lt.LanguageCode != "" {
-		lang = lt.LanguageCode
+	var parts []string
+	if lt != nil && lt.SentenceTokenizer != nil {
+		parts = lt.SentenceTokenizer.Tokenize(text)
+	} else {
+		lang := "en"
+		if lt != nil && lt.LanguageCode != "" {
+			lang = lt.LanguageCode
+		}
+		parts = tokenizers.NewSRXSentenceTokenizer(lang).Tokenize(text)
 	}
-	parts := tokenizers.NewSRXSentenceTokenizer(lang).Tokenize(text)
 	if len(parts) == 0 && text != "" {
 		return []string{text}
 	}
