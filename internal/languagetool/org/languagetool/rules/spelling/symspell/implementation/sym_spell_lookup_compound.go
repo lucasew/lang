@@ -82,14 +82,14 @@ func (s *SymSpell) lookupCompoundMax(input string, maxEditDistance int) []Sugges
 						continue
 					}
 					// suggestion top = split_1 suggestion top
-					if len(suggestions) > 0 && suggestions[0].EqualTerm(suggestions1[0]) {
+					if len(suggestions) > 0 && suggestions[0].Equals(suggestions1[0]) {
 						continue
 					}
 					suggestions2 := s.LookupMax(part2, VerbosityTop, maxEditDistance)
 					if len(suggestions2) == 0 {
 						continue
 					}
-					if len(suggestions) > 0 && suggestions[0].EqualTerm(suggestions2[0]) {
+					if len(suggestions) > 0 && suggestions[0].Equals(suggestions2[0]) {
 						continue
 					}
 					// select best suggestion for split pair

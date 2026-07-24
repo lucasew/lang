@@ -57,3 +57,13 @@ func javaIndexOfChar(s string, ch uint16) int {
 	}
 	return -1
 }
+
+// javaStringHashCode ports Java String.hashCode():
+// s[0]*31^(n-1) + s[1]*31^(n-2) + ... over UTF-16 code units, 32-bit int overflow.
+func javaStringHashCode(s string) int {
+	var h int32
+	for _, cu := range javaChars(s) {
+		h = 31*h + int32(cu)
+	}
+	return int(h)
+}
