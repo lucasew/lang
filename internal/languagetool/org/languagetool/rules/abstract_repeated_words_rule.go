@@ -5,7 +5,6 @@ import (
 	"io"
 	"regexp"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -201,14 +200,6 @@ func LoadSynonymsWords(reader io.Reader) (map[string]*SynonymsData, error) {
 	return out, sc.Err()
 }
 
-func isCapitalizedWord(s string) bool {
-	rs := []rune(s)
-	if len(rs) < 2 {
-		return false
-	}
-	return unicode.IsUpper(rs[0]) && unicode.IsLower(rs[1])
-}
-
 // MatchList ports AbstractRepeatedWordsRule.match.
 func (r *AbstractRepeatedWordsRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	var matches []*RuleMatch
@@ -238,7 +229,10 @@ func (r *AbstractRepeatedWordsRule) MatchList(sentences []*languagetool.Analyzed
 		}
 		sentStart := true
 		lemmasInSentence := map[string]bool{}
-		for i, atrs := range tokens {
+		// Java: i starts at -1 and increments only for non-immunized tokens
+		// (immunized continue skips i++ — bug-for-bug with AbstractRepeatedWordsRule).
+		i := -1
+		for _, atrs := range tokens {
 			if atrs.IsImmunized() {
 				continue
 			}
@@ -246,13 +240,16 @@ func (r *AbstractRepeatedWordsRule) MatchList(sentences []*languagetool.Analyzed
 			if token != "" {
 				wordNumber++
 			}
-			isCap := isCapitalizedWord(token)
+			// Java StringTools.isCapitalizedWord / isAllUppercase
+			isCap := tools.IsCapitalizedWord(token)
 			isAllUpper := tools.IsAllUppercase(token)
+			i++
 			isException := token == ""
 			if r.IsException != nil {
 				isException = isException || r.IsException(tokens, i, sentStart, isCap, isAllUpper)
 			}
-			if sentStart && token != "" && !isPunctOnly(token) {
+			// Java: PUNCT_PATTERN = \p{P} with String.matches (full token = one punct char)
+			if sentStart && token != "" && !javaPunctToken(token) {
 				sentStart = false
 			}
 			if isException {
@@ -362,11 +359,10 @@ func javaStringMatches(regex, s string) bool {
 	return re.MatchString(s)
 }
 
-func isPunctOnly(s string) bool {
-	for _, r := range s {
-		if !unicode.IsPunct(r) {
-			return false
-		}
-	}
-	return s != ""
+// javaPunctToken ports AbstractRepeatedWordsRule PUNCT_PATTERN (\p{P}) String.matches:
+// true only when the entire token is a single Unicode punctuation character.
+var javaPunctPattern = regexp.MustCompile(`^\p{P}$`)
+
+func javaPunctToken(s string) bool {
+	return javaPunctPattern.MatchString(s)
 }
