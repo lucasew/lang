@@ -68,9 +68,11 @@ func parseENUnitNumber(s string) (float64, error) {
 }
 
 // formatENUnitNumber ports NumberFormat.getNumberInstance(Locale.ENGLISH)
-// with maximumFractionDigits=2, RoundingMode.HALF_UP (min fraction digits 0).
+// with maximumFractionDigits=2, RoundingMode.HALF_UP, minimumFractionDigits=0
+// (trailing zeros stripped — e.g. 1.704… → "1.7", not "1.70").
 // Grouping separators are omitted — Java enables them, but unit suggestions in
 // the EN test matrix only assert decimal forms like "1.83 m" / "4.54 t".
+// Locale.UK (Imperial) uses the same min/max/rounding for these values.
 func formatENUnitNumber(v float64) string {
 	sign := ""
 	if v < 0 {
@@ -82,7 +84,10 @@ func formatENUnitNumber(v float64) string {
 	if math.Abs(scaled-math.Round(scaled)) < 1e-9 {
 		return sign + strconv.FormatInt(int64(math.Round(scaled)), 10)
 	}
-	return sign + fmt.Sprintf("%.2f", scaled)
+	s := fmt.Sprintf("%.2f", scaled)
+	s = strings.TrimRight(s, "0")
+	s = strings.TrimRight(s, ".")
+	return sign + s
 }
 
 func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
@@ -145,8 +150,8 @@ func registerENImperialUnits(base *rules.AbstractUnitConversionRule) {
 	base.AddUnit(`met(?:re|er)s?`, rules.UnitMetre, "metres", 1, true)
 	base.AddUnit(`decimet(?:re|er)s?`, rules.UnitMetre, "decimetres", 1e-1, false)
 	base.AddUnit(`centimet(?:re|er)s?`, rules.UnitMetre, "centimetres", 1e-2, true)
-	// Java symbol for mm is "micrometres" (upstream typo); keep millimetres spelling for factor 1e-3
-	base.AddUnit(`millimet(?:re|er)s?`, rules.UnitMetre, "millimetres", 1e-3, true)
+	// Java UnitConversionRuleImperial: symbol "micrometres" for millimet (upstream typo); keep bug-for-bug.
+	base.AddUnit(`millimet(?:re|er)s?`, rules.UnitMetre, "micrometres", 1e-3, true)
 	base.AddUnit(`micromet(?:re|er)s?`, rules.UnitMetre, "micrometres", 1e-6, true)
 	base.AddUnit(`nanomet(?:re|er)s?`, rules.UnitMetre, "nanometres", 1e-9, true)
 
