@@ -111,11 +111,12 @@ func (r *AbstractSpaceBeforeRule) Match(sentence *languagetool.AnalyzedSentence)
 	tokens := sentence.GetTokens()
 	msg := r.getSuggestion()
 	short := r.getShort()
-	conj := r.getConjunctions()
+	// Compile Java matches()-form once per sentence (pattern is stable on the rule).
+	conj := javaMatchesAnchored(r.getConjunctions())
 	for i := 1; i < len(tokens); i++ {
 		token := tokens[i].GetToken()
 		// Java: Matcher.matches() — entire token region, not find()/substring.
-		if !javaMatcherMatches(conj, token) {
+		if conj == nil || !conj.MatchString(token) {
 			continue
 		}
 		previousToken := tokens[i-1].GetToken()
@@ -134,12 +135,29 @@ func (r *AbstractSpaceBeforeRule) Match(sentence *languagetool.AnalyzedSentence)
 	return ruleMatches
 }
 
-// javaMatcherMatches ports Java Matcher.matches(): the entire input must match the pattern.
-// Go regexp.MatchString is unanchored (substring); this is full-region like Java.
-func javaMatcherMatches(re *regexp.Regexp, s string) bool {
+// javaMatchesAnchored returns a regexp equivalent to Java Matcher.matches() on re:
+// the entire input region must match the pattern body.
+//
+// RE2 is leftmost-first: FindStringIndex + checking full span is NOT equivalent to
+// Java matches() for shorter-left alternations (e.g. a|ab on "ab", or FA
+// چون|چونکه on "چونکه") — the short left alt binds and the span check fails while
+// Java backtracking/alt retry still succeeds on the longer alt.
+// Wrapping as \A(?:pattern)\z forces full-region match (same as compileJavaMatches).
+//
+// re may already be ^…$ / \A…\z (FA/KM Go currently store that); re-wrapping is safe.
+func javaMatchesAnchored(re *regexp.Regexp) *regexp.Regexp {
 	if re == nil {
+		return nil
+	}
+	return regexp.MustCompile(`\A(?:` + re.String() + `)\z`)
+}
+
+// javaMatcherMatches ports Java Matcher.matches(): the entire input must match the pattern.
+// Go regexp.MatchString is unanchored find (≈ Matcher.find()); this is full-region like Java.
+func javaMatcherMatches(re *regexp.Regexp, s string) bool {
+	full := javaMatchesAnchored(re)
+	if full == nil {
 		return false
 	}
-	loc := re.FindStringIndex(s)
-	return loc != nil && loc[0] == 0 && loc[1] == len(s)
+	return full.MatchString(s)
 }

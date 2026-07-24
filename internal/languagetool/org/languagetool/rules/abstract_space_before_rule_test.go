@@ -162,3 +162,70 @@ func TestJavaMatcherMatches_FullStringOnly(t *testing.T) {
 	require.True(t, javaMatcherMatches(re2, "به"))
 	require.False(t, javaMatcherMatches(re2, "xبه"))
 }
+
+// Java Matcher.matches() is full-region with Java regex alt/backtracking semantics.
+// RE2 leftmost-first + FindStringIndex full-span is wrong for shorter-left alts.
+func TestJavaMatcherMatches_ShorterLeftAlternation(t *testing.T) {
+	// a|ab on "ab": Java matches() true (longer alt); old FindStringIndex span false.
+	re := regexp.MustCompile(`a|ab`)
+	require.True(t, javaMatcherMatches(re, "a"))
+	require.True(t, javaMatcherMatches(re, "ab"), "Java matches() succeeds via longer alt ab")
+	require.False(t, javaMatcherMatches(re, "abc"))
+	require.False(t, javaMatcherMatches(re, "xa"))
+
+	// FA-style unanchored body (Java PersianSpaceBeforeRule Pattern.compile):
+	// "و|به|با|تا|زیرا|چون|بنابراین|چونکه" — چون before چونکه.
+	faBody := regexp.MustCompile(`و|به|با|تا|زیرا|چون|بنابراین|چونکه`)
+	require.True(t, javaMatcherMatches(faBody, "چون"))
+	require.True(t, javaMatcherMatches(faBody, "چونکه"),
+		"Java matches() on FA CONJUNCTIONS must accept چونکه despite shorter-left چون")
+	require.True(t, javaMatcherMatches(faBody, "به"))
+	require.False(t, javaMatcherMatches(faBody, "چونکex"))
+	require.False(t, javaMatcherMatches(faBody, "xچونکه"))
+
+	// Minimal FA-style prefix pair
+	faPrefix := regexp.MustCompile(`چون|چونکه`)
+	require.True(t, javaMatcherMatches(faPrefix, "چونکه"))
+	require.True(t, javaMatcherMatches(faPrefix, "چون"))
+	require.False(t, javaMatcherMatches(faPrefix, "چونک"))
+}
+
+func TestAbstractSpaceBeforeRule_ShorterLeftAltYieldsMatch(t *testing.T) {
+	// Unanchored a|ab like Java Pattern.compile; Match uses Matcher.matches().
+	base := &AbstractSpaceBeforeRule{
+		Conjunctions: regexp.MustCompile(`a|ab`),
+	}
+	InitSpaceBeforeMeta(base, nil)
+	// token "ab" at start: prev SENT_START "" → missing-space RuleMatch
+	ms := base.Match(languagetool.AnalyzePlain("ab x"))
+	require.Len(t, ms, 1)
+	require.Equal(t, 0, ms[0].GetFromPos())
+	require.Equal(t, 2, ms[0].GetToPos())
+	require.Equal(t, []string{" ab"}, ms[0].GetSuggestedReplacements())
+
+	// FA-style: چونکه must fire missing-space path
+	fa := &AbstractSpaceBeforeRule{
+		Conjunctions: regexp.MustCompile(`چون|چونکه`),
+	}
+	InitSpaceBeforeMeta(fa, nil)
+	// Manual sentence: SENT_START + "چونکه" (no space before)
+	tok := "چونکه"
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", nil, nil)),
+		languagetool.NewAnalyzedTokenReadingsAt(
+			languagetool.NewAnalyzedToken(tok, nil, nil), 0),
+	})
+	sent.GetTokens()[0].SetStartPos(0)
+	ms = fa.Match(sent)
+	require.Len(t, ms, 1, "FA-style چون|چونکه must match token چونکه and yield RuleMatch")
+	require.Equal(t, 0, ms[0].GetFromPos())
+	require.Equal(t, utf16Len(tok), ms[0].GetToPos())
+	require.Equal(t, []string{" " + tok}, ms[0].GetSuggestedReplacements())
+
+	// Still no match for partials under matches()
+	require.Empty(t, base.Match(languagetool.AnalyzePlain("band"))) // a|ab does not full-match "band"
+	partial := &AbstractSpaceBeforeRule{Conjunctions: regexp.MustCompile(`and|or`)}
+	InitSpaceBeforeMeta(partial, nil)
+	require.Empty(t, partial.Match(languagetool.AnalyzePlain("band")))
+	require.Empty(t, partial.Match(languagetool.AnalyzePlain("andx")))
+}
