@@ -227,7 +227,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-NewLineMatchFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/NewLineMatchFilter.java; inspiration/languagetool/languagetool-standalone/src/test/java/org/languagetool/rules/NewLineFilterTest.java | internal/languagetool/org/languagetool/rules/ | e42f080f9b5c0676037d27a869768024e8a39dac | 0 | 0 |  |  | 2026-07-24T06:55:36Z |
 | docs/faithful-port-checklist.md#3.C.2-MorfologikSpeller-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | 89d912c474ae86d7c9c38d6dee942201fd684fc6 | 0 | 0 |  |  | 2026-07-24T07:10:54Z |
 | docs/faithful-port-checklist.md#3.C.2-MorfologikMultiSpeller-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test2.txt | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | f63c5be135d54cbfb9000f3a1db6615fa61ffb77 | 0 | 0 |  |  | 2026-07-24T07:22:39Z |
-| docs/faithful-port-checklist.md#3.C.2-DetailedDamerauLevenstheinDistance-core-test | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistanceTest.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/ | 969f72941f54792e9f01f31e6d84a58ed7f5a054 | 0 | 0 |  |  | 2026-07-24T07:31:34Z |
+| docs/faithful-port-checklist.md#3.C.2-DetailedDamerauLevenstheinDistance-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistanceTest.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/ | 969f72941f54792e9f01f31e6d84a58ed7f5a054 | 0 | 0 |  |  | 2026-07-24T07:37:10Z |
 
 ## Human inbox
 
@@ -237,7 +237,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-DetailedDamerauLevenstheinDistance-core-test @ 969f7294 (UTF-16 Compare; JVM matrix incl. Test→Tts delete+replace). FR/zh blocked. |
+| Notes | ACCEPT 3.C.2-DetailedDamerauLevenstheinDistance-core-test @ 969f7294 (UTF-16 Compare; JVM Distance matrix). FR/zh blocked. Next: next 3.C.2 leaf. |
 
 ---
 
@@ -965,3 +965,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T07:22:39Z ACCEPT: 3.C.2-MorfologikMultiSpeller-core-test @ f63c5be1 (validator + parent green reconfirm)
 - 2026-07-24T07:25:17Z implement: 3.C.2-DetailedDamerauLevenstheinDistance-core-test (full Distance/compare twin; Java testDistanceDetails matrix even if @Ignore)
 - 2026-07-24T07:31:34Z ready: 3.C.2-DetailedDamerauLevenstheinDistance-core-test @ 969f7294 (implementer report; parent green reconfirm)
+- 2026-07-24T07:33:49Z validating: 3.C.2-DetailedDamerauLevenstheinDistance-core-test @ 969f7294 (strict invent re-audit vs Java DetailedDamerauLevenstheinDistance)
+- 2026-07-24T07:37:10Z ACCEPT: 3.C.2-DetailedDamerauLevenstheinDistance-core-test @ 969f7294 (validator + parent green reconfirm)
