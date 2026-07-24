@@ -225,7 +225,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-ConvertToSentenceCaseFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ConvertToSentenceCaseFilter.java | internal/languagetool/org/languagetool/rules/ | 4d0f7ebfc4c89852545f344433eebe9cf8280f1d | 0 | 0 |  |  | 2026-07-24T06:30:43Z |
 | docs/faithful-port-checklist.md#3.C.1-UnderlineSpacesFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/UnderlineSpacesFilter.java | internal/languagetool/org/languagetool/rules/ | cee9482ea65720c881a70e855f6ebfd856199174 | 0 | 0 |  |  | 2026-07-24T06:45:42Z |
 | docs/faithful-port-checklist.md#3.C.1-NewLineMatchFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/NewLineMatchFilter.java; inspiration/languagetool/languagetool-standalone/src/test/java/org/languagetool/rules/NewLineFilterTest.java | internal/languagetool/org/languagetool/rules/ | e42f080f9b5c0676037d27a869768024e8a39dac | 0 | 0 |  |  | 2026-07-24T06:55:36Z |
-| docs/faithful-port-checklist.md#3.C.2-MorfologikSpeller-core-test | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | 89d912c474ae86d7c9c38d6dee942201fd684fc6 | 0 | 0 |  |  | 2026-07-24T07:05:35Z |
+| docs/faithful-port-checklist.md#3.C.2-MorfologikSpeller-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | 89d912c474ae86d7c9c38d6dee942201fd684fc6 | 0 | 0 |  |  | 2026-07-24T07:10:54Z |
 
 ## Human inbox
 
@@ -235,7 +235,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-MorfologikSpeller-core-test @ 89d912c4 (official test.dict; map invent deleted; parent green). FR/zh blocked. |
+| Notes | ACCEPT 3.C.2-MorfologikSpeller-core-test @ 89d912c4. FR/zh blocked. |
 
 ---
 
@@ -955,3 +955,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T06:55:36Z ACCEPT: 3.C.1-NewLineMatchFilter @ e42f080f (validator + parent green reconfirm)
 - 2026-07-24T07:00:22Z implement: 3.C.2-MorfologikSpeller-core-test (MorfologikSpellerTest full outcome twin; official xx/spelling/test.dict)
 - 2026-07-24T07:05:35Z ready: 3.C.2-MorfologikSpeller-core-test @ 89d912c4 (implementer report; parent green reconfirm)
+- 2026-07-24T07:08:41Z validating: 3.C.2-MorfologikSpeller-core-test @ 89d912c4 (strict invent re-audit vs Java MorfologikSpeller + official test.dict)
+- 2026-07-24T07:10:54Z ACCEPT: 3.C.2-MorfologikSpeller-core-test @ 89d912c4 (validator + parent green reconfirm)
