@@ -296,6 +296,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.C.3-SpellingCheckRuleTest | accepted | inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/SpellingCheckRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/MorfologikAmericanSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/AbstractEnglishSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/ignore.txt; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/multiwords.txt | internal/languagetool/org/languagetool/rules/en/SpellingCheckRuleTest_test.go; internal/languagetool/org/languagetool/rules/en/abstract_english_speller_rule.go | 62b1fd37adb3ee09ffcab29ef896ec77c299c666 | 0 | 0 | | | 2026-07-24T23:38:31Z |
 | docs/faithful-port-checklist.md#3.C.3-WordRepeatRuleTest | accepted | inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/WordRepeatRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/en/WordRepeatRuleTest_test.go | 39391466135b75c87758b80950c397b2436de5f1 | 0 | 0 | | | 2026-07-24T23:50:01Z |
+| docs/faithful-port-checklist.md#3.C.4-EnglishForL2SpeakersFalseFriendRuleTest | implementing | inspiration/languagetool/languagetool-standalone/src/test/java/org/languagetool/rules/en/EnglishForL2SpeakersFalseFriendRuleTest.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/EnglishForFrenchFalseFriendRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/EnglishForL2SpeakersFalseFriendRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/confusion_sets_l2_fr.txt; inspiration/languagetool/languagetool-core/src/main/resources/org/languagetool/rules/false-friends.xml | internal/languagetool/org/languagetool/rules/en/EnglishForL2SpeakersFalseFriendRuleTest_test.go; internal/languagetool/org/languagetool/rules/en/english_for_l2_speakers_false_friend_rule.go; internal/languagetool/org/languagetool/rules/en/english_for_french_false_friend_rule.go | | 0 | 0 | | | 2026-07-24T23:54:26Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -304,7 +305,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-WordRepeatRuleTest @ 39391466. Next EN leaf e.g. UppercaseSentenceStart EN, ConfusionProbability, UpperCaseNgram, LanguageSpecificSpellchecker|
+| Notes | implementing 3.C.4-EnglishForL2SpeakersFalseFriendRuleTest (official confusion_sets_l2_fr + false-friends.xml; FakeLanguageModel twin)|
 
 ---
 
@@ -1313,3 +1314,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T23:46:22Z ready: 3.C.3-WordRepeatRuleTest @ 39391466 (implementer report; parent green reconfirm TestWordRepeatRule_)
 - 2026-07-24T23:48:46Z validating: 3.C.3-WordRepeatRuleTest @ 39391466 (strict invent re-audit vs Java WordRepeatRuleTest + core WordRepeatRule)
 - 2026-07-24T23:50:01Z ACCEPT: 3.C.3-WordRepeatRuleTest @ 39391466 (validator + parent green reconfirm TestWordRepeatRule_)
+- 2026-07-24T23:54:26Z implement: 3.C.4-EnglishForL2SpeakersFalseFriendRuleTest (EnglishForFrenchFalseFriendRule + L2 FF testRule twin; official l2_fr + false-friends.xml)
