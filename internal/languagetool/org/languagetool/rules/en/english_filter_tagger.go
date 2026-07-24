@@ -52,6 +52,8 @@ func WireEnglishFilterTagger(dictPath string) bool {
 	})
 	// Java EnglishWordTokenizer → EnglishTagger.INSTANCE for hyphen/apostrophe keep.
 	wireEnglishTokenizerIsTagged(tw)
+	// Java FindSuggestionsFilter: MorfologikSpeller("/en/english.dict") — same resource.
+	_ = WireEnglishFindSuggestionsSpeller(dictPath)
 	return true
 }
 
@@ -82,11 +84,13 @@ func filterTagWordToATR(word string, tw func(string) []languagetool.TokenTag) *l
 }
 
 // ClearEnglishFilterTagger clears the process-wide filter tagger (tests).
-// Also clears the filter disambiguator so PartialPosTagFilter probes fail-closed.
+// Also clears the filter disambiguator so PartialPosTagFilter probes fail-closed,
+// and the FindSuggestions /en/english.dict speller (wired with the same path).
 func ClearEnglishFilterTagger() {
 	filterTagMu.Lock()
 	filterTagWord = nil
 	filterTagMu.Unlock()
+	ClearEnglishFindSuggestionsSpeller()
 	ClearEnglishFilterDisambiguator()
 	rules.SetDefaultEnglishWordTagger(nil)
 	rules.SetDefaultCheckPostagsTagger(nil)
