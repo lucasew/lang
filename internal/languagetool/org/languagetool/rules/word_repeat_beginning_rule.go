@@ -6,19 +6,34 @@ import (
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // WordRepeatBeginningRule ports org.languagetool.rules.WordRepeatBeginningRule.
-// Java ctor: setCategory(REPETITIONS_STYLE), setLocQualityIssueType(Style).
+//
+// TextLevelRule; category REPETITIONS_STYLE; ITSIssueType Style; minToCheckParagraph=2.
+// Default isAdverb/isSentenceException false; getSuggestions empty.
+// isException list: : – - ✔️ ➡️ — ⭐️ ⚠️
+//
+// Match loop (Java bug-for-bug):
+//   - isSentenceException → prevSentence=null; continue (skips lastToken/beforeLastToken/pos updates)
+//   - tokens = getTokensWithoutWhitespace(); if length>1: token = tokens[1]
+//   - if length>3 and isWord and lastToken==token and !isException(token/tokens[2]/tokens[3])
+//     and prevSentence!=null and prevSentence.getText().trim().matches(".+[.?!]$"):
+//       adverb → shortMsg adv; else if beforeLastToken==token → shortMsg word; else ""
+//       if shortMsg non-empty: match on current token span; suggestions from getSuggestions
+//   - beforeLastToken=lastToken; lastToken=token; pos+=getCorrectedTextLength(); prevSentence=sentence
+//
+// Adverb match fires on SECOND consecutive; word match needs THREE (beforeLastToken).
 type WordRepeatBeginningRule struct {
 	Messages map[string]string
 	// Category ports Rule.category (Java REPETITIONS_STYLE).
 	Category *Category
 	// IssueType ports getLocQualityIssueType (Java Style).
 	IssueType ITSIssueType
-	// Hooks for language subclasses (EnglishWordRepeatBeginningRule).
+	// Hooks for language subclasses (e.g. EnglishWordRepeatBeginningRule).
 	IsAdverbFn          func(token *languagetool.AnalyzedTokenReadings) bool
-	// IsAdverbAtFn optional context-aware adverb check (e.g. "Sin embargo").
+	// IsAdverbAtFn optional context-aware adverb check (language modules).
 	IsAdverbAtFn        func(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
 	IsExceptionFn       func(token string) bool
 	IsSentenceException func(sentence *languagetool.AnalyzedSentence) bool
@@ -104,6 +119,7 @@ func (r *WordRepeatBeginningRule) MinToCheckParagraph() int { return 2 }
 // EstimateContextForSureMatch ports TextLevelRule (Java always -1).
 func (r *WordRepeatBeginningRule) EstimateContextForSureMatch() int { return -1 }
 
+// isAdverb ports WordRepeatBeginningRule.isAdverb (default false; subclasses override via IsAdverbFn).
 func (r *WordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenReadings) bool {
 	if r.IsAdverbFn != nil {
 		return r.IsAdverbFn(token)
@@ -111,6 +127,8 @@ func (r *WordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenRead
 	return false
 }
 
+// isAdverbAt is a language-module hook (defaults to isAdverb on tokens[i]).
+// Java core only calls isAdverb(analyzedToken); this preserves multi-token subclasses.
 func (r *WordRepeatBeginningRule) isAdverbAt(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	if r.IsAdverbAtFn != nil {
 		return r.IsAdverbAtFn(tokens, i)
@@ -121,6 +139,8 @@ func (r *WordRepeatBeginningRule) isAdverbAt(tokens []*languagetool.AnalyzedToke
 	return false
 }
 
+// isException ports WordRepeatBeginningRule.isException.
+// Subclass IsExceptionFn is OR'd with the base list (Java subclasses call super.isException).
 func (r *WordRepeatBeginningRule) isException(token string) bool {
 	if r.IsExceptionFn != nil && r.IsExceptionFn(token) {
 		return true
@@ -132,6 +152,7 @@ func (r *WordRepeatBeginningRule) isException(token string) bool {
 	return false
 }
 
+// isSentenceException ports WordRepeatBeginningRule.isSentenceException (default false).
 func (r *WordRepeatBeginningRule) isSentenceException(sentence *languagetool.AnalyzedSentence) bool {
 	if r.IsSentenceException != nil {
 		return r.IsSentenceException(sentence)
@@ -139,6 +160,7 @@ func (r *WordRepeatBeginningRule) isSentenceException(sentence *languagetool.Ana
 	return false
 }
 
+// getSuggestions ports WordRepeatBeginningRule.getSuggestions (default empty).
 func (r *WordRepeatBeginningRule) getSuggestions(token *languagetool.AnalyzedTokenReadings) []string {
 	if r.GetSuggestionsFn != nil {
 		return r.GetSuggestionsFn(token)
@@ -146,6 +168,7 @@ func (r *WordRepeatBeginningRule) getSuggestions(token *languagetool.AnalyzedTok
 	return nil
 }
 
+// endsSentenceRE ports Java prevSentence.getText().trim().matches(".+[.?!]$").
 var endsSentenceRE = regexp.MustCompile(`.+[.?!]$`)
 
 // MatchList ports match(List<AnalyzedSentence>).
@@ -156,11 +179,10 @@ func (r *WordRepeatBeginningRule) MatchList(sentences []*languagetool.AnalyzedSe
 	pos := 0
 	var prevSentence *languagetool.AnalyzedSentence
 	for _, sentence := range sentences {
+		// Java: if (isSentenceException(sentence)) { prevSentence = null; continue; }
+		// continue skips token/lastToken/beforeLastToken/pos updates entirely.
 		if r.isSentenceException(sentence) {
 			prevSentence = nil
-			// still advance pos? Java continues without updating lastToken... actually continue after prevSentence=null, still falls through to update? 
-			// Java: continue skips the rest of the loop body including beforeLastToken/lastToken/pos updates!
-			// So sentence exceptions skip length accumulation too - unusual. Follow Java.
 			continue
 		}
 		tokens := sentence.GetTokensWithoutWhitespace()
@@ -169,10 +191,11 @@ func (r *WordRepeatBeginningRule) MatchList(sentences []*languagetool.AnalyzedSe
 			analyzedToken := tokens[1]
 			token = analyzedToken.GetToken()
 			if len(tokens) > 3 {
-				// Java: token.length()==1 && !Character.isLetter(charAt(0)) → not a word
+				// avoid "..." etc. to be matched:
+				// Java: isWord = !(token.length()==1 && !Character.isLetter(charAt(0)))
 				// length/charAt are UTF-16 units (BMP letter = 1 unit; emoji = 2 → stays a word).
 				isWord := true
-				if utf16LenStr(token) == 1 {
+				if javaStringLen(token) == 1 {
 					u := utf16.Encode([]rune(token))
 					if len(u) == 1 && !unicode.IsLetter(rune(u[0])) {
 						isWord = false
@@ -181,18 +204,21 @@ func (r *WordRepeatBeginningRule) MatchList(sentences []*languagetool.AnalyzedSe
 				if isWord && lastToken == token && !r.isException(token) &&
 					!r.isException(tokens[2].GetToken()) && !r.isException(tokens[3].GetToken()) &&
 					prevSentence != nil &&
-					endsSentenceRE.MatchString(stringsTrim(prevSentence.GetText())) {
+					endsSentenceRE.MatchString(tools.JavaStringTrim(prevSentence.GetText())) {
+					// Java: isAdverb(analyzedToken); Go also supports IsAdverbAtFn for modules.
 					var shortMsg string
 					if r.isAdverbAt(tokens, 1) {
-						shortMsg = r.msg("desc_repetition_beginning_adv", "Adverb repetition at sentence start.")
+						shortMsg = r.msg("desc_repetition_beginning_adv")
 					} else if beforeLastToken == token {
-						shortMsg = r.msg("desc_repetition_beginning_word", "Word repetition at sentence start.")
+						shortMsg = r.msg("desc_repetition_beginning_word")
+					} else {
+						shortMsg = ""
 					}
 					if shortMsg != "" {
-						thesaurus := r.msg("desc_repetition_beginning_thesaurus", "Consider using a thesaurus.")
-						msg := shortMsg + " " + thesaurus
+						msg := shortMsg + " " + r.msg("desc_repetition_beginning_thesaurus")
+						// Java: startPos = analyzedToken.getStartPos(); endPos = startPos + token.length()
 						startPos := analyzedToken.GetStartPos()
-						endPos := startPos + utf16LenStr(token)
+						endPos := startPos + javaStringLen(token)
 						rm := NewRuleMatch(r, sentence, pos+startPos, pos+endPos, msg)
 						rm.ShortMessage = shortMsg
 						suggs := r.getSuggestions(analyzedToken)
@@ -212,32 +238,18 @@ func (r *WordRepeatBeginningRule) MatchList(sentences []*languagetool.AnalyzedSe
 	return ruleMatches
 }
 
-func (r *WordRepeatBeginningRule) msg(key, fallback string) string {
+func (r *WordRepeatBeginningRule) msg(key string) string {
 	if r.Messages != nil {
 		if s := r.Messages[key]; s != "" {
 			return s
 		}
 	}
-	return fallback
+	// Java ResourceBundle would throw; empty keeps shortMsg gate honest when keys missing.
+	return ""
 }
 
-func stringsTrim(s string) string {
-	// strings.TrimSpace
-	for len(s) > 0 && (s[0] == ' ' || s[0] == '\t' || s[0] == '\n' || s[0] == '\r') {
-		s = s[1:]
-	}
-	for len(s) > 0 {
-		c := s[len(s)-1]
-		if c == ' ' || c == '\t' || c == '\n' || c == '\r' {
-			s = s[:len(s)-1]
-			continue
-		}
-		break
-	}
-	return s
-}
-
-func utf16LenStr(s string) int {
+// javaStringLen ports Java String.length() (UTF-16 code units).
+func javaStringLen(s string) int {
 	n := 0
 	for _, r := range s {
 		n += len(utf16.Encode([]rune{r}))
