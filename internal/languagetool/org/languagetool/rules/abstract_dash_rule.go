@@ -96,6 +96,14 @@ func (r *AbstractDashRule) GetDescription() string {
 	return r.Description
 }
 
+// GetMessage ports AbstractDashRule.getMessage (abstract in Java; set by subclass).
+func (r *AbstractDashRule) GetMessage() string {
+	if r == nil {
+		return ""
+	}
+	return r.Message
+}
+
 // GetID ports Rule.getId.
 func (r *AbstractDashRule) GetID() string {
 	if r == nil || r.ID == "" {
@@ -153,9 +161,7 @@ func LoadDashCompoundPatterns(r io.Reader) ([]string, error) {
 		if strings.HasSuffix(line, "*") || strings.HasSuffix(line, "$") {
 			line = line[:len(line)-1]
 		}
-		if !strings.Contains(line, "-") {
-			continue
-		}
+		// Java loadCompoundFile keeps every remaining line (hyphen expected by compounds files).
 		words = append(words, line)
 	}
 	if err := sc.Err(); err != nil {
@@ -189,10 +195,8 @@ func (r *AbstractDashRule) Match(sentence *languagetool.AnalyzedSentence) []*Rul
 	text := sentence.GetText()
 	var matches []*RuleMatch
 	startPositions := map[int]bool{}
-	msg := r.Message
-	if msg == "" {
-		msg = "A dash was used instead of a hyphen."
-	}
+	// Java: getMessage() from subclass — no default invent string here.
+	msg := r.GetMessage()
 
 	for _, pattern := range r.CompoundPatterns {
 		from := 0
@@ -273,5 +277,3 @@ func lastRune(s string) (rune, int) {
 	}
 	return last, 1
 }
-
-// silence unused unicode import if any
