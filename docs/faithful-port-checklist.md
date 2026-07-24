@@ -112,7 +112,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 
 | # | Check | Status |
 |---|--------|--------|
-| 3.C.1 | Core layout rules (whitespace, unpaired, …) | [ ] partial; core CommaWhitespaceRuleTest twin ACCEPT @ 8f196018 (sub-sector 3.C.1-CommaWhitespaceRule; Demo JLanguageTool analyze path); Tools.isParagraphEnd shared; ConvertToSentenceCaseFilter registered |
+| 3.C.1 | Core layout rules (whitespace, unpaired, …) | [ ] partial; core CommaWhitespaceRuleTest twin ACCEPT @ 8f196018 (sub-sector 3.C.1-CommaWhitespaceRule; Demo JLanguageTool analyze path); core DoublePunctuationRuleTest twin ACCEPT @ edf50669 (sub-sector 3.C.1-DoublePunctuationRule; Demo JLanguageTool analyze path); Tools.isParagraphEnd shared; ConvertToSentenceCaseFilter registered |
 | 3.C.2 | Speller rules (Morfologik/Hunspell) | [ ] |
 | 3.C.3 | Language-specific Java rules (EN AvsAn, DE, …) | [ ] by language |
 | 3.C.4 | False friends | [ ] |
