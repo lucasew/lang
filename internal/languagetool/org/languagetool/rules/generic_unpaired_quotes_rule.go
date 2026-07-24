@@ -1,12 +1,10 @@
 package rules
 
 import (
-	"fmt"
 	"regexp"
-	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // quoteSymbolLocator ports GenericUnpairedQuotesRule.SymbolLocator.
@@ -17,7 +15,7 @@ type quoteSymbolLocator struct {
 }
 
 // GenericUnpairedQuotesRule ports org.languagetool.rules.GenericUnpairedQuotesRule.
-// Java: PUNCTUATION, Typographical.
+// Java: TextLevelRule, Categories.PUNCTUATION, ITSIssueType.Typographical.
 type GenericUnpairedQuotesRule struct {
 	Messages     map[string]string
 	StartSymbols []string
@@ -32,43 +30,64 @@ type GenericUnpairedQuotesRule struct {
 	// incorrectExamples / correctExamples port Rule.addExamplePair.
 	incorrectExamples []IncorrectExample
 	correctExamples   []CorrectExample
-	// Optional language overrides (Java subclass isNotBeginning/EndingApostrophe).
+	// Optional language overrides (Java protected isNotBeginning/EndingApostrophe).
 	// Nil → default GenericUnpairedQuotesRule logic.
 	IsNotBeginningApostropheFn func(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
 	IsNotEndingApostropheFn    func(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
 }
 
+// Java GenericUnpairedQuotesRule static patterns — Matcher.matches() = full string.
 var (
-	possibleApostrophe = regexp.MustCompile(`[‘’']`)
-	inchPattern        = regexp.MustCompile(`(?s).*\d".*`)
-	// Java: [\p{Punct}…–—&&[^\"'_]] — punct including …–— excluding " ' _
-	quotePunctuation = func(s string) bool {
-		if s == "" || s == "\"" || s == "'" || s == "_" {
-			return false
-		}
-		if s == "…" || s == "–" || s == "—" {
-			return true
-		}
-		// unicode.IsPunct covers \p{Punct}
-		for _, r := range s {
-			if !unicode.IsPunct(r) {
-				return false
-			}
-		}
-		return true
-	}
+	// POSSIBLE_APOSTROPHE: [‘’']
+	possibleApostrophe = regexp.MustCompile(`^[‘’']$`)
+	// INCH_PATTERN: .*\d".* with DOTALL
+	inchPattern = regexp.MustCompile(`(?s).*\d".*`)
+	// PUNCTUATION: [\p{Punct}…–—&&[^\"'_]]
+	// Go: punct/ellipsis/dashes excluding " ' _
+	quotePunctuation = regexp.MustCompile(`^[\p{P}…–—]$`)
+	// PUNCT_MARKS: [\?\.!,]
 	quotePunctMarks = regexp.MustCompile(`^[?.!,]$`)
 )
 
+// quotePunctuationOK ports PUNCTUATION.matcher(token).matches() excluding " ' _.
+func quotePunctuationOK(s string) bool {
+	if s == "\"" || s == "'" || s == "_" {
+		return false
+	}
+	return quotePunctuation.MatchString(s)
+}
+
+// NewGenericUnpairedQuotesRule ports
+// GenericUnpairedQuotesRule(messages, startSymbols, endSymbols).
 func NewGenericUnpairedQuotesRule(messages map[string]string, start, end []string) *GenericUnpairedQuotesRule {
+	return NewGenericUnpairedQuotesRuleWithID(nil, messages, start, end)
+}
+
+// NewGenericUnpairedQuotesRuleDefault ports
+// GenericUnpairedQuotesRule(messages) with “” "" ‘’ ”.
+func NewGenericUnpairedQuotesRuleDefault(messages map[string]string) *GenericUnpairedQuotesRule {
+	return NewGenericUnpairedQuotesRule(messages,
+		[]string{"“", "\"", "‘", "'"},
+		[]string{"”", "\"", "’", "'"},
+	)
+}
+
+// NewGenericUnpairedQuotesRuleWithID ports
+// GenericUnpairedQuotesRule(ruleId, messages, startSymbols, endSymbols).
+// ruleId nil/empty → "UNPAIRED_QUOTES".
+func NewGenericUnpairedQuotesRuleWithID(ruleID *string, messages map[string]string, start, end []string) *GenericUnpairedQuotesRule {
 	if len(start) != len(end) {
-		panic("start/end symbol count mismatch")
+		panic("Different number of start and end symbols")
+	}
+	id := "UNPAIRED_QUOTES"
+	if ruleID != nil && *ruleID != "" {
+		id = *ruleID
 	}
 	return &GenericUnpairedQuotesRule{
 		Messages:     messages,
 		StartSymbols: start,
 		EndSymbols:   end,
-		ruleID:       "UNPAIRED_QUOTES",
+		ruleID:       id,
 		Category:     CatPunctuation.GetCategory(messages),
 		IssueType:    ITSTypographical,
 	}
@@ -77,6 +96,22 @@ func NewGenericUnpairedQuotesRule(messages map[string]string, start, end []strin
 func (r *GenericUnpairedQuotesRule) GetID() string { return r.ruleID }
 
 func (r *GenericUnpairedQuotesRule) SetRuleID(id string) { r.ruleID = id }
+
+// GetDescription ports getDescription (desc_unpaired_quotes).
+func (r *GenericUnpairedQuotesRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if m, ok := r.Messages["desc_unpaired_quotes"]; ok {
+			return m
+		}
+	}
+	return "Unpaired quotation marks"
+}
+
+// MinToCheckParagraph ports minToCheckParagraph (Java returns -1).
+func (r *GenericUnpairedQuotesRule) MinToCheckParagraph() int { return -1 }
+
+// EstimateContextForSureMatch ports TextLevelRule (Java always -1).
+func (r *GenericUnpairedQuotesRule) EstimateContextForSureMatch() int { return -1 }
 
 // GetCategory ports Rule.getCategory.
 func (r *GenericUnpairedQuotesRule) GetCategory() *Category {
@@ -185,7 +220,6 @@ func (r *GenericUnpairedQuotesRule) MatchList(sentences []*languagetool.Analyzed
 				idx := r.indexOfOpeningQuote(openingQuotes, startSymbol)
 				if idx >= 0 {
 					r.removeAllOpenInnerQuotes(idx, &openingQuotes, &ruleMatches)
-					// remove opening at idx
 					openingQuotes = append(openingQuotes[:idx], openingQuotes[idx+1:]...)
 					if lastApostropheSymbol != nil && *lastApostropheSymbol == startSymbol {
 						lastApostropheSymbol = nil
@@ -216,6 +250,7 @@ func (r *GenericUnpairedQuotesRule) MatchList(sentences []*languagetool.Analyzed
 	return ruleMatches
 }
 
+// isStartSymbolBefore ports isStartSymbolbefore.
 func (r *GenericUnpairedQuotesRule) isStartSymbolBefore(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	for j := i - 1; j > 0; j-- {
 		if tokens[i].GetToken() != tokens[j].GetToken() && containsStr(r.StartSymbols, tokens[j].GetToken()) {
@@ -229,6 +264,7 @@ func (r *GenericUnpairedQuotesRule) isStartSymbolBefore(tokens []*languagetool.A
 	return true
 }
 
+// isNotOpenSymbol ports isNotOpenSymbol.
 func (r *GenericUnpairedQuotesRule) isNotOpenSymbol(j int, openingQuotes []quoteSymbolLocator) bool {
 	if r.EndSymbols[j] == r.StartSymbols[j] {
 		for _, oq := range openingQuotes {
@@ -240,6 +276,7 @@ func (r *GenericUnpairedQuotesRule) isNotOpenSymbol(j int, openingQuotes []quote
 	return true
 }
 
+// isNotQuote ports isNotQuote.
 func (r *GenericUnpairedQuotesRule) isNotQuote(tokens []*languagetool.AnalyzedTokenReadings, i, j int) bool {
 	if (tokens[i-1].IsSentenceStart() || tokens[i].IsWhitespaceBefore()) &&
 		(i >= len(tokens)-1 || tokens[i+1].IsWhitespaceBefore()) {
@@ -249,15 +286,16 @@ func (r *GenericUnpairedQuotesRule) isNotQuote(tokens []*languagetool.AnalyzedTo
 		if i < len(tokens)-1 &&
 			!tokens[i].IsWhitespaceBefore() &&
 			!tokens[i+1].IsWhitespaceBefore() &&
-			quotePunctuation(tokens[i-1].GetToken()) &&
+			quotePunctuationOK(tokens[i-1].GetToken()) &&
 			tokens[i+1].GetToken() != "." &&
-			quotePunctuation(tokens[i+1].GetToken()) {
+			quotePunctuationOK(tokens[i+1].GetToken()) {
 			return true
 		}
 	}
 	return false
 }
 
+// isOpeningQuote ports isOpeningQuote.
 func (r *GenericUnpairedQuotesRule) isOpeningQuote(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	for j := 0; j < len(r.StartSymbols); j++ {
 		if r.StartSymbols[j] == tokens[i].GetToken() {
@@ -269,8 +307,8 @@ func (r *GenericUnpairedQuotesRule) isOpeningQuote(tokens []*languagetool.Analyz
 					tokens[i].IsWhitespaceBefore() ||
 					(i < len(tokens)-1 && !tokens[i+1].IsWhitespaceBefore() &&
 						((!quotePunctMarks.MatchString(tokens[i+1].GetToken()) &&
-							quotePunctuation(tokens[i-1].GetToken())) ||
-							strings.HasSuffix(tokens[i-1].GetToken(), "-"))) ||
+							quotePunctuationOK(tokens[i-1].GetToken())) ||
+							hasSuffixDash(tokens[i-1].GetToken()))) ||
 					r.isStartSymbolBefore(tokens, i)
 			}
 			return true
@@ -279,6 +317,12 @@ func (r *GenericUnpairedQuotesRule) isOpeningQuote(tokens []*languagetool.Analyz
 	return false
 }
 
+// hasSuffixDash ports tokens[i-1].getToken().endsWith("-").
+func hasSuffixDash(s string) bool {
+	return len(s) > 0 && s[len(s)-1] == '-'
+}
+
+// isClosingQuote ports isClosingQuote.
 func (r *GenericUnpairedQuotesRule) isClosingQuote(tokens []*languagetool.AnalyzedTokenReadings, i int, openingQuotes []quoteSymbolLocator) bool {
 	for j := 0; j < len(r.EndSymbols); j++ {
 		if r.EndSymbols[j] == tokens[i].GetToken() {
@@ -291,10 +335,12 @@ func (r *GenericUnpairedQuotesRule) isClosingQuote(tokens []*languagetool.Analyz
 	return false
 }
 
+// isInchQuote ports isInchQuote.
 func (r *GenericUnpairedQuotesRule) isInchQuote(text string) bool {
 	return inchPattern.MatchString(text)
 }
 
+// isNotBeginningApostrophe ports isNotBeginningApostrophe.
 func (r *GenericUnpairedQuotesRule) isNotBeginningApostrophe(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	if r != nil && r.IsNotBeginningApostropheFn != nil {
 		return r.IsNotBeginningApostropheFn(tokens, i)
@@ -303,6 +349,7 @@ func (r *GenericUnpairedQuotesRule) isNotBeginningApostrophe(tokens []*languaget
 		i >= len(tokens)-1 || tokens[i+1].IsNonWord() || tokens[i+1].IsWhitespaceBefore()
 }
 
+// isNotEndingApostrophe ports isNotEndingApostrophe.
 func (r *GenericUnpairedQuotesRule) isNotEndingApostrophe(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	if r != nil && r.IsNotEndingApostropheFn != nil {
 		return r.IsNotEndingApostropheFn(tokens, i)
@@ -312,6 +359,7 @@ func (r *GenericUnpairedQuotesRule) isNotEndingApostrophe(tokens []*languagetool
 		tokens[i-1].IsNonWord()
 }
 
+// indexOfOpeningQuote ports indexOfOpeningQuote.
 func (r *GenericUnpairedQuotesRule) indexOfOpeningQuote(openingQuotes []quoteSymbolLocator, symbol string) int {
 	for i, oq := range openingQuotes {
 		if symbol == oq.symbol {
@@ -321,24 +369,23 @@ func (r *GenericUnpairedQuotesRule) indexOfOpeningQuote(openingQuotes []quoteSym
 	return -1
 }
 
+// addMatch ports addMatch.
 func (r *GenericUnpairedQuotesRule) addMatch(opening quoteSymbolLocator, ruleMatches *[]*RuleMatch) {
 	other := r.findCorrespondingSymbol(opening.symbol)
-	msg := fmt.Sprintf("Unpaired quotes: expected %s", other)
-	if r.Messages != nil {
-		if m, ok := r.Messages["unpaired_brackets"]; ok {
-			if strings.Contains(m, "%s") || strings.Contains(m, "%v") {
-				msg = fmt.Sprintf(m, other)
-			} else if strings.Contains(m, "{0}") {
-				msg = strings.ReplaceAll(m, "{0}", other)
-			} else {
-				msg = m + " " + other
-			}
+	// Java: MessageFormat.format(messages.getString("unpaired_brackets"), findCorrespondingSymbol(...))
+	pattern := "Unpaired symbol: ''{0}'' seems to be missing"
+	if r != nil && r.Messages != nil {
+		if m, ok := r.Messages["unpaired_brackets"]; ok && m != "" {
+			pattern = m
 		}
 	}
+	msg := tools.I18n(pattern, other)
+	// Java: symbol.length() (UTF-16 code units)
 	symLen := utf16Len(opening.symbol)
 	*ruleMatches = append(*ruleMatches, NewRuleMatch(r, opening.sentence, opening.startPos, opening.startPos+symLen, msg))
 }
 
+// removeAllOpenInnerQuotes ports removeAllOpenInnerQuotes.
 func (r *GenericUnpairedQuotesRule) removeAllOpenInnerQuotes(index int, openingQuotes *[]quoteSymbolLocator, ruleMatches *[]*RuleMatch) {
 	for i := len(*openingQuotes) - 1; i > index; i-- {
 		r.addMatch((*openingQuotes)[i], ruleMatches)
@@ -346,10 +393,16 @@ func (r *GenericUnpairedQuotesRule) removeAllOpenInnerQuotes(index int, openingQ
 	}
 }
 
+// findCorrespondingSymbol ports findCorrespondingSymbol.
 func (r *GenericUnpairedQuotesRule) findCorrespondingSymbol(symbol string) string {
 	if idx := indexOf(r.StartSymbols, symbol); idx >= 0 {
 		return r.EndSymbols[idx]
 	}
 	idx := indexOf(r.EndSymbols, symbol)
 	return r.StartSymbols[idx]
+}
+
+// FindCorrespondingSymbol is the exported twin of protected findCorrespondingSymbol.
+func (r *GenericUnpairedQuotesRule) FindCorrespondingSymbol(symbol string) string {
+	return r.findCorrespondingSymbol(symbol)
 }
