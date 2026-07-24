@@ -190,19 +190,9 @@ func (regexAntiPatternAsRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, argu
 // underlineSpacesRuleFilter adapts rules.UnderlineSpacesFilter to RuleFilter.
 type underlineSpacesRuleFilter struct{}
 
-func (underlineSpacesRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
-	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
-	if match == nil {
-		return nil
-	}
-	mode := GetRequired("underlineSpaces", arguments)
-	text := ""
-	if match.Sentence != nil {
-		text = match.Sentence.GetText()
-	}
-	from, to := rules.NewUnderlineSpacesFilter().Expand(text, match.FromPos, match.ToPos, mode)
-	match.SetOffsetPosition(from, to)
-	return match
+func (underlineSpacesRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, pos int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
+	return rules.NewUnderlineSpacesFilter().AcceptRuleMatch(match, arguments, pos, patternTokens, tokenPositions)
 }
 
 var (

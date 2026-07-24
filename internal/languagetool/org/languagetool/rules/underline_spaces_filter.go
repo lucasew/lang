@@ -6,52 +6,43 @@ import (
 )
 
 // UnderlineSpacesFilter ports org.languagetool.rules.UnderlineSpacesFilter.
-// Expands match offsets to include adjacent whitespace before/after/both.
+// Expands match offsets to include adjacent whitespace before and/or after the marker.
 type UnderlineSpacesFilter struct{}
 
 func NewUnderlineSpacesFilter() *UnderlineSpacesFilter {
 	return &UnderlineSpacesFilter{}
 }
 
-// Expand returns possibly extended fromPos/toPos for the match.
-// underlineSpaces is "before", "after", or "both".
-// Positions are the same code-unit convention as the match (Java String UTF-16).
-func (f *UnderlineSpacesFilter) Expand(sentence string, fromPos, toPos int, underlineSpaces string) (int, int) {
-	if underlineSpaces == "before" || underlineSpaces == "both" {
-		if fromPos-1 >= 0 {
-			ch := utf16Slice(sentence, fromPos-1, fromPos)
-			if tools.IsWhitespace(ch) {
-				fromPos--
-			}
-		}
-	}
-	if underlineSpaces == "after" || underlineSpaces == "both" {
-		if toPos+1 <= utf16Len(sentence) {
-			ch := utf16Slice(sentence, toPos, toPos+1)
-			if tools.IsWhitespace(ch) {
-				toPos++
-			}
-		}
-	}
-	return fromPos, toPos
-}
-
 // AcceptRuleMatch ports UnderlineSpacesFilter.acceptRuleMatch.
-// Args: underlineSpaces = before | after | both (required).
+// Required arg: underlineSpaces = before | after | both (other values leave offsets unchanged).
+// Positions are Java String UTF-16 code units (sentence.length / substring).
 func (f *UnderlineSpacesFilter) AcceptRuleMatch(match *RuleMatch, arguments map[string]string, _ int,
 	_ []*languagetool.AnalyzedTokenReadings, _ []int) *RuleMatch {
-	if f == nil || match == nil {
-		return nil
-	}
-	mode, ok := arguments["underlineSpaces"]
+	// Java RuleFilter.getRequired("underlineSpaces", arguments)
+	underlineSpaces, ok := arguments["underlineSpaces"]
 	if !ok {
 		panic("Missing key 'underlineSpaces'")
 	}
-	var sentence string
-	if match.Sentence != nil {
-		sentence = match.Sentence.GetText()
+	// Java: match.getSentence().getText() — NPE if match or sentence is null
+	// (AnalyzedSentence.GetText soft-returns "" on nil receiver; force NPE twin).
+	if match == nil || match.Sentence == nil {
+		panic("NullPointerException")
 	}
-	from, to := f.Expand(sentence, match.GetFromPos(), match.GetToPos(), mode)
-	match.SetOffsetPosition(from, to)
+	sentence := match.Sentence.GetText()
+	if underlineSpaces == "before" || underlineSpaces == "both" {
+		// Java: match.getFromPos() - 1 >= 0 && StringTools.isWhitespace(sentence.substring(from-1, from))
+		if match.GetFromPos()-1 >= 0 &&
+			tools.IsWhitespace(utf16Slice(sentence, match.GetFromPos()-1, match.GetFromPos())) {
+			match.SetOffsetPosition(match.GetFromPos()-1, match.GetToPos())
+		}
+	}
+	if underlineSpaces == "after" || underlineSpaces == "both" {
+		// Java: match.getToPos() + 1 < sentence.length()
+		// (stricter than substring bounds; trailing single whitespace is not expanded — Java quirk)
+		if match.GetToPos()+1 < utf16Len(sentence) &&
+			tools.IsWhitespace(utf16Slice(sentence, match.GetToPos(), match.GetToPos()+1)) {
+			match.SetOffsetPosition(match.GetFromPos(), match.GetToPos()+1)
+		}
+	}
 	return match
 }
