@@ -200,6 +200,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 ---
 | docs/faithful-port-checklist.md#3.A.1-GermanCompoundTokenizer | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tokenizers/de/GermanCompoundTokenizer.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/tokenizers/de/GermanCompoundTokenizerTest.java; de.danielnaber.jwordsplitter (EmbeddedGermanDictionary + GermanWordSplitter) | internal/languagetool/org/languagetool/tokenizers/de/ | 4f88d4da8ef923f17159b8759c700097ae698873 | 0 | 0 |  |  | 2026-07-24T00:59:07Z |
+| docs/faithful-port-checklist.md#3.C.1-CommaWhitespaceRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/CommaWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/CommaWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | 8f196018d8687ade3513ec47b6dcd285238f152e | 0 | 0 |  |  | 2026-07-24T01:11:30Z |
 
 ## Human inbox
 
@@ -209,7 +210,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.A.1-GermanCompoundTokenizer @ 4f88d4da (validator + parent green; jWordSplitter 4.5). FR/zh blocked. |
+| Notes | ready 3.C.1-CommaWhitespaceRule @ 8f196018 (DemoLanguage analyze twin; parent green). FR/zh blocked. |
 
 ---
 
@@ -819,3 +820,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T00:48:23Z ready: 3.A.1-GermanCompoundTokenizer @ 4f88d4da (implementer report; parent green reconfirm)
 - 2026-07-24T00:53:46Z validating: 3.A.1-GermanCompoundTokenizer @ 4f88d4da
 - 2026-07-24T00:59:07Z ACCEPT: 3.A.1-GermanCompoundTokenizer @ 4f88d4da (validator + parent green reconfirm; official wordsGerman 64559)
+- 2026-07-24T01:05:10Z implement: 3.C.1-CommaWhitespaceRule (CommaWhitespaceRuleTest full outcome twin; core layout 3.C.1 leaf)
+- 2026-07-24T01:11:30Z ready: 3.C.1-CommaWhitespaceRule @ 8f196018 (implementer report; parent green reconfirm)
