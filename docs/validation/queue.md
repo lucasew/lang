@@ -217,7 +217,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-WhiteSpaceAtBeginOfParagraph | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhiteSpaceAtBeginOfParagraph.java | internal/languagetool/org/languagetool/rules/ | 1392009b79abdb8a63867c5736026a118453d011 | 0 | 0 |  |  | 2026-07-24T04:30:10Z |
 | docs/faithful-port-checklist.md#3.C.1-WhiteSpaceBeforeParagraphEnd | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhiteSpaceBeforeParagraphEnd.java | internal/languagetool/org/languagetool/rules/ | b1ca13dfaced336640fcae82741bb47513e7ea34 | 0 | 0 |  |  | 2026-07-24T04:40:03Z |
 | docs/faithful-port-checklist.md#3.C.1-ParagraphRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ParagraphRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | baf442057c7020a58aa9e6c7fe2130d05862928f | 0 | 0 |  |  | 2026-07-24T04:55:22Z |
-| docs/faithful-port-checklist.md#3.C.1-WordRepeatBeginningRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | d17b8514163aece863fbdfcc1e5708645c86faa6 | 0 | 0 |  |  | 2026-07-24T05:04:39Z |
+| docs/faithful-port-checklist.md#3.C.1-WordRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | d17b8514163aece863fbdfcc1e5708645c86faa6 | 0 | 0 |  |  | 2026-07-24T05:12:42Z |
 
 ## Human inbox
 
@@ -227,7 +227,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-WordRepeatBeginningRule @ d17b8514 (demoLT/EN Analyze twin; parent green). FR/zh blocked. |
+| Notes | ACCEPT 3.C.1-WordRepeatBeginningRule @ d17b8514. FR/zh blocked. Next: more 3.C.1 core leaves. |
 
 ---
 
@@ -911,3 +911,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T04:55:22Z ACCEPT: 3.C.1-ParagraphRepeatBeginningRule @ baf44205 (validator + parent green reconfirm)
 - 2026-07-24T04:58:54Z implement: 3.C.1-WordRepeatBeginningRule (MatchList outcome twin; Demo/EN Analyze; core layout 3.C.1 leaf)
 - 2026-07-24T05:04:39Z ready: 3.C.1-WordRepeatBeginningRule @ d17b8514 (implementer report; parent green reconfirm)
+- 2026-07-24T05:08:53Z validating: 3.C.1-WordRepeatBeginningRule @ d17b8514 (strict invent re-audit vs Java WordRepeatBeginningRule)
+- 2026-07-24T05:12:42Z ACCEPT: 3.C.1-WordRepeatBeginningRule @ d17b8514 (validator + parent green reconfirm)
