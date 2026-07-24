@@ -11,16 +11,16 @@ import (
 // AdvancedWordRepeatRule ports org.languagetool.rules.AdvancedWordRepeatRule.
 // Detects same word/lemma anywhere in the sentence (not only adjacent).
 // Java ctor: setCategory(MISC), setDefaultOff(), setLocQualityIssueType(Style).
-// ExcludedWords match lemmas only (Java getExcludedWordsPattern); prep/pronoun
-// exclusions use ExcludedPos when tagged — no surface invent of POS lists.
+// Abstract hooks (Java): getExcludedWordsPattern, getExcludedNonWordsPattern,
+// getExcludedPos, getMessage, getShortMessage — fields on this struct.
 type AdvancedWordRepeatRule struct {
 	Messages         map[string]string
-	ExcludedWords    map[string]bool
-	ExcludedNonWords *regexp.Regexp
-	ExcludedPos      *regexp.Regexp
+	ExcludedWords    map[string]bool // Java getExcludedWordsPattern() Set
+	ExcludedNonWords *regexp.Regexp  // Java getExcludedNonWordsPattern()
+	ExcludedPos      *regexp.Regexp  // Java getExcludedPos()
 	ID               string
-	Message          string
-	ShortMessage     string
+	Message          string // Java getMessage()
+	ShortMessage     string // Java getShortMessage()
 	// Category ports Rule.category (Java MISC).
 	Category *Category
 	// IssueType ports getLocQualityIssueType (Java Style).
@@ -103,17 +103,23 @@ func (r *AdvancedWordRepeatRule) IsDefaultOff() bool {
 	return r != nil && r.DefaultOff
 }
 
+// Match ports AdvancedWordRepeatRule.match(AnalyzedSentence).
+// Control flow is a line-faithful transcription of the Java method.
 func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
 	tokens := sentence.GetTokensWithoutWhitespace()
+	repetition := false
+	// Java: Set<String> inflectedWords = new TreeSet<>() — contains/add only.
 	inflectedWords := map[string]bool{}
 	curToken := 0
+	// start from real token, 0 = SENT_START
 	for i := 1; i < len(tokens); i++ {
 		token := tokens[i].GetToken()
+		// avoid "..." etc. to be matched:
 		isWord := true
 		hasLemma := true
 
-		// Java: token.length() < 2 (UTF-16 code units, not Unicode code points)
+		// Java: token.length() < 2 (UTF-16 code units)
 		if utf16LenAdv(token) < 2 {
 			isWord = false
 		}
@@ -130,11 +136,14 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 					hasLemma = false
 					break
 				}
+
 				if r.ExcludedWords[*lemma] {
 					isWord = false
 					break
 				}
-				if r.ExcludedPos != nil && r.ExcludedPos.MatchString(*posTag) {
+
+				// Java: Matcher.matches() ≡ whole-string match
+				if javaRegexpMatches(r.ExcludedPos, *posTag) {
 					isWord = false
 					break
 				}
@@ -143,39 +152,28 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 			}
 		}
 
-		// Java Matcher.matches() is full-string; Go MatchString is unanchored find.
-		if isWord && r.ExcludedNonWords != nil {
-			if loc := r.ExcludedNonWords.FindStringIndex(token); loc != nil && loc[0] == 0 && loc[1] == len(token) {
-				isWord = false
-			}
+		// Java: Matcher m1 = getExcludedNonWordsPattern().matcher(token); m1.matches()
+		if isWord && javaRegexpMatches(r.ExcludedNonWords, token) {
+			isWord = false
 		}
 
-		// Java: boolean notSentEnd misnamed — true when any reading is SENT_END.
-		repetition := false
 		prevLemma := ""
 		if isWord {
-			// Soft Analyze may leave only SENT_END on the last content word (null-POS
-			// reading dropped). Still track surface so untagged "test test" matches
-			// (incomplete vs full Java tagger, not surface invent of POS/lemma lists).
-			contentReadings := 0
-			isSentEnd := false
+			// Java misnames notSentEnd: true when any reading is SENT_END.
+			notSentEnd := false
 			for _, analyzedToken := range tokens[i].GetReadings() {
 				pos := analyzedToken.GetPOSTag()
-				if pos != nil && *pos == languagetool.SentenceEndTagName {
-					isSentEnd = true
+				if pos != nil {
+					notSentEnd = notSentEnd || *pos == languagetool.SentenceEndTagName
 				}
-				if pos != nil && (*pos == languagetool.SentenceEndTagName || *pos == languagetool.ParagraphEndTagName) {
-					continue
-				}
-				contentReadings++
 				if hasLemma {
-					lemmaPtr := analyzedToken.GetLemma()
-					if lemmaPtr == nil {
-						continue
+					// When hasLemma, Java first loop established non-null lemmas on non-null POS readings.
+					curLemmaPtr := analyzedToken.GetLemma()
+					var curLemma string
+					if curLemmaPtr != nil {
+						curLemma = *curLemmaPtr
 					}
-					curLemma := *lemmaPtr
-					// Java: if (!prevLemma.equals(curLemma) && !notSentEnd)
-					if prevLemma != curLemma && !isSentEnd {
+					if prevLemma != curLemma && !notSentEnd {
 						if inflectedWords[curLemma] && curToken != i {
 							repetition = true
 						} else {
@@ -185,40 +183,35 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 					}
 					prevLemma = curLemma
 				} else {
-					// Java: inflectedWords.contains(tokens[i].getToken()) — exact surface.
-					if !isSentEnd {
-						if inflectedWords[token] {
-							repetition = true
-						} else {
-							inflectedWords[token] = true
-						}
+					if inflectedWords[token] && !notSentEnd {
+						repetition = true
+					} else {
+						inflectedWords[token] = true
 					}
-				}
-			}
-			if contentReadings == 0 && !hasLemma {
-				if inflectedWords[token] {
-					repetition = true
-				} else {
-					inflectedWords[token] = true
 				}
 			}
 		}
 
 		if repetition {
 			pos := tokens[i].GetStartPos()
-			end := pos + utf16LenAdv(token)
-			msg := r.Message
-			if msg == "" {
-				msg = "Word repeated in sentence"
-			}
-			rm := NewRuleMatch(r, sentence, pos, end, msg)
-			rm.ShortMessage = r.ShortMessage
-			ruleMatches = append(ruleMatches, rm)
-			// Java resets repetition after each match.
+			// Java: pos + token.length() (UTF-16)
+			ruleMatch := NewRuleMatch(r, sentence, pos, pos+utf16LenAdv(token), r.Message)
+			ruleMatch.ShortMessage = r.ShortMessage
+			ruleMatches = append(ruleMatches, ruleMatch)
 			repetition = false
 		}
 	}
 	return ruleMatches
+}
+
+// javaRegexpMatches ports java.util.regex.Matcher.matches(): whole-string match.
+// Go regexp.MatchString is unanchored find (≈ Matcher.find()).
+func javaRegexpMatches(re *regexp.Regexp, s string) bool {
+	if re == nil {
+		return false
+	}
+	loc := re.FindStringIndex(s)
+	return loc != nil && loc[0] == 0 && loc[1] == len(s)
 }
 
 func utf16LenAdv(s string) int {
