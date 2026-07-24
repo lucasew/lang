@@ -1,0 +1,16 @@
+Official jWordSplitter 4.5 embedded data (same as LanguageTool dependency
+de.danielnaber:jwordsplitter:4.5 / jwordsplitter-4.5.jar).
+
+wordsGerman.txt
+  - Source: de/danielnaber/jwordsplitter/wordsGerman.ser inside the jar
+  - Export: Java EmbeddedGermanDictionary.getWords() via ObjectInputStream
+    (FastObjectSaver), written as UTF-8 one word per line (sorted).
+  - Not a subset: full set, 64559 entries, identical membership to the ser.
+
+exceptionsGerman.txt
+  - Byte-identical copy of
+    de/danielnaber/jwordsplitter/exceptionsGerman.txt from the same jar.
+
+Jar used for export:
+  /home/lucasew/.local/share/mise/installs/github-valentjn-ltex-ls/16.0.0/lib/jwordsplitter-4.5.jar
+Upstream: https://github.com/danielnaber/jwordsplitter tag v4.5

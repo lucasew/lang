@@ -1,6 +1,8 @@
 package de
 
-// Twin of GermanCompoundTokenizerTest (Java @Ignore interactive; green dict split)
+// Twin of org.languagetool.tokenizers.de.GermanCompoundTokenizerTest
+// (active @Test test(); @Ignore interactive test omitted).
+
 import (
 	"testing"
 
@@ -8,15 +10,15 @@ import (
 )
 
 func TestGermanCompoundTokenizer_Test(t *testing.T) {
-	tok := NewGermanCompoundTokenizer(true)
-	tok.AddWord("auto")
-	tok.AddWord("bahn")
-	tok.AddWord("haus")
-	tok.AddWord("tür")
-	// Capitalized compounds keep first-part capital (Java/jWordSplitter-ish surface)
-	require.Equal(t, []string{"Auto", "bahn"}, tok.Tokenize("Autobahn"))
-	require.Equal(t, []string{"Haus", "tür"}, tok.Tokenize("Haustür"))
-	// unknown / short stays whole
-	require.Equal(t, []string{"xyz"}, tok.Tokenize("xyz"))
-	require.Equal(t, []string{"xyzabc"}, tok.Tokenize("xyzabc"))
+	// Java: GermanCompoundTokenizer tokenizer = new GermanCompoundTokenizer(true);
+	tokenizer := NewGermanCompoundTokenizer(true)
+
+	// assertThat(tokenizer.tokenize("Bahnhofsuhr").toString(), is("[Bahnhofs, uhr]"));
+	require.Equal(t, []string{"Bahnhofs", "uhr"}, tokenizer.Tokenize("Bahnhofsuhr"))
+	// assertThat(tokenizer.tokenize("natofreundlich").toString(), is("[nato, freundlich]"));
+	require.Equal(t, []string{"nato", "freundlich"}, tokenizer.Tokenize("natofreundlich"))
+	// assertThat(tokenizer.tokenize("natofreundliches").toString(), is("[nato, freundliches]"));
+	require.Equal(t, []string{"nato", "freundliches"}, tokenizer.Tokenize("natofreundliches"))
+	// assertThat(tokenizer.tokenize("Firefox-Add-on").toString(), is("[Firefox, , Add-on]"));  // why the space?
+	require.Equal(t, []string{"Firefox", "", "Add-on"}, tokenizer.Tokenize("Firefox-Add-on"))
 }

@@ -1,67 +1,88 @@
 package de
 
 import (
-	"strings"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
-
-func TestGermanCompoundTokenizer(t *testing.T) {
-	tok := NewGermanCompoundTokenizer(true)
-	tok.AddWord("auto")
-	tok.AddWord("bahn")
-	got := tok.Tokenize("autobahn")
-	require.Equal(t, []string{"auto", "bahn"}, got)
-	// unknown stays whole
-	require.Equal(t, []string{"xyzabc"}, tok.Tokenize("xyzabc"))
-}
-
-func TestGermanCompoundTokenizer_AllSplits(t *testing.T) {
-	tok := NewGermanCompoundTokenizer(true)
-	// clear extras noise for deterministic small lexicon
-	tok.Words = map[string]struct{}{
-		"arbeit":      {},
-		"amt":         {},
-		"s":           {}, // not used: MinPartLen 3
-		"platz":       {},
-		"arbeitplatz": {}, // whole form also in dict
-	}
-	// "arbeitsplatz" with arbeit + platz only if "s" not needed as separate
-	// arbeit + splatz won't work; need arbeit + platz with "s" glued
-	tok.AddWord("arbeits")
-	tok.AddWord("platz")
-	// autobahn-style two-way
-	tok.AddWord("auto")
-	tok.AddWord("bahn")
-	// also "autob" + "ahn" not in dict
-
-	splits := tok.AllSplits("autobahn")
-	require.NotEmpty(t, splits)
-	require.Equal(t, []string{"auto", "bahn"}, splits[0])
-
-	// multi-partition: ab+cd and a+b+c if all in dict — use letter compounds
-	tok2 := NewGermanCompoundTokenizer(true)
-	tok2.Words = map[string]struct{}{
-		"foo":    {},
-		"bar":    {},
-		"baz":    {},
-		"foobar": {}, // longer part also known
-	}
-	// foobarbaz: foo+bar+baz and foobar+baz
-	all := tok2.AllSplits("foobarbaz")
-	require.GreaterOrEqual(t, len(all), 2)
-	var joined []string
-	for _, p := range all {
-		joined = append(joined, strings.Join(p, "+"))
-	}
-	require.Contains(t, joined, "foo+bar+baz")
-	require.Contains(t, joined, "foobar+baz")
-}
 
 // Twin: Maskerade exception is commented out in Java — not an active exception.
 func TestCompoundTokenizer_MaskeradeNotException(t *testing.T) {
 	tok := NewGermanCompoundTokenizer(true)
 	_, ok := tok.Exceptions["maskerade"]
 	require.False(t, ok, "Maskerade is commented out in GermanCompoundTokenizer.java")
+}
+
+// Twin: Sportshorts addException is commented out in Java.
+func TestCompoundTokenizer_SportshortsNotException(t *testing.T) {
+	tok := NewGermanCompoundTokenizer(true)
+	_, ok := tok.Exceptions["sportshorts"]
+	require.False(t, ok, "Sportshorts is commented out in GermanCompoundTokenizer.java")
+}
+
+// Helper: InputTooLongException path returns singleton (Java GermanCompoundTokenizer.tokenize catch).
+func TestCompoundTokenizer_TooLongReturnsWhole(t *testing.T) {
+	tok := NewGermanCompoundTokenizer(true)
+	long := make([]byte, 71)
+	for i := range long {
+		long[i] = 'a'
+	}
+	got := tok.Tokenize(string(long))
+	require.Equal(t, []string{string(long)}, got)
+}
+
+// Helper: splitter exposes InputTooLong for AllSplits (returns nil in wrapper).
+func TestCompoundTokenizer_AllSplitsTooLong(t *testing.T) {
+	tok := NewGermanCompoundTokenizer(true)
+	long := make([]byte, 71)
+	for i := range long {
+		long[i] = 'a'
+	}
+	require.Nil(t, tok.AllSplits(string(long)))
+}
+
+// Helper: constructor exception casing preserved like Java asList.
+func TestCompoundTokenizer_ExceptionCase(t *testing.T) {
+	tok := NewGermanCompoundTokenizer(true)
+	require.Equal(t, []string{"Alkohol", "abstinenz"}, tok.Tokenize("Alkoholabstinenz"))
+	require.Equal(t, []string{"Flexo", "druck"}, tok.Tokenize("Flexodruck"))
+}
+
+// Sanity: embedded dict loaded (not empty invent).
+func TestCompoundTokenizer_EmbeddedDictLoaded(t *testing.T) {
+	words := embeddedGermanDictionaryWords()
+	require.GreaterOrEqual(t, len(words), 60000)
+	_, ok := words["bahnhof"]
+	require.True(t, ok)
+	_, ok = words["nato"]
+	require.True(t, ok)
+}
+
+// Sanity: errInputTooLong identity.
+func TestInputTooLongError(t *testing.T) {
+	sp := newGermanWordSplitter(false, map[string]struct{}{"aaa": {}})
+	_, err := sp.splitWord("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa") // 71
+	require.True(t, errors.Is(err, errInputTooLong))
+}
+
+func TestCompoundTokenizer_MoreJavaOutcomes(t *testing.T) {
+	tok := NewGermanCompoundTokenizer(true)
+	cases := map[string][]string{
+		"Bahnhofsuhr":      {"Bahnhofs", "uhr"},
+		"natofreundlich":   {"nato", "freundlich"},
+		"natofreundliches": {"nato", "freundliches"},
+		"Firefox-Add-on":   {"Firefox", "", "Add-on"},
+		"Alkoholabstinenz": {"Alkohol", "abstinenz"},
+		"Flexodruck":       {"Flexo", "druck"},
+		"Absolventen":      {"Absolventen"},
+		"Haustür":          {"Haus", "tür"},
+		"Autobahn":         {"Autobahn"},
+		"Arbeitsplatz":     {"Arbeitsplatz"},
+		"karamelligen":     {"karamelligen"},
+		"Muttertag":        {"Muttertag"},
+	}
+	for in, want := range cases {
+		require.Equal(t, want, tok.Tokenize(in), in)
+	}
 }
