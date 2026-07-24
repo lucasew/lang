@@ -1,15 +1,11 @@
 package spelling
 
-// Twin of SymSpellRuleTest (Java has no @Test) — surface smoke if SymSpellRule exists.
-import (
-	"testing"
+// Twin of SymSpellRuleTest (Java class is empty — no @Test methods).
+// Surface coverage lives in sym_spell_rule_test.go behavior-matrix twins.
 
-	"github.com/stretchr/testify/require"
-)
+import "testing"
 
-func TestSymSpellRule_NoTests(t *testing.T) {
-	// package may define SymSpell helpers; ensure SpellingCheckRule still works as fallback
-	r := NewSpellingCheckRule("SYMSPELL", "sym", "en")
-	require.Equal(t, "SYMSPELL", r.GetID())
-	require.NotEmpty(t, r.GetDescription())
+func TestSymSpellRule_JavaTestClassEmpty(t *testing.T) {
+	// Java SymSpellRuleTest has no tests; keep twin file for twin-audit path pairing.
+	t.Log("SymSpellRuleTest.java is empty; see sym_spell_rule_test.go")
 }
