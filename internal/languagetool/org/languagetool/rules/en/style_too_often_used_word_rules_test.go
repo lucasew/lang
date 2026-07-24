@@ -9,13 +9,256 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Behavior matrix twin for org.languagetool.rules.en.StyleTooOftenUsedAdjectiveRule
+// Behavior matrix twins for EN StyleTooOftenUsed{Noun,Adjective}Rule
 // (+ AbstractStyleTooOftenUsedWordRule match algorithm). Java has no dedicated *Test class.
 
 func TestStyleTooOftenUsedWordRules_IDs(t *testing.T) {
 	require.Equal(t, "TOO_OFTEN_USED_NOUN_EN", NewStyleTooOftenUsedNounRule().GetID())
 	require.Equal(t, "TOO_OFTEN_USED_VERB_EN", NewStyleTooOftenUsedVerbRule().GetID())
 	require.Equal(t, "TOO_OFTEN_USED_ADJECTIVE_EN", NewStyleTooOftenUsedAdjectiveRule().GetID())
+}
+
+// --- StyleTooOftenUsedNounRule (EN) ---
+// Behavior matrix twin for org.languagetool.rules.en.StyleTooOftenUsedNounRule
+// (+ AbstractStyleTooOftenUsedWordRule match algorithm). Java has no dedicated *Test class.
+
+func TestStyleTooOftenUsedNounRule_JavaMeta(t *testing.T) {
+	// Java StyleTooOftenUsedNounRule + AbstractStyleTooOftenUsedWordRule ctor.
+	rule := NewStyleTooOftenUsedNounRule()
+	require.Equal(t, "TOO_OFTEN_USED_NOUN_EN", rule.GetID())
+	require.Equal(t, "Statistical Style Analysis: Overused Noun", rule.GetDescription())
+	// Java: "Show when a noun is used more often than ...% of all nouns:"
+	require.Equal(t, "Show when a noun is used more often than ...% of all nouns:", rule.GetConfigureText())
+	require.Equal(t, 5, rule.MinPercent)        // DEFAULT_MIN_PERCENT
+	require.Equal(t, 5, rule.DefaultMinPercent) // Java defaultMinPercent
+	require.Equal(t, 100, rule.MinWordCount)    // Abstract MIN_WORD_COUNT
+	require.True(t, rule.IsDefaultOff())        // DEFAULT_ACTIVATION = false
+	require.Equal(t, rules.ITSStyle, rule.GetLocQualityIssueType())
+	cat := rule.GetCategory()
+	require.NotNil(t, cat)
+	require.Equal(t, "CREATIVE_WRITING", cat.GetID().String())
+	require.True(t, cat.IsDefaultOff())
+
+	// getLimitMessage(limit)
+	require.Equal(t,
+		"The noun is used more than 5% times of all nouns. It may be better to replace it with a synonym.",
+		rule.LimitMessage(5))
+	require.Equal(t,
+		"The noun is used more than 12% times of all nouns. It may be better to replace it with a synonym.",
+		rule.LimitMessage(12))
+
+	// getRuleOptions: RuleOption(defaultMinPercent, getConfigureText(), 1, 100)
+	opts := rule.GetRuleOptions()
+	require.Len(t, opts, 1)
+	require.Equal(t, 5, opts[0].DefaultValue)
+	require.Equal(t, rule.GetConfigureText(), opts[0].ConfigureText)
+	require.Equal(t, 1, opts[0].MinConfigurableValue)
+	require.Equal(t, 100, opts[0].MaxConfigurableValue)
+}
+
+func TestStyleTooOftenUsedNounRule_IsToCountedWordAndException(t *testing.T) {
+	rule := NewStyleTooOftenUsedNounRule()
+
+	// isToCountedWord = hasPosTagStartingWith("NN")
+	require.True(t, rule.IsToCountedWord(styleATR("cat", "NN", "cat")))
+	require.True(t, rule.IsToCountedWord(styleATR("cats", "NNS", "cat")))
+	// NNP also starts with "NN" (Java isToCountedWord true; isException also true)
+	require.True(t, rule.IsToCountedWord(styleATR("London", "NNP", "London")))
+	require.False(t, rule.IsToCountedWord(styleATR("good", "JJ", "good")))
+	require.False(t, rule.IsToCountedWord(styleATR("run", "VB", "run")))
+
+	// isException = NNP|IN|JJ|RB|VB starting tags (token at index n)
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		styleSentStart(),
+		styleATR("London", "NNP", "London"),
+		styleATR("in", "IN", "in"),
+		styleATR("good", "JJ", "good"),
+		styleATR("quickly", "RB", "quickly"),
+		styleATR("run", "VB", "run"),
+		styleATR("cat", "NN", "cat"),
+		styleATR("cats", "NNS", "cat"),
+	}
+	require.True(t, rule.IsException(tokens, 1))  // NNP
+	require.True(t, rule.IsException(tokens, 2))  // IN
+	require.True(t, rule.IsException(tokens, 3))  // JJ
+	require.True(t, rule.IsException(tokens, 4))  // RB
+	require.True(t, rule.IsException(tokens, 5))  // VB
+	require.False(t, rule.IsException(tokens, 6)) // pure NN
+	require.False(t, rule.IsException(tokens, 7)) // pure NNS
+
+	// Multi-tag token that is NN and also VB → exception (Java ORs all tags)
+	nnAndVB := styleATRMulti("run", "run", "NN", "VB")
+	require.True(t, rule.IsToCountedWord(nnAndVB))
+	require.True(t, rule.IsException([]*languagetool.AnalyzedTokenReadings{styleSentStart(), nnAndVB}, 1))
+}
+
+func TestStyleTooOftenUsedNounRule_ToAddedLemma(t *testing.T) {
+	rule := NewStyleTooOftenUsedNounRule()
+	// Java: getLemmaForPosTagStartsWith("NN", token)
+	require.Equal(t, "cat", rule.ToAddedLemma(styleATR("cats", "NNS", "cat")))
+	require.Equal(t, "house", rule.ToAddedLemma(styleATR("house", "NN", "house")))
+	// No NN reading → null/empty (no surface invent)
+	require.Equal(t, "", rule.ToAddedLemma(styleATR("good", "JJ", "good")))
+	// NN reading with nil lemma → empty string path (Java returns null lemma)
+	pos := "NN"
+	tok := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("x", &pos, nil), 0)
+	require.Equal(t, "", rule.ToAddedLemma(tok))
+}
+
+func TestStyleTooOftenUsedNounRule_Match_MinWordCountGate(t *testing.T) {
+	// Java getTooOftenUsedWords: if numWords < MIN_WORD_COUNT (100) → empty.
+	rule := NewStyleTooOftenUsedNounRule()
+	require.Equal(t, 100, rule.MinWordCount)
+
+	s1 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("A", "DT", "a"),
+		styleATR("good", "JJ", "good"),
+		styleATR("cat", "NN", "cat"),
+		styleATR(".", ".", "."),
+	))
+	s2 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("A", "DT", "a"),
+		styleATR("bad", "JJ", "bad"),
+		styleATR("cat", "NN", "cat"),
+		styleATR(".", ".", "."),
+	))
+	// Short text: only 2 counted NN lemmas → under 100 → no matches
+	require.Empty(t, rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2}))
+}
+
+func TestStyleTooOftenUsedNounRule_Match_OverusedLemma(t *testing.T) {
+	// Bypass MIN_WORD_COUNT only for percent-threshold unit test (Java production uses 100).
+	rule := NewStyleTooOftenUsedNounRule()
+	rule.MinWordCount = 0
+
+	s1 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("A", "DT", "a"),
+		styleATR("good", "JJ", "good"),
+		styleATR("cat", "NN", "cat"),
+		styleATR(".", ".", "."),
+	))
+	s2 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("A", "DT", "a"),
+		styleATR("bad", "JJ", "bad"),
+		styleATR("cat", "NN", "cat"),
+		styleATR(".", ".", "."),
+	))
+	// "cat" is 100% of nouns ≥ DEFAULT_MIN_PERCENT 5 → both hits
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})
+	require.GreaterOrEqual(t, len(ms), 2)
+	wantMsg := "The noun is used more than 5% times of all nouns. It may be better to replace it with a synonym."
+	for _, m := range ms {
+		require.Equal(t, wantMsg, m.GetMessage())
+		r, ok := m.GetRule().(*rules.AbstractStyleTooOftenUsedWordRule)
+		require.True(t, ok)
+		require.Equal(t, "TOO_OFTEN_USED_NOUN_EN", r.GetID())
+	}
+
+	// Two lemmas each 50% ≥ 5 → both flag once
+	s3 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("A", "DT", "a"),
+		styleATR("nice", "JJ", "nice"),
+		styleATR("house", "NN", "house"),
+		styleATR(".", ".", "."),
+	))
+	ms2 := rule.MatchList([]*languagetool.AnalyzedSentence{s1, s3})
+	require.Equal(t, 2, len(ms2))
+
+	// Raise threshold above 50%: neither flags
+	rule.MinPercent = 51
+	require.Empty(t, rule.MatchList([]*languagetool.AnalyzedSentence{s1, s3}))
+}
+
+func TestStyleTooOftenUsedNounRule_Match_ExceptionTagsNotCounted(t *testing.T) {
+	// Tokens that have NN but also VB/JJ/... are exceptions and must not enter the map.
+	// NNP is isToCountedWord (NN*) but isException (NNP*) → not counted.
+	rule := NewStyleTooOftenUsedNounRule()
+	rule.MinWordCount = 0
+
+	// Only pure NN "cat"; "run" has NN+VB → isException; "London" is NNP → isException
+	s := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("A", "DT", "a"),
+		styleATR("cat", "NN", "cat"),
+		styleATRMulti("run", "run", "NN", "VB"),
+		styleATR("London", "NNP", "London"),
+		styleATR(".", ".", "."),
+	))
+	// only "cat" counted → 100% ≥ 5 → one match on "cat" only
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{s})
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, "cat", extractSurface(s, ms[0]))
+}
+
+func TestStyleTooOftenUsedNounRule_Match_DirectSpeechExclusion(t *testing.T) {
+	// Java: withoutDirectSpeech only when setWithoutDirectSpeech(true).
+	// Opening quote with next token !isWhitespaceBefore → enter DS; content not counted.
+	rule := NewStyleTooOftenUsedNounRule()
+	rule.MinWordCount = 0
+	rule.WithoutDirectSpeech = true
+
+	// Sentence: He said "cat cat cat" and dog runs.
+	// Inside quotes: three "cat" NN; outside: "dog" NN.
+	// With exclusion: only "dog" counted → 100% of nouns → match on "dog" only.
+	openQ := styleATR("\"", "``", "\"")
+	cat1 := styleATR("cat", "NN", "cat")
+	cat1.SetWhitespaceBefore(false)
+	cat2 := styleATR("cat", "NN", "cat")
+	cat2.SetWhitespaceBefore(true)
+	cat3 := styleATR("cat", "NN", "cat")
+	cat3.SetWhitespaceBefore(true)
+	endQ := styleATR("\"", "''", "\"")
+	endQ.SetWhitespaceBefore(false)
+	dog := styleATR("dog", "NN", "dog")
+	dog.SetWhitespaceBefore(true)
+
+	s := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("He", "PRP", "he"),
+		styleATR("said", "VBD", "say"),
+		openQ,
+		cat1,
+		cat2,
+		cat3,
+		endQ,
+		styleATR("and", "CC", "and"),
+		dog,
+		styleATR("runs", "VBZ", "run"),
+		styleATR(".", ".", "."),
+	))
+	toks := s.GetTokensWithoutWhitespace()
+	var quoteIdxs []int
+	for i := 1; i < len(toks); i++ {
+		if toks[i].GetToken() == "\"" {
+			quoteIdxs = append(quoteIdxs, i)
+		}
+	}
+	require.GreaterOrEqual(t, len(quoteIdxs), 2)
+	toks[quoteIdxs[0]+1].SetWhitespaceBefore(false) // enter DS
+	toks[quoteIdxs[1]].SetWhitespaceBefore(false)   // exit DS
+
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{s})
+	require.Equal(t, 1, len(ms), "only outside-quote overused noun should match")
+	require.Equal(t, "dog", extractSurface(s, ms[0]))
+
+	// Default WithoutDirectSpeech=false: quotes do not exclude; "cat" is majority
+	rule.WithoutDirectSpeech = false
+	msAll := rule.MatchList([]*languagetool.AnalyzedSentence{s})
+	require.GreaterOrEqual(t, len(msAll), 3) // three "cat" at least
+}
+
+func TestStyleTooOftenUsedNounRule_Match_UntaggedNoInvent(t *testing.T) {
+	// Soft/untagged SplitAndAnalyze must not invent POS → no matches.
+	rule := NewStyleTooOftenUsedNounRule()
+	rule.MinWordCount = 0
+	plain := languagetool.SplitAndAnalyze("A cat ran. A cat slept. A cat meowed.")
+	require.Equal(t, 0, len(rule.MatchList(plain)))
 }
 
 func TestStyleTooOftenUsedAdjectiveRule_JavaMeta(t *testing.T) {
