@@ -204,7 +204,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-DoublePunctuationRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/DoublePunctuationRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/DoublePunctuationRuleTest.java | internal/languagetool/org/languagetool/rules/ | edf5066901748980fc9be426e5c3345da788667b | 0 | 0 |  |  | 2026-07-24T01:25:20Z |
 | docs/faithful-port-checklist.md#3.C.1-MultipleWhitespaceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/MultipleWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | 33d56c14e16cd8cf6daff0f257753f369eda613c | 0 | 0 |  |  | 2026-07-24T01:35:31Z |
 | docs/faithful-port-checklist.md#3.C.1-UppercaseSentenceStartRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/UppercaseSentenceStartRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java | internal/languagetool/org/languagetool/rules/ | ece9f12b00ef9d17a20aa020ec569e77d3d41f29 | 1 | 0 | |  | 2026-07-24T02:07:50Z |
-| docs/faithful-port-checklist.md#3.C.1-SentenceWhitespaceRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/SentenceWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | de93509beb8ffe486b7996df296bee35547400c7 | 0 | 0 | | | 2026-07-24T02:15:59Z |
+| docs/faithful-port-checklist.md#3.C.1-SentenceWhitespaceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/SentenceWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | de93509beb8ffe486b7996df296bee35547400c7 | 0 | 0 | | | 2026-07-24T02:22:40Z |
 
 ## Human inbox
 
@@ -214,7 +214,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-SentenceWhitespaceRule @ de93509b (FakeLanguage yy+SimpleSentenceTokenizer; parent green). FR/zh blocked. |
+| Notes | accepted 3.C.1-SentenceWhitespaceRule @ de93509b. FR/zh blocked. |
 
 ---
 
@@ -846,3 +846,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T02:07:50Z ACCEPT: 3.C.1-UppercaseSentenceStartRule @ ece9f12b (validator + parent green reconfirm; r1 matches() fixed)
 - 2026-07-24T02:09:28Z implement: 3.C.1-SentenceWhitespaceRule (SentenceWhitespaceRuleTest full outcome twin; core layout 3.C.1 leaf)
 - 2026-07-24T02:15:59Z ready: 3.C.1-SentenceWhitespaceRule @ de93509b (implementer report; parent green reconfirm)
+- 2026-07-24T02:18:46Z validating: 3.C.1-SentenceWhitespaceRule @ de93509b
+- 2026-07-24T02:22:40Z ACCEPT: 3.C.1-SentenceWhitespaceRule @ de93509b (validator + parent green reconfirm)
