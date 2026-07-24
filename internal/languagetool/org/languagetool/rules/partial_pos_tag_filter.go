@@ -22,21 +22,36 @@ func NewPartialPosTagFilter(tag func(string) []string) *PartialPosTagFilter {
 
 // AcceptRuleMatch ports PartialPosTagFilter.acceptRuleMatch.
 // Args: no (1-based pattern token), regexp, postag_regexp; optional negate_pos, two_groups_regexp, prefix, suffix.
+// Java: missing required args / wrong group count / bad index → RuntimeException (panic in Go).
+// Keep path returns the same match pointer (Java return match).
 func (f *PartialPosTagFilter) AcceptRuleMatch(match *RuleMatch, args map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *RuleMatch {
 	if f == nil || match == nil {
 		return nil
 	}
-	if args["no"] == "" || args["regexp"] == "" || args["postag_regexp"] == "" {
+	// Java: !(containsKey no && regexp && postag_regexp) → RuntimeException.
+	if _, ok := args["no"]; !ok {
+		panic("Set 'no', 'regexp' and 'postag_regexp' for filter PartialPosTagFilter")
+	}
+	if _, ok := args["regexp"]; !ok {
+		panic("Set 'no', 'regexp' and 'postag_regexp' for filter PartialPosTagFilter")
+	}
+	if _, ok := args["postag_regexp"]; !ok {
 		panic("Set 'no', 'regexp' and 'postag_regexp' for filter PartialPosTagFilter")
 	}
 	tokenPos, err := strconv.Atoi(args["no"])
 	if err != nil {
-		return nil
+		// Java Integer.parseInt → NumberFormatException.
+		panic(err.Error())
 	}
-	if tokenPos < 1 || tokenPos > len(patternTokens) || patternTokens[tokenPos-1] == nil {
-		return nil
+	// Java patternTokens[tokenPos-1] — OOB / null → exception.
+	if tokenPos < 1 || tokenPos > len(patternTokens) {
+		panic(fmt.Sprintf("PartialPosTagFilter token index %d out of range (len=%d)", tokenPos, len(patternTokens)))
 	}
+	if patternTokens[tokenPos-1] == nil {
+		panic("PartialPosTagFilter pattern token is null")
+	}
+	// Java: containsKey only (value ignored) for negate_pos / two_groups_regexp.
 	_, negatePos := args["negate_pos"]
 	_, twoGroups := args["two_groups_regexp"]
 	ok, err := f.Accept(
