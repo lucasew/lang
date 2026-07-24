@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Behavior matrix twins for EN StyleTooOftenUsed{Noun,Adjective}Rule
+// Behavior matrix twins for EN StyleTooOftenUsed{Noun,Verb,Adjective}Rule
 // (+ AbstractStyleTooOftenUsedWordRule match algorithm). Java has no dedicated *Test class.
 
 func TestStyleTooOftenUsedWordRules_IDs(t *testing.T) {
@@ -258,6 +258,245 @@ func TestStyleTooOftenUsedNounRule_Match_UntaggedNoInvent(t *testing.T) {
 	rule := NewStyleTooOftenUsedNounRule()
 	rule.MinWordCount = 0
 	plain := languagetool.SplitAndAnalyze("A cat ran. A cat slept. A cat meowed.")
+	require.Equal(t, 0, len(rule.MatchList(plain)))
+}
+
+// --- StyleTooOftenUsedVerbRule (EN) ---
+// Behavior matrix twin for org.languagetool.rules.en.StyleTooOftenUsedVerbRule
+// (+ AbstractStyleTooOftenUsedWordRule match algorithm). Java has no dedicated *Test class.
+
+func TestStyleTooOftenUsedVerbRule_JavaMeta(t *testing.T) {
+	// Java StyleTooOftenUsedVerbRule + AbstractStyleTooOftenUsedWordRule ctor.
+	rule := NewStyleTooOftenUsedVerbRule()
+	require.Equal(t, "TOO_OFTEN_USED_VERB_EN", rule.GetID())
+	require.Equal(t, "Statistical Style Analysis: Overused Verb", rule.GetDescription())
+	// Java: "Show when a verb is used more often than ...% of all verbs:"
+	require.Equal(t, "Show when a verb is used more often than ...% of all verbs:", rule.GetConfigureText())
+	require.Equal(t, 5, rule.MinPercent)        // DEFAULT_MIN_PERCENT
+	require.Equal(t, 5, rule.DefaultMinPercent) // Java defaultMinPercent
+	require.Equal(t, 100, rule.MinWordCount)    // Abstract MIN_WORD_COUNT
+	require.True(t, rule.IsDefaultOff())        // DEFAULT_ACTIVATION = false
+	require.Equal(t, rules.ITSStyle, rule.GetLocQualityIssueType())
+	cat := rule.GetCategory()
+	require.NotNil(t, cat)
+	require.Equal(t, "CREATIVE_WRITING", cat.GetID().String())
+	require.True(t, cat.IsDefaultOff())
+
+	// getLimitMessage(limit)
+	require.Equal(t,
+		"The verb is used more than 5% times of all verbs. It may be better to replace it with a synonym.",
+		rule.LimitMessage(5))
+	require.Equal(t,
+		"The verb is used more than 12% times of all verbs. It may be better to replace it with a synonym.",
+		rule.LimitMessage(12))
+
+	// getRuleOptions: RuleOption(defaultMinPercent, getConfigureText(), 1, 100)
+	opts := rule.GetRuleOptions()
+	require.Len(t, opts, 1)
+	require.Equal(t, 5, opts[0].DefaultValue)
+	require.Equal(t, rule.GetConfigureText(), opts[0].ConfigureText)
+	require.Equal(t, 1, opts[0].MinConfigurableValue)
+	require.Equal(t, 100, opts[0].MaxConfigurableValue)
+}
+
+func TestStyleTooOftenUsedVerbRule_IsToCountedWordAndException(t *testing.T) {
+	rule := NewStyleTooOftenUsedVerbRule()
+
+	// isToCountedWord = hasPosTagStartingWith("VB")
+	require.True(t, rule.IsToCountedWord(styleATR("run", "VB", "run")))
+	require.True(t, rule.IsToCountedWord(styleATR("runs", "VBZ", "run")))
+	require.True(t, rule.IsToCountedWord(styleATR("ran", "VBD", "run")))
+	require.True(t, rule.IsToCountedWord(styleATR("running", "VBG", "run")))
+	require.True(t, rule.IsToCountedWord(styleATR("been", "VBN", "be")))
+	require.False(t, rule.IsToCountedWord(styleATR("good", "JJ", "good")))
+	require.False(t, rule.IsToCountedWord(styleATR("cat", "NN", "cat")))
+
+	// isException = hasAnyLemma("be","have","do") || IN* || NN*
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		styleSentStart(),
+		styleATR("is", "VBZ", "be"),
+		styleATR("have", "VB", "have"),
+		styleATR("did", "VBD", "do"),
+		styleATR("in", "IN", "in"),
+		styleATR("cat", "NN", "cat"),
+		styleATR("run", "VB", "run"),
+		styleATR("runs", "VBZ", "run"),
+	}
+	require.True(t, rule.IsException(tokens, 1))  // lemma be
+	require.True(t, rule.IsException(tokens, 2))  // lemma have
+	require.True(t, rule.IsException(tokens, 3))  // lemma do
+	require.True(t, rule.IsException(tokens, 4))  // IN
+	require.True(t, rule.IsException(tokens, 5))  // NN
+	require.False(t, rule.IsException(tokens, 6)) // pure VB run
+	require.False(t, rule.IsException(tokens, 7)) // pure VBZ run
+
+	// Multi-tag token that is VB and also NN → exception (Java ORs tags / lemmas)
+	vbAndNN := styleATRMulti("run", "run", "VB", "NN")
+	require.True(t, rule.IsToCountedWord(vbAndNN))
+	require.True(t, rule.IsException([]*languagetool.AnalyzedTokenReadings{styleSentStart(), vbAndNN}, 1))
+}
+
+func TestStyleTooOftenUsedVerbRule_ToAddedLemma(t *testing.T) {
+	rule := NewStyleTooOftenUsedVerbRule()
+	// Java: getLemmaForPosTagStartsWith("VB", token)
+	require.Equal(t, "run", rule.ToAddedLemma(styleATR("runs", "VBZ", "run")))
+	require.Equal(t, "run", rule.ToAddedLemma(styleATR("running", "VBG", "run")))
+	// No VB reading → null/empty (no surface invent)
+	require.Equal(t, "", rule.ToAddedLemma(styleATR("good", "JJ", "good")))
+	// VB reading with nil lemma → empty string path (Java returns null lemma)
+	pos := "VB"
+	tok := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("x", &pos, nil), 0)
+	require.Equal(t, "", rule.ToAddedLemma(tok))
+}
+
+func TestStyleTooOftenUsedVerbRule_Match_MinWordCountGate(t *testing.T) {
+	// Java getTooOftenUsedWords: if numWords < MIN_WORD_COUNT (100) → empty.
+	rule := NewStyleTooOftenUsedVerbRule()
+	require.Equal(t, 100, rule.MinWordCount)
+
+	s1 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("Cats", "NNS", "cat"),
+		styleATR("run", "VB", "run"),
+		styleATR(".", ".", "."),
+	))
+	s2 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("Dogs", "NNS", "dog"),
+		styleATR("run", "VB", "run"),
+		styleATR(".", ".", "."),
+	))
+	// Short text: only 2 counted VB lemmas → under 100 → no matches
+	require.Empty(t, rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2}))
+}
+
+func TestStyleTooOftenUsedVerbRule_Match_OverusedLemma(t *testing.T) {
+	// Bypass MIN_WORD_COUNT only for percent-threshold unit test (Java production uses 100).
+	rule := NewStyleTooOftenUsedVerbRule()
+	rule.MinWordCount = 0
+
+	s1 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("Cats", "NNS", "cat"),
+		styleATR("run", "VB", "run"),
+		styleATR(".", ".", "."),
+	))
+	s2 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("Dogs", "NNS", "dog"),
+		styleATR("run", "VB", "run"),
+		styleATR(".", ".", "."),
+	))
+	// "run" is 100% of verbs ≥ DEFAULT_MIN_PERCENT 5 → both hits
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})
+	require.GreaterOrEqual(t, len(ms), 2)
+	wantMsg := "The verb is used more than 5% times of all verbs. It may be better to replace it with a synonym."
+	for _, m := range ms {
+		require.Equal(t, wantMsg, m.GetMessage())
+		r, ok := m.GetRule().(*rules.AbstractStyleTooOftenUsedWordRule)
+		require.True(t, ok)
+		require.Equal(t, "TOO_OFTEN_USED_VERB_EN", r.GetID())
+	}
+
+	// Two lemmas each 50% ≥ 5 → both flag once
+	s3 := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("Birds", "NNS", "bird"),
+		styleATR("fly", "VB", "fly"),
+		styleATR(".", ".", "."),
+	))
+	ms2 := rule.MatchList([]*languagetool.AnalyzedSentence{s1, s3})
+	require.Equal(t, 2, len(ms2))
+
+	// Raise threshold above 50%: neither flags
+	rule.MinPercent = 51
+	require.Empty(t, rule.MatchList([]*languagetool.AnalyzedSentence{s1, s3}))
+}
+
+func TestStyleTooOftenUsedVerbRule_Match_ExceptionTagsNotCounted(t *testing.T) {
+	// be|have|do lemmas and IN*|NN* are exceptions and must not enter the map.
+	// VB+NN multi-tag is isToCountedWord (VB*) but isException (NN*) → not counted.
+	rule := NewStyleTooOftenUsedVerbRule()
+	rule.MinWordCount = 0
+
+	// Only pure VB "run"; "is" lemma be → isException; "walk" has VB+NN → isException
+	s := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("Cats", "NNS", "cat"),
+		styleATR("run", "VB", "run"),
+		styleATR("is", "VBZ", "be"),
+		styleATRMulti("walk", "walk", "VB", "NN"),
+		styleATR(".", ".", "."),
+	))
+	// only "run" counted → 100% ≥ 5 → one match on "run" only
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{s})
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, "run", extractSurface(s, ms[0]))
+}
+
+func TestStyleTooOftenUsedVerbRule_Match_DirectSpeechExclusion(t *testing.T) {
+	// Java: withoutDirectSpeech only when setWithoutDirectSpeech(true).
+	// Opening quote with next token !isWhitespaceBefore → enter DS; content not counted.
+	rule := NewStyleTooOftenUsedVerbRule()
+	rule.MinWordCount = 0
+	rule.WithoutDirectSpeech = true
+
+	// Sentence: Then "run run run" and walk now.
+	// (no outside VB reporting verb — "said"/VBD would also be counted as a verb)
+	// Inside quotes: three "run" VB; outside: "walk" VB.
+	// With exclusion: only "walk" counted → 100% of verbs → match on "walk" only.
+	openQ := styleATR("\"", "``", "\"")
+	run1 := styleATR("run", "VB", "run")
+	run1.SetWhitespaceBefore(false)
+	run2 := styleATR("run", "VB", "run")
+	run2.SetWhitespaceBefore(true)
+	run3 := styleATR("run", "VB", "run")
+	run3.SetWhitespaceBefore(true)
+	endQ := styleATR("\"", "''", "\"")
+	endQ.SetWhitespaceBefore(false)
+	walk := styleATR("walk", "VB", "walk")
+	walk.SetWhitespaceBefore(true)
+
+	s := languagetool.NewAnalyzedSentence(styleWithPositions(
+		styleSentStart(),
+		styleATR("Then", "RB", "then"),
+		openQ,
+		run1,
+		run2,
+		run3,
+		endQ,
+		styleATR("and", "CC", "and"),
+		walk,
+		styleATR("now", "RB", "now"),
+		styleATR(".", ".", "."),
+	))
+	toks := s.GetTokensWithoutWhitespace()
+	var quoteIdxs []int
+	for i := 1; i < len(toks); i++ {
+		if toks[i].GetToken() == "\"" {
+			quoteIdxs = append(quoteIdxs, i)
+		}
+	}
+	require.GreaterOrEqual(t, len(quoteIdxs), 2)
+	toks[quoteIdxs[0]+1].SetWhitespaceBefore(false) // enter DS
+	toks[quoteIdxs[1]].SetWhitespaceBefore(false)   // exit DS
+
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{s})
+	require.Equal(t, 1, len(ms), "only outside-quote overused verb should match")
+	require.Equal(t, "walk", extractSurface(s, ms[0]))
+
+	// Default WithoutDirectSpeech=false: quotes do not exclude; "run" is majority
+	rule.WithoutDirectSpeech = false
+	msAll := rule.MatchList([]*languagetool.AnalyzedSentence{s})
+	require.GreaterOrEqual(t, len(msAll), 3) // three "run" at least
+}
+
+func TestStyleTooOftenUsedVerbRule_Match_UntaggedNoInvent(t *testing.T) {
+	// Soft/untagged SplitAndAnalyze must not invent POS → no matches.
+	rule := NewStyleTooOftenUsedVerbRule()
+	rule.MinWordCount = 0
+	plain := languagetool.SplitAndAnalyze("Cats run. Dogs run. Birds run.")
 	require.Equal(t, 0, len(rule.MatchList(plain)))
 }
 
