@@ -15,8 +15,12 @@ type AbstractStyleTooOftenUsedWordRule struct {
 	Messages     map[string]string
 	ID           string
 	Description  string
-	MinPercent   int // threshold percent; Java defaults 5 for DE
-	MinWordCount int // Java 100; 0 disables gate for twin tests
+	// ConfigureText ports getConfigureText (used by getRuleOptions).
+	ConfigureText string
+	// DefaultMinPercent ports Java defaultMinPercent (RuleOption default).
+	DefaultMinPercent int
+	MinPercent        int // threshold percent; Java defaults 5 for DE/EN style rules
+	MinWordCount      int // Java 100; 0 disables gate for twin tests
 	// WithoutDirectSpeech when true excludes quoted spans (Java withoutDirectSpeech).
 	WithoutDirectSpeech bool
 	// Category ports Rule.category (Java CREATIVE_WRITING).
@@ -87,6 +91,27 @@ func (r *AbstractStyleTooOftenUsedWordRule) GetDescription() string {
 		return r.Description
 	}
 	return "Word used too often"
+}
+
+// GetConfigureText ports AbstractStyleTooOftenUsedWordRule.getConfigureText (abstract in Java).
+func (r *AbstractStyleTooOftenUsedWordRule) GetConfigureText() string {
+	if r == nil {
+		return ""
+	}
+	return r.ConfigureText
+}
+
+// GetRuleOptions ports AbstractStyleTooOftenUsedWordRule.getRuleOptions.
+// Java: new RuleOption(defaultMinPercent, getConfigureText(), 1, 100)
+func (r *AbstractStyleTooOftenUsedWordRule) GetRuleOptions() []*RuleOption {
+	if r == nil {
+		return nil
+	}
+	def := r.DefaultMinPercent
+	if def == 0 {
+		def = r.MinPercent
+	}
+	return []*RuleOption{NewRuleOption(def, r.GetConfigureText(), 1, 100)}
 }
 
 func (r *AbstractStyleTooOftenUsedWordRule) minWords() int {
@@ -210,6 +235,7 @@ func (r *AbstractStyleTooOftenUsedWordRule) getTooOftenUsedWords(wordMap map[str
 }
 
 // LemmaForPosTagStartsWith ports getLemmaForPosTagStartsWith.
+// Java returns reading.getLemma() on the first POS-prefix match (may be null → "").
 func LemmaForPosTagStartsWith(startPos string, token *languagetool.AnalyzedTokenReadings) string {
 	if token == nil {
 		return ""
@@ -223,6 +249,7 @@ func LemmaForPosTagStartsWith(startPos string, token *languagetool.AnalyzedToken
 			if l := reading.GetLemma(); l != nil {
 				return *l
 			}
+			return "" // Java: return reading.getLemma() when null
 		}
 	}
 	return ""
