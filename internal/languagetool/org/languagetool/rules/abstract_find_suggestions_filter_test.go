@@ -135,6 +135,22 @@ func TestGetPositionFS_MarkerAndOffset(t *testing.T) {
 	require.Panics(t, func() { getPositionFS("marker+9", toks, m) })
 }
 
+// Twin: ArrayList.remove(Object) is first-only, then stream().distinct().
+// ["err","x","err"] remove "err" → ["x","err"] → distinct → ["x","err"] (not remove-all ["x"]).
+func TestRemoveStringFS_FirstOnlyThenDistinct(t *testing.T) {
+	in := []string{"err", "x", "err"}
+	afterRemove := removeStringFS(in, "err")
+	require.Equal(t, []string{"x", "err"}, afterRemove)
+	require.Equal(t, []string{"x", "err"}, distinctFS(afterRemove))
+
+	// No match: list unchanged.
+	require.Equal(t, []string{"a", "b"}, removeStringFS([]string{"a", "b"}, "z"))
+	// Single occurrence.
+	require.Equal(t, []string{"b", "c"}, removeStringFS([]string{"a", "b", "c"}, "a"))
+	// Empty target still removes first "" only (Java remove("")).
+	require.Equal(t, []string{"a", ""}, removeStringFS([]string{"", "a", ""}, ""))
+}
+
 // Twin: definitiveReplacements.remove(match.getOriginalErrorStr()) only —
 // do not invent setOriginalErrorStr when empty.
 // Pre-seed match suggested replacements (non-template path) so remove is observable;

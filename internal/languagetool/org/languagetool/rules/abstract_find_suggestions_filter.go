@@ -358,18 +358,19 @@ func containsStrFS(list []string, s string) bool {
 	return false
 }
 
-// removeStringFS ports List.remove(Object): drop every occurrence equal to s
-// (Java ArrayList.remove is first-only once, but stream distinct follows;
-// dropping all equals is equivalent for this filter's use).
+// removeStringFS ports ArrayList.remove(Object): remove the first occurrence equal to s only.
+// Later equals survive remove and may remain after stream().distinct() (order of first sighting).
 // Call even when s is empty — do not invent an early skip (Java still remove("")).
 func removeStringFS(list []string, s string) []string {
-	var out []string
-	for _, x := range list {
-		if x != s {
-			out = append(out, x)
+	for i, x := range list {
+		if x == s {
+			out := make([]string, 0, len(list)-1)
+			out = append(out, list[:i]...)
+			out = append(out, list[i+1:]...)
+			return out
 		}
 	}
-	return out
+	return list
 }
 
 func distinctFS(in []string) []string {
