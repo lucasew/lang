@@ -1,6 +1,10 @@
 package en
 
-// Code generated-ish from AdverbFilter.java; keep in sync.
+// adverb2Adj ports AdverbFilter.adverb2Adj (Java HashMap double-brace init).
+// Source: org.languagetool.rules.en.AdverbFilter — active put() only.
+// HashMap semantics: later put overwrites earlier (jokily: jokey then joking → joking).
+// Commented puts in Java (e.g. unduly→undue, empty key) are intentionally absent.
+// Active put calls: 505; unique keys after overwrite: 503.
 var adverb2Adj = map[string]string{
 	"absolutely":           "absolute",
 	"academically":         "academical",
