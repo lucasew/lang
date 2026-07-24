@@ -229,6 +229,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-MorfologikMultiSpeller-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test2.txt | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | f63c5be135d54cbfb9000f3a1db6615fa61ffb77 | 0 | 0 |  |  | 2026-07-24T07:22:39Z |
 | docs/faithful-port-checklist.md#3.C.2-DetailedDamerauLevenstheinDistance-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistanceTest.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/ | 969f72941f54792e9f01f31e6d84a58ed7f5a054 | 0 | 0 |  |  | 2026-07-24T07:37:10Z |
 | docs/faithful-port-checklist.md#3.C.2-WeightedSuggestion | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/WeightedSuggestion.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/weighted_suggestion.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/weighted_suggestion_test.go | 0905ca8c91701c677e04fd51eaa99cdfe9ba88c3 | 0 | 0 |  |  | 2026-07-24T07:45:46Z |
+| docs/faithful-port-checklist.md#3.C.2-SuggestionsOrdererConfig | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/SuggestionsOrdererConfig.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config_test.go | ed961fc7b2684f60b856b1c7dcf96b18729e010d | 0 | 0 |  |  | 2026-07-24T07:51:17Z |
 
 ## Human inbox
 
@@ -238,7 +239,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.2-WeightedSuggestion @ 0905ca8c (CompareTo + stable SortByWeight). FR/zh blocked. Next: next 3.C.2 leaf. |
+| Notes | ready 3.C.2-SuggestionsOrdererConfig @ ed961fc7 (in-process System property twin; Java parseBoolean). FR/zh blocked. |
 
 ---
 
@@ -972,3 +973,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T07:41:25Z ready: 3.C.2-WeightedSuggestion @ 0905ca8c (implementer report; parent green reconfirm)
 - 2026-07-24T07:43:43Z validating: 3.C.2-WeightedSuggestion @ 0905ca8c (strict invent re-audit vs Java WeightedSuggestion)
 - 2026-07-24T07:45:46Z ACCEPT: 3.C.2-WeightedSuggestion @ 0905ca8c (validator + parent green reconfirm)
+- 2026-07-24T07:48:53Z implement: 3.C.2-SuggestionsOrdererConfig (System property ML flag + ngramsPath twin; morfologik ordering leaf)
+- 2026-07-24T07:51:17Z ready: 3.C.2-SuggestionsOrdererConfig @ ed961fc7 (implementer report; parent green reconfirm)
