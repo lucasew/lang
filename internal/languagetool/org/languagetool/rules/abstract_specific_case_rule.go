@@ -45,14 +45,23 @@ func InitSpecificCaseMeta(r *AbstractSpecificCaseRule, messages map[string]strin
 	}
 }
 
-// LoadSpecificCasePhrases loads phrase list: each non-comment line is the proper spelling.
+// LoadSpecificCasePhrases ports CachingWordListLoader.loadWords + AbstractSpecificCaseRule.loadPhrases:
+// skip empty/# lines; strip trailing "#…" comments; map lowercased phrase → proper spelling.
 func LoadSpecificCasePhrases(r io.Reader) (map[string]string, int, error) {
 	m := make(map[string]string)
 	maxLen := 0
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := tools.JavaStringTrim(sc.Text())
-		if line == "" || line[0] == '#' {
+		raw := sc.Text()
+		if raw == "" || strings.HasPrefix(raw, "#") {
+			continue
+		}
+		// Java CachingWordListLoader: substringBefore(line.trim(), "#").trim()
+		line := tools.JavaStringTrim(raw)
+		if i := strings.Index(line, "#"); i >= 0 {
+			line = tools.JavaStringTrim(line[:i])
+		}
+		if line == "" {
 			continue
 		}
 		parts := strings.Split(line, " ")
@@ -153,31 +162,33 @@ func (r *AbstractSpecificCaseRule) Match(sentence *languagetool.AnalyzedSentence
 			if !ok || tools.IsAllUppercase(phrase) || phrase == properSpelling {
 				continue
 			}
-			// sentence start: avoid suggesting lowercase-start phrases
+			// Java: avoid suggesting e.g. "vitamin C" at sentence start
 			if i > 0 && tokens[i-1].IsSentenceStart() && !tools.StartsWithUppercase(properSpelling) {
 				continue
 			}
-			// Also: first real token after SENT_START is i==1 with tokens[0] SENT_START
-			if i == 1 && tokens[0].IsSentenceStart() && !tools.StartsWithUppercase(properSpelling) {
-				continue
-			}
-			msg := r.OtherCapitalizationMessage
-			if msg == "" {
-				msg = "The particular expression should follow the suggested capitalization."
-			}
+			var msg string
 			if allWordsUppercase(properSpelling) {
 				msg = r.InitialCapitalMessage
 				if msg == "" {
+					// Java AbstractSpecificCaseRule.getInitialCapitalMessage default
 					msg = "The initials of the particular phrase must be capitals."
+				}
+			} else {
+				msg = r.OtherCapitalizationMessage
+				if msg == "" {
+					// Java AbstractSpecificCaseRule.getOtherCapitalizationMessage default
+					msg = "The particular expression should follow the suggested capitalization."
 				}
 			}
 			from := tokens[i].GetStartPos()
 			to := tokens[i+j-1].GetEndPos()
-			rm := NewRuleMatch(r, sentence, from, to, msg)
 			short := r.ShortMsg
 			if short == "" {
+				// Java AbstractSpecificCaseRule.getShortMessage default
 				short = "Special capitalization"
 			}
+			// Java: new RuleMatch(this, sentence, from, to, msg, getShortMessage())
+			rm := NewRuleMatch(r, sentence, from, to, msg)
 			rm.ShortMessage = short
 			rm.SetSuggestedReplacement(properSpelling)
 			matches = append(matches, rm)
