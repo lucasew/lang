@@ -168,9 +168,12 @@ func (r *AvsAnRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.Rule
 					"word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'."
 			}
 			if msg != "" {
+				// Java: new RuleMatch(this, sentence, prevStart, prevEnd, prevStart, tokenEnd, msg, "Wrong article")
+				// suggestions extracted from <suggestion>…</suggestion> in message.
 				prev := tokens[prevTokenIndex]
 				rm := rules.NewRuleMatch(r, sentence, prev.GetStartPos(), prev.GetEndPos(), msg)
-				rm.ShortMessage = "Wrong article"
+				rm.SetPatternPosition(prev.GetStartPos(), token.GetEndPos())
+				rm.SetShortMessage("Wrong article")
 				rm.SetSuggestedReplacement(replacement)
 				ruleMatches = append(ruleMatches, rm)
 			}
