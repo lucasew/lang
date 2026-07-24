@@ -9,15 +9,22 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
+// LongSentenceRuleID ports LongSentenceRule.RULE_ID.
+const LongSentenceRuleID = "TOO_LONG_SENTENCE"
+
 var (
+	// quotedSentEnd ports QUOTED_SENT_END = Pattern.compile("[?!.][\"“”„»«]", DOTALL).
+	// DOTALL is a no-op for this character class (no '.' wildcard).
 	quotedSentEnd = regexp.MustCompile(`[?!.]["“”„»«]`)
+	// sentEndRE ports SENT_END = Pattern.compile("[?!.]") used with Matcher.matches()
+	// (entire token must be a single sentence-end mark).
 	sentEndRE     = regexp.MustCompile(`^[?!.]$`)
 	openingQuotes = []string{"\"", "“", "„", "«", "(", "[", "{", "—"}
 	closingQuotes = []string{"\"", "”", "“", "»", ")", "]", "}", "—"}
 )
 
 // LongSentenceRule ports org.languagetool.rules.LongSentenceRule.
-// Java: STYLE, Style, Tag.picky.
+// Java: Categories.STYLE, ITSIssueType.Style, Tag.picky; minToCheckParagraph=0.
 type LongSentenceRule struct {
 	Messages map[string]string
 	MaxWords int
@@ -40,10 +47,26 @@ type LongSentenceRule struct {
 	correctExamples   []CorrectExample
 }
 
+// NewLongSentenceRule ports LongSentenceRule(messages, null, maxWords).
 func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentenceRule {
+	return NewLongSentenceRuleWithUserConfig(messages, nil, maxWords)
+}
+
+// NewLongSentenceRuleWithUserConfig ports
+// LongSentenceRule(ResourceBundle messages, UserConfig userConfig, int maxWords).
+// UserConfig.getConfigValueByID(getId()) overrides maxWords when present.
+func NewLongSentenceRuleWithUserConfig(messages map[string]string, userConfig *languagetool.UserConfig, maxWords int) *LongSentenceRule {
+	tmpMaxWords := maxWords
+	if userConfig != nil {
+		if cf := userConfig.GetConfigValueByID(LongSentenceRuleID); len(cf) > 0 && cf[0] != nil {
+			if n, ok := configValueAsInt(cf[0]); ok {
+				tmpMaxWords = n
+			}
+		}
+	}
 	return &LongSentenceRule{
 		Messages:  messages,
-		MaxWords:  maxWords,
+		MaxWords:  tmpMaxWords,
 		Category:  CatStyle.GetCategory(messages),
 		IssueType: ITSStyle,
 		Tags:      []Tag{TagPicky},
@@ -51,10 +74,10 @@ func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentence
 }
 
 func (r *LongSentenceRule) GetID() string {
-	if r.RuleID != "" {
+	if r != nil && r.RuleID != "" {
 		return r.RuleID
 	}
-	return "TOO_LONG_SENTENCE"
+	return LongSentenceRuleID
 }
 
 func (r *LongSentenceRule) GetCategory() *Category {
@@ -140,7 +163,7 @@ func (r *LongSentenceRule) EstimateContextForSureMatch() int { return -1 }
 func (r *LongSentenceRule) MinToCheckParagraph() int { return 0 }
 
 // GetDescription ports LongSentenceRule.getDescription.
-// Default: MessageFormat(messages["long_sentence_rule_desc"], maxWords).
+// Java: MessageFormat.format(messages.getString("long_sentence_rule_desc"), maxWords).
 func (r *LongSentenceRule) GetDescription() string {
 	if r != nil && r.Description != "" {
 		return r.Description
@@ -153,22 +176,40 @@ func (r *LongSentenceRule) GetDescription() string {
 	return fmt.Sprintf("Finds long sentences (more than %d words)", r.maxWords())
 }
 
+// maxWords returns the configured threshold (Java private final maxWords field).
 func (r *LongSentenceRule) maxWords() int {
-	if r == nil || r.MaxWords <= 0 {
-		return 40
+	if r == nil {
+		return 0
 	}
 	return r.MaxWords
 }
 
+// GetMessage ports LongSentenceRule.getMessage.
+// Java: MessageFormat.format(messages.getString("long_sentence_rule_msg2"), maxWords).
 func (r *LongSentenceRule) GetMessage() string {
 	msg := ""
-	if r.Messages != nil {
+	if r != nil && r.Messages != nil {
 		msg = r.Messages["long_sentence_rule_msg2"]
 	}
 	if msg == "" {
 		msg = "This sentence is too long ({0} words)"
 	}
 	return messageFormat0(msg, r.maxWords())
+}
+
+// GetRuleOptions ports LongSentenceRule.getRuleOptions.
+// Java: new RuleOption(maxWords, messages.getString("guiLongSentencesText"), 5, 100).
+func (r *LongSentenceRule) GetRuleOptions() []*RuleOption {
+	cfgText := ""
+	if r != nil && r.Messages != nil {
+		cfgText = r.Messages["guiLongSentencesText"]
+	}
+	if cfgText == "" {
+		cfgText = "Maximum sentences length (5 - 100 words):"
+	}
+	return []*RuleOption{
+		NewRuleOption(r.maxWords(), cfgText, 5, 100),
+	}
 }
 
 // messageFormat0 ports MessageFormat with a single {0} integer argument.
@@ -181,8 +222,8 @@ func messageFormat0(tmpl string, n int) string {
 }
 
 func isWordCount(tokenText string) bool {
-	// Java: tokenText.length() > 0 then !isNotWordCharacter(substring(0,1))
-	// length/substring are UTF-16 code units (BMP letter = 1 unit).
+	// Java: if (tokenText.length() > 0) return !StringTools.isNotWordCharacter(tokenText.substring(0,1));
+	// length/substring are UTF-16 code units (BMP letter = 1 unit; emoji high surrogate is not \p{L}).
 	if utf16Len(tokenText) == 0 {
 		return false
 	}
@@ -194,10 +235,13 @@ func isWordCount(tokenText string) bool {
 func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
 	pos := 0
+	maxWords := r.maxWords()
+	// Java builds msg once per sentence after short-circuits; message is independent of sentence.
 	msg := r.GetMessage()
 	for _, sentence := range sentences {
 		tokens := sentence.GetTokens()
-		if len(tokens) < r.MaxWords {
+		// Java: if (tokens.length < maxWords) { pos += …; continue; } — short-circuit on token count.
+		if len(tokens) < maxWords {
 			pos += sentence.GetCorrectedTextLength()
 			continue
 		}
@@ -205,9 +249,9 @@ func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence)
 			pos += sentence.GetCorrectedTextLength()
 			continue
 		}
-		// Java: fromPosToken / toPosToken / indexOfQuote are outside the outer
-		// segment loop — not reset at ":" / ";" / newline. A match after a colon
-		// therefore still spans from the first counted word of the sentence.
+		// Java: fromPosToken / toPosToken / indexOfQuote are declared outside the outer
+		// segment loop — not reset at ":" / ";" / newline boundaries. A match after a
+		// colon still spans from the first counted word of the sentence (bug-for-bug).
 		i := 0
 		var fromPos, toPos []int
 		var fromPosToken, toPosToken *languagetool.AnalyzedTokenReadings
@@ -217,6 +261,7 @@ func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence)
 			for i < len(tokens) && tokens[i].GetToken() != ":" && tokens[i].GetToken() != ";" &&
 				tokens[i].GetToken() != "\n" && tokens[i].GetToken() != "\r\n" && tokens[i].GetToken() != "\n\r" {
 				token := tokens[i].GetToken()
+				// Java: OPENING_QUOTES.contains then indexOf; CLOSING_QUOTES.indexOf(token) == indexOfQuote.
 				if indexOfQuote == -1 {
 					for oi, oq := range openingQuotes {
 						if token == oq {
@@ -225,6 +270,7 @@ func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence)
 						}
 					}
 				} else if indexOfQuote > -1 {
+					// Equivalent to CLOSING_QUOTES.indexOf(token) == indexOfQuote (exact slot match).
 					if indexOfQuote < len(closingQuotes) && token == closingQuotes[indexOfQuote] {
 						indexOfQuote = -1
 					}
@@ -233,7 +279,7 @@ func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence)
 					if fromPosToken == nil {
 						fromPosToken = tokens[i]
 					}
-					if numWords == r.MaxWords {
+					if numWords == maxWords {
 						if toPosToken == nil {
 							for j := len(tokens) - 1; j >= 0; j-- {
 								if isWordCount(tokens[j].GetToken()) {
@@ -250,6 +296,7 @@ func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence)
 							fromPos = append(fromPos, fromPosToken.GetStartPos())
 							toPos = append(toPos, toPosToken.GetEndPos())
 						} else {
+							// keep old logic if we could not find word tokens
 							fromPos = append(fromPos, tokens[0].GetStartPos())
 							toPos = append(toPos, tokens[len(tokens)-1].GetEndPos())
 						}
