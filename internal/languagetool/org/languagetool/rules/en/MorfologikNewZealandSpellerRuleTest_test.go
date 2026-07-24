@@ -1,94 +1,139 @@
 package en
 
+// Twin of org.languagetool.rules.en.MorfologikNewZealandSpellerRuleTest.
+// Official resources: /en/hunspell/en_NZ.dict, spelling_en-NZ.txt, en/en-US-GB.txt
+// (column 0), spelling.txt / multiwords — same as Java. No inject-only soft maps.
+
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
 )
 
-func withNZ(words ...string) *MorfologikVariantSpellerRule {
+// requireNewZealandDict skips when official en_NZ.dict is not discoverable (no invent).
+func requireNewZealandDict(t *testing.T) *MorfologikVariantSpellerRule {
+	t.Helper()
+	if morfologik.DiscoverLanguageDict(NewZealandSpellerDict) == "" {
+		t.Skip("en_NZ.dict not discoverable (third_party/english-pos-dict or inspiration)")
+	}
 	r := NewMorfologikNewZealandSpellerRule()
-	sp := morfologik.NewMorfologikSpeller(NewZealandSpellerDict, 1)
-	for _, w := range words {
-		sp.AddWord(w)
-	}
-	r.ClearMultiSpellers() // map inject: disable multi-speller (Java tests use single inject)
-	r.Speller = sp
-	r.IsMisspelled = r.MorfologikSpellerRule.IsMisspelled
-	if r.SpellingCheckRule != nil {
-		r.IgnoreWordsWithLength = 1
-	}
+	require.NotNil(t, r)
+	require.NotNil(t, r.Speller1, "InitSpellersFromGetters must attach multi when dict present")
 	return r
 }
 
-// Twin of MorfologikNewZealandSpellerRuleTest.testSuggestions
-func TestMorfologikNewZealandSpellerRule_Suggestions(t *testing.T) {
-	r := withNZ("the", "speech")
+func TestMorfologikNewZealandSpellerRule_Meta(t *testing.T) {
+	r := NewMorfologikNewZealandSpellerRule()
 	require.Equal(t, MorfologikNewZealandSpellerRuleID, r.GetID())
-	require.Equal(t, []string{"speech"}, EnglishAdditionalTopSuggestions("speach", r.IsMisspelled))
-	// teh is dict-distance in Java; inject Speller.Suggestions
-	r.Speller.Suggestions["teh"] = []string{"the"}
-	ms, err := r.Match(languagetool.AnalyzePlain("teh"))
+	require.Equal(t, "MORFOLOGIK_RULE_EN_NZ", r.GetID())
+	require.Equal(t, NewZealandSpellerDict, r.GetFileName())
+	require.Equal(t, "/en/hunspell/en_NZ.dict", r.GetFileName())
+	require.Equal(t, NewZealandVariantSpellingFile, r.GetLanguageVariantSpellingFileName())
+	require.Equal(t, "en/hunspell/spelling_en-NZ.txt", r.GetLanguageVariantSpellingFileName())
+	// Java US_ENGLISH = loadWordlist("en/en-US-GB.txt", 0) — American form → NZ/British form
+	if len(r.OtherVariant) == 0 {
+		t.Skip("en/en-US-GB.txt not loaded")
+	}
+	vi := r.IsValidInOtherVariant("color")
+	require.NotNil(t, vi)
+	require.Equal(t, "American English", vi.GetVariantName())
+	require.Equal(t, "colour", vi.GetOtherVariant())
+	vi2 := r.IsValidInOtherVariant("behavior")
+	require.NotNil(t, vi2)
+	require.Equal(t, "behaviour", vi2.GetOtherVariant())
+	// column 0, not 1: NZ/British form is not a key for NZ rule
+	require.Nil(t, r.IsValidInOtherVariant("colour"))
+	require.Nil(t, r.IsValidInOtherVariant("behaviour"))
+}
+
+// Twin of testSuggestions → AbstractEnglishSpellerRuleTest.testNonVariantSpecificSuggestions
+func TestMorfologikNewZealandSpellerRule_Suggestions(t *testing.T) {
+	r := requireNewZealandDict(t)
+	// assertFirstMatch ordered prefixes (Java assertFirstMatch)
+	assertFirstSuggestions(t, r, "teh", "the")
+	assertFirstSuggestions(t, r, "seperate", "separate")
+	assertFirstSuggestions(t, r, "definately", "definitely")
+	assertFirstSuggestions(t, r, "recieve", "receive")
+	assertFirstSuggestions(t, r, "offical", "official")
+	assertFirstSuggestions(t, r, "managment", "management")
+	assertFirstSuggestions(t, r, "Febuary", "February")
+	assertFirstSuggestions(t, r, "enviroment", "environment")
+	assertFirstSuggestions(t, r, "occurence", "occurrence")
+	assertFirstSuggestions(t, r, "commision", "commission")
+	assertFirstSuggestions(t, r, "assocation", "association")
+	assertFirstSuggestions(t, r, "Cincinatti", "Cincinnati")
+	assertFirstSuggestions(t, r, "milennium", "millennium")
+	assertFirstSuggestions(t, r, "accomodation", "accommodation")
+	assertFirstSuggestions(t, r, "foriegn", "foreign")
+	assertFirstSuggestions(t, r, "chemcial", "chemical")
+	assertFirstSuggestions(t, r, "developement", "development")
+	assertFirstSuggestions(t, r, "maintainance", "maintenance")
+	assertFirstSuggestions(t, r, "restaraunt", "restaurant")
+	assertFirstSuggestions(t, r, "garentee", "guarantee")
+	assertFirstSuggestions(t, r, "greatful", "grateful")
+	assertFirstSuggestions(t, r, "hipocrit", "hypocrite")
+	assertFirstSuggestions(t, r, "mischevious", "mischievous")
+	assertFirstSuggestions(t, r, "hygeine", "hygiene")
+	assertFirstSuggestions(t, r, "ur", "your")
+	assertFirstSuggestions(t, r, "doublecheck", "double-check")
+	assertFirstSuggestions(t, r, "alot", "a lot")
+	assertFirstSuggestions(t, r, "speach", "speech")
+	assertFirstSuggestions(t, r, "qualifys", "qualifies")
+	assertFirstSuggestions(t, r, "nicefys", "nicely")
+	// assertAllMatches: expected are a prefix of suggestions in order
+	assertFirstSuggestions(t, r, "campaignt", "campaign", "campaigns")
+	assertFirstSuggestions(t, r, "campaignd", "campaign", "campaigns", "campaigned")
+	assertFirstSuggestions(t, r, "campaignll", "campaign", "campaigns", "campaigned", "campaigner")
+	assertFirstSuggestions(t, r, "spreaded", "spread", "spreader")
+	assertFirstSuggestions(t, r, "slimiar", "similar", "slimier")
+	assertFirstSuggestions(t, r, "vacume", "value", "volume", "acute", "vacuum")
+	// contractions sentence
+	ms, err := r.Match(analyzeEN("You couldn't; he didn't; it doesn't; they aren't; I hadn't; etc."))
 	require.NoError(t, err)
-	require.Equal(t, "the", ms[0].GetSuggestedReplacements()[0])
+	require.Empty(t, ms)
 }
 
 // Twin of MorfologikNewZealandSpellerRuleTest.testMorfologikSpeller
 func TestMorfologikNewZealandSpellerRule_MorfologikSpeller(t *testing.T) {
-	r := withNZ(
-		"This", "is", "an", "example", "we", "get", "behaviour", "as", "a", "dictionary", "word",
-		"Why", "don", "t", "speak", "today", "He", "doesn", "know", "what", "to", "do",
-		"Abercrombie", "émigré", "émigrés", "or", "tête", "à", "tête",
-		"taught", "us",
-	)
-	// compound check for tête-à-tête parts
+	r := requireNewZealandDict(t)
+
+	// correct sentences — Java JLanguageTool(NewZealandEnglish).getAnalyzedSentence
 	for _, s := range []string{
 		"This is an example: we get behaviour as a dictionary word.",
 		"Why don't we speak today.",
 		"He doesn't know what to do.",
-		",", "123454", "μ",
+		",",
+		"123454",
+		"μ",
+		// special New Zealand content:
 		"Abercrombie",
+		// words with diacritics in the spelling dictionary
 		"émigré or émigrés",
 		"tête-à-tête",
 	} {
-		ms, err := r.Match(languagetool.AnalyzePlain(s))
-		require.NoError(t, err)
+		ms, err := r.Match(analyzeENFull(s))
+		require.NoError(t, err, s)
 		require.Empty(t, ms, "good %q", s)
 	}
 
-	if r.OtherVariant == nil {
-		r.OtherVariant = map[string]string{}
-	}
-	if _, ok := r.OtherVariant["behavior"]; !ok {
-		r.OtherVariant["behavior"] = "behaviour"
-	}
-	r.IsValidInOtherVariantFn = r.IsValidInOtherVariant
-	ms, err := r.Match(languagetool.AnalyzePlain("behavior"))
+	// American "behavior" → New Zealand "behaviour" via variant map + positions
+	matches1, err := r.Match(analyzeEN("behavior"))
 	require.NoError(t, err)
-	require.Equal(t, 1, len(ms))
-	require.Equal(t, 0, ms[0].GetFromPos())
-	require.Equal(t, 8, ms[0].GetToPos())
-	require.Equal(t, "behaviour", ms[0].GetSuggestedReplacements()[0])
+	require.Equal(t, 1, len(matches1))
+	require.Equal(t, 0, matches1[0].GetFromPos())
+	require.Equal(t, 8, matches1[0].GetToPos())
+	require.Equal(t, "behaviour", matches1[0].GetSuggestedReplacements()[0])
+	require.Contains(t, matches1[0].GetMessage(), "American English")
 
-	ms, err = r.Match(languagetool.AnalyzePlain("aõh"))
-	require.NoError(t, err)
-	require.Equal(t, 1, len(ms))
-	ms, err = r.Match(languagetool.AnalyzePlain("a"))
-	require.NoError(t, err)
-	require.Empty(t, ms)
+	require.Equal(t, 1, matchCount(t, r, "aõh"))
+	require.Equal(t, 0, matchCount(t, r, "a"))
 
-	r.Synthesize = func(surface, lemma, pos string) []string {
-		if lemma == "teach" && pos == "VBD" {
-			return []string{"taught"}
-		}
-		return nil
-	}
-	ms, err = r.Match(languagetool.AnalyzePlain("He teached us."))
+	// replacement pairs / irregular (teached → taught needs synthesizer)
+	matches2, err := r.Match(analyzeEN("He teached us."))
 	require.NoError(t, err)
-	require.Equal(t, 1, len(ms))
-	require.Equal(t, 3, ms[0].GetFromPos())
-	require.Equal(t, 10, ms[0].GetToPos())
-	require.Equal(t, "taught", ms[0].GetSuggestedReplacements()[0])
+	require.Equal(t, 1, len(matches2))
+	require.Equal(t, 3, matches2[0].GetFromPos())
+	require.Equal(t, 10, matches2[0].GetToPos())
+	require.Equal(t, "taught", matches2[0].GetSuggestedReplacements()[0])
 }
