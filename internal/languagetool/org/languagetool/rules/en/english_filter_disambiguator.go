@@ -38,3 +38,9 @@ func getFilterDisambiguator() filterDisambiguator {
 	defer filterDisambigMu.RUnlock()
 	return filterDisambig
 }
+
+// FilterDisambiguatorAvailable reports whether an EN hybrid is wired for
+// EnglishPartialPosTagFilter probes (Java getDisambiguator() path).
+func FilterDisambiguatorAvailable() bool {
+	return getFilterDisambiguator() != nil
+}

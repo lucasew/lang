@@ -7,12 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// stubDisambig passes the sentence through (no-op), matching a missing-rules hybrid.
-type stubDisambig struct{}
-
-func (stubDisambig) Disambiguate(s *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
-	return s
-}
+// Wire-path smoke kept separate; full outcome matrix is in
+// english_partial_pos_tag_filter_test.go.
 
 func TestEnglishPartialPosTagFilter_TagAndDisambiguate(t *testing.T) {
 	ClearEnglishFilterTagger()
@@ -35,7 +31,7 @@ func TestEnglishPartialPosTagFilter_TagAndDisambiguate(t *testing.T) {
 	filterTagMu.Lock()
 	filterTagWord = tw
 	filterTagMu.Unlock()
-	WireEnglishFilterDisambiguator(stubDisambig{})
+	WireEnglishFilterDisambiguator(passThroughDisambig{})
 
 	// Match any of the POS tags.
 	ok, err = f.Accept("running", "^(run).*", "VB.*", false, false, "", "")
@@ -44,6 +40,12 @@ func TestEnglishPartialPosTagFilter_TagAndDisambiguate(t *testing.T) {
 
 	// Fail when postag does not match.
 	ok, err = f.Accept("running", "^(run).*", "JJ.*", false, false, "", "")
+	require.NoError(t, err)
+	require.False(t, ok)
+
+	// Only tagger, no disambig → fail closed.
+	ClearEnglishFilterDisambiguator()
+	ok, err = f.Accept("running", "^(run).*", "VB.*", false, false, "", "")
 	require.NoError(t, err)
 	require.False(t, ok)
 }

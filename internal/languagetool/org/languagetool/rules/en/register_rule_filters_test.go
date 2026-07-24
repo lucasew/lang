@@ -24,6 +24,7 @@ func TestENRuleFiltersRegistered(t *testing.T) {
 		"org.languagetool.rules.en.EnglishNumberInWordFilter",
 		"org.languagetool.rules.en.FindSuggestionsFilter",
 		"org.languagetool.rules.en.NoDisambiguationEnglishPartialPosTagFilter",
+		"org.languagetool.rules.en.EnglishPartialPosTagFilter",
 		"org.languagetool.rules.en.EnglishConvertToSentenceCaseFilter",
 		"org.languagetool.rules.patterns.RegexAntiPatternFilter",
 		"org.languagetool.rules.DateRangeChecker",
