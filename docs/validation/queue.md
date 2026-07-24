@@ -294,6 +294,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-MorfologikNewZealandSpellerRule | accepted | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/MorfologikNewZealandSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikNewZealandSpellerRuleTest.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/AbstractEnglishSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/en-US-GB.txt; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/spelling_en-NZ.txt | internal/languagetool/org/languagetool/rules/en/ | 3ee30af98f3afc6e4d287523aeb85ceba61ef8d6 | 0 | 0 |  |  | 2026-07-24T23:06:05Z |
 | docs/faithful-port-checklist.md#3.C.3-MorfologikSouthAfricanSpellerRule | accepted | inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/MorfologikSouthAfricanSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikSouthAfricanSpellerRuleTest.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/AbstractEnglishSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/en-US-GB.txt; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/spelling_en-ZA.txt | internal/languagetool/org/languagetool/rules/en/ | 5c94754c144621a09872d2a7b6b4cc5dd94872b6 | 0 | 0 |  |  | 2026-07-24T23:16:34Z |
 
+| docs/faithful-port-checklist.md#3.C.3-SpellingCheckRuleTest | implementing | inspiration/languagetool/languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/SpellingCheckRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/java/org/languagetool/rules/en/MorfologikAmericanSpellerRule.java; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/ignore.txt; inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/spelling.txt | internal/languagetool/org/languagetool/rules/en/SpellingCheckRuleTest_test.go; internal/languagetool/org/languagetool/rules/en/; internal/languagetool/org/languagetool/rules/spelling/ | | 0 | 0 | | | 2026-07-24T23:20:02Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -302,7 +303,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-MorfologikSouthAfricanSpellerRule @ 5c94754c (last EN Morfologik locale speller). Blocked: FR/zh/VagueSpellChecker.|
+| Notes | implementing 3.C.3-SpellingCheckRuleTest (full twin; after EN Morfologik locale ACCEPTs)|
 
 ---
 
@@ -1302,3 +1303,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T23:10:56Z ready: 3.C.3-MorfologikSouthAfricanSpellerRule @ 5c94754c (implementer report; parent green reconfirm MorfologikSouthAfrican|AbstractEnglishSpeller)
 - 2026-07-24T23:13:44Z validating: 3.C.3-MorfologikSouthAfricanSpellerRule @ 5c94754c (strict invent re-audit vs Java MorfologikSouthAfricanSpellerRuleTest + official en_ZA.dict)
 - 2026-07-24T23:16:34Z ACCEPT: 3.C.3-MorfologikSouthAfricanSpellerRule @ 5c94754c (validator + parent green reconfirm; official en_ZA.dict; en-US-GB col 0; LoadUSGB # skip)
+
+- 2026-07-24T23:20:02Z implement: 3.C.3-SpellingCheckRuleTest (EN SpellingCheckRuleTest full twin; ignore.txt/spelling.txt/acceptPhrases/isUrl/isEMail; MorfologikAmerican path)
