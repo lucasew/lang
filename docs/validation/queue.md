@@ -210,6 +210,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-LongParagraphRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/LongParagraphRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/LongParagraphRuleTest.java | internal/languagetool/org/languagetool/rules/ | c2ce95d42b3e5a898deb4c27ba06ced9762727a3 | 0 | 0 | | | 2026-07-24T02:57:22Z |
 | docs/faithful-port-checklist.md#3.C.1-LongSentenceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/LongSentenceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/LongSentenceRuleTest.java | internal/languagetool/org/languagetool/rules/ | 833fee3508996f2db71899ad85060cc4c5a6f5e8 | 0 | 0 | | | 2026-07-24T03:10:28Z |
 | docs/faithful-port-checklist.md#3.C.1-GenericUnpairedBracketsRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/GenericUnpairedBracketsRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/GenericUnpairedBracketsRuleTest.java | internal/languagetool/org/languagetool/rules/ | 45e770d07eb7e1ded60323ada1e59d582398a2c0 | 0 | 0 | | | 2026-07-24T03:26:15Z |
+| docs/faithful-port-checklist.md#3.C.1-GenericUnpairedQuotesRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/GenericUnpairedQuotesRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/GenericUnpairedQuotesRuleTest.java | internal/languagetool/org/languagetool/rules/ | 9743a8b6eceaf036c2c500d4019ca4565c8a9beb | 0 | 0 | | | 2026-07-24T03:33:24Z |
 
 ## Human inbox
 
@@ -219,7 +220,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.1-GenericUnpairedBracketsRule @ 45e770d0. FR/zh blocked. Next: more 3.C.1 core layout leaves. |
+| Notes | ready 3.C.1-GenericUnpairedQuotesRule @ 9743a8b6 (FakeLanguage Check twin; parent green). FR/zh blocked. |
 
 ---
 
@@ -873,3 +874,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T03:21:29Z ready: 3.C.1-GenericUnpairedBracketsRule @ 45e770d0 (implementer report; parent green reconfirm)
 - 2026-07-24T03:23:48Z validating: 3.C.1-GenericUnpairedBracketsRule @ 45e770d0 (strict invent re-audit vs Java GenericUnpairedBracketsRuleTest)
 - 2026-07-24T03:26:15Z ACCEPT: 3.C.1-GenericUnpairedBracketsRule @ 45e770d0 (validator + parent green reconfirm)
+- 2026-07-24T03:28:57Z implement: 3.C.1-GenericUnpairedQuotesRule (GenericUnpairedQuotesRuleTest full outcome twin; FakeLanguage Check; core layout 3.C.1 leaf)
+- 2026-07-24T03:33:24Z ready: 3.C.1-GenericUnpairedQuotesRule @ 9743a8b6 (implementer report; parent green reconfirm)
