@@ -172,7 +172,11 @@ func NewMorfologikAustralianSpellerRule() *MorfologikVariantSpellerRule {
 	return NewMorfologikAustralianSpellerRuleWithUser(nil)
 }
 
+// NewMorfologikAustralianSpellerRuleWithUser ports MorfologikAustralianSpellerRule(..., UserConfig).
+// Java: RESOURCE_FILENAME=/en/hunspell/en_AU.dict, LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT=en/hunspell/spelling_en-AU.txt,
+// US_ENGLISH=loadWordlist("en/en-US-GB.txt", 0), isValidInOtherVariant → VariantInfo("American English", …).
 func NewMorfologikAustralianSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	// Java: loadWordlist("en/en-US-GB.txt", 0) — American form as key → Australian/British form
 	return newVariantSpellerWithUser(MorfologikAustralianSpellerRuleID, "en-AU", AustralianSpellerDict,
 		AustralianVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
