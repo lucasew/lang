@@ -201,6 +201,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 ---
 | docs/faithful-port-checklist.md#3.A.1-GermanCompoundTokenizer | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tokenizers/de/GermanCompoundTokenizer.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/tokenizers/de/GermanCompoundTokenizerTest.java; de.danielnaber.jwordsplitter (EmbeddedGermanDictionary + GermanWordSplitter) | internal/languagetool/org/languagetool/tokenizers/de/ | 4f88d4da8ef923f17159b8759c700097ae698873 | 0 | 0 |  |  | 2026-07-24T00:59:07Z |
 | docs/faithful-port-checklist.md#3.C.1-CommaWhitespaceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/CommaWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/CommaWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | 8f196018d8687ade3513ec47b6dcd285238f152e | 0 | 0 |  |  | 2026-07-24T01:17:39Z |
+| docs/faithful-port-checklist.md#3.C.1-DoublePunctuationRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/DoublePunctuationRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/DoublePunctuationRuleTest.java | internal/languagetool/org/languagetool/rules/ | edf5066901748980fc9be426e5c3345da788667b | 0 | 0 |  |  | 2026-07-24T01:21:56Z |
 
 ## Human inbox
 
@@ -210,7 +211,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.1-CommaWhitespaceRule @ 8f196018 (validator + parent green). FR/zh blocked. |
+| Notes | ready 3.C.1-DoublePunctuationRule @ edf50669 (Demo analyze twin; parent green). FR/zh blocked. |
 
 ---
 
@@ -824,3 +825,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T01:11:30Z ready: 3.C.1-CommaWhitespaceRule @ 8f196018 (implementer report; parent green reconfirm)
 - 2026-07-24T01:13:56Z validating: 3.C.1-CommaWhitespaceRule @ 8f196018
 - 2026-07-24T01:17:39Z ACCEPT: 3.C.1-CommaWhitespaceRule @ 8f196018 (validator + parent green reconfirm)
+- 2026-07-24T01:19:08Z implement: 3.C.1-DoublePunctuationRule (DoublePunctuationRuleTest full outcome twin; core layout 3.C.1 leaf)
+- 2026-07-24T01:21:56Z ready: 3.C.1-DoublePunctuationRule @ edf50669 (implementer report; parent green reconfirm)
