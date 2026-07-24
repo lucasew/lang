@@ -45,12 +45,10 @@ func NewEnglishWordRepeatBeginningRule(messages map[string]string) *EnglishWordR
 	return r
 }
 
+// isException ports EnglishWordRepeatBeginningRule.isException:
+// super.isException(token) || The/A/An. Base WordRepeatBeginningRule.isException
+// already ORs IsExceptionFn with the core list (: – - …), so only EN extras here.
 func (r *EnglishWordRepeatBeginningRule) isException(token string) bool {
-	// Java: super.isException(token) || The/A/An
-	switch token {
-	case ":", "–", "-", "✔️", "➡️", "—", "⭐️", "⚠️":
-		return true
-	}
 	return token == "The" || token == "A" || token == "An"
 }
 
