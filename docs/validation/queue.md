@@ -231,6 +231,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-WeightedSuggestion | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/WeightedSuggestion.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/weighted_suggestion.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/weighted_suggestion_test.go | 0905ca8c91701c677e04fd51eaa99cdfe9ba88c3 | 0 | 0 |  |  | 2026-07-24T07:45:46Z |
 | docs/faithful-port-checklist.md#3.C.2-SuggestionsOrdererConfig | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/SuggestionsOrdererConfig.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config_test.go | ed961fc7b2684f60b856b1c7dcf96b18729e010d | 0 | 0 |  |  | 2026-07-24T07:55:24Z |
 | docs/faithful-port-checklist.md#3.C.2-CommonFileTypes | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CommonFileTypes.java | internal/languagetool/org/languagetool/rules/spelling/common_file_types.go; internal/languagetool/org/languagetool/rules/spelling/common_file_types_test.go | c43e5171766e6a272d60171a7817a4cb7255baac | 0 | 0 |  |  | 2026-07-24T08:06:27Z |
+| docs/faithful-port-checklist.md#3.C.2-CachingWordListLoader | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CachingWordListLoader.java | internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader.go; internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader_test.go | e88cdde6398af1ea6876165c74e4f3c696f02fc7 | 0 | 0 |  |  | 2026-07-24T08:12:12Z |
 
 ## Human inbox
 
@@ -240,7 +241,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.2-CommonFileTypes @ c43e5171 (list+pattern; matcher.matches oracle). FR/zh blocked. Next: next 3.C.2 leaf. |
+| Notes | ready 3.C.2-CachingWordListLoader @ e88cdde6 (DataBroker LoadWords; Java trim/comment; process cache). FR/zh blocked. |
 
 ---
 
@@ -982,3 +983,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T08:02:18Z ready: 3.C.2-CommonFileTypes @ c43e5171 (implementer report; parent green reconfirm)
 - 2026-07-24T08:03:45Z validating: 3.C.2-CommonFileTypes @ c43e5171 (strict invent re-audit vs Java CommonFileTypes)
 - 2026-07-24T08:06:27Z ACCEPT: 3.C.2-CommonFileTypes @ c43e5171 (validator + parent green reconfirm)
+- 2026-07-24T08:09:07Z implement: 3.C.2-CachingWordListLoader (resourceExists + getFromResourceDirAsLines load path; Java trim/comment parse)
+- 2026-07-24T08:12:12Z ready: 3.C.2-CachingWordListLoader @ e88cdde6 (implementer report; parent green reconfirm)
