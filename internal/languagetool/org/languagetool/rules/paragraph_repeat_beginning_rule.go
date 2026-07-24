@@ -9,7 +9,13 @@ import (
 )
 
 // ParagraphRepeatBeginningRule ports org.languagetool.rules.ParagraphRepeatBeginningRule.
-// Java ctor: setCategory(STYLE), setLocQualityIssueType(Style), setDefaultOff().
+//
+// Java ctor: super(messages); Categories.STYLE; this.lang = lang; ITSIssueType.Style; setDefaultOff().
+// Language is used only for Tools.isParagraphEnd → singleLineBreaksMarksPara (field below).
+//
+// TextLevelRule; STYLE; Style; setDefaultOff(); minToCheckParagraph=1.
+// id: PARAGRAPH_REPEAT_BEGINNING_RULE
+// messages: repetition_paragraph_beginning_desc / repetition_paragraph_beginning_last_msg
 type ParagraphRepeatBeginningRule struct {
 	Messages map[string]string
 	// Category ports Rule.category (Java STYLE).
@@ -18,15 +24,24 @@ type ParagraphRepeatBeginningRule struct {
 	IssueType ITSIssueType
 	// DefaultOff ports setDefaultOff (Java true).
 	DefaultOff bool
-	// IsArticle optional POS stand-in; default false (only first word compared).
+	// IsArticle optional override of isArticle(AnalyzedTokenReadings); when nil,
+	// Java default: hasPosTagStartingWith("DT"). German subclass sets ART.
 	IsArticle func(token *languagetool.AnalyzedTokenReadings) bool
-	// SingleLineBreaksMarksPara matches Demo/SRX default false → need \n\n
+	// SingleLineBreaksMarksPara ports Language.getSentenceTokenizer().singleLineBreaksMarksPara()
+	// as used by Tools.isParagraphEnd (Demo/SRX default false → need \n\n or next starts with \n).
 	SingleLineBreaksMarksPara bool
-	RuleID                    string
+	// RuleID optional override of getId (German subclass returns GERMAN_...).
+	RuleID string
 }
 
-var paraQuotesRE = regexp.MustCompile(`[’'"„“”»«‚‘›‹()\[\]]`)
+// QUOTES_REGEX ports ParagraphRepeatBeginningRule.QUOTES_REGEX.
+// Java Pattern.matcher(token).matches() requires the whole token to be one quote/bracket char.
+// Anchored so Go MatchString matches Java matches(), not find().
+var paraQuotesRE = regexp.MustCompile(`\A[’'"„“”»«‚‘›‹()\[\]]\z`)
 
+// NewParagraphRepeatBeginningRule ports
+// ParagraphRepeatBeginningRule(ResourceBundle messages, Language lang).
+// Caller sets SingleLineBreaksMarksPara from the language sentence tokenizer when needed.
 func NewParagraphRepeatBeginningRule(messages map[string]string) *ParagraphRepeatBeginningRule {
 	return &ParagraphRepeatBeginningRule{
 		Messages:   messages,
@@ -50,7 +65,7 @@ func (r *ParagraphRepeatBeginningRule) GetDescription() string {
 			return s
 		}
 	}
-	return "Paragraphs should not begin with the same words"
+	return "Same beginning of paragraph"
 }
 
 // GetCategory ports Rule.getCategory.
@@ -75,19 +90,22 @@ func (r *ParagraphRepeatBeginningRule) IsDefaultOff() bool { return r != nil && 
 // MinToCheckParagraph ports minToCheckParagraph (Java returns 1).
 func (r *ParagraphRepeatBeginningRule) MinToCheckParagraph() int { return 1 }
 
+// isParagraphEnd ports Tools.isParagraphEnd(sentences, n, lang) via SingleLineBreaksMarksPara.
 func (r *ParagraphRepeatBeginningRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
 	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
+// isArticle ports ParagraphRepeatBeginningRule.isArticle (overridable via IsArticle field).
+// Java default: token.hasPosTagStartingWith("DT").
 func (r *ParagraphRepeatBeginningRule) isArticle(token *languagetool.AnalyzedTokenReadings) bool {
 	if r.IsArticle != nil {
 		return r.IsArticle(token)
 	}
-	// Java ParagraphRepeatBeginningRule.isArticle: hasPosTagStartingWith("DT")
 	return token != nil && token.HasPosTagStartingWith("DT")
 }
 
-// numCharEqualBeginning returns endPos of matching beginning token in lastTokens, or 0.
+// numCharEqualBeginning ports private numCharEqualBeginning.
+// Returns lastTokens[nToken].getEndPos() when paragraph beginnings are equal, else 0.
 func (r *ParagraphRepeatBeginningRule) numCharEqualBeginning(lastTokens, nextTokens []*languagetool.AnalyzedTokenReadings) int {
 	if len(lastTokens) < 2 || len(nextTokens) < 2 ||
 		lastTokens[1].IsWhitespace() || nextTokens[1].IsWhitespace() {
@@ -96,6 +114,7 @@ func (r *ParagraphRepeatBeginningRule) numCharEqualBeginning(lastTokens, nextTok
 	nToken := 1
 	lastToken := lastTokens[nToken].GetToken()
 	nextToken := nextTokens[nToken].GetToken()
+	// Java: QUOTES_REGEX.matcher(lastToken).matches() && lastToken.equals(nextToken)
 	if paraQuotesRE.MatchString(lastToken) && lastToken == nextToken {
 		if len(lastTokens) <= nToken+1 || len(nextTokens) <= nToken+1 {
 			return 0
@@ -104,7 +123,7 @@ func (r *ParagraphRepeatBeginningRule) numCharEqualBeginning(lastTokens, nextTok
 		lastToken = lastTokens[nToken].GetToken()
 		nextToken = nextTokens[nToken].GetToken()
 	}
-	// Java: Character.isLetter(lastToken.charAt(0)) — first UTF-16 unit
+	// Java: Character.isLetter(lastToken.charAt(0)) — first UTF-16 code unit
 	if lastToken == "" || !javaIsLetterCharAt0(lastToken) {
 		return 0
 	}
@@ -126,6 +145,9 @@ func (r *ParagraphRepeatBeginningRule) numCharEqualBeginning(lastTokens, nextTok
 }
 
 // MatchList ports match(List<AnalyzedSentence>).
+//
+// Java position accumulation uses sentences.get(n).getText().length() (UTF-16), NOT
+// getCorrectedTextLength — preserve that quirk bug-for-bug.
 func (r *ParagraphRepeatBeginningRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
 	if len(sentences) < 1 {
@@ -140,10 +162,10 @@ func (r *ParagraphRepeatBeginningRule) MatchList(sentences []*languagetool.Analy
 		msg = r.Messages["repetition_paragraph_beginning_last_msg"]
 	}
 	if msg == "" {
-		msg = "Paragraphs should not begin with the same words"
+		msg = "Same beginning as last paragraph"
 	}
 	for n := 0; n < len(sentences)-1; n++ {
-		// Java: nextPos += sentences.get(n).getText().length() (UTF-16)
+		// Java: nextPos += sentences.get(n).getText().length() (String.length = UTF-16 units)
 		nextPos += utf16Len(sentences[n].GetText())
 		if !r.isParagraphEnd(sentences, n) {
 			continue
@@ -156,11 +178,14 @@ func (r *ParagraphRepeatBeginningRule) MatchList(sentences []*languagetool.Analy
 			if startPos < lastPos+endPos {
 				rm := NewRuleMatch(r, lastSentence, startPos, lastPos+endPos, msg)
 				ruleMatches = append(ruleMatches, rm)
+
+				// Java reuses endPos from lastTokens on the next-sentence match (quirk).
 				startPos2 := nextPos + nextTokens[1].GetStartPos()
 				rm2 := NewRuleMatch(r, nextSentence, startPos2, nextPos+endPos, msg)
 				ruleMatches = append(ruleMatches, rm2)
 			}
 		}
+		// Java only advances last* inside the paragraph-end branch.
 		lastSentence = nextSentence
 		lastTokens = nextTokens
 		lastPos = nextPos
