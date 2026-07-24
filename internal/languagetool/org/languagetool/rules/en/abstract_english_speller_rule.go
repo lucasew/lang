@@ -58,6 +58,8 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 		VariantCode:           variantCode,
 		LanguageName:          englishLanguageName(variantCode),
 	}
+	// Java: language.getSynthesizer() for getIrregularFormsOrNull (fail-closed when dict missing).
+	r.Synthesize = englishSpellerSynthesizeFn()
 	// Java AbstractEnglishSpellerRule: super.ignoreWordsWithLength = 1
 	// tokenizeNewWords() = false — re-load lists as whole-line ignores.
 	// Path getters: EN multiwords via getAdditionalSpellingFileNames (or SpellingCheckRule en case).
@@ -87,6 +89,10 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 		// Java addHyphenSuggestions for multi-part hyphenated misspellings.
 		base.AddHyphenSuggestionsFn = func(parts []string) []string {
 			return EnglishAddHyphenSuggestions(parts, base.IsMisspelled, func(w string) []string {
+				// Prefer multi-speller suggestions when InitSpellersFromGetters attached real dict.
+				if base.Multi != nil {
+					return base.Multi.GetSuggestions(w)
+				}
 				if base.Speller == nil {
 					return nil
 				}
@@ -100,6 +106,24 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 		rules.Fixed("This <marker>sentence</marker> contains a spelling mistake."),
 	)
 	return r
+}
+
+// englishSpellerSynthesizeFn ports language.getSynthesizer().synthesize(token, posTag)
+// for irregular-form suggestions. Nil when english_synth.dict is not discoverable.
+func englishSpellerSynthesizeFn() SynthesizeFn {
+	s := openDiscoveredEnglishSynthesizer()
+	if s == nil {
+		return nil
+	}
+	return func(surface, lemma, posTag string) []string {
+		lem := lemma
+		tok := languagetool.NewAnalyzedToken(surface, nil, &lem)
+		forms, err := s.Synthesize(tok, posTag)
+		if err != nil {
+			return nil
+		}
+		return forms
+	}
 }
 
 // AddExamplePair ports Rule.addExamplePair.
