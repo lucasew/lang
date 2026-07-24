@@ -15,10 +15,11 @@ type EnglishWordRepeatRule struct {
 	*rules.WordRepeatRule
 }
 
+// Java Pattern.compile / String.matches — full-string match (implicit ^$).
 var singleChar = regexp.MustCompile(`(?i)^[a-z]$`)
 
-var apostropheRE = regexp.MustCompile(`['’` + "`" + `´‘]`)
-var logSignRE = regexp.MustCompile(`log(ged|s)?|sign(ed|s)?`)
+var apostropheRE = regexp.MustCompile(`^['’` + "`" + `´‘]$`)
+var logSignRE = regexp.MustCompile(`^(log(ged|s)?|sign(ed|s)?)$`)
 
 func NewEnglishWordRepeatRule(messages map[string]string) *EnglishWordRepeatRule {
 	base := rules.NewWordRepeatRule(messages)
