@@ -497,7 +497,7 @@
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionsOrdererFeatureExtractor.java::SuggestionsOrdererFeatureExtractor
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionsOrdererFeatureExtractor.java::SuggestionsOrdererFeatureExtractor.Feature
 - [x] org/languagetool/rules/spelling/suggestions/SuggestionsRanker.java::SuggestionsRanker
-- [ ] org/languagetool/rules/spelling/symspell/implementation/ChunkArray.java::ChunkArray
+- [x] org/languagetool/rules/spelling/symspell/implementation/ChunkArray.java::ChunkArray
 - [x] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance
 - [x] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance.DistanceAlgorithm
 - [x] org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java::SuggestItem
