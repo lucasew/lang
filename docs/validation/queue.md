@@ -214,7 +214,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-PunctuationMarkAtParagraphEnd | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/PunctuationMarkAtParagraphEnd.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/PunctuationMarkAtParagraphEndTest.java | internal/languagetool/org/languagetool/rules/ | 3b5bab7e00f5fe65958eb53b712ffe045b930fdf | 0 | 0 | | | 2026-07-24T03:50:35Z |
 | docs/faithful-port-checklist.md#3.C.1-PunctuationMarkAtParagraphEnd2 | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/PunctuationMarkAtParagraphEnd2.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/PunctuationMarkAtParagraphEnd2Test.java | internal/languagetool/org/languagetool/rules/ | 938314b9f782a399b30d9576c3af7314bbc01371 | 0 | 0 |  |  | 2026-07-24T04:00:58Z |
 | docs/faithful-port-checklist.md#3.C.1-EmptyLineRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/EmptyLineRule.java | internal/languagetool/org/languagetool/rules/ | fa2fb22d0576bec0f22d8d853ff6f270bd4e828d | 0 | 0 |  |  | 2026-07-24T04:20:34Z |
-| docs/faithful-port-checklist.md#3.C.1-WhiteSpaceAtBeginOfParagraph | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhiteSpaceAtBeginOfParagraph.java | internal/languagetool/org/languagetool/rules/ | 1392009b79abdb8a63867c5736026a118453d011 | 0 | 0 |  |  | 2026-07-24T04:26:36Z |
+| docs/faithful-port-checklist.md#3.C.1-WhiteSpaceAtBeginOfParagraph | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhiteSpaceAtBeginOfParagraph.java | internal/languagetool/org/languagetool/rules/ | 1392009b79abdb8a63867c5736026a118453d011 | 0 | 0 |  |  | 2026-07-24T04:30:10Z |
 
 ## Human inbox
 
@@ -224,7 +224,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-WhiteSpaceAtBeginOfParagraph @ 1392009b (demoLT/EN Analyze twin; parent green). FR/zh blocked. |
+| Notes | last ACCEPT 3.C.1-WhiteSpaceAtBeginOfParagraph @ 1392009b. FR/zh blocked. |
 
 ---
 
@@ -896,3 +896,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T04:20:34Z ACCEPT: 3.C.1-EmptyLineRule @ fa2fb22d (validator + parent green reconfirm)
 - 2026-07-24T04:23:55Z implement: 3.C.1-WhiteSpaceAtBeginOfParagraph (Match outcome twin; Demo/EN Analyze; core layout 3.C.1 leaf)
 - 2026-07-24T04:26:36Z ready: 3.C.1-WhiteSpaceAtBeginOfParagraph @ 1392009b (implementer report; parent green reconfirm)
+- 2026-07-24T04:28:41Z validating: 3.C.1-WhiteSpaceAtBeginOfParagraph @ 1392009b (strict invent re-audit vs Java WhiteSpaceAtBeginOfParagraph)
+- 2026-07-24T04:30:10Z ACCEPT: 3.C.1-WhiteSpaceAtBeginOfParagraph @ 1392009b (validator + parent green reconfirm)
