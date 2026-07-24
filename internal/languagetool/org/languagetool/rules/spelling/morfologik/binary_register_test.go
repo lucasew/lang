@@ -32,3 +32,10 @@ func TestTryRegisterBinarySpeller_Polish(t *testing.T) {
 	}
 	require.True(t, found, "%+v", m)
 }
+
+func TestDiscoverLanguageDict_XXSpellingTestDict(t *testing.T) {
+	p := DiscoverLanguageDict("/xx/spelling/test.dict")
+	require.NotEmpty(t, p, "official core test resource required")
+	require.Contains(t, p, "languagetool-core")
+	require.Contains(t, p, "xx/spelling/test.dict")
+}

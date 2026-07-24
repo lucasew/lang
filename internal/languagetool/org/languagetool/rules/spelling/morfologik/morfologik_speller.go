@@ -12,7 +12,7 @@ import (
 )
 
 // MorfologikSpeller ports org.languagetool.rules.spelling.morfologik.MorfologikSpeller
-// as a pluggable dictionary probe + optional suggestion map (binary .dict deferred).
+// as a pluggable dictionary probe + optional suggestion map; binary .dict via AttachBinaryDictionary.
 //
 // Metadata flags port morfologik.speller.Speller.isMisspelled gates driven by
 // DictionaryMetadata (defaults: ignoreNumbers/punctuation true, convertCase true).

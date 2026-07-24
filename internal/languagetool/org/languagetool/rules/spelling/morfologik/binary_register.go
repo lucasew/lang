@@ -35,6 +35,11 @@ func DiscoverLanguageDict(classpath string) string {
 			// some modules put hunspell under resource/ without repeating lang in rest already including lang/
 			filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", lang,
 				"src", "main", "resources", "org", "languagetool", "resource", rel),
+			// core test resources (e.g. /xx/spelling/test.dict used by MorfologikSpellerTest)
+			filepath.Join(dir, "inspiration", "languagetool", "languagetool-core",
+				"src", "test", "resources", "org", "languagetool", "resource", rel),
+			filepath.Join(dir, "inspiration", "languagetool", "languagetool-core",
+				"src", "main", "resources", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "languagetool-dicts", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "english-pos-dict", "org", "languagetool", "resource", rel),
 		}
