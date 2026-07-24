@@ -13,6 +13,13 @@ type DateFilterHelper struct{}
 
 func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
+// GetCalendar ports DateFilterHelper.getCalendar → Calendar.getInstance(Locale.UK).
+// Locale.UK selects calendar symbols/first-day; wall clock uses the JVM/OS default TZ
+// (Go: time.Now in Local).
+func (h *DateFilterHelper) GetCalendar() time.Time {
+	return time.Now()
+}
+
 // GetDayOfWeek ports DateFilterHelper.getDayOfWeek(String).
 // Prefix match after trimSpecialCharacters + toLowerCase (Java).
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {

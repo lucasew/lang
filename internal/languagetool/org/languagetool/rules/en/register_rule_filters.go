@@ -62,13 +62,19 @@ func init() {
 	})
 }
 
-
-
-
 func enFutureDateCore() *rules.FutureDateFilterCore {
-	h := NewDateFilterHelper()
+	return enFutureDateCoreWith(NewDateFilterHelper())
+}
+
+// enFutureDateCoreWith wires AbstractFutureDateFilter hooks via DateFilterHelper
+// (Java FutureDateFilter.getMonth / getCalendar).
+func enFutureDateCoreWith(h *DateFilterHelper) *rules.FutureDateFilterCore {
+	if h == nil {
+		h = NewDateFilterHelper()
+	}
 	return &rules.FutureDateFilterCore{
 		GetMonth: func(localized string) (int, error) {
+			// Java DateFilterHelper.getMonth throws RuntimeException on unknown month.
 			m, err := h.GetMonth(localized)
 			if err != nil {
 				return 0, err
@@ -77,7 +83,6 @@ func enFutureDateCore() *rules.FutureDateFilterCore {
 		},
 	}
 }
-
 
 func enDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter {
 	h := NewDateFilterHelper()
@@ -108,7 +113,6 @@ func enDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter 
 	}
 }
 
-
 func enNewYearDateCore() *rules.NewYearDateFilterCore {
 	h := NewDateFilterHelper()
 	return &rules.NewYearDateFilterCore{
@@ -121,6 +125,3 @@ func enNewYearDateCore() *rules.NewYearDateFilterCore {
 		},
 	}
 }
-
-
-

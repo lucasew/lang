@@ -5,14 +5,18 @@ import (
 	"time"
 )
 
-// FutureDateFilterCore ports AbstractFutureDateFilter date assembly helpers.
+// FutureDateFilterCore ports org.languagetool.rules.AbstractFutureDateFilter.
+// Language filters supply GetMonth (and optionally GetDayOfMonth); getCalendar/now
+// is TestHackHelper-aware (fixed 2014-01-01 under tests).
 type FutureDateFilterCore struct {
-	// GetMonth maps a localized month name to 1–12; nil only accepts numeric months.
+	// GetMonth maps a localized month name to 1–12 (Java abstract getMonth).
+	// Nil only accepts numeric months via StringUtils.isNumeric.
 	GetMonth func(localized string) (int, error)
-	// GetDayOfMonth maps a localized day name to 1–31; nil only accepts numeric days.
-	// Java getDayOfMonth default returns 0 (invalid → non-lenient calendar fails).
+	// GetDayOfMonth maps a localized day name to 1–31; Java default returns 0
+	// (invalid → non-lenient calendar → after() throws → null).
 	GetDayOfMonth func(localized string) (int, error)
-	// Now is the reference "today"; nil uses time.Now().UTC() (or test fixed date 2014-01-01).
+	// Now is the reference "today" (Java getCalendar()); nil uses wall clock
+	// (or TestHackHelper fixed date 2014-01-01 under go test).
 	Now func() time.Time
 }
 
@@ -31,10 +35,12 @@ func ParseDayOfMonthArg(s string, getNamed func(string) (int, error)) (int, erro
 	return 0, nil
 }
 
-// ParseMonthArg ports AbstractFutureDateFilter.getMonthFromArguments (1-based month).
+// ParseMonthArg ports AbstractFutureDateFilter.getMonthFromArguments as 1-based month.
+// Java returns month-1 for Calendar; callers using Go time.Month keep 1-based and
+// map at the Calendar/time boundary (time.Month(m) == Java month field + 1).
 // Java: StringUtils.isNumeric → parseInt; else getMonth(monthStr) (no trimSpecialCharacters).
 func (f *FutureDateFilterCore) ParseMonthArg(monthStr string) (int, error) {
-	// Apache Commons isNumeric: digits only
+	// Apache Commons StringUtils.isNumeric: non-empty, every char Character.isDigit
 	if isAllDigits(monthStr) {
 		return strconv.Atoi(monthStr)
 	}
@@ -44,29 +50,77 @@ func (f *FutureDateFilterCore) ParseMonthArg(monthStr string) (int, error) {
 	return 0, strconv.ErrSyntax
 }
 
-// IsFuture reports whether year/month/day (1-based month) is strictly after "today"
-// (Java dateFromDate.after(currentDate); test clock 2014-01-01).
-func (f *FutureDateFilterCore) IsFuture(year, month, day int) bool {
-	if year <= 0 || month < 1 || month > 12 || day < 1 {
-		return false
+// getDate ports AbstractFutureDateFilter.getDate (year/month/day assembly,
+// setLenient(false)). Returns ok=false for invalid calendar dates (Java after()
+// throws IllegalArgumentException → acceptRuleMatch returns null).
+// month/day args: month may be numeric or localized; day uses DAY_OF_MONTH_PATTERN.
+func (f *FutureDateFilterCore) getDate(args map[string]string) (year, month, day int, ok bool) {
+	y, err := strconv.Atoi(args["year"])
+	if err != nil {
+		// Java Integer.parseInt → NumberFormatException (propagates from getDate);
+		// Go maps to soft drop (same as invalid calendar) — grammar always supplies digits.
+		return 0, 0, 0, false
 	}
-	d := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	// strict validity
+	m, err := f.ParseMonthArg(args["month"])
+	if err != nil {
+		return 0, 0, 0, false
+	}
+	d, err := ParseDayOfMonthArg(args["day"], f.dayOfMonthHook())
+	if err != nil {
+		return 0, 0, 0, false
+	}
+	// Java: calendar.setLenient(false); set(year, month-1, day, 0, 0, 0)
+	// Strict validity: reject rollover (e.g. Feb 30, day 0, month 13).
+	loc := f.calendarLocation()
+	t := time.Date(y, time.Month(m), d, 0, 0, 0, 0, loc)
+	if t.Year() != y || int(t.Month()) != m || t.Day() != d {
+		return 0, 0, 0, false
+	}
+	return y, m, d, true
+}
+
+func (f *FutureDateFilterCore) dayOfMonthHook() func(string) (int, error) {
+	if f != nil && f.GetDayOfMonth != nil {
+		return f.GetDayOfMonth
+	}
+	return nil
+}
+
+// calendarLocation is the TZ used for date assembly and "today"
+// (Java Calendar.getInstance(Locale.…) uses the JVM default timezone).
+func (f *FutureDateFilterCore) calendarLocation() *time.Location {
+	now := f.now()
+	if now.Location() != nil {
+		return now.Location()
+	}
+	return time.Local
+}
+
+// IsFuture reports whether year/month/day (1-based month) is strictly after "today"
+// (Java dateFromDate.after(currentDate); test clock 2014-01-01 via TestHackHelper).
+func (f *FutureDateFilterCore) IsFuture(year, month, day int) bool {
+	loc := f.calendarLocation()
+	d := time.Date(year, time.Month(month), day, 0, 0, 0, 0, loc)
+	// strict validity (Java setLenient(false); after() throws → not kept)
 	if d.Year() != year || int(d.Month()) != month || d.Day() != day {
 		return false
 	}
 	now := f.now()
-	// Java compares full Calendar after(currentDate); times zeroed at midnight
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	// Compare calendar dates at midnight in the same location.
+	// (Java sets dateFromDate to 0:0:0; currentDate is getCalendar() / test fixed date.)
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
 	return d.After(today)
 }
 
-// AcceptFromArgs keeps the match when the date in args is in the future.
-// Required args: year, month, day (Java getRequired).
+// AcceptFromArgs ports AbstractFutureDateFilter.acceptRuleMatch boolean decision:
+// keep the match only when the date in args is strictly after currentDate.
+// Required args: year, month, day (Java getRequired → panic if missing).
 func (f *FutureDateFilterCore) AcceptFromArgs(args map[string]string) bool {
 	if args == nil {
+		// No Java twin for nil map; fail closed.
 		return false
 	}
+	// Java getRequired — IllegalArgumentException "Missing key '…'"
 	if _, ok := args["year"]; !ok {
 		panic("Missing key 'year'")
 	}
@@ -76,36 +130,24 @@ func (f *FutureDateFilterCore) AcceptFromArgs(args map[string]string) bool {
 	if _, ok := args["day"]; !ok {
 		panic("Missing key 'day'")
 	}
-	y, err := strconv.Atoi(args["year"])
-	if err != nil {
-		return false
-	}
-	m, err := f.ParseMonthArg(args["month"])
-	if err != nil {
-		return false
-	}
-	d, err := ParseDayOfMonthArg(args["day"], f.GetDayOfMonth)
-	if err != nil {
-		return false
-	}
-	// Java setLenient(false); invalid day (0) or Feb 30 → after() throws → null
-	if d < 1 {
-		return false
-	}
-	t := time.Date(y, time.Month(m), d, 0, 0, 0, 0, time.UTC)
-	if t.Year() != y || int(t.Month()) != m || t.Day() != d {
+	y, m, d, ok := f.getDate(args)
+	if !ok {
+		// invalid calendar (lenient false) → after() IllegalArgumentException → null
 		return false
 	}
 	return f.IsFuture(y, m, d)
 }
 
+// now ports getCalendar() + TestHackHelper.isJUnitTest() branch:
+// under tests, currentDate = Calendar.Builder().setDate(2014, 0, 1).
 func (f *FutureDateFilterCore) now() time.Time {
 	if f != nil && f.Now != nil {
 		return f.Now()
 	}
 	if IsTest() {
-		// Java TestHackHelper: currentDate = 2014-01-01
-		return time.Date(2014, time.January, 1, 0, 0, 0, 0, time.UTC)
+		// Java: new Calendar.Builder().setDate(2014, 0, 1).build()
+		return time.Date(2014, time.January, 1, 0, 0, 0, 0, time.Local)
 	}
-	return time.Now().UTC()
+	// Java getCalendar() → Calendar.getInstance(locale) in system default TZ
+	return time.Now()
 }
