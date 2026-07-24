@@ -4,13 +4,21 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/stretchr/testify/require"
 )
 
+func clearIdentifier(t *testing.T) {
+	t.Helper()
+	identifier.Instance.Clear()
+	t.Cleanup(func() { identifier.Instance.Clear() })
+}
+
 // Twin of MorfologikSpellerRule.match ForeignLanguageChecker arm:
 // preferredLanguages ≥ 2 + high error ratio → setNewLanguageMatches on first match.
 func TestMatch_ForeignLanguageChecker_SetsNewLanguageMatches(t *testing.T) {
+	clearIdentifier(t)
 	sp := NewMorfologikSpeller("/xx.dict", 1)
 	// Only a few correct English words; rest misspelled so errorRatio ≥ 0.45.
 	for _, w := range []string{"the", "and", "a"} {
@@ -20,13 +28,10 @@ func TestMatch_ForeignLanguageChecker_SetsNewLanguageMatches(t *testing.T) {
 	uc := languagetool.NewUserConfig()
 	uc.SetPreferredLanguagesList([]string{"en", "de", "fr"})
 	r.SetUserConfig(uc)
-	// Inject identifier: claim German (Java LanguageIdentifier path).
-	r.ForeignDetect = func(sentence string, preferred []string, maxResults int) []spelling.DetectedLanguageScore {
-		return []spelling.DetectedLanguageScore{
-			{ShortCode: "de", Confidence: 0.91, Source: "test"},
-			{ShortCode: "fr", Confidence: 0.4, Source: "test"},
-		}
-	}
+	// Wire LanguageIdentifierService (Java ForeignLanguageChecker path).
+	identifier.Instance.SetSimple(identifier.NewMapLanguageIdentifier(100, func(sentence string, preferred []string) map[string]float64 {
+		return map[string]float64{"de": 0.91, "fr": 0.4}
+	}))
 
 	// ≥ 3 non-nonWord tokens; most misspelled.
 	// "xxx yyy zzz www the" → 5 content words-ish; many matches.
@@ -41,6 +46,7 @@ func TestMatch_ForeignLanguageChecker_SetsNewLanguageMatches(t *testing.T) {
 }
 
 func TestMatch_ForeignLanguageChecker_SameLang_NoNewLanguageMatches(t *testing.T) {
+	clearIdentifier(t)
 	sp := NewMorfologikSpeller("/xx.dict", 1)
 	// Non-empty map so IsMisspelled flags unknowns (empty Words = fail-closed).
 	sp.AddWord("the")
@@ -48,12 +54,10 @@ func TestMatch_ForeignLanguageChecker_SameLang_NoNewLanguageMatches(t *testing.T
 	uc := languagetool.NewUserConfig()
 	uc.SetPreferredLanguagesList([]string{"en", "de"})
 	r.SetUserConfig(uc)
-	r.ForeignDetect = func(sentence string, preferred []string, maxResults int) []spelling.DetectedLanguageScore {
-		// Top hit is same language as the rule → NO_FOREIGN_LANG_DETECTED (no set).
-		return []spelling.DetectedLanguageScore{
-			{ShortCode: "en", Confidence: 0.95, Source: "test"},
-		}
-	}
+	// Top hit is same language as the rule → NO_FOREIGN_LANG_DETECTED (no set).
+	identifier.Instance.SetSimple(identifier.NewMapLanguageIdentifier(100, func(sentence string, preferred []string) map[string]float64 {
+		return map[string]float64{"en": 0.95}
+	}))
 	ms, err := r.Match(languagetool.AnalyzePlain("xxx yyy zzz www aaa"))
 	require.NoError(t, err)
 	require.NotEmpty(t, ms)

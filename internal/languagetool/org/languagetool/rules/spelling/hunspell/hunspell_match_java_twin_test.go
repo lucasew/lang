@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/stretchr/testify/require"
 )
 
@@ -109,14 +109,17 @@ func TestHunspellMatch_PTIgnoreWrongSplitOnCommonWord(t *testing.T) {
 
 // ForeignLanguageChecker on Hunspell Match (preferredLanguages ≥ 2).
 func TestHunspellMatch_ForeignLanguage(t *testing.T) {
+	identifier.Instance.Clear()
+	t.Cleanup(func() { identifier.Instance.Clear() })
 	dict := NewMapHunspellDictionary([]string{"the"})
 	r := NewHunspellRule("en", dict)
 	uc := languagetool.NewUserConfig()
 	uc.SetPreferredLanguagesList([]string{"en", "de"})
 	r.SetUserConfig(uc)
-	r.ForeignDetect = func(sentence string, preferred []string, maxResults int) []spelling.DetectedLanguageScore {
-		return []spelling.DetectedLanguageScore{{ShortCode: "de", Confidence: 0.88}}
-	}
+	// Wire LanguageIdentifierService (Java ForeignLanguageChecker path).
+	identifier.Instance.SetSimple(identifier.NewMapLanguageIdentifier(100, func(sentence string, preferred []string) map[string]float64 {
+		return map[string]float64{"de": 0.88}
+	}))
 	ms, err := r.Match(languagetool.AnalyzePlain("xxx yyy zzz www vvv"))
 	require.NoError(t, err)
 	require.NotEmpty(t, ms)

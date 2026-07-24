@@ -1,65 +1,81 @@
 package spelling
 
-// ForeignLanguageChecker ports org.languagetool.rules.spelling.ForeignLanguageChecker
-// with a pluggable language-id hook (no LanguageIdentifierService).
-const (
-	ForeignErrorThreshold       = 0.45
-	ForeignMinSentenceThreshold = 3
-	ForeignMaxScoringLanguages  = 5
-	NoForeignLangDetected       = "NO_FOREIGN_LANG_DETECTED"
+import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier"
 )
 
-// DetectedLanguageScore is one scored detection result.
-type DetectedLanguageScore struct {
-	ShortCode  string
-	Confidence float32
-	Source     string
-}
+// ForeignLanguageChecker ports org.languagetool.rules.spelling.ForeignLanguageChecker.
+const (
+	// ForeignErrorThreshold ports ERROR_THRESHOLD.
+	ForeignErrorThreshold = 0.45
+	// ForeignMinSentenceThreshold ports MIN_SENTENCE_THRESHOLD.
+	ForeignMinSentenceThreshold = 3
+	// ForeignMaxScoringLanguages ports MAX_SCORING_LANGUAGES.
+	ForeignMaxScoringLanguages = 5
+	// NoForeignLangDetected ports NO_FOREIGN_LANG_DETECTED.
+	NoForeignLangDetected = "NO_FOREIGN_LANG_DETECTED"
+)
 
-// DetectScoresFunc returns ranked language scores for a sentence.
-type DetectScoresFunc func(sentence string, preferred []string, maxResults int) []DetectedLanguageScore
-
-// ForeignLanguageChecker checks whether high error ratio suggests a different language.
+// ForeignLanguageChecker ports org.languagetool.rules.spelling.ForeignLanguageChecker.
 type ForeignLanguageChecker struct {
-	LanguageShortCode  string
-	Sentence           string
-	SentenceLength     int64
-	PreferredLanguages []string
-	// Detect is optional; when nil, Check returns empty (same as no identifier).
-	Detect DetectScoresFunc
+	languageShortCode  string
+	sentence           string
+	sentenceLength     int64
+	preferredLanguages []string
 }
 
+// NewForeignLanguageChecker ports ForeignLanguageChecker(languageShortCode, sentence, sentenceLength, preferredLanguages).
 func NewForeignLanguageChecker(languageShortCode, sentence string, sentenceLength int64, preferred []string) *ForeignLanguageChecker {
+	pref := append([]string(nil), preferred...)
 	return &ForeignLanguageChecker{
-		LanguageShortCode:  languageShortCode,
-		Sentence:           sentence,
-		SentenceLength:     sentenceLength,
-		PreferredLanguages: append([]string(nil), preferred...),
+		languageShortCode:  languageShortCode,
+		sentence:           sentence,
+		sentenceLength:     sentenceLength,
+		preferredLanguages: pref,
 	}
 }
 
-// Check returns language→confidence when error ratio is high; empty if not triggered.
+// Check ports ForeignLanguageChecker.check(matchesSoFar).
+// Returns language shortCode → confidence when the error ratio is high enough to
+// suggest a different language; empty map when not triggered / identifier missing.
+// Java returns LinkedHashMap; Go map does not preserve order (callers key-lookup).
 func (c *ForeignLanguageChecker) Check(matchesSoFar int) map[string]float32 {
-	if c.SentenceLength < ForeignMinSentenceThreshold {
+	if c == nil {
 		return map[string]float32{}
 	}
-	errorRatio := float32(matchesSoFar) / float32(c.SentenceLength)
-	if errorRatio < ForeignErrorThreshold {
-		return map[string]float32{}
+	// Java: float errorRatio = (float) matchesSoFar / sentenceLength;
+	errorRatio := float32(matchesSoFar) / float32(c.sentenceLength)
+	if c.sentenceLength >= ForeignMinSentenceThreshold && errorRatio >= ForeignErrorThreshold {
+		// Java: LanguageIdentifier langIdent = LanguageIdentifierService.INSTANCE.getInitialized();
+		langIdent := identifier.Instance.GetInitialized()
+		if langIdent != nil {
+			// Java: getDetectedLanguageScores(sentence, Collections.emptyList(), preferredLanguages, true, MAX_SCORING_LANGUAGES)
+			detectedLanguageScores := langIdent.Scores(
+				c.sentence,
+				[]string{},
+				c.preferredLanguages,
+				true,
+				ForeignMaxScoringLanguages,
+			)
+			// Java: LinkedHashMap — Go map is unordered; values/keys match.
+			results := make(map[string]float32, ForeignMaxScoringLanguages)
+			if len(detectedLanguageScores) > 0 {
+				for i := 0; i < len(detectedLanguageScores); i++ {
+					detectedLanguage := detectedLanguageScores[i]
+					// Java: Language language = detectedLanguage.getDetectedLanguage();
+					// language.getShortCode() — Go DetectedLanguage stores short code in DetectedLanguageCode.
+					shortCode := detectedLanguage.GetDetectedLanguageCode()
+					// The text main language still has the highest threshold
+					if i == 0 && shortCode == c.languageShortCode {
+						return map[string]float32{NoForeignLangDetected: 0.99}
+					}
+					// Java: log.trace(...) — omit (no behavior impact)
+					results[shortCode] = detectedLanguage.GetDetectionConfidence()
+				}
+				return results
+			}
+			return map[string]float32{NoForeignLangDetected: 0.99}
+		}
 	}
-	if c.Detect == nil {
-		return map[string]float32{}
-	}
-	scores := c.Detect(c.Sentence, c.PreferredLanguages, ForeignMaxScoringLanguages)
-	if len(scores) == 0 {
-		return map[string]float32{NoForeignLangDetected: 0.99}
-	}
-	if scores[0].ShortCode == c.LanguageShortCode {
-		return map[string]float32{NoForeignLangDetected: 0.99}
-	}
-	out := make(map[string]float32, len(scores))
-	for _, s := range scores {
-		out[s.ShortCode] = s.Confidence
-	}
-	return out
+	return map[string]float32{}
 }

@@ -64,9 +64,6 @@ type MorfologikSpellerRule struct {
 	TokenizingPattern *regexp.Regexp
 	// UserConfig ports MorfologikSpellerRule.userConfig (suggestionsEnabled / maxSpellingSuggestions).
 	UserConfig *languagetool.UserConfig
-	// ForeignDetect ports ForeignLanguageChecker language-id hook (LanguageIdentifierService).
-	// When nil, foreign-language scoring is inactive (Java langIdent == null → empty).
-	ForeignDetect spelling.DetectScoresFunc
 }
 
 func NewMorfologikSpellerRule(id, languageCode, fileName string, speller *MorfologikSpeller) *MorfologikSpellerRule {
@@ -278,11 +275,8 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			if sentence != nil {
 				text = sentence.GetText()
 			}
+			// ForeignLanguageChecker uses LanguageIdentifierService.INSTANCE (Java).
 			foreignChecker = spelling.NewForeignLanguageChecker(langCode, text, sentenceLength, pref)
-			// Optional Detect hook: set ForeignDetect on the rule when identifier is wired.
-			if r.ForeignDetect != nil {
-				foreignChecker.Detect = r.ForeignDetect
-			}
 		}
 	}
 	// applyForeign ports end-of-loop foreignLanguageChecker.check (once until result).

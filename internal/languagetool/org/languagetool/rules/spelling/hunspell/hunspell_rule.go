@@ -37,9 +37,6 @@ type HunspellRule struct {
 	// UserConfig ports HunspellRule.userConfig (suggestionsEnabled / maxSpellingSuggestions /
 	// preferredLanguages for ForeignLanguageChecker).
 	UserConfig *languagetool.UserConfig
-	// ForeignDetect ports ForeignLanguageChecker language-id hook.
-	// When nil, foreign-language scoring is inactive (Java langIdent == null → empty).
-	ForeignDetect spelling.DetectScoresFunc
 	// GetOnlySuggestionsFn ports getOnlySuggestions: when non-empty, replaces dict sugs.
 	GetOnlySuggestionsFn func(word string) []string
 	// GetAdditionalTopSuggestionsFn ports getAdditionalTopSuggestions language overrides.
@@ -160,10 +157,8 @@ func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 			if sentence != nil {
 				text = sentence.GetText()
 			}
+			// ForeignLanguageChecker uses LanguageIdentifierService.INSTANCE (Java).
 			foreignChecker = spelling.NewForeignLanguageChecker(langCode, text, foreignSentenceLengthHun(sentence), pref)
-			if r.ForeignDetect != nil {
-				foreignChecker.Detect = r.ForeignDetect
-			}
 		}
 	}
 
