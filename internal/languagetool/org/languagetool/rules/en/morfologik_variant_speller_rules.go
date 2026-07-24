@@ -198,7 +198,11 @@ func NewMorfologikSouthAfricanSpellerRule() *MorfologikVariantSpellerRule {
 	return NewMorfologikSouthAfricanSpellerRuleWithUser(nil)
 }
 
+// NewMorfologikSouthAfricanSpellerRuleWithUser ports MorfologikSouthAfricanSpellerRule(..., UserConfig).
+// Java: RESOURCE_FILENAME=/en/hunspell/en_ZA.dict, LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT=en/hunspell/spelling_en-ZA.txt,
+// US_ENGLISH=loadWordlist("en/en-US-GB.txt", 0), isValidInOtherVariant → VariantInfo("American English", …).
 func NewMorfologikSouthAfricanSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	// Java: loadWordlist("en/en-US-GB.txt", 0) — American form as key → South African/British form
 	return newVariantSpellerWithUser(MorfologikSouthAfricanSpellerRuleID, "en-ZA", SouthAfricanSpellerDict,
 		SouthAfricanVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
