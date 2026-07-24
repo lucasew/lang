@@ -206,7 +206,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-UppercaseSentenceStartRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/UppercaseSentenceStartRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java | internal/languagetool/org/languagetool/rules/ | ece9f12b00ef9d17a20aa020ec569e77d3d41f29 | 1 | 0 | |  | 2026-07-24T02:07:50Z |
 | docs/faithful-port-checklist.md#3.C.1-SentenceWhitespaceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/SentenceWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | de93509beb8ffe486b7996df296bee35547400c7 | 0 | 0 | | | 2026-07-24T02:22:40Z |
 | docs/faithful-port-checklist.md#3.C.1-WhitespaceBeforePunctuationRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhitespaceBeforePunctuationRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WhitespaceBeforePunctuationRuleTest.java | internal/languagetool/org/languagetool/rules/ | 31710741a5a24130e1faaa7d227611f813a908fe | 0 | 0 | | | 2026-07-24T02:30:32Z |
-| docs/faithful-port-checklist.md#3.C.1-WordRepeatRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java | internal/languagetool/org/languagetool/rules/ | f4719f5e1cb4efdb7c3a6747b997438fae984214 | 0 | 0 | | | 2026-07-24T02:37:44Z |
+| docs/faithful-port-checklist.md#3.C.1-WordRepeatRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java | internal/languagetool/org/languagetool/rules/ | f4719f5e1cb4efdb7c3a6747b997438fae984214 | 0 | 0 | | | 2026-07-24T02:41:35Z |
 
 ## Human inbox
 
@@ -216,7 +216,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-WordRepeatRule @ f4719f5e (Demo GetAnalyzedSentence twin; parent green). FR/zh blocked. |
+| Notes | accepted 3.C.1-WordRepeatRule @ f4719f5e. FR/zh blocked. |
 
 ---
 
@@ -856,3 +856,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T02:30:32Z ACCEPT: 3.C.1-WhitespaceBeforePunctuationRule @ 31710741 (validator + parent green reconfirm)
 - 2026-07-24T02:33:53Z implement: 3.C.1-WordRepeatRule (WordRepeatRuleTest full outcome twin; core layout 3.C.1 leaf)
 - 2026-07-24T02:37:44Z ready: 3.C.1-WordRepeatRule @ f4719f5e (implementer report; parent green reconfirm)
+- 2026-07-24T02:38:47Z validating: 3.C.1-WordRepeatRule @ f4719f5e
+- 2026-07-24T02:41:35Z ACCEPT: 3.C.1-WordRepeatRule @ f4719f5e (validator + parent green reconfirm)
