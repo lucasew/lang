@@ -159,7 +159,11 @@ func NewMorfologikCanadianSpellerRule() *MorfologikVariantSpellerRule {
 	return NewMorfologikCanadianSpellerRuleWithUser(nil)
 }
 
+// NewMorfologikCanadianSpellerRuleWithUser ports MorfologikCanadianSpellerRule(..., UserConfig).
+// Java: RESOURCE_FILENAME=/en/hunspell/en_CA.dict, LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT=en/hunspell/spelling_en-CA.txt,
+// US_ENGLISH=loadWordlist("en/en-US-GB.txt", 0), isValidInOtherVariant → VariantInfo("American English", …).
 func NewMorfologikCanadianSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikVariantSpellerRule {
+	// Java: loadWordlist("en/en-US-GB.txt", 0) — American form as key → Canadian/British form
 	return newVariantSpellerWithUser(MorfologikCanadianSpellerRuleID, "en-CA", CanadianSpellerDict,
 		CanadianVariantSpellingFile, "American English", usGbVariantMap(0), userConfig)
 }
