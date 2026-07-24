@@ -479,14 +479,29 @@ func Convert(value float64, src, dst UnitDef) (float64, bool) {
 	return FromSI(ToSI(value, src), dst), true
 }
 
+// unitDefEquals ports javax.measure Unit.equals for our UnitDef:
+// same dimension and same SI mapping (Factor/Offset). Symbol may differ
+// (e.g. "l" vs "liters" for the same litre unit).
+func unitDefEquals(a, b UnitDef) bool {
+	return a.Kind == b.Kind && a.ID == b.ID &&
+		math.Abs(a.Factor-b.Factor) < 1e-15 &&
+		math.Abs(a.Offset-b.Offset) < 1e-15
+}
+
 // GetMetricEquivalent returns metric conversions sorted by "naturalness" (closeness to 1–100).
+// Ports AbstractUnitConversionRule.getMetricEquivalent:
+// if the source unit equals any registered metric unit → nil (already that metric);
+// otherwise convert to every compatible metric unit (including same base ID with a
+// different factor — US/Imp pints are litre×factor, not a separate kind).
 func (r *AbstractUnitConversionRule) GetMetricEquivalent(value float64, unit UnitDef) []struct {
 	Unit  UnitDef
 	Value float64
 } {
-	if unit.Metric {
-		// already metric — no conversion needed for suggestion path
-		return nil
+	// Java: if (unit.equals(metric)) return null — source is already that metric unit.
+	for _, m := range r.metricUnits {
+		if unitDefEquals(unit, m) {
+			return nil
+		}
 	}
 	var out []struct {
 		Unit  UnitDef
@@ -496,7 +511,8 @@ func (r *AbstractUnitConversionRule) GetMetricEquivalent(value float64, unit Uni
 		if m.Kind != unit.Kind {
 			continue
 		}
-		if m.ID == unit.ID {
+		// Same SI mapping as source (already handled above) — skip duplicates only.
+		if unitDefEquals(unit, m) {
 			continue
 		}
 		v, ok := Convert(value, unit, m)
@@ -632,9 +648,10 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 				unitBodyEnd := fullEnd + cm[5]
 				numInParen := text[numFrom:numTo]
 				unitBody := tools.JavaStringTrim(text[fullEnd+cm[4] : unitBodyEnd])
+				convertedTrimmed := unitParenTrimmed(text[cFrom:cTo])
 				if given, errG := r.parseNumber(numInParen); errG == nil {
 					highlight := text[from:fullEnd]
-					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, numFrom, numTo, unitBodyEnd, val, sp.unit, given, unitBody, highlight); check != nil {
+					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, numFrom, numTo, unitBodyEnd, val, sp.unit, given, unitBody, convertedTrimmed, highlight); check != nil {
 						claim(from, cTo)
 						matches = append(matches, check)
 						continue
@@ -709,9 +726,10 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					unitBodyEnd := loc[1] + cm[5]
 					numInParen := text[numFrom:numTo]
 					unitBody := tools.JavaStringTrim(text[loc[1]+cm[4] : unitBodyEnd])
+					convertedTrimmed := unitParenTrimmed(text[cFrom:cTo])
 					given, errG := r.parseNumber(numInParen)
 					if errG == nil {
-						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, numFrom, numTo, unitBodyEnd, val, up.unit, given, unitBody, full); check != nil {
+						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, numFrom, numTo, unitBodyEnd, val, up.unit, given, unitBody, convertedTrimmed, full); check != nil {
 							claim(loc[0], cTo)
 							matches = append(matches, check)
 							continue
@@ -811,6 +829,16 @@ func dedupeUnitMatchesByStart(matches []*RuleMatch) []*RuleMatch {
 	return out
 }
 
+// unitParenTrimmed ports Java convertedInText.trim() without outer parentheses:
+// " (ca. 10 miles)" → "ca. 10 miles".
+func unitParenTrimmed(parenSpan string) string {
+	s := tools.JavaStringTrim(parenSpan)
+	if len(s) >= 2 && s[0] == '(' && s[len(s)-1] == ')' {
+		return tools.JavaStringTrim(s[1 : len(s)-1])
+	}
+	return s
+}
+
 // checkParentheticalConversion ports the Java CHECK branch when a conversion already follows.
 // Returns a RuleMatch if the given conversion is wrong; nil if OK or not verifiable.
 //
@@ -819,11 +847,13 @@ func dedupeUnitMatchesByStart(matches []*RuleMatch) []*RuleMatch {
 //   - non-metric source (CHECK): unitMatcher.start … convertedMatcher.end(0)
 //   - unknown unit: number through unit body (start(1)/end(2))
 //   - unit mismatch: unitMatcher.start … convertedMatcher.end(0)
+//
+// convertedTrimmed is the paren body without outer "()" (may include "ca. " / "aprox. ").
 func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	sentence *languagetool.AnalyzedSentence,
 	srcFrom, srcTo, convFrom, convTo, numFrom, numTo, unitBodyEnd int,
 	srcVal float64, srcUnit UnitDef,
-	given float64, unitBody, originalFull string,
+	given float64, unitBody, convertedTrimmed, originalFull string,
 ) *RuleMatch {
 	// Java: if convertedMatcher.group().trim().matches("\\(\\d+ (feet|ft) \\d+ inch\\)") return;
 	// e.g. "(2 ft 6 inch)" would be interpreted as just "2 ft", giving a wrong suggestion.
@@ -925,9 +955,20 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 		}
 		return m
 	}
-	// same unit as source → leave alone (Java)
-	if convertedUnit.ID == srcUnit.ID && convertedUnit.Symbol == srcUnit.Symbol {
+	// same unit as source → leave alone (Java unit.equals(convertedUnit))
+	if unitDefEquals(srcUnit, *convertedUnit) {
 		return nil
+	}
+	// Java: if converted != null && converted.stream().anyMatch(s -> s.equals(convertedTrimmed)) return
+	// (parenthetical already uses one of our metric suggestion strings, including "ca. …").
+	if convertedTrimmed != "" && !srcUnit.Metric {
+		for _, eq := range r.GetMetricEquivalent(srcVal, srcUnit) {
+			for _, conv := range r.formatConversionSuggestion(eq.Value, eq.Unit.Symbol) {
+				if conv == convertedTrimmed {
+					return nil
+				}
+			}
+		}
 	}
 	expected, ok := Convert(srcVal, srcUnit, *convertedUnit)
 	if !ok {
@@ -946,8 +987,37 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	// also accept if given matches any metric-equivalent candidate within DELTA
 	equivs := r.GetMetricEquivalent(srcVal, srcUnit)
 	for _, eq := range equivs {
-		if eq.Unit.ID == convertedUnit.ID && math.Abs(eq.Value-given) < unitDelta {
+		if unitDefEquals(eq.Unit, *convertedUnit) && math.Abs(eq.Value-given) < unitDelta {
 			return nil
+		}
+	}
+	// Build formatted reverse/forward forms (Java getFormattedConversions), including
+	// alternate symbols for the same SI unit ("mi"/"miles", "m"/"meters").
+	var suggs []string
+	seenSugg := map[string]bool{}
+	addForms := func(value float64, symbol string) {
+		for _, conv := range r.formatConversionSuggestion(value, symbol) {
+			if seenSugg[conv] || len(suggs) >= unitMaxSuggestions {
+				continue
+			}
+			seenSugg[conv] = true
+			suggs = append(suggs, conv)
+		}
+	}
+	addForms(expected, convertedUnit.Symbol)
+	for i := range r.unitPatterns {
+		u := r.unitPatterns[i].unit
+		if unitDefEquals(u, *convertedUnit) && u.Symbol != convertedUnit.Symbol {
+			addForms(expected, u.Symbol)
+		}
+	}
+	// Java reverseConverted.stream().anyMatch(s -> s.equals(convertedTrimmed)) → accept
+	// (covers "ca. 10 miles" when computed is 9.94 miles within ROUNDING_DELTA).
+	if convertedTrimmed != "" {
+		for _, s := range suggs {
+			if s == convertedTrimmed {
+				return nil
+			}
 		}
 	}
 	// Java spans: metric source → number only; non-metric → unit through full paren
@@ -957,13 +1027,25 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	}
 	m := r.newUnitMatch(sentence, matchFrom, matchTo, UnitMsgCheck)
 	// Java getFormattedConversions for reverse CHECK: number + unit forms (not wrapped
-	// in "original (…)" — that wrapping is only for SUGGESTION path).
-	var suggs []string
-	for _, conv := range r.formatConversionSuggestion(expected, convertedUnit.Symbol) {
-		if len(suggs) >= unitMaxSuggestions {
-			break
+	// in "original (…)" — that wrapping is only for SUGGESTION path / non-metric corrected).
+	if !srcUnit.Metric {
+		// Java: corrected = converted.stream().map(s -> getSuggestion(original, s))
+		orig := tools.JavaStringTrim(originalFull)
+		var metricSuggs []string
+		for _, eq := range equivs {
+			for _, conv := range r.formatConversionSuggestion(eq.Value, eq.Unit.Symbol) {
+				if len(metricSuggs) >= unitMaxSuggestions {
+					break
+				}
+				metricSuggs = append(metricSuggs, r.FormatSuggestion(orig, conv))
+			}
+			if len(metricSuggs) >= unitMaxSuggestions {
+				break
+			}
 		}
-		suggs = append(suggs, conv)
+		if len(metricSuggs) > 0 {
+			suggs = metricSuggs
+		}
 	}
 	if len(suggs) == 0 {
 		suggs = []string{r.formatNumber(expected) + " " + convertedUnit.Symbol}
