@@ -240,6 +240,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-SymSpell | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SymSpell.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_load.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_lookup_compound.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_word_segmentation.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_test.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_load_test.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_lookup_compound_test.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/sym_spell_word_segmentation_test.go | d19822b4a84edb5c9d848eb3e22317a064e01ba0 | 0 | 0 |  |  | 2026-07-24T09:34:38Z |
 | docs/faithful-port-checklist.md#3.C.2-SymSpellRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/SymSpellRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/SymSpellRuleTest.java | internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule.go; internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule_test.go; internal/languagetool/org/languagetool/rules/spelling/SymSpellRuleTest_test.go | 2cb93985ca6ea9623e2de0f50d57acea6c927e21 | 0 | 0 |  |  | 2026-07-24T09:52:14Z |
 
+| docs/faithful-port-checklist.md#3.C.2-MultitokenSpeller | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/multitoken/MultitokenSpeller.java | internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller_test.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/utf16_distance_test.go | 29b60d6cba9fcb8ad0e10730e71bf5d0fbe5b33e | 0 | 0 |  |  | 2026-07-24T10:03:25Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -248,7 +249,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.2-SymSpellRule @ 2cb93985. Next: implement next 3.C.2 leaf (e.g. MultitokenSpellerFilter/VagueSpellChecker). FR/zh blocked. |
+| Notes | ready 3.C.2-MultitokenSpeller @ 29b60d6c (distances/UTF-16/cache; invent soft skips removed). FR/zh blocked. |
 
 ---
 
@@ -1022,3 +1023,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T09:45:13Z ready: 3.C.2-SymSpellRule @ 2cb93985 (implementer report; parent green reconfirm)
 - 2026-07-24T09:48:40Z validating: 3.C.2-SymSpellRule @ 2cb93985 (strict invent re-audit vs Java SymSpellRule)
 - 2026-07-24T09:52:14Z ACCEPT: 3.C.2-SymSpellRule @ 2cb93985 (validator + parent green reconfirm)
+- 2026-07-24T09:53:56Z implement: 3.C.2-MultitokenSpeller (init maps; getSuggestions distances; UTF-16; official multitoken lists; outcome twins; delete invent)
+- 2026-07-24T10:03:25Z ready: 3.C.2-MultitokenSpeller @ 29b60d6c (implementer report; parent green reconfirm)
