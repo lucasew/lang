@@ -8,51 +8,48 @@ import (
 )
 
 // WhitespaceCheckFilter ports org.languagetool.rules.WhitespaceCheckFilter.
-// Keeps the match when whitespace before the token at 1-based position
-// is not equal to the expected whitespaceChar.
+// Line map (Java → Go):
+//   acceptRuleMatch → AcceptRuleMatch
+//   getRequired("whitespaceChar"|"position") → map lookup; missing → panic "Missing key '…'"
+//   Integer.parseInt(position) → strconv.Atoi (invalid → panic)
+//   pos < 1 || pos > patternTokens.length → IllegalArgumentException message via panic
+//   !patternTokens[pos-1].getWhitespaceBefore().equals(wsChar) → return match; else null
 type WhitespaceCheckFilter struct{}
 
 func NewWhitespaceCheckFilter() *WhitespaceCheckFilter {
 	return &WhitespaceCheckFilter{}
 }
 
-// Accept returns true when the match should be kept (whitespace differs).
-// position is 1-based into whitespaceBefore (same length as pattern tokens).
-func (f *WhitespaceCheckFilter) Accept(whitespaceBefore []string, position int, whitespaceChar string) (keep bool, err string) {
-	if position < 1 || position > len(whitespaceBefore) {
-		return false, "Wrong position in WhitespaceCheckFilter"
-	}
-	return whitespaceBefore[position-1] != whitespaceChar, ""
-}
-
 // AcceptRuleMatch ports WhitespaceCheckFilter.acceptRuleMatch.
-// Args: whitespaceChar (required), position (required, 1-based).
+// Required args: whitespaceChar, position (1-based into patternTokens).
 func (f *WhitespaceCheckFilter) AcceptRuleMatch(match *RuleMatch, arguments map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *RuleMatch {
-	if f == nil || match == nil {
-		return nil
-	}
+	// Java RuleFilter.getRequired("whitespaceChar", arguments)
 	wsChar, ok := arguments["whitespaceChar"]
 	if !ok {
 		panic("Missing key 'whitespaceChar'")
 	}
+	// Java RuleFilter.getRequired("position", arguments)
 	posStr, ok := arguments["position"]
 	if !ok {
 		panic("Missing key 'position'")
 	}
+	// Java: Integer.parseInt(...) — NumberFormatException on bad input
 	pos, err := strconv.Atoi(posStr)
 	if err != nil {
 		panic(err)
 	}
 	if pos < 1 || pos > len(patternTokens) {
+		// Java: throw new IllegalArgumentException("Wrong position in WhitespaceCheckFilter: " + pos + ", must be 1 to " + patternTokens.length)
 		panic(fmt.Sprintf("Wrong position in WhitespaceCheckFilter: %d, must be 1 to %d", pos, len(patternTokens)))
 	}
+	// Java: patternTokens[pos - 1].getWhitespaceBefore().equals(wsChar)
+	// null element → NPE (do not invent soft empty-string path)
 	tok := patternTokens[pos-1]
-	got := ""
-	if tok != nil {
-		got = tok.GetWhitespaceBefore()
+	if tok == nil {
+		panic("NullPointerException")
 	}
-	if got != wsChar {
+	if tok.GetWhitespaceBefore() != wsChar {
 		return match
 	}
 	return nil
