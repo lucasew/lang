@@ -241,6 +241,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-SymSpellRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/SymSpellRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/SymSpellRuleTest.java | internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule.go; internal/languagetool/org/languagetool/rules/spelling/sym_spell_rule_test.go; internal/languagetool/org/languagetool/rules/spelling/SymSpellRuleTest_test.go | 2cb93985ca6ea9623e2de0f50d57acea6c927e21 | 0 | 0 |  |  | 2026-07-24T09:52:14Z |
 
 | docs/faithful-port-checklist.md#3.C.2-MultitokenSpeller | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/multitoken/MultitokenSpeller.java | internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller_test.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/utf16_distance_test.go | 29b60d6cba9fcb8ad0e10730e71bf5d0fbe5b33e | 0 | 0 |  |  | 2026-07-24T10:12:05Z |
+| docs/faithful-port-checklist.md#3.C.2-MultitokenSpellerFilter | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/multitoken/MultitokenSpellerFilter.java | internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller_filter.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller_filter_test.go; internal/languagetool/org/languagetool/rules/patterns/default_rule_filters.go; internal/languagetool/org/languagetool/rules/patterns/default_rule_filters_test.go | e21fcfdf7c13954ac3bc873a7a9c5cacf9fed348 | 0 | 0 |  |  | 2026-07-24T10:21:09Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -249,7 +250,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.2-MultitokenSpeller @ 29b60d6c. Next: implement MultitokenSpellerFilter (depends on MultitokenSpeller). FR/zh blocked. |
+| Notes | ready 3.C.2-MultitokenSpellerFilter @ e21fcfdf (short-code gate; casing; invent CheckSpelling removed). FR/zh blocked. |
 
 ---
 
@@ -1027,3 +1028,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T10:03:25Z ready: 3.C.2-MultitokenSpeller @ 29b60d6c (implementer report; parent green reconfirm)
 - 2026-07-24T10:08:41Z validating: 3.C.2-MultitokenSpeller @ 29b60d6c (strict invent re-audit vs Java MultitokenSpeller)
 - 2026-07-24T10:12:05Z ACCEPT: 3.C.2-MultitokenSpeller @ 29b60d6c (validator + parent green reconfirm)
+- 2026-07-24T10:13:49Z implement: 3.C.2-MultitokenSpellerFilter (acceptRuleMatch; isMisspelled; en/de/pt/nl path; case transforms; outcome twins; delete invent)
+- 2026-07-24T10:21:09Z ready: 3.C.2-MultitokenSpellerFilter @ e21fcfdf (implementer report; parent green reconfirm)
