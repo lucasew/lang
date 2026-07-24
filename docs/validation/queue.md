@@ -242,6 +242,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.C.2-MultitokenSpeller | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/multitoken/MultitokenSpeller.java | internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller_test.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/utf16_distance_test.go | 29b60d6cba9fcb8ad0e10730e71bf5d0fbe5b33e | 0 | 0 |  |  | 2026-07-24T10:12:05Z |
 | docs/faithful-port-checklist.md#3.C.2-MultitokenSpellerFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/multitoken/MultitokenSpellerFilter.java | internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller_filter.go; internal/languagetool/org/languagetool/rules/spelling/multitoken/multitoken_speller_filter_test.go; internal/languagetool/org/languagetool/rules/patterns/default_rule_filters.go; internal/languagetool/org/languagetool/rules/patterns/default_rule_filters_test.go | e21fcfdf7c13954ac3bc873a7a9c5cacf9fed348 | 0 | 0 |  |  | 2026-07-24T10:27:15Z |
+| docs/faithful-port-checklist.md#3.C.2-VagueSpellChecker | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/VagueSpellChecker.java; inspiration/languagetool/languagetool-standalone/src/test/java/org/languagetool/rules/spelling/VagueSpellCheckerTest.java | internal/languagetool/org/languagetool/rules/spelling/vague_spell_checker.go; internal/languagetool/org/languagetool/rules/spelling/vague_spell_checker_port_test.go; internal/languagetool/org/languagetool/rules/spelling/VagueSpellCheckerTest_test.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/binary_register.go | 5e95555641f75f8428d5b83892c920d84b1cf27a | 0 | 0 |  |  | 2026-07-24T10:40:13Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -250,7 +251,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ACCEPT 3.C.2-MultitokenSpellerFilter @ e21fcfdf. Next: implement next 3.C.2 leaf (e.g. VagueSpellChecker). FR/zh blocked. |
+| Notes | ready 3.C.2-VagueSpellChecker @ 5e955556 (Hunspell/Morfologik paths; invent inject removed; twin en/de/pt/fr). FR/zh blocked. |
 
 ---
 
@@ -1032,3 +1033,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T10:21:09Z ready: 3.C.2-MultitokenSpellerFilter @ e21fcfdf (implementer report; parent green reconfirm)
 - 2026-07-24T10:23:41Z validating: 3.C.2-MultitokenSpellerFilter @ e21fcfdf (strict invent re-audit vs Java MultitokenSpellerFilter)
 - 2026-07-24T10:27:15Z ACCEPT: 3.C.2-MultitokenSpellerFilter @ e21fcfdf (validator + parent green reconfirm)
+- 2026-07-24T10:29:15Z implement: 3.C.2-VagueSpellChecker (isValidWord; getSpellingCheckRule; Hunspell vs Morfologik NonThreadSafeSpellRule; VagueSpellCheckerTest twin; delete invent inject)
+- 2026-07-24T10:40:13Z ready: 3.C.2-VagueSpellChecker @ 5e955556 (implementer report; parent green reconfirm; twin en/de/pt/fr with third_party pos-dicts present)
