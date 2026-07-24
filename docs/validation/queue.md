@@ -216,7 +216,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-EmptyLineRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/EmptyLineRule.java | internal/languagetool/org/languagetool/rules/ | fa2fb22d0576bec0f22d8d853ff6f270bd4e828d | 0 | 0 |  |  | 2026-07-24T04:20:34Z |
 | docs/faithful-port-checklist.md#3.C.1-WhiteSpaceAtBeginOfParagraph | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhiteSpaceAtBeginOfParagraph.java | internal/languagetool/org/languagetool/rules/ | 1392009b79abdb8a63867c5736026a118453d011 | 0 | 0 |  |  | 2026-07-24T04:30:10Z |
 | docs/faithful-port-checklist.md#3.C.1-WhiteSpaceBeforeParagraphEnd | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WhiteSpaceBeforeParagraphEnd.java | internal/languagetool/org/languagetool/rules/ | b1ca13dfaced336640fcae82741bb47513e7ea34 | 0 | 0 |  |  | 2026-07-24T04:40:03Z |
-| docs/faithful-port-checklist.md#3.C.1-ParagraphRepeatBeginningRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ParagraphRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | baf442057c7020a58aa9e6c7fe2130d05862928f | 0 | 0 |  |  | 2026-07-24T04:48:39Z |
+| docs/faithful-port-checklist.md#3.C.1-ParagraphRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ParagraphRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/ | baf442057c7020a58aa9e6c7fe2130d05862928f | 0 | 0 |  |  | 2026-07-24T04:55:22Z |
 
 ## Human inbox
 
@@ -226,7 +226,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-ParagraphRepeatBeginningRule @ baf44205 (demoLT/EN Analyze twin; parent green). FR/zh blocked. |
+| Notes | last ACCEPT 3.C.1-ParagraphRepeatBeginningRule @ baf44205. FR/zh blocked. |
 
 ---
 
@@ -906,3 +906,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T04:40:03Z ACCEPT: 3.C.1-WhiteSpaceBeforeParagraphEnd @ b1ca13df (validator + parent green reconfirm)
 - 2026-07-24T04:44:00Z implement: 3.C.1-ParagraphRepeatBeginningRule (MatchList outcome twin; Demo/EN Analyze; core layout 3.C.1 leaf)
 - 2026-07-24T04:48:39Z ready: 3.C.1-ParagraphRepeatBeginningRule @ baf44205 (implementer report; parent green reconfirm)
+- 2026-07-24T04:53:43Z validating: 3.C.1-ParagraphRepeatBeginningRule @ baf44205 (strict invent re-audit vs Java ParagraphRepeatBeginningRule)
+- 2026-07-24T04:55:22Z ACCEPT: 3.C.1-ParagraphRepeatBeginningRule @ baf44205 (validator + parent green reconfirm)
