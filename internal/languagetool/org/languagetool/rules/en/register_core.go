@@ -228,7 +228,8 @@ func RegisterEnglishVariantExtraRules(lt *languagetool.JLanguageTool) {
 	code := strings.ToLower(lt.GetLanguageCode())
 	switch {
 	case strings.Contains(code, "gb"):
-		gb := NewBritishReplaceRule(nil)
+		// Java BritishEnglish: new BritishReplaceRule(messages, "/en/en-GB/replace.txt")
+		gb := NewBritishReplaceRule(nil, BritishReplaceFilePath)
 		lt.AddRuleChecker(gb.GetID(), rules.AsSentenceCheckerSimple(gb.Match))
 		imU := NewUnitConversionRuleImperial(nil)
 		lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
