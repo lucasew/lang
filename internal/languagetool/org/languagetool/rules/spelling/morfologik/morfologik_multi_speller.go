@@ -44,35 +44,45 @@ func (m *MorfologikMultiSpeller) ConvertsCase() bool {
 	return m != nil && m.convertsCase
 }
 
-// NewMorfologikMultiSpellerFromPaths validates dict path conventions (Java ctor parity)
-// then builds an empty multi-speller shell. Binary .dict loading is deferred.
+// NewMorfologikMultiSpellerFromPaths ports
+// MorfologikMultiSpeller(binaryDictPath, plainTextPaths, languageVariantPlainTextPath=null, maxEditDistance).
+// Loads official binary .dict + plain-text lists via classpath discovery (same resources as Java).
 func NewMorfologikMultiSpellerFromPaths(binaryDict string, plainTextDicts []string, maxEditDistance int) (*MorfologikMultiSpeller, error) {
 	if err := ValidateMultiSpellerDictPath(binaryDict); err != nil {
 		return nil, err
 	}
 	for _, p := range plainTextDicts {
-		if tools.JavaStringTrim(p) == "" {
+		p = tools.JavaStringTrim(p)
+		if p == "" {
 			return nil, fmt.Errorf("empty plain-text dictionary path")
 		}
+		// Java ctor: plain text needs suffix .txt
+		if !strings.HasSuffix(p, ".txt") {
+			return nil, fmt.Errorf("Unsupported dictionary, plain text file needs to have suffix .txt: %s", p)
+		}
 	}
-	_ = maxEditDistance
-	return &MorfologikMultiSpeller{BinaryDictPath: binaryDict}, nil
+	if maxEditDistance < 1 {
+		maxEditDistance = 1
+	}
+	// Java MorfologikSpeller(binaryDictPath) fails when resource missing / unreadable.
+	if DiscoverLanguageDict(binaryDict) == "" {
+		return nil, fmt.Errorf("dictionary not found: %s", binaryDict)
+	}
+	m := OpenMultiSpellerFromClasspath(binaryDict, plainTextDicts, "", maxEditDistance, nil)
+	if m == nil || len(m.Spellers) == 0 {
+		return nil, fmt.Errorf("failed to open multi speller for %s", binaryDict)
+	}
+	return m, nil
 }
 
-// ValidateMultiSpellerDictPath rejects non-.dict names (e.g. .dict.README) and empty paths.
+// ValidateMultiSpellerDictPath ports getBinaryDict path check:
+// binary Morfologik file needs suffix .dict (IllegalArgumentException in Java).
 func ValidateMultiSpellerDictPath(path string) error {
 	if tools.JavaStringTrim(path) == "" {
 		return fmt.Errorf("dictionary path is empty")
 	}
-	if strings.HasSuffix(path, ".README") || strings.Contains(path, ".dict.README") {
-		return fmt.Errorf("invalid dictionary file name: %s", path)
-	}
 	if !strings.HasSuffix(path, ".dict") {
-		// Java also fails when the binary resource is missing / wrong extension
-		return fmt.Errorf("invalid dictionary file (expected .dict): %s", path)
-	}
-	if strings.Contains(path, "no-such-file") {
-		return fmt.Errorf("dictionary not found: %s", path)
+		return fmt.Errorf("Unsupported dictionary, binary Morfologik file needs to have suffix .dict: %s", path)
 	}
 	return nil
 }

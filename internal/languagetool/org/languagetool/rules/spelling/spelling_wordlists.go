@@ -175,6 +175,9 @@ func discoverResourceRel(rel string) string {
 		candidates = append(candidates,
 			filepath.Join(dir, "inspiration", "languagetool", "languagetool-core",
 				"src", "main", "resources", "org", "languagetool", "resource", rel),
+			// core test resources (e.g. xx/spelling/test2.txt for MorfologikMultiSpellerTest)
+			filepath.Join(dir, "inspiration", "languagetool", "languagetool-core",
+				"src", "test", "resources", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "languagetool-dicts", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "english-pos-dict", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "testdata", "upstream", rel),
