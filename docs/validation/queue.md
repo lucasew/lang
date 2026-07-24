@@ -230,7 +230,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-DetailedDamerauLevenstheinDistance-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistanceTest.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/ | 969f72941f54792e9f01f31e6d84a58ed7f5a054 | 0 | 0 |  |  | 2026-07-24T07:37:10Z |
 | docs/faithful-port-checklist.md#3.C.2-WeightedSuggestion | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/WeightedSuggestion.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/weighted_suggestion.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/weighted_suggestion_test.go | 0905ca8c91701c677e04fd51eaa99cdfe9ba88c3 | 0 | 0 |  |  | 2026-07-24T07:45:46Z |
 | docs/faithful-port-checklist.md#3.C.2-SuggestionsOrdererConfig | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/suggestions_ordering/SuggestionsOrdererConfig.java | internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/suggestions_ordering/suggestions_orderer_config_test.go | ed961fc7b2684f60b856b1c7dcf96b18729e010d | 0 | 0 |  |  | 2026-07-24T07:55:24Z |
-| docs/faithful-port-checklist.md#3.C.2-CommonFileTypes | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CommonFileTypes.java | internal/languagetool/org/languagetool/rules/spelling/common_file_types.go; internal/languagetool/org/languagetool/rules/spelling/common_file_types_test.go | c43e5171766e6a272d60171a7817a4cb7255baac | 0 | 0 |  |  | 2026-07-24T08:02:18Z |
+| docs/faithful-port-checklist.md#3.C.2-CommonFileTypes | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CommonFileTypes.java | internal/languagetool/org/languagetool/rules/spelling/common_file_types.go; internal/languagetool/org/languagetool/rules/spelling/common_file_types_test.go | c43e5171766e6a272d60171a7817a4cb7255baac | 0 | 0 |  |  | 2026-07-24T08:06:27Z |
 
 ## Human inbox
 
@@ -240,7 +240,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-CommonFileTypes @ c43e5171 (list+pattern; full-region matches ≡ Java matcher.matches). FR/zh blocked. |
+| Notes | ACCEPT 3.C.2-CommonFileTypes @ c43e5171 (list+pattern; matcher.matches oracle). FR/zh blocked. Next: next 3.C.2 leaf. |
 
 ---
 
@@ -980,3 +980,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T07:55:24Z ACCEPT: 3.C.2-SuggestionsOrdererConfig @ ed961fc7 (validator + parent green reconfirm)
 - 2026-07-24T07:58:54Z implement: 3.C.2-CommonFileTypes (COMMON_FILE_TYPES list + CASE_INSENSITIVE suffix Pattern twin)
 - 2026-07-24T08:02:18Z ready: 3.C.2-CommonFileTypes @ c43e5171 (implementer report; parent green reconfirm)
+- 2026-07-24T08:03:45Z validating: 3.C.2-CommonFileTypes @ c43e5171 (strict invent re-audit vs Java CommonFileTypes)
+- 2026-07-24T08:06:27Z ACCEPT: 3.C.2-CommonFileTypes @ c43e5171 (validator + parent green reconfirm)
