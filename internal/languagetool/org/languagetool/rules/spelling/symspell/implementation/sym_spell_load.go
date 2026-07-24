@@ -66,9 +66,9 @@ func (s *SymSpell) LoadDictionary(r io.Reader, termIndex, countIndex int) bool {
 	}
 	// ignore scanner error like Java catches IOException and prints
 	if s.deletes == nil {
-		s.deletes = map[int][]string{}
+		// Java: this.deletes = new HashMap<>(staging.deleteCount());
+		s.deletes = make(map[int][]string, staging.DeleteCount())
 	}
-	// ensure capacity-ish: Java new HashMap<>(staging.deleteCount()) when deletes null
 	s.CommitStaged(staging)
 	return true
 }
@@ -123,7 +123,8 @@ func (s *SymSpell) CreateDictionary(r io.Reader) bool {
 		}
 	}
 	if s.deletes == nil {
-		s.deletes = map[int][]string{}
+		// Java: this.deletes = new HashMap<>(staging.deleteCount());
+		s.deletes = make(map[int][]string, staging.DeleteCount())
 	}
 	s.CommitStaged(staging)
 	return true

@@ -58,6 +58,12 @@ func javaIndexOfChar(s string, ch uint16) int {
 	return -1
 }
 
+// javaCharAt ports String.charAt(i) for a UTF-16 code unit index (panics if OOB like Java).
+func javaCharAt(s string, i int) uint16 {
+	u := javaChars(s)
+	return u[i]
+}
+
 // javaStringHashCode ports Java String.hashCode():
 // s[0]*31^(n-1) + s[1]*31^(n-2) + ... over UTF-16 code units, 32-bit int overflow.
 func javaStringHashCode(s string) int {

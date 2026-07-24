@@ -39,36 +39,40 @@ func (s *SymSpell) WordSegmentationEdit(input string, maxEditDistance int) Segme
 // WordSegmentationMax ports wordSegmentation(input, maxEditDistance, maxSegmentationWordLength).
 // All substring/length/charAt operations use Java UTF-16 units.
 func (s *SymSpell) WordSegmentationMax(input string, maxEditDistance, maxSegmentationWordLength int) SegmentedSuggestion {
+	// Java: if (input.isEmpty()) return new SegmentedSuggestion();
 	if s == nil || input == "" {
 		return SegmentedSuggestion{}
 	}
 	inputLen := javaStringLen(input)
+	// Java: int arraySize = Math.min(maxSegmentationWordLength, input.length());
 	arraySize := maxSegmentationWordLength
 	if inputLen < arraySize {
 		arraySize = inputLen
 	}
-	if arraySize <= 0 {
-		return SegmentedSuggestion{}
-	}
 	compositions := make([]SegmentedSuggestion, arraySize)
+	// Java: for (int i = 0; i < arraySize; i++) compositions[i] = new SegmentedSuggestion();
+	// Go zero values already match empty SegmentedSuggestion defaults.
+
 	circularIndex := -1
 
 	// outer loop (column): all possible part start positions
 	for j := 0; j < inputLen; j++ {
-		// inner loop (row): all possible part lengths
+		// inner loop (row): all possible part lengths (from start position)
+		// part can't be bigger than longest word in dictionary
 		imax := inputLen - j
 		if maxSegmentationWordLength < imax {
 			imax = maxSegmentationWordLength
 		}
 		for i := 1; i <= imax; i++ {
+			// Java: String part = input.substring(j, j + i);
 			part := javaSubstring(input, j, j+i)
 			separatorLength := 0
 			topEd := 0
 			var topProbabilityLog float64
 			var topResult string
 
-			// Java Character.isWhitespace(part.charAt(0))
-			if javaStringLen(part) > 0 && isJavaWhitespaceChar(part) {
+			// Java: Character.isWhitespace(part.charAt(0))
+			if isJavaWhitespaceChar(part) {
 				// remove space for levenshtein calculation
 				part = javaSubstring(part, 1, javaStringLen(part))
 			} else {
@@ -76,10 +80,11 @@ func (s *SymSpell) WordSegmentationMax(input string, maxEditDistance, maxSegment
 				separatorLength = 1
 			}
 
-			// remove space from part, add number of removed spaces to topEd
+			// remove space from part1, add number of removed spaces to topEd
 			topEd += javaStringLen(part)
-			// remove space (ASCII space only — Java part.replace(" ", ""))
+			// Java: part = part.replace(" ", ""); // ASCII space only
 			part = strings.ReplaceAll(part, " ", "")
+			// add number of removed spaces to ed
 			topEd -= javaStringLen(part)
 
 			results := s.LookupMax(part, VerbosityTop, maxEditDistance)
@@ -96,28 +101,26 @@ func (s *SymSpell) WordSegmentationMax(input string, maxEditDistance, maxSegment
 				topProbabilityLog = math.Log10(10.0 / (float64(corpusWordCountN) * math.Pow(10.0, float64(javaStringLen(part)))))
 			}
 
+			// Java: int destinationIndex = ((i + circularIndex) % arraySize);
+			// When circularIndex == -1: (i - 1) % arraySize; Go % on non-negative is fine.
 			destinationIndex := (i + circularIndex) % arraySize
-			// Go % with negative: circularIndex starts -1, i>=1 → can be 0.. 
-			// Java: ((i + circularIndex) % arraySize) — when circularIndex=-1, i=1 → 0.
-			// In Go, (-1+1)%n = 0; but (i + (-1)) when i=1 is 0. Good.
-			// When circularIndex=-1 and i=arraySize: (arraySize-1)%arraySize ok.
 			if destinationIndex < 0 {
 				destinationIndex += arraySize
 			}
 
+			// set values in first loop
 			if j == 0 {
-				// set values in first loop
 				compositions[destinationIndex].SegmentedString = part
 				compositions[destinationIndex].CorrectedString = topResult
 				compositions[destinationIndex].DistanceSum = topEd
 				compositions[destinationIndex].ProbabilityLogSum = topProbabilityLog
-			} else if i == maxSegmentationWordLength ||
-				// replace if better probabilityLogSum at same ed or one space difference
-				(((compositions[circularIndex].DistanceSum+topEd == compositions[destinationIndex].DistanceSum) ||
+			} else if (i == maxSegmentationWordLength) ||
+				// replace values if better probabilityLogSum, if same edit distance OR one space difference
+				((((compositions[circularIndex].DistanceSum+topEd == compositions[destinationIndex].DistanceSum) ||
 					(compositions[circularIndex].DistanceSum+separatorLength+topEd == compositions[destinationIndex].DistanceSum)) &&
 					(compositions[destinationIndex].ProbabilityLogSum < compositions[circularIndex].ProbabilityLogSum+topProbabilityLog)) ||
-				// replace if smaller edit distance
-				(compositions[circularIndex].DistanceSum+separatorLength+topEd < compositions[destinationIndex].DistanceSum) {
+					// replace values if smaller edit distance
+					(compositions[circularIndex].DistanceSum+separatorLength+topEd < compositions[destinationIndex].DistanceSum)) {
 				compositions[destinationIndex].SegmentedString = compositions[circularIndex].SegmentedString + " " + part
 				compositions[destinationIndex].CorrectedString = compositions[circularIndex].CorrectedString + " " + topResult
 				compositions[destinationIndex].DistanceSum = compositions[circularIndex].DistanceSum + topEd
@@ -129,9 +132,7 @@ func (s *SymSpell) WordSegmentationMax(input string, maxEditDistance, maxSegment
 			circularIndex = 0
 		}
 	}
-	if circularIndex < 0 || circularIndex >= arraySize {
-		return SegmentedSuggestion{}
-	}
+	// Java: return compositions[circularIndex];
 	return compositions[circularIndex]
 }
 

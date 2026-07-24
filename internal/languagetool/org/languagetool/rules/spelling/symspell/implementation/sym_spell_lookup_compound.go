@@ -135,8 +135,8 @@ func (s *SymSpell) lookupCompoundMax(input string, maxEditDistance int) []Sugges
 			suggestion.Count = si.Count
 		}
 	}
-	// replaceAll("\\s+$", "")
-	suggestion.Term = strings.TrimRight(b.String(), " \t\n\r")
+	// Java: replaceAll("\\s+$", "") — default \s is [ \t\n\x0B\f\r]
+	suggestion.Term = strings.TrimRight(b.String(), " \t\n\v\f\r")
 	editDistance := NewEditDistance(suggestion.Term, Damerau)
 	// Java: DamerauLevenshteinDistance(input, maxDictionaryEditDistance)
 	suggestion.Distance = editDistance.DamerauLevenshteinDistance(input, s.maxDictionaryEditDistance)

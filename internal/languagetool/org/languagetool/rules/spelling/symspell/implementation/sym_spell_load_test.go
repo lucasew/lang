@@ -16,9 +16,20 @@ func TestLoadDictionary(t *testing.T) {
 	corpus := "hello 100\nworld 50\n# skip? no fields\nbadline\nok 3\n"
 	require.True(t, s.LoadDictionary(strings.NewReader(corpus), 0, 1))
 	require.Equal(t, 3, s.WordCount())
+	// Java: spel Closest with spell 10 → spell|1|10; here hello 100
 	got := s.Lookup("helo", VerbosityClosest)
 	require.NotEmpty(t, got)
 	require.Equal(t, "hello", got[0].Term)
+	require.Equal(t, 1, got[0].Distance)
+	require.Equal(t, int64(100), got[0].Count)
+}
+
+// Twin: loadDictionary returns true and yields Java Closest on "spel".
+func TestLoadDictionary_SpellCheck(t *testing.T) {
+	s := DefaultSymSpell()
+	require.True(t, s.LoadDictionary(strings.NewReader("spell 10\ncheck 5\nok 3\n"), 0, 1))
+	got := s.Lookup("spel", VerbosityClosest)
+	require.Equal(t, []SuggestItem{{Term: "spell", Distance: 1, Count: 10}}, got)
 }
 
 // Twin: Java line.split("\\s") keeps empty mid-fields; NBSP is not a delimiter.
@@ -53,17 +64,20 @@ func TestLoadDictionary_ColumnIndex(t *testing.T) {
 }
 
 // Twin of createDictionary from plain text.
+// Java createDictionary on "Hello, world! café's test-case" → 4 words
+// {world=1, café's=1, hello=1, test-case=1}.
 func TestCreateDictionary(t *testing.T) {
 	s := DefaultSymSpell()
-	text := "Hello, world! café's test-case underscore_word"
+	text := "Hello, world! café's test-case"
 	require.True(t, s.CreateDictionary(strings.NewReader(text)))
-	// parseWords lowercases and extracts tokens
-	require.GreaterOrEqual(t, s.WordCount(), 4)
-	// "hello" from Hello
+	require.Equal(t, 4, s.WordCount())
+	require.Equal(t, int64(1), s.words["hello"])
+	require.Equal(t, int64(1), s.words["world"])
+	require.Equal(t, int64(1), s.words["café's"])
+	require.Equal(t, int64(1), s.words["test-case"])
 	got := s.Lookup("hello", VerbosityTop)
-	require.NotEmpty(t, got)
-	require.Equal(t, "hello", got[0].Term)
-	// café with apostrophe form
+	require.Equal(t, []SuggestItem{{Term: "hello", Distance: 0, Count: 1}}, got)
+	// parseWords lowercases and keeps apostrophe / hyphen / underscore
 	require.Contains(t, parseWords("café's"), "café's")
 	require.Contains(t, parseWords("test-case"), "test-case")
 	require.Contains(t, parseWords("underscore_word"), "underscore_word")

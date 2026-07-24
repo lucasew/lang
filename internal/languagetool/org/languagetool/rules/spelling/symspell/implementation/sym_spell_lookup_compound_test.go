@@ -6,26 +6,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Twin of SymSpell.lookupCompound — join two terms that form a known word.
-func TestLookupCompound_Combi(t *testing.T) {
-	s := DefaultSymSpell()
-	// "helloworld" as one word; also "hello" and "world"
-	require.True(t, s.CreateDictionaryEntry("hello", 100, nil))
-	require.True(t, s.CreateDictionaryEntry("world", 80, nil))
-	require.True(t, s.CreateDictionaryEntry("helloworld", 50, nil))
+// Twin of SymSpell.lookupCompound — Java goldens on fixture dict.
+func TestLookupCompound_JavaGoldens(t *testing.T) {
+	s := fixtureDict(t)
 
-	// input "hello world" (space between known words) — compound path may join
-	got := s.LookupCompound("hello world")
-	require.Len(t, got, 1)
-	require.NotEmpty(t, got[0].Term)
+	// compound helo world => [hello world|1|5]
+	got := s.LookupCompound("helo world")
+	require.Equal(t, []SuggestItem{{Term: "hello world", Distance: 1, Count: 5}}, got)
 
-	// "helloworld" as single term without space — split path may recover "hello world"
+	// compound helloworld => [hello world|1|5]  (split path)
 	got = s.LookupCompound("helloworld")
-	require.Len(t, got, 1)
-	// Prefer split into hello world or exact helloworld
-	require.True(t,
-		got[0].Term == "helloworld" || got[0].Term == "hello world",
-		"got %q", got[0].Term)
+	require.Equal(t, []SuggestItem{{Term: "hello world", Distance: 1, Count: 5}}, got)
+
+	// compound hello => [hello|0|11]
+	got = s.LookupCompound("hello")
+	require.Equal(t, []SuggestItem{{Term: "hello", Distance: 0, Count: 11}}, got)
 }
 
 // Twin: single known word remains.
@@ -33,9 +28,7 @@ func TestLookupCompound_SingleKnown(t *testing.T) {
 	s := DefaultSymSpell()
 	require.True(t, s.CreateDictionaryEntry("test", 10, nil))
 	got := s.LookupCompound("test")
-	require.Len(t, got, 1)
-	require.Equal(t, "test", got[0].Term)
-	require.Equal(t, 0, got[0].Distance)
+	require.Equal(t, []SuggestItem{{Term: "test", Distance: 0, Count: 10}}, got)
 }
 
 // Twin: typo in first of two words.
@@ -45,15 +38,15 @@ func TestLookupCompound_Typo(t *testing.T) {
 	require.True(t, s.CreateDictionaryEntry("world", 80, nil))
 	got := s.LookupCompound("helo world")
 	require.Len(t, got, 1)
-	// Should correct helo → hello
-	require.Contains(t, got[0].Term, "hello")
-	require.Contains(t, got[0].Term, "world")
+	require.Equal(t, "hello world", got[0].Term)
+	require.Equal(t, 1, got[0].Distance)
+	require.Equal(t, int64(80), got[0].Count) // min(100, 80)
 }
 
 // Twin: maxEditDistance > maxDictionaryEditDistance panics (Java IllegalArgumentException).
 func TestLookupCompound_DistTooBig(t *testing.T) {
 	s := DefaultSymSpell() // max edit 2
-	require.Panics(t, func() {
+	require.PanicsWithValue(t, "Dist to big 99", func() {
 		s.LookupCompoundMax("x", 99)
 	})
 }
@@ -64,6 +57,5 @@ func TestLookupCompound_DefaultMax(t *testing.T) {
 	require.True(t, s.CreateDictionaryEntry("cat", 5, nil))
 	require.True(t, s.CreateDictionaryEntry("dog", 5, nil))
 	got := s.LookupCompound("cat dog")
-	require.Len(t, got, 1)
-	require.Equal(t, "cat dog", got[0].Term)
+	require.Equal(t, []SuggestItem{{Term: "cat dog", Distance: 0, Count: 5}}, got)
 }
