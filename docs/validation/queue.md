@@ -203,7 +203,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-CommaWhitespaceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/CommaWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/CommaWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | 8f196018d8687ade3513ec47b6dcd285238f152e | 0 | 0 |  |  | 2026-07-24T01:17:39Z |
 | docs/faithful-port-checklist.md#3.C.1-DoublePunctuationRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/DoublePunctuationRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/DoublePunctuationRuleTest.java | internal/languagetool/org/languagetool/rules/ | edf5066901748980fc9be426e5c3345da788667b | 0 | 0 |  |  | 2026-07-24T01:25:20Z |
 | docs/faithful-port-checklist.md#3.C.1-MultipleWhitespaceRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/MultipleWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java | internal/languagetool/org/languagetool/rules/ | 33d56c14e16cd8cf6daff0f257753f369eda613c | 0 | 0 |  |  | 2026-07-24T01:35:31Z |
-| docs/faithful-port-checklist.md#3.C.1-UppercaseSentenceStartRule | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/UppercaseSentenceStartRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java | internal/languagetool/org/languagetool/rules/ | 5875153a7170a96fd877ff91e8fff2c2fdca2808 | 0 | 0 |  |  | 2026-07-24T01:44:39Z |
+| docs/faithful-port-checklist.md#3.C.1-UppercaseSentenceStartRule | rejected | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/UppercaseSentenceStartRule.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java | internal/languagetool/org/languagetool/rules/ | 5875153a7170a96fd877ff91e8fff2c2fdca2808 | 1 | 0 | r1: DIGIT_DOT/LINEBREAK_DIGIT_DOT not Java Matcher.matches() full-string (Go MatchString without end anchor / substring \n\d+\. ); numbered-list isPrevSentenceNumberedList diverges; fix: ^\d+\. [^\n\r]*$ and ^[^\n]*\n\d+\. $ (or full-span matches helper) |  | 2026-07-24T01:54:18Z |
 
 ## Human inbox
 
@@ -213,7 +213,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.1-UppercaseSentenceStartRule @ 5875153a (Demo SimpleSentenceTokenizer path; parent green). FR/zh blocked. |
+| Notes | rejected 3.C.1-UppercaseSentenceStartRule @ 5875153a r1 (DIGIT_DOT/LINEBREAK matches() invent). FR/zh blocked. |
 
 ---
 
@@ -837,3 +837,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T01:35:31Z ACCEPT: 3.C.1-MultipleWhitespaceRule @ 33d56c14 (validator + parent green reconfirm)
 - 2026-07-24T01:39:05Z implement: 3.C.1-UppercaseSentenceStartRule (UppercaseSentenceStartRuleTest full outcome twin; core layout 3.C.1 leaf)
 - 2026-07-24T01:44:39Z ready: 3.C.1-UppercaseSentenceStartRule @ 5875153a (implementer report; parent green reconfirm)
+- 2026-07-24T01:49:04Z validating: 3.C.1-UppercaseSentenceStartRule @ 5875153a
+- 2026-07-24T01:54:18Z REJECT: 3.C.1-UppercaseSentenceStartRule @ 5875153a round=1 (DIGIT_DOT/LINEBREAK_DIGIT_DOT not Java matches())
