@@ -42,6 +42,8 @@ func DiscoverLanguageDict(classpath string) string {
 				"src", "main", "resources", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "languagetool-dicts", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "english-pos-dict", "org", "languagetool", "resource", rel),
+			filepath.Join(dir, "third_party", "french-pos-dict", "org", "languagetool", "resource", rel),
+			filepath.Join(dir, "third_party", "portuguese-pos-dict", "org", "languagetool", "resource", rel),
 		}
 		for _, p := range candidates {
 			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
