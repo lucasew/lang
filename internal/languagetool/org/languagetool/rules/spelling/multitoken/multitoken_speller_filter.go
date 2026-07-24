@@ -2,7 +2,6 @@ package multitoken
 
 import (
 	"strings"
-	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -12,128 +11,127 @@ import (
 
 // MultitokenSpellerFilter ports
 // org.languagetool.rules.spelling.multitoken.MultitokenSpellerFilter.
-// Speller and misspelled hooks are pluggable (no full Language stack).
+//
+// Java obtains Language from ((PatternRule) match.getRule()).getLanguage() and then
+// uses Language APIs (getShortCode, getDefaultLanguageVariant, getMultitokenSpeller,
+// getDefaultSpellingRule, getWordTokenizer). Go wires those Language APIs as fields/hooks
+// on this leaf (no full Language composite required for the filter sector).
 type MultitokenSpellerFilter struct {
+	// Speller ports Language.getMultitokenSpeller() (after optional default-variant resolve).
 	Speller *MultitokenSpeller
-	// IsMisspelled optional token-level speller (Java SpellingCheckRule.isMisspelled).
-	// When set, isMisspelled tokenizes the error with WordTokenizer and ORs token results
-	// (Java MultitokenSpellerFilter.isMisspelled). Nil → null SpellingCheckRule path.
+	// ShortCode ports Language.getShortCode() for the en/de/pt/nl areTokensAcceptedBySpeller gate.
+	ShortCode string
+	// ShortCodeWithCountryAndVariant ports Language.getShortCodeWithCountryAndVariant().
+	// When UTF-16 length == 2 inside the en/de/pt/nl gate, Java reassigns
+	// lang = lang.getDefaultLanguageVariant() before isMisspelled + getMultitokenSpeller.
+	ShortCodeWithCountryAndVariant string
+	// GetDefaultLanguageVariant ports Language.getDefaultLanguageVariant().
+	// Called only when short code is en/de/pt/nl and ShortCodeWithCountryAndVariant length is 2.
+	// Returned hooks replace Speller/IsMisspelled/Tokenize for isMisspelled + getSuggestions
+	// (Java mutates the local lang reference).
+	GetDefaultLanguageVariant func() *MultitokenSpellerLanguageHooks
+	// IsMisspelled ports SpellingCheckRule.isMisspelled (Java language.getDefaultSpellingRule()).
+	// Nil → null SpellingCheckRule → isMisspelled returns false.
 	IsMisspelled func(token string) bool
 	// Tokenize ports language.getWordTokenizer().tokenize; nil → WordTokenizer.
 	Tokenize func(s string) []string
-	// AtSentenceStart when true forces capitalization of lower-case suggestions
-	// (overrides auto patternTokenPos detection).
-	AtSentenceStart bool
-	// PatternTokenPos ports patternTokenPos (index in tokensWithoutWhitespace for the
-	// first matched token). 0 = auto-detect from match.FromPos when possible.
-	PatternTokenPos int
-	// CheckSpelling enables Java en/de/pt/nl areTokensAcceptedBySpeller path.
-	// When false (default), areTokensAcceptedBySpeller stays false (fr/es/ca/…).
-	// When true and IsMisspelled is nil, acceptedBySpeller is true (null speller → !false).
-	// When true and IsMisspelled is set, acceptedBySpeller = !isMisspelled(error).
-	CheckSpelling bool
 }
 
-// AcceptRuleMatch is a convenience surface: originalError when non-empty, else
-// match.OriginalErrorStr / sentence span. Pattern tokens optional via AcceptRuleMatchFull.
-func (f *MultitokenSpellerFilter) AcceptRuleMatch(match *rules.RuleMatch, originalError string) *rules.RuleMatch {
-	return f.AcceptRuleMatchFull(match, nil, f.PatternTokenPos, nil, originalError)
+// MultitokenSpellerLanguageHooks is the Language surface re-bound when
+// getDefaultLanguageVariant() is used (bare short codes in testing).
+type MultitokenSpellerLanguageHooks struct {
+	Speller      *MultitokenSpeller
+	IsMisspelled func(token string) bool
+	Tokenize     func(s string) []string
 }
 
-// AcceptRuleMatchFull ports RuleFilter.acceptRuleMatch control flow for MultitokenSpellerFilter.
-// patternTokenPos is the index in tokensWithoutWhitespace of the first pattern token (Java).
-// patternTokens when all isIgnoredBySpeller → drop match (return nil).
-func (f *MultitokenSpellerFilter) AcceptRuleMatchFull(
+// AcceptRuleMatch ports MultitokenSpellerFilter.acceptRuleMatch.
+func (f *MultitokenSpellerFilter) AcceptRuleMatch(
 	match *rules.RuleMatch,
 	_ map[string]string,
 	patternTokenPos int,
 	patternTokens []*languagetool.AnalyzedTokenReadings,
-	originalError string,
+	_ []int,
 ) *rules.RuleMatch {
-	if f == nil || match == nil || f.Speller == nil {
+	if f == nil || match == nil {
 		return match
 	}
 	// Java: if (Arrays.stream(patternTokens).allMatch(x -> x.isIgnoredBySpeller())) return null;
-	// Stream.allMatch on empty stream is true → empty patternTokens drops the match.
-	// nil patternTokens is a Go convenience (AcceptRuleMatch without tokens) — skip the gate
+	// Stream.allMatch on empty stream is true.
+	// nil patternTokens is a Go convenience (tests without tokens) — skip the gate
 	// (Java always passes the matched array from the pattern engine; null would NPE).
 	if patternTokens != nil && allIgnoredBySpeller(patternTokens) {
 		return nil
 	}
 
-	underlinedError := originalError
-	if underlinedError == "" {
-		underlinedError = match.GetOriginalErrorStr()
+	// Java: String underlinedError = match.getOriginalErrorStr();
+	underlinedError := match.GetOriginalErrorStr()
+
+	// Language local (may be reassigned to default variant inside en/de/pt/nl gate).
+	sp := f.Speller
+	isMiss := f.IsMisspelled
+	tokenize := f.Tokenize
+
+	// Java:
+	//   boolean areTokensAcceptedBySpeller = false;
+	//   if (lang.getShortCode().equals("en") || ... "de" || "pt" || "nl") {
+	//     if (lang.getShortCodeWithCountryAndVariant().length()==2) {
+	//       lang = lang.getDefaultLanguageVariant();
+	//     }
+	//     areTokensAcceptedBySpeller = !isMisspelled(underlinedError, lang);
+	//   }
+	//   List<String> replacements = lang.getMultitokenSpeller().getSuggestions(...);
+	acceptedBySpeller := false
+	if isSpellerAcceptedShortCode(f.ShortCode) {
+		scv := f.ShortCodeWithCountryAndVariant
+		if scv == "" {
+			scv = f.ShortCode
+		}
+		if utf16Len(scv) == 2 && f.GetDefaultLanguageVariant != nil {
+			if v := f.GetDefaultLanguageVariant(); v != nil {
+				sp = v.Speller
+				isMiss = v.IsMisspelled
+				tokenize = v.Tokenize
+			}
+		}
+		acceptedBySpeller = !isMisspelledWith(underlinedError, isMiss, tokenize)
 	}
-	if underlinedError == "" && match.Sentence != nil {
-		// UTF-16 span from FromPos/ToPos when OriginalErrorStr unset
-		text := match.Sentence.GetText()
-		underlinedError = sliceUTF16(text, match.GetFromPos(), match.GetToPos())
-	}
-	if underlinedError == "" {
+	if sp == nil {
+		// Java: lang.getMultitokenSpeller() would NPE; fail-closed like empty suggestions.
 		return nil
 	}
-
-	// Java: areTokensAcceptedBySpeller for en/de/pt/nl only (CheckSpelling flag)
-	acceptedBySpeller := false
-	if f.CheckSpelling {
-		// null SpellingCheckRule → isMisspelled false → accepted true
-		acceptedBySpeller = !f.isMisspelled(underlinedError)
-	}
-	replacements := f.Speller.GetSuggestionsOpts(underlinedError, acceptedBySpeller)
+	replacements := sp.GetSuggestionsOpts(underlinedError, acceptedBySpeller)
 	if len(replacements) == 0 {
 		return nil
 	}
 
-	// Java: underlinedError.length()>4 && isAllUppercase — UTF-16 length
-	// Java: underlinedError.length()>4 && isAllUppercase — UTF-16 length
+	// Java: underlinedError.length()>4 && StringTools.isAllUppercase — UTF-16 length
 	if utf16Len(underlinedError) > 4 && tools.IsAllUppercase(underlinedError) {
-		up := make([]string, 0, len(replacements))
-		seen := map[string]struct{}{}
-		for _, r := range replacements {
-			n := strings.ToUpper(r)
-			if n == underlinedError {
-				continue
+		allUpper := make([]string, 0, len(replacements))
+		for _, replacement := range replacements {
+			// Java: replacement.toUpperCase() (default locale)
+			newReplacement := strings.ToUpper(replacement)
+			if !stringListContains(allUpper, newReplacement) && underlinedError != newReplacement {
+				allUpper = append(allUpper, newReplacement)
 			}
-			if _, ok := seen[n]; ok {
-				continue
-			}
-			seen[n] = struct{}{}
-			up = append(up, n)
 		}
-		replacements = up
+		replacements = allUpper
 	} else {
 		// Capitalize suggestion at sentence start
-		atStart := f.AtSentenceStart
-		if !atStart && match.Sentence != nil {
-			pos := patternTokenPos
-			if pos == 0 {
-				pos = f.PatternTokenPos
-			}
-			if pos == 0 {
-				pos = patternTokenPosFromMatch(match)
-			}
-			atStart = isPatternAtSentenceStart(match.Sentence, pos)
-		}
-		if atStart {
-			cap := make([]string, 0, len(replacements))
-			seen := map[string]struct{}{}
-			for _, r := range replacements {
-				n := r
-				// do not capitalize iPad (mixed case) — only all-lower
-				if r == strings.ToLower(r) {
-					n = tools.UppercaseFirstChar(r)
+		// Java: wordsStartPos = 1; skip punctuation / not-word; patternTokenPos==wordsStartPos
+		if match.Sentence != nil && isPatternAtSentenceStart(match.Sentence, patternTokenPos) {
+			capitalized := make([]string, 0, len(replacements))
+			for _, replacement := range replacements {
+				newReplacement := replacement
+				// do not capitalize iPad (mixed case) — only when all-lower
+				if replacement == strings.ToLower(replacement) {
+					newReplacement = tools.UppercaseFirstChar(replacement)
 				}
-				if n == underlinedError {
-					continue
+				if !stringListContains(capitalized, newReplacement) && underlinedError != newReplacement {
+					capitalized = append(capitalized, newReplacement)
 				}
-				if _, ok := seen[n]; ok {
-					continue
-				}
-				seen[n] = struct{}{}
-				cap = append(cap, n)
 			}
-			replacements = cap
+			replacements = capitalized
 		}
 	}
 	if len(replacements) == 0 {
@@ -141,6 +139,16 @@ func (f *MultitokenSpellerFilter) AcceptRuleMatchFull(
 	}
 	match.SetSuggestedReplacements(replacements)
 	return match
+}
+
+// isSpellerAcceptedShortCode ports the Java short-code gate for areTokensAcceptedBySpeller.
+func isSpellerAcceptedShortCode(short string) bool {
+	switch short {
+	case "en", "de", "pt", "nl":
+		return true
+	default:
+		return false
+	}
 }
 
 // allIgnoredBySpeller ports Arrays.stream(patternTokens).allMatch(isIgnoredBySpeller).
@@ -157,13 +165,15 @@ func allIgnoredBySpeller(tokens []*languagetool.AnalyzedTokenReadings) bool {
 // isPatternAtSentenceStart ports MultitokenSpellerFilter sentence-start walk:
 // wordsStartPos skips leading punct/not-word after SENT_START; true when patternTokenPos == wordsStartPos.
 func isPatternAtSentenceStart(sentence *languagetool.AnalyzedSentence, patternTokenPos int) bool {
-	if sentence == nil || patternTokenPos <= 0 {
+	if sentence == nil {
 		return false
 	}
 	tokens := sentence.GetTokensWithoutWhitespace()
+	// Java: int wordsStartPos = 1;
 	wordsStartPos := 1
 	for wordsStartPos < len(tokens) {
 		tok := tokens[wordsStartPos]
+		// Java does not null-check; defensive skip only
 		if tok == nil {
 			wordsStartPos++
 			continue
@@ -178,62 +188,44 @@ func isPatternAtSentenceStart(sentence *languagetool.AnalyzedSentence, patternTo
 	return patternTokenPos == wordsStartPos
 }
 
-// patternTokenPosFromMatch finds tokensWithoutWhitespace index of the first token
-// whose start equals match.FromPos (UTF-16). 0 if not found.
-func patternTokenPosFromMatch(match *rules.RuleMatch) int {
-	if match == nil || match.Sentence == nil {
-		return 0
-	}
-	from := match.GetFromPos()
-	tokens := match.Sentence.GetTokensWithoutWhitespace()
-	for i, tok := range tokens {
-		if tok != nil && tok.GetStartPos() == from {
-			return i
-		}
-	}
-	return 0
-}
-
-// sliceUTF16 returns the substring of s covering UTF-16 units [from,to).
-func sliceUTF16(s string, from, to int) string {
-	if from < 0 || to <= from {
-		return ""
-	}
-	u := utf16.Encode([]rune(s))
-	if from >= len(u) {
-		return ""
-	}
-	if to > len(u) {
-		to = len(u)
-	}
-	return string(utf16.Decode(u[from:to]))
-}
-
-// isMisspelled ports MultitokenSpellerFilter.isMisspelled(String, Language):
+// isMisspelled ports MultitokenSpellerFilter.isMisspelled(String, Language) using
+// this filter's spelling-rule and tokenizer hooks (Language DI).
 //
 //	if spellerRule == null → false
 //	tokens = wordTokenizer.tokenize(s)
 //	any token misspelled → true
 func (f *MultitokenSpellerFilter) isMisspelled(s string) bool {
-	if f == nil || f.IsMisspelled == nil {
-		// Java: null SpellingCheckRule → false (not misspelled)
+	if f == nil {
 		return false
 	}
-	tokens := f.tokenizeError(s)
-	if len(tokens) == 0 {
+	return isMisspelledWith(s, f.IsMisspelled, f.Tokenize)
+}
+
+func isMisspelledWith(s string, isMiss func(string) bool, tokenize func(string) []string) bool {
+	// Java: if (spellerRule == null) return false;
+	if isMiss == nil {
 		return false
 	}
-	for _, tok := range tokens {
-		if f.IsMisspelled(tok) {
+	var tokens []string
+	if tokenize != nil {
+		tokens = tokenize(s)
+	} else {
+		tokens = tokenizers.NewWordTokenizer().Tokenize(s)
+	}
+	for _, token := range tokens {
+		if isMiss(token) {
 			return true
 		}
 	}
 	return false
 }
 
-func (f *MultitokenSpellerFilter) tokenizeError(s string) []string {
-	if f != nil && f.Tokenize != nil {
-		return f.Tokenize(s)
+// stringListContains ports List.contains for ordered-dedupe of suggestion lists.
+func stringListContains(list []string, s string) bool {
+	for _, x := range list {
+		if x == s {
+			return true
+		}
 	}
-	return tokenizers.NewWordTokenizer().Tokenize(s)
+	return false
 }
