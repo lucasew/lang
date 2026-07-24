@@ -226,7 +226,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-UnderlineSpacesFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/UnderlineSpacesFilter.java | internal/languagetool/org/languagetool/rules/ | cee9482ea65720c881a70e855f6ebfd856199174 | 0 | 0 |  |  | 2026-07-24T06:45:42Z |
 | docs/faithful-port-checklist.md#3.C.1-NewLineMatchFilter | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/NewLineMatchFilter.java; inspiration/languagetool/languagetool-standalone/src/test/java/org/languagetool/rules/NewLineFilterTest.java | internal/languagetool/org/languagetool/rules/ | e42f080f9b5c0676037d27a869768024e8a39dac | 0 | 0 |  |  | 2026-07-24T06:55:36Z |
 | docs/faithful-port-checklist.md#3.C.2-MorfologikSpeller-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | 89d912c474ae86d7c9c38d6dee942201fd684fc6 | 0 | 0 |  |  | 2026-07-24T07:10:54Z |
-| docs/faithful-port-checklist.md#3.C.2-MorfologikMultiSpeller-core-test | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test2.txt | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | f63c5be135d54cbfb9000f3a1db6615fa61ffb77 | 0 | 0 |  |  | 2026-07-24T07:17:47Z |
+| docs/faithful-port-checklist.md#3.C.2-MorfologikMultiSpeller-core-test | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpeller.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpellerTest.java; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test.dict; inspiration/languagetool/languagetool-core/src/test/resources/org/languagetool/resource/xx/spelling/test2.txt | internal/languagetool/org/languagetool/rules/spelling/morfologik/ | f63c5be135d54cbfb9000f3a1db6615fa61ffb77 | 0 | 0 |  |  | 2026-07-24T07:22:39Z |
 
 ## Human inbox
 
@@ -236,7 +236,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-MorfologikMultiSpeller-core-test @ f63c5be1 (official test.dict+test2.txt; map invent deleted; parent green). FR/zh blocked. |
+| Notes | ACCEPT 3.C.2-MorfologikMultiSpeller-core-test @ f63c5be1 (official test.dict+test2.txt). FR/zh blocked. Next: pick next 3.C.2 leaf. |
 
 ---
 
@@ -960,3 +960,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T07:10:54Z ACCEPT: 3.C.2-MorfologikSpeller-core-test @ 89d912c4 (validator + parent green reconfirm)
 - 2026-07-24T07:14:04Z implement: 3.C.2-MorfologikMultiSpeller-core-test (MorfologikMultiSpellerTest full outcome twin; official xx/spelling resources)
 - 2026-07-24T07:17:47Z ready: 3.C.2-MorfologikMultiSpeller-core-test @ f63c5be1 (implementer report; parent green reconfirm)
+- 2026-07-24T07:18:53Z validating: 3.C.2-MorfologikMultiSpeller-core-test @ f63c5be1 (strict invent re-audit vs Java MorfologikMultiSpeller + official resources)
+- 2026-07-24T07:22:39Z ACCEPT: 3.C.2-MorfologikMultiSpeller-core-test @ f63c5be1 (validator + parent green reconfirm)
