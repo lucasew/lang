@@ -234,7 +234,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-CachingWordListLoader | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CachingWordListLoader.java | internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader.go; internal/languagetool/org/languagetool/rules/spelling/caching_word_list_loader_test.go | e88cdde6398af1ea6876165c74e4f3c696f02fc7 | 0 | 0 |  |  | 2026-07-24T08:16:28Z |
 | docs/faithful-port-checklist.md#3.C.2-ForeignLanguageChecker | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/ForeignLanguageChecker.java | internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker.go; internal/languagetool/org/languagetool/rules/spelling/foreign_language_checker_test.go | 791b5a69a77a5cf239d9f407e9a140eb9b96cbec | 0 | 0 |  |  | 2026-07-24T08:30:36Z |
 | docs/faithful-port-checklist.md#3.C.2-SuggestItem | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item_test.go | 45a6aa45b5657c498d1262b37eecc44a04e48487 | 0 | 0 |  |  | 2026-07-24T08:39:54Z |
-| docs/faithful-port-checklist.md#3.C.2-EditDistance | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/EditDistance.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/edit_distance.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/edit_distance_test.go | fb55aa4375bbdc361e5093be3a675746a18499e9 | 0 | 0 |  |  | 2026-07-24T08:47:53Z |
+| docs/faithful-port-checklist.md#3.C.2-EditDistance | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/EditDistance.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/edit_distance.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/edit_distance_test.go | fb55aa4375bbdc361e5093be3a675746a18499e9 | 0 | 0 |  |  | 2026-07-24T08:50:52Z |
 
 ## Human inbox
 
@@ -244,7 +244,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-EditDistance @ fb55aa43 (Damerau UTF-16 Compare matrix). FR/zh blocked. |
+| Notes | last ACCEPT 3.C.2-EditDistance @ fb55aa43 (Damerau UTF-16). FR/zh blocked. Next: more 3.C.2 spelling leaves. |
 
 ---
 
@@ -1000,3 +1000,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T08:39:54Z ACCEPT: 3.C.2-SuggestItem @ 45a6aa45 (validator + parent green reconfirm)
 - 2026-07-24T08:44:02Z implement: 3.C.2-EditDistance (DamerauLevenshteinDistance UTF-16; maxDistance/-1; empty base; full outcome matrix)
 - 2026-07-24T08:47:53Z ready: 3.C.2-EditDistance @ fb55aa43 (implementer report; parent green reconfirm)
+- 2026-07-24T08:48:46Z validating: 3.C.2-EditDistance @ fb55aa43 (strict invent re-audit vs Java EditDistance)
+- 2026-07-24T08:50:52Z ACCEPT: 3.C.2-EditDistance @ fb55aa43 (validator + parent green reconfirm)

@@ -498,8 +498,8 @@
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionsOrdererFeatureExtractor.java::SuggestionsOrdererFeatureExtractor.Feature
 - [x] org/languagetool/rules/spelling/suggestions/SuggestionsRanker.java::SuggestionsRanker
 - [ ] org/languagetool/rules/spelling/symspell/implementation/ChunkArray.java::ChunkArray
-- [ ] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance
-- [ ] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance.DistanceAlgorithm
+- [x] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance
+- [x] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance.DistanceAlgorithm
 - [x] org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java::SuggestItem
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Node
