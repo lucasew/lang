@@ -46,7 +46,8 @@ func LoadUSGBVariantMap(column int) map[string]string {
 	}
 	for _, line := range lines {
 		line = tools.JavaStringTrim(line)
-		if line == "" {
+		// Java AbstractEnglishSpellerRule.loadWordlist: empty or startsWith("#")
+		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		parts := strings.Split(line, ";")
