@@ -486,7 +486,7 @@
 - [ ] org/languagetool/rules/spelling/morfologik/suggestions_ordering/DetailedDamerauLevenstheinDistance.java::DetailedDamerauLevenstheinDistance.Distance
 - [x] org/languagetool/rules/spelling/morfologik/suggestions_ordering/SuggestionsOrdererConfig.java::SuggestionsOrdererConfig
 - [x] org/languagetool/rules/spelling/multitoken/MultitokenSpeller.java::MultitokenSpeller
-- [ ] org/languagetool/rules/spelling/multitoken/MultitokenSpellerFilter.java::MultitokenSpellerFilter
+- [x] org/languagetool/rules/spelling/multitoken/MultitokenSpellerFilter.java::MultitokenSpellerFilter
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionChangesExperiment.java::SuggestionChangesTestConfig
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionChangesExperiment.java::SuggestionChangesDataset
 - [ ] org/languagetool/rules/spelling/suggestions/SuggestionChangesExperiment.java::SuggestionChangesExperimentRuns
