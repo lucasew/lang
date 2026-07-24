@@ -9,49 +9,56 @@ import (
 )
 
 // OrdinalSuffixFilter ports org.languagetool.rules.en.OrdinalSuffixFilter.
-// Fixes ordinal suggestions like "1nd" → "1st".
+// Fixes the suggestion for ordinal suffixes, like "1nd" -> "1st".
+// Java @since 5.3
 type OrdinalSuffixFilter struct{}
 
 func NewOrdinalSuffixFilter() *OrdinalSuffixFilter {
 	return &OrdinalSuffixFilter{}
 }
 
-// Java: Pattern.compile(".*(11|12|13)") and Pattern.compile("[^0-9]")
+// Java:
+//   private static final Pattern PATTERN = Pattern.compile(".*(11|12|13)");
+//   private static final Pattern NON_DIGITS = Pattern.compile("[^0-9]");
+// PATTERN.matcher(ordinal).matches() is full-string match — Go MatchString is
+// substring search, so anchors emulate Java Matcher.matches().
 var (
-	ordinalTeens    = regexp.MustCompile(`.*(11|12|13)`)
-	ordinalNonDigit = regexp.MustCompile(`[^0-9]`)
+	ordinalSuffixTeens     = regexp.MustCompile(`\A.*(11|12|13)\z`)
+	ordinalSuffixNonDigits = regexp.MustCompile(`[^0-9]`)
 )
 
-// Fix returns the corrected ordinal string from a broken suggestion (digits extracted).
-func (f *OrdinalSuffixFilter) Fix(suggestion string) string {
-	ordinal := ordinalNonDigit.ReplaceAllString(suggestion, "")
-	if ordinalTeens.MatchString(ordinal) {
-		return ordinal + "th"
-	}
-	switch {
-	case strings.HasSuffix(ordinal, "1"):
-		return ordinal + "st"
-	case strings.HasSuffix(ordinal, "2"):
-		return ordinal + "nd"
-	case strings.HasSuffix(ordinal, "3"):
-		return ordinal + "rd"
-	default:
-		return ordinal + "th"
-	}
-}
-
 // AcceptRuleMatch ports OrdinalSuffixFilter.acceptRuleMatch.
-// Java: rewrites first suggested replacement ordinal suffix in place.
+// Java:
+//
+//	String ordinal = NON_DIGITS.matcher(match.getSuggestedReplacements().get(0)).replaceAll("");
+//	if (PATTERN.matcher(ordinal).matches()) {
+//	  match.setSuggestedReplacement(ordinal + "th");
+//	} else if (ordinal.endsWith("1")) {
+//	  match.setSuggestedReplacement(ordinal + "st");
+//	} else if (ordinal.endsWith("2")) {
+//	  match.setSuggestedReplacement(ordinal + "nd");
+//	} else if (ordinal.endsWith("3")) {
+//	  match.setSuggestedReplacement(ordinal + "rd");
+//	} else {
+//	  match.setSuggestedReplacement(ordinal + "th");
+//	}
+//	return match;
+//
+// Empty suggestions: Java get(0) → IndexOutOfBoundsException; Go index panic.
 func (f *OrdinalSuffixFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map[string]string, _ int,
 	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
-	if f == nil || match == nil {
-		return nil
+	// Java: match.getSuggestedReplacements().get(0) — panics if empty / nil list path.
+	ordinal := ordinalSuffixNonDigits.ReplaceAllString(match.GetSuggestedReplacements()[0], "")
+	if ordinalSuffixTeens.MatchString(ordinal) {
+		match.SetSuggestedReplacement(ordinal + "th")
+	} else if strings.HasSuffix(ordinal, "1") {
+		match.SetSuggestedReplacement(ordinal + "st")
+	} else if strings.HasSuffix(ordinal, "2") {
+		match.SetSuggestedReplacement(ordinal + "nd")
+	} else if strings.HasSuffix(ordinal, "3") {
+		match.SetSuggestedReplacement(ordinal + "rd")
+	} else {
+		match.SetSuggestedReplacement(ordinal + "th")
 	}
-	reps := match.GetSuggestedReplacements()
-	if len(reps) == 0 {
-		// Java: getSuggestedReplacements().get(0) → IndexOutOfBoundsException
-		panic("OrdinalSuffixFilter: no suggested replacements")
-	}
-	match.SetSuggestedReplacement(f.Fix(reps[0]))
 	return match
 }
