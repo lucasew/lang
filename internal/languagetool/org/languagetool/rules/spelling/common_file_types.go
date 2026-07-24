@@ -3,11 +3,14 @@ package spelling
 import (
 	"regexp"
 	"strings"
-	"sync"
 )
 
-// commonFileTypes ports CommonFileTypes.COMMON_FILE_TYPES (order/content as Java).
-// Note: Java lists "cgi" twice; keep the same multiset for 1:1 join.
+// Twin of org.languagetool.rules.spelling.CommonFileTypes
+// (inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/CommonFileTypes.java).
+// Static utility: private constructor in Java → no constructible type here.
+
+// commonFileTypes ports CommonFileTypes.COMMON_FILE_TYPES (exact order/content).
+// Java lists "cgi" twice; keep the same multiset so String.join order matches.
 var commonFileTypes = []string{
 	"jpeg", "jpg", "gif", "png", "bmp", "svg", "ai", "sketch", "ico", "ps", "psd", "tiff", "tif",
 	"mp3", "wav", "midi", "mid", "aif", "mpa", "ogg", "wma", "wpl", "cda",
@@ -22,17 +25,18 @@ var commonFileTypes = []string{
 	"doc", "docx", "dot", "dotx", "pdf", "rtf", "srx", "text", "tex", "wks", "wps", "wpd", "txt", "yaml", "yml", "csl", "md", "adm", "webm", "webp",
 }
 
-var (
-	suffixPatternOnce sync.Once
-	suffixPattern     *regexp.Regexp
-)
+// suffixPatternSource is the Pattern body as Java builds it (before CASE_INSENSITIVE flag).
+// Java:
+//
+//	Pattern.compile("[\\wáàâóòìíéèùúôîêûäöüß\\-.()]*?.+\\.(" + String.join("|", COMMON_FILE_TYPES) + ")",
+//	  Pattern.CASE_INSENSITIVE);
+const suffixPatternBodyPrefix = `[\wáàâóòìíéèùúôîêûäöüß\-.()]*?.+\.(`
 
-// GetSuffixPattern ports CommonFileTypes.getSuffixPattern (static CASE_INSENSITIVE Pattern).
+// suffixPattern ports CommonFileTypes.suffixPattern (static final, CASE_INSENSITIVE).
+// Go maps Pattern.CASE_INSENSITIVE to the (?i) flag (extensions are ASCII; parity holds).
+var suffixPattern = regexp.MustCompile(`(?i)` + suffixPatternBodyPrefix + strings.Join(commonFileTypes, "|") + `)`)
+
+// GetSuffixPattern ports CommonFileTypes.getSuffixPattern.
 func GetSuffixPattern() *regexp.Regexp {
-	suffixPatternOnce.Do(func() {
-		// Java: [\\wáàâóòìíéèùúôîêûäöüß\\-.()]*?.+\\.(" + join + ")
-		pat := `[\wáàâóòìíéèùúôîêûäöüß\-.()]*?.+\.(` + strings.Join(commonFileTypes, "|") + `)`
-		suffixPattern = regexp.MustCompile(`(?i)` + pat)
-	})
 	return suffixPattern
 }
