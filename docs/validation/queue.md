@@ -236,7 +236,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.2-SuggestItem | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggest_item_test.go | 45a6aa45b5657c498d1262b37eecc44a04e48487 | 0 | 0 |  |  | 2026-07-24T08:39:54Z |
 | docs/faithful-port-checklist.md#3.C.2-EditDistance | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/EditDistance.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/edit_distance.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/edit_distance_test.go | fb55aa4375bbdc361e5093be3a675746a18499e9 | 0 | 0 |  |  | 2026-07-24T08:50:52Z |
 | docs/faithful-port-checklist.md#3.C.2-ChunkArray | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/ChunkArray.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/chunk_array.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/chunk_array_test.go | b14685ceb8e05d11c5d5fca3c7b948fa3305bc23 | 0 | 0 |  |  | 2026-07-24T08:59:37Z |
-| docs/faithful-port-checklist.md#3.C.2-SuggestionStage | ready | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggestion_stage.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggestion_stage_test.go | b73d06575ca58b12ec05ab27da01b3d10a277f6b | 0 | 0 |  |  | 2026-07-24T09:05:59Z |
+| docs/faithful-port-checklist.md#3.C.2-SuggestionStage | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java | internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggestion_stage.go; internal/languagetool/org/languagetool/rules/spelling/symspell/implementation/suggestion_stage_test.go | b73d06575ca58b12ec05ab27da01b3d10a277f6b | 0 | 0 |  |  | 2026-07-24T09:11:40Z |
 
 ## Human inbox
 
@@ -246,7 +246,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP portable-1.8.2 missing; no Go Term.toString twin) |
-| Notes | ready 3.C.2-SuggestionStage @ b73d0657 (Node/Entry; LIFO commitTo; no min-16 invent). FR/zh blocked. |
+| Notes | ACCEPT 3.C.2-SuggestionStage @ b73d0657. Next: implement next 3.C.2 leaf (SymSpell deps). FR/zh blocked. |
 
 ---
 
@@ -1010,3 +1010,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-24T08:59:37Z ACCEPT: 3.C.2-ChunkArray @ b14685ce (validator + parent green reconfirm)
 - 2026-07-24T09:04:05Z implement: 3.C.2-SuggestionStage (Node/Entry + add/commitTo/clear; LIFO order twins; HashMap deletes)
 - 2026-07-24T09:05:59Z ready: 3.C.2-SuggestionStage @ b73d0657 (implementer report; parent green reconfirm)
+- 2026-07-24T09:08:59Z validating: 3.C.2-SuggestionStage @ b73d0657 (strict invent re-audit vs Java SuggestionStage)
+- 2026-07-24T09:11:40Z ACCEPT: 3.C.2-SuggestionStage @ b73d0657 (validator + parent green reconfirm)

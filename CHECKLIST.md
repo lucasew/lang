@@ -501,9 +501,9 @@
 - [x] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance
 - [x] org/languagetool/rules/spelling/symspell/implementation/EditDistance.java::EditDistance.DistanceAlgorithm
 - [x] org/languagetool/rules/spelling/symspell/implementation/SuggestItem.java::SuggestItem
-- [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage
-- [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Node
-- [ ] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Entry
+- [x] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage
+- [x] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Node
+- [x] org/languagetool/rules/spelling/symspell/implementation/SuggestionStage.java::SuggestionStage.Entry
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell.Verbosity
 - [ ] org/languagetool/rules/spelling/symspell/implementation/SymSpell.java::SymSpell.SegmentedSuggestion
