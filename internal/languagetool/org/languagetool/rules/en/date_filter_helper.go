@@ -13,6 +13,8 @@ type DateFilterHelper struct{}
 
 func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
+// GetDayOfWeek ports DateFilterHelper.getDayOfWeek(String).
+// Prefix match after trimSpecialCharacters + toLowerCase (Java).
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 	// Java: StringTools.trimSpecialCharacters(dayStr).toLowerCase()
 	day := strings.ToLower(tools.TrimSpecialCharacters(dayStr))
@@ -36,6 +38,14 @@ func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 	}
 }
 
+// GetDayOfWeekName ports DateFilterHelper.getDayOfWeek(Calendar) —
+// Calendar.getDisplayName(DAY_OF_WEEK, LONG, Locale.UK).
+func (h *DateFilterHelper) GetDayOfWeekName(t time.Time) string {
+	names := []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
+	return names[int(t.Weekday())]
+}
+
+// GetMonth ports DateFilterHelper.getMonth(String) → 1..12 (as time.Month).
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 	// Java: StringTools.trimSpecialCharacters(monthStr).toLowerCase()
 	mon := strings.ToLower(tools.TrimSpecialCharacters(monthStr))

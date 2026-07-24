@@ -3,10 +3,10 @@ package en
 import (
 	"strconv"
 	"time"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // DateCheckFilter ports org.languagetool.rules.en.DateCheckFilter
@@ -23,15 +23,18 @@ func NewDateCheckFilter() *DateCheckFilter {
 	}
 }
 
-// GetDayOfWeekJava returns Java Calendar day-of-week (Sunday=1 … Saturday=7).
+// GetDayOfWeekJava ports DateCheckFilter.getDayOfWeek(String) via DateFilterHelper.
+// Returns Java Calendar day-of-week (Sunday=1 … Saturday=7).
 func (f *DateCheckFilter) GetDayOfWeekJava(dayStr string) (int, error) {
 	wd, err := f.helper.GetDayOfWeek(dayStr)
 	if err != nil {
 		return 0, err
 	}
+	// Go time.Weekday: Sunday=0 … Saturday=6 → Java Calendar: Sunday=1 … Saturday=7
 	return int(wd) + 1, nil
 }
 
+// GetMonth ports DateCheckFilter.getMonth(String) via DateFilterHelper → 1..12.
 func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
 	m, err := f.helper.GetMonth(monthStr)
 	if err != nil {
@@ -40,19 +43,27 @@ func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
 	return int(m), nil
 }
 
+// GetDayOfWeekName ports DateCheckFilter.getDayOfWeek(Calendar) via DateFilterHelper
+// (Locale.UK LONG display names).
 func (f *DateCheckFilter) GetDayOfWeekName(year, month, day int) string {
 	t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	names := []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
-	return names[int(t.Weekday())]
+	return f.helper.GetDayOfWeekName(t)
+}
+
+// ErrorMessageWrongYear ports DateCheckFilter.getErrorMessageWrongYear.
+func (f *DateCheckFilter) ErrorMessageWrongYear() string {
+	return `This date is wrong. Did you mean "{currentYear}"?`
 }
 
 // DayStrLikeOriginal ports DateCheckFilter.getDayStrLikeOriginal (EN ordinal suffixes).
+// Java: if StringTools.isNumeric(original) return day; else append st/nd/rd/th.
 func DayStrLikeOriginal(day, original string) string {
-	if isNumeric(original) {
+	if tools.IsNumeric(original) {
 		return day
 	}
 	number, err := strconv.Atoi(day)
 	if err != nil {
+		// Java Integer.parseInt would throw; callers always pass numeric day strings.
 		return day
 	}
 	if number >= 11 && number <= 13 {
@@ -70,19 +81,7 @@ func DayStrLikeOriginal(day, original string) string {
 	}
 }
 
-func isNumeric(s string) bool {
-	if s == "" {
-		return false
-	}
-	for _, r := range s {
-		if !unicode.IsDigit(r) {
-			return false
-		}
-	}
-	return true
-}
-
-// AcceptRuleMatch ports DateCheckFilter.acceptRuleMatch (super).
+// AcceptRuleMatch ports DateCheckFilter.acceptRuleMatch (super AbstractDateCheckWithSuggestionsFilter).
 func (f *DateCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
 	if f == nil || match == nil {

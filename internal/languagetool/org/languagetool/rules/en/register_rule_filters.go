@@ -92,9 +92,8 @@ func enDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter 
 				return wd
 			},
 			FormatDayOfWeek: func(t time.Time) string {
-				// Java DateFilterHelper Locale.UK LONG: Sunday, Monday, …
-				names := []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
-				return names[int(t.Weekday())]
+				// Java DateFilterHelper.getDayOfWeek(Calendar): Locale.UK LONG
+				return h.GetDayOfWeekName(t)
 			},
 			GetMonth: func(localized string) int {
 				m, err := h.GetMonth(localized)
@@ -104,6 +103,7 @@ func enDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter 
 				return int(m)
 			},
 		},
+		// Java DateCheckFilter.getErrorMessageWrongYear
 		ErrorMessageWrongYear: `This date is wrong. Did you mean "{currentYear}"?`,
 	}
 }

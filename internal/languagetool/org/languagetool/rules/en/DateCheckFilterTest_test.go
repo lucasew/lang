@@ -7,40 +7,48 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of DateCheckFilterTest.testGetDayOfWeek
+// Port of DateCheckFilterTest.testGetDayOfWeek — every Java assertThat.
 func TestDateCheckFilter_GetDayOfWeek(t *testing.T) {
 	f := NewDateCheckFilter()
 	// Java Calendar: Sunday=1 … Saturday=7
-	d, err := f.GetDayOfWeekJava("Sun")
-	require.NoError(t, err)
-	require.Equal(t, 1, d)
-	d, err = f.GetDayOfWeekJava("Mon")
-	require.NoError(t, err)
-	require.Equal(t, 2, d)
-	d, err = f.GetDayOfWeekJava("mon")
-	require.NoError(t, err)
-	require.Equal(t, 2, d)
-	d, err = f.GetDayOfWeekJava("Monday")
-	require.NoError(t, err)
-	require.Equal(t, 2, d)
-	d, err = f.GetDayOfWeekJava("Friday")
-	require.NoError(t, err)
-	require.Equal(t, 6, d)
-	d, err = f.GetDayOfWeekJava("Saturday")
-	require.NoError(t, err)
-	require.Equal(t, 7, d)
+	cases := []struct {
+		in   string
+		want int
+	}{
+		{"Sun", 1},
+		{"Mon", 2},
+		{"mon", 2},
+		{"Mon.", 2},
+		{"Monday", 2},
+		{"monday", 2},
+		{"Tue", 3},
+		{"Fri", 6},
+		{"Fr", 6},
+		{"Saturday", 7},
+	}
+	for _, tc := range cases {
+		d, err := f.GetDayOfWeekJava(tc.in)
+		require.NoError(t, err, "day %q", tc.in)
+		require.Equal(t, tc.want, d, "day %q", tc.in)
+	}
 }
 
-// Port of DateCheckFilterTest.testMonth
+// Port of DateCheckFilterTest.testMonth — every Java assertThat.
 func TestDateCheckFilter_Month(t *testing.T) {
 	f := NewDateCheckFilter()
-	m, err := f.GetMonth("jan")
-	require.NoError(t, err)
-	require.Equal(t, 1, m)
-	m, err = f.GetMonth("december")
-	require.NoError(t, err)
-	require.Equal(t, 12, m)
-	m, err = f.GetMonth("DECEMBER")
-	require.NoError(t, err)
-	require.Equal(t, 12, m)
+	cases := []struct {
+		in   string
+		want int
+	}{
+		{"jan", 1},
+		{"dec", 12},
+		{"december", 12},
+		{"December", 12},
+		{"DECEMBER", 12},
+	}
+	for _, tc := range cases {
+		m, err := f.GetMonth(tc.in)
+		require.NoError(t, err, "month %q", tc.in)
+		require.Equal(t, tc.want, m, "month %q", tc.in)
+	}
 }

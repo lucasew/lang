@@ -17,6 +17,7 @@ func TestDateCheckFilter(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 1, m)
 	require.Equal(t, "Friday", f.GetDayOfWeekName(2014, 8, 29))
+	require.Equal(t, `This date is wrong. Did you mean "{currentYear}"?`, f.ErrorMessageWrongYear())
 }
 
 func TestDateCheckFilter_AcceptIncompleteArgs(t *testing.T) {
