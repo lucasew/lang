@@ -1,6 +1,9 @@
 package de
 
-// Twin of LineExpanderTest — suffix expansion; verb-prefix without synth emits join/zu/genitive.
+// Twin of org.languagetool.rules.de.LineExpanderTest.testExpansion.
+// Java assertSetsEqual → order-independent set equality.
+// Verb-prefix cases use real GermanSynthesizer VER: forms (no invent form lists).
+
 import (
 	"testing"
 
@@ -8,97 +11,54 @@ import (
 )
 
 func TestLineExpander_Expansion(t *testing.T) {
-	e := NewLineExpander()
-	require.Equal(t, []string{""}, e.ExpandLine(""))
-	require.Equal(t, []string{"Das"}, e.ExpandLine("Das"))
-	require.Equal(t, []string{"Tisch", "Tische"}, e.ExpandLine("Tisch/E"))
-	require.Equal(t, []string{"Tische", "Tischen"}, e.ExpandLine("Tische/N"))
-	require.Equal(t, []string{"Auto", "Autos"}, e.ExpandLine("Auto/S"))
-	got := e.ExpandLine("klein/A")
-	require.ElementsMatch(t, []string{"klein", "kleine", "kleiner", "kleines", "kleinen", "kleinem"}, got)
-	// multi-flag NSE
-	got = e.ExpandLine("x/NSE")
-	require.ElementsMatch(t, []string{"x", "xn", "xs", "xe"}, got)
-	// Java: x/NA
-	got = e.ExpandLine("x/NA")
-	require.ElementsMatch(t, []string{"x", "xn", "xe", "xer", "xes", "xen", "xem"}, got)
-	// Java: adjective ending in -e drops base duplicate from /A forms
-	got = e.ExpandLine("viertjüngste/A")
-	require.ElementsMatch(t, []string{"viertjüngste", "viertjüngster", "viertjüngstes", "viertjüngsten", "viertjüngstem"}, got)
-	require.Equal(t, []string{"Das"}, e.ExpandLine("Das  #foo"))
-	require.Equal(t, []string{"Tisch", "Tische"}, e.ExpandLine("Tisch/E  #bla #foo"))
-	require.ElementsMatch(t, []string{"Goethestraße", "Goethestr."}, e.ExpandLine("Goethestraße/T"))
-	require.ElementsMatch(t, []string{"Goethestrasse", "Goethestr."}, e.ExpandLine("Goethestrasse/T"))
-	// Java: multi-word street + ß/ss → Str.
-	require.ElementsMatch(t, []string{"Zwingenberger Straße", "Zwingenberger Str."}, e.ExpandLine("Zwingenberger Straße/T"))
-	require.ElementsMatch(t, []string{"Zwingenberger Strasse", "Zwingenberger Str."}, e.ExpandLine("Zwingenberger Strasse/T"))
-	// escaped slash is not a flag
-	require.Equal(t, []string{"Escape/N"}, e.ExpandLine(`Escape\/N`))
-	// gender gap
-	require.ElementsMatch(t, []string{
-		"Lehrer_in", "Lehrer_innen", "Lehrer*in", "Lehrer*innen", "Lehrer:in", "Lehrer:innen",
-	}, e.ExpandLine("Lehrer_in"))
-	// verb prefix without synthesizer: fail-closed (no invent join/zu/genitive)
-	require.Empty(t, e.ExpandLine("rüber_machen"))
-	e.VerbForms = func(lemma string) []string {
-		if lemma == "machen" {
-			return []string{"machen", "machst"}
-		}
-		return nil
-	}
-	got = e.ExpandLine("rüber_machen")
-	require.Contains(t, got, "rübermachen")
-	require.Contains(t, got, "rübermachst")
-	require.Contains(t, got, "rüberzumachen")
-	require.Contains(t, got, "Rübermachens")
-	// Character.isLowerCase(charAt(0)): skip non-lower forms
-	e.VerbForms = func(string) []string { return []string{"Mach", "machen"} }
-	got = e.ExpandLine("rüber_machen")
-	require.NotContains(t, got, "rüberMach")
-	require.Contains(t, got, "rübermachen")
-	// Java: rüber_machen  #bla #foo with full synth form list
-	e.VerbForms = func(lemma string) []string {
-		if lemma != "machen" {
-			return nil
-		}
-		return []string{
-			"mach", "gemacht", "machest", "machst", "mache", "machen", "machet",
-			"machte", "machend", "machten", "macht", "machtest", "machtet",
-		}
-	}
-	got = e.ExpandLine("rüber_machen  #bla #foo")
-	for _, want := range []string{
+	// Java: private final LineExpander exp = new LineExpander();
+	// Verb cache is static GermanSynthesizer.INSTANCE — wire the same path.
+	exp := WireLineExpander()
+	require.NotNil(t, exp.VerbForms,
+		"german_synth.dict required for LineExpander verb-prefix expansion (Java GermanSynthesizer.INSTANCE); install german-pos-dict / DE resources")
+
+	// Java expand("") → singletonList("") (toString "[]" makes assertSetsEqual a no-op quirk).
+	// Assert real list content: [""].
+	require.Equal(t, []string{""}, exp.ExpandLine(""))
+
+	assertSetsEqual(t, exp.ExpandLine("Das"), []string{"Das"})
+	assertSetsEqual(t, exp.ExpandLine("Tisch/E"), []string{"Tisch", "Tische"})
+	assertSetsEqual(t, exp.ExpandLine("Tische/N"), []string{"Tische", "Tischen"})
+	assertSetsEqual(t, exp.ExpandLine("Auto/S"), []string{"Auto", "Autos"})
+	assertSetsEqual(t, exp.ExpandLine("klein/A"), []string{"klein", "kleine", "kleiner", "kleines", "kleinen", "kleinem"})
+	assertSetsEqual(t, exp.ExpandLine("x/NSE"), []string{"x", "xn", "xs", "xe"})
+	assertSetsEqual(t, exp.ExpandLine("x/NA"), []string{"x", "xn", "xe", "xer", "xes", "xen", "xem"})
+	assertSetsEqual(t, exp.ExpandLine("viertjüngste/A"), []string{"viertjüngste", "viertjüngster", "viertjüngstes", "viertjüngsten", "viertjüngstem"})
+	assertSetsEqual(t, exp.ExpandLine("Das  #foo"), []string{"Das"})
+	assertSetsEqual(t, exp.ExpandLine("Tisch/E  #bla #foo"), []string{"Tisch", "Tische"})
+	assertSetsEqual(t, exp.ExpandLine("Goethestraße/T"), []string{"Goethestraße", "Goethestr."})
+	assertSetsEqual(t, exp.ExpandLine("Goethestrasse/T"), []string{"Goethestrasse", "Goethestr."})
+	assertSetsEqual(t, exp.ExpandLine("Zwingenberger Straße/T"), []string{"Zwingenberger Straße", "Zwingenberger Str."})
+	assertSetsEqual(t, exp.ExpandLine("Zwingenberger Strasse/T"), []string{"Zwingenberger Strasse", "Zwingenberger Str."})
+
+	assertSetsEqual(t, exp.ExpandLine(`Escape\/N`), []string{"Escape/N"})
+	// Java: combination of escape and flag not supported yet (commented out)
+
+	// Verb-prefix via real synthesizer (Java GermanSynthesizer.INSTANCE VER: forms)
+	assertSetsEqual(t, exp.ExpandLine("rüber_machen  #bla #foo"), []string{
 		"rübermach", "rübergemacht", "rübermachest", "rübermachst", "rübermache",
 		"rübermachen", "rübermachet", "rübermachte", "rübermachend", "rübermachten",
 		"rübermacht", "rübermachtest", "rübermachtet", "rüberzumachen", "Rübermachens",
-	} {
-		require.Contains(t, got, want, "missing %s in %v", want, got)
-	}
-	// Java: rüber_verschicken with synth forms
-	e.VerbForms = func(lemma string) []string {
-		if lemma != "verschicken" {
-			return nil
-		}
-		return []string{
-			"verschickend", "verschickst", "verschick", "verschickest", "verschicktest",
-			"verschicke", "verschicket", "verschickte", "verschicktet", "verschickten",
-			"verschicken", "verschickt",
-		}
-	}
-	got = e.ExpandLine("rüber_verschicken")
-	for _, want := range []string{
+	})
+	assertSetsEqual(t, exp.ExpandLine("rüber_verschicken"), []string{
 		"rüberverschickend", "rüberverschickst", "rüberverschick", "rüberverschickest",
 		"rüberverschicktest", "rüberverschicke", "rüberverschicket", "rüberverschickte",
 		"rüberverschicktet", "rüberverschickten", "rüberverschicken", "rüberverschickt",
 		"rüberzuverschicken", "Rüberverschickens",
-	} {
-		require.Contains(t, got, want, "missing %s", want)
-	}
-	// escaped underscore is plain
-	require.Equal(t, []string{"escape_machen"}, e.ExpandLine(`escape\_machen`))
-	// unknown flag panics (Java RuntimeException)
-	require.Panics(t, func() { e.ExpandLine("rüber/invalidword") })
-	// empty synth forms panic (Java RuntimeException)
-	e.VerbForms = func(string) []string { return nil }
-	require.Panics(t, func() { e.ExpandLine("rüber_machen") })
+	})
+	assertSetsEqual(t, exp.ExpandLine(`escape\_machen`), []string{"escape_machen"})
+
+	// Java: expand("rüber/invalidword"); fail(); catch RuntimeException
+	require.Panics(t, func() { exp.ExpandLine("rüber/invalidword") })
+}
+
+// assertSetsEqual ports LineExpanderTest.assertSetsEqual (order-independent).
+func assertSetsEqual(t *testing.T, actual, expected []string) {
+	t.Helper()
+	require.ElementsMatch(t, expected, actual)
 }
