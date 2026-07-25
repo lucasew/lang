@@ -1,115 +1,120 @@
 package rules
 
 import (
-	"strings"
-	"unicode"
+	"strconv"
+	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// FleschReadingEase computes English Flesch Reading Ease:
-// 206.835 - 1.015*(words/sentences) - 84.6*(syllables/words)
-func FleschReadingEase(sentences, words, syllables int) float64 {
-	if sentences <= 0 || words <= 0 {
-		return 0
-	}
-	asl := float64(words) / float64(sentences)
-	asw := float64(syllables) / float64(words)
-	return 206.835 - 1.015*asl - 84.6*asw
-}
+// Java ReadabilityRule constants.
+const (
+	readabilityMarkWords = 3
+	readabilityMinWords  = 10
+)
 
-// CountSyllablesEN is a simple English syllable estimator (vowel-group based).
-func CountSyllablesEN(word string) int {
-	w := strings.ToLower(word)
-	if w == "" {
-		return 0
-	}
-	// strip non-letters
-	var b strings.Builder
-	for _, r := range w {
-		if unicode.IsLetter(r) {
-			b.WriteRune(r)
-		}
-	}
-	w = b.String()
-	if w == "" {
-		return 0
-	}
-	vowels := "aeiouy"
-	count := 0
-	prevV := false
-	for _, r := range w {
-		isV := strings.ContainsRune(vowels, r)
-		if isV && !prevV {
-			count++
-		}
-		prevV = isV
-	}
-	// silent e
-	if strings.HasSuffix(w, "e") && count > 1 {
-		count--
-	}
-	if count < 1 {
-		count = 1
-	}
-	return count
-}
-
-// ReadabilityLevel maps Flesch score to school-grade style level 0–6 (simplified).
-// Higher level = harder text.
-func ReadabilityLevel(flesch float64) int {
-	switch {
-	case flesch >= 90:
-		return 0
-	case flesch >= 80:
-		return 1
-	case flesch >= 70:
-		return 2
-	case flesch >= 60:
-		return 3
-	case flesch >= 50:
-		return 4
-	case flesch >= 30:
-		return 5
-	default:
-		return 6
-	}
-}
-
-// ReadabilityRule ports metadata for org.languagetool.rules.ReadabilityRule.
-// Java: Category TEXT_ANALYSIS (default off category), Style; setDefaultOff when !defaultOn.
+// ReadabilityRule ports org.languagetool.rules.ReadabilityRule (extends TextLevelRule).
+// Flesch-Reading-Ease for English; tooEasyTest selects simple vs difficult check.
+// Java: Category TEXT_ANALYSIS, ITS Style; setDefaultOff when !defaultOn.
 type ReadabilityRule struct {
+	Messages map[string]string
+	// TooEasyTest ports tooEasyTest (true → too easy / SIMPLE id).
 	TooEasyTest bool
-	Level       int // threshold level
-	MinWords    int
-	// Category ports Rule.category (Java TEXT_ANALYSIS).
-	Category *Category
-	// IssueType ports getLocQualityIssueType (Java Style).
-	IssueType ITSIssueType
-	// DefaultOff ports setDefaultOff (Java when defaultOn=false).
-	DefaultOff bool
-	// CountSyllables defaults to CountSyllablesEN when nil.
-	CountSyllables func(word string) int
+	// Level is the threshold 0–6 (Java default 3).
+	Level int
+	// SingleLineBreaksMarksPara ports Language.getSentenceTokenizer().singleLineBreaksMarksPara()
+	// for Tools.isParagraphEnd (Demo/SRX default false).
+	SingleLineBreaksMarksPara bool
+	// LangCode ports Language for LinguServices.getNumberOfSyllables(…, lang.getDefaultLanguageVariant()).
+	// Empty when unused (linguServices == null path).
+	LangCode string
+	// LinguServices ports userConfig.getLinguServices() (nil → simpleSyllablesCount).
+	LinguServices *languagetool.LinguServices
+	Category      *Category
+	IssueType     ITSIssueType
+	DefaultOff    bool
+
+	// Cumulative stats from last match() (Java instance fields).
+	nAllSentences int
+	nAllWords     int
+	nAllSyllables int
 }
 
+// NewReadabilityRule ports ReadabilityRule(messages, lang, null, tooEasyTest, level, false)
+// with Demo-like paragraph breaks (singleLine=false). level < 0 → default 3.
 func NewReadabilityRule(tooEasy bool, level int) *ReadabilityRule {
-	// Java: TEXT_ANALYSIS category with onByDefault=false; typically setDefaultOff().
+	return NewReadabilityRuleFull(nil, nil, tooEasy, level, false)
+}
+
+// NewReadabilityRuleFull ports
+// ReadabilityRule(ResourceBundle, Language, UserConfig, boolean tooEasyTest, int level, boolean defaultOn).
+// Language is carried as SingleLineBreaksMarksPara + LangCode (set by callers when needed).
+func NewReadabilityRuleFull(
+	messages map[string]string,
+	userConfig *languagetool.UserConfig,
+	tooEasyTest bool,
+	level int,
+	defaultOn bool,
+) *ReadabilityRule {
 	cat := NewCategoryFull(NewCategoryId("TEXT_ANALYSIS"), "Text Analysis", CategoryInternal, false, "")
-	return &ReadabilityRule{
-		TooEasyTest: tooEasy,
-		Level:       level,
-		MinWords:    10,
+	r := &ReadabilityRule{
+		Messages:    messages,
+		TooEasyTest: tooEasyTest,
 		Category:    cat,
 		IssueType:   ITSStyle,
-		DefaultOff:  true,
+		DefaultOff:  !defaultOn,
 	}
+
+	tmpLevel := -1
+	if userConfig != nil {
+		r.LinguServices = userConfig.GetLinguServices()
+		// Java: userConfig.getConfigValueByID(getId()) — id depends on tooEasyTest.
+		if cf := userConfig.GetConfigValueByID(r.GetID()); len(cf) > 0 && cf[0] != nil {
+			if n, ok := configValueAsInt(cf[0]); ok {
+				tmpLevel = n
+			}
+		}
+	}
+
+	if tmpLevel >= 0 {
+		r.Level = tmpLevel
+	} else if level >= 0 {
+		r.Level = level
+	} else {
+		r.Level = 3
+	}
+	return r
 }
 
+// GetID ports getId() / getId(tooEasyTest).
 func (r *ReadabilityRule) GetID() string {
-	if r.TooEasyTest {
+	return r.GetIDFor(r != nil && r.TooEasyTest)
+}
+
+// GetIDFor ports getId(boolean tooEasyTest).
+func (r *ReadabilityRule) GetIDFor(tooEasyTest bool) string {
+	if tooEasyTest {
 		return "READABILITY_RULE_SIMPLE"
 	}
 	return "READABILITY_RULE_DIFFICULT"
+}
+
+// GetDescription ports getDescription().
+func (r *ReadabilityRule) GetDescription() string {
+	if r != nil && r.TooEasyTest {
+		return "Readability: Too easy text"
+	}
+	return "Readability: Too difficult text"
+}
+
+// GetConfigureText ports getConfigureText().
+func (r *ReadabilityRule) GetConfigureText() string {
+	return "Level of readability 0 (very difficult) to 6 (very easy):"
+}
+
+// GetRuleOptions ports getRuleOptions() — default option value 3, range 0–6.
+func (r *ReadabilityRule) GetRuleOptions() []*RuleOption {
+	return []*RuleOption{NewRuleOption(3, r.GetConfigureText(), 0, 6)}
 }
 
 func (r *ReadabilityRule) GetCategory() *Category {
@@ -128,74 +133,255 @@ func (r *ReadabilityRule) GetLocQualityIssueType() ITSIssueType {
 
 func (r *ReadabilityRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
-// EvaluateParagraph returns flesch score and level for whitespace-split words/sentences.
-// sentences is count of sentences in the paragraph.
-func (r *ReadabilityRule) EvaluateParagraph(sentences int, words []string) (flesch float64, level int, tooExtreme bool) {
-	if len(words) < r.MinWords || sentences < 1 {
-		return 0, 0, false
+// GetAllSentences ports getAllSentences().
+func (r *ReadabilityRule) GetAllSentences() int {
+	if r == nil {
+		return 0
 	}
-	sylFn := r.CountSyllables
-	if sylFn == nil {
-		sylFn = CountSyllablesEN
-	}
-	syl := 0
-	for _, w := range words {
-		syl += sylFn(w)
-	}
-	flesch = FleschReadingEase(sentences, len(words), syl)
-	level = ReadabilityLevel(flesch)
-	if r.TooEasyTest {
-		tooExtreme = level > r.Level && r.Level >= 0
-	} else {
-		tooExtreme = level < r.Level && r.Level >= 0
-	}
-	// when level threshold is -1, treat as disabled threshold
-	if r.Level < 0 {
-		tooExtreme = false
-	}
-	return flesch, level, tooExtreme
+	return r.nAllSentences
 }
 
-// MatchList ports ReadabilityRule.match (paragraph FRE; typically default-off).
+// GetAllWords ports getAllWords().
+func (r *ReadabilityRule) GetAllWords() int {
+	if r == nil {
+		return 0
+	}
+	return r.nAllWords
+}
+
+// GetAllSyllables ports getAllSyllables().
+func (r *ReadabilityRule) GetAllSyllables() int {
+	if r == nil {
+		return 0
+	}
+	return r.nAllSyllables
+}
+
+// PrintMessageLevel ports printMessageLevel(level).
+func (r *ReadabilityRule) PrintMessageLevel(level int) string {
+	var sLevel string
+	switch level {
+	case 0:
+		sLevel = "Very difficult"
+	case 1:
+		sLevel = "Difficult"
+	case 2:
+		sLevel = "Fairly difficult"
+	case 3:
+		sLevel = "Medium"
+	case 4:
+		sLevel = "Fairly easy"
+	case 5:
+		sLevel = "Easy"
+	case 6:
+		sLevel = "Very easy"
+	default:
+		return ""
+	}
+	return " {Level " + strconv.Itoa(level) + ": " + sLevel + "}"
+}
+
+// GetMessage ports getMessage(level, FRE, ASL, ASW) — FRE/ASL/ASW unused in English template.
+func (r *ReadabilityRule) GetMessage(level, fre, asl, asw int) string {
+	simple, few := "difficult", "many"
+	if r != nil && r.TooEasyTest {
+		simple, few = "simple", "few"
+	}
+	return "Readability: The text of this paragraph is too " + simple + r.PrintMessageLevel(level) +
+		". Too " + few + " words per sentence and too " + few + " syllables per word."
+}
+
+// getReadabilityLevel ports private getReadabilityLevel(fre).
+// Higher FRE → easier text → higher level (0 very difficult … 6 very easy).
+func getReadabilityLevel(fre float64) int {
+	if fre < 30 {
+		return 0
+	} else if fre < 50 {
+		return 1
+	} else if fre < 60 {
+		return 2
+	} else if fre < 70 {
+		return 3
+	} else if fre < 80 {
+		return 4
+	} else if fre < 90 {
+		return 5
+	}
+	return 6
+}
+
+// GetReadabilityLevel exposes getReadabilityLevel for tests / subclasses.
+func (r *ReadabilityRule) GetReadabilityLevel(fre float64) int {
+	return getReadabilityLevel(fre)
+}
+
+// GetFleschReadingEase ports getFleschReadingEase(asl, asw) — English FRE formula.
+// Subclasses (DE Amstad, PT) override.
+func (r *ReadabilityRule) GetFleschReadingEase(asl, asw float64) float64 {
+	return 206.835 - (1.015 * asl) - (84.6 * asw)
+}
+
+// isVowel ports private static isVowel(char c).
+func isVowelReadability(c rune) bool {
+	return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'y' ||
+		c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U' || c == 'Y'
+}
+
+// SimpleSyllablesCount ports protected simpleSyllablesCount(String word).
+// Uses Java String.charAt / length (UTF-16 code units), double-vowel lastDouble logic,
+// and trailing e+s/d / ue rules.
+func (r *ReadabilityRule) SimpleSyllablesCount(word string) int {
+	return simpleSyllablesCount(word)
+}
+
+func simpleSyllablesCount(word string) int {
+	n := utf16LenReadability(word)
+	if n == 0 {
+		return 0
+	}
+	if n == 1 {
+		return 1
+	}
+	nSyllables := 0
+	lastDouble := false
+	for i := 0; i < n-1; i++ {
+		c := javaCharAtReadability(word, i)
+		if isVowelReadability(c) {
+			cn := javaCharAtReadability(word, i+1)
+			if lastDouble {
+				nSyllables++
+				lastDouble = false
+			} else if ((c == 'e' || c == 'E') && (cn == 'a' || cn == 'o' || cn == 'e' || cn == 'i' || cn == 'y')) ||
+				((c == 'a' || c == 'A') && (cn == 'e' || cn == 'i' || cn == 'u')) ||
+				((c == 'o' || c == 'O') && (cn == 'o' || cn == 'i' || cn == 'u' || cn == 'a')) ||
+				((c == 'u' || c == 'U') && (cn == 'i' || cn == 'a')) ||
+				((c == 'i' || c == 'I') && (cn == 'e' || cn == 'o')) {
+				lastDouble = true
+			} else {
+				nSyllables++
+				lastDouble = false
+			}
+		} else {
+			lastDouble = false
+		}
+	}
+	c := javaCharAtReadability(word, n-1)
+	cl := javaCharAtReadability(word, n-2)
+	// Java: if (cl == 'e' && (c == 's' || c == 'd') || cl == 'u' && c == 'e')
+	// ⇒ (cl=='e' && (c=='s'||c=='d')) || (cl=='u' && c=='e')
+	if (cl == 'e' && (c == 's' || c == 'd')) || (cl == 'u' && c == 'e') {
+		nSyllables--
+	} else if isVowelReadability(c) && c != 'e' {
+		nSyllables++
+	}
+	if nSyllables <= 0 {
+		return 1
+	}
+	return nSyllables
+}
+
+func utf16LenReadability(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}
+
+func javaCharAtReadability(s string, i int) rune {
+	u := utf16.Encode([]rune(s))
+	if i < 0 || i >= len(u) {
+		return 0
+	}
+	return rune(u[i])
+}
+
+// MatchList ports ReadabilityRule.match(List<AnalyzedSentence>).
+// Bug-for-bug control flow including the final return operator-precedence quirk:
+//
+//	if (nParagraph > 1 && (tooEasyTest && rLevel > level) || (!tooEasyTest && rLevel < level))
+//	  return ruleMatches;
+//	else
+//	  return empty;
 func (r *ReadabilityRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
-	if r == nil || len(sentences) == 0 {
+	if r == nil {
 		return nil
 	}
-	var words []string
-	nSent := 0
-	var startSent *languagetool.AnalyzedSentence
-	startPos, endPos := -1, -1
+	var ruleMatches []*RuleMatch
+	nParagraph := 0
+	r.nAllSentences = 0
+	r.nAllWords = 0
+	r.nAllSyllables = 0
+	nSentences := 0
+	nWords := 0
+	nSyllables := 0
 	pos := 0
-	for _, s := range sentences {
-		if s == nil {
+	startPos := -1
+	endPos := -1
+	level := r.Level
+	tooEasyTest := r.TooEasyTest
+	singleLine := r.SingleLineBreaksMarksPara
+
+	for n := 0; n < len(sentences); n++ {
+		sentence := sentences[n]
+		if sentence == nil {
+			// Java would NPE; skip nil for Go safety without changing multi-sentence stats path.
 			continue
 		}
-		nSent++
-		toks := s.GetTokensWithoutWhitespace()
-		if startSent == nil && len(toks) > 1 {
-			startSent = s
-			startPos = pos + toks[1].GetStartPos()
-			if len(toks) > 3 {
-				endPos = pos + toks[3].GetEndPos()
-			} else {
-				endPos = pos + toks[len(toks)-1].GetEndPos()
-			}
+		tokens := sentence.GetTokensWithoutWhitespace()
+		if startPos < 0 && len(tokens) > 1 && tokens[1] != nil {
+			startPos = pos + tokens[1].GetStartPos()
 		}
-		for _, t := range toks {
-			if t == nil || t.IsSentenceStart() || t.IsSentenceEnd() || t.IsNonWord() {
+		if endPos < 0 && len(tokens) > readabilityMarkWords && tokens[readabilityMarkWords] != nil {
+			endPos = pos + tokens[readabilityMarkWords].GetEndPos()
+		}
+		nSentences++
+		for _, token := range tokens {
+			if token == nil {
 				continue
 			}
-			words = append(words, t.GetToken())
+			sToken := token.GetToken()
+			if !token.IsWhitespace() && !token.IsNonWord() {
+				nWords++
+				if r.LinguServices == nil {
+					nSyllables += r.SimpleSyllablesCount(sToken)
+				} else {
+					nSyllables += r.LinguServices.GetNumberOfSyllables(sToken, r.LangCode)
+				}
+			}
 		}
-		pos += s.GetCorrectedTextLength()
+		if languagetool.IsParagraphEnd(sentences, n, singleLine) {
+			if nWords >= readabilityMinWords {
+				asl := float64(nWords) / float64(nSentences)
+				asw := float64(nSyllables) / float64(nWords)
+				fre := r.GetFleschReadingEase(asl, asw)
+				rLevel := getReadabilityLevel(fre)
+				if (tooEasyTest && rLevel > level) || (!tooEasyTest && rLevel < level) {
+					msg := r.GetMessage(rLevel, int(fre), int(asl), int(asw))
+					ruleMatches = append(ruleMatches, NewRuleMatch(r, sentence, startPos, endPos, msg))
+				}
+			}
+			r.nAllSentences += nSentences
+			r.nAllWords += nWords
+			r.nAllSyllables += nSyllables
+			nSentences = 0
+			nWords = 0
+			nSyllables = 0
+			startPos = -1
+			endPos = -1
+			nParagraph++
+		}
+		pos += sentence.GetCorrectedTextLength()
 	}
-	_, _, too := r.EvaluateParagraph(nSent, words)
-	if !too || startSent == nil || startPos < 0 || endPos < 0 {
-		return nil
+
+	// Final FRE/rLevel from cumulative nAll* (Java may divide by zero → Inf/NaN).
+	asl := float64(r.nAllWords) / float64(r.nAllSentences)
+	asw := float64(r.nAllSyllables) / float64(r.nAllWords)
+	fre := r.GetFleschReadingEase(asl, asw)
+	rLevel := getReadabilityLevel(fre)
+	// Java: if (nParagraph > 1 && (tooEasyTest && rLevel > level) || (!tooEasyTest && rLevel < level))
+	// Parse as (nParagraph > 1 && (tooEasyTest && rLevel > level)) || (!tooEasyTest && rLevel < level)
+	if nParagraph > 1 && (tooEasyTest && rLevel > level) || (!tooEasyTest && rLevel < level) {
+		return ruleMatches
 	}
-	msg := "This text is too difficult to read"
-	if r.TooEasyTest {
-		msg = "This text is too easy to read"
-	}
-	return []*RuleMatch{NewRuleMatch(r, startSent, startPos, endPos, msg)}
+	return []*RuleMatch{}
 }
+
+// MinToCheckParagraph ports minToCheckParagraph() → -1.
+func (r *ReadabilityRule) MinToCheckParagraph() int { return -1 }
