@@ -13,22 +13,23 @@ import (
 
 // UnitConversionRule ports org.languagetool.rules.de.UnitConversionRule
 // (extends AbstractUnitConversionRule with German unit names and Locale.GERMANY formatting).
-// Without javax.measure: fixed SI factors (same approach as rules.AbstractUnitConversionRule).
 type UnitConversionRule struct {
 	*rules.AbstractUnitConversionRule
 }
 
 func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 	base := rules.NewAbstractUnitConversionRule(messages)
-	// Java getId
+	// Java UnitConversionRule.getId
 	base.ID = "EINHEITEN_METRISCH"
 	// Java: addExamplePair(Example.wrong(...), Example.fixed(...))
 	base.AddExamplePair(
 		rules.Wrong("Ich bin <marker>6 Fuß</marker> groß."),
 		rules.Fixed("Ich bin <marker>6 Fuß (1,83 m)</marker> groß."),
 	)
+	// Java: NumberFormat.getNumberInstance(Locale.GERMANY), max 2 fraction digits, HALF_UP
 	base.FormatNumber = formatDEUnitNumber
 	base.ParseNumber = parseDEUnitNumber
+	// Java UnitConversionRule.getMessage
 	base.MessageFor = func(m rules.UnitConversionMessage) string {
 		switch m {
 		case rules.UnitMsgCheck:
@@ -40,7 +41,7 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 		case rules.UnitMsgUnitMismatch:
 			return "Diese Einheiten sind nicht kompatibel."
 		default:
-			return "Einheit"
+			panic(fmt.Sprintf("Unknown message type: %v", m))
 		}
 	}
 	// Java UnitConversionRule.getShortMessage
@@ -55,15 +56,14 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 		case rules.UnitMsgUnitMismatch:
 			return "Inkompatible Einheiten."
 		default:
-			return "Einheit"
+			panic(fmt.Sprintf("Unknown message type: %v", m))
 		}
 	}
-	// Pfund Sterling anti-pattern (not a mass)
-	base.AntiPatternsAppend(`\d+[.,\d]*\s*Pfund\s+Sterling`)
+	// Pfund Sterling is in AbstractUnitConversionRule.antiPatterns (Java); no DE append.
 
-	// Java UnitConversionRule addUnit registrations (commented Java units omitted).
+	// Java UnitConversionRule constructor addUnit registrations (commented Java units omitted).
 	// Mass
-	base.AddUnit(`Kilo(?:gramm)?`, rules.UnitKilogram, "Kilogramm", 1, true)
+	base.AddUnit(`Kilo(gramm)?`, rules.UnitKilogram, "Kilogramm", 1, true)
 	base.AddUnit(`Gramm`, rules.UnitKilogram, "Gramm", 1e-3, true)
 	base.AddUnit(`Tonnen?`, rules.UnitKilogram, "Tonnen", 1e3, true)
 	base.AddUnit(`Pfund`, rules.UnitPound, "Pfund", 1, false)
@@ -71,12 +71,11 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 	// Length (imperial)
 	base.AddUnit(`Meilen?`, rules.UnitMile, "Meile", 1, false)
 	base.AddUnit(`Yard`, rules.UnitYard, "Yard", 1, false)
-	// Java "Fuß"; allow ss spelling common in ASCII contexts (same unit)
-	base.AddUnit(`Fu(?:ß|ss)`, rules.UnitFeet, "Fuß", 1, false)
+	base.AddUnit(`Fuß`, rules.UnitFeet, "Fuß", 1, false)
 	base.AddUnit(`Zoll`, rules.UnitInch, "Zoll", 1, false)
 
 	// Speed
-	base.AddUnit(`(?:Kilometer pro Stunde|Stundenkilometer)`, rules.UnitKmh, "Kilometer pro Stunde", 1, true)
+	base.AddUnit(`(Kilometer pro Stunde|Stundenkilometer)`, rules.UnitKmh, "Kilometer pro Stunde", 1, true)
 	base.AddUnit(`Meilen pro Stunde`, rules.UnitMph, "Meilen pro Stunde", 1, false)
 
 	// Metric length (Java uses METRE base + factor; Dezimeters commented out)
@@ -110,9 +109,9 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 	base.AddUnit(`Liter`, rules.UnitLitre, "Liter", 1, true)
 	base.AddUnit(`Milliliter`, rules.UnitLitre, "Milliliter", 1e-3, true)
 
-	// Temperature
-	base.AddUnit(`(?:Grad\s*)?Fahrenheit`, rules.UnitFahrenheit, "Grad Fahrenheit", 1, false)
-	base.AddUnit(`(?:Grad\s*)?Celsius`, rules.UnitCelsius, "Grad Celsius", 1, true)
+	// Temperature — Java: "(?:Grad)? Fahrenheit" / "(?:Grad)? Celsius" (space after optional Grad)
+	base.AddUnit(`(?:Grad)? Fahrenheit`, rules.UnitFahrenheit, "Grad Fahrenheit", 1, false)
+	base.AddUnit(`(?:Grad)? Celsius`, rules.UnitCelsius, "Grad Celsius", 1, true)
 
 	return &UnitConversionRule{AbstractUnitConversionRule: base}
 }
@@ -137,7 +136,8 @@ func (r *UnitConversionRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 	return ms
 }
 
-// parseDEUnitNumber: German thousands '.' and decimal ','.
+// parseDEUnitNumber ports NumberFormat.getNumberInstance(Locale.GERMANY).parse
+// ('.' = grouping, ',' = decimal), e.g. "10.000,75" → 10000.75, "1.800" → 1800.
 func parseDEUnitNumber(s string) (float64, error) {
 	s = tools.JavaStringTrim(s)
 	if strings.Contains(s, ",") && strings.Contains(s, ".") {
@@ -146,26 +146,29 @@ func parseDEUnitNumber(s string) (float64, error) {
 	} else if strings.Contains(s, ",") {
 		s = strings.ReplaceAll(s, ",", ".")
 	}
-	// pure thousand separators like 1.800 (no comma) → 1800 if pattern is groups of 3
+	// pure thousand separators like 1.800 (no comma) → 1800 when 3 digits after '.'
+	// (Java GERMANY: 1.800 = 1800; decimal uses comma, e.g. 1,82 = 1.82)
 	if strings.Count(s, ".") == 1 {
 		parts := strings.Split(s, ".")
 		if len(parts) == 2 && len(parts[1]) == 3 && !strings.Contains(parts[1], "e") {
-			// ambiguous: 1.82 could be 1.82 or 1820 — Java NumberFormat GERMANY:
-			// 1.800 = 1800, 1,82 = 1.82. Three digits after dot → thousands.
 			s = parts[0] + parts[1]
 		}
 	}
 	return strconv.ParseFloat(s, 64)
 }
 
-// formatDEUnitNumber: Locale.GERMANY, max 2 fraction digits, HALF_UP.
+// formatDEUnitNumber ports NumberFormat.getNumberInstance(Locale.GERMANY)
+// with maximumFractionDigits=2, RoundingMode.HALF_UP, minimumFractionDigits=0
+// (trailing zeros stripped — e.g. 1.8288 → "1,83").
+// Grouping separators omitted — DE UnitConversionRuleTest only asserts forms like
+// "1,83 Meter" / "160,93 Kilometer" / "4,54 Tonnen".
 func formatDEUnitNumber(v float64) string {
-	// HALF_UP to 2 decimals
 	sign := ""
 	if v < 0 {
 		sign = "-"
 		v = -v
 	}
+	// HALF_UP to 2 fraction digits
 	scaled := math.Round(v*100) / 100
 	if math.Abs(scaled-math.Round(scaled)) < 1e-9 {
 		return sign + strconv.FormatInt(int64(math.Round(scaled)), 10)
