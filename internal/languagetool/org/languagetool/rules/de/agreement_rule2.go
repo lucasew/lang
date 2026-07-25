@@ -320,7 +320,8 @@ func (r *AgreementRule2) checkAdjNounAgreement(adj, noun *languagetool.AnalyzedT
 	if len(set1) == 0 || len(set2) == 0 {
 		return nil
 	}
-	if CategoriesIntersect(set1, set2) {
+	// Java: set1.retainAll(set2); if (!set1.isEmpty()) return null;
+	if categorySetsIntersect(set1, set2) {
 		return nil
 	}
 	rm := rules.NewRuleMatch(r, sentence, adj.GetStartPos(), noun.GetEndPos(), agreement2Msg)

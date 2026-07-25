@@ -339,7 +339,8 @@ func (r *AgreementRule) checkDetNoun(det, noun *languagetool.AnalyzedTokenReadin
 		if len(set1) == 0 || len(set2) == 0 {
 			return nil
 		}
-		if CategoriesIntersect(set1, set2) {
+		// Java: set1.retainAll(set2); if (!set1.isEmpty()) return null;
+		if categorySetsIntersect(set1, set2) {
 			return nil
 		}
 	} else {
@@ -360,6 +361,17 @@ func (r *AgreementRule) checkDetNoun(det, noun *languagetool.AnalyzedTokenReadin
 	rm.ShortMessage = agreementShort
 	r.attachSuggestions(rm, det, nil, nil, noun, repl, maybePrep, skippedStr)
 	return rm
+}
+
+// categorySetsIntersect is the Go twin of Java set1.retainAll(set2); !set1.isEmpty()
+// used by AgreementRule / AgreementRule2 (not AgreementTools).
+func categorySetsIntersect(a, b map[string]struct{}) bool {
+	for k := range a {
+		if _, ok := b[k]; ok {
+			return true
+		}
+	}
+	return false
 }
 
 // isSingleSTVReading ports the :STV empty-set1 gate in checkDetNounAgreement.

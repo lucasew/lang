@@ -7,117 +7,92 @@ import (
 	detag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/de"
 )
 
-// GrammarCategory mirrors AgreementRule.GrammarCategory bits that can be omitted.
+// GrammarCategory ports AgreementRule.GrammarCategory bits that AgreementTools
+// accepts in its omit set (Java: AgreementRule.GrammarCategory).
+// Full enum with displayName lives with AgreementRule; these constants are the
+// omit-set members used by AgreementTools.makeString.
 type GrammarCategory int
 
 const (
+	// CatKasus ports GrammarCategory.KASUS.
 	CatKasus GrammarCategory = iota
+	// CatNumerus ports GrammarCategory.NUMERUS.
 	CatNumerus
+	// CatGenus ports GrammarCategory.GENUS.
 	CatGenus
 )
 
-// AgreementCategoryString builds a compact Kasus/Numerus/Genus key used by
-// AgreementTools.getAgreementCategories.
-func AgreementCategoryString(casus, numerus, genus string, det string, omit map[GrammarCategory]bool) string {
-	var parts []string
-	if !omit[CatKasus] && casus != "" {
-		parts = append(parts, casus)
-	}
-	if !omit[CatNumerus] && numerus != "" {
-		parts = append(parts, numerus)
-	}
-	if !omit[CatGenus] && genus != "" {
-		parts = append(parts, genus)
-	}
-	if det != "" {
-		parts = append(parts, det)
-	}
-	return strings.Join(parts, "/")
-}
-
-// GetAgreementCategories ports AgreementTools.getAgreementCategories for tagged tokens.
-// omit may skip Kasus/Numerus/Genus; skipSol skips :SOL adjective readings.
+// GetAgreementCategories ports AgreementTools.getAgreementCategories.
+// Return Kasus, Numerus, Genus of those forms with a determiner.
+// omit may skip Kasus/Numerus/Genus (Java Set.contains); skipSol skips :SOL readings.
 func GetAgreementCategories(aToken *languagetool.AnalyzedTokenReadings, omit map[GrammarCategory]bool, skipSol bool) map[string]struct{} {
+	// Java: private AgreementTools(); static methods only.
 	set := map[string]struct{}{}
 	if aToken == nil {
+		// Java NPE on null aToken; no twin call site passes nil.
 		return set
 	}
 	if omit == nil {
+		// Java emptySet / new HashSet<>() → nothing omitted.
 		omit = map[GrammarCategory]bool{}
 	}
+	// Java: List<AnalyzedToken> readings = aToken.getReadings();
 	for _, tmpReading := range aToken.GetReadings() {
-		if tmpReading == nil || tmpReading.GetPOSTag() == nil {
+		if tmpReading == nil {
+			// Java list elements are non-null; skip defensive.
 			continue
 		}
-		pos := *tmpReading.GetPOSTag()
-		if skipSol && strings.HasSuffix(pos, ":SOL") {
-			continue
-		}
-		reading := detag.ParseGermanPOS(pos)
-		if reading.Kasus == "" && reading.Numerus == "" && reading.Genus == "" {
-			continue
-		}
-		// ALG expands to all genders (Java Genus.ALLGEMEIN)
-		if reading.Genus == detag.GenusALG && !strings.HasSuffix(pos, ":STV") &&
-			!possessiveSpecialCase(aToken, tmpReading) {
-			gens := []detag.Genus{detag.GenusMas, detag.GenusFem, detag.GenusNeu}
-			if reading.Determination == "" {
-				for _, g := range gens {
-					set[makeAgreementString(reading.Kasus, reading.Numerus, g, detag.DetDefinite, omit)] = struct{}{}
-					set[makeAgreementString(reading.Kasus, reading.Numerus, g, detag.DetIndefinite, omit)] = struct{}{}
-				}
-			} else {
-				for _, g := range gens {
-					set[makeAgreementString(reading.Kasus, reading.Numerus, g, reading.Determination, omit)] = struct{}{}
-				}
+		// Java: if (skipSol && tmpReading.getPOSTag() != null && tmpReading.getPOSTag().endsWith(":SOL"))
+		if skipSol {
+			if pos := tmpReading.GetPOSTag(); pos != nil && strings.HasSuffix(*pos, ":SOL") {
+				// SOL = alleinstehend - needs to be skipped so we find errors like "An der roter Ampel."
+				continue
 			}
+		}
+		// Java: AnalyzedGermanToken reading = new AnalyzedGermanToken(tmpReading);
+		reading := detag.NewAnalyzedGermanToken(tmpReading)
+		// Java: if (reading.getCasus() == null && reading.getNumerus() == null && reading.getGenus() == null)
+		if reading.GetCasus() == "" && reading.GetNumerus() == "" && reading.GetGenus() == "" {
 			continue
 		}
-		// jed/manch: both DEF and IND
-		lemma := ""
-		if tmpReading.GetLemma() != nil {
-			lemma = *tmpReading.GetLemma()
-		}
-		if reading.Determination == "" || lemma == "jed" || lemma == "manch" {
-			set[makeAgreementString(reading.Kasus, reading.Numerus, reading.Genus, detag.DetDefinite, omit)] = struct{}{}
-			set[makeAgreementString(reading.Kasus, reading.Numerus, reading.Genus, detag.DetIndefinite, omit)] = struct{}{}
+		pos := tmpReading.GetPOSTag()
+		// Java: if (reading.getGenus() == ALLGEMEIN &&
+		//   tmpReading.getPOSTag() != null && !tmpReading.getPOSTag().endsWith(":STV") &&
+		//   !possessiveSpecialCase(aToken, tmpReading))
+		if reading.GetGenus() == detag.GenusAllgemein &&
+			pos != nil && !strings.HasSuffix(*pos, ":STV") &&
+			!possessiveSpecialCase(aToken, tmpReading) {
+			// genus=ALG in the original data. Expand so e.g. "Ich Arbeiter" is not flagged.
+			if reading.GetDetermination() == "" {
+				// Nouns don't have determination; pretend they fulfill both DEF and IND.
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusMaskulinum, detag.DeterminationDefinite, omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusMaskulinum, detag.DeterminationIndefinite, omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusFemininum, detag.DeterminationDefinite, omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusFemininum, detag.DeterminationIndefinite, omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusNeutrum, detag.DeterminationDefinite, omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusNeutrum, detag.DeterminationIndefinite, omit)] = struct{}{}
+			} else {
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusMaskulinum, reading.GetDetermination(), omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusFemininum, reading.GetDetermination(), omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), detag.GenusNeutrum, reading.GetDetermination(), omit)] = struct{}{}
+			}
 		} else {
-			set[makeAgreementString(reading.Kasus, reading.Numerus, reading.Genus, reading.Determination, omit)] = struct{}{}
+			// Java: if (reading.getDetermination() == null || "jed".equals(lemma) || "manch".equals(lemma))
+			lemma := tmpReading.GetLemma()
+			jedOrManch := lemma != nil && (*lemma == "jed" || *lemma == "manch")
+			if reading.GetDetermination() == "" || jedOrManch {
+				// "jeder" etc. needs a special case to avoid false alarm
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), reading.GetGenus(), detag.DeterminationDefinite, omit)] = struct{}{}
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), reading.GetGenus(), detag.DeterminationIndefinite, omit)] = struct{}{}
+			} else {
+				set[makeString(reading.GetCasus(), reading.GetNumerus(), reading.GetGenus(), reading.GetDetermination(), omit)] = struct{}{}
+			}
 		}
 	}
 	return set
 }
 
-func makeAgreementString(casus detag.Kasus, num detag.Numerus, gen detag.Genus, det detag.Determination, omit map[GrammarCategory]bool) string {
-	var l []string
-	if casus != "" && !omit[CatKasus] {
-		l = append(l, string(casus))
-	}
-	if num != "" && !omit[CatNumerus] {
-		l = append(l, string(num))
-	}
-	if gen != "" && !omit[CatGenus] {
-		l = append(l, string(gen))
-	}
-	if det != "" {
-		l = append(l, string(det))
-	}
-	return strings.Join(l, "/")
-}
-
-func possessiveSpecialCase(aToken *languagetool.AnalyzedTokenReadings, tmpReading *languagetool.AnalyzedToken) bool {
-	if aToken == nil || !aToken.HasPosTagStartingWith("PRO:POS") {
-		return false
-	}
-	if tmpReading == nil || tmpReading.GetLemma() == nil {
-		return false
-	}
-	lem := *tmpReading.GetLemma()
-	return lem == "ich" || lem == "sich"
-}
-
-// GetAgreementSOLCategories ports AgreementTools.getAgreementSOLCategories:
-// only readings whose POS ends with :SOL (alleinstehend).
+// GetAgreementSOLCategories ports AgreementTools.getAgreementSOLCategories.
 func GetAgreementSOLCategories(aToken *languagetool.AnalyzedTokenReadings, omit map[GrammarCategory]bool) map[string]struct{} {
 	set := map[string]struct{}{}
 	if aToken == nil {
@@ -127,49 +102,58 @@ func GetAgreementSOLCategories(aToken *languagetool.AnalyzedTokenReadings, omit 
 		omit = map[GrammarCategory]bool{}
 	}
 	for _, tmpReading := range aToken.GetReadings() {
-		if tmpReading == nil || tmpReading.GetPOSTag() == nil {
+		if tmpReading == nil {
 			continue
 		}
-		pos := *tmpReading.GetPOSTag()
-		if !strings.HasSuffix(pos, ":SOL") {
+		// Java: if (tmpReading.getPOSTag() != null && !tmpReading.getPOSTag().endsWith(":SOL")) continue;
+		if pos := tmpReading.GetPOSTag(); pos != nil && !strings.HasSuffix(*pos, ":SOL") {
 			continue
 		}
-		reading := detag.ParseGermanPOS(pos)
-		if reading.Kasus == "" && reading.Numerus == "" && reading.Genus == "" {
+		reading := detag.NewAnalyzedGermanToken(tmpReading)
+		if reading.GetCasus() == "" && reading.GetNumerus() == "" && reading.GetGenus() == "" {
 			continue
 		}
-		set[makeAgreementString(reading.Kasus, reading.Numerus, reading.Genus, detag.DetDefinite, omit)] = struct{}{}
-		set[makeAgreementString(reading.Kasus, reading.Numerus, reading.Genus, detag.DetIndefinite, omit)] = struct{}{}
+		set[makeString(reading.GetCasus(), reading.GetNumerus(), reading.GetGenus(), detag.DeterminationDefinite, omit)] = struct{}{}
+		set[makeString(reading.GetCasus(), reading.GetNumerus(), reading.GetGenus(), detag.DeterminationIndefinite, omit)] = struct{}{}
 	}
 	return set
 }
 
-// CategoriesIntersect reports whether two category sets share any key.
-// Empty side → treated as non-mismatch for call sites that fail-closed on missing tags
-// (Java checkDetNoun uses retainAll on empty differently; STV is handled separately).
-func CategoriesIntersect(a, b map[string]struct{}) bool {
-	if len(a) == 0 || len(b) == 0 {
-		return true
+// possessiveSpecialCase ports AgreementTools.possessiveSpecialCase (private).
+// would cause error misses as it contains 'ALG', e.g. in "Der Zustand meiner Gehirns."
+func possessiveSpecialCase(aToken *languagetool.AnalyzedTokenReadings, tmpReading *languagetool.AnalyzedToken) bool {
+	// Java: return aToken.hasPosTagStartingWith("PRO:POS") && StringUtils.equalsAny(tmpReading.getLemma(), "ich", "sich");
+	if aToken == nil || !aToken.HasPosTagStartingWith("PRO:POS") {
+		return false
 	}
-	for k := range a {
-		if _, ok := b[k]; ok {
-			return true
-		}
+	if tmpReading == nil {
+		return false
 	}
-	return false
+	lem := tmpReading.GetLemma()
+	if lem == nil {
+		// StringUtils.equalsAny(null, ...) → false
+		return false
+	}
+	return *lem == "ich" || *lem == "sich"
 }
 
-// AgreementTools is the Java-name twin for agreement category string helpers.
-type AgreementTools struct{}
-
-func (AgreementTools) CategoryString(casus, numerus, genus, det string, omit map[GrammarCategory]bool) string {
-	return AgreementCategoryString(casus, numerus, genus, det, omit)
-}
-
-func (AgreementTools) GetCategories(aToken *languagetool.AnalyzedTokenReadings, omit map[GrammarCategory]bool, skipSol bool) map[string]struct{} {
-	return GetAgreementCategories(aToken, omit, skipSol)
-}
-
-func (AgreementTools) GetSOLCategories(aToken *languagetool.AnalyzedTokenReadings, omit map[GrammarCategory]bool) map[string]struct{} {
-	return GetAgreementSOLCategories(aToken, omit)
+// makeString ports AgreementTools.makeString (private).
+// Java joins non-omitted Kasus/Numerus/Genus + determination via '/';
+// toString() values are German names (Nominativ, Singular, Maskulinum, definit, …).
+func makeString(casus detag.Kasus, num detag.Numerus, gen detag.Genus, determination detag.Determination, omit map[GrammarCategory]bool) string {
+	var l []string
+	// Java: if (casus != null && !omit.contains(GrammarCategory.KASUS))
+	if casus != "" && !omit[CatKasus] {
+		l = append(l, string(casus))
+	}
+	if num != "" && !omit[CatNumerus] {
+		l = append(l, string(num))
+	}
+	if gen != "" && !omit[CatGenus] {
+		l = append(l, string(gen))
+	}
+	if determination != "" {
+		l = append(l, string(determination))
+	}
+	return strings.Join(l, "/")
 }

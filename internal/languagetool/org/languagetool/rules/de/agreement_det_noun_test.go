@@ -30,7 +30,7 @@ func TestGetAgreementCategories_DetAndNoun(t *testing.T) {
 	noun := atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus")
 	ncats := GetAgreementCategories(noun, nil, false)
 	require.Contains(t, ncats, "Nominativ/Singular/Neutrum/definit")
-	require.False(t, CategoriesIntersect(cats, ncats), "die(FEM) vs Haus(NEU) must not agree")
+	require.False(t, categorySetsIntersect(cats, ncats), "die(FEM) vs Haus(NEU) must not agree")
 }
 
 func TestAgreementRule_DetNounMismatch(t *testing.T) {
