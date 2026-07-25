@@ -3,7 +3,6 @@ package de
 import (
 	"embed"
 	"io"
-	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -51,21 +50,22 @@ func loadDECompoundData() *rules.CompoundRuleData {
 
 func loadCHCompoundData() *rules.CompoundRuleData {
 	chCompoundOnce.Do(func() {
-		// SwissExpander: accept ß and ss variants
-		expander := func(line string) []string {
-			if strings.Contains(line, "ß") {
-				return []string{line, strings.ReplaceAll(line, "ß", "ss")}
-			}
-			return []string{line}
-		}
-		chCompoundData = mustLoadCompoundData(expander)
+		// Java: new CompoundRuleData(new SwissExpander(), "/de/compounds.txt", "/de/compound-cities.txt")
+		chCompoundData = mustLoadCompoundData(SwissExpandLine)
 	})
 	return chCompoundData
 }
 
 // GermanCompoundRule ports org.languagetool.rules.de.GermanCompoundRule.
-// isMisspelled uses SpellingIsMisspelled (Java GermanyGerman default spelling rule).
-// Without SpellingIsMisspelled, isMisspelled is false (AbstractCompoundRule default).
+//
+// Java isMisspelled:
+//
+//	return GermanyGerman.getInstance().getDefaultSpellingRule().isMisspelled(word);
+//
+// SpellingIsMisspelled is that hook. When nil, keep AbstractCompoundRule default
+// (isMisspelled=false → keep suggestions). Do not substitute raw FilterDict alone:
+// it rejects Java-accepted compound suggestions (e.g. "Stand-by-Betrieb") that the
+// full GermanSpellerRule/hunspell path accepts.
 type GermanCompoundRule struct {
 	*rules.AbstractCompoundRule
 	// SpellingIsMisspelled ports getDefaultSpellingRule().isMisspelled; nil → misspelled=false.
@@ -81,7 +81,9 @@ func NewGermanCompoundRule(messages map[string]string) *GermanCompoundRule {
 		WithOrWithoutHyphenMessage:  "Diese Wörter werden zusammengeschrieben oder mit Bindestrich getrennt.",
 		ShortDesc:                   "Zusammenschreibung von Wörtern",
 		SentenceStartsWithUpperCase: true,
-		Data:                        loadDECompoundData(),
+		// Java makeAntiPatterns(..., GermanyGerman) / Language.getShortCode() → "de"
+		LanguageCode: "de",
+		Data:         loadDECompoundData(),
 	}
 	rules.InitCompoundRuleMeta(base, messages)
 	// Java GermanCompoundRule: HNO Arzt → HNO-Arzt
@@ -91,22 +93,28 @@ func NewGermanCompoundRule(messages map[string]string) *GermanCompoundRule {
 	)
 	r := &GermanCompoundRule{AbstractCompoundRule: base}
 	base.IsMisspelled = func(word string) bool {
-		if r.SpellingIsMisspelled == nil {
-			return false
+		if r.SpellingIsMisspelled != nil {
+			return r.SpellingIsMisspelled(word)
 		}
-		return r.SpellingIsMisspelled(word)
+		// AbstractCompoundRule default: isMisspelled → false
+		return false
 	}
 	return r
 }
 
 // Match applies ANTI_PATTERNS immunization then AbstractCompoundRule.
-// Java: getSentenceWithImmunization(sentence) via getAntiPatterns().
+// Java AbstractCompoundRule.match: getSentenceWithImmunization(sentence) via getAntiPatterns().
 func (r *GermanCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	return r.AbstractCompoundRule.Match(getSentenceWithDECompoundImmunization(sentence))
 }
 
+// GetAntiPatterns ports GermanCompoundRule.getAntiPatterns.
+func (r *GermanCompoundRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return deCompoundAntiPatterns()
+}
+
 // SwissCompoundRule ports org.languagetool.rules.de.SwissCompoundRule.
-// Java extends GermanCompoundRule (inherits isMisspelled + ANTI_PATTERNS).
+// Java extends GermanCompoundRule (inherits isMisspelled → GermanyGerman + ANTI_PATTERNS).
 type SwissCompoundRule struct {
 	*rules.AbstractCompoundRule
 	SpellingIsMisspelled func(word string) bool
@@ -121,21 +129,28 @@ func NewSwissCompoundRule(messages map[string]string) *SwissCompoundRule {
 		WithOrWithoutHyphenMessage:  "Diese Wörter werden zusammengeschrieben oder mit Bindestrich getrennt.",
 		ShortDesc:                   "Zusammenschreibung von Wörtern",
 		SentenceStartsWithUpperCase: true,
+		LanguageCode:                "de",
 		Data:                        loadCHCompoundData(),
 	}
 	rules.InitCompoundRuleMeta(base, messages)
 	r := &SwissCompoundRule{AbstractCompoundRule: base}
+	// Java SwissCompoundRule extends GermanCompoundRule — same isMisspelled (GermanyGerman).
 	base.IsMisspelled = func(word string) bool {
-		if r.SpellingIsMisspelled == nil {
-			return false
+		if r.SpellingIsMisspelled != nil {
+			return r.SpellingIsMisspelled(word)
 		}
-		return r.SpellingIsMisspelled(word)
+		return false
 	}
 	return r
 }
 
 func (r *SwissCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	return r.AbstractCompoundRule.Match(getSentenceWithDECompoundImmunization(sentence))
+}
+
+// GetAntiPatterns ports inherited GermanCompoundRule.getAntiPatterns.
+func (r *SwissCompoundRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return deCompoundAntiPatterns()
 }
 
 // deCompoundAntiPatterns ports GermanCompoundRule.getAntiPatterns (cached IMMUNIZE rules).
@@ -147,7 +162,7 @@ func deCompoundAntiPatterns() []*disambigrules.DisambiguationPatternRule {
 			if len(toks) == 0 {
 				continue
 			}
-			// Java makeAntiPatterns: INTERNAL_ANTIPATTERN + IMMUNIZE
+			// Java makeAntiPatterns: INTERNAL_ANTIPATTERN + IMMUNIZE, GermanyGerman shortCode "de"
 			rule := disambigrules.NewDisambiguationPatternRule(
 				"INTERNAL_ANTIPATTERN", "(no description)", "de",
 				toks, "", nil, disambigrules.ActionImmunize,

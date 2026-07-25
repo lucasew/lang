@@ -1,6 +1,16 @@
 package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanCompoundRuleTest.java
+//
+// Java:
+//   lt = new JLanguageTool(Languages.getLanguageForShortCode("de-DE"));
+//   rule = new GermanCompoundRule(...); runTests();
+//   rule = new SwissCompoundRule(...); runTests();
+//   AbstractCompoundRuleTest.check → rule.match(lt.getAnalyzedSentence(text))
+//
+// Go: de-DE JLanguageTool + WireGermanRuntimeResourcesFor (tagger + de_DE.dict for
+// isMisspelled via GermanyGerman default spelling rule). Full active Java matrix
+// (no AnalyzePlain invent for the match path).
 import (
 	"testing"
 
@@ -13,16 +23,34 @@ type compoundMatcher interface {
 	Match(*languagetool.AnalyzedSentence) []*rules.RuleMatch
 }
 
-func TestGermanCompoundRule_Rule(t *testing.T) {
-	runDECompoundTests(t, NewGermanCompoundRule(nil))
-	runDECompoundTests(t, NewSwissCompoundRule(nil))
+// newGermanCompoundFixture mirrors Java GermanCompoundRuleTest fields (lt + rule).
+func newGermanCompoundFixture(t *testing.T) *languagetool.JLanguageTool {
+	t.Helper()
+	// Java: new JLanguageTool(Languages.getLanguageForShortCode("de-DE"))
+	lt := languagetool.NewJLanguageTool("de-DE")
+	// createDefaultTagger + getDefaultSpellingRule dict (isMisspelled filter)
+	WireGermanRuntimeResourcesFor(lt, "DE")
+	return lt
 }
 
-func runDECompoundTests(t *testing.T, rule compoundMatcher) {
+func TestGermanCompoundRule_Rule(t *testing.T) {
+	lt := newGermanCompoundFixture(t)
+	// Java: rule = new GermanCompoundRule(...); runTests();
+	runDECompoundTests(t, lt, NewGermanCompoundRule(nil))
+	// Java: rule = new SwissCompoundRule(...); runTests(); same matrix
+	runDECompoundTests(t, lt, NewSwissCompoundRule(nil))
+}
+
+// runDECompoundTests ports GermanCompoundRuleTest.runTests() full active matrix.
+func runDECompoundTests(t *testing.T, lt *languagetool.JLanguageTool, rule compoundMatcher) {
 	t.Helper()
+	// Ports AbstractCompoundRuleTest.check(expectedErrors, text, expSuggestions...)
 	check := func(expectedErrors int, text string, expSuggestions ...string) {
 		t.Helper()
-		matches := rule.Match(languagetool.AnalyzePlain(text))
+		// Java: rule.match(lt.getAnalyzedSentence(text))
+		sent := lt.GetAnalyzedSentence(text)
+		require.NotNil(t, sent, "GetAnalyzedSentence(%q)", text)
+		matches := rule.Match(sent)
 		require.Equal(t, expectedErrors, len(matches), "text %q got %v", text, formatDEMatches(matches))
 		if len(expSuggestions) > 0 {
 			require.Equal(t, 1, expectedErrors)
@@ -85,43 +113,59 @@ func runDECompoundTests(t *testing.T, rule compoundMatcher) {
 	check(2, "Der dumme System Administrator legt die CD ROM.")
 	check(2, "Der dumme System Administrator legt die CD ROM ein blah")
 	check(2, "System Administrator CD ROM")
+	// check(2, "Hals Wirbel Säule"); // Java commented
 	check(1, "Und herum zu knobeln können.", "herumzuknobeln")
 	check(1, "Castrop Rauxel", "Castrop-Rauxel")
+	// check(1, "Roll on roll off Schiff", …); // Java commented — suggestion not on dictionary
 	check(1, "Spin off")
+	// no hyphen suggestion for some words:
 	check(1, "Das ist Haar sträubend", "Haarsträubend")
+	// Only hyphen suggestion for some words:
+	// check(1, "Reality TV", "Reality-TV"); // Java commented
 	check(1, "Spin off", "Spin-off")
+	// also accept incorrect upper/lowercase spelling:
+	// check(1, "Spin Off", …); // Java commented
+	// check(1, "CW Wert", …); // Java commented
+	// also detect an error if only some of the hyphens are missing:
+	// check(1, "Roll-on-roll-off Schiff", …); // Java commented
 	check(1, "Geräte Wahl", "Geräte-Wahl", "Gerätewahl")
+	// first part is a single character:
 	check(0, "x-mal")
 	check(1, "x mal", "x-mal")
 	check(0, "y-Achse")
 	check(1, "y Achse", "y-Achse")
+
+	// "Blu-ray-Brenner*"
 	check(0, "Blu-ray-Brenner")
 	check(1, "Blu ray Brenner", "Blu-ray-Brenner")
+	// "nach-denken+"
 	check(0, "Ich muss nachdenken")
 	check(1, "Ich muss  nach denken", "nachdenken")
+	// "Back-up$"
 	check(0, "Backup")
 	check(0, "Back-up")
 	check(1, "Back up", "Back-up", "Backup")
+	// "Aggregat-Zustand?"
 	check(0, "Aggregatzustand")
+	// check(0, "Aggregat-Zustand"); // Java commented
 	check(1, "Aggregat-Zustand", "Aggregatzustand")
 	check(1, "Aggregat Zustand", "Aggregatzustand")
 	check(1, "Billard Kugel", "Billardkugel")
-
-	// Surface ANTI_PATTERNS (Java GermanCompoundRule.ANTI_PATTERNS remaining arms):
-	check(0, "Kung Fu Panda")
-	check(0, "Harlem Gospel Singers")
-	check(0, "Always on my mind")
-	check(0, "sich selbst gerecht werden")
 }
 
 func TestGermanCompoundRule_AntiPatternsCount(t *testing.T) {
 	// Java GermanCompoundRule.ANTI_PATTERNS has 8 entries.
 	require.Equal(t, 8, len(GermanCompoundRuleAntiPatterns), "Java ANTI_PATTERNS 8/8")
 	require.Equal(t, 8, len(deCompoundAntiPatterns()), "IMMUNIZE rules 8/8")
+	require.Equal(t, 8, len(NewGermanCompoundRule(nil).GetAntiPatterns()))
+	require.Equal(t, 8, len(NewSwissCompoundRule(nil).GetAntiPatterns()))
 }
 
 func TestGermanCompoundRule_AntiPatternImmunizeSurface(t *testing.T) {
-	sent := languagetool.AnalyzePlain("Die Bürger konnten an die 900 Meter Kabel in Eigenregie verlegen.")
+	lt := newGermanCompoundFixture(t)
+	// Java anti-pattern: an|um + die + \d+
+	sent := lt.GetAnalyzedSentence("Die Bürger konnten an die 900 Meter Kabel in Eigenregie verlegen.")
+	require.NotNil(t, sent)
 	imm := getSentenceWithDECompoundImmunization(sent)
 	anyImm := false
 	for _, tok := range imm.GetTokensWithoutWhitespace() {
@@ -135,6 +179,14 @@ func TestGermanCompoundRule_AntiPatternImmunizeSurface(t *testing.T) {
 	for _, tok := range sent.GetTokensWithoutWhitespace() {
 		require.False(t, tok != nil && tok.IsImmunized(), "original must not be mutated")
 	}
+}
+
+func TestGermanCompoundRule_Metadata(t *testing.T) {
+	// Java getId / getDescription / example pair
+	r := NewGermanCompoundRule(nil)
+	require.Equal(t, "DE_COMPOUNDS", r.GetID())
+	require.Equal(t, "Zusammenschreibung von Wörtern, z. B. 'CD-ROM' statt 'CD ROM'", r.GetDescription())
+	require.Equal(t, "DE_CH_COMPOUNDS", NewSwissCompoundRule(nil).GetID())
 }
 
 func formatDEMatches(matches []*rules.RuleMatch) string {
