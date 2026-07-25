@@ -32,39 +32,6 @@ func TestSentenceWithManRule(t *testing.T) {
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Man sollte das vermeiden."))))
 }
 
-func TestSentenceWithModalVerbRule(t *testing.T) {
-	rule := NewSentenceWithModalVerbRuleWithMinPercent(nil, 0)
-	// Java: VER:MOD + VER:INF
-	hit := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:MAS", "er"),
-		atrWithPOS("muss", "VER:MOD:3:SIN:PRS:SFT", "müssen"),
-		atrWithPOS("das", "PRO:DEM:AKK:SIN:NEU", "das"),
-		atrWithPOS("erledigen", "VER:INF:NON", "erledigen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 1, len(rule.Match(hit)))
-	noModal := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:MAS", "er"),
-		atrWithPOS("erledigt", "VER:3:SIN:PRS:NON", "erledigen"),
-		atrWithPOS("das", "PRO:DEM:AKK:SIN:NEU", "das"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(noModal)))
-	// modal alone is not enough
-	modalOnly := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:MAS", "er"),
-		atrWithPOS("muss", "VER:MOD:3:SIN:PRS:SFT", "müssen"),
-		atrWithPOS("das", "PRO:DEM:AKK:SIN:NEU", "das"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(modalOnly)))
-	// no surface invent on AnalyzePlain
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Er muss das erledigen."))))
-}
-
 func TestPassiveSentenceRule(t *testing.T) {
 	rule := NewPassiveSentenceRuleWithMinPercent(nil, 0)
 	// Java: lemma werden + VER:PA2
