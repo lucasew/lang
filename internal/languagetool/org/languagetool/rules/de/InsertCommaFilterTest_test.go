@@ -1,7 +1,14 @@
 package de
 
-// Twin of InsertCommaFilterTest — POS-dependent branches need a tagger (Java GermanTagger).
+// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/InsertCommaFilterTest.java
+//
+// Java:
+//   JLanguageTool lt = new JLanguageTool(Languages.getLanguageForShortCode("de"));
+//   runFilter(input, patternTokenPos, atrFromPos, atrToPos, fromPos, toPos, origRepl, newRepl, lt);
+//   InsertCommaFilter uses GermanTagger.INSTANCE.tag on suggestion parts.
+
 import (
+	"fmt"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -9,89 +16,39 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestInsertCommaFilter_Filter ports InsertCommaFilterTest.testFilter.
 func TestInsertCommaFilter_Filter(t *testing.T) {
-	f := NewInsertCommaFilter()
-	// two tokens: no POS required
-	require.Equal(t, []string{"hoffe, es"}, f.Suggest("hoffe es"))
-	require.Equal(t, []string{"steht, parkt"}, f.Suggest("steht parkt"))
+	// Java: new JLanguageTool(Languages.getLanguageForShortCode("de"))
+	lt := languagetool.NewJLanguageTool("de")
+	// Wire tagger for GetAnalyzedSentence POS (Java createDefaultTagger → GermanTagger.INSTANCE).
+	require.True(t, WireGermanTagWord(lt), "GermanTagger.INSTANCE resources required")
+	WireGermanTaggerDefaults()
+	require.NotNil(t, DiscoveredGermanTagger(), "GermanTagger.INSTANCE resources required")
 
-	// three tokens without tagger: fail-closed (no invent both placements)
-	require.Empty(t, f.Suggest("Ich hoffe es"))
-
-	// with POS twin of Java hasTag checks
-	f.TagToken = func(w string) []string {
-		switch w {
-		case "hoffe", "Hoffe":
-			return []string{"VER:1:SIN:PRÄ:NON"}
-		case "es":
-			return []string{"PRO:PER:NOM:SIN:3:NEU"}
-		case "geht":
-			return []string{"VER:3:SIN:PRÄ:SFT"}
-		case "Sag", "sag":
-			return []string{"VER:IMP:SIN:SFT"}
-		case "mal":
-			return []string{"ADV:TMP"}
-		case "hast":
-			return []string{"VER:2:SIN:PRÄ:NON"}
-		case "denke":
-			return []string{"VER:1:SIN:PRÄ:NON"}
-		case "hier":
-			return []string{"ADV:LOK"}
-		case "kann":
-			return []string{"VER:3:SIN:PRÄ:NON"}
-		case "ist":
-			return []string{"VER:3:SIN:PRÄ:NON"}
-		case "steht", "parkt":
-			return []string{"VER:3:SIN:PRÄ:SFT"}
-		}
-		return nil
-	}
-	// "hoffe es geht" → VER + PRO:PER → "hoffe, es geht"
-	require.Equal(t, []string{"hoffe, es geht"}, f.Suggest("hoffe es geht"))
-	// "Sag mal hast" → SAGT + mal + VER
-	require.Equal(t, []string{"Sag mal, hast"}, f.Suggest("Sag mal hast"))
-	// "denke hier kann" → VER + ADV + VER
-	require.Equal(t, []string{"denke, hier kann"}, f.Suggest("denke hier kann"))
-	// "Hoffe bei euch ist" → patternTokenPos==1 BEI+DIR+VER (Java test case)
-	require.Equal(t, []string{"Hoffe, bei euch ist"}, f.Suggest("Hoffe bei euch ist"))
+	runFilter(t, "Das Auto, das am Straßenrand steht parkt im Halteverbot.", 7,
+		7, 8, 29, 40, "steht parkt", "[steht, parkt]", lt)
+	runFilter(t, "Hoffe bei euch ist alles gut.", 1,
+		1, 4, 0, 7, "Hoffe bei euch ist", "[Hoffe, bei euch ist]", lt)
 }
 
-// Twin of InsertCommaFilterTest.runFilter via AcceptRuleMatch
-func TestInsertCommaFilter_AcceptRuleMatch_JavaCases(t *testing.T) {
-	f := NewInsertCommaFilter()
-	f.TagToken = func(w string) []string {
-		switch w {
-		case "steht", "parkt":
-			return []string{"VER:3:SIN:PRÄ:SFT"}
-		case "Hoffe", "hoffe":
-			return []string{"VER:1:SIN:PRÄ:NON"}
-		case "ist":
-			return []string{"VER:3:SIN:PRÄ:NON"}
-		}
-		return nil
-	}
-
-	// Java: "steht parkt" → "[steht, parkt]"
-	sent1 := languagetool.AnalyzePlain("Das Auto, das am Straßenrand steht parkt im Halteverbot.")
-	m1 := rules.NewRuleMatch(rules.NewFakeRule("KOMMA"), sent1, 29, 40, "fake msg")
-	m1.SetSuggestedReplacement("steht parkt")
-	// patternTokenPos=7; atr from stands/parkt not needed for 2-part
-	out1 := f.AcceptRuleMatch(m1, map[string]string{}, 7, nil, nil)
-	require.NotNil(t, out1)
-	require.Equal(t, []string{"steht, parkt"}, out1.GetSuggestedReplacements())
-
-	// Java: "Hoffe bei euch ist" → "[Hoffe, bei euch ist]" with patternTokenPos=1
-	sent2 := languagetool.AnalyzePlain("Hoffe bei euch ist alles gut.")
-	m2 := rules.NewRuleMatch(rules.NewFakeRule("KOMMA"), sent2, 0, 7, "fake msg")
-	m2.SetSuggestedReplacement("Hoffe bei euch ist")
-	// pattern tokens only need length for some branches; BEI path uses parts only
-	atr := []*languagetool.AnalyzedTokenReadings{
-		atrWithPOS("Hoffe", "VER:1:SIN:PRÄ:NON", "hoffen"),
-		atrWithPOS("bei", "APPR:DAT", "bei"),
-		atrWithPOS("euch", "PRO:PER:DAT:PLU", "ihr"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-	}
-	out2 := f.AcceptRuleMatch(m2, map[string]string{}, 1, atr, nil)
-	require.NotNil(t, out2)
-	require.Equal(t, []string{"Hoffe, bei euch ist"}, out2.GetSuggestedReplacements())
+// runFilter ports InsertCommaFilterTest.runFilter.
+func runFilter(t *testing.T, input string, patternTokenPos, atrFromPos, atrToPos, fromPos, toPos int,
+	origRepl, newRepl string, lt *languagetool.JLanguageTool) {
+	t.Helper()
+	args := map[string]string{}
+	filter := NewInsertCommaFilter()
+	sentence := lt.GetAnalyzedSentence(input)
+	require.NotNil(t, sentence, "GetAnalyzedSentence(%q)", input)
+	match := rules.NewRuleMatch(rules.NewFakeRule("I"), sentence, fromPos, toPos, "fake msg")
+	match.SetSuggestedReplacement(origRepl)
+	// Java: AnalyzedTokenReadings[] atr = { tokensWithoutWhitespace[atrFromPos], tokensWithoutWhitespace[atrToPos] }
+	toks := sentence.GetTokensWithoutWhitespace()
+	require.Greater(t, len(toks), atrFromPos)
+	require.Greater(t, len(toks), atrToPos)
+	atr := []*languagetool.AnalyzedTokenReadings{toks[atrFromPos], toks[atrToPos]}
+	matchTmp := filter.AcceptRuleMatch(match, args, patternTokenPos, atr, nil)
+	require.NotNil(t, matchTmp)
+	// Java: assertThat(matchTmp.getSuggestedReplacements().toString(), is(newRepl));
+	got := fmt.Sprint(matchTmp.GetSuggestedReplacements())
+	require.Equal(t, newRepl, got)
 }

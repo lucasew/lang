@@ -20,9 +20,10 @@ func WireGermanTaggerDefaults() {
 		if tagger == nil {
 			return
 		}
-		tagPOS := germanTaggerPOSFunc(tagger)
-		SetDefaultInsertCommaTagger(tagPOS)
-		SetDefaultUppercaseNounTagger(tagPOS)
+		// InsertCommaFilter.getTag → GermanTagger.INSTANCE.tag (full tagger, not POS-only).
+		SetDefaultInsertCommaGermanTagger(tagger)
+		// UppercaseNounReadingFilter still takes POS string list.
+		SetDefaultUppercaseNounTagger(germanTaggerPOSFunc(tagger))
 	})
 }
 

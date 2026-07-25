@@ -1,5 +1,7 @@
 package de
 
+// Unit coverage for InsertCommaFilter branches beyond InsertCommaFilterTest twin.
+// Uses real GermanTagger.INSTANCE (DiscoveredGermanTagger) — no invent POS maps.
 import (
 	"testing"
 
@@ -8,33 +10,59 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func requireGermanTagger(t *testing.T) {
+	t.Helper()
+	WireGermanTaggerDefaults()
+	require.NotNil(t, DiscoveredGermanTagger(), "GermanTagger.INSTANCE resources required")
+}
+
 func TestInsertCommaFilter_TwoToken(t *testing.T) {
+	// Java parts.length == 2 — no POS required
 	f := NewInsertCommaFilter()
-	got := f.Suggest("hoffe es")
-	require.Equal(t, []string{"hoffe, es"}, got)
+	require.Equal(t, []string{"hoffe, es"}, f.Suggest("hoffe es"))
+	require.Equal(t, []string{"steht, parkt"}, f.Suggest("steht parkt"))
 }
 
-func TestInsertCommaFilter_ThreeTokenWithoutTagger(t *testing.T) {
-	// fail-closed: no POS invent for 3-token path
+func TestInsertCommaFilter_ThreeTokenVerProPer(t *testing.T) {
+	// Java: VER: + PRO:PER: → "hoffe, es geht"
+	requireGermanTagger(t)
 	f := NewInsertCommaFilter()
-	require.Empty(t, f.Suggest("hoffe es geht"))
+	require.Equal(t, []string{"hoffe, es geht"}, f.Suggest("hoffe es geht"))
 }
 
-func TestInsertCommaFilter_ThreeTokenWithTagger(t *testing.T) {
+func TestInsertCommaFilter_ThreeTokenSagtMal(t *testing.T) {
+	// Java: SAGT + mal + VER: → "Sag mal, hast"
+	requireGermanTagger(t)
 	f := NewInsertCommaFilter()
-	f.TagToken = func(w string) []string {
-		switch w {
-		case "hoffe":
-			return []string{"VER:1:SIN:PRÄ:NON"}
-		case "es":
-			return []string{"PRO:PER:NOM:SIN:3:NEU"}
-		case "geht":
-			return []string{"VER:3:SIN:PRÄ:SFT"}
-		}
-		return nil
-	}
-	got := f.Suggest("hoffe es geht")
-	require.Equal(t, []string{"hoffe, es geht"}, got)
+	require.Equal(t, []string{"Sag mal, hast"}, f.Suggest("Sag mal hast"))
+}
+
+func TestInsertCommaFilter_ThreeTokenVerAdvVer(t *testing.T) {
+	// Java: VER: + ADV: + VER: → "denke, hier kann"
+	requireGermanTagger(t)
+	f := NewInsertCommaFilter()
+	require.Equal(t, []string{"denke, hier kann"}, f.Suggest("denke hier kann"))
+}
+
+func TestInsertCommaFilter_FourTokenDenkeDemonstrative(t *testing.T) {
+	// Java: DENKE_ETC + PRO:DEM: + SUB: → "schätze, diese Krawatte passt"
+	requireGermanTagger(t)
+	f := NewInsertCommaFilter()
+	require.Equal(t, []string{"schätze, diese Krawatte passt"}, f.Suggest("schätze diese Krawatte passt"))
+}
+
+func TestInsertCommaFilter_FourTokenVerProPerAdvInr(t *testing.T) {
+	// Java: VER + PRO:PER + ADV:INR → "Weißt du, warum diese"
+	requireGermanTagger(t)
+	f := NewInsertCommaFilter()
+	require.Equal(t, []string{"Weißt du, warum diese"}, f.Suggest("Weißt du warum diese"))
+}
+
+func TestInsertCommaFilter_FourTokenBeiDir(t *testing.T) {
+	// Java test case path: patternTokenPos==1 + BEI + DIR_ETC + VER
+	requireGermanTagger(t)
+	f := NewInsertCommaFilter()
+	require.Equal(t, []string{"Hoffe, bei euch ist"}, f.Suggest("Hoffe bei euch ist"))
 }
 
 func TestInsertCommaFilter_Registered(t *testing.T) {
@@ -44,48 +72,6 @@ func TestInsertCommaFilter_Registered(t *testing.T) {
 	m.SetSuggestedReplacements([]string{"sag mal"})
 	out := f.AcceptRuleMatch(m, nil, 1, nil, nil)
 	require.NotNil(t, out)
+	// two-token path: no POS required
 	require.Equal(t, []string{"sag, mal"}, out.GetSuggestedReplacements())
-}
-
-func TestInsertCommaFilter_FourTokenDenkeDemonstrative(t *testing.T) {
-	// Java: DENKE_ETC + PRO:DEM: + SUB: → "schätze, diese Krawatte passt"
-	f := NewInsertCommaFilter()
-	f.TagToken = func(w string) []string {
-		switch w {
-		case "schätze":
-			return []string{"VER:1:SIN:PRÄ:NON"}
-		case "diese":
-			return []string{"PRO:DEM:NOM:SIN:FEM"}
-		case "Krawatte":
-			return []string{"SUB:NOM:SIN:FEM"}
-		case "passt":
-			return []string{"VER:3:SIN:PRÄ:SFT"}
-		}
-		return nil
-	}
-	require.Equal(t, []string{"schätze, diese Krawatte passt"}, f.Suggest("schätze diese Krawatte passt"))
-}
-
-func TestInsertCommaFilter_FourTokenVerProPerAdvInr(t *testing.T) {
-	// Java: VER + PRO:PER + ADV:INR → "Weißt du, warum diese"
-	f := NewInsertCommaFilter()
-	f.TagToken = func(w string) []string {
-		switch w {
-		case "Weißt":
-			return []string{"VER:2:SIN:PRÄ:NON"}
-		case "du":
-			return []string{"PRO:PER:NOM:SIN:2"}
-		case "warum":
-			return []string{"ADV:INR"}
-		case "diese":
-			return []string{"PRO:DEM:NOM:SIN:FEM"}
-		}
-		return nil
-	}
-	require.Equal(t, []string{"Weißt du, warum diese"}, f.Suggest("Weißt du warum diese"))
-}
-
-func TestInsertCommaFilter_FourTokenWithoutTagger(t *testing.T) {
-	f := NewInsertCommaFilter()
-	require.Empty(t, f.Suggest("schätze diese Krawatte passt"))
 }
