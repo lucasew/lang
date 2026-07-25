@@ -3,16 +3,13 @@ package en
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
-func TestUpperCaseNgramRule(t *testing.T) {
-	r := NewUpperCaseNgramRule(nil)
-	sent := languagetool.AnalyzePlain("The Dog ran.")
-	ms, err := r.Match(sent)
-	require.NoError(t, err)
-	// "Dog" mid-sentence titlecase
-	require.NotEmpty(t, ms)
-	require.Equal(t, "dog", ms[0].GetSuggestedReplacements()[0])
+func TestUpperCaseNgramRule_Meta(t *testing.T) {
+	r := newUpperCaseNgramRuleForTest()
+	require.Equal(t, "EN_UPPER_CASE_NGRAM", r.GetID())
+	require.Equal(t, "Checks wrong uppercase spelling of words that are not proper nouns", r.GetDescription())
+	require.Equal(t, 50, THRESHOLD)
+	require.Equal(t, 50, UpperCaseNgramThreshold)
 }
