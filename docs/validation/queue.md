@@ -327,6 +327,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-GermanNumberInWordFilter | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanNumberInWordFilter.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanNumberInWordFilterTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractNumberInWordFilter.java | internal/languagetool/org/languagetool/rules/de/german_number_in_word_filter.go; internal/languagetool/org/languagetool/rules/de/GermanNumberInWordFilterTest_test.go; internal/languagetool/org/languagetool/rules/abstract_number_in_word_filter.go | 1a8b214238f08685828f0f3f7330d2e20b44ee05 | 0 | 0 | | | 2026-07-25T06:51:32Z |
 
 | docs/faithful-port-checklist.md#3.C.3-NonSignificantVerbsRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/NonSignificantVerbsRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/NonSignificantVerbsRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStatisticStyleRule.java | internal/languagetool/org/languagetool/rules/de/non_significant_verbs_rule.go; internal/languagetool/org/languagetool/rules/de/NonSignificantVerbsRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/non_significant_verbs_rule_test.go; internal/languagetool/org/languagetool/rules/abstract_statistic_style_rule.go | 39cbba61e053bc50e7f2f37a45bfb33bb4ad30bf | 0 | 0 | | | 2026-07-25T07:06:26Z |
+| docs/faithful-port-checklist.md#3.C.3-OldSpellingRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/OldSpellingRule.java; inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SpellingData.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/OldSpellingRuleTest.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/alt_neu.csv | internal/languagetool/org/languagetool/rules/de/old_spelling_rule.go; internal/languagetool/org/languagetool/rules/de/OldSpellingRuleTest_test.go | 701d3be31bdeb9157cc59d1ba2edbf87dd01b636 | 0 | 0 | | | 2026-07-25T07:16:37Z |
 
 ## Human inbox
 
@@ -336,7 +337,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-NonSignificantVerbsRule @ 39cbba61 |
+| Notes | ready 3.C.3-OldSpellingRule @ 701d3be3 (parent green reconfirm) |
 
 ---
 
@@ -1457,3 +1458,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T07:02:49Z ready: 3.C.3-NonSignificantVerbsRule @ 39cbba61 (implementer report; parent green reconfirm NonSignificantVerbs)
 - 2026-07-25T07:03:48Z validating: 3.C.3-NonSignificantVerbsRule @ 39cbba61 (strict invent re-audit vs Java NonSignificantVerbsRule + Test + GermanTagger.Tag analysis)
 - 2026-07-25T07:06:26Z ACCEPT: 3.C.3-NonSignificantVerbsRule @ 39cbba61 (validator ACCEPT + parent green reconfirm; NON_SIGNIFICANT_VERB_DE; counts 3/0; GermanTagger.Tag)
+- 2026-07-25T07:09:51Z implement: 3.C.3-OldSpellingRule (DE OldSpellingRuleTest full twin; official alt_neu.csv + SpellingData/GermanSynthesizer; Java king)
+- 2026-07-25T07:16:37Z ready: 3.C.3-OldSpellingRule @ 701d3be3 (implementer report; parent green reconfirm OldSpelling)
