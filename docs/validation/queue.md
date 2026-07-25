@@ -373,7 +373,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | When idle | Summary |
 |-----------|---------|
 | Last idle at | _(never)_ |
-| Blocked lines |  (missing french.dict);  (HanLP);  (pure-Hunspell affix dict missing; invent removed @ 9b184b7c);  (affix HunspellDictionary missing; partial @ 693a9d3e)
+| Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
 | Notes | blocked 3.C.3-GermanSpellerRule @ 693a9d3e (affix Hunspell); next fire: implement other unchecked leaf
 
 ---
