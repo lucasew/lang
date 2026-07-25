@@ -85,6 +85,8 @@ func containsHyphenInside(token string) bool {
 	return strings.Contains(token, "-") && !strings.HasPrefix(token, "-") && !strings.HasSuffix(token, "-")
 }
 
+// isNumericToken ports org.apache.commons.lang3.StringUtils.isNumeric used by match:
+// non-empty and every character is Character.isDigit (Unicode decimal digits).
 func isNumericToken(s string) bool {
 	if s == "" {
 		return false

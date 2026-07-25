@@ -1,32 +1,52 @@
 package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundCoherencyRuleTest.java
-// Surface forms via AnalyzePlain; inflected pairs use lemma inject (Java Morfologik lemmas).
+//
+// Java:
+//   CompoundCoherencyRule rule = new CompoundCoherencyRule(TestTools.getEnglishMessages());
+//   JLanguageTool lt = new JLanguageTool(Languages.getLanguageForShortCode("de"));
+//   rule.match(Arrays.asList(lt.getAnalyzedSentence(s1), lt.getAnalyzedSentence(s2)));
+//
+// Go: de-DE JLanguageTool + WireGermanTagWord (createDefaultTagger) so Morfologik lemmas
+// feed getLemma / hyphen reconstruct the same way as Java. No lemma invent for the
+// main matrix. @Ignore testRuleInteractive is omitted (debug-only).
+
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
+// newCompoundCoherencyFixture mirrors Java CompoundCoherencyRuleTest fields.
+func newCompoundCoherencyFixture(t *testing.T) (*CompoundCoherencyRule, *languagetool.JLanguageTool) {
+	t.Helper()
+	rule := NewCompoundCoherencyRule(nil) // Java: TestTools.getEnglishMessages() — STYLE category only
+	lt := languagetool.NewJLanguageTool("de-DE")
+	require.True(t, WireGermanTagWord(lt), "GermanTagger resources required for CompoundCoherencyRule twin")
+	return rule, lt
+}
+
+// getCompoundCoherencyMatches ports private getMatches(s1, s2).
+func getCompoundCoherencyMatches(rule *CompoundCoherencyRule, lt *languagetool.JLanguageTool, s1, s2 string) []*rules.RuleMatch {
+	sent1 := lt.GetAnalyzedSentence(s1)
+	sent2 := lt.GetAnalyzedSentence(s2)
+	return rule.MatchList([]*languagetool.AnalyzedSentence{sent1, sent2})
+}
+
 func TestCompoundCoherencyRule_Rule(t *testing.T) {
-	rule := NewCompoundCoherencyRule(nil)
+	rule, lt := newCompoundCoherencyFixture(t)
 
 	assertOkay := func(s1, s2 string) {
 		t.Helper()
-		ms := rule.MatchList([]*languagetool.AnalyzedSentence{
-			languagetool.AnalyzePlain(s1),
-			languagetool.AnalyzePlain(s2),
-		})
-		require.Equal(t, 0, len(ms), "okay %q | %q", s1, s2)
+		ms := getCompoundCoherencyMatches(rule, lt, s1, s2)
+		require.Equal(t, 0, len(ms), "okay %q | %q got %v", s1, s2, ms)
 	}
 	assertError := func(s1, s2 string, fromPos, toPos int, suggestion *string) {
 		t.Helper()
-		ms := rule.MatchList([]*languagetool.AnalyzedSentence{
-			languagetool.AnalyzePlain(s1),
-			languagetool.AnalyzePlain(s2),
-		})
-		require.Equal(t, 1, len(ms), "error %q | %q got %d", s1, s2, len(ms))
+		ms := getCompoundCoherencyMatches(rule, lt, s1, s2)
+		require.Equal(t, 1, len(ms), "error %q | %q got %d matches", s1, s2, len(ms))
 		require.Equal(t, fromPos, ms[0].GetFromPos(), "fromPos %q | %q", s1, s2)
 		require.Equal(t, toPos, ms[0].GetToPos(), "toPos %q | %q", s1, s2)
 		if suggestion == nil {
@@ -37,16 +57,24 @@ func TestCompoundCoherencyRule_Rule(t *testing.T) {
 	}
 	strp := func(s string) *string { return &s }
 
-	// Java assertOkay (same surface/hyphenation family without inconsistency):
+	// Java CompoundCoherencyRuleTest.testRule assertOkay:
 	assertOkay("Ein Jugendfoto.", "Und ein Jugendfoto.")
+	assertOkay("Ein Jugendfoto.", "Der Rahmen eines Jugendfotos.")
+	assertOkay("Der Rahmen eines Jugendfotos.", "Ein Jugendfoto.")
 	assertOkay("Der Zahn-Ärzte-Verband.", "Der Zahn-Ärzte-Verband.")
+	assertOkay("Der Zahn-Ärzte-Verband.", "Des Zahn-Ärzte-Verbands.")
+	assertOkay("Der Zahn-Ärzte-Verband.", "Des Zahn-Ärzte-Verbandes.")
 	assertOkay("Es gibt E-Mail.", "Und es gibt E-Mails.")
 	assertOkay("Es gibt E-Mails.", "Und es gibt E-Mail.")
 	assertOkay("Ein Jugend-Foto.", "Der Rahmen eines Jugend-Fotos.")
 
-	// Java assertError surface (same uninflected strip → suggestion = first form):
+	// Java assertError (positions + suggestions; null → empty replacements):
 	assertError("Ein Jugendfoto.", "Und ein Jugend-Foto.", 23, 34, strp("Jugendfoto"))
 	assertError("Ein Jugend-Foto.", "Und ein Jugendfoto.", 24, 34, strp("Jugend-Foto"))
+
+	assertError("Viele Zahn-Ärzte.", "Oder Zahnärzte.", 22, 31, nil)
+	assertError("Viele Zahn-Ärzte.", "Oder Zahnärzte.", 22, 31, nil) // Java duplicate line
+	assertError("Viele Zahn-Ärzte.", "Oder Zahnärzten.", 22, 32, nil)
 
 	assertError("Der Zahn-Ärzte-Verband.", "Der Zahn-Ärzteverband.", 27, 44, strp("Zahn-Ärzte-Verband"))
 	assertError("Der Zahn-Ärzte-Verband.", "Der Zahnärzte-Verband.", 27, 44, strp("Zahn-Ärzte-Verband"))
@@ -55,97 +83,60 @@ func TestCompoundCoherencyRule_Rule(t *testing.T) {
 	assertError("Der Zahnärzte-Verband.", "Der Zahn-Ärzte-Verband.", 26, 44, strp("Zahnärzte-Verband"))
 	assertError("Der Zahnärzteverband.", "Der Zahn-Ärzte-Verband.", 25, 43, strp("Zahnärzteverband"))
 
-	require.Equal(t, "Einheitliche Schreibweise bei Komposita (mit oder ohne Bindestrich)", rule.GetDescription())
+	assertError("Der Zahn-Ärzte-Verband.", "Des Zahn-Ärzteverbandes.", 27, 46, nil)
+	assertError("Der Zahn-Ärzte-Verband.", "Des Zahnärzte-Verbandes.", 27, 46, nil)
+	assertError("Der Zahn-Ärzte-Verband.", "Des Zahnärzteverbandes.", 27, 45, nil)
+
+	// Constructor / TextLevelRule surface (Java STYLE + example pair + minToCheckParagraph -1)
 	require.Equal(t, "DE_COMPOUND_COHERENCY", rule.GetID())
+	require.Equal(t, "Einheitliche Schreibweise bei Komposita (mit oder ohne Bindestrich)", rule.GetDescription())
 	require.Equal(t, -1, rule.MinToCheckParagraph())
+	require.NotNil(t, rule.GetCategory())
 	require.NotEmpty(t, rule.GetIncorrectExamples())
-}
-
-// injectLemma replaces readings for a surface token so HasSameLemmas + getLemma path runs (Java tagger).
-func injectLemma(s *languagetool.AnalyzedSentence, surface, lemma string) {
-	for _, tok := range s.GetTokensWithoutWhitespace() {
-		if tok != nil && tok.GetToken() == surface {
-			pos := "SUB:NOM:PLU:MAS"
-			l := lemma
-			p := pos
-			newTok := languagetool.NewAnalyzedToken(surface, &p, &l)
-			*tok = *languagetool.NewAnalyzedTokenReadingsFromOld(tok, []*languagetool.AnalyzedToken{newTok}, "test")
-		}
-	}
-}
-
-// Inflected pairs: Java stores lemmas so suggestion is null when surfaces differ after strip.
-func TestCompoundCoherencyRule_InflectedNullSuggestion(t *testing.T) {
-	rule := NewCompoundCoherencyRule(nil)
-
-	// Viele Zahn-Ärzte. / Oder Zahnärzte. — Java 22–31, no suggestion
-	s1 := languagetool.AnalyzePlain("Viele Zahn-Ärzte.")
-	s2 := languagetool.AnalyzePlain("Oder Zahnärzte.")
-	injectLemma(s1, "Zahn-Ärzte", "Zahnarzt")
-	injectLemma(s2, "Zahnärzte", "Zahnarzt")
-	ms := rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})
-	require.Equal(t, 1, len(ms))
-	require.Equal(t, 22, ms[0].GetFromPos())
-	require.Equal(t, 31, ms[0].GetToPos())
-	require.Empty(t, ms[0].GetSuggestedReplacements())
-
-	// Viele Zahn-Ärzte. / Oder Zahnärzten. — 22–32, no suggestion
-	s1b := languagetool.AnalyzePlain("Viele Zahn-Ärzte.")
-	s2b := languagetool.AnalyzePlain("Oder Zahnärzten.")
-	injectLemma(s1b, "Zahn-Ärzte", "Zahnarzt")
-	injectLemma(s2b, "Zahnärzten", "Zahnarzt")
-	ms = rule.MatchList([]*languagetool.AnalyzedSentence{s1b, s2b})
-	require.Equal(t, 1, len(ms))
-	require.Equal(t, 22, ms[0].GetFromPos())
-	require.Equal(t, 32, ms[0].GetToPos())
-	require.Empty(t, ms[0].GetSuggestedReplacements())
-
-	// Jugendfoto / Jugendfotos okay with shared lemma
-	j1 := languagetool.AnalyzePlain("Ein Jugendfoto.")
-	j2 := languagetool.AnalyzePlain("Der Rahmen eines Jugendfotos.")
-	injectLemma(j1, "Jugendfoto", "Jugendfoto")
-	injectLemma(j2, "Jugendfotos", "Jugendfoto")
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{j1, j2})))
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{j2, j1})))
-
-	// Verbands / Verbandes same hyphenation → okay
-	v1 := languagetool.AnalyzePlain("Der Zahn-Ärzte-Verband.")
-	v2 := languagetool.AnalyzePlain("Des Zahn-Ärzte-Verbands.")
-	injectLemma(v1, "Zahn-Ärzte-Verband", "Zahn-Ärzte-Verband")
-	injectLemma(v2, "Zahn-Ärzte-Verbands", "Zahn-Ärzte-Verband")
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{v1, v2})))
-	v3 := languagetool.AnalyzePlain("Des Zahn-Ärzte-Verbandes.")
-	injectLemma(v3, "Zahn-Ärzte-Verbandes", "Zahn-Ärzte-Verband")
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{v1, v3})))
-
-	assertInflectedError := func(s1, s2 string, from, to int, surface1, surface2, lemma string) {
-		t.Helper()
-		a := languagetool.AnalyzePlain(s1)
-		b := languagetool.AnalyzePlain(s2)
-		injectLemma(a, surface1, lemma)
-		injectLemma(b, surface2, lemma)
-		got := rule.MatchList([]*languagetool.AnalyzedSentence{a, b})
-		require.Equal(t, 1, len(got), "%q | %q", s1, s2)
-		require.Equal(t, from, got[0].GetFromPos(), "from %q | %q", s1, s2)
-		require.Equal(t, to, got[0].GetToPos(), "to %q | %q", s1, s2)
-		require.Empty(t, got[0].GetSuggestedReplacements(), "sugg %q | %q", s1, s2)
-	}
-
-	// Java genitive inconsistency (lemma unifies norm key; surface strip differs → no sugg)
-	assertInflectedError("Der Zahn-Ärzte-Verband.", "Des Zahn-Ärzteverbandes.", 27, 46,
-		"Zahn-Ärzte-Verband", "Zahn-Ärzteverbandes", "Zahnärzteverband")
-	assertInflectedError("Der Zahn-Ärzte-Verband.", "Des Zahnärzte-Verbandes.", 27, 46,
-		"Zahn-Ärzte-Verband", "Zahnärzte-Verbandes", "Zahnärzteverband")
-	assertInflectedError("Der Zahn-Ärzte-Verband.", "Des Zahnärzteverbandes.", 27, 45,
-		"Zahn-Ärzte-Verband", "Zahnärzteverbandes", "Zahnärzteverband")
+	require.NotEmpty(t, rule.GetCorrectExamples())
+	require.Contains(t, rule.GetIncorrectExamples()[0].GetExample(), "Help-Desks")
+	require.Contains(t, rule.GetCorrectExamples()[0].GetExample(), "Helpdesks")
 }
 
 func TestCompoundCoherencyRule_NumericBreak(t *testing.T) {
-	// Java: isNumeric(normToken) breaks the token loop for that sentence
+	// Java: StringUtils.isNumeric(normToken) → break token loop (avoid "2-3" vs "23")
 	rule := NewCompoundCoherencyRule(nil)
 	ms := rule.MatchList([]*languagetool.AnalyzedSentence{
 		languagetool.AnalyzePlain("Von 2-3."),
 		languagetool.AnalyzePlain("Bis 23."),
 	})
 	require.Equal(t, 0, len(ms))
+}
+
+func TestCompoundCoherencyRule_GetLemmaHyphenReconstruct(t *testing.T) {
+	// Java getLemma: lemma "Jugendfoto" for surface "Jugend-Fotos" → "Jugend-Foto"
+	lemma := "Jugendfoto"
+	surface := "Jugend-Fotos"
+	pos := "SUB:NOM:SIN:NEU"
+	atr := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken(surface, &pos, &lemma),
+	}, 0)
+	require.Equal(t, "Jugend-Foto", compoundCoherencyLemma(atr))
+
+	// Multi-hyphen reconstruct (Zahnarzt + Zahn-Ärzte → Zahn-Arzt)
+	lemma2 := "Zahnarzt"
+	surface2 := "Zahn-Ärzte"
+	atr2 := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken(surface2, &pos, &lemma2),
+	}, 0)
+	require.Equal(t, "Zahn-Arzt", compoundCoherencyLemma(atr2))
+
+	// No reconstruct when lemma already has hyphen
+	lemma3 := "E-Mail"
+	surface3 := "E-Mails"
+	atr3 := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken(surface3, &pos, &lemma3),
+	}, 0)
+	require.Equal(t, "E-Mail", compoundCoherencyLemma(atr3))
+
+	// hasSameLemmas false / empty → no lemma (caller uses surface token)
+	atr4 := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("x", &pos, nil),
+	}, 0)
+	require.Equal(t, "", compoundCoherencyLemma(atr4))
 }
