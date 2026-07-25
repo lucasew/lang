@@ -4,130 +4,101 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	detag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/de"
 )
 
-// POSType mirrors GermanToken.POSType for helper checks.
-type POSType int
+// POSType is GermanToken.POSType as used by GermanHelper.hasReadingOfType.
+// Values are the Java POSType.toString() strings, shared with tagging/de.
+type POSType = detag.POSType
 
+// POS type constants (GermanToken.POSType). Aliases keep existing rules/de call sites.
 const (
-	POSOther POSType = iota
-	POSNomen
-	POSVerb
-	POSAdjective
-	POSDeterminer
-	POSPronoun
-	POSPartizip
-	POSProperNoun
-	// Remaining constants kept for callers that may reference them; not set by
-	// AnalyzedGermanToken parsing (Java leaves type null for ADV/KON/…).
-	POSParticle
-	POSAdverb
-	POSConjunction
-	POSNumeral
-	POSInterjection
-	POSPreposition
+	POSNomen      = detag.POSNomen
+	POSVerb       = detag.POSVerb
+	POSAdjective  = detag.POSAdjektiv // Java ADJEKTIV
+	POSAdjektiv   = detag.POSAdjektiv
+	POSDeterminer = detag.POSDeterminer
+	POSPronoun    = detag.POSPronomen // Java PRONOMEN
+	POSPronomen   = detag.POSPronomen
+	POSPartizip   = detag.POSPartizip
+	POSProperNoun = detag.POSProperNoun
+	POSOther      = detag.POSOther
 )
 
-// GermanHelper ports org.languagetool.rules.de.GermanHelper POS-tag utilities.
-func GetNounCase(posTag string) string   { return getIndexOrEmpty(posTag, 1) }
-func GetNounNumber(posTag string) string { return getIndexOrEmpty(posTag, 2) }
-func GetNounGender(posTag string) string { return getIndexOrEmpty(posTag, 3) }
+// GetNounCase ports GermanHelper.getNounCase (index 1 of SUB:CASE:NUM:GENDER…).
+func GetNounCase(posTag string) string { return getIndexOrEmptyString(posTag, 1) }
 
-func GetDeterminerDefiniteness(posTag string) string { return getIndexOrEmpty(posTag, 1) }
-func GetDeterminerCase(posTag string) string         { return getIndexOrEmpty(posTag, 2) }
-func GetDeterminerNumber(posTag string) string       { return getIndexOrEmpty(posTag, 3) }
-func GetDeterminerGender(posTag string) string       { return getIndexOrEmpty(posTag, 4) }
+// GetNounNumber ports GermanHelper.getNounNumber.
+func GetNounNumber(posTag string) string { return getIndexOrEmptyString(posTag, 2) }
 
-// GetComparison returns GRU, KOM, or SUP (or empty).
+// GetNounGender ports GermanHelper.getNounGender.
+func GetNounGender(posTag string) string { return getIndexOrEmptyString(posTag, 3) }
+
+// GetDeterminerDefiniteness ports GermanHelper.getDeterminerDefiniteness.
+func GetDeterminerDefiniteness(posTag string) string { return getIndexOrEmptyString(posTag, 1) }
+
+// GetDeterminerCase ports GermanHelper.getDeterminerCase.
+func GetDeterminerCase(posTag string) string { return getIndexOrEmptyString(posTag, 2) }
+
+// GetDeterminerNumber ports GermanHelper.getDeterminerNumber.
+func GetDeterminerNumber(posTag string) string { return getIndexOrEmptyString(posTag, 3) }
+
+// GetDeterminerGender ports GermanHelper.getDeterminerGender.
+func GetDeterminerGender(posTag string) string { return getIndexOrEmptyString(posTag, 4) }
+
+// GetComparison ports GermanHelper.getComparison — GRU, KOM, or SUP (index 4, else 2 for PA2:PRD:GRU…).
 func GetComparison(posTag string) string {
-	cmp := getIndexOrEmpty(posTag, 4)
+	// input e.g. ADJ:AKK:PLU:MAS:KOM:SOL
+	cmp := getIndexOrEmptyString(posTag, 4)
 	if cmp != "GRU" && cmp != "KOM" && cmp != "SUP" {
-		cmp = getIndexOrEmpty(posTag, 2)
+		// for cases like "PA2:PRD:GRU:VER"
+		cmp = getIndexOrEmptyString(posTag, 2)
 	}
 	return cmp
 }
 
-func getIndexOrEmpty(posTag string, idx int) string {
+// getIndexOrEmptyString ports GermanHelper.getIndexOrEmptyString.
+// Java: null → ""; else posTag.split(":") and return array[idx] if length > idx else "".
+// Go has no string null; empty string covers the null case.
+func getIndexOrEmptyString(posTag string, idx int) string {
 	if posTag == "" {
 		return ""
 	}
-	parts := strings.Split(posTag, ":")
-	if len(parts) > idx {
-		return parts[idx]
+	array := strings.Split(posTag, ":")
+	if len(array) > idx {
+		return array[idx]
 	}
 	return ""
 }
 
-// HasReadingOfType ports GermanHelper.hasReadingOfType via AnalyzedGermanToken.getType().
-func HasReadingOfType(readings *languagetool.AnalyzedTokenReadings, typ POSType) bool {
-	if readings == nil {
+// HasReadingOfType ports GermanHelper.hasReadingOfType.
+// Java: early false on SENTENCE_END / PARAGRAPH_END; else new AnalyzedGermanToken(token).getType() == type.
+func HasReadingOfType(tokenReadings *languagetool.AnalyzedTokenReadings, typ POSType) bool {
+	if tokenReadings == nil {
 		return false
 	}
-	for _, tok := range readings.GetReadings() {
-		if tok == nil {
+	for _, token := range tokenReadings.GetReadings() {
+		if token == nil {
 			continue
 		}
-		pt := tok.GetPOSTag()
-		if pt != nil &&
-			(*pt == languagetool.SentenceEndTagName || *pt == languagetool.ParagraphEndTagName) {
+		posTag := token.GetPOSTag()
+		if posTag != nil &&
+			(*posTag == languagetool.SentenceEndTagName ||
+				*posTag == languagetool.ParagraphEndTagName) {
 			return false
 		}
-		if posTypeFromAnalyzedGermanToken(pt) == typ {
+		// Java: AnalyzedGermanToken germanToken = new AnalyzedGermanToken(token);
+		//       if (germanToken.getType() == type) return true;
+		// Single type-resolution path: tagging/de.ParseGermanPOS (AnalyzedGermanToken ctor twin).
+		var tag string
+		if posTag != nil {
+			tag = *posTag
+		}
+		germanToken := detag.ParseGermanPOS(tag)
+		// Java getType() null never equals a non-null POSType; empty Type is the Go twin of null.
+		if germanToken.Type == typ {
 			return true
 		}
 	}
 	return false
-}
-
-// posTypeFromAnalyzedGermanToken ports AnalyzedGermanToken constructor type resolution.
-// Java: only tags with ≥3 colon parts get a type; EIG/SUB/PA/VER/ADJ/PRO/ART map as below.
-func posTypeFromAnalyzedGermanToken(posTag *string) POSType {
-	if posTag == nil || *posTag == "" {
-		return POSOther
-	}
-	parts := strings.Split(*posTag, ":")
-	if len(parts) < 3 {
-		return POSOther
-	}
-	// Java AnalyzedGermanToken: tempType starts null; PA1/PA2 always assign; others only if null.
-	var temp *POSType
-	for _, part := range parts {
-		switch part {
-		case "EIG":
-			t := POSProperNoun
-			temp = &t
-		case "SUB":
-			if temp == nil {
-				t := POSNomen
-				temp = &t
-			}
-		case "PA1", "PA2":
-			t := POSPartizip
-			temp = &t
-		case "VER":
-			if temp == nil {
-				t := POSVerb
-				temp = &t
-			}
-		case "ADJ":
-			if temp == nil {
-				t := POSAdjective
-				temp = &t
-			}
-		case "PRO":
-			if temp == nil {
-				t := POSPronoun
-				temp = &t
-			}
-		case "ART":
-			if temp == nil {
-				t := POSDeterminer
-				temp = &t
-			}
-		}
-	}
-	if temp == nil {
-		return POSOther
-	}
-	return *temp
 }
