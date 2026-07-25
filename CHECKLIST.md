@@ -1020,7 +1020,7 @@
 - [x] org/languagetool/rules/de/UnitConversionRule.java::UnitConversionRule
 - [x] org/languagetool/rules/de/UnnecessaryPhraseRule.java::UnnecessaryPhraseRule
 - [x] org/languagetool/rules/de/UpperCaseNgramRule.java::UpperCaseNgramRule
-- [ ] org/languagetool/rules/de/UppercaseNounReadingFilter.java::UppercaseNounReadingFilter
+- [x] org/languagetool/rules/de/UppercaseNounReadingFilter.java::UppercaseNounReadingFilter
 - [x] org/languagetool/rules/de/ValidWordFilter.java::ValidWordFilter
 - [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule
 - [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule.BooleanAndFiniteVerb
