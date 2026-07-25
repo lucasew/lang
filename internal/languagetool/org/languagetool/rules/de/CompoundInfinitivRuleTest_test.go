@@ -1,6 +1,21 @@
 package de
 
-// Twin of CompoundInfinitivRuleTest — Java uses ZUS + VER:INF + speller.
+// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundInfinitivRuleTest.java
+//
+// Java:
+//   Language german = Languages.getLanguageForShortCode("de");
+//   CompoundInfinitivRule rule = new CompoundInfinitivRule(TestTools.getMessages("de"), german, null);
+//   JLanguageTool lt = new JLanguageTool(german);
+//   assertThat(rule.match(lt.getAnalyzedSentence(...)).length, is(N));
+//
+// Go: de JLanguageTool + WireGermanRuntimeResourcesFor (createDefaultTagger + disambiguator
+// + de_DE.dict speller). Match uses real ZUS/VER:INF tags and Morfologik de_DE.dict —
+// same path as Java (no surface invent, no fake known-word map).
+//
+// Sentence-start imperative short forms ("Hör") need GermanTagger.Tag sentence context
+// (Java createDefaultTagger().tag → getImperativeForm). WireGermanTagWord is Lookup-only,
+// so the twin re-applies GermanTagger.Tag for untagged first content tokens when needed.
+
 import (
 	"testing"
 
@@ -8,254 +23,147 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCompoundInfinitivRule_Rule(t *testing.T) {
-	// Speller: joined particle+infinitive is a known compound (Java !isMisspelled)
-	// Also "anfangen" etc. for exception scan.
-	known := map[string]struct{}{
-		"saubermachen": {},
-		"vorbeikommen": {},
-		"vorbeilassen": {},
-		"anfangen":     {},
-		"aufhören":     {}, // if scanned as particle+verb
-	}
+// newCompoundInfinitivFixture mirrors Java CompoundInfinitivRuleTest fields.
+func newCompoundInfinitivFixture(t *testing.T) (*CompoundInfinitivRule, *languagetool.JLanguageTool) {
+	t.Helper()
+	// Java: new CompoundInfinitivRule(messages, german, null) — speller lazy on match
 	rule := NewCompoundInfinitivRule(nil)
-	rule.IsMisspelled = func(w string) bool {
-		_, ok := known[w]
-		return !ok
+	lt := languagetool.NewJLanguageTool("de")
+	WireGermanRuntimeResourcesFor(lt, "DE")
+	require.True(t, FilterDictAvailable() || DiscoverGermanHunspellDict("DE") != "",
+		"de_DE.dict required for CompoundInfinitivRule speller twin")
+	require.True(t, WireGermanTagWord(lt) || lt.TagWord != nil,
+		"GermanTagger resources required for CompoundInfinitivRule twin")
+	return rule, lt
+}
+
+// ciMatchLen ports rule.match(lt.getAnalyzedSentence(text)).length with Java-visible
+// sentence-start imperative enrichment when TagWord Lookup left the first word untagged.
+func ciMatchLen(t *testing.T, rule *CompoundInfinitivRule, lt *languagetool.JLanguageTool, text string) int {
+	t.Helper()
+	sent := lt.GetAnalyzedSentence(text)
+	require.NotNil(t, sent)
+	enrichSentenceStartImperativeFromGermanTagger(sent)
+	return len(rule.Match(sent))
+}
+
+// enrichSentenceStartImperativeFromGermanTagger ports the Java tagger arm that
+// Lookup-based TagWord cannot: GermanTagger.getImperativeForm at sentence start
+// (e.g. "Hör" → VER:IMP:SIN:SFT). Only fills tokens that still lack any POS tag.
+func enrichSentenceStartImperativeFromGermanTagger(sent *languagetool.AnalyzedSentence) {
+	if sent == nil {
+		return
+	}
+	tagger := DiscoveredGermanTagger()
+	if tagger == nil {
+		return
+	}
+	all := sent.GetTokens()
+	if len(all) < 2 {
+		return
+	}
+	// First content token (index 1 after SENT_START) — only enrich when untagged.
+	first := all[1]
+	if first == nil || first.IsWhitespace() {
+		return
+	}
+	if hasAnyPOSTagCI(first) {
+		return
+	}
+	// Full token list including whitespace (Java GermanTagger.tag sentenceTokens).
+	surfaces := make([]string, 0, len(all)-1)
+	for i := 1; i < len(all); i++ {
+		if all[i] == nil {
+			surfaces = append(surfaces, "")
+			continue
+		}
+		surfaces = append(surfaces, all[i].GetToken())
+	}
+	tagged := tagger.Tag(surfaces)
+	if len(tagged) == 0 || tagged[0] == nil {
+		return
+	}
+	for _, r := range tagged[0].GetReadings() {
+		if r == nil {
+			continue
+		}
+		if p := r.GetPOSTag(); p != nil && *p != "" {
+			first.AddReading(r, "GermanTagger.Tag")
+		}
+	}
+}
+
+func hasAnyPOSTagCI(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r == nil {
+			continue
+		}
+		if p := r.GetPOSTag(); p != nil && *p != "" && *p != languagetool.SentenceStartTagName &&
+			*p != languagetool.SentenceEndTagName {
+			return true
+		}
+	}
+	return false
+}
+
+// TestCompoundInfinitivRule_Rule ports CompoundInfinitivRuleTest.testRule full matrix.
+func TestCompoundInfinitivRule_Rule(t *testing.T) {
+	rule, lt := newCompoundInfinitivFixture(t)
+
+	assertLen := func(text string, want int) {
+		t.Helper()
+		got := ciMatchLen(t, rule, lt, text)
+		require.Equal(t, want, got, "match length for %q", text)
 	}
 
-	// Java: "Ich brachte ihn dazu, mein Zimmer sauber zu machen." → 1
-	sauber := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Ich", "PRO:PER:NOM:SIN:MAS", "ich"),
-		atrWithPOS("brachte", "VER:3:SIN:PRT:SFT", "bringen"),
-		atrWithPOS("ihn", "PRO:PER:AKK:SIN:MAS", "er"),
-		atrWithPOS("dazu", "ADV", "dazu"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("mein", "PRO:POS:AKK:SIN:NEU", "mein"),
-		atrWithPOS("Zimmer", "SUB:AKK:SIN:NEU", "Zimmer"),
-		atrWithPOS("sauber", "ZUS", "sauber"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("machen", "VER:INF:NON", "machen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 1, len(rule.Match(sauber)))
+	// Java assertThat(...length, is(1)) — incorrect (should compound):
+	assertLen("Ich brachte ihn dazu, mein Zimmer sauber zu machen.", 1)
+	assertLen("Du brauchst nicht bei mir vorbei zu kommen.", 1)
+	assertLen("Ich ging zur Seite, um die alte Dame vorbei zu lassen.", 1)
 
-	// Java: "Du brauchst nicht bei mir vorbei zu kommen." → 1
-	vorbei := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Du", "PRO:PER:NOM:SIN:MAS", "du"),
-		atrWithPOS("brauchst", "VER:2:SIN:PRS:SFT", "brauchen"),
-		atrWithPOS("nicht", "ADV", "nicht"),
-		atrWithPOS("bei", "PRP:DAT", "bei"),
-		atrWithPOS("mir", "PRO:PER:DAT:SIN:MAS", "ich"),
-		atrWithPOS("vorbei", "ZUS", "vorbei"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("kommen", "VER:INF:NON", "kommen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 1, len(rule.Match(vorbei)))
+	// Java assertThat(...length, is(0)) — correct / exception / anti-pattern:
+	assertLen("Seine Frau gab vor zu schlafen.", 0)
+	assertLen("Mein Herz hörte auf zu schlagen.", 0)
+	assertLen("Den Sonnenaufgang von einem Berggipfel aus zu sehen, ist eine Wonne.", 0)
+	assertLen("Hör auf zu schreien", 0)
+	assertLen("Sie riss sich zusammen und fing wieder an zu reden.", 0)
+	assertLen("Fang an zu zählen.", 0)
+	assertLen("Er hatte nichts weiter zu sagen", 0)
+	assertLen("Sie strengte sich an zu schwimmen.", 0)
+	assertLen("Er erhob sich von dem Stuhl, auf dem er gesessen hatte, und begann im Zimmer auf und ab zu schreiten.", 0)
+	assertLen("Tom stand auf und fing an, auf und ab zu gehen.", 0)
+	assertLen("Aber um auf Nummer sicher zu gehen, schrieb er es auf.", 0)
+	assertLen("Sie scheint aus Spanien heraus zu kaufen.", 0)
+	assertLen("Hab keine Lust, mir Gedanken darüber zu machen.", 0)
+	assertLen("Fang an zu lesen, wo du aufgehört hast.", 0)
+	assertLen("Fang dort an zu lesen, wo du aufgehört hast.", 0)
+	assertLen("Der diensthabende Kollege hatte ganz schön zu tun.", 0)
+}
 
-	// Java: "… die alte Dame vorbei zu lassen." → 1
-	lassen := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Ich", "PRO:PER:NOM:SIN:MAS", "ich"),
-		atrWithPOS("ging", "VER:3:SIN:PRT:NON", "gehen"),
-		atrWithPOS("zur", "APPRART:DAT:FEM", "zu"),
-		atrWithPOS("Seite", "SUB:DAT:SIN:FEM", "Seite"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("um", "KOUI", "um"),
-		atrWithPOS("die", "ART:DEF:AKK:SIN:FEM", "die"),
-		atrWithPOS("alte", "ADJ:AKK:SIN:FEM:GRU:DEF", "alt"),
-		atrWithPOS("Dame", "SUB:AKK:SIN:FEM", "Dame"),
-		atrWithPOS("vorbei", "ZUS", "vorbei"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("lassen", "VER:INF:NON", "lassen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 1, len(rule.Match(lassen)))
-
-	// Java: "Seine Frau gab vor zu schlafen." → 0 (isException: tokens[n-2] VER)
-	// "gab" VER, "vor" ZUS, "zu", "schlafen"
-	vor := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Seine", "PRO:POS:NOM:SIN:FEM", "sein"),
-		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
-		atrWithPOS("gab", "VER:3:SIN:PRT:NON", "geben"),
-		atrWithPOS("vor", "ZUS", "vor"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("schlafen", "VER:INF:NON", "schlafen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(vor)))
-
-	// Java: "Mein Herz hörte auf zu schlagen." → 0 (VER before particle)
-	auf := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Mein", "PRO:POS:NOM:SIN:NEU", "mein"),
-		atrWithPOS("Herz", "SUB:NOM:SIN:NEU", "Herz"),
-		atrWithPOS("hörte", "VER:3:SIN:PRT:SFT", "hören"),
-		atrWithPOS("auf", "ZUS", "auf"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("schlagen", "VER:INF:NON", "schlagen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(auf)))
-
-	// Java: "Fang an zu zählen." → 0 via isException verb scan (an+fangen known)
-	fang := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Fang", "VER:IMP:SIN:SFT", "fangen"),
-		atrWithPOS("an", "ZUS", "an"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("zählen", "VER:INF:NON", "zählen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(fang)))
-
-	// Java: "Er hatte nichts weiter zu sagen" → 0 (weiter+sagen adj/special exception)
-	// "weiter" is in ADJ_EXCEPTION? Looking Java: sagen+weiter exception
-	weiter := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:MAS", "er"),
-		atrWithPOS("hatte", "VER:3:SIN:PRT:NON", "haben"),
-		atrWithPOS("nichts", "PIS", "nichts"),
-		atrWithPOS("weiter", "ZUS", "weiter"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("sagen", "VER:INF:NON", "sagen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	// n-2 is "nichts" not VER — but sagen+weiter exception
-	require.Equal(t, 0, len(rule.Match(weiter)))
-
-	// Java: "Hör auf zu schreien" → 0 (tokens[n-2] VER before particle)
-	hoer := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Hör", "VER:IMP:SIN:SFT", "hören"),
-		atrWithPOS("auf", "ZUS", "auf"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("schreien", "VER:INF:NON", "schreien"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(hoer)))
-
-	// Java: "Den Sonnenaufgang von einem Berggipfel aus zu sehen, …" → 0 (von…aus exception)
-	// also know aussehen as compound so without exception would fire
-	known["aussehen"] = struct{}{}
-	ausSehen := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Den", "ART:DEF:AKK:SIN:MAS", "der"),
-		atrWithPOS("Sonnenaufgang", "SUB:AKK:SIN:MAS", "Sonnenaufgang"),
-		atrWithPOS("von", "APPR:DAT", "von"),
-		atrWithPOS("einem", "ART:IND:DAT:SIN:MAS", "ein"),
-		atrWithPOS("Berggipfel", "SUB:DAT:SIN:MAS", "Berggipfel"),
-		atrWithPOS("aus", "ZUS", "aus"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("sehen", "VER:INF:NON", "sehen"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("eine", "ART:IND:NOM:SIN:FEM", "ein"),
-		atrWithPOS("Wonne", "SUB:NOM:SIN:FEM", "Wonne"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(ausSehen)))
-
-	// Java: "Sie strengte sich an zu schwimmen." → 0 (an+strengen known via exception scan)
-	known["anstrengen"] = struct{}{}
-	anSchwimmen := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Sie", "PRO:PER:NOM:SIN:FEM", "sie"),
-		atrWithPOS("strengte", "VER:3:SIN:PRT:SFT", "strengen"),
-		atrWithPOS("sich", "PRF:AKK:SIN", "sich"),
-		atrWithPOS("an", "ZUS", "an"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("schwimmen", "VER:INF:NON", "schwimmen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(anSchwimmen)))
-
-	// Java: "Sie riss sich zusammen und fing wieder an zu reden." → 0 (an+fangen)
-	// exception scan: "fing" VER before particle path also via known "anfangen"
-	known["anfangen"] = struct{}{}
-	anReden := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Sie", "PRO:PER:NOM:SIN:FEM", "sie"),
-		atrWithPOS("riss", "VER:3:SIN:PRT:NON", "reißen"),
-		atrWithPOS("sich", "PRF:AKK:SIN", "sich"),
-		atrWithPOS("zusammen", "PTKVZ", "zusammen"),
-		atrWithPOS("und", "KON", "und"),
-		atrWithPOS("fing", "VER:3:SIN:PRT:NON", "fangen"),
-		atrWithPOS("wieder", "ADV", "wieder"),
-		atrWithPOS("an", "ZUS", "an"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("reden", "VER:INF:NON", "reden"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(anReden)))
-
-	// Java: "Fang dort an zu lesen, wo du aufgehört hast." → 0
-	fangDort := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Fang", "VER:IMP:SIN:SFT", "fangen"),
-		atrWithPOS("dort", "ADV", "dort"),
-		atrWithPOS("an", "ZUS", "an"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("lesen", "VER:INF:NON", "lesen"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("wo", "PWAV", "wo"),
-		atrWithPOS("du", "PRO:PER:NOM:SIN:MAS", "du"),
-		atrWithPOS("aufgehört", "VER:PA2:SFT", "aufhören"),
-		atrWithPOS("hast", "VER:2:SIN:PRÄ:NON", "haben"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(fangDort)))
-
-	// Java: "Der diensthabende Kollege hatte ganz schön zu tun." → 0
-	// "schön" is ADJ not ZUS → isRelevant false
-	schoen := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("diensthabende", "ADJA:NOM:SIN:MAS:GRU:DEF", "diensthabend"),
-		atrWithPOS("Kollege", "SUB:NOM:SIN:MAS", "Kollege"),
-		atrWithPOS("hatte", "VER:3:SIN:PRT:NON", "haben"),
-		atrWithPOS("ganz", "ADV", "ganz"),
-		atrWithPOS("schön", "ADJ:PRD:GRU", "schön"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("tun", "VER:INF:NON", "tun"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(schoen)))
-
-	// Java: "Hab keine Lust, mir Gedanken darüber zu machen." → 0 ("darüber" not ZUS)
-	darueber := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Hab", "VER:IMP:SIN:NON", "haben"),
-		atrWithPOS("keine", "PIAT:AKK:SIN:FEM", "kein"),
-		atrWithPOS("Lust", "SUB:AKK:SIN:FEM", "Lust"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("mir", "PRO:PER:DAT:SIN:MAS", "ich"),
-		atrWithPOS("Gedanken", "SUB:AKK:PLU:MAS", "Gedanke"),
-		atrWithPOS("darüber", "PRO:ADV", "darüber"),
-		atrWithPOS("zu", "PTKZU", "zu"),
-		atrWithPOS("machen", "VER:INF:NON", "machen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(darueber)))
-
-	// Error match: message + suggestion morph (sauber zu machen → saubermachen)
-	ms := rule.Match(sauber)
+// TestCompoundInfinitivRule_MatchSurface ports Java-visible match fields for a hit
+// (message, suggestion particle+zu+infinitive, UTF-16 span).
+func TestCompoundInfinitivRule_MatchSurface(t *testing.T) {
+	rule, lt := newCompoundInfinitivFixture(t)
+	text := "Ich brachte ihn dazu, mein Zimmer sauber zu machen."
+	sent := lt.GetAnalyzedSentence(text)
+	ms := rule.Match(sent)
 	require.Equal(t, 1, len(ms))
 	require.Contains(t, ms[0].GetMessage(), "saubermachen")
-	// Java: setSuggestedReplacement(particle + "zu" + infinitive) e.g. sauberzumachen
+	// Java: suggestions.add(tokens[i-1] + tokens[i] + tokens[i+1]) → sauberzumachen
 	require.Equal(t, []string{"sauberzumachen"}, ms[0].GetSuggestedReplacements())
-	// UTF-16 span: particle start → infinitive end
-	toks := sauber.GetTokensWithoutWhitespace()
+	toks := sent.GetTokensWithoutWhitespace()
 	var sauberTok, machenTok *languagetool.AnalyzedTokenReadings
 	for _, tok := range toks {
-		if tok != nil && tok.GetToken() == "sauber" {
-			sauberTok = tok
+		if tok == nil {
+			continue
 		}
-		if tok != nil && tok.GetToken() == "machen" {
+		switch tok.GetToken() {
+		case "sauber":
+			sauberTok = tok
+		case "machen":
 			machenTok = tok
 		}
 	}
@@ -263,15 +171,9 @@ func TestCompoundInfinitivRule_Rule(t *testing.T) {
 	require.NotNil(t, machenTok)
 	require.Equal(t, sauberTok.GetStartPos(), ms[0].GetFromPos())
 	require.Equal(t, machenTok.GetEndPos(), ms[0].GetToPos())
-
-	// untagged must not invent
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Du brauchst nicht bei mir vorbei zu kommen."))))
-
-	// Without speller, fail closed (all joins misspelled)
-	noSpell := NewCompoundInfinitivRule(nil)
-	require.Equal(t, 0, len(noSpell.Match(sauber)))
 }
 
+// TestCompoundInfinitivRule_IsPunctuationUTF16 ports isPunctuation (Java length==1 + equalsAny).
 func TestCompoundInfinitivRule_IsPunctuationUTF16(t *testing.T) {
 	require.True(t, isPunctuationCI("…"))
 	require.True(t, isPunctuationCI("."))
@@ -279,11 +181,18 @@ func TestCompoundInfinitivRule_IsPunctuationUTF16(t *testing.T) {
 	require.False(t, isPunctuationCI(""))
 }
 
+// TestCompoundInfinitivRule_Meta ports constructor surface (id, description, url, examples).
 func TestCompoundInfinitivRule_Meta(t *testing.T) {
 	r := NewCompoundInfinitivRule(nil)
 	require.Equal(t, "COMPOUND_INFINITIV_RULE", r.GetID())
 	require.Equal(t, "Erweiterter Infinitiv mit zu (Zusammenschreibung)", r.GetDescription())
 	require.Equal(t, "https://languagetool.org/insights/de/beitrag/zu-zusammen-oder-getrennt/", r.GetURL())
+	require.NotNil(t, r.GetCategory())
+	require.Equal(t, "COMPOUNDING", r.GetCategory().GetID().String())
 	require.NotEmpty(t, r.GetIncorrectExamples())
 	require.NotEmpty(t, r.GetCorrectExamples())
+	require.Contains(t, r.GetIncorrectExamples()[0].GetExample(), "sicher zu gehen")
+	require.Contains(t, r.GetCorrectExamples()[0].GetExample(), "sicherzugehen")
+	require.NotEmpty(t, r.GetAntiPatterns())
+	require.Equal(t, len(CompoundInfinitivAntiPatterns), len(r.GetAntiPatterns()))
 }

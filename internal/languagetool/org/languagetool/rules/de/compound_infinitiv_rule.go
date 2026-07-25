@@ -13,21 +13,43 @@ import (
 // CompoundInfinitivRule ports org.languagetool.rules.de.CompoundInfinitivRule.
 // Java: ZUS + "zu" + VER:INF and !isMisspelled(particle+infinitive) — no surface invent.
 // Java: COMPOUNDING, Misspelling, setUrl.
+//
+// Java constructor (messages, Language lang, UserConfig userConfig):
+//   - linguServices from userConfig when non-null; else null
+//   - speller lazy-init in match() via MorfologikSpeller("/de/hunspell/de_DE.dict")
+//
+// Go maps linguServices + Speller to IsMisspelled / FilterDict (same de_DE.dict).
 type CompoundInfinitivRule struct {
-	Messages     map[string]string
-	Category     *rules.Category
-	IssueType    rules.ITSIssueType
-	IsMisspelled func(word string) bool // optional; nil → fail-closed misspelled (no false compounds)
+	Messages  map[string]string
+	Category  *rules.Category
+	IssueType rules.ITSIssueType
+	// LangCode ports Java Language lang (used only with LinguServices in Java).
+	LangCode string
+	// IsMisspelled ports Java isMisspelled after lowercaseFirstChar.
+	// nil → ensureSpeller then FilterDict (Java Speller path); no dict → fail-closed.
+	IsMisspelled func(word string) bool
 	// incorrectExamples / correctExamples port Rule.addExamplePair.
 	incorrectExamples []rules.IncorrectExample
 	correctExamples   []rules.CorrectExample
 }
 
+// NewCompoundInfinitivRule ports CompoundInfinitivRule(messages, lang, null):
+// linguServices null; speller is lazy-initialized on Match (ensureSpeller).
 func NewCompoundInfinitivRule(messages map[string]string) *CompoundInfinitivRule {
+	return NewCompoundInfinitivRuleFor(messages, "de")
+}
+
+// NewCompoundInfinitivRuleFor ports CompoundInfinitivRule(messages, lang, null)
+// with an explicit language short code (Java Languages.getLanguageForShortCode).
+func NewCompoundInfinitivRuleFor(messages map[string]string, langCode string) *CompoundInfinitivRule {
+	if langCode == "" {
+		langCode = "de"
+	}
 	r := &CompoundInfinitivRule{
 		Messages:  messages,
 		Category:  rules.CatCompounding.GetCategory(messages),
 		IssueType: rules.ITSMisspelling,
+		LangCode:  langCode,
 	}
 	// Java: sicher zu gehen → sicherzugehen
 	r.AddExamplePair(
@@ -147,8 +169,28 @@ func (r *CompoundInfinitivRule) getSentenceWithImmunization(sentence *languageto
 	return immunized
 }
 
+// ensureSpeller ports CompoundInfinitivRule.match lazy Speller init:
+//
+//	if (linguServices == null && speller == null) {
+//	  speller = new Speller(MorfologikSpeller.getDictionaryWithCaching("/de/hunspell/de_DE.dict"));
+//	}
+//
+// Go: wire process-wide de_DE.dict into FilterDict when not yet available.
+func (r *CompoundInfinitivRule) ensureSpeller() {
+	if r != nil && r.IsMisspelled != nil {
+		return
+	}
+	if FilterDictAvailable() {
+		return
+	}
+	if p := DiscoverGermanHunspellDict("DE"); p != "" {
+		_ = WireGermanFilterSpeller(p)
+	}
+}
+
 func (r *CompoundInfinitivRule) isMisspelled(word string) bool {
-	// Java lowercaseFirstChar then speller; requires speller (IllegalStateException if null).
+	// Java: word = StringTools.lowercaseFirstChar(word); then Speller / LinguServices.
+	// Requires speller after lazy init (IllegalStateException if still null).
 	w := tools.LowercaseFirstChar(word)
 	if r != nil && r.IsMisspelled != nil {
 		return r.IsMisspelled(w)
@@ -255,10 +297,17 @@ func (r *CompoundInfinitivRule) isException(tokens []*languagetool.AnalyzedToken
 	return false
 }
 
+// GetAntiPatterns ports CompoundInfinitivRule.getAntiPatterns (cached ANTI_PATTERNS).
+func (r *CompoundInfinitivRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return compoundInfAntiPatternRules()
+}
+
 func (r *CompoundInfinitivRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	if sentence == nil {
 		return nil
 	}
+	// Java match(): lazy-init Speller from /de/hunspell/de_DE.dict when linguServices null.
+	r.ensureSpeller()
 	imm := r.getSentenceWithImmunization(sentence)
 	tokens := imm.GetTokensWithoutWhitespace()
 	var ruleMatches []*rules.RuleMatch
@@ -281,16 +330,21 @@ func (r *CompoundInfinitivRule) Match(sentence *languagetool.AnalyzedSentence) [
 		msg := "Wenn der erweiterte Infinitiv von dem Verb '" + joined +
 			"' abgeleitet ist, sollte er zusammengeschrieben werden."
 		rm := rules.NewRuleMatch(r, sentence, tokens[i-1].GetStartPos(), tokens[i+1].GetEndPos(), msg)
-		rm.SetSuggestedReplacement(tokens[i-1].GetToken() + tokens[i].GetToken() + tokens[i+1].GetToken())
+		// Java: suggestions.add(particle + "zu" + infinitive)
+		rm.SetSuggestedReplacements([]string{
+			tokens[i-1].GetToken() + tokens[i].GetToken() + tokens[i+1].GetToken(),
+		})
 		ruleMatches = append(ruleMatches, rm)
 	}
 	return ruleMatches
 }
 
-// WireCompoundInfinitivRule attaches FilterDictIsMisspelled (Java Morfologik/LinguServices).
+// WireCompoundInfinitivRule attaches FilterDictIsMisspelled (Java Morfologik Speller /
+// LinguServices). Also ensures de_DE.dict is discovered like match() lazy init.
 // Without a wired dict, joins are treated as misspelled (no false compound hits).
 func WireCompoundInfinitivRule(messages map[string]string) *CompoundInfinitivRule {
 	r := NewCompoundInfinitivRule(messages)
+	r.ensureSpeller()
 	r.IsMisspelled = func(w string) bool {
 		if !FilterDictAvailable() {
 			return true
