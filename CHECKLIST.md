@@ -255,7 +255,7 @@
 - [x] org/languagetool/rules/PartialPosTagFilter.java::PartialPosTagFilter
 - [x] org/languagetool/rules/PunctuationMarkAtParagraphEnd.java::PunctuationMarkAtParagraphEnd
 - [x] org/languagetool/rules/PunctuationMarkAtParagraphEnd2.java::PunctuationMarkAtParagraphEnd2
-- [ ] org/languagetool/rules/ReadabilityRule.java::ReadabilityRule
+- [x] org/languagetool/rules/ReadabilityRule.java::ReadabilityRule
 - [ ] org/languagetool/rules/RemoteRule.java::RemoteRule
 - [ ] org/languagetool/rules/RemoteRule.java::RemoteRule.RemoteRequest
 - [x] org/languagetool/rules/RemoteRuleConfig.java::RemoteRuleConfig
