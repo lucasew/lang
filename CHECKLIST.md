@@ -1010,7 +1010,7 @@
 - [x] org/languagetool/rules/de/StyleRepeatedSentenceBeginning.java::StyleRepeatedSentenceBeginning
 - [x] org/languagetool/rules/de/StyleRepeatedVeryShortSentences.java::StyleRepeatedVeryShortSentences
 - [x] org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java::StyleTooOftenUsedAdjectiveRule
-- [ ] org/languagetool/rules/de/StyleTooOftenUsedNounRule.java::StyleTooOftenUsedNounRule
+- [x] org/languagetool/rules/de/StyleTooOftenUsedNounRule.java::StyleTooOftenUsedNounRule
 - [ ] org/languagetool/rules/de/StyleTooOftenUsedVerbRule.java::StyleTooOftenUsedVerbRule
 - [ ] org/languagetool/rules/de/SubjectVerbAgreementRule.java::SubjectVerbAgreementRule
 - [ ] org/languagetool/rules/de/SubjectVerbAgreementRule.java::SubjectVerbAgreementRule.SingularPluralPair
