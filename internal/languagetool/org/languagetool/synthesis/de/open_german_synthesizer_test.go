@@ -13,15 +13,15 @@ func TestOpenGermanSynthesizerFromDir_Missing(t *testing.T) {
 	require.Nil(t, OpenGermanSynthesizerFromDir(t.TempDir()))
 }
 
-func TestStrictCompoundTokenizeFromDir_FailClosedEmpty(t *testing.T) {
-	fn := strictCompoundTokenizeFromDir("")
+func TestStrictCompoundTokenizeGetStrictInstance(t *testing.T) {
+	fn := strictCompoundTokenizeGetStrictInstance()
 	require.NotNil(t, fn)
-	// Only LT extras / exceptions may split; empty lemma → nil
 	require.Nil(t, fn(""))
+	// WLAN-LAN-Kabel stays whole (hyphen path in getCompoundForms); embedded dict only.
+	require.Equal(t, []string{"WLAN-LAN-Kabel"}, fn("WLAN-LAN-Kabel"))
 }
 
 func TestOpenGermanSynthesizerFromDir_WithSynthDict(t *testing.T) {
-	// Discover inspiration resource/de when present; skip if no german_synth.dict
 	const rel = "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de"
 	wd, err := os.Getwd()
 	require.NoError(t, err)
@@ -42,10 +42,12 @@ func TestOpenGermanSynthesizerFromDir_WithSynthDict(t *testing.T) {
 	if root == "" {
 		t.Skip("no DE resource dir")
 	}
-	// often no german_synth.dict in checkout — fail-closed nil is correct
 	gs := OpenGermanSynthesizerFromDir(root)
 	if gs == nil {
 		t.Skip("no german_synth.dict")
 	}
 	require.NotNil(t, gs.StrictCompoundTokenize)
+	require.NotNil(t, gs.Lookup)
+	require.NotEmpty(t, gs.PossibleTags)
+	require.NotNil(t, gs.NumberSpeller)
 }

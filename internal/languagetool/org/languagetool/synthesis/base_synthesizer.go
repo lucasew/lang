@@ -258,17 +258,14 @@ func collectForms(s *BaseSynthesizer, lemma string, tags []string) []string {
 	if s == nil || lemma == "" {
 		return nil
 	}
+	// Java BaseSynthesizer.synthesizeForPosTags: results.addAll(lookup(...)) — keep
+	// duplicates across tags (GermanSynthesizerTest Haus ".*" lists Haus/Häuser repeatedly).
 	var forms []string
-	seen := map[string]struct{}{}
 	for _, tag := range tags {
 		for _, f := range s.lookupForms(lemma, tag) {
 			if s.isRemoved(lemma, tag, f) {
 				continue
 			}
-			if _, ok := seen[f]; ok {
-				continue
-			}
-			seen[f] = struct{}{}
 			forms = append(forms, f)
 		}
 	}

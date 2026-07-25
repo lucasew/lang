@@ -1,7 +1,10 @@
 package de
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
@@ -11,7 +14,44 @@ import (
 const (
 	GermanSynthResource = "/de/german_synth.dict"
 	GermanTagsFile      = "/de/german_tags.txt"
+	// germanResourceRel is the official LT resource/de directory (Java classpath /de/...).
+	germanResourceRel = "inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de"
 )
+
+// INSTANCE ports GermanSynthesizer.INSTANCE (lazy; nil if official german_synth.dict missing).
+var (
+	instanceOnce sync.Once
+	instance     *GermanSynthesizer
+)
+
+// Instance returns GermanSynthesizer.INSTANCE loaded from official LT resources.
+func Instance() *GermanSynthesizer {
+	instanceOnce.Do(func() {
+		if root := findGermanResourceDir(); root != "" {
+			instance = OpenGermanSynthesizerFromDir(root)
+		}
+	})
+	return instance
+}
+
+func findGermanResourceDir() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	for i := 0; i < 14; i++ {
+		cand := filepath.Join(dir, germanResourceRel)
+		if st, err := os.Stat(cand); err == nil && st.IsDir() {
+			return cand
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
 
 // germanSynthRemove ports GermanSynthesizer.REMOVE (bad/old forms still in synth dict).
 var germanSynthRemove = map[string]struct{}{
@@ -80,6 +120,14 @@ func (s *GermanSynthesizer) synthesize(token *languagetool.AnalyzedToken, posTag
 	if err != nil {
 		return nil, err
 	}
+	// Spell-number tags return from BaseSynthesizer.synthesize before lookup, so Java
+	// never applies GermanSynthesizer.lookup case gate — only REMOVE on non-empty.
+	if !posTagRegExp && isSpellNumberTag(posTag) {
+		if len(forms) == 0 {
+			return s.getCompoundForms(token, posTag, false), nil
+		}
+		return filterRemove(forms), nil
+	}
 	// Java lookup case filter (before empty → compound decision).
 	forms = filterCaseMatch(lemmaOf(token), forms)
 	if len(forms) == 0 {
@@ -88,6 +136,12 @@ func (s *GermanSynthesizer) synthesize(token *languagetool.AnalyzedToken, posTag
 	}
 	// Java synthesize: filter REMOVE only when super result non-empty.
 	return filterRemove(forms), nil
+}
+
+func isSpellNumberTag(posTag string) bool {
+	return posTag == synthesis.SpellNumberTag ||
+		posTag == synthesis.SpellNumberFeminineTag ||
+		posTag == synthesis.SpellNumberRomanTag
 }
 
 // getCompoundForms ports GermanSynthesizer.getCompoundForms.
@@ -167,7 +221,7 @@ func lemmaOf(token *languagetool.AnalyzedToken) string {
 	return token.GetToken()
 }
 
-// filterCaseMatch ports GermanSynthesizer.lookup case gate.
+// filterCaseMatch ports GermanSynthesizer.lookup case gate (per form, no dedupe).
 // Java (operator precedence):
 //
 //	lcLemma == lcLookup || lemma.equals("mein") || (lemma.equals("ich") && !REMOVE.contains(s))
@@ -179,7 +233,6 @@ func filterCaseMatch(lemma string, forms []string) []string {
 	}
 	lcLemma := tools.StartsWithLowercase(lemma)
 	var out []string
-	seen := map[string]struct{}{}
 	for _, form := range forms {
 		if form == "" {
 			continue
@@ -190,10 +243,6 @@ func filterCaseMatch(lemma string, forms []string) []string {
 		if !allow {
 			continue
 		}
-		if _, ok := seen[form]; ok {
-			continue
-		}
-		seen[form] = struct{}{}
 		out = append(out, form)
 	}
 	return out
