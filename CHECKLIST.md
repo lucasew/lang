@@ -1414,7 +1414,7 @@
 - [ ] org/languagetool/rules/pt/PortugueseWikipediaRule.java::PortugueseWikipediaRule
 - [x] org/languagetool/rules/pt/PortugueseWordCoherencyRule.java::PortugueseWordCoherencyRule
 - [ ] org/languagetool/rules/pt/PortugueseWordRepeatBeginningRule.java::PortugueseWordRepeatBeginningRule
-- [ ] org/languagetool/rules/pt/PortugueseWordRepeatRule.java::PortugueseWordRepeatRule
+- [x] org/languagetool/rules/pt/PortugueseWordRepeatRule.java::PortugueseWordRepeatRule
 - [ ] org/languagetool/rules/pt/PortugueseWordinessRule.java::PortugueseWordinessRule
 - [ ] org/languagetool/rules/pt/PortugueseWrongWordInContextRule.java::PortugueseWrongWordInContextRule
 - [ ] org/languagetool/rules/pt/PostReformPortugueseCompoundRule.java::PostReformPortugueseCompoundRule
