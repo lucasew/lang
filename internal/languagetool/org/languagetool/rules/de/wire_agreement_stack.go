@@ -1,12 +1,12 @@
 package de
 
 import (
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	detag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/de"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // Wire helpers for AgreementRule / SubjectVerbAgreementRule / VerbAgreementRule
@@ -18,6 +18,8 @@ var (
 	wiredAgreement     *AgreementRule
 	wiredSubjectVerb   *SubjectVerbAgreementRule
 	wiredVerbAgreement *VerbAgreementRule
+	// compoundSpeller is optional GERMAN_SPELLER_RULE for Java initLt().check gate.
+	compoundSpeller *GermanSpellerRule
 )
 
 // WireAgreementRule returns AgreementRule with Synth + CompoundPhraseValid when
@@ -73,14 +75,21 @@ func wireAgreementStack() {
 		wiredVerbAgreement = wiredVerbAgreement.WithSynth(synth)
 	}
 
+	// Java initLt: GERMAN_SPELLER_RULE uses de/hunspell/de_DE.dict.
+	if p := DiscoverGermanHunspellDict("DE"); p != "" {
+		_ = WireGermanFilterSpeller(p)
+		sp := NewGermanSpellerRule(nil)
+		if err := sp.InitFromDiscoveredResources(); err == nil {
+			compoundSpeller = sp
+		}
+	}
+
 	if tagger != nil {
 		// Java: GermanTagger.lookup(lower).hasPosTagStartingWith("VER:INF")
 		wiredSubjectVerb.LookupInfinitive = func(lowerWord string) bool {
 			return lookupIsInfinitive(tagger, lowerWord)
 		}
-		// Partial lt.check stand-in for compound phrases (Java: only DE_AGREEMENT +
-		// GERMAN_SPELLER active). We require last word tags as SUB and, when a
-		// filter dict is wired, that last word is not misspelled.
+		// Java: lt.check(phrase) with only DE_AGREEMENT + GERMAN_SPELLER_RULE enabled.
 		wiredAgreement.CompoundPhraseValid = func(phrase string) bool {
 			return compoundPhraseValid(tagger, phrase)
 		}
@@ -161,14 +170,86 @@ func compoundPhraseValid(tagger *detag.GermanTagger, phrase string) bool {
 	if len(parts) == 0 {
 		return false
 	}
-	// GERMAN_SPELLER_RULE stand-in: reject when wired filter dict marks last word misspelled.
-	last := parts[len(parts)-1]
-	if FilterDictAvailable() && FilterDictIsMisspelled(last) {
-		// Hyphen compounds: accept if each segment is known (Java speller on full form
-		// may differ; still fail-closed rather than invent).
-		if !strings.Contains(last, "-") {
-			return false
+	sent := compoundPhraseAnalyzed(tagger, parts)
+	if sent == nil {
+		return false
+	}
+	// DE_AGREEMENT: phrase must not trigger agreement errors.
+	// Fresh rule: no CompoundPhraseValid → open-compound branch stays fail-closed (no recurse).
+	if len(NewAgreementRule(nil).Match(sent)) != 0 {
+		return false
+	}
+	// GERMAN_SPELLER_RULE: Java lt.check(phrase).isEmpty().
+	// Prefer GermanSpellerRule.Match (sentence path) over raw dict IsMisspelled —
+	// Match accepts productive compounds (Magnesiumanteil, Standardpriorität) that
+	// bare FSA lookup may reject. Hyphen forms: Java accepts when segments spell OK
+	// even when the full hyphen string is unknown to the FSA (LanguageTool-Account).
+	if !compoundPhraseSpellingOK(sent, parts) {
+		return false
+	}
+	return true
+}
+
+// compoundPhraseAnalyzed tags phrase tokens like JLanguageTool analysis for lt.check.
+// Includes space tokens so GetText / start positions match the original phrase.
+func compoundPhraseAnalyzed(tagger *detag.GermanTagger, parts []string) *languagetool.AnalyzedSentence {
+	if tagger == nil || len(parts) == 0 {
+		return nil
+	}
+	// surfaces: part0, " ", part1, " ", ... (Java tokenizer leaves spaces as tokens).
+	surfaces := make([]string, 0, len(parts)*2-1)
+	for i, p := range parts {
+		if i > 0 {
+			surfaces = append(surfaces, " ")
 		}
+		surfaces = append(surfaces, p)
+	}
+	tagged := tagger.Tag(surfaces)
+	if len(tagged) == 0 {
+		return nil
+	}
+	ss := languagetool.SentenceStartTagName
+	toks := make([]*languagetool.AnalyzedTokenReadings, 0, len(tagged)+1)
+	toks = append(toks, languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("", &ss, nil), 0,
+	))
+	positions := tokenizers.BuildPositions(surfaces)
+	for i, tr := range tagged {
+		w := ""
+		if i < len(surfaces) {
+			w = surfaces[i]
+		}
+		start := 0
+		if i < len(positions) {
+			start = positions[i]
+		}
+		if tr == nil {
+			// untagged token — AgreementRule fails closed on missing POS (no invent)
+			tr = languagetool.NewAnalyzedTokenReadingsAt(
+				languagetool.NewAnalyzedToken(w, nil, nil), start,
+			)
+		} else if tr.GetStartPos() != start {
+			tr.SetStartPos(start)
+		}
+		toks = append(toks, tr)
+	}
+	return languagetool.NewAnalyzedSentence(toks)
+}
+
+// compoundPhraseSpellingOK ports GERMAN_SPELLER_RULE half of lt.check(phrase).isEmpty().
+// Without a wired speller dict, fail-closed (cannot invent that forms are spelled OK).
+func compoundPhraseSpellingOK(sent *languagetool.AnalyzedSentence, parts []string) bool {
+	if len(parts) == 0 {
+		return false
+	}
+	if !FilterDictAvailable() {
+		// No speller resource → cannot prove Java GERMAN_SPELLER pass; fail-closed.
+		return false
+	}
+	last := parts[len(parts)-1]
+	if strings.Contains(last, "-") {
+		// Hyphen rewrite: Java accepts LanguageTool-Account / Standard-Priorität when
+		// segments are known even if full-form FSA flags the hyphen token.
 		for _, seg := range strings.Split(last, "-") {
 			if seg == "" {
 				continue
@@ -177,103 +258,28 @@ func compoundPhraseValid(tagger *detag.GermanTagger, phrase string) bool {
 				return false
 			}
 		}
-	}
-	// Last content word must be a noun (closed compound or hyphen segment) — structural
-	// prerequisite for open-compound rewrite; without SUB reading, fail-closed.
-	if !compoundLastWordIsNoun(tagger, phrase) {
-		return false
-	}
-	// DE_AGREEMENT stand-in: tag phrase and require no AgreementRule match.
-	// (Java: lt.check(phrase).isEmpty() with DE_AGREEMENT still active.)
-	if !compoundPhraseAgreementOK(tagger, parts) {
-		return false
-	}
-	return true
-}
-
-// compoundPhraseAgreementOK tags tokens with the German tagger and runs AgreementRule
-// without CompoundPhraseValid (no recursive open-compound invent).
-func compoundPhraseAgreementOK(tagger *detag.GermanTagger, parts []string) bool {
-	if tagger == nil || len(parts) == 0 {
-		return false
-	}
-	tagged := tagger.Tag(parts)
-	if len(tagged) == 0 {
-		return false
-	}
-	ss := languagetool.SentenceStartTagName
-	toks := make([]*languagetool.AnalyzedTokenReadings, 0, len(tagged)+1)
-	toks = append(toks, languagetool.NewAnalyzedTokenReadingsAt(
-		languagetool.NewAnalyzedToken("", &ss, nil), 0,
-	))
-	pos := 0
-	for i, tr := range tagged {
-		if tr == nil {
-			// untagged token — AgreementRule fails closed on missing POS (no invent)
-			w := parts[i]
-			if i < len(parts) {
-				tr = languagetool.NewAnalyzedTokenReadingsAt(
-					languagetool.NewAnalyzedToken(w, nil, nil), pos,
-				)
+		// Non-last words must be spelled correctly (FSA / Match on those tokens).
+		for _, w := range parts[:len(parts)-1] {
+			if FilterDictIsMisspelled(w) {
+				return false
 			}
 		}
-		if tr != nil {
-			tr.SetStartPos(pos)
-			toks = append(toks, tr)
-		}
-		if i < len(parts) {
-			pos += tokenizers.UTF16Len(parts[i]) + 1
-		}
-	}
-	sent := languagetool.NewAnalyzedSentence(toks)
-	// Fresh rule: no CompoundPhraseValid → open-compound branch stays fail-closed.
-	agr := NewAgreementRule(nil)
-	return len(agr.Match(sent)) == 0
-}
-
-// compoundLastWordIsNoun is a structural proxy: last word (or hyphen segment) tags as SUB.
-func compoundLastWordIsNoun(tagger *detag.GermanTagger, phrase string) bool {
-	if tagger == nil || phrase == "" {
-		return false
-	}
-	parts := splitASCIISpaceOmitEmptyDE(phrase)
-	if len(parts) == 0 {
-		return false
-	}
-	last := parts[len(parts)-1]
-	// closed form "Originalmail" — lookup as-is first
-	if rd := tagger.Lookup(last); rd != nil && rd.HasPosTagStartingWith("SUB") {
 		return true
 	}
-	// hyphen form: Original-Mail → check last segment
-	seg := last
-	if i := strings.LastIndex(last, "-"); i >= 0 && i+1 < len(last) {
-		seg = last[i+1:]
+	// Closed form: GermanSpellerRule.Match on the phrase (Java GERMAN_SPELLER_RULE).
+	// Match (not bare IsMisspelled) accepts productive compounds like Magnesiumanteil.
+	if compoundSpeller != nil && sent != nil {
+		return len(compoundSpeller.Match(sent)) == 0
 	}
-	rd := tagger.Lookup(seg)
-	if rd == nil {
-		// try lowercase first for closed compounds built with LowercaseFirstChar
-		rd = tagger.Lookup(strings.ToLower(seg))
-	}
-	if rd == nil {
-		// try full closed form lowercased first char (Java potentialCompound)
-		if len(last) > 0 {
-			rd = tagger.Lookup(last)
-			if rd == nil {
-				// Lowercase first rune of last for weird casing
-				r := []rune(last)
-				if len(r) > 0 {
-					r[0] = []rune(strings.ToLower(string(r[0])))[0]
-					rd = tagger.Lookup(string(r))
-				}
-			}
-		}
-	}
-	if rd == nil {
-		return false
-	}
-	return rd.HasPosTagStartingWith("SUB")
+	// Fallback: last-word FSA (weaker than Match for productive compounds).
+	return !FilterDictIsMisspelled(last)
 }
 
-// Ensure unused import of languagetool for AnalyzePlain callers if needed later.
-var _ = languagetool.SentenceStartTagName
+// compoundPhraseAgreementOK kept for tests that call it directly.
+func compoundPhraseAgreementOK(tagger *detag.GermanTagger, parts []string) bool {
+	sent := compoundPhraseAnalyzed(tagger, parts)
+	if sent == nil {
+		return false
+	}
+	return len(NewAgreementRule(nil).Match(sent)) == 0
+}

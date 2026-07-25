@@ -231,9 +231,10 @@ func (r *AgreementRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.
 		skippedStr := ""
 		if afterMod > i+1 && i+1 < len(tokens) && tokens[i+1] != nil {
 			// Java: sentence.getText().substring(tokens[i+1].start, tokens[afterMod-1].end)
-			// Full JLT analysis includes whitespace tokens so GetText has spaces and positions align.
-			// tokens here are without whitespace — join surfaces (single spaces) matches Java
-			// when modifiers are consecutive; if GetText substring equals that span, prefer it.
+			// Full JLT analysis includes whitespace tokens so GetText + positions align
+			// (preserves "1,4"). Morph-inject fixtures may set positions with virtual
+			// spaces while GetText is token-concatenated — only use substring when it
+			// matches the skipped surfaces (whitespace-insensitive).
 			var parts []string
 			for j := i + 1; j < afterMod; j++ {
 				if tokens[j] != nil && tokens[j].GetToken() != "" {
@@ -244,10 +245,10 @@ func (r *AgreementRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.
 			skippedStr = joined
 			from := tokens[i+1].GetStartPos()
 			to := tokens[afterMod-1].GetEndPos()
-			if to > from {
-				// Java String.substring with UTF-16 token positions.
+			if to > from && sentence.GetText() != "" {
 				sub := rules.UTF16Substring(sentence.GetText(), from, to)
-				if sub == joined {
+				if sub != "" && strings.ReplaceAll(sub, " ", "") == strings.ReplaceAll(joined, " ", "") {
+					// Prefer original span (e.g. "1,4" over joined "1 , 4").
 					skippedStr = sub
 				}
 			}
