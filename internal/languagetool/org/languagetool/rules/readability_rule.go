@@ -34,6 +34,13 @@ type ReadabilityRule struct {
 	IssueType     ITSIssueType
 	DefaultOff    bool
 
+	// Override hooks map Java polymorphic overrides from language subclasses
+	// (e.g. GermanReadabilityRule) into MatchList without re-implementing match().
+	// Nil → English base behavior (must keep core tests green).
+	FleschReadingEaseOverride    func(asl, asw float64) float64
+	SimpleSyllablesCountOverride func(word string) int
+	MessageOverride              func(level, fre, asl, asw int) string
+
 	// Cumulative stats from last match() (Java instance fields).
 	nAllSentences int
 	nAllWords     int
@@ -182,7 +189,11 @@ func (r *ReadabilityRule) PrintMessageLevel(level int) string {
 }
 
 // GetMessage ports getMessage(level, FRE, ASL, ASW) — FRE/ASL/ASW unused in English template.
+// MessageOverride ports language-subclass overrides (e.g. GermanReadabilityRule.getMessage).
 func (r *ReadabilityRule) GetMessage(level, fre, asl, asw int) string {
+	if r != nil && r.MessageOverride != nil {
+		return r.MessageOverride(level, fre, asl, asw)
+	}
 	simple, few := "difficult", "many"
 	if r != nil && r.TooEasyTest {
 		simple, few = "simple", "few"
@@ -216,8 +227,11 @@ func (r *ReadabilityRule) GetReadabilityLevel(fre float64) int {
 }
 
 // GetFleschReadingEase ports getFleschReadingEase(asl, asw) — English FRE formula.
-// Subclasses (DE Amstad, PT) override.
+// Subclasses (DE Amstad, PT) override via FleschReadingEaseOverride.
 func (r *ReadabilityRule) GetFleschReadingEase(asl, asw float64) float64 {
+	if r != nil && r.FleschReadingEaseOverride != nil {
+		return r.FleschReadingEaseOverride(asl, asw)
+	}
 	return 206.835 - (1.015 * asl) - (84.6 * asw)
 }
 
@@ -229,8 +243,11 @@ func isVowelReadability(c rune) bool {
 
 // SimpleSyllablesCount ports protected simpleSyllablesCount(String word).
 // Uses Java String.charAt / length (UTF-16 code units), double-vowel lastDouble logic,
-// and trailing e+s/d / ue rules.
+// and trailing e+s/d / ue rules. Language subclasses set SimpleSyllablesCountOverride.
 func (r *ReadabilityRule) SimpleSyllablesCount(word string) int {
+	if r != nil && r.SimpleSyllablesCountOverride != nil {
+		return r.SimpleSyllablesCountOverride(word)
+	}
 	return simpleSyllablesCount(word)
 }
 

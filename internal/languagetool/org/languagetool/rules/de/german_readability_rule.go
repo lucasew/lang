@@ -1,98 +1,92 @@
 package de
 
 import (
-	"unicode"
+	"strconv"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
 // GermanReadabilityRule ports org.languagetool.rules.de.GermanReadabilityRule
-// (extends ReadabilityRule with German FRE and simpleSyllablesCount).
-// Default off (Java defaultOn=false). Level default 3.
-// Java base: Category TEXT_ANALYSIS, ITS Style.
+// (extends ReadabilityRule). Does not override match() — inherits core MatchList
+// with polymorphic FRE / simpleSyllablesCount / getMessage via override hooks.
+//
+// Java ctor after super: Category CREATIVE_WRITING (category_creative_writing),
+// Location.INTERNAL, false. Default off when defaultOn=false.
 type GermanReadabilityRule struct {
-	Messages   map[string]string
-	TooEasy    bool
-	Level      int // threshold 0–6; Java default 3
-	DefaultOff bool
-	MinWords   int // Java MIN_WORDS = 10
-	MarkWords  int // Java MARK_WORDS = 3 (span to mark)
-	Category   *rules.Category
-	IssueType  rules.ITSIssueType
+	*rules.ReadabilityRule
 }
 
+// NewGermanReadabilityRule ports
+// GermanReadabilityRule(messages, lang, userConfig, tooEasyTest)
+// → full ctor with level=-1, defaultOn=false.
 func NewGermanReadabilityRule(messages map[string]string, tooEasy bool) *GermanReadabilityRule {
-	cat := rules.NewCategoryFull(rules.NewCategoryId("TEXT_ANALYSIS"), "Text Analysis", rules.CategoryInternal, false, "")
-	return &GermanReadabilityRule{
-		Messages:   messages,
-		TooEasy:    tooEasy,
-		Level:      3,
-		DefaultOff: true,
-		MinWords:   10,
-		MarkWords:  3,
-		Category:   cat,
-		IssueType:  rules.ITSStyle,
-	}
+	return NewGermanReadabilityRuleFull(messages, nil, tooEasy, -1, false)
 }
 
-func (r *GermanReadabilityRule) GetCategory() *rules.Category {
-	if r == nil {
-		return nil
+// NewGermanReadabilityRuleFull ports
+// GermanReadabilityRule(ResourceBundle, Language, UserConfig, boolean tooEasyTest, int level, boolean defaultOn).
+func NewGermanReadabilityRuleFull(
+	messages map[string]string,
+	userConfig *languagetool.UserConfig,
+	tooEasyTest bool,
+	level int,
+	defaultOn bool,
+) *GermanReadabilityRule {
+	// Java: super(messages, lang, userConfig, tooEasyTest, level, defaultOn);
+	// then setCategory(CREATIVE_WRITING, …).
+	base := rules.NewReadabilityRuleFull(messages, userConfig, tooEasyTest, level, defaultOn)
+	base.Category = rules.CreativeWritingCategory(messages)
+
+	r := &GermanReadabilityRule{ReadabilityRule: base}
+
+	// Java polymorphic dispatch from ReadabilityRule.match() → DE overrides.
+	base.FleschReadingEaseOverride = func(asl, asw float64) float64 {
+		return r.GetFleschReadingEase(asl, asw)
 	}
-	return r.Category
+	base.SimpleSyllablesCountOverride = func(word string) int {
+		return r.SimpleSyllablesCount(word)
+	}
+	base.MessageOverride = func(level, fre, asl, asw int) string {
+		return r.GetMessage(level, fre, asl, asw)
+	}
+	return r
 }
 
-func (r *GermanReadabilityRule) GetLocQualityIssueType() rules.ITSIssueType {
-	if r == nil || r.IssueType == "" {
-		return rules.ITSStyle
-	}
-	return r.IssueType
-}
-
-func (r *GermanReadabilityRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
-
+// GetID ports getId() / getId(tooEasyTest) with DE suffixes.
 func (r *GermanReadabilityRule) GetID() string {
-	if r != nil && r.TooEasy {
+	tooEasy := r != nil && r.ReadabilityRule != nil && r.TooEasyTest
+	return r.GetIDFor(tooEasy)
+}
+
+// GetIDFor ports getId(boolean tooEasyTest).
+func (r *GermanReadabilityRule) GetIDFor(tooEasyTest bool) string {
+	if tooEasyTest {
 		return "READABILITY_RULE_SIMPLE_DE"
 	}
 	return "READABILITY_RULE_DIFFICULT_DE"
 }
 
+// GetDescription ports getDescription().
 func (r *GermanReadabilityRule) GetDescription() string {
-	if r != nil && r.TooEasy {
+	if r != nil && r.ReadabilityRule != nil && r.TooEasyTest {
 		return "Lesbarkeit: Zu einfacher Text"
 	}
 	return "Lesbarkeit: Zu schwieriger Text"
 }
 
-// German FRE (Amstad): 180 - ASL - 58.5 * ASW
-func germanFleschReadingEase(asl, asw float64) float64 {
-	return 180 - asl - (58.5 * asw)
+// GetConfigureText ports getConfigureText().
+func (r *GermanReadabilityRule) GetConfigureText() string {
+	return "Grad der Lesbarkeit 0 (sehr schwierig) bis 6 (sehr einfach):"
 }
 
-// German readability level from FRE (Java ReadabilityRule.getReadabilityLevel).
-// Higher level = easier text.
-func germanReadabilityLevel(fre float64) int {
-	switch {
-	case fre < 30:
-		return 0
-	case fre < 50:
-		return 1
-	case fre < 60:
-		return 2
-	case fre < 70:
-		return 3
-	case fre < 80:
-		return 4
-	case fre < 90:
-		return 5
-	default:
-		return 6
-	}
+// GetRuleOptions ports getRuleOptions() — uses DE configure text (Java polymorphic getConfigureText).
+func (r *GermanReadabilityRule) GetRuleOptions() []*rules.RuleOption {
+	return []*rules.RuleOption{rules.NewRuleOption(3, r.GetConfigureText(), 0, 6)}
 }
 
-func printMessageLevelDE(level int) string {
+// PrintMessageLevel ports printMessageLevel(level) — German "Grad" labels.
+func (r *GermanReadabilityRule) PrintMessageLevel(level int) string {
 	var sLevel string
 	switch level {
 	case 0:
@@ -112,20 +106,33 @@ func printMessageLevelDE(level int) string {
 	default:
 		return ""
 	}
-	return " {Grad " + itoaDE(level) + ": " + sLevel + "}"
+	return " {Grad " + strconv.Itoa(level) + ": " + sLevel + "}"
 }
 
-func (r *GermanReadabilityRule) getMessage(level int) string {
+// GetMessage ports getMessage(level, fre, asl, asw).
+func (r *GermanReadabilityRule) GetMessage(level, fre, asl, asw int) string {
 	simple, few := "schwierig", "viele"
-	if r.TooEasy {
+	if r != nil && r.ReadabilityRule != nil && r.TooEasyTest {
 		simple, few = "einfach", "wenige"
 	}
-	return "Lesbarkeit: Der Text dieses Absatzes ist zu " + simple + printMessageLevelDE(level) +
+	return "Lesbarkeit: Der Text dieses Absatzes ist zu " + simple + r.PrintMessageLevel(level) +
 		". Zu " + few + " Wörter pro Satz und zu " + few + " Silben pro Wort."
 }
 
-// simpleSyllablesCount ports GermanReadabilityRule.simpleSyllablesCount:
-// word.charAt(i) / word.length() are UTF-16 units; GermanTools.isVowel(char).
+// GetFleschReadingEase ports getFleschReadingEase — Amstad German FRE:
+// 180 - asl - (58.5 * asw).
+func (r *GermanReadabilityRule) GetFleschReadingEase(asl, asw float64) float64 {
+	return 180 - asl - (58.5 * asw)
+}
+
+// SimpleSyllablesCount ports protected simpleSyllablesCount(String word):
+// UTF-16 charAt/length; GermanTools.isVowel; diphthong lastDouble rules;
+// nSyllables==0 → 1.
+func (r *GermanReadabilityRule) SimpleSyllablesCount(word string) int {
+	return simpleSyllablesCountDE(word)
+}
+
+// simpleSyllablesCountDE is the Java GermanReadabilityRule.simpleSyllablesCount body.
 func simpleSyllablesCountDE(word string) int {
 	n := utf16LenDE(word)
 	if n == 0 {
@@ -160,107 +167,4 @@ func simpleSyllablesCountDE(word string) int {
 		return 1
 	}
 	return nSyllables
-}
-
-// MatchList ports ReadabilityRule.match with German overrides.
-// Processes paragraph ends via IsParagraphEnd; leftover trailing text forms last paragraph.
-func (r *GermanReadabilityRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	if r == nil || len(sentences) == 0 {
-		return nil
-	}
-	minWords := r.MinWords
-	if minWords <= 0 {
-		minWords = 10
-	}
-	markWords := r.MarkWords
-	if markWords <= 0 {
-		markWords = 3
-	}
-	levelThresh := r.Level
-	if levelThresh < 0 {
-		levelThresh = 3
-	}
-
-	var ruleMatches []*rules.RuleMatch
-	nSentences, nWords, nSyllables := 0, 0, 0
-	pos := 0
-	startPos, endPos := -1, -1
-	var markSentence *languagetool.AnalyzedSentence
-
-	flushPara := func(sentence *languagetool.AnalyzedSentence) {
-		if nWords >= minWords && nSentences > 0 {
-			asl := float64(nWords) / float64(nSentences)
-			asw := float64(nSyllables) / float64(nWords)
-			fre := germanFleschReadingEase(asl, asw)
-			rLevel := germanReadabilityLevel(fre)
-			if (r.TooEasy && rLevel > levelThresh) || (!r.TooEasy && rLevel < levelThresh) {
-				if startPos >= 0 && endPos >= 0 && markSentence != nil {
-					// Java ReadabilityRule: new RuleMatch(this, sentence, start, end, msg) only.
-					msg := r.getMessage(rLevel)
-					rm := rules.NewRuleMatch(r, markSentence, startPos, endPos, msg)
-					ruleMatches = append(ruleMatches, rm)
-				}
-			}
-		}
-		nSentences, nWords, nSyllables = 0, 0, 0
-		startPos, endPos = -1, -1
-		markSentence = nil
-	}
-
-	for n, sentence := range sentences {
-		if sentence == nil {
-			continue
-		}
-		tokens := sentence.GetTokensWithoutWhitespace()
-		if startPos < 0 && len(tokens) > 1 && tokens[1] != nil {
-			startPos = pos + tokens[1].GetStartPos()
-			markSentence = sentence
-		}
-		if endPos < 0 && len(tokens) > markWords && tokens[markWords] != nil {
-			endPos = pos + tokens[markWords].GetEndPos()
-		} else if endPos < 0 && len(tokens) > 1 {
-			// short sentence: mark first few content tokens
-			last := tokens[len(tokens)-1]
-			if last != nil {
-				endPos = pos + last.GetEndPos()
-			}
-		}
-		nSentences++
-		for _, token := range tokens {
-			if token == nil || token.IsWhitespace() || token.IsNonWord() {
-				continue
-			}
-			// skip sentence markers
-			if token.IsSentenceStart() || token.IsSentenceEnd() {
-				continue
-			}
-			sToken := token.GetToken()
-			// skip pure non-letters for word count (Java isNonWord already covers punct)
-			if sToken == "" {
-				continue
-			}
-			allNonLetter := true
-			for _, rr := range sToken {
-				if unicode.IsLetter(rr) || unicode.IsDigit(rr) {
-					allNonLetter = false
-					break
-				}
-			}
-			if allNonLetter {
-				continue
-			}
-			nWords++
-			nSyllables += simpleSyllablesCountDE(sToken)
-		}
-		// Java: Tools.isParagraphEnd
-		if languagetool.IsParagraphEnd(sentences, n, false) {
-			flushPara(sentence)
-		}
-		pos += sentence.GetCorrectedTextLength()
-	}
-	// trailing paragraph without explicit para end
-	if nWords > 0 {
-		flushPara(nil)
-	}
-	return ruleMatches
 }
