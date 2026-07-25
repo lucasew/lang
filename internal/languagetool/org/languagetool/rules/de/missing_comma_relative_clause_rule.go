@@ -12,8 +12,7 @@ import (
 
 // MissingCommaRelativeClauseRule ports org.languagetool.rules.de.MissingCommaRelativeClauseRule.
 // Behind=false → COMMA_IN_FRONT_RELATIVE_CLAUSE; Behind=true → COMMA_BEHIND_RELATIVE_CLAUSE.
-// Morph/POS only (no surface invent for untagged AnalyzePlain).
-// Java: Category HILFESTELLUNG_KOMMASETZUNG ("Kommasetzung").
+// Java: Category HILFESTELLUNG_KOMMASETZUNG ("Kommasetzung", Location.INTERNAL, true).
 type MissingCommaRelativeClauseRule struct {
 	Messages map[string]string
 	Behind   bool
@@ -21,16 +20,24 @@ type MissingCommaRelativeClauseRule struct {
 }
 
 func newMissingCommaCategory(messages map[string]string) *rules.Category {
-	// Java: new Category(HILFESTELLUNG_KOMMASETZUNG, "Kommasetzung", INTERNAL, true)
+	// Java: new Category(new CategoryId("HILFESTELLUNG_KOMMASETZUNG"), "Kommasetzung", Location.INTERNAL, true)
+	_ = messages
 	return rules.NewCategoryFull(rules.NewCategoryId("HILFESTELLUNG_KOMMASETZUNG"), "Kommasetzung", rules.CategoryInternal, true, "")
 }
 
+// NewMissingCommaRelativeClauseRule ports MissingCommaRelativeClauseRule(messages) → behind=false.
 func NewMissingCommaRelativeClauseRule(messages map[string]string) *MissingCommaRelativeClauseRule {
-	return &MissingCommaRelativeClauseRule{Messages: messages, Category: newMissingCommaCategory(messages)}
+	return NewMissingCommaRelativeClauseRuleBehindFlag(messages, false)
 }
 
+// NewMissingCommaRelativeClauseRuleBehind ports MissingCommaRelativeClauseRule(messages, true).
 func NewMissingCommaRelativeClauseRuleBehind(messages map[string]string) *MissingCommaRelativeClauseRule {
-	return &MissingCommaRelativeClauseRule{Messages: messages, Behind: true, Category: newMissingCommaCategory(messages)}
+	return NewMissingCommaRelativeClauseRuleBehindFlag(messages, true)
+}
+
+// NewMissingCommaRelativeClauseRuleBehindFlag ports MissingCommaRelativeClauseRule(messages, behind).
+func NewMissingCommaRelativeClauseRuleBehindFlag(messages map[string]string, behind bool) *MissingCommaRelativeClauseRule {
+	return &MissingCommaRelativeClauseRule{Messages: messages, Behind: behind, Category: newMissingCommaCategory(messages)}
 }
 
 func (r *MissingCommaRelativeClauseRule) GetID() string {
@@ -64,7 +71,7 @@ var (
 	// bug-for-bug; multi-char tokens still fail full-match (.matches()).
 	// Characters outside that range that appear after en-dash in Java are listed
 	// explicitly (em-dash, guillemets, brackets, …, •).
-	missingCommaMarksRE = regexp.MustCompile(`^[•\x{0021}-\x{2013}\x{2014}’'"„“”…»«‚‘›‹()/\[\]\\]$`)
+	missingCommaMarksRE   = regexp.MustCompile(`^[•\x{0021}-\x{2013}\x{2014}’'"„“”…»«‚‘›‹()/\[\]\\]$`)
 	missingCommaPronounRE = regexp.MustCompile(`^(d(e[mnr]|ie|as|e([nr]|ss)en)|welche[mrs]?|wessen|was)$`)
 
 	missingCommaAntiOnce  sync.Once
@@ -89,11 +96,16 @@ func missingCommaAntiPatternRules() []*disambigrules.DisambiguationPatternRule {
 	return missingCommaAntiRules
 }
 
+// GetAntiPatterns ports MissingCommaRelativeClauseRule.getAntiPatterns.
+func (r *MissingCommaRelativeClauseRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return missingCommaAntiPatternRules()
+}
+
 func (r *MissingCommaRelativeClauseRule) getSentenceWithImmunization(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
 	if sentence == nil {
 		return nil
 	}
-	aps := missingCommaAntiPatternRules()
+	aps := r.GetAntiPatterns()
 	if len(aps) == 0 {
 		return sentence
 	}
@@ -114,6 +126,7 @@ func (r *MissingCommaRelativeClauseRule) getSentenceWithImmunization(sentence *l
 	return immunized
 }
 
+// Match ports MissingCommaRelativeClauseRule.match.
 func (r *MissingCommaRelativeClauseRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	if sentence == nil {
 		return nil
@@ -123,20 +136,10 @@ func (r *MissingCommaRelativeClauseRule) Match(sentence *languagetool.AnalyzedSe
 	if len(tokens) <= 1 {
 		return nil
 	}
-	// Morph path only (Java POS-gated). Untagged AnalyzePlain fails closed.
 	if r.Behind {
 		return r.matchMorphBehind(tokens, sentence)
 	}
 	return r.matchMorphFront(tokens, sentence)
-}
-
-func hasAnyVERTags(tokens []*languagetool.AnalyzedTokenReadings) bool {
-	for _, t := range tokens {
-		if t != nil && t.HasPosTagStartingWith("VER") {
-			return true
-		}
-	}
-	return false
 }
 
 func isSeparatorMissingComma(token string) bool {
@@ -205,7 +208,7 @@ func verbPosMissingComma(tokens []*languagetool.AnalyzedTokenReadings, start, en
 				j++
 			}
 			if j < end && j < len(tokens) && tokens[j] != nil &&
-				!tokens[j].MatchesPosTagRegex("(SUB|EIG):.*"+gender+".*") && !isPosTagUnknown(tokens[j]) {
+				!tokens[j].MatchesPosTagRegex("(SUB|EIG):.*"+gender+".*") && !tokens[j].IsPosTagUnknown() {
 				verbs = append(verbs, i)
 			}
 		} else {
@@ -213,14 +216,6 @@ func verbPosMissingComma(tokens []*languagetool.AnalyzedTokenReadings, start, en
 		}
 	}
 	return verbs
-}
-
-func isPosTagUnknown(t *languagetool.AnalyzedTokenReadings) bool {
-	if t == nil {
-		return true
-	}
-	// Java isPosTagUnknown — treat untagged as unknown
-	return !t.IsTagged()
 }
 
 func isKonUntMissingComma(token *languagetool.AnalyzedTokenReadings) bool {
@@ -286,7 +281,8 @@ func isPronounMissingComma(tokens []*languagetool.AnalyzedTokenReadings, n int) 
 	if n < 1 || n >= len(tokens) || tokens[n] == nil {
 		return false
 	}
-	return missingCommaPronounRE.MatchString(strings.ToLower(tokens[n].GetToken())) &&
+	// Java: PRONOUN.matcher(token).matches() — case-sensitive (no CASE_INSENSITIVE).
+	return missingCommaPronounRE.MatchString(tokens[n].GetToken()) &&
 		tokens[n-1] != nil && tokens[n-1].GetToken() != "sowie"
 }
 
@@ -366,7 +362,7 @@ func skipToSubMissingComma(gender string, tokens []*languagetool.AnalyzedTokenRe
 		if tokens[i] == nil {
 			continue
 		}
-		if tokens[i].MatchesPosTagRegex(`(ADJ|PA[12]):.*`+gender+`.*`) || isPosTagUnknown(tokens[i]) {
+		if tokens[i].MatchesPosTagRegex(`(ADJ|PA[12]):.*`+gender+`.*`) || tokens[i].IsPosTagUnknown() {
 			return i
 		}
 		if tokens[i].HasPosTagStartingWith("ART") {
@@ -390,7 +386,7 @@ func isArticleMissingComma(gender string, tokens []*languagetool.AnalyzedTokenRe
 		if tokens[i] == nil {
 			continue
 		}
-		if tokens[i].MatchesPosTagRegex(sSub) || isPosTagUnknown(tokens[i]) {
+		if tokens[i].MatchesPosTagRegex(sSub) || tokens[i].IsPosTagUnknown() {
 			return true
 		}
 		if tokens[i].HasPosTagStartingWith("ART") || !tokens[i].MatchesPosTagRegex(sAdj) {

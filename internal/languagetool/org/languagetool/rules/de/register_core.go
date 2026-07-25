@@ -319,20 +319,10 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	ci := WireCompoundInfinitivRule(nil)
 	lt.AddRuleChecker(ci.GetID(), rules.AsSentenceCheckerSimple(ci.Match))
 
-	// MissingCommaRelativeClauseRule: front + behind (Java both registered).
-	// Morph/POS only; without VER tags skip so untagged Check does not invent false positives.
+	// MissingCommaRelativeClauseRule: front + behind (Java German.getRelevantRules both).
+	// Match is POS-gated by the Java algorithm; untagged input yields zero matches.
 	mcFront := NewMissingCommaRelativeClauseRule(nil)
-	lt.AddRuleChecker(mcFront.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-		if s == nil || !hasAnyVERTags(s.GetTokensWithoutWhitespace()) {
-			return nil
-		}
-		return mcFront.Match(s)
-	}))
+	lt.AddRuleChecker(mcFront.GetID(), rules.AsSentenceCheckerSimple(mcFront.Match))
 	mcBehind := NewMissingCommaRelativeClauseRuleBehind(nil)
-	lt.AddRuleChecker(mcBehind.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-		if s == nil || !hasAnyVERTags(s.GetTokensWithoutWhitespace()) {
-			return nil
-		}
-		return mcBehind.Match(s)
-	}))
+	lt.AddRuleChecker(mcBehind.GetID(), rules.AsSentenceCheckerSimple(mcBehind.Match))
 }

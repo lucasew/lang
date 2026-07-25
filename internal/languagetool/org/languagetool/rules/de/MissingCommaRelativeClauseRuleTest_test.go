@@ -1,248 +1,135 @@
 package de
 
-// Twin of MissingCommaRelativeClauseRuleTest — morph/POS inject (no surface invent).
+// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/MissingCommaRelativeClauseRuleTest.java
+//
+// Java:
+//   JLanguageTool lt = new JLanguageTool(Languages.getLanguageForShortCode("de-DE"));
+//   MissingCommaRelativeClauseRule rule = new MissingCommaRelativeClauseRule(TestTools.getMessages("de"));
+//   assertMatch / assertNoMatch via rule.match(lt.getAnalyzedSentence(input))
+//   then rule = new MissingCommaRelativeClauseRule(messages, true) for behind constructor
+//
+// Go: de-DE analysis via GermanWordTokenizer + GermanTagger.Tag (sentence-start case)
+// + GermanRuleDisambiguator + post chunker — same shape as Java getAnalyzedSentence.
+// WireGermanTagWord alone is Lookup-only and leaves sentence-start "Alles" untagged;
+// that would not match Java createDefaultTagger().tag. No hand-injected POS tables.
+
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
+// newMissingCommaRelativeFixture mirrors Java MissingCommaRelativeClauseRuleTest setup.
+func newMissingCommaRelativeFixture(t *testing.T) *languagetool.JLanguageTool {
+	t.Helper()
+	// Java: Languages.getLanguageForShortCode("de-DE")
+	lt := languagetool.NewJLanguageTool("de-DE")
+	// createDefaultTagger + disambiguator + chunker + synth (anti-pattern MatchInflectedForms)
+	WireGermanRuntimeResourcesFor(lt, "DE")
+	require.NotNil(t, DiscoveredGermanTagger(), "GermanTagger.INSTANCE resources required")
+	require.True(t, WireGermanTagWord(lt) || lt.TagWord != nil, "GermanTagger resources required")
+	return lt
+}
+
+// mcrcAnalyzedSentence ports lt.getAnalyzedSentence(input):
+// GermanTagger.Tag (ignoreCase / sentence-start lowercasing) + Disambiguator + post chunker.
+func mcrcAnalyzedSentence(t *testing.T, lt *languagetool.JLanguageTool, input string) *languagetool.AnalyzedSentence {
+	t.Helper()
+	tagger := DiscoveredGermanTagger()
+	require.NotNil(t, tagger)
+	sent := analyzeWithGermanTagger(tagger, input)
+	require.NotNil(t, sent, "analyzeWithGermanTagger(%q)", input)
+	if lt != nil && lt.Disambiguator != nil {
+		if d := lt.Disambiguator.Disambiguate(sent); d != nil {
+			sent = d
+		}
+	}
+	if sent != nil && lt != nil && lt.PostDisambiguationChunker != nil {
+		lt.PostDisambiguationChunker.AddChunkTags(sent.GetTokens())
+	}
+	return sent
+}
+
+// assertMCRCMatch ports MissingCommaRelativeClauseRuleTest.assertMatch.
+func assertMCRCMatch(t *testing.T, input string, from, to int, rule *MissingCommaRelativeClauseRule, lt *languagetool.JLanguageTool) {
+	t.Helper()
+	matches := rule.Match(mcrcAnalyzedSentence(t, lt, input))
+	require.Equal(t, 1, len(matches), "match count for %q", input)
+	require.Equal(t, from, matches[0].GetFromPos(), "fromPos for %q", input)
+	require.Equal(t, to, matches[0].GetToPos(), "toPos for %q", input)
+}
+
+// assertMCRCNoMatch ports MissingCommaRelativeClauseRuleTest.assertNoMatch.
+func assertMCRCNoMatch(t *testing.T, input string, rule *MissingCommaRelativeClauseRule, lt *languagetool.JLanguageTool) {
+	t.Helper()
+	matches := rule.Match(mcrcAnalyzedSentence(t, lt, input))
+	require.Equal(t, 0, len(matches), "expected 0 matches for %q, got %d", input, len(matches))
+}
+
+// TestMissingCommaRelativeClauseRule_Match ports MissingCommaRelativeClauseRuleTest.testMatch.
 func TestMissingCommaRelativeClauseRule_Match(t *testing.T) {
-	// Untagged AnalyzePlain must not invent relative-comma hits
+	lt := newMissingCommaRelativeFixture(t)
+
+	// --- front constructor (behind=false) ---
 	rule := NewMissingCommaRelativeClauseRule(nil)
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Das Auto das am Straßenrand steht parkt im Halteverbot."))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Computer machen die Leute dumm."))))
-
-	behind := NewMissingCommaRelativeClauseRuleBehind(nil)
-	require.Equal(t, 0, len(behind.Match(languagetool.AnalyzePlain("Das Auto, das am Straßenrand steht parkt im Halteverbot."))))
-	require.Equal(t, 0, len(behind.Match(languagetool.AnalyzePlain("Das Auto, das am Straßenrand steht, parkt im Halteverbot."))))
-
 	require.Equal(t, "COMMA_IN_FRONT_RELATIVE_CLAUSE", rule.GetID())
-	require.Equal(t, "COMMA_BEHIND_RELATIVE_CLAUSE", behind.GetID())
+	require.Equal(t, "Fehlendes Komma vor Relativsatz", rule.GetDescription())
+	require.NotNil(t, rule.GetCategory())
+	require.True(t, rule.GetCategory().GetID().Equals(rules.NewCategoryId("HILFESTELLUNG_KOMMASETZUNG")))
+	require.Equal(t, 25, len(rule.GetAntiPatterns()))
+
+	assertMCRCMatch(t, "Das Auto das am Straßenrand steht parkt im Halteverbot.", 4, 12, rule, lt)
+	assertMCRCMatch(t, "Das Auto das am Straßenrand steht, parkt im Halteverbot.", 4, 12, rule, lt)
+	assertMCRCMatch(t, "Das Auto in dem der Mann sitzt, parkt im Halteverbot.", 4, 15, rule, lt)
+	assertMCRCMatch(t, "Das Auto in dem der Mann sitzt parkt im Halteverbot.", 4, 15, rule, lt)
+	assertMCRCMatch(t, "Die Frau die vor dem Auto steht hat schwarze Haare.", 4, 12, rule, lt)
+	assertMCRCMatch(t, "Die Frau die vor dem Auto steht, hat schwarze Haare.", 4, 12, rule, lt)
+	assertMCRCMatch(t, "Alles was ich habe, ist ein Buch.", 0, 9, rule, lt)
+
+	assertMCRCNoMatch(t, "Computer machen die Leute dumm.", rule, lt)
+	assertMCRCNoMatch(t, "Die Unstimmigkeit zwischen den Geschichten der zwei Unfallbeteiligten war groß.", rule, lt)
+	assertMCRCNoMatch(t, "Ebenso darf keine schwerere Strafe als die zum Zeitpunkt der Begehung der strafbaren Handlung angedrohte Strafe verhängt werden.", rule, lt)
+	assertMCRCNoMatch(t, "Als dritte Gruppe lassen sich Aminosäuren fassen, die der Organismus anstelle dieser in Proteine einbaut.", rule, lt)
+	assertMCRCNoMatch(t, "Selbst wenn das alles perfekt verlustfrei wäre, hätte ich nichts gewonnen.", rule, lt)
+	assertMCRCNoMatch(t, "Die Studenten, deren Urteil am stärksten von dem der Profis abwich, waren sich sicher, einen guten von einem schlechten unterscheiden zu können.", rule, lt)
+	assertMCRCNoMatch(t, "Die Studenten, deren Urteil am stärksten durch das der Profis beeinflusst wurde, waren sich sicher, einen guten von einem schlechten unterscheiden zu können.", rule, lt)
+
+	// --- behind constructor (behind=true) ---
+	rule = NewMissingCommaRelativeClauseRuleBehind(nil)
+	require.Equal(t, "COMMA_BEHIND_RELATIVE_CLAUSE", rule.GetID())
+	require.Equal(t, "Fehlendes Komma nach Relativsatz", rule.GetDescription())
+
+	assertMCRCMatch(t, "Das Auto, das am Straßenrand steht parkt im Halteverbot.", 29, 40, rule, lt)
+	assertMCRCMatch(t, "Das Auto, in dem der Mann sitzt parkt im Halteverbot.", 26, 37, rule, lt)
+	assertMCRCMatch(t, "Die Frau, die vor dem Auto steht hat schwarze Haare.", 27, 36, rule, lt)
+	assertMCRCMatch(t, "Alles, was ich habe ist ein Buch.", 15, 23, rule, lt)
+	assertMCRCMatch(t, "In diesem Prozess sind aber Entwicklungsschritte ja integriert, die wir Psychiater glaube ich auch gut kennen.", 72, 93, rule, lt)
+	assertMCRCMatch(t, "Alles, was du für die Spieße brauchst sind Tortellini, getrocknete Tomaten, Cherrytomaten und Mozzarellakugeln.", 29, 42, rule, lt)
+
+	assertMCRCNoMatch(t, ".... das war eher so das, was alle im Browser deaktiviert hatten, weil man dachte, über Javascript wird irgendwie Schadsoftware eingeschleust.", rule, lt)
+	assertMCRCNoMatch(t, "Ich habe einige Fehler begangen, die ich vermeiden hätte können sollen.", rule, lt)
+	assertMCRCNoMatch(t, "Doch die Rolle, die Mohammed bin Salman in Riad spielt, ist zwiespältig.", rule, lt)
+	assertMCRCNoMatch(t, "Laut Josef Peter Burg gehörte das Haus, aus dem er samt Familie geworfen wurde, Werner und Sigrid Bahlke, während er darin wohnte und darauf aufpasste.", rule, lt)
+	assertMCRCNoMatch(t, "Darüber hinaus stellt die klassische Metaphysik eine Grundfrage, die sich etwa wie folgt formulieren lässt: Warum ist überhaupt Seiendes und nicht vielmehr Nichts?", rule, lt)
+	assertMCRCNoMatch(t, "Wenn du alles, was du meinst nicht zu können, von anderen erledigen lässt, wirst du es niemals selbst lernen.", rule, lt)
+	assertMCRCNoMatch(t, "Er hat einen Zeitraum durchlebt, in dem seine Gedanken verträumt auf den weiten Feldern der Mysterien umherirrten.", rule, lt)
+	assertMCRCNoMatch(t, "Es ist die Wiederkehr der Panikmache, die der neue Nationalismus mit dem der Sprachreiniger verbindet und die Geschichte der Sprachreinigung zu einem Lehrstück macht.", rule, lt)
+	assertMCRCNoMatch(t, "Gesuche können von Institutionen, Organisationen, Vereinen und Gruppierungen gestellt werden, die im Kanton Luzern domiziliert sind.", rule, lt)
+	assertMCRCNoMatch(t, "Die Klausel kann zudem nur Gleichrang mit Verbindlichkeiten des Schuldners herstellen, die vom Gesetz in der Insolvenz nicht privilegiert sind, so dass die Klausel nichts an der gesetzlich vorgesehenen Rangfolge im Insolvenzverfahren ändert.", rule, lt)
+	assertMCRCNoMatch(t, "Plan von Maßnahmen, mit denen das Ansteckungsrisiko während des Aufenthalts an einem Ort verringert werden soll", rule, lt)
+	assertMCRCNoMatch(t, "Aus diesem Grund sind die Wörter nicht direkt übersetzt, stattdessen wird der Zustand oder die Situation beschrieben in der die Wörter benutzt werden.", rule, lt)
+	assertMCRCNoMatch(t, "Kryptographisch sichere Verfahren sind dann solche, für die es keine bessere Methode zum Brechen der Sicherheit als das Faktorisieren einer großen Zahl gibt, insbesondere kann der private nicht aus dem öffentlichen Schlüssel errechnet werden.", rule, lt)
+	assertMCRCNoMatch(t, "Wayne Jancik begrenzt seine One-Hit-Wonders in den USA auf die Billboard-Top-40-Pop-Hitparade mit einer „Ruhe-Periode“ von 5 Jahren, innerhalb derer kein weiterer Hit desselben Interpreten in die Top 40 gelangen darf.", rule, lt)
+	assertMCRCNoMatch(t, "Nach dem Abzug russischer Truppen aus der Region Kiew sind in den ehemals besetzten und umkämpften ukrainischen Gebieten inzwischen Hunderte Leichen von Bewohnern gefunden worden.", rule, lt)
+	assertMCRCNoMatch(t, "Bei der Installation werden Ihnen Sticker und Aufkleber zur Verfügung gestellt, die Sie anstelle der traditionellen Emojis verwenden können.", rule, lt)
+	assertMCRCNoMatch(t, "»Alles, was wir dank dieses Projektes sehen werden, wird für uns neu sein«, so der renommierte Bienenforscher.", rule, lt)
 }
 
-// Twin of MissingCommaRelativeClauseRuleTest.testMatch front cases (morph).
-func TestMissingCommaRelativeClauseRule_FrontMorphJava(t *testing.T) {
-	rule := NewMissingCommaRelativeClauseRule(nil)
-	// "Das Auto das am Straßenrand steht parkt im Halteverbot." → 4-12
-	s := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS("das", "PRELS:NOM:SIN:NEU", "das"),
-		atrWithPOS("am", "APPRART:DAT:SIN:MAS", "an"),
-		atrWithPOS("Straßenrand", "SUB:DAT:SIN:MAS", "Straßenrand"),
-		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
-		atrWithPOS("parkt", "VER:3:SIN:PRS:SFT", "parken"),
-		atrWithPOS("im", "APPRART:DAT:SIN:NEU", "in"),
-		atrWithPOS("Halteverbot", "SUB:DAT:SIN:NEU", "Halteverbot"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	ms := rule.Match(s)
-	require.Equal(t, 1, len(ms))
-	require.Equal(t, 4, ms[0].GetFromPos())
-	require.Equal(t, 12, ms[0].GetToPos())
-
-	// with comma already after Auto — still front match at relative pronoun (Java)
-	s2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS("das", "PRELS:NOM:SIN:NEU", "das"),
-		atrWithPOS("am", "APPRART:DAT:SIN:MAS", "an"),
-		atrWithPOS("Straßenrand", "SUB:DAT:SIN:MAS", "Straßenrand"),
-		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("parkt", "VER:3:SIN:PRS:SFT", "parken"),
-		atrWithPOS("im", "APPRART:DAT:SIN:NEU", "in"),
-		atrWithPOS("Halteverbot", "SUB:DAT:SIN:NEU", "Halteverbot"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	ms2 := rule.Match(s2)
-	require.Equal(t, 1, len(ms2))
-	require.Equal(t, 4, ms2[0].GetFromPos())
-	require.Equal(t, 12, ms2[0].GetToPos())
-
-	// no relative clause
-	good := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Computer", "SUB:NOM:PLU:MAS", "Computer"),
-		atrWithPOS("machen", "VER:3:PLU:PRS:SFT", "machen"),
-		atrWithPOS("die", "ART:DEF:AKK:PLU:*", "die"),
-		atrWithPOS("Leute", "SUB:AKK:PLU:MAS", "Leute"),
-		atrWithPOS("dumm", "ADJ:PRD:GRU", "dumm"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Empty(t, rule.Match(good))
-
-	// "Die Frau die vor dem Auto steht hat schwarze Haare." → 4-12
-	frau := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Die", "ART:DEF:NOM:SIN:FEM", "die"),
-		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
-		atrWithPOS("die", "PRELS:NOM:SIN:FEM", "die"),
-		atrWithPOS("vor", "PRP:DAT", "vor"),
-		atrWithPOS("dem", "ART:DEF:DAT:SIN:NEU", "der"),
-		atrWithPOS("Auto", "SUB:DAT:SIN:NEU", "Auto"),
-		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
-		atrWithPOS("hat", "VER:3:SIN:PRS:SFT", "haben"),
-		atrWithPOS("schwarze", "ADJ:AKK:PLU:NEU:GRU:IND", "schwarz"),
-		atrWithPOS("Haare", "SUB:AKK:PLU:NEU", "Haar"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	msF := rule.Match(frau)
-	require.Equal(t, 1, len(msF))
-	require.Equal(t, 4, msF[0].GetFromPos())
-	require.Equal(t, 12, msF[0].GetToPos())
-
-	// "Das Auto in dem der Mann sitzt, parkt im Halteverbot." → 4-15
-	// dem refers to Auto → SIN:NEU (Java LT tags)
-	indem := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS("in", "PRP:DAT", "in"),
-		atrWithPOS("dem", "PRELS:DAT:SIN:NEU", "der"),
-		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Mann", "SUB:NOM:SIN:MAS", "Mann"),
-		atrWithPOS("sitzt", "VER:3:SIN:PRS:SFT", "sitzen"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("parkt", "VER:3:SIN:PRS:SFT", "parken"),
-		atrWithPOS("im", "APPRART:DAT:SIN:NEU", "in"),
-		atrWithPOS("Halteverbot", "SUB:DAT:SIN:NEU", "Halteverbot"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	msIn := rule.Match(indem)
-	require.Equal(t, 1, len(msIn))
-	require.Equal(t, 4, msIn[0].GetFromPos())
-	require.Equal(t, 15, msIn[0].GetToPos())
-
-	// "Alles was ich habe, ist ein Buch." → 0-9
-	// was often ungendered; Alles as PRO:DEM matches matchesGender empty-gender path
-	alles := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Alles", "PRO:DEM:NOM:SIN:NEU", "alles"),
-		atrWithPOS("was", "PRELS", "was"),
-		atrWithPOS("ich", "PPER:NOM:SIN:1", "ich"),
-		atrWithPOS("habe", "VER:1:SIN:PRS:SFT", "haben"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("ist", "VER:3:SIN:PRS:NON", "sein"),
-		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
-		atrWithPOS("Buch", "SUB:NOM:SIN:NEU", "Buch"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	msA := rule.Match(alles)
-	require.Equal(t, 1, len(msA))
-	require.Equal(t, 0, msA[0].GetFromPos())
-	require.Equal(t, 9, msA[0].GetToPos())
-}
-
-// Twin of MissingCommaRelativeClauseRuleTest behind (second constructor).
-func TestMissingCommaRelativeClauseRule_BehindMorphJava(t *testing.T) {
-	rule := NewMissingCommaRelativeClauseRuleBehind(nil)
-	// "Das Auto, das am Straßenrand steht parkt im Halteverbot." → 29-40
-	s := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("das", "PRELS:NOM:SIN:NEU", "das"),
-		atrWithPOS("am", "APPRART:DAT:SIN:MAS", "an"),
-		atrWithPOS("Straßenrand", "SUB:DAT:SIN:MAS", "Straßenrand"),
-		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
-		atrWithPOS("parkt", "VER:3:SIN:PRS:SFT", "parken"),
-		atrWithPOS("im", "APPRART:DAT:SIN:NEU", "in"),
-		atrWithPOS("Halteverbot", "SUB:DAT:SIN:NEU", "Halteverbot"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	ms := rule.Match(s)
-	require.Equal(t, 1, len(ms))
-	require.Equal(t, 29, ms[0].GetFromPos())
-	require.Equal(t, 40, ms[0].GetToPos())
-
-	// comma after relative clause → no match
-	good := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("das", "PRELS:NOM:SIN:NEU", "das"),
-		atrWithPOS("am", "APPRART:DAT:SIN:MAS", "an"),
-		atrWithPOS("Straßenrand", "SUB:DAT:SIN:MAS", "Straßenrand"),
-		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("parkt", "VER:3:SIN:PRS:SFT", "parken"),
-		atrWithPOS("im", "APPRART:DAT:SIN:NEU", "in"),
-		atrWithPOS("Halteverbot", "SUB:DAT:SIN:NEU", "Halteverbot"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Empty(t, rule.Match(good))
-
-	// "Die Frau, die vor dem Auto steht hat schwarze Haare." → 27-36
-	frauB := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Die", "ART:DEF:NOM:SIN:FEM", "die"),
-		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("die", "PRELS:NOM:SIN:FEM", "die"),
-		atrWithPOS("vor", "PRP:DAT", "vor"),
-		atrWithPOS("dem", "ART:DEF:DAT:SIN:NEU", "der"),
-		atrWithPOS("Auto", "SUB:DAT:SIN:NEU", "Auto"),
-		atrWithPOS("steht", "VER:3:SIN:PRS:SFT", "stehen"),
-		atrWithPOS("hat", "VER:3:SIN:PRS:SFT", "haben"),
-		atrWithPOS("schwarze", "ADJ:AKK:PLU:NEU:GRU:IND", "schwarz"),
-		atrWithPOS("Haare", "SUB:AKK:PLU:NEU", "Haar"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	msFB := rule.Match(frauB)
-	require.Equal(t, 1, len(msFB))
-	require.Equal(t, 27, msFB[0].GetFromPos())
-	require.Equal(t, 36, msFB[0].GetToPos())
-
-	// "Alles, was ich habe ist ein Buch." → 15-23
-	allesB := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Alles", "PRO:DEM:NOM:SIN:NEU", "alles"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("was", "PRELS", "was"),
-		atrWithPOS("ich", "PPER:NOM:SIN:1", "ich"),
-		atrWithPOS("habe", "VER:1:SIN:PRS:SFT", "haben"),
-		atrWithPOS("ist", "VER:3:SIN:PRS:NON", "sein"),
-		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
-		atrWithPOS("Buch", "SUB:NOM:SIN:NEU", "Buch"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	msAB := rule.Match(allesB)
-	require.Equal(t, 1, len(msAB))
-	require.Equal(t, 15, msAB[0].GetFromPos())
-	require.Equal(t, 23, msAB[0].GetToPos())
-}
-
-func TestWithPositions_UTF16AndPunctSpacing(t *testing.T) {
-	// "Auto," then "das" must match Java offsets with ß in Straßenrand
-	toks := withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART", "das"),
-		atrWithPOS("Auto", "SUB", "Auto"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("das", "PRELS", "das"),
-		atrWithPOS("am", "PRP", "an"),
-		atrWithPOS("Straßenrand", "SUB", "Straßenrand"),
-		atrWithPOS("steht", "VER", "stehen"),
-	)
-	// Auto 4-8, comma 8-9, das 10-13, am 14-16, Straßenrand 17-28, steht 29-34
-	require.Equal(t, 4, toks[2].GetStartPos())  // Auto
-	require.Equal(t, 8, toks[3].GetStartPos())  // comma
-	require.Equal(t, 10, toks[4].GetStartPos()) // das
-	require.Equal(t, 17, toks[6].GetStartPos()) // Straßenrand
-	require.Equal(t, 29, toks[7].GetStartPos()) // steht
-	require.Equal(t, 11, utf16LenDE("Straßenrand"))
-}
-
-// Twin of Java MARKS_REGEX character-class range quirk (!-– includes letters).
+// TestMissingCommaMarksRE_JavaRangeQuirk twins Java MARKS_REGEX character-class range
+// quirk (!-– includes letters/digits as single-char separators when .matches()).
 func TestMissingCommaMarksRE_JavaRangeQuirk(t *testing.T) {
-	// Java .matches() on character class: single-char full match only
 	require.True(t, missingCommaMarksRE.MatchString(","))
 	require.True(t, missingCommaMarksRE.MatchString("."))
 	// Range U+0021..U+2013 includes ASCII letters/digits (Java quirk)
@@ -257,4 +144,22 @@ func TestMissingCommaMarksRE_JavaRangeQuirk(t *testing.T) {
 	require.True(t, isSeparatorMissingComma("und"))
 	require.True(t, isSeparatorMissingComma("oder"))
 	require.False(t, isSeparatorMissingComma("Auto"))
+}
+
+// TestMissingCommaRelativeClauseRule_Constructors ports both Java constructors.
+func TestMissingCommaRelativeClauseRule_Constructors(t *testing.T) {
+	front := NewMissingCommaRelativeClauseRule(nil)
+	require.False(t, front.Behind)
+	require.Equal(t, "COMMA_IN_FRONT_RELATIVE_CLAUSE", front.GetID())
+
+	behind := NewMissingCommaRelativeClauseRuleBehind(nil)
+	require.True(t, behind.Behind)
+	require.Equal(t, "COMMA_BEHIND_RELATIVE_CLAUSE", behind.GetID())
+
+	flag := NewMissingCommaRelativeClauseRuleBehindFlag(nil, true)
+	require.True(t, flag.Behind)
+	require.Equal(t, "COMMA_BEHIND_RELATIVE_CLAUSE", flag.GetID())
+	flag2 := NewMissingCommaRelativeClauseRuleBehindFlag(nil, false)
+	require.False(t, flag2.Behind)
+	require.Equal(t, "COMMA_IN_FRONT_RELATIVE_CLAUSE", flag2.GetID())
 }
