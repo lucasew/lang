@@ -56,7 +56,12 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	// Java German.getRelevantRules layout only (no invent SharedLayout helper / no
 	// WHITESPACE_PUNCTUATION / no core DOUBLE_PUNCTUATION / SENTENCE_WHITESPACE /
 	// UNPAIRED_BRACKETS / PARAGRAPH_REPEAT_BEGINNING — DE-specific rules below).
-	deComma := NewGermanCommaWhitespaceRule(nil)
+	// Java German.getRelevantRules: GermanCommaWhitespaceRule(messages, Example.wrong/fixed, Tools.getUrl(...))
+	deComma := NewGermanCommaWhitespaceRule(nil,
+		rules.Wrong("Die Partei<marker> ,</marker> die die letzte Wahl gewann."),
+		rules.Fixed("Die Partei<marker>,</marker> die die letzte Wahl gewann."),
+		"https://languagetool.org/insights/de/beitrag/grammatik-leerzeichen/#fehler-1-leerzeichen-vor-und-nach-satzzeichen",
+	)
 	lt.AddRuleChecker(deComma.GetID(), rules.AsSentenceCheckerSimple(deComma.Match))
 
 	// Unpaired brackets/quotes registered later with DE-specific rules (same Java list).

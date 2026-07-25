@@ -5,38 +5,39 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
+// TestGermanCommaWhitespaceRule_Rule ports GermanCommaWhitespaceRuleTest.testRule.
+//
+// Java:
+//
+//	rule = new GermanCommaWhitespaceRule(TestTools.getEnglishMessages(),
+//	  Example.wrong("Die Partei<marker> ,</marker> die die letzte Wahl gewann."),
+//	  Example.fixed("Die Partei<marker>,</marker> die die letzte Wahl gewann."),
+//	  Tools.getUrl("http://fake"));
+//	lt = new JLanguageTool(Languages.getLanguageForShortCode("de"));
+//	assertThat(rule.match(lt.getAnalyzedSentence("Es gibt 5 Millionen .de-Domains.")).length, is(0));
 func TestGermanCommaWhitespaceRule_Rule(t *testing.T) {
-	rule := NewGermanCommaWhitespaceRule(nil)
-	require.Equal(t, "COMMA_PARENTHESIS_WHITESPACE", rule.GetID())
-	require.Contains(t, rule.GetURL(), "grammatik-leerzeichen")
-
-	// Java: space before . for TLD/domain labels is exception (.de-Domains)
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Es gibt 5 Millionen .de-Domains."))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Es gibt 5 Millionen .com-Domain."))))
-
-	// normal space-before-comma still flagged (Java example pair)
-	ms := rule.Match(languagetool.AnalyzePlain("Die Partei , die die letzte Wahl gewann."))
-	require.Equal(t, 1, len(ms))
-	// DE wrapper sets Rule so URL is available on the match rule
-	if ms[0].Rule != nil {
-		if u, ok := ms[0].Rule.(interface{ GetURL() string }); ok {
-			require.Contains(t, u.GetURL(), "leerzeichen")
-		}
-	}
-
-	// non-domain space before period still flagged
-	require.GreaterOrEqual(t, len(rule.Match(languagetool.AnalyzePlain("Ende . Nächster Satz."))), 1)
+	rule := NewGermanCommaWhitespaceRule(
+		nil, // TestTools.getEnglishMessages — not asserted by Java testRule
+		rules.Wrong("Die Partei<marker> ,</marker> die die letzte Wahl gewann."),
+		rules.Fixed("Die Partei<marker>,</marker> die die letzte Wahl gewann."),
+		"http://fake",
+	)
+	lt := languagetool.NewJLanguageTool("de")
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("Es gibt 5 Millionen .de-Domains."))))
 }
 
-// Twin of Java isException domain regex [a-z]{2,10}-Domains?
+// Twin of Java isException domain regex [a-z]{2,10}-Domains? with Matcher.matches().
 func TestGermanCommaWhitespaceRule_DomainExceptionRE(t *testing.T) {
-	require.True(t, deDomainLabel.MatchString("de-Domains"))
-	require.True(t, deDomainLabel.MatchString("com-Domain"))
-	require.True(t, deDomainLabel.MatchString("info-Domains"))
-	require.False(t, deDomainLabel.MatchString("DE-Domains")) // case-sensitive like Java
-	require.False(t, deDomainLabel.MatchString("toolongname-Domain"))
-	require.False(t, deDomainLabel.MatchString("x-Domain")) // need ≥2 letters
+	require.True(t, domains.MatchString("de-Domains"))
+	require.True(t, domains.MatchString("com-Domain"))
+	require.True(t, domains.MatchString("info-Domains"))
+	require.False(t, domains.MatchString("DE-Domains"))         // case-sensitive like Java
+	require.False(t, domains.MatchString("toolongname-Domain")) // >10 letters before -
+	require.False(t, domains.MatchString("x-Domain"))           // need ≥2 letters
+	require.False(t, domains.MatchString("de-DomainsX"))        // matches() full string only
+	require.True(t, domains.MatchString("xde-Domains"))         // [a-z]{2,10} accepts "xde"
 }
