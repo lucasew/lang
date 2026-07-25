@@ -1393,38 +1393,154 @@ func TestSwissGermanSpeller_InitFromDiscovered(t *testing.T) {
 	require.NotEmpty(t, r.IgnoreWords)
 }
 
-// --- Audit-path Java twin names (morph / fail-closed without full dict corpus) ---
+// mustInitGermanSpeller opens official DE resources (dict + lists + GermanTagger +
+// getStrictInstance compound tokenizers). Skips when inspiration tree is absent.
+func mustInitGermanSpeller(t *testing.T) *GermanSpellerRule {
+	t.Helper()
+	ClearGermanFilterSpeller()
+	t.Cleanup(ClearGermanFilterSpeller)
+	if DiscoverGermanResourceDir() == "" {
+		t.Skip("inspiration DE resources not found")
+	}
+	r := NewGermanSpellerRule(nil)
+	require.NoError(t, r.InitFromDiscoveredResources())
+	require.True(t, FilterDictAvailable(), "de_DE.dict required for Java twin outcomes")
+	return r
+}
+
+// --- Java GermanSpellerRuleTest twins (resource-backed, Java-visible outcomes) ---
 
 // Twin of GermanSpellerRuleTest.testIsMisspelled
 func TestGermanSpellerRule_IsMisspelled(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	// no dict: FilterDict unavailable → fail-closed false (not invent misspellings)
-	require.False(t, r.IsMisspelled("xyzzyqq"))
-	// length-1 never misspelled (IgnoreWord)
-	require.False(t, r.IsMisspelled("a"))
-	r.AddIgnoreWords("LanguageTool")
-	require.False(t, r.IsMisspelled("LanguageTool"))
-	// prohibited forces true even without dict
-	r.AddProhibitedWords([]string{"xyzzyqq"})
-	require.True(t, r.IsMisspelled("xyzzyqq"))
+	// Fail-closed without dict (no invent misspellings)
+	ClearGermanFilterSpeller()
+	r0 := NewGermanSpellerRule(nil)
+	require.False(t, r0.IsMisspelled("xyzzyqq"))
+	require.False(t, r0.IsMisspelled("a"))
+	r0.AddIgnoreWords("LanguageTool")
+	require.False(t, r0.IsMisspelled("LanguageTool"))
+	r0.AddProhibitedWords([]string{"xyzzyqq"})
+	require.True(t, r0.IsMisspelled("xyzzyqq"))
+
+	r := mustInitGermanSpeller(t)
+	// Java assertTrue misspelled
+	for _, w := range []string{
+		"dshfsdhsdf", "Haussarbeit", "Überschus", "Überschussen",
+		"Spielzugcomputer", "Spielzugcomputern",
+		"Studentenschafte", "Steuereigenschafte",
+		"Gebietskörperschaf", "Gebietskörperschafs", "Gebietskörperschafen",
+		"Freundschaf",
+	} {
+		require.True(t, r.IsMisspelled(w), "IsMisspelled(%q)", w)
+	}
+	// Java assertFalse misspelled
+	for _, w := range []string{
+		"Hausarbeit", "Überschuss", "Überschüsse",
+		"Spielzug", "Spielzugs",
+		"Studentenschaften", "Steuereigenschaften", "Eigenschaften", "wirtschafte",
+		"Wollschaf", "Wollschafen",
+	} {
+		require.False(t, r.IsMisspelled(w), "IsMisspelled(%q)", w)
+	}
+	// Wollschafs: Java hunspell.spell accepts genitive via .aff; pure-Go morfologik
+	// dict + FileHunspellDictionary have no affix expansion (same leaf as
+	// 3.C.2-VagueSpellChecker blocked reason). Do not invent a soft pass here.
 }
 
-// Twin of GermanSpellerRuleTest.testIgnoreMisspelledWord
+// Twin of GermanSpellerRuleTest.testIgnoreMisspelledWord (ignorePotentiallyMisspelledWord).
+// Matrix covers Java assertTrue/False cases that the pure-Go path can match with
+// GermanTagger + getStrictInstance (no affix-capable hunspell). Cases that need
+// free-compound hunspell.spell or pure-plural first parts accepted only via
+// Java's native hunspell are omitted (documented gap).
 func TestGermanSpellerRule_IgnoreMisspelledWord(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	r.AddIgnoreWords("Feynman")
-	require.True(t, r.IgnoreWord("Feynman"))
-	require.False(t, r.IsMisspelled("Feynman"))
+	r := mustInitGermanSpeller(t)
+	// Java assertFalse
+	for _, w := range []string{
+		"Wahlkamp", "Ahmenforscherin", "Bachwettbewerb", "Berlinhauptbahnhof",
+		"Bogenschiessen", "Badefenster", "Badspaß", "Widersachen", "Widerherstellung",
+		"Ostenteil", "Perspektivewechsel", "Suchemaschine", "Sprachevariante", "Sprachenvariante",
+		"Kontrollegremiums", "Kontrollengremiums", "Leuchtefunktion", "Schulestreit",
+		"Stelleplätze", "Herzenanliegen", "Weltbummler", "Zähnebürste", "Fußbällespielen",
+		"Abschlussgruße", "Azubikommt", "Lasstest", "Wachtums-Pistole", "Discorum",
+		"Arbeitsgeber", "Arbeitsgeberverhandlungen", "Arbeitplatz", "Rechtlage",
+		"Rechtextremismus", "Rechtanwälten", "Rechtsfertigungsgrund",
+		"Aus-leihstelle", "AusLeihStelle", "Vorraus",
+		"Weinkühl-schrank", "Weinskühlschrank", "Weinsskühlschrank",
+		"Schokosbrunnen", "Gensfleisch", "Grossmächten", "Aussichtplattform", "Datumangabe",
+		"haltungschäden", "haltungs-schäden", "haltungs-Schäden", "Haltungschäden",
+		"Haltung-Schäden", "Hultungsschäden", "Hultungs-Schäden", "Haltungsscheden",
+		"Haltungs-Scheden", "HaltungsSchäden", "Haltungsei", "Haltungs-Ei",
+		"Leistungsnach", "Antwortzugeschnitten", "Leistungsgegangen", "Leistungsgegangen.",
+		"Leistungsversuchstestnachweis", "Leistung", "Leistungs",
+		"Anschauungswiese", "Fakultätsaal", "Implementierungs-pflicht", "Sachsenmeisterschaf",
+		"Bürge*in", "PDFversion", "AktienIndex", "EisenbahnerInnern", "Eisenbahner*innern",
+		"Eisenbahner/-innern", "Ireland", "Alkoholgenuß",
+		"Actionsspaß", "Aktionwoche", "Aufschwungsphase", "Absprungsrate",
+		"Ahornswald", "Aluminiumssockel", "Antwortszeiten", "Austauschsprogramms",
+		"Bahnstrasse", "Bausstellen", "Bergstrasse", "Berufungssausschuss", "Betreffszeile",
+		"Bundeswasserstrassen", "Abstiegzone", "Abstimmungbeschluss", "Dorfstrasse",
+		"Kitasausbau", "Linkpartei", "Linksportal", "Muttertagkarte", "Verbandgemeinde",
+		"Sonntagfahrer", "Gerätbezeichnung",
+		"Abflußleitung", "Grünschloß", "Bewußtseinswandels", "Meerweine",
+	} {
+		require.False(t, r.IgnorePotentiallyMisspelledWord(w), "ignorePotentially(%q)", w)
+	}
+	// Java assertTrue — subset proven with GermanTagger compound POS + strict tokenizer
+	for _, w := range []string{
+		"Schwedenreise", "Erwachsenenintensivkurse", "Horizontalbohrtechnik",
+		"Bürokratieaufbau", "Wendeplatte",
+		"Ausbiegemöglichkeit", "Lipochrom", "Ostteil", "Perspektivwechsel",
+		"Sprachvariante", "Kontrollgremiums", "Leuchtfunktion", "Schulstreit",
+		"Herzensanliegen", "Vornamensliste", "Wörterbuch", "Wortgrenze", "Weltklimaveränderung",
+		// Demokratenversammlung: pure-plural first part rejected by processTwoPart (same as Java
+		// processTwo when POS is only PLU); Java may still accept via hunspell.spell free compound.
+		"Zahnbürsten", "Zähnebürsten", "Apfelstehlen", "Äpfelstehlen",
+		"Zwiebelschneiden", "Zwiebelnschneiden", "Fußballspielen",
+		"Abbiegemöglichkeit", "Cholesterinwiederaufnahmehemmer", "Kennenlernmöglichkeit",
+		"Konstruktionsverfahren", "Wölkchenbildung", "Offenlegungsfrist", "Hospizgemeinschaft",
+		"Ablassbild", "Rechtfertigungsgrund", "Ausleihstelle", "Trauringkollektionen",
+		"Weinkühlschrank", "Schokobrunnen", "Hundefutterschachtel", "Leistungsversuchstest",
+		"Nachuntersuchungstest", "Robustheitsabstände", "Robustheitsabstände.",
+		"Absenkungsvorgaben", "Prioritätsdings", "Prioritätsdings.", "Haltungsschäden",
+		"Prioritäts-Dings", "Prioritäts-Dings.", "Haltungs-Schäden", "Kritzelcafé",
+		"Agensprinzip",
+		"SEO-ExpertIn", "SEO-Expert*in", "SEO-Expert:in", "SEO-Expert_in", "SEO-Expert/-in",
+		"SEO-ExpertInnen", "SEO-Expert*innen", "SEO-Expert:innen", "SEO-Expert_innen", "SEO-Expert/-innen",
+		"ArbeitnehmerInnenschutzgesetz", "Arbeitnehmer*innenschutzgesetz",
+		"Arbeitnehmer:innenschutzgesetz", "Arbeitnehmer_innenschutzgesetz",
+		"Arbeitnehmer/-innenschutzgesetz",
+		"Karnevalmuseum", "Aktionswoche", "Bunsenbrennerflamme",
+		"Linkelemente", "Linksdrehung", "Muttertagskarte", "Verbandmaterial", "Verbandsmaterial",
+		"Sonntagnachmittag", "Sonntagsfahrer", "Gerätebezeichnung",
+		"Abflussleitung", "Grünschloss", "Bewusstseinswandels",
+	} {
+		require.True(t, r.IgnorePotentiallyMisspelledWord(w), "ignorePotentially(%q)", w)
+	}
 }
 
 // Twin of GermanSpellerRuleTest.testProhibited
 func TestGermanSpellerRule_Prohibited(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	r.AddIgnoreWords("okword")
-	r.AddProhibitedWords([]string{"okword"})
-	require.True(t, r.IsProhibited("okword"))
-	// prohibited overrides ignore → misspelled
-	require.True(t, r.IsMisspelled("okword"))
+	r := mustInitGermanSpeller(t)
+	require.True(t, r.IsProhibited("Standart-Test"))
+	require.True(t, r.IsProhibited("Blindarmentzündung"))
+	require.True(t, r.IsProhibited("Weihnachtfreier"))
+	require.False(t, r.IsProhibited("Standard-Test"))
+	require.True(t, r.IsProhibited("Abstellgreis"))
+	require.True(t, r.IsProhibited("Abstellgreise"))
+	require.True(t, r.IsProhibited("Abstellgreisen"))
+	require.True(t, r.IsProhibited("Landstreckenflüge"))
+	require.True(t, r.IsProhibited("Landstreckenflügen"))
+	require.True(t, r.IsProhibited("Abdominalgangion"))
+	require.True(t, r.IsProhibited("Abdominalgangionen"))
+	require.True(t, r.IsProhibited("Badegas"))
+	require.True(t, r.IsProhibited("Aktienkur"))
+	require.True(t, r.IsProhibited("Stellungsnahmen"))
+	require.True(t, r.IsProhibited("Varietee"))
+	require.True(t, r.IsProhibited("Varietees"))
+	require.True(t, r.IsProhibited("Feuerwerksartigel"))
+	require.True(t, r.IsProhibited("Feuerwerksartigeln"))
+	require.True(t, r.IsProhibited("Feuerwerksartigels"))
+	require.True(t, r.IsProhibited("To-go"))
 }
 
 // Twin of GermanSpellerRuleTest.testAddIgnoreWords
@@ -1432,161 +1548,293 @@ func TestGermanSpellerRule_AddIgnoreWords(t *testing.T) {
 	r := NewGermanSpellerRule(nil)
 	r.AddIgnoreWords("Alpha", "Beta Gamma")
 	require.True(t, r.IgnoreWord("Alpha"))
-	// multi-token becomes phrase ignore
-	require.NotNil(t, r)
+	// Java addIgnoreWords stores expanded forms; case-fold is via ignoreWordsIgnoreCase set
+	// only for all-upper or explicit paths — "alpha" lower is not auto-ignored.
+	require.False(t, r.IgnoreWord("alpha"))
 }
 
 // Twin of GermanSpellerRuleTest.testFilterForLanguage
 func TestGermanSpellerRule_FilterForLanguage(t *testing.T) {
 	r := NewGermanSpellerRule(nil)
-	// base DE keeps ß
-	out := r.FilterForLanguage([]string{"Straße", "ok", "-x", "a b"})
-	require.Contains(t, out, "Straße")
-	require.Contains(t, out, "ok")
+	list1 := []string{"Mafiosi s", "foo"}
+	require.Equal(t, []string{"foo"}, r.FilterForLanguage(list1))
+	list2 := []string{"-bar", "foo"}
+	require.Equal(t, []string{"foo"}, r.FilterForLanguage(list2))
+	// Swiss: ß → ss
+	ch := NewSwissGermanSpellerRule(nil)
+	list3 := []string{"Muße", "foo"}
+	require.Equal(t, []string{"Musse", "foo"}, ch.FilterForLanguage(list3))
 }
 
 // Twin of GermanSpellerRuleTest.testSortSuggestion
 func TestGermanSpellerRule_SortSuggestion(t *testing.T) {
 	r := NewGermanSpellerRule(nil)
-	out := r.SortSuggestionByQuality("Haus", []string{"Maus", "haus", "vor allem"})
-	require.NotEmpty(t, out)
-	// case-matched / space-containing quality boost
-	require.Equal(t, len(out), 3)
+	out := r.SortSuggestionByQuality("fehler", []string{"fehla", "xxx", "Fehler"})
+	require.Equal(t, []string{"Fehler", "fehla", "xxx"}, out)
+	out2 := r.SortSuggestionByQuality("mülleimer", []string{"Mülheimer", "-mülheimer", "Melkeimer", "Mühlheimer", "Mülleimer"})
+	require.Equal(t, "Mülleimer", out2[0])
 }
 
 // Twin of GermanSpellerRuleTest.testGetOnlySuggestions
 func TestGermanSpellerRule_GetOnlySuggestions(t *testing.T) {
 	r := NewGermanSpellerRule(nil)
-	// known curated pair if any; empty is valid fail-closed without invent
-	sugs := r.OnlySuggestions("dass")
-	_ = sugs
-	require.NotNil(t, r)
+	require.Equal(t, []string{"authentisch"}, r.OnlySuggestions("autentisch"))
+	require.Equal(t, []string{"brillanter"}, r.OnlySuggestions("brillianter"))
+	require.Equal(t, []string{"authentischeres"}, r.OnlySuggestions("autentischeres"))
+	require.Equal(t, []string{"Authentischere"}, r.OnlySuggestions("Autentischere"))
 }
 
-// Twin of GermanSpellerRuleTest.testRuleWithGermanyGerman
+// Twin of GermanSpellerRuleTest.testRuleWithGermanyGerman (+ commonGermanAsserts subset).
+// Note: free compounds like Waschmaschinentestversuch need affix-capable hunspell.spell
+// (Java DumontsHunspellDictionary); pure-Go morfologik has no free-compound formation.
+// "Er bzw. sie." needs German word tokenizer keeping "bzw." — AnalyzePlain splits "bzw"+".".
 func TestGermanSpellerRule_RuleWithGermanyGerman(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
+	r := mustInitGermanSpeller(t)
 	require.Equal(t, "GERMAN_SPELLER_RULE", r.GetID())
-	// id may be HUNSPELL_RULE — accept non-empty
-	require.NotEmpty(t, r.GetID())
+	matchN := func(s string) int {
+		return len(r.Match(languagetool.AnalyzePlain(s)))
+	}
+	require.Equal(t, 0, matchN("Der äußere Übeltäter."))
+	require.Equal(t, 1, matchN("Der äussere Übeltäter."))
+	require.Equal(t, 0, matchN("Der Arbeitnehmer"))
+	require.Equal(t, 0, matchN("Die Verhaltensänderung"))
+	require.Equal(t, 0, matchN("Die Standarte"))
+	require.Equal(t, 0, matchN("Die Standarten"))
+	require.Equal(t, 0, matchN("Der Standard"))
+	require.Equal(t, 1, matchN("Der Waschmaschinentest-Dftgedgs"))
+	require.Equal(t, 1, matchN("Der Dftgedgs-Waschmaschinentest"))
+	require.Equal(t, 1, matchN("Der Arbeitsnehmer"))
+	require.Equal(t, 1, matchN("Die Verhaltenänderung"))
+	require.Equal(t, 1, matchN("Er bw. sie."))
+	require.Equal(t, 1, matchN("Der Standart"))
+	require.Equal(t, 1, matchN("Halterun"))
+	require.Equal(t, 0, matchN("Halterung"))
+	require.Equal(t, 0, matchN("Wandhalterung"))
+	require.Equal(t, 1, matchN("süddeutschland"))
+	require.Equal(t, 1, matchN("Einbusse"))
+	require.Equal(t, 0, matchN("nordwestfranzösisch"))
+	require.Equal(t, 0, matchN("Desktopbetrieb"))
 }
 
 // Twin of GermanSpellerRuleTest.testRuleWithAustrianGerman
 func TestGermanSpellerRule_RuleWithAustrianGerman(t *testing.T) {
+	ClearGermanFilterSpeller()
+	t.Cleanup(ClearGermanFilterSpeller)
+	if DiscoverGermanResourceDir() == "" {
+		t.Skip("no resources")
+	}
 	r := NewAustrianGermanSpellerRule(nil)
-	require.NotEmpty(t, r.GetID())
+	require.NoError(t, r.InitFromDiscoveredResources())
+	require.Equal(t, 0, len(r.Match(languagetool.AnalyzePlain("Der äußere Übeltäter."))))
+	require.Equal(t, 1, len(r.Match(languagetool.AnalyzePlain("Der äussere Übeltäter."))))
 }
 
 // Twin of GermanSpellerRuleTest.testRuleWithSwissGerman
 func TestGermanSpellerRule_RuleWithSwissGerman(t *testing.T) {
+	ClearGermanFilterSpeller()
+	t.Cleanup(ClearGermanFilterSpeller)
+	if DiscoverGermanResourceDir() == "" {
+		t.Skip("no resources")
+	}
 	r := NewSwissGermanSpellerRule(nil)
-	require.NotEmpty(t, r.GetID())
-	// CH filter uses ss not ß
+	require.NoError(t, r.InitFromDiscoveredResources())
+	// ß not allowed in Swiss
+	require.Equal(t, 1, len(r.Match(languagetool.AnalyzePlain("Der äußere Übeltäter."))))
+	require.Equal(t, 0, len(r.Match(languagetool.AnalyzePlain("Der äussere Übeltäter."))))
+	// Einbusse accepted in CH
+	require.Equal(t, 0, len(r.Match(languagetool.AnalyzePlain("Einbusse"))))
+	// CH filter rewrites ß→ss
 	out := r.FilterForLanguage([]string{"Straße"})
-	// Swiss may rewrite Straße → Strasse
-	_ = out
+	require.Equal(t, []string{"Strasse"}, out)
 }
 
-// Twin of GermanSpellerRuleTest.testGenderCompound
+// Twin of GermanSpellerRuleTest.testGenderCompound (ignorePotentially / isValidGender path).
+// Full Match matrix needs GermanWordTokenizer keeping gender markers (* : _) attached;
+// AnalyzePlain (and current GermanWordTokenizer) split them. Assert the word-level
+// ignorePotentially path that GermanSpellerRule owns.
 func TestGermanSpellerRule_GenderCompound(t *testing.T) {
-	// removeGenderCompoundMatches path covered by RemoveGenderCompoundMatches twin
-	require.NotNil(t, NewGermanSpellerRule(nil))
+	r := mustInitGermanSpeller(t)
+	// gender-star compounds accepted via ignorePotentially
+	for _, w := range []string{
+		"SEO-ExpertIn", "SEO-Expert*in", "SEO-Expert:in", "SEO-Expert_in", "SEO-Expert/-in",
+		"SEO-ExpertInnen", "SEO-Expert*innen", "SEO-Expert:innen", "SEO-Expert_innen", "SEO-Expert/-innen",
+		"ArbeitnehmerInnenschutzgesetz", "Arbeitnehmer*innenschutzgesetz",
+	} {
+		require.True(t, r.IgnorePotentiallyMisspelledWord(w), w)
+	}
+	// invalid gender-star rejected
+	require.False(t, r.IgnorePotentiallyMisspelledWord("Bürge*in"))
+	require.False(t, r.IgnorePotentiallyMisspelledWord("Eisenbahner*innern"))
+	// CommonFileTypes suffix: .txt / .pdf etc. ignored when whole token matches suffix pattern
+	require.True(t, r.IgnoreWordAt([]string{"Jurist_innen.txt"}, 0))
+	require.True(t, r.IgnoreWordAt([]string{"report.pdf"}, 0))
+	require.True(t, r.IgnoreWordAt([]string{"archive.tar.gz"}, 0))
 }
 
 // Twin of GermanSpellerRuleTest.testPosition
 func TestGermanSpellerRule_Position(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	// Match without dict returns empty (fail closed); with override, position is UTF-16 span
-	r.IsMisspelledOverride = func(w string) bool { return w == "xyzzy" }
-	// Match also gates on FilterDictAvailable in some paths — force via prohibited
-	r2 := NewGermanSpellerRule(nil)
-	r2.AddProhibitedWords([]string{"xyzzy"})
-	ms := r2.Match(languagetool.AnalyzePlain("Ein xyzzy Test."))
-	if len(ms) == 0 {
-		// Match may require FilterDictAvailable; assert IgnoreWord/IsMisspelled positions via override API
-		require.True(t, r.IsMisspelled("xyzzy"))
-		return
-	}
+	r := mustInitGermanSpeller(t)
+	ms := r.Match(languagetool.AnalyzePlain("Ein xyzzyqqq Test."))
+	require.NotEmpty(t, ms)
 	require.GreaterOrEqual(t, ms[0].FromPos, 0)
 	require.Greater(t, ms[0].ToPos, ms[0].FromPos)
 }
 
-// Twin of GermanSpellerRuleTest.testSplitWords
+// Twin of GermanSpellerRuleTest.testSplitWords — wrong-split path coverage
 func TestGermanSpellerRule_SplitWords(t *testing.T) {
-	// split-word suggestions live in suggest path; morph smoke
-	r := NewGermanSpellerRule(nil)
-	require.NotNil(t, r.FilterForLanguage([]string{"Hausboot"}))
+	r := mustInitGermanSpeller(t)
+	// Known misspelling that triggers suggestions (not necessarily wrong-split)
+	ms := r.Match(languagetool.AnalyzePlain("Ein Hauk Test."))
+	require.NotEmpty(t, ms)
+	require.NotEmpty(t, ms[0].GetSuggestedReplacements())
 }
 
-// Twin of GermanSpellerRuleTest.testGetSuggestions
+// Twin of GermanSpellerRuleTest.testGetSuggestions (subset of assertCorrection)
 func TestGermanSpellerRule_GetSuggestions(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	// without dict, curated only-suggestions or empty
-	_ = r.OnlySuggestions("dass")
-	require.NotNil(t, r)
+	r := mustInitGermanSpeller(t)
+	contains := func(word string, want ...string) {
+		t.Helper()
+		got := r.Suggest(word)
+		for _, w := range want {
+			require.Contains(t, got, w, "Suggest(%q) missing %q; full=%v", word, w, got)
+		}
+	}
+	contains("Hauk", "Haus")
+	contains("Rechtschreipreform", "Rechtschreibreform")
+	contains("Autuverkehr", "Autoverkehr")
+	contains("bw.", "bzw.")
+	contains("vorallem", "vor allem")
+	contains("wieviel", "wie viel")
+	contains("undzwar", "und zwar")
 }
 
 // Twin of GermanSpellerRuleTest.testSuggestions
 func TestGermanSpellerRule_Suggestions(t *testing.T) {
-	TestGermanSpellerRule_GetSuggestions(t)
+	r := mustInitGermanSpeller(t)
+	// first suggestion for known misspellings
+	first := func(word string) string {
+		sugs := r.Suggest(word)
+		if len(sugs) == 0 {
+			return ""
+		}
+		return sugs[0]
+	}
+	// OnlySuggestions path for autentisch-style words via Match
+	ms := r.Match(languagetool.AnalyzePlain("Eine autentische Sache."))
+	require.Len(t, ms, 1)
+	sugs := ms[0].GetSuggestedReplacements()
+	require.NotEmpty(t, sugs)
+	require.Equal(t, "authentische", sugs[0])
+	_ = first
 }
 
 // Twin of GermanSpellerRuleTest.testGetSuggestionOrder
 func TestGermanSpellerRule_GetSuggestionOrder(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	out := r.SortSuggestionByQuality("test", []string{"Test", "best", "a b"})
-	require.Len(t, out, 3)
+	r := mustInitGermanSpeller(t)
+	first := func(word string) string {
+		sugs := r.Suggest(word)
+		require.NotEmpty(t, sugs, word)
+		return sugs[0]
+	}
+	require.Equal(t, "heißt", first("heisst"))
+	require.Equal(t, "heißen", first("heissen"))
+	require.Equal(t, "Phänomen", first("Fänomen"))
+	require.Equal(t, "homophob", first("homofob"))
+	require.Equal(t, "über", first("ueber"))
+	require.Equal(t, "Ärger", first("Aerger"))
+	require.Equal(t, "Rhythmus", first("Rythmus"))
 }
 
 // Twin of GermanSpellerRuleTest.testFilteringOutSuggestions
 func TestGermanSpellerRule_FilteringOutSuggestions(t *testing.T) {
+	r := mustInitGermanSpeller(t)
+	ms := r.Match(languagetool.AnalyzePlain("glückklich"))
+	require.NotEmpty(t, ms)
+	sugs := ms[0].GetSuggestedReplacements()
+	require.Contains(t, sugs, "glücklich")
+	// Java: [glücklich, glücklichst] — first must be glücklich
+	require.Equal(t, "glücklich", sugs[0])
+}
+
+// Twin of GermanSpellerRuleTest.testFilterBadSuggestions
+func TestGermanSpellerRule_FilterBadSuggestions(t *testing.T) {
 	r := NewGermanSpellerRule(nil)
 	r.AddProhibitedWords([]string{"bad"})
 	out := r.FilterProhibitedSuggestions([]string{"good", "bad", "ok"})
 	require.NotContains(t, out, "bad")
 	require.Contains(t, out, "good")
+	require.Contains(t, out, "ok")
 }
 
-// Twin of GermanSpellerRuleTest.testFilterBadSuggestions
-func TestGermanSpellerRule_FilterBadSuggestions(t *testing.T) {
-	TestGermanSpellerRule_FilteringOutSuggestions(t)
-}
-
-// Twin of GermanSpellerRuleTest.testGetAdditionalTopSuggestions
+// Twin of GermanSpellerRuleTest.testGetAdditionalTopSuggestions (Match surface)
 func TestGermanSpellerRule_GetAdditionalTopSuggestions(t *testing.T) {
-	// covered by AdditionalTopSuggestions* tests; keep named twin
-	require.NotNil(t, NewGermanSpellerRule(nil))
+	r := mustInitGermanSpeller(t)
+	// exact map path (Java ADDITIONAL_SUGGESTIONS) via Suggest
+	require.Equal(t, []string{"dass"}, r.Suggest("daß"))
+	ms := r.Match(languagetool.AnalyzePlain("dan"))
+	require.NotEmpty(t, ms)
+	sugs := ms[0].GetSuggestedReplacements()
+	require.NotEmpty(t, sugs)
+	// Java: starts with [dann, Dan, den, an…
+	require.Equal(t, "dann", sugs[0])
 }
 
 // Twin of GermanSpellerRuleTest.testDashAndHyphenEtc
 func TestGermanSpellerRule_DashAndHyphenEtc(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	r.AddIgnoreWords("E-Mail")
-	// Without FilterDict, Match is empty (fail-closed). Smoke: ignore / hyphen APIs exist.
-	require.True(t, r.IgnoreWord("E-Mail"))
+	r := mustInitGermanSpeller(t)
+	// E-Mail from spelling extras / ignore
 	require.False(t, r.IsMisspelled("E-Mail"))
-	// Match may return nil or empty without dict — do not invent hits
-	ms := r.Match(languagetool.AnalyzePlain("Das -Mail test."))
-	require.Empty(t, ms)
+	// hyphenated form with known second part still needs free-compound hunspell for first part;
+	// assert garbage second part is flagged
+	require.Equal(t, 1, len(r.Match(languagetool.AnalyzePlain("Der Waschmaschinentest-Dftgedgs"))))
+	// non-hyphen compounds in dict
+	require.Equal(t, 0, len(r.Match(languagetool.AnalyzePlain("Der Arbeitnehmer"))))
 }
 
 // Twin of GermanSpellerRuleTest.testGetSuggestionsFromSpellingTxt
 func TestGermanSpellerRule_GetSuggestionsFromSpellingTxt(t *testing.T) {
-	r := NewGermanSpellerRule(nil)
-	// spelling.txt load is InitBaseSpellingIgnoreWords — path may be missing
-	_ = r
+	r := mustInitGermanSpeller(t)
+	// spelling.txt extras are ignore-words / multi-speller; Aarhus from spelling.txt
+	require.False(t, r.IsMisspelled("Aarhus"))
+	require.False(t, r.IsMisspelled("Aalborg"))
+	require.False(t, r.IsMisspelled("Aalborgs"))
 }
 
-// Twin of GermanSpellerRuleTest.testMorfologikSuggestionsWorkaround
+// Twin of GermanSpellerRuleTest.testMorfologikSuggestionsWorkaround (@Ignore in Java —
+// no outcome matrix; assert multi-speller is wired)
 func TestGermanSpellerRule_MorfologikSuggestionsWorkaround(t *testing.T) {
-	require.NotNil(t, NewGermanSpellerRule(nil))
+	r := mustInitGermanSpeller(t)
+	require.NotNil(t, r.MorfoSpeller)
 }
 
 // Twin of GermanSpellerRuleTest.testProhibitVsSpellingDeCH
 func TestGermanSpellerRule_ProhibitVsSpellingDeCH(t *testing.T) {
+	ClearGermanFilterSpeller()
+	t.Cleanup(ClearGermanFilterSpeller)
+	if DiscoverGermanResourceDir() == "" {
+		t.Skip("no resources")
+	}
 	r := NewSwissGermanSpellerRule(nil)
+	require.NoError(t, r.InitFromDiscoveredResources())
+	// Prohibited word remains misspelled even if similar forms exist
 	r.AddProhibitedWords([]string{"ssword"})
 	require.True(t, r.IsProhibited("ssword"))
+	require.True(t, r.IsMisspelled("ssword"))
+}
+
+// Twin of ExpandingReader: spelling streams expanded via LineExpander (getSpeller path).
+func TestGermanSpellerRule_ExpandingReader_GetSpeller(t *testing.T) {
+	// expandingPrepareLine is the ExpandingReader twin used by GetSpeller
+	got := expandingPrepareLine("Aalborg/S")
+	require.Contains(t, got, "Aalborg")
+	require.Contains(t, got, "Aalborgs")
+	// plain line
+	require.Equal(t, []string{"foobar"}, expandingPrepareLine("foobar"))
+	// GetSpeller wires ExpandingReader for DE
+	sp := GetSpeller("DE", "", nil)
+	require.NotNil(t, sp)
+	// spelling.txt form accepted by multi-speller after expand
+	require.False(t, sp.IsMisspelled("Aalborgs"))
 }
 
 // Twin of Java getAdditionalTopSuggestionsString Email / piekst / ch cases.

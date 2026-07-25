@@ -373,15 +373,80 @@ func (r *GermanSpellerRule) wireSynthesizeFromResources(resourceRoot string) {
 	r.Synthesize = synthesizeGermanRE
 }
 
-// wireTagPOSFromResources loads POS via german.dict (when present) + ManualTagger
-// added/removed files — same CombiningTagger stack as Java BaseTagger/GermanTagger.
-// Missing german.dict: manual-only (incomplete, not invented).
+// wireTagPOSFromResources ports GermanSpellerRule POS hooks via GermanTagger
+// (Java getTagger().tag(singletonList(word)) with ignoreCase=true).
+//
+// Must use full GermanTagger compound analysis — raw WordTagger alone misses
+// compounds such as Intensivkurse / Testversuch that processThreePart needs
+// (Java comment: "Erwachsenen"+"intensiv"+"kurse" requires isNoun(compound2)).
+// Missing resources: leave TagPOS/LemmaOf nil (fail-closed, no invent).
 func (r *GermanSpellerRule) wireTagPOSFromResources(resourceRoot string) {
 	if r == nil {
 		return
 	}
 	// Do not overwrite test-injected hooks
 	if r.TagPOS != nil || r.LemmaOf != nil {
+		return
+	}
+	gt := openDiscoveredGermanTagger(resourceRoot)
+	if gt == nil {
+		// Fallback: WordTagger-only stack (no compound analysis) when GermanTagger
+		// cannot open — still better than nil for simple dictionary hits.
+		r.wireTagPOSWordTaggerOnly(resourceRoot)
+		return
+	}
+	// Java isNoun/isAdjective/…: getTagger().tag(Collections.singletonList(word))
+	// → tag(list) → tag(list, true) ignoreCase=true. Includes unknown-word compound split.
+	r.TagPOS = func(word string) []string {
+		if word == "" {
+			return nil
+		}
+		rds := gt.Tag([]string{word})
+		if len(rds) == 0 || rds[0] == nil {
+			return nil
+		}
+		out := make([]string, 0, 4)
+		for _, rd := range rds[0].GetReadings() {
+			if rd == nil {
+				continue
+			}
+			if p := rd.GetPOSTag(); p != nil && *p != "" {
+				out = append(out, *p)
+			}
+		}
+		return out
+	}
+	// Java findLemmaForNoun: tag(uppercaseFirstChar(word)), first SUB lemma.
+	r.LemmaOf = func(word string) string {
+		if word == "" {
+			return ""
+		}
+		for _, probe := range []string{uppercaseFirstChar(word), word} {
+			rds := gt.Tag([]string{probe})
+			if len(rds) == 0 || rds[0] == nil {
+				continue
+			}
+			for _, rd := range rds[0].GetReadings() {
+				if rd == nil {
+					continue
+				}
+				p := rd.GetPOSTag()
+				if p == nil || !strings.HasPrefix(*p, "SUB") {
+					continue
+				}
+				if l := rd.GetLemma(); l != nil && *l != "" {
+					return *l
+				}
+			}
+		}
+		return ""
+	}
+}
+
+// wireTagPOSWordTaggerOnly is the fail-soft path when GermanTagger cannot open:
+// dictionary + manuals only (no compound POS). Prefer wireTagPOSFromResources.
+func (r *GermanSpellerRule) wireTagPOSWordTaggerOnly(resourceRoot string) {
+	if r == nil || r.TagPOS != nil || r.LemmaOf != nil {
 		return
 	}
 	loadManual := func(name string) tagging.WordTagger {
@@ -403,7 +468,6 @@ func (r *GermanSpellerRule) wireTagPOSFromResources(resourceRoot string) {
 		}
 		return mt
 	}
-	// Binary POS dict (optional)
 	var morfo tagging.WordTagger
 	if p := DiscoverGermanPOSDict(); p != "" {
 		if mt := tagging.OpenMorfologikTagger(p); mt != nil {
@@ -416,7 +480,6 @@ func (r *GermanSpellerRule) wireTagPOSFromResources(resourceRoot string) {
 			}
 		}
 	}
-	// Manual additions (tagger2 in CombiningTagger)
 	var manuals tagging.WordTagger
 	added := loadManual("added.txt")
 	addedCustom := loadManual("added_custom.txt")
@@ -428,7 +491,6 @@ func (r *GermanSpellerRule) wireTagPOSFromResources(resourceRoot string) {
 	case addedCustom != nil:
 		manuals = addedCustom
 	}
-	// spelling.txt expansions: /A /P adj + underscore verb nominalized/zu
 	var adjExp, verbExp tagging.WordTagger
 	if resourceRoot != "" {
 		spellingPath := filepath.Join(resourceRoot, "hunspell", "spelling.txt")
@@ -444,7 +506,6 @@ func (r *GermanSpellerRule) wireTagPOSFromResources(resourceRoot string) {
 	if morfo == nil && manuals == nil && adjExp == nil && verbExp == nil {
 		return
 	}
-	// merge expansions into manuals side (additional surface readings)
 	merge := func(extra tagging.WordTagger) {
 		if extra == nil {
 			return
@@ -465,8 +526,6 @@ func (r *GermanSpellerRule) wireTagPOSFromResources(resourceRoot string) {
 			removal = remCustom
 		}
 	}
-	// Java BaseTagger CombiningTagger: tagger1=morfo dict, tagger2=manual additions,
-	// removalTagger filters. Tag order: manual first, then dict, then remove.
 	tagger1 := tagging.WordTagger(tagging.MapWordTagger{})
 	if morfo != nil {
 		tagger1 = morfo
@@ -504,7 +563,6 @@ func (r *GermanSpellerRule) wireTagPOSFromResources(resourceRoot string) {
 		if word == "" {
 			return ""
 		}
-		// Java findLemmaForNoun: tag(uppercaseFirstChar(word)), first SUB lemma
 		probe := word
 		tags := wt.Tag(probe)
 		if len(tags) == 0 {
@@ -525,44 +583,28 @@ func fileExists(p string) bool {
 	return err == nil && st.Mode().IsRegular()
 }
 
-// wireCompoundTokenizers builds strict + non-strict GermanCompoundTokenizer from:
-// common_words.txt, hunspell .dic surfaces, and Java LT exceptions/extendedList
-// (ApplyLanguageToolExtras inside NewGermanCompoundTokenizer).
+// wireCompoundTokenizers ports GermanSpellerRule fields compoundTokenizer /
+// nonStrictCompoundTokenizer:
+//
+//	compoundTokenizer = language.getStrictCompoundTokenizer()
+//	  → GermanCompoundTokenizer.getStrictInstance()
+//	nonStrictCompoundTokenizer = GermanCompoundTokenizer.getNonStrictInstance()
+//
+// Java does NOT load hunspell .dic or common_words.txt into these instances
+// (only EmbeddedGermanDictionary + ExtendedGermanWordSplitter.extendedList +
+// constructor addException). Loading de_DE.dic here blocked correct splits
+// (e.g. Wörterbuch → single token) and broke ignorePotentiallyMisspelledWord.
 func (r *GermanSpellerRule) wireCompoundTokenizers(resourceRoot, hunDir, dictName string) {
 	if r == nil {
 		return
 	}
-	strict := compoundtok.NewGermanCompoundTokenizer(true)
-	nonStrict := compoundtok.NewGermanCompoundTokenizer(false)
-	loadList := func(path string) {
-		if !fileExists(path) {
-			return
-		}
-		words, err := LoadSpellingWordList(path)
-		if err != nil {
-			return
-		}
-		for _, w := range words {
-			strict.AddWord(w)
-			nonStrict.AddWord(w)
-		}
-	}
-	loadList(filepath.Join(resourceRoot, "common_words.txt"))
-	// hunspell dic surfaces as part lexicon (real LT resource, not invent)
-	dicPath := filepath.Join(hunDir, strings.TrimSuffix(dictName, ".dict")+".dic")
-	if !fileExists(dicPath) {
-		dicPath = filepath.Join(hunDir, "de_DE.dic")
-	}
-	if fileExists(dicPath) {
-		if f, err := os.Open(dicPath); err == nil {
-			_ = strict.LoadHunspellDic(f)
-			f.Close()
-		}
-		if f, err := os.Open(dicPath); err == nil {
-			_ = nonStrict.LoadHunspellDic(f)
-			f.Close()
-		}
-	}
+	// resourceRoot/hunDir/dictName unused — Java getStrictInstance is process-wide
+	// and independent of variant dict paths. Kept in signature for call-site stability.
+	_ = resourceRoot
+	_ = hunDir
+	_ = dictName
+	strict := compoundtok.GetStrictInstance()
+	nonStrict := compoundtok.GetNonStrictInstance()
 	r.CompoundTokenize = func(word string) []string {
 		return strict.Tokenize(word)
 	}
@@ -570,6 +612,7 @@ func (r *GermanSpellerRule) wireCompoundTokenizers(resourceRoot, hunDir, dictNam
 		return nonStrict.Tokenize(word)
 	}
 	// getAllSplits stand-in: union of strict + non-strict dictionary partitions
+	// (used by suggestion paths; not loaded with hunspell .dic either).
 	r.CompoundTokenizeAll = func(word string) [][]string {
 		seen := map[string]struct{}{}
 		var out [][]string
