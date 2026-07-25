@@ -3,56 +3,76 @@ package de
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ngrams"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UpperCaseNgramRule ports org.languagetool.rules.de.UpperCaseNgramRule.
-// PseudoProbability(trigram) returns probability of [prev, word, next].
-// Without LM hook, Match is empty (Java requires LanguageModel; defaultTempOff).
-// No surface heuristic invent when LM is absent.
+// Finds some words written uppercase that should be lowercase and vice versa.
+// @since 5.0
 type UpperCaseNgramRule struct {
-	Messages map[string]string
-	// Category ports setCategory(CASING).
-	Category *rules.Category
-	// IssueType ports setLocQualityIssueType(Misspelling).
+	messages map[string]string
+	// lm ports LanguageModel (Java Objects.requireNonNull in ctor).
+	lm ngrams.LanguageModel
+	// langCode ports Language lang ctor arg (currently unused in Java Match;
+	// reserved for the commented ambiguous_case.txt extension).
+	langCode string
+
+	Category  *rules.Category
 	IssueType rules.ITSIssueType
-	// PseudoProbability ports LanguageModel.getPseudoProbability(list).GetProb().
-	// Return 0 for unknown; ratios use these probs.
-	PseudoProbability func(trigram []string) float64
-	// DefaultTempOff mirrors Java setDefaultTempOff.
+	// DefaultOff / DefaultTempOff port setDefaultTempOff() (Java TODO still on).
+	DefaultOff     bool
 	DefaultTempOff bool
-	// incorrectExamples / correctExamples port Rule.addExamplePair.
+
 	incorrectExamples []rules.IncorrectExample
 	correctExamples   []rules.CorrectExample
 }
 
-const upperCaseNgramThreshold = 50.0
+// upperCaseNgramThreshold ports UpperCaseNgramRule.THRESHOLD.
+const upperCaseNgramThreshold = 50
 
-var upperCaseNgramRelevant = map[string]struct{}{
+// upperCaseNgramRelevantWords ports UpperCaseNgramRule.relevantWords.
+// Java TODO: optional /de/ambiguous_case.txt load stays disabled.
+var upperCaseNgramRelevantWords = map[string]struct{}{
 	"tage": {}, "tagen": {},
 	"Tage": {}, "Tagen": {},
 }
 
-func NewUpperCaseNgramRule(messages map[string]string) *UpperCaseNgramRule {
+// NewUpperCaseNgramRule ports
+// UpperCaseNgramRule(ResourceBundle messages, LanguageModel lm, Language lang).
+// lm must be non-nil (Java Objects.requireNonNull).
+func NewUpperCaseNgramRule(messages map[string]string, lm ngrams.LanguageModel, langCode string) *UpperCaseNgramRule {
+	if lm == nil {
+		panic("lm must not be null") // Java Objects.requireNonNull(lm)
+	}
+	/*
+		TODO: potential extension - too many false alarms for now...
+		String path = "/de/ambiguous_case.txt";
+		List<String> lines = JLanguageTool.getDataBroker().getFromResourceDirAsLines(path);
+		for (String line : lines) {
+		  if (line.isEmpty() || line.startsWith("#")) {
+		    continue;
+		  }
+		  if (startsWithLowercase(line)) {
+		    throw new RuntimeException("Only entries with uppercase first chars expected in " + path + ": " + line);
+		  }
+		  relevantWords.add(line);
+		  relevantWords.add(lowercaseFirstChar(line));
+		}
+	*/
 	r := &UpperCaseNgramRule{
-		Messages:       messages,
+		messages:       messages,
+		lm:             lm,
+		langCode:       langCode,
 		Category:       rules.CatCasing.GetCategory(messages),
 		IssueType:      rules.ITSMisspelling,
+		DefaultOff:     true, // setDefaultTempOff
 		DefaultTempOff: true,
 	}
-	// Java: addExamplePair (tagen → Tagen)
 	r.AddExamplePair(
 		rules.Wrong("Die Suche endete nach 15 <marker>tagen</marker>."),
 		rules.Fixed("Die Suche endete nach 15 <marker>Tagen</marker>."),
 	)
-	return r
-}
-
-// NewUpperCaseNgramRuleWithLM ports the Java constructor that requires LanguageModel.
-// lm is GetPseudoProbability for a 3-token list (prev, word, next).
-func NewUpperCaseNgramRuleWithLM(messages map[string]string, lm func(trigram []string) float64) *UpperCaseNgramRule {
-	r := NewUpperCaseNgramRule(messages)
-	r.PseudoProbability = lm
 	return r
 }
 
@@ -74,6 +94,16 @@ func (r *UpperCaseNgramRule) GetLocQualityIssueType() rules.ITSIssueType {
 		return rules.ITSMisspelling
 	}
 	return r.IssueType
+}
+
+// IsDefaultTempOff ports Rule.isDefaultTempOff (set in ctor via setDefaultTempOff).
+func (r *UpperCaseNgramRule) IsDefaultTempOff() bool {
+	return r != nil && r.DefaultTempOff
+}
+
+// IsDefaultOff ports Rule.isDefaultOff (setDefaultTempOff also sets defaultOff).
+func (r *UpperCaseNgramRule) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
 }
 
 // AddExamplePair ports Rule.addExamplePair.
@@ -107,53 +137,63 @@ func (r *UpperCaseNgramRule) GetCorrectExamples() []rules.CorrectExample {
 	return out
 }
 
+// GetAntiPatterns ports Rule.getAntiPatterns default (empty).
+// Used by getSentenceWithImmunization identity path in Match.
+func (r *UpperCaseNgramRule) GetAntiPatterns() []rules.SentenceReplacer {
+	return nil
+}
+
+// Match ports UpperCaseNgramRule.match.
 func (r *UpperCaseNgramRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	if sentence == nil || r == nil || r.PseudoProbability == nil {
-		// Java always has LM; without it fail closed (no invent).
+	if r == nil || sentence == nil {
 		return nil
 	}
-	tokens := sentence.GetTokensWithoutWhitespace()
+	// Java: AnalyzedTokenReadings[] tokens = getSentenceWithImmunization(sentence).getTokensWithoutWhitespace();
+	// DE rule does not override getAntiPatterns → identity immunization.
+	work := rules.SentenceWithImmunization(sentence, r.GetAntiPatterns())
+	tokens := work.GetTokensWithoutWhitespace()
 	var matches []*rules.RuleMatch
 	for i := 1; i < len(tokens); i++ {
-		if i+1 >= len(tokens) || tokens[i] == nil || tokens[i-1] == nil || tokens[i+1] == nil {
+		token := tokens[i]
+		if token == nil {
 			continue
 		}
-		tokenStr := tokens[i].GetToken()
-		if _, ok := upperCaseNgramRelevant[tokenStr]; !ok {
-			continue
-		}
-		if tools.IsAllUppercase(tokenStr) {
-			continue
-		}
-		ucToken := tools.UppercaseFirstChar(tokenStr)
-		lcToken := tools.LowercaseFirstChar(tokenStr)
-		prev, next := tokens[i-1].GetToken(), tokens[i+1].GetToken()
-
-		ucProb := r.PseudoProbability([]string{prev, ucToken, next})
-		lcProb := r.PseudoProbability([]string{prev, lcToken, next})
-		if ucProb <= 0 {
-			ucProb = 1e-20
-		}
-		if lcProb <= 0 {
-			lcProb = 1e-20
-		}
-		if tools.StartsWithUppercase(tokenStr) {
-			ratio := lcProb / ucProb
-			if ratio > upperCaseNgramThreshold {
-				msg := "Meinten Sie das Verb '" + lcToken + "'? Nur Nomen und Eigennamen werden großgeschrieben."
-				rm := rules.NewRuleMatch(r, sentence, tokens[i].GetStartPos(), tokens[i].GetEndPos(), msg)
-				rm.SetSuggestedReplacement(lcToken)
-				matches = append(matches, rm)
+		tokenStr := token.GetToken()
+		if i+1 < len(tokens) && upperCaseNgramRelevantContains(tokenStr) && !tools.IsAllUppercase(tokenStr) {
+			ucToken := tools.UppercaseFirstChar(tokenStr)
+			lcToken := tools.LowercaseFirstChar(tokenStr)
+			prevTok := tokens[i-1]
+			nextTok := tokens[i+1]
+			if prevTok == nil || nextTok == nil {
+				continue
 			}
-		} else {
-			ratio := ucProb / lcProb
-			if ratio > upperCaseNgramThreshold {
-				msg := "Meinten Sie das Nomen '" + ucToken + "'? Nomen und Eigennamen werden großgeschrieben."
-				rm := rules.NewRuleMatch(r, sentence, tokens[i].GetStartPos(), tokens[i].GetEndPos(), msg)
-				rm.SetSuggestedReplacement(ucToken)
-				matches = append(matches, rm)
+			ucList := []string{prevTok.GetToken(), ucToken, nextTok.GetToken()}
+			lcList := []string{prevTok.GetToken(), lcToken, nextTok.GetToken()}
+			ucProb := r.lm.GetPseudoProbability(ucList)
+			lcProb := r.lm.GetPseudoProbability(lcList)
+			if tools.StartsWithUppercase(tokenStr) {
+				ratio := lcProb.GetProb() / ucProb.GetProb()
+				if ratio > upperCaseNgramThreshold {
+					msg := "Meinten Sie das Verb '" + lcToken + "'? Nur Nomen und Eigennamen werden großgeschrieben."
+					match := rules.NewRuleMatch(r, sentence, token.GetStartPos(), token.GetEndPos(), msg)
+					match.SetSuggestedReplacement(lcToken)
+					matches = append(matches, match)
+				}
+			} else {
+				ratio := ucProb.GetProb() / lcProb.GetProb()
+				if ratio > upperCaseNgramThreshold {
+					msg := "Meinten Sie das Nomen '" + ucToken + "'? Nomen und Eigennamen werden großgeschrieben."
+					match := rules.NewRuleMatch(r, sentence, token.GetStartPos(), token.GetEndPos(), msg)
+					match.SetSuggestedReplacement(ucToken)
+					matches = append(matches, match)
+				}
 			}
 		}
 	}
 	return matches
+}
+
+func upperCaseNgramRelevantContains(tokenStr string) bool {
+	_, ok := upperCaseNgramRelevantWords[tokenStr]
+	return ok
 }
