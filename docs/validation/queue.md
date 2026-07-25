@@ -358,6 +358,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.2-GermanToken | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/GermanToken.java | internal/languagetool/org/languagetool/tagging/de/german_token.go; internal/languagetool/org/languagetool/tagging/de/GermanTokenTest_test.go | ca7aa7f8d05c8de4b0cfe6ca7f875f9606b86840 | 0 | 0 | | | 2026-07-25T14:40:36Z |
 | docs/faithful-port-checklist.md#3.A.2-AdjectiveTags | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/AdjectiveTags.java | internal/languagetool/org/languagetool/tagging/de/adjective_tags.go; internal/languagetool/org/languagetool/tagging/de/adjective_tags_test.go | c1105c455194f2ea95432c9f93c1b622c9981568 | 0 | 0 | | | 2026-07-25T14:49:45Z |
 | docs/faithful-port-checklist.md#3.A.2-AnalyzedGermanToken | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/AnalyzedGermanToken.java | internal/languagetool/org/languagetool/tagging/de/german_token.go; internal/languagetool/org/languagetool/tagging/de/AnalyzedGermanTokenTest_test.go | c6852e9112bd5d43d740c4ed2f01a7b3e0b60893 | 0 | 0 | | | 2026-07-25T15:05:22Z |
+| docs/faithful-port-checklist.md#3.A.2-GermanTagger | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/GermanTagger.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/german.dict | internal/languagetool/org/languagetool/tagging/de/german_tagger.go; internal/languagetool/org/languagetool/tagging/de/german_tagger_load.go; internal/languagetool/org/languagetool/tagging/de/GermanTaggerTest_test.go | 052fd5ee58c9d6a8511f2dbc725d94ea9d12277c | 0 | 0 | | | 2026-07-25T15:23:43Z |
 
 ## Human inbox
 
@@ -367,7 +368,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.A.2-AnalyzedGermanToken @ c6852e91; next fire: implement GermanTagger (full GermanTaggerTest + official german.dict)
+| Notes | ready 3.A.2-GermanTagger @ 052fd5ee; next fire: validate GermanTagger (real dict twins; invent MapWordTagger corpus removed)
 
 ---
 
@@ -1620,3 +1621,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T15:02:00Z ready: 3.A.2-AnalyzedGermanToken @ c6852e91 (implementer report; parent green reconfirm tagging/de + GermanHelper; StringUtils.split; invent Reading removed)
 - 2026-07-25T15:03:58Z validating: 3.A.2-AnalyzedGermanToken @ c6852e91 (strict invent re-audit vs Java AnalyzedGermanToken ctor + getters)
 - 2026-07-25T15:05:22Z ACCEPT: 3.A.2-AnalyzedGermanToken @ c6852e91 (validator ACCEPT + parent green reconfirm; Morphy→GermanToken; StringUtils.split; invent Reading removed)
+- 2026-07-25T15:09:54Z implement: 3.A.2-GermanTagger (full GermanTaggerTest twins; official german.dict+added/removed; nested PrefixInfixVerb/AdjInfo/ExpansionInfos; Java king; no MapWordTagger invent for corpus)
+- 2026-07-25T15:23:43Z ready: 3.A.2-GermanTagger @ 052fd5ee (implementer report; parent green reconfirm tagging/de; EnsureDefaultGermanTagger+full GermanTaggerTest twins; MapWordTagger corpus invent removed)
