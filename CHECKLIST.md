@@ -1007,7 +1007,7 @@
 - [ ] org/languagetool/rules/de/SimilarNameRule.java::SimilarNameRule
 - [ ] org/languagetool/rules/de/SimpleReplaceRule.java::SimpleReplaceRule
 - [ ] org/languagetool/rules/de/SpellingData.java::SpellingData
-- [ ] org/languagetool/rules/de/StyleRepeatedSentenceBeginning.java::StyleRepeatedSentenceBeginning
+- [x] org/languagetool/rules/de/StyleRepeatedSentenceBeginning.java::StyleRepeatedSentenceBeginning
 - [ ] org/languagetool/rules/de/StyleRepeatedVeryShortSentences.java::StyleRepeatedVeryShortSentences
 - [ ] org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java::StyleTooOftenUsedAdjectiveRule
 - [ ] org/languagetool/rules/de/StyleTooOftenUsedNounRule.java::StyleTooOftenUsedNounRule
