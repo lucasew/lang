@@ -1017,7 +1017,7 @@
 - [x] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule
 - [x] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule.SwissExpander
 - [x] org/languagetool/rules/de/SwissGermanSpellerRule.java::SwissGermanSpellerRule
-- [ ] org/languagetool/rules/de/UnitConversionRule.java::UnitConversionRule
+- [x] org/languagetool/rules/de/UnitConversionRule.java::UnitConversionRule
 - [ ] org/languagetool/rules/de/UnnecessaryPhraseRule.java::UnnecessaryPhraseRule
 - [ ] org/languagetool/rules/de/UpperCaseNgramRule.java::UpperCaseNgramRule
 - [ ] org/languagetool/rules/de/UppercaseNounReadingFilter.java::UppercaseNounReadingFilter
