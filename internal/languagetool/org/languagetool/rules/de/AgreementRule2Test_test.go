@@ -1,133 +1,162 @@
 package de
 
-// Twin of AgreementRule2Test — Java uses tagged analysis (ADJ+SUB).
+// Twin of org.languagetool.rules.de.AgreementRule2Test
+// Java: rule.match(lt.getAnalyzedSentence(s)) with GermanyGerman + AgreementRule2.
+
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
-func TestAgreementRule2_Rule(t *testing.T) {
+func ar2Setup(t *testing.T) (*languagetool.JLanguageTool, *AgreementRule2) {
+	t.Helper()
+	lt := languagetool.NewJLanguageTool("de-DE")
+	if !WireGermanTagWord(lt) {
+		t.Skip("GermanTagger resources unavailable")
+	}
+	_ = WireGermanDisambiguator(lt)
 	rule := NewAgreementRule2(nil)
-	// Kleiner (MAS) Haus (NEU) mismatch
-	bad := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Kleiner", "ADJ:NOM:SIN:MAS:GRU:SOL", "klein"),
-		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-	))
-	require.Equal(t, 1, len(rule.Match(bad)))
+	// Java: GermanSynthesizer.INSTANCE used directly in getSuggestions
+	if s := openDiscoveredGermanSynthesizer(); s != nil {
+		rule = rule.WithSynth(s)
+	}
+	require.Equal(t, "DE_AGREEMENT2", rule.GetID())
+	require.Contains(t, rule.GetDescription(), "Kongruenz von Adjektiv und Nomen")
+	return lt, rule
+}
 
-	good := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Kleines", "ADJ:NOM:SIN:NEU:GRU:SOL", "klein"),
-		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-	))
-	require.Equal(t, 0, len(rule.Match(good)))
+// ar2Match ports rule.match(lt.getAnalyzedSentence(s)).
+func ar2Match(lt *languagetool.JLanguageTool, rule *AgreementRule2, s string) []*rules.RuleMatch {
+	sent := lt.GetAnalyzedSentence(s)
+	if sent == nil {
+		sents := lt.Analyze(s)
+		if len(sents) == 0 {
+			return nil
+		}
+		return rule.Match(sents[0])
+	}
+	return rule.Match(sent)
+}
 
-	// Wirtschaftlich (ADJ no gender agreement) vs Wachstum NEU — use mismatched tags
-	bad2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Wirtschaftlich", "ADJ:PRD:GRU", "wirtschaftlich"),
-		atrWithPOS("Wachstum", "SUB:NOM:SIN:NEU", "Wachstum"),
-	))
-	// PRD adj may not yield agreement categories — only assert untagged no invent
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Kleiner Haus am Waldesrand"))))
+func ar2AssertGood(t *testing.T, lt *languagetool.JLanguageTool, rule *AgreementRule2, s string) {
+	t.Helper()
+	ms := ar2Match(lt, rule, s)
+	require.Equal(t, 0, len(ms), "Found unexpected match in sentence %q: %v", s, ms)
+}
 
-	// Deutscher Taschenbuch Verlag — third SUB skips (Java)
-	triple := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Deutscher", "ADJ:NOM:SIN:MAS:GRU:SOL", "deutsch"),
-		atrWithPOS("Taschenbuch", "SUB:NOM:SIN:NEU", "Taschenbuch"),
-		atrWithPOS("Verlag", "SUB:NOM:SIN:MAS", "Verlag"),
-	))
-	require.Equal(t, 0, len(rule.Match(triple)))
+func ar2AssertBad(t *testing.T, lt *languagetool.JLanguageTool, rule *AgreementRule2, s string) {
+	t.Helper()
+	ms := ar2Match(lt, rule, s)
+	require.Equal(t, 1, len(ms), "Did not find one match in sentence %q (got %d)", s, len(ms))
+}
 
-	// Deutscher Taschenbuch without third SUB — mismatch MAS adj + NEU noun
-	pair := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Deutscher", "ADJ:NOM:SIN:MAS:GRU:SOL", "deutsch"),
-		atrWithPOS("Taschenbuch", "SUB:NOM:SIN:NEU", "Taschenbuch"),
-	))
-	require.Equal(t, 1, len(rule.Match(pair)))
+func ar2AssertBadSuggestion(t *testing.T, lt *languagetool.JLanguageTool, rule *AgreementRule2, s, suggestion string) {
+	t.Helper()
+	ms := ar2Match(lt, rule, s)
+	require.Equal(t, 1, len(ms), "Did not find one match in sentence %q (got %d)", s, len(ms))
+	require.Contains(t, ms[0].GetSuggestedReplacements(), suggestion,
+		"Got suggestions: %v, expected contains: %q", ms[0].GetSuggestedReplacements(), suggestion)
+}
 
-	_ = bad2
+// Twin of AgreementRule2Test.testRule
+func TestAgreementRule2_Rule(t *testing.T) {
+	lt, rule := ar2Setup(t)
+
+	ar2AssertBad(t, lt, rule, "Kleiner Haus am Waldesrand")
+	ar2AssertGood(t, lt, rule, "Kleines Haus am Waldesrand")
+	ar2AssertBad(t, lt, rule, "\"Kleiner Haus am Waldesrand\"")
+	ar2AssertGood(t, lt, rule, "\"Kleines Haus am Waldesrand\"")
+	ar2AssertBad(t, lt, rule, "Wirtschaftlich Wachstum kommt ins Stocken")
+	ar2AssertGood(t, lt, rule, "Wirtschaftliches Wachstum kommt ins Stocken")
+	ar2AssertGood(t, lt, rule, "Unter Berücksichtigung des Übergangs")
+
+	ar2AssertGood(t, lt, rule, "Wirklich Frieden herrscht aber noch nicht")
+	ar2AssertBad(t, lt, rule, "Deutscher Taschenbuch")
+	ar2AssertGood(t, lt, rule, "Deutscher Taschenbuch Verlag expandiert")
+
+	ar2AssertGood(t, lt, rule, "Wohl Anfang 1725 begegnete Bach dem Dichter.")
+	ar2AssertGood(t, lt, rule, "Weniger Personal wird im ganzen Land gebraucht.")
+	ar2AssertGood(t, lt, rule, "National Board of Review") // eng
+	ar2AssertGood(t, lt, rule, "International Management") // eng.
+	ar2AssertGood(t, lt, rule, "Gemeinsam Sportler anfeuern.")
+	ar2AssertGood(t, lt, rule, "Viel Spaß beim Arbeiten")
+	ar2AssertGood(t, lt, rule, "Ganz Europa stand vor einer Neuordnung.")
+	ar2AssertGood(t, lt, rule, "Gesetzlich Versicherte sind davon ausgenommen.")
+	ar2AssertGood(t, lt, rule, "Ausreichend Bananen essen.")
+	ar2AssertGood(t, lt, rule, "Nachhaltig Yoga praktizieren")
+	ar2AssertGood(t, lt, rule, "Überraschend Besuch bekommt er dann von ihr.")
+	ar2AssertGood(t, lt, rule, "Ruhig Schlafen & Zentral Wohnen")
+	ar2AssertGood(t, lt, rule, "Voller Mitleid")
+	ar2AssertGood(t, lt, rule, "Voll Mitleid")
+	ar2AssertGood(t, lt, rule, "Einzig Fernschüsse brachten Erfolgsaussichten.")
+	ar2AssertGood(t, lt, rule, "Gelangweilt Dinge sortieren hilft als Ablenkung.")
+	ar2AssertGood(t, lt, rule, "Ganzjährig Garten pflegen")
+	ar2AssertGood(t, lt, rule, "Herzlich Willkommen bei unseren günstigen Rezepten!")
+	ar2AssertGood(t, lt, rule, "10-tägiges Rückgaberecht")
+	ar2AssertGood(t, lt, rule, "Angeblich Schüsse vor Explosionen gefallen")
+	ar2AssertGood(t, lt, rule, "Dickes Danke auch an Elena")
+	ar2AssertGood(t, lt, rule, "Dickes Dankeschön auch an Elena")
+	ar2AssertGood(t, lt, rule, "Echt Scheiße")
+	ar2AssertGood(t, lt, rule, "Entsprechende Automaten werden heute nicht mehr gebaut")
+	ar2AssertGood(t, lt, rule, "Existenziell Bedrohte kriegen einen Taschenrechner")
+	ar2AssertGood(t, lt, rule, "Flächendeckend Tempo 30")
+	ar2AssertGood(t, lt, rule, "Frei Klavier spielen lernen")
+	ar2AssertGood(t, lt, rule, "Ganz Eilige können es schaffen")
+	ar2AssertGood(t, lt, rule, "Gering Gebildete laufen Gefahr ...")
+	ar2AssertGood(t, lt, rule, "Ganz Ohr ist man hier")
+	ar2AssertGood(t, lt, rule, "Gleichzeitig Muskeln aufbauen und Fett verlieren")
+	ar2AssertGood(t, lt, rule, "Klar Schiff, Erster Offizier!")
+	ar2AssertGood(t, lt, rule, "Kostenlos Bewegung schnuppern")
+	ar2AssertGood(t, lt, rule, "Prinzipiell Anrecht auf eine Vertretung")
+	ar2AssertGood(t, lt, rule, "Regelrecht Modell gestanden haben Michel")
+	ar2AssertGood(t, lt, rule, "Weitgehend Konsens, auch über ...")
+	ar2AssertGood(t, lt, rule, "Alarmierte Polizeibeamte nahmen den Mann fest.")
+	ar2AssertGood(t, lt, rule, "Anderen Brot und Arbeit ermöglichen - das ist ihr Ziel")
+	ar2AssertGood(t, lt, rule, "Diverse Unwesen, mit denen sich Hellboy beschäftigen muss, ...")
+	ar2AssertGood(t, lt, rule, "Gut Qualifizierte bekommen Angebote")
+	ar2AssertGood(t, lt, rule, "Liebe Mai, wie geht es dir?")
+	ar2AssertGood(t, lt, rule, "Willkommen Simpsons-Fan!")
 }
 
 // Twin of AgreementRule2Test.testSuggestion
 func TestAgreementRule2_Suggestion(t *testing.T) {
-	// mock synth: Synthesize(adj, ADJ:NOM:num:gen:GRU:SOL) → form
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil || token.GetLemma() == nil {
-				return nil, nil
-			}
-			lem := *token.GetLemma()
-			switch {
-			case lem == "klein" && posTag == "ADJ:NOM:SIN:NEU:GRU:SOL":
-				return []string{"kleines"}, nil
-			case lem == "klein" && posTag == "ADJ:NOM:PLU:NEU:GRU:SOL":
-				return []string{"kleine"}, nil
-			case lem == "jung" && posTag == "ADJ:NOM:SIN:FEM:GRU:SOL":
-				return []string{"junge"}, nil
-			case lem == "wirtschaftlich" && posTag == "ADJ:NOM:SIN:NEU:GRU:SOL":
-				return []string{"wirtschaftliches"}, nil
-			default:
-				return nil, nil
-			}
-		},
+	lt, rule := ar2Setup(t)
+	// commented in Java (false alarms with SOL categories path) — not asserted
+
+	ar2AssertGood(t, lt, rule, "Kleinem Haus am Waldesrand ...")
+	ar2AssertBadSuggestion(t, lt, rule, "Kleiner Haus am Waldesrand", "Kleines Haus")
+	ar2AssertBadSuggestion(t, lt, rule, "Kleines Häuser am Waldesrand", "Kleine Häuser")
+	ar2AssertBadSuggestion(t, lt, rule, "Kleinem Häuser am Waldesrand", "Kleine Häuser")
+	// assertBad("Kleinen Häuser...") commented in Java
+
+	ar2AssertBadSuggestion(t, lt, rule, "Kleines Tisch reicht auch", "Kleiner Tisch")
+	ar2AssertGood(t, lt, rule, "Junger Frau geht das Geld aus")
+	ar2AssertGood(t, lt, rule, "Junge Frau gewinnt im Lotto")
+	ar2AssertBadSuggestion(t, lt, rule, "Junges Frau gewinnt im Lotto", "Junge Frau")
+	// assertBad("Jungen Frau...") commented in Java
+	ar2AssertBadSuggestion(t, lt, rule, "Jungem Frau gewinnt im Lotto", "Junge Frau")
+	ar2AssertBadSuggestion(t, lt, rule, "Jung Frau gewinnt im Lotto", "Junge Frau")
+	ar2AssertBadSuggestion(t, lt, rule, "Wirtschaftlich Wachstum kommt ins Stocken", "Wirtschaftliches Wachstum")
+	ar2AssertBadSuggestion(t, lt, rule, "Wirtschaftlicher Wachstum kommt ins Stocken", "Wirtschaftliches Wachstum")
+	// assertBad("Wirtschaftliche Wachstum...") commented in Java
+}
+
+// Twin metadata / anti-pattern surface (Java getAntiPatterns + estimateContext).
+func TestAgreementRule2_MetaAndAntiPatterns(t *testing.T) {
+	rule := NewAgreementRule2(nil)
+	require.Equal(t, "DE_AGREEMENT2", rule.GetID())
+	require.Equal(t, len(AgreementRule2AntiPatterns), len(rule.GetAntiPatterns()))
+	max := 0
+	for _, ap := range AgreementRule2AntiPatterns {
+		if n := len(ap); n > max {
+			max = n
+		}
 	}
-	rule := NewAgreementRule2(nil).WithSynth(synth)
-
-	// Good: Kleinem Haus (DAT)
-	goodDat := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Kleinem", "ADJ:DAT:SIN:NEU:GRU:SOL", "klein"),
-		atrWithPOS("Haus", "SUB:DAT:SIN:NEU", "Haus"),
-		atrWithPOS("am", "APPRART:DAT:SIN:NEU", "an"),
-		atrWithPOS("Waldesrand", "SUB:DAT:SIN:MAS", "Waldesrand"),
-	))
-	require.Equal(t, 0, len(rule.Match(goodDat)))
-
-	// Bad: Kleiner Haus → Kleines Haus
-	bad := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Kleiner", "ADJ:NOM:SIN:MAS:GRU:SOL", "klein"),
-		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-	))
-	ms := rule.Match(bad)
-	require.Equal(t, 1, len(ms))
-	require.Contains(t, ms[0].GetSuggestedReplacements(), "Kleines Haus")
-
-	// Bad plural: Kleines Häuser → Kleine Häuser
-	bad2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Kleines", "ADJ:NOM:SIN:NEU:GRU:SOL", "klein"),
-		atrWithPOS("Häuser", "SUB:NOM:PLU:NEU", "Haus"),
-	))
-	ms2 := rule.Match(bad2)
-	require.Equal(t, 1, len(ms2))
-	require.Contains(t, ms2[0].GetSuggestedReplacements(), "Kleine Häuser")
-
-	// Bad: Junges Frau → Junge Frau
-	bad3 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Junges", "ADJ:NOM:SIN:NEU:GRU:SOL", "jung"),
-		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
-	))
-	ms3 := rule.Match(bad3)
-	require.Equal(t, 1, len(ms3))
-	require.Contains(t, ms3[0].GetSuggestedReplacements(), "Junge Frau")
-
-	// Good: Junge Frau
-	good := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Junge", "ADJ:NOM:SIN:FEM:GRU:SOL", "jung"),
-		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
-	))
-	require.Equal(t, 0, len(rule.Match(good)))
-
-	// untagged no invent
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Kleiner Haus am Waldesrand"))))
+	require.Equal(t, max, rule.EstimateContextForSureMatch())
+	ex := rule.GetIncorrectExamples()
+	require.NotEmpty(t, ex)
+	require.Contains(t, ex[0].GetExample(), "Kleiner Haus")
 }

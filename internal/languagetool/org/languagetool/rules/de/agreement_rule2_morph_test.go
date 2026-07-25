@@ -64,8 +64,10 @@ func TestAgreementRule2_AntiPatternImmunizesWillkommen(t *testing.T) {
 }
 
 func TestAgreementRule2_SuggestionsWithSynth(t *testing.T) {
+	// Java: synthesize(adjToken, tag, true) → SynthesizeRE(..., true)
 	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
+		SynthRE: func(token *languagetool.AnalyzedToken, posTag string, re bool) ([]string, error) {
+			require.True(t, re)
 			if posTag == "ADJ:NOM:SIN:NEU:GRU:SOL" {
 				return []string{"kleines"}, nil
 			}
@@ -73,13 +75,40 @@ func TestAgreementRule2_SuggestionsWithSynth(t *testing.T) {
 		},
 	}
 	ss := languagetool.SentenceStartTagName
-	toks := []*languagetool.AnalyzedTokenReadings{
+	toks := withPositions(
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
 		atrWithPOS("Kleiner", "ADJ:NOM:SIN:MAS:GRU:SOL", "klein"),
 		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-	}
+	)
 	sent := languagetool.NewAnalyzedSentence(toks)
 	ms := NewAgreementRule2(nil).WithSynth(synth).Match(sent)
 	require.NotEmpty(t, ms)
 	require.Contains(t, ms[0].GetSuggestedReplacements(), "Kleines Haus")
+}
+
+func TestAgreementRule2_EmptyCategoriesIsMismatch(t *testing.T) {
+	// Java retainCommonCategories: empty set1 retainAll set2 → empty → RuleMatch.
+	// ADJ:PRD:GRU yields no casus/numerus/genus categories (e.g. "Wirtschaftlich Wachstum").
+	ss := languagetool.SentenceStartTagName
+	toks := withPositions(
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
+		atrWithPOS("Wirtschaftlich", "ADJ:PRD:GRU", "wirtschaftlich"),
+		atrWithPOS("Wachstum", "SUB:NOM:SIN:NEU", "Wachstum"),
+	)
+	sent := languagetool.NewAnalyzedSentence(toks)
+	ms := NewAgreementRule2(nil).Match(sent)
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, agreement2Short, ms[0].ShortMessage)
+}
+
+func TestAgreementRule2_ImmunizedContinueNotBreak(t *testing.T) {
+	// Java: immunized/unter → continue (not break). "unter" then non-ADJ breaks.
+	ss := languagetool.SentenceStartTagName
+	toks := withPositions(
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
+		atrWithPOS("Unter", "ADJ:PRD:GRU", "unter"),
+		atrWithPOS("Berücksichtigung", "SUB:DAT:SIN:FEM", "Berücksichtigung"),
+	)
+	sent := languagetool.NewAnalyzedSentence(toks)
+	require.Empty(t, NewAgreementRule2(nil).Match(sent))
 }

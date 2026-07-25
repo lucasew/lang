@@ -103,6 +103,11 @@ func (r *AgreementRule2) EstimateContextForSureMatch() int {
 	return max
 }
 
+// GetAntiPatterns ports AgreementRule2.getAntiPatterns (cached ANTI_PATTERNS IMMUNIZE rules).
+func (r *AgreementRule2) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return agreementRule2AntiPatterns()
+}
+
 const (
 	agreement2Msg = "Möglicherweise fehlende grammatikalische Übereinstimmung zwischen Adjektiv und " +
 		"Nomen bezüglich Kasus, Numerus oder Genus. Beispiel: 'kleiner Haus' statt 'kleines Haus'"
@@ -270,104 +275,137 @@ func (r *AgreementRule2) Match(sentence *languagetool.AnalyzedSentence) []*rules
 	if sentence == nil {
 		return nil
 	}
-	imm := r.getSentenceWithImmunization(sentence)
-	tokens := imm.GetTokensWithoutWhitespace()
-	// Java: scan from start, skip SENT_START and quotes; rule only at sentence start (minus quotes).
+	// Java: List<RuleMatch> ruleMatches = new ArrayList<>(); ... return toRuleMatchArray(ruleMatches);
+	var ruleMatches []*rules.RuleMatch
+	// Java: AnalyzedTokenReadings[] tokens = getSentenceWithImmunization(sentence).getTokensWithoutWhitespace();
+	tokens := r.getSentenceWithImmunization(sentence).GetTokensWithoutWhitespace()
 	for i := 0; i < len(tokens); i++ {
-		tok := tokens[i]
-		if tok == nil {
+		if tokens[i] == nil {
 			continue
 		}
-		if tok.IsSentenceStart() {
+		token := tokens[i].GetToken()
+		// Java: if (!tokens[i].isSentenceStart() && !StringUtils.equalsAny(token, "\"", "„", "»", "«"))
+		if tokens[i].IsSentenceStart() || isAgreementRule2Quote(token) {
+			// skip SENT_START and quotes (continue loop)
 			continue
 		}
-		w := tok.GetToken()
-		if isQuoteTok(w) {
-			continue
-		}
-		// first content token
-		if i+1 >= len(tokens) {
-			break
-		}
-		// Java: ADJ + SUB tags only (no surface invent)
-		if tok.HasPosTagStartingWith("ADJ") && tokens[i+1].HasPosTagStartingWith("SUB") &&
+		// skip quotes, as these are not relevant
+		if i+1 < len(tokens) &&
+			tokens[i].HasPosTagStartingWith("ADJ") &&
+			tokens[i+1].HasPosTagStartingWith("SUB") &&
 			!tokens[i+1].HasPosTagStartingWith("EIG") {
-			if tok.IsImmunized() || tokens[i+1].IsImmunized() || strings.EqualFold(w, "unter") {
+			// Java: if (immunized || unter) continue;  — not break
+			if tokens[i].IsImmunized() || tokens[i+1].IsImmunized() ||
+				strings.EqualFold(tokens[i].GetToken(), "unter") {
+				continue
+			}
+			var nextToken *languagetool.AnalyzedTokenReadings
+			if i+2 < len(tokens) {
+				nextToken = tokens[i+2]
+			}
+			if nextToken != nil && nextToken.HasPosTagStartingWith("SUB") {
+				// no alarm for e.g. "Deutscher Taschenbuch Verlag"
 				break
 			}
-			if i+2 < len(tokens) && tokens[i+2] != nil && tokens[i+2].HasPosTagStartingWith("SUB") {
-				// "Deutscher Taschenbuch Verlag"
+			ruleMatch := r.checkAdjNounAgreement(tokens[i], tokens[i+1], sentence)
+			if ruleMatch != nil {
+				// Java always setSuggestedReplacements (may be empty list)
+				ruleMatch.SetSuggestedReplacements(r.getSuggestions(tokens, i))
+				ruleMatches = append(ruleMatches, ruleMatch)
 				break
 			}
-			if rm := r.checkAdjNounAgreement(tok, tokens[i+1], sentence); rm != nil {
-				sugs := r.getSuggestions(tokens, i)
-				if len(sugs) > 0 {
-					rm.SetSuggestedReplacements(sugs)
-				}
-				return []*rules.RuleMatch{rm}
-			}
+			// Java: when agreement OK, do not break — fall through to next i
+		} else {
+			// rule only works at sentence start (minus quotes)
 			break
 		}
-		// rule only works at sentence start (minus quotes)
-		break
+	}
+	return ruleMatches
+}
+
+// checkAdjNounAgreement ports AgreementRule2.checkAdjNounAgreement.
+func (r *AgreementRule2) checkAdjNounAgreement(token1, token2 *languagetool.AnalyzedTokenReadings, sentence *languagetool.AnalyzedSentence) *rules.RuleMatch {
+	set := r.retainCommonCategories(token1, token2)
+	if len(set) == 0 {
+		// Java: new RuleMatch(this, sentence, token1.getStartPos(), token2.getEndPos(), msg, shortMsg)
+		rm := rules.NewRuleMatch(r, sentence, token1.GetStartPos(), token2.GetEndPos(), agreement2Msg)
+		rm.ShortMessage = agreement2Short
+		return rm
 	}
 	return nil
 }
 
-func (r *AgreementRule2) checkAdjNounAgreement(adj, noun *languagetool.AnalyzedTokenReadings, sentence *languagetool.AnalyzedSentence) *rules.RuleMatch {
-	set1 := GetAgreementCategories(adj, nil, false)
-	set2 := GetAgreementCategories(noun, nil, false)
-	if len(set1) == 0 || len(set2) == 0 {
-		return nil
+// retainCommonCategories ports AgreementRule2.retainCommonCategories.
+// Java: set1.retainAll(set2); empty common set → agreement error.
+// Note: empty set1 or set2 also yields empty retainAll (Java flags mismatch; do not early-return).
+func (r *AgreementRule2) retainCommonCategories(token1, token2 *languagetool.AnalyzedTokenReadings) map[string]struct{} {
+	// Java: Set<AgreementRule.GrammarCategory> categoryToRelaxSet = Collections.emptySet();
+	set1 := GetAgreementCategories(token1, nil, false)
+	set2 := GetAgreementCategories(token2, nil, false)
+	// Java: set1.retainAll(set2)
+	for k := range set1 {
+		if _, ok := set2[k]; !ok {
+			delete(set1, k)
+		}
 	}
-	// Java: set1.retainAll(set2); if (!set1.isEmpty()) return null;
-	if categorySetsIntersect(set1, set2) {
-		return nil
-	}
-	rm := rules.NewRuleMatch(r, sentence, adj.GetStartPos(), noun.GetEndPos(), agreement2Msg)
-	rm.ShortMessage = agreement2Short
-	return rm
+	return set1
 }
 
+// getSuggestions ports AgreementRule2.getSuggestions.
+// Java: GermanSynthesizer.INSTANCE.synthesize(adjToken, "ADJ:NOM:"+number+":"+gender+":GRU:SOL", true)
 func (r *AgreementRule2) getSuggestions(tokens []*languagetool.AnalyzedTokenReadings, i int) []string {
-	if r == nil || r.Synth == nil || i+1 >= len(tokens) {
-		return nil
+	suggestions := []string{}
+	if r == nil || r.Synth == nil || i+1 >= len(tokens) || tokens[i] == nil || tokens[i+1] == nil {
+		return suggestions
 	}
-	adjReadings := tokens[i].GetReadings()
-	if len(adjReadings) == 0 || adjReadings[0] == nil {
-		return nil
+	// Java: AnalyzedToken adjToken = tokens[i].getAnalyzedToken(0);
+	adjToken := tokens[i].GetAnalyzedToken(0)
+	if adjToken == nil {
+		return suggestions
 	}
-	adjToken := adjReadings[0]
-	var suggestions []string
-	seen := map[string]struct{}{}
 	for _, nounToken := range tokens[i+1].GetReadings() {
 		if nounToken == nil || nounToken.GetPOSTag() == nil {
 			continue
 		}
-		gender := genderFromPOS(*nounToken.GetPOSTag())
-		number := numberFromPOS(*nounToken.GetPOSTag())
-		if gender == "" || number == "" {
+		gender := agreementRule2GetGender(nounToken)
+		if gender == "" {
 			continue
 		}
-		// Java: synthesize(adjToken, "ADJ:NOM:"+number+":"+gender+":GRU:SOL", true)
-		tag := "ADJ:NOM:" + number + ":" + gender + ":GRU:SOL"
-		forms, err := r.Synth.Synthesize(adjToken, tag)
-		if err != nil {
+		number := agreementRule2GetNumber(nounToken)
+		if number == "" {
 			continue
+		}
+		// Java third arg true → posTagRegExp
+		tag := "ADJ:NOM:" + number + ":" + gender + ":GRU:SOL"
+		forms, err := r.Synth.SynthesizeRE(adjToken, tag, true)
+		if err != nil {
+			// Java: catch (IOException e) { throw new RuntimeException(e); }
+			panic(err)
 		}
 		for _, s := range forms {
-			full := tools.UppercaseFirstChar(s) + " " + nounToken.GetToken()
-			if _, ok := seen[full]; ok {
-				continue
+			fullSugg := tools.UppercaseFirstChar(s) + " " + nounToken.GetToken()
+			// Java: if (!suggestions.contains(fullSugg))
+			found := false
+			for _, existing := range suggestions {
+				if existing == fullSugg {
+					found = true
+					break
+				}
 			}
-			seen[full] = struct{}{}
-			suggestions = append(suggestions, full)
+			if !found {
+				suggestions = append(suggestions, fullSugg)
+			}
 		}
 	}
 	return suggestions
 }
 
-func genderFromPOS(pos string) string {
+// agreementRule2GetGender ports AgreementRule2.getGender.
+func agreementRule2GetGender(nounToken *languagetool.AnalyzedToken) string {
+	if nounToken == nil || nounToken.GetPOSTag() == nil {
+		return ""
+	}
+	pos := *nounToken.GetPOSTag()
 	switch {
 	case strings.Contains(pos, ":MAS"):
 		return "MAS"
@@ -380,7 +418,12 @@ func genderFromPOS(pos string) string {
 	}
 }
 
-func numberFromPOS(pos string) string {
+// agreementRule2GetNumber ports AgreementRule2.getNumber.
+func agreementRule2GetNumber(nounToken *languagetool.AnalyzedToken) string {
+	if nounToken == nil || nounToken.GetPOSTag() == nil {
+		return ""
+	}
+	pos := *nounToken.GetPOSTag()
 	switch {
 	case strings.Contains(pos, ":SIN:"):
 		return "SIN"
@@ -391,9 +434,11 @@ func numberFromPOS(pos string) string {
 	}
 }
 
-func isQuoteTok(w string) bool {
+// isAgreementRule2Quote ports StringUtils.equalsAny(token, "\"", "„", "»", "«") in match().
+// Only these four — no invent of curly/ASCII-single quotes.
+func isAgreementRule2Quote(w string) bool {
 	switch w {
-	case "\"", "„", "»", "«", "'", "“", "”":
+	case "\"", "„", "»", "«":
 		return true
 	}
 	return false
