@@ -180,7 +180,7 @@ func (r *RedundantModalOrAuxiliaryVerb) Match(sentence *languagetool.AnalyzedSen
 						}
 					} else if strings.EqualFold(tokens[nt-1].GetToken(), tokens[nVerb-1].GetToken()) &&
 						tokens[nt-1].HasPosTagStartingWith("PRO:PER") && !tokens[nt-1].HasPosTagStartingWith("ART") {
-						// morph-only personal pronoun branch
+						// Java: PRO:PER before repeated verb (not ART)
 						if nVerb == nConjunction-1 {
 							if nVerb >= 2 {
 								ruleMatch = rules.NewRuleMatch(r, sentence, tokens[nVerb-2].GetEndPos(), tokens[nVerb].GetEndPos(), redundantSubText)
@@ -201,7 +201,7 @@ func (r *RedundantModalOrAuxiliaryVerb) Match(sentence *languagetool.AnalyzedSen
 							ruleMatch = rules.NewRuleMatch(r, sentence, tokens[nt-1].GetEndPos(), tokens[nt+1].GetEndPos(), redundantSubText)
 						}
 					} else {
-						// surface-friendly branch + morph exceptions
+						// Java else branch: skip guards then participle / span match
 						if shouldSkipRedundantBranch(tokens, nt, nVerb, nConjunction) {
 							break
 						}
@@ -272,19 +272,20 @@ func verbKind(isMod bool) string {
 	return "Hilfsverb"
 }
 
-// shouldSkipRedundantBranch ports the large Java else-if guard that breaks without match.
+// shouldSkipRedundantBranch ports the Java else-branch break guard (PRO:PER / da / zu /
+// token-equality / VER:MOD pair / end-of-clause conditions). Morph tags only via
+// hasPosTagStartingWith — no surface invent of POS.
 func shouldSkipRedundantBranch(tokens []*languagetool.AnalyzedTokenReadings, nt, nVerb, nConjunction int) bool {
 	if nt < 1 || nVerb < 1 || nVerb+1 >= len(tokens) || tokens[nt-1] == nil {
 		return true
 	}
-	// Java: if (tokens[nt-1].hasPosTagStartingWith("PRO:PER") || da/zu || ... || break conditions)
-	// Without PRO tags, still honor da/zu and token equality checks.
 	if tokens[nt-1].HasPosTagStartingWith("PRO:PER") ||
 		tokens[nt-1].GetToken() == "da" || tokens[nt-1].GetToken() == "zu" ||
 		(tokens[nVerb+1] != nil && tokens[nVerb+1].GetToken() == tokens[nt-1].GetToken()) ||
 		(nt+1 < len(tokens) && tokens[nt+1] != nil &&
 			(tokens[nt+1].HasPosTagStartingWith("PRO:PER") ||
 				tokens[nt-1].GetToken() == tokens[nt+1].GetToken() ||
+				// Java duplicates tokens[nt-1]==tokens[nt+1]; single check is equivalent
 				tokens[nVerb-1].GetToken() == tokens[nt+1].GetToken() ||
 				(tokens[nVerb+1].HasPosTagStartingWith("VER:MOD") && tokens[nt+1].HasPosTagStartingWith("VER:MOD")) ||
 				(nVerb == nConjunction-1 && !isBreakTokenRedundant(tokens[nt+1].GetToken())))) ||

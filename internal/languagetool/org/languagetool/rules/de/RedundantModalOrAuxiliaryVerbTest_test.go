@@ -1,7 +1,18 @@
 package de
 
-// Twin of RedundantModalOrAuxiliaryVerbTest — Java uses tagged analysis (VER:MOD/VER:AUX).
-// Morph/POS inject only; untagged AnalyzePlain remains fail-closed.
+// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/RedundantModalOrAuxiliaryVerbTest.java
+//
+// Java setup:
+//   Language lang = Languages.getLanguageForShortCode("de-DE");
+//   JLanguageTool lt = new JLanguageTool(lang);
+//   setUpRule(lt): disable all; add RedundantModalOrAuxiliaryVerb; enable
+//   assertEquals(1|0, lt.check(sentence).size());
+//
+// Go: de-DE JLanguageTool + WireGermanTagWord (createDefaultTagger) so VER:MOD /
+// VER:AUX / PRO:* / PA2 tags come from GermanTagger — no AnalyzePlain invent and no
+// hand-injected POS for the Java testRule matrix. Primary twin is rule.Match on
+// lt.GetAnalyzedSentence (same as Java check with only this rule enabled).
+
 import (
 	"testing"
 
@@ -9,212 +20,83 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRedundantModalOrAuxiliaryVerb_Rule(t *testing.T) {
+// setUpRedundantModalRule ports RedundantModalOrAuxiliaryVerbTest.setUpRule.
+func setUpRedundantModalRule(t *testing.T) (*RedundantModalOrAuxiliaryVerb, *languagetool.JLanguageTool) {
+	t.Helper()
+	// Java: Languages.getLanguageForShortCode("de-DE"); new JLanguageTool(lang)
+	lt := languagetool.NewJLanguageTool("de-DE")
+	require.True(t, WireGermanTagWord(lt), "GermanTagger resources required for RedundantModalOrAuxiliaryVerb twin")
+	// Java: for (Rule rule : lt.getAllRules()) { lt.disableRule(rule.getId()); }
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		lt.DisableRule(id)
+	}
+	// Java: new RedundantModalOrAuxiliaryVerb(TestTools.getMessages(lang.getShortCode()))
 	rule := NewRedundantModalOrAuxiliaryVerb(nil)
-
-	// Java match: "Erst werde ich … und erst dann werde ich …"
-	werde := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Erst", "ADV", "erst"),
-		atrWithPOS("werde", "VER:AUX:1:SIN:PRS:SFT", "werden"),
-		atrWithPOS("ich", "PRO:PER:NOM:SIN:MAS", "ich"),
-		atrWithPOS("die", "ART:DEF:AKK:PLU:MAS", "der"),
-		atrWithPOS("Preise", "SUB:AKK:PLU:MAS", "Preis"),
-		atrWithPOS("vergleichen", "VER:INF:NON", "vergleichen"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("erst", "ADV", "erst"),
-		atrWithPOS("dann", "ADV", "dann"),
-		atrWithPOS("werde", "VER:AUX:1:SIN:PRS:SFT", "werden"),
-		atrWithPOS("ich", "PRO:PER:NOM:SIN:MAS", "ich"),
-		atrWithPOS("entscheiden", "VER:INF:NON", "entscheiden"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	ms := rule.Match(werde)
-	require.Equal(t, 1, len(ms))
-	// "werde ich" repeats as multi-token → Satzteil message (not single Hilfsverb)
-	require.Contains(t, ms[0].GetMessage(), "redundant")
-	require.Empty(t, ms[0].GetShortMessage())
-
-	// Java: "Sie hat das Foto … angeschaut und hat gelacht."
-	hat := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Sie", "PRO:PER:NOM:SIN:FEM", "sie"),
-		atrWithPOS("hat", "VER:AUX:3:SIN:PRS:SFT", "haben"),
-		atrWithPOS("das", "ART:DEF:AKK:SIN:NEU", "der"),
-		atrWithPOS("Foto", "SUB:AKK:SIN:NEU", "Foto"),
-		atrWithPOS("angeschaut", "VER:PA2:NON", "anschauen"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("hat", "VER:AUX:3:SIN:PRS:SFT", "haben"),
-		atrWithPOS("gelacht", "VER:PA2:SFT", "lachen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 1, len(rule.Match(hat)))
-
-	// Java: "Das Essen ist gut und der Service hier ist gut."
-	ist := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "der"),
-		atrWithPOS("Essen", "SUB:NOM:SIN:NEU", "Essen"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("gut", "ADJ:PRD:GRU", "gut"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Service", "SUB:NOM:SIN:MAS", "Service"),
-		atrWithPOS("hier", "ADV", "hier"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("gut", "ADJ:PRD:GRU", "gut"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 1, len(rule.Match(ist)))
-
-	// Java: "Ich bin gern in eurer Mitte und ich bin gern zu Gast bei euch."
-	// second "bin" after "ich" (PRO:PER before repeated AUX) → Satzteil path
-	bin := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Ich", "PRO:PER:NOM:SIN:MAS", "ich"),
-		atrWithPOS("bin", "VER:AUX:1:SIN:PRS:SFT", "sein"),
-		atrWithPOS("gern", "ADV", "gern"),
-		atrWithPOS("in", "APPR:DAT", "in"),
-		atrWithPOS("eurer", "PRO:POS:DAT:SIN:FEM", "euer"),
-		atrWithPOS("Mitte", "SUB:DAT:SIN:FEM", "Mitte"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("ich", "PRO:PER:NOM:SIN:MAS", "ich"),
-		atrWithPOS("bin", "VER:AUX:1:SIN:PRS:SFT", "sein"),
-		atrWithPOS("gern", "ADV", "gern"),
-		atrWithPOS("zu", "APPR:DAT", "zu"),
-		atrWithPOS("Gast", "SUB:DAT:SIN:MAS", "Gast"),
-		atrWithPOS("bei", "APPR:DAT", "bei"),
-		atrWithPOS("euch", "PRO:PER:DAT:PLU:*", "ihr"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	ms = rule.Match(bin)
-	require.Equal(t, 1, len(ms))
-	require.Contains(t, ms[0].GetMessage(), "Satzteil")
-
-	// Java: "Wann ist jemand kühn und wann ist jemand tollkühn?"
-	// ist ... jemand und ... ist jemand → sub text on repeated clause
-	wann := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Wann", "PWAV", "wann"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("jemand", "PIS:NOM:SIN:MAS", "jemand"),
-		atrWithPOS("kühn", "ADJ:PRD:GRU", "kühn"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("wann", "PWAV", "wann"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("jemand", "PIS:NOM:SIN:MAS", "jemand"),
-		atrWithPOS("tollkühn", "ADJ:PRD:GRU", "tollkühn"),
-		atrWithPOS("?", "PKT", "?"),
-	))
-	// jemand is PIS not PRO:IND in all taggers; Java uses PRO:IND for jemand?
-	// If PRO:IND: inject as PRO:IND for the branch that matches next-token equality
-	// Re-tag jemand as PRO:IND to match Java morph class for indefinite pronouns.
-	// Actually HasPosTagStartingWith("PRO:IND") — PIS may not match. Use PRO:IND:
-	wann = languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Wann", "PWAV", "wann"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("jemand", "PRO:IND:NOM:SIN:MAS", "jemand"),
-		atrWithPOS("kühn", "ADJ:PRD:GRU", "kühn"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("wann", "PWAV", "wann"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("jemand", "PRO:IND:NOM:SIN:MAS", "jemand"),
-		atrWithPOS("tollkühn", "ADJ:PRD:GRU", "tollkühn"),
-		atrWithPOS("?", "PKT", "?"),
-	))
-	require.Equal(t, 1, len(rule.Match(wann)))
-
-	// Java modal: "Wir müssen wissen, was wir tun sollen und wie wir es tun sollen."
-	// comma breaks first scan; second sollen after und
-	sollen := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Wir", "PRO:PER:NOM:PLU:*", "wir"),
-		atrWithPOS("müssen", "VER:MOD:1:PLU:PRS:SFT", "müssen"),
-		atrWithPOS("wissen", "VER:INF:NON", "wissen"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("was", "PWS:AKK:SIN:NEU", "was"),
-		atrWithPOS("wir", "PRO:PER:NOM:PLU:*", "wir"),
-		atrWithPOS("tun", "VER:INF:NON", "tun"),
-		atrWithPOS("sollen", "VER:MOD:1:PLU:PRS:SFT", "sollen"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("wie", "PWAV", "wie"),
-		atrWithPOS("wir", "PRO:PER:NOM:PLU:*", "wir"),
-		atrWithPOS("es", "PRO:PER:AKK:SIN:NEU", "es"),
-		atrWithPOS("tun", "VER:INF:NON", "tun"),
-		atrWithPOS("sollen", "VER:MOD:1:PLU:PRS:SFT", "sollen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	// Note: comma breaks after müssen — the sollen...und...sollen is the match region
-	require.Equal(t, 1, len(rule.Match(sollen)))
-
-	// Java: Tom ist um halb drei angekommen und Mary ist kurze Zeit später angekommen.
-	// participle path (PA2 before und, same participle after second AUX)
-	angekommen := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Tom", "EIG:NOM:SIN:MAS", "Tom"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("um", "APPR:AKK", "um"),
-		atrWithPOS("halb", "ADV", "halb"),
-		atrWithPOS("drei", "CARD", "drei"),
-		atrWithPOS("angekommen", "PA2", "ankommen"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("Mary", "EIG:NOM:SIN:FEM", "Mary"),
-		atrWithPOS("ist", "VER:AUX:3:SIN:PRS:SFT", "sein"),
-		atrWithPOS("kurze", "ADJA:AKK:SIN:FEM:GRU:IND", "kurz"),
-		atrWithPOS("Zeit", "SUB:AKK:SIN:FEM", "Zeit"),
-		atrWithPOS("später", "ADV", "später"),
-		atrWithPOS("angekommen", "PA2", "ankommen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	// hasParticipleAt looks for PA2 *before* conjunction: tokens[nConjunction-1] must be PA2
-	// Here token before und is "angekommen" ✓; after second ist find angekommen at end
-	ms = rule.Match(angekommen)
-	require.Equal(t, 1, len(ms))
-	require.Contains(t, ms[0].GetMessage(), "Satzteil")
-
-	// no match — untagged must not invent
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Tom kauft Äpfel und Mary isst Bananen."))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Erst werde ich die Preise vergleichen und erst dann werde ich entscheiden."))))
-
-	// Java no-match: Johnny hat Alice vorgeschlagen und sie hat akzeptiert.
-	// PRO:PER "sie" before second hat → shouldSkipRedundantBranch (PRO:PER on nt-1).
-	johnny := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Johnny", "EIG:NOM:SIN:MAS", "Johnny"),
-		atrWithPOS("hat", "VER:AUX:3:SIN:PRS:SFT", "haben"),
-		atrWithPOS("Alice", "EIG:AKK:SIN:FEM", "Alice"),
-		atrWithPOS("vorgeschlagen", "PA2", "vorschlagen"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("sie", "PRO:PER:NOM:SIN:FEM", "sie"),
-		atrWithPOS("hat", "VER:AUX:3:SIN:PRS:SFT", "haben"),
-		atrWithPOS("akzeptiert", "PA2", "akzeptieren"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(johnny)))
-
-	// Java no-match: "Sie mag niemanden und niemand mag sie." — mag not VER:AUX/MOD → 0
-	// With only non-MOD/AUX tags:
-	mag := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Sie", "PRO:PER:NOM:SIN:FEM", "sie"),
-		atrWithPOS("mag", "VER:1:SIN:PRS:SFT", "mögen"), // not VER:MOD in this fixture
-		atrWithPOS("niemanden", "PIS:AKK:SIN:MAS", "niemand"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("niemand", "PIS:NOM:SIN:MAS", "niemand"),
-		atrWithPOS("mag", "VER:1:SIN:PRS:SFT", "mögen"),
-		atrWithPOS("sie", "PRO:PER:AKK:SIN:FEM", "sie"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(mag)))
+	// Only this rule: Match on GetAnalyzedSentence is the check path for a single
+	// sentence-level rule (Java lt.check size with all others disabled).
+	return rule, lt
 }
 
+// assertRedundantModalCount ports assertEquals(want, lt.check(text).size()).
+func assertRedundantModalCount(t *testing.T, rule *RedundantModalOrAuxiliaryVerb, lt *languagetool.JLanguageTool, text string, want int) {
+	t.Helper()
+	sent := lt.GetAnalyzedSentence(text)
+	require.NotNil(t, sent, "GetAnalyzedSentence(%q)", text)
+	got := len(rule.Match(sent))
+	require.Equal(t, want, got, "sentence %q", text)
+}
+
+// TestRedundantModalOrAuxiliaryVerb_Rule ports RedundantModalOrAuxiliaryVerbTest.testRule.
+// Full Java matrix: 10 match + 20 no-match sentences, exact strings and expected sizes.
+func TestRedundantModalOrAuxiliaryVerb_Rule(t *testing.T) {
+	rule, lt := setUpRedundantModalRule(t)
+
+	// matches (Java assertEquals(1, lt.check(...).size()))
+	assertRedundantModalCount(t, rule, lt, "Erst werde ich die Preise vergleichen und erst dann werde ich entscheiden, ob ich die Kamera kaufe.", 1)
+	assertRedundantModalCount(t, rule, lt, "Sie hat das Foto von mir als kleinem Jungen angeschaut und hat gelacht.", 1)
+	assertRedundantModalCount(t, rule, lt, "Ich bin gern in eurer Mitte und ich bin gern zu Gast bei euch.", 1)
+	assertRedundantModalCount(t, rule, lt, "Da ich nun einmal bin, wer ich bin und was ich bin, kann ich es nicht übers Herz bringen.", 1)
+	assertRedundantModalCount(t, rule, lt, "Wann ist jemand kühn und wann ist jemand tollkühn?", 1)
+	assertRedundantModalCount(t, rule, lt, "Tom ist um halb drei angekommen und Mary ist kurze Zeit später angekommen.", 1)
+	assertRedundantModalCount(t, rule, lt, "Das Essen ist gut und der Service hier ist gut.", 1)
+	assertRedundantModalCount(t, rule, lt, "Wir müssen wissen, was wir tun sollen und wie wir es tun sollen.", 1)
+	assertRedundantModalCount(t, rule, lt, "Ich muss unbedingt wissen, was zu tun ist, wie es zu tun ist und wann es zu tun ist.", 1)
+	assertRedundantModalCount(t, rule, lt, "Er erzählte ihr, eine böse Hexe habe ihn in einen Frosch verwandelt und nur sie allein habe ihn retten können und morgen würden sie gemeinsam in sein Reich fahren.", 1)
+
+	// no match (Java assertEquals(0, lt.check(...).size()))
+	assertRedundantModalCount(t, rule, lt, "„nicht dürfen“ und „nicht müssen“ dürfen nicht miteinander verwechselt werden.", 0)
+	assertRedundantModalCount(t, rule, lt, "Ich mag Physik und Mathematik mag ich noch mehr.", 0)
+	assertRedundantModalCount(t, rule, lt, "Aus Angst vor den Zeitungen sind Politiker langweilig und am Ende sind sie selbst für die Zeitungen zu langweilig.", 0)
+	assertRedundantModalCount(t, rule, lt, "Ändert der Akkusativ wirklich die Bedeutung eines Satzes: Sie hat Aids oder Aids hat sie?", 0)
+	assertRedundantModalCount(t, rule, lt, "Tom hat eine Tüte Äpfel gekauft und er hat an einem Tag ein Drittel davon gegessen.", 0)
+	assertRedundantModalCount(t, rule, lt, "Mein Vaterland ist mein Stadtviertel und nun ist es beinahe nicht wiedererkennbar.", 0)
+	assertRedundantModalCount(t, rule, lt, "Johnny hat Alice vorgeschlagen und sie hat akzeptiert.", 0)
+	assertRedundantModalCount(t, rule, lt, "Unsere Zeit hier ist begrenzt und sie ist wertvoll.", 0)
+	assertRedundantModalCount(t, rule, lt, "Manchmal ist die Wahrheit nützlich und manchmal ist sie unnütz.", 0)
+	assertRedundantModalCount(t, rule, lt, "Treue ist irgendwo absolut oder sie ist gar nichts.", 0)
+	assertRedundantModalCount(t, rule, lt, "Sie mag niemanden und niemand mag sie.", 0)
+	assertRedundantModalCount(t, rule, lt, "Eines Tages wird die USA eine Frau als Präsidenten wählen und das wird kein schönes Schauspiel sein.", 0)
+	assertRedundantModalCount(t, rule, lt, "Mein Name ist Mary und das ist Tom.", 0)
+	assertRedundantModalCount(t, rule, lt, "Er hat seine Augen langsam geöffnet und dann hat sie ihn geküsst.", 0)
+	assertRedundantModalCount(t, rule, lt, "Die Flaneure haben es prinzipiell nicht eilig und sind immer für ein Schwätzchen zu haben.", 0)
+	assertRedundantModalCount(t, rule, lt, "Es sind Tendenzen erkennbar und diese Tendenzen sind leider nicht ermutigend.", 0)
+	assertRedundantModalCount(t, rule, lt, "Ja ist ja und nein ist nein, das nennt man Offenheit.", 0)
+	assertRedundantModalCount(t, rule, lt, "Wie werden einmal unsere Namen hinter den Erfindern des Fliegens und dergleichen vergessen werden?", 0)
+	assertRedundantModalCount(t, rule, lt, "In den Chroniken ist über die Flut von 1342 zu lesen, dass im Mainzer Dom einem Mann das Wasser bis zur Brust gestanden habe und dass man in Köln mit Booten über die Stadtmauern habe fahren können.", 0)
+	assertRedundantModalCount(t, rule, lt, "Sie stellt sicher, dass die gerissenen Bänder nicht belastet werden können und dass das Gelenk dennoch bewegt werden kann.", 0)
+}
+
+// TestRedundantModalOrAuxiliaryVerb_Meta ports Java ctor metadata (id, description, STYLE, default-off).
 func TestRedundantModalOrAuxiliaryVerb_Meta(t *testing.T) {
 	r := NewRedundantModalOrAuxiliaryVerb(nil)
 	require.Equal(t, "REDUNDANT_MODAL_VERB", r.GetID())
 	require.Equal(t, "Redundantes Modal- oder Hilfsverb", r.GetDescription())
 	require.True(t, r.IsDefaultOff())
 	require.NotNil(t, r.GetCategory())
+	require.Equal(t, "STYLE", r.GetCategory().GetID().String())
+	require.Equal(t, "style", string(r.GetLocQualityIssueType()))
+	// Untagged plain analysis must not invent VER:MOD/VER:AUX matches (Java needs tagger).
+	require.Equal(t, 0, len(r.Match(languagetool.AnalyzePlain("Erst werde ich die Preise vergleichen und erst dann werde ich entscheiden."))))
 }
 
 // Twin of Java MARKS_REGEX character-class range quirk (!-– includes letters/digits).
