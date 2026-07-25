@@ -311,7 +311,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-WiederVsWiderRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/WiederVsWiderRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/WiederVsWiderRuleTest.java | internal/languagetool/org/languagetool/rules/de/wieder_vs_wider_rule.go; internal/languagetool/org/languagetool/rules/de/WiederVsWiderRuleTest_test.go | 3f97b345e4de8e93df4f94301a291ede3a9cd2af | 0 | 0 |  |  | 2026-07-25T03:05:52Z |
 | docs/faithful-port-checklist.md#3.C.3-MissingVerbRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/MissingVerbRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/MissingVerbRuleTest.java | internal/languagetool/org/languagetool/rules/de/missing_verb_rule.go; internal/languagetool/org/languagetool/rules/de/MissingVerbRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/wire_agreement_stack.go | bf67ca5325532dbcc53a7f2c1f1c981b6053a52a | 0 | 0 |  |  | 2026-07-25T03:20:49Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanWordRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanWordRepeatBeginningRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanWordRepeatBeginningRuleTest.java | internal/languagetool/org/languagetool/rules/de/german_word_repeat_beginning_rule.go; internal/languagetool/org/languagetool/rules/de/GermanWordRepeatBeginningRuleTest_test.go | 8ae88a3b66327112ec6ec909382d10cbcc23f3b8 | 0 | 0 |  |  | 2026-07-25T03:30:01Z |
-| docs/faithful-port-checklist.md#3.C.3-SimilarNameRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SimilarNameRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SimilarNameRuleTest.java | internal/languagetool/org/languagetool/rules/de/similar_name_rule.go; internal/languagetool/org/languagetool/rules/de/SimilarNameRuleTest_test.go | f2079b4fca8158c05625fb28909681486bbf1d9f | 0 | 0 |  |  | 2026-07-25T03:39:15Z |
+| docs/faithful-port-checklist.md#3.C.3-SimilarNameRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SimilarNameRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SimilarNameRuleTest.java | internal/languagetool/org/languagetool/rules/de/similar_name_rule.go; internal/languagetool/org/languagetool/rules/de/SimilarNameRuleTest_test.go | f2079b4fca8158c05625fb28909681486bbf1d9f | 0 | 0 |  |  | 2026-07-25T03:45:26Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -320,7 +320,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-GermanWordRepeatBeginningRule @ 8ae88a3b |
+| Notes | ACCEPT 3.C.3-SimilarNameRule @ f2079b4f |
 
 ---
 
@@ -1395,3 +1395,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T03:30:01Z ACCEPT: 3.C.3-GermanWordRepeatBeginningRule @ 8ae88a3b (validator + parent green reconfirm; GERMAN_WORD_REPEAT_BEGINNING_RULE; ADVERBS set; full matrix)
 - 2026-07-25T03:34:00Z implement: 3.C.3-SimilarNameRule (DE_SIMILAR_NAMES + SimilarNameRuleTest full matrix; TextLevelRule)
 - 2026-07-25T03:39:15Z ready: 3.C.3-SimilarNameRule @ f2079b4f (implementer report; parent green reconfirm SimilarName)
+- 2026-07-25T03:43:47Z validating: 3.C.3-SimilarNameRule @ f2079b4f (strict invent re-audit vs Java SimilarNameRule + Test)
+- 2026-07-25T03:45:26Z ACCEPT: 3.C.3-SimilarNameRule @ f2079b4f (validator + parent green reconfirm; DE_SIMILAR_NAMES; full matrix; de-DE analysis)
