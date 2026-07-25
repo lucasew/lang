@@ -52,9 +52,6 @@ func (t *GermanTagger) SetSpellingVerbExpansion(ex *SpellingVerbExpansion) {
 	}
 }
 
-// DefaultGermanTagger is a process-level tagger (empty dict until loaded).
-var DefaultGermanTagger = NewGermanTagger(tagging.MapWordTagger{})
-
 // Tag tags tokens with German case/gender-aware retries and sentence-context
 // arms (imperative short form, substantivated -er, gender gap, mitarbeitend).
 // Java: tag(sentenceTokens) → tag(sentenceTokens, true) with ignoreCase=true.
