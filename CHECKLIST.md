@@ -947,9 +947,9 @@
 - [ ] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2.Suggestion
 - [ ] org/languagetool/rules/de/AgreementTools.java::AgreementTools
 - [x] org/languagetool/rules/de/AustrianGermanSpellerRule.java::AustrianGermanSpellerRule
-- [ ] org/languagetool/rules/de/CaseRule.java::CaseRule
-- [ ] org/languagetool/rules/de/CaseRuleAntiPatterns.java::CaseRuleAntiPatterns
-- [ ] org/languagetool/rules/de/CaseRuleExceptions.java::CaseRuleExceptions
+- [x] org/languagetool/rules/de/CaseRule.java::CaseRule
+- [x] org/languagetool/rules/de/CaseRuleAntiPatterns.java::CaseRuleAntiPatterns
+- [x] org/languagetool/rules/de/CaseRuleExceptions.java::CaseRuleExceptions
 - [x] org/languagetool/rules/de/CompoundCheckFilter.java::CompoundCheckFilter
 - [ ] org/languagetool/rules/de/CompoundCheckFilter.java::CompoundCheckFilter.Lazy
 - [ ] org/languagetool/rules/de/CompoundCoherencyRule.java::CompoundCoherencyRule
