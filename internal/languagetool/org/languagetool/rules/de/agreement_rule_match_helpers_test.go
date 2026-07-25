@@ -132,3 +132,16 @@ func TestAgreementRule_HerrGrey_Skip(t *testing.T) {
 		require.NotEqual(t, agreementShort, m.ShortMessage, "Herr Grey must not fire agreement")
 	}
 }
+
+// Java match: hasReadingOfType(…, NOMEN) only — pure EIG is PROPER_NOUN, not DET+NOUN.
+// Probe: morph die + Müller (EIG:NOM:SIN:MAS) → 0 matches (validator fix 3.C.3).
+func TestAgreementRule_PureEIG_NotNomen(t *testing.T) {
+	toks := []*languagetool.AnalyzedTokenReadings{
+		atrWithPOS("die", "ART:DEF:NOM:SIN:FEM", "der"),
+		atrWithPOS("Müller", "EIG:NOM:SIN:MAS", "Müller"),
+	}
+	ms := NewAgreementRule(nil).Match(languagetool.NewAnalyzedSentence(toks))
+	require.Empty(t, ms, "die + pure EIG Müller must not invent DET+NOUN agreement")
+	require.False(t, isNounTagged(toks[1]))
+	require.True(t, HasReadingOfType(toks[1], POSProperNoun))
+}

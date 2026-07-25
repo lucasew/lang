@@ -266,29 +266,20 @@ func (r *AgreementRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.
 				maybePrep = nil
 			}
 		}
-		// DET + ADJ/PA + SUB
+		// DET + ADJ/PA + … — Java prefer NOMEN (DET+ADJ+NOUN), else ADJEKTIV+NOMEN (DET+ADJ+ADJ+NOUN)
 		if isNonPredicativeAdjOrParticiple(next) {
-			k := afterMod + 1
-			if k >= len(tokens) {
-				continue
+			tokenPos := afterMod + 1
+			if tokenPos >= len(tokens) {
+				break
 			}
-			// DET + ADJ + ADJ + SUB
-			if isNonPredicativeAdjOrParticiple(tokens[k]) && k+1 < len(tokens) && isNounTagged(tokens[k+1]) {
-				if tokens[k].IsImmunized() || tokens[k+1].IsImmunized() {
-					continue
-				}
-				if rm := r.checkDetAdjAdjNoun(tokens[i], next, tokens[k], tokens[k+1], sentence, i, repl, skippedStr, origTokens, maybePrep); rm != nil {
-					matches = append(matches, rm)
-				}
-				continue
-			}
-			// Java: DET+ADJ+NOUN does not skip "Herr" at the call site (HERR_FRAU handled inside).
-			if isNounTagged(tokens[k]) {
-				if tokens[k].IsImmunized() {
+			// Java: hasReadingOfType(tokens[tokenPos], POSType.NOMEN)
+			if HasReadingOfType(tokens[tokenPos], POSNomen) {
+				if tokens[tokenPos].IsImmunized() {
 					continue
 				}
 				// "als das" false alarm: "weniger farbenprächtig als das anderer Papageien"
-				if i >= 2 && isAdjectiveTagged(tokens[i-2]) &&
+				// Java: hasReadingOfType(tokens[i-2], POSType.ADJEKTIV)
+				if i >= 2 && HasReadingOfType(tokens[i-2], POSAdjective) &&
 					tokens[i-1].GetToken() == "als" && tokens[i].GetToken() == "das" {
 					continue
 				}
@@ -299,14 +290,22 @@ func (r *AgreementRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.
 				if allowSug {
 					replArg = repl
 				}
-				if rm := r.checkDetAdjNoun(tokens[i], next, tokens[k], sentence, i, replArg, allowSug, skippedStr, origTokens, maybePrep); rm != nil {
+				if rm := r.checkDetAdjNoun(tokens[i], next, tokens[tokenPos], sentence, i, replArg, allowSug, skippedStr, origTokens, maybePrep); rm != nil {
+					matches = append(matches, rm)
+				}
+			} else if tokenPos+1 < len(tokens) &&
+				HasReadingOfType(tokens[tokenPos+1], POSNomen) &&
+				HasReadingOfType(tokens[tokenPos], POSAdjective) {
+				// Java: DET+ADJ+ADJ+NOUN — middle must be ADJEKTIV (not participle-only gate)
+				if tokens[tokenPos].IsImmunized() || tokens[tokenPos+1].IsImmunized() {
+					continue
+				}
+				if rm := r.checkDetAdjAdjNoun(tokens[i], next, tokens[tokenPos], tokens[tokenPos+1], sentence, i, repl, skippedStr, origTokens, maybePrep); rm != nil {
 					matches = append(matches, rm)
 				}
 			}
-			continue
-		}
-		// DET + SUB (Java: skip bare "Herr" title at call site)
-		if isNounTagged(next) && next.GetToken() != "Herr" {
+		} else if HasReadingOfType(next, POSNomen) && next.GetToken() != "Herr" {
+			// DET + SUB (Java: skip bare "Herr" title at call site; pure EIG is not NOMEN)
 			if rm := r.checkDetNoun(tokens[i], next, sentence, i, repl, skippedStr, origTokens, maybePrep); rm != nil {
 				matches = append(matches, rm)
 			}
@@ -460,13 +459,9 @@ func (r *AgreementRule) attachSuggestions(rm *rules.RuleMatch, det, adj1, adj2, 
 	if adj1 != nil {
 		s = s.WithAdjectives(adj1, adj2)
 	}
-	// Java: suggestor.getSuggestions(true) — keep lowest token-edit tier only.
+	// Java: suggestor.getSuggestions(true) — full filtered list (no hard-cap).
 	sugs := s.GetSuggestionsFiltered(true)
 	if len(sugs) > 0 {
-		// Cap like typical UI; Java returns full filtered list from suggestor.
-		if len(sugs) > 20 {
-			sugs = sugs[:20]
-		}
 		rm.SetSuggestedReplacements(sugs)
 	}
 }
@@ -533,15 +528,13 @@ func isDetOrPro(t *languagetool.AnalyzedTokenReadings) bool {
 	return t.HasPosTagStartingWith("ART:") || t.HasPosTagStartingWith("PRO:")
 }
 
+// isNounTagged ports hasReadingOfType(…, POSType.NOMEN). Pure EIG: is PROPER_NOUN, not NOMEN.
 func isNounTagged(t *languagetool.AnalyzedTokenReadings) bool {
-	if t == nil {
-		return false
-	}
-	return t.HasPosTagStartingWith("SUB:") || t.HasPosTagStartingWith("EIG:")
+	return HasReadingOfType(t, POSNomen)
 }
 
 func isAdjectiveTagged(t *languagetool.AnalyzedTokenReadings) bool {
-	return t != nil && t.HasPosTagStartingWith("ADJ:")
+	return HasReadingOfType(t, POSAdjective)
 }
 
 // isNonPredicativeAdjOrParticiple ports isNonPredicativeAdjective || isParticiple.
