@@ -314,6 +314,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-SimilarNameRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SimilarNameRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SimilarNameRuleTest.java | internal/languagetool/org/languagetool/rules/de/similar_name_rule.go; internal/languagetool/org/languagetool/rules/de/SimilarNameRuleTest_test.go | f2079b4fca8158c05625fb28909681486bbf1d9f | 0 | 0 |  |  | 2026-07-25T03:45:26Z |
 | docs/faithful-port-checklist.md#3.C.3-CompoundCoherencyRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/CompoundCoherencyRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundCoherencyRuleTest.java | internal/languagetool/org/languagetool/rules/de/compound_coherency_rule.go; internal/languagetool/org/languagetool/rules/de/CompoundCoherencyRuleTest_test.go | 449211bd0a7ab02d90a0a191fe5b898625adce71 | 0 | 0 |  |  | 2026-07-25T05:12:24Z |
 | docs/faithful-port-checklist.md#3.C.3-CompoundInfinitivRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/CompoundInfinitivRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundInfinitivRuleTest.java | internal/languagetool/org/languagetool/rules/de/compound_infinitiv_rule.go; internal/languagetool/org/languagetool/rules/de/compound_infinitiv_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/CompoundInfinitivRuleTest_test.go | b4bdc22d135727548b856becaff4b16cae768452 | 0 | 0 | | | 2026-07-25T05:28:00Z |
+| docs/faithful-port-checklist.md#3.C.3-DuUpperLowerCaseRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/DuUpperLowerCaseRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/DuUpperLowerCaseRuleTest.java | internal/languagetool/org/languagetool/rules/de/du_upper_lower_case_rule.go; internal/languagetool/org/languagetool/rules/de/DuUpperLowerCaseRuleTest_test.go | 5ac659321bc1c7c163004962cf4a060348df9283 | 0 | 0 | | | 2026-07-25T05:36:00Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -322,7 +323,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-CompoundInfinitivRule @ b4bdc22d |
+| Notes | ready 3.C.3-DuUpperLowerCaseRule @ 5ac65932 (await validate) |
 
 ---
 
@@ -1407,3 +1408,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T05:21:00Z ready: 3.C.3-CompoundInfinitivRule @ b4bdc22d (implementer report; parent green reconfirm)
 - 2026-07-25T05:22:30Z validating: 3.C.3-CompoundInfinitivRule @ b4bdc22d (strict invent re-audit vs Java CompoundInfinitivRule + Test)
 - 2026-07-25T05:28:00Z ACCEPT: 3.C.3-CompoundInfinitivRule @ b4bdc22d (validator ACCEPT + parent green reconfirm; DE compound zu-infinitive; full testRule matrix; de_DE.dict speller)
+- 2026-07-25T05:30:00Z implement: 3.C.3-DuUpperLowerCaseRule (DE DuUpperLowerCaseRuleTest full twin; Java king)
+- 2026-07-25T05:36:00Z ready: 3.C.3-DuUpperLowerCaseRule @ 5ac65932 (implementer report; parent green reconfirm DuUpperLowerCase)
