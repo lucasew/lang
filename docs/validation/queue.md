@@ -348,6 +348,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-StyleTooOftenUsedAdjectiveRule-DE | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java | internal/languagetool/org/languagetool/rules/de/style_too_often_used_adjective_rule.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_adjective_rule_test.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_rules_test.go; internal/languagetool/org/languagetool/rules/abstract_style_too_often_used_word_rule.go | df32ff354ecc070ce6207c4b3cbd8c64006010e1 | 0 | 0 | | | 2026-07-25T12:06:00Z |
 | docs/faithful-port-checklist.md#3.C.3-StyleTooOftenUsedNounRule-DE | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleTooOftenUsedNounRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java | internal/languagetool/org/languagetool/rules/de/style_too_often_used_noun_rule.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_noun_rule_test.go; internal/languagetool/org/languagetool/rules/abstract_style_too_often_used_word_rule.go | f26fe6fa6e646ea207842ce7d476649c97555034 | 0 | 0 | | | 2026-07-25T12:15:30Z |
 | docs/faithful-port-checklist.md#3.C.3-StyleTooOftenUsedVerbRule-DE | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleTooOftenUsedVerbRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java | internal/languagetool/org/languagetool/rules/de/style_too_often_used_verb_rule.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_verb_rule_test.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_rules_test.go; internal/languagetool/org/languagetool/rules/abstract_style_too_often_used_word_rule.go | bb916331e83250a1a30cec9c24f28dccc9e0668c | 0 | 0 | | | 2026-07-25T12:25:18Z |
+| docs/faithful-port-checklist.md#3.C.3-SubjectVerbAgreementRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SubjectVerbAgreementRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SubjectVerbAgreementRuleTest.java | internal/languagetool/org/languagetool/rules/de/subject_verb_agreement_rule.go; internal/languagetool/org/languagetool/rules/de/subject_verb_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/SubjectVerbAgreementRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/subject_verb_agreement_morph_test.go; internal/languagetool/org/languagetool/rules/de/subject_verb_infinitive_test.go | 485b004dd11b60af6e785929009bcd28532f9bdd | 0 | 0 | | | 2026-07-25T12:36:45Z |
 
 ## Human inbox
 
@@ -357,7 +358,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-StyleTooOftenUsedVerbRule-DE @ bb916331; next fire: implement next unchecked DE 3.C.3 leaf
+| Notes | ready 3.C.3-SubjectVerbAgreementRule @ 485b004d; next fire: validate
 
 ---
 
@@ -1570,3 +1571,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T12:22:19Z ready: 3.C.3-StyleTooOftenUsedVerbRule-DE @ bb916331 (implementer report; parent green reconfirm VER:+MOD/AUX/ART/ADJ twin)
 - 2026-07-25T12:23:45Z validating: 3.C.3-StyleTooOftenUsedVerbRule-DE @ bb916331 (strict invent re-audit vs Java StyleTooOftenUsedVerbRule; bare ART/ADJ)
 - 2026-07-25T12:25:18Z ACCEPT: 3.C.3-StyleTooOftenUsedVerbRule-DE @ bb916331 (validator ACCEPT + parent green reconfirm; VER:+MOD/AUX/ART/ADJ bare)
+- 2026-07-25T12:28:57Z implement: 3.C.3-SubjectVerbAgreementRule (DE SubjectVerbAgreementRule + SingularPluralPair; full Java test twin; Java king)
+- 2026-07-25T12:36:45Z ready: 3.C.3-SubjectVerbAgreementRule @ 485b004d (implementer report; parent green reconfirm SubjectVerbAgreement twin; 57 anti-patterns)
