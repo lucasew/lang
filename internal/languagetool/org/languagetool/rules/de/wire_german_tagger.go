@@ -66,6 +66,7 @@ func WireGermanTagWord(lt *languagetool.JLanguageTool) bool {
 
 // WireGermanTagWordFor is WireGermanTagWord with language variant.
 // Java SwissGerman.createDefaultTagger → SwissGermanTagger (ss→ß retry for untagged).
+// Also sets SentenceTagger to GermanTagger.Tag (Java getTagger().tag(List) with ignoreCase).
 func WireGermanTagWordFor(lt *languagetool.JLanguageTool, variant string) bool {
 	if lt == nil {
 		return false
@@ -99,6 +100,10 @@ func WireGermanTagWordFor(lt *languagetool.JLanguageTool, variant string) bool {
 			return false
 		}
 		lt.TagWord = tw
+		// Java createDefaultTagger().tag(tokens) — full sentence (ss→ß via SwissGermanTagger.Tag).
+		lt.SentenceTagger = func(tokens []string) []*languagetool.AnalyzedTokenReadings {
+			return swiss.Tag(tokens)
+		}
 		return true
 	}
 	tw := GermanTagWord(base)
@@ -106,6 +111,10 @@ func WireGermanTagWordFor(lt *languagetool.JLanguageTool, variant string) bool {
 		return false
 	}
 	lt.TagWord = tw
+	// Java GermanyGerman.createDefaultTagger → GermanTagger.INSTANCE.tag(tokens, ignoreCase=true).
+	lt.SentenceTagger = func(tokens []string) []*languagetool.AnalyzedTokenReadings {
+		return base.Tag(tokens)
+	}
 	return true
 }
 

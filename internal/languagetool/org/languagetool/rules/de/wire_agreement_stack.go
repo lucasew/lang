@@ -67,7 +67,11 @@ func wireAgreementStack() {
 
 	wiredAgreement = NewAgreementRule(nil)
 	wiredSubjectVerb = NewSubjectVerbAgreementRule(nil)
+	// Java: new VerbAgreementRule(messages, language) — synthesizer via language.getSynthesizer().
 	wiredVerbAgreement = NewVerbAgreementRule(nil)
+	if synth := openDiscoveredGermanSynthesizer(); synth != nil {
+		wiredVerbAgreement = wiredVerbAgreement.WithSynth(synth)
+	}
 
 	if tagger != nil {
 		// Java: GermanTagger.lookup(lower).hasPosTagStartingWith("VER:INF")

@@ -94,11 +94,17 @@ func (r *VerbAgreementRule) GetCategory() *rules.Category {
 	return r.Category
 }
 
-// EstimateContextForSureMatch ports VerbAgreementRule.estimateContextForSureMatch → 0.
+// EstimateContextForSureMatch ports VerbAgreementRule.estimateContextForSureMatch → 0
+// (TextLevelRule default; Java does not override estimateContextForSureMatch on this type).
 func (r *VerbAgreementRule) EstimateContextForSureMatch() int { return 0 }
 
 // MinToCheckParagraph ports TextLevelRule.minToCheckParagraph (Java returns 0).
 func (r *VerbAgreementRule) MinToCheckParagraph() int { return 0 }
+
+// GetAntiPatterns ports VerbAgreementRule.getAntiPatterns (cached ANTI_PATTERNS IMMUNIZE rules).
+func (r *VerbAgreementRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return verbAgreementAntiPatternRules()
+}
 
 // Java COMMA is the literal low-9 quotation mark ‚ (not ASCII comma).
 var verbAgreementSpecialCommaRE = regexp.MustCompile(`‚`)
@@ -166,8 +172,9 @@ var binIgnorePrev = map[string]struct{}{
 	"Zayid": {}, "Zayed": {}, "Hamad": {}, "Chalifa": {}, "Raschid": {}, "Turki": {}, "/": {},
 }
 
+// verbAgreementQuotationMarks ports VerbAgreementRule.QUOTATION_MARKS (exactly two).
 var verbAgreementQuotationMarks = map[string]struct{}{
-	"\"": {}, "„": {}, "»": {}, "«": {}, "'": {}, "“": {}, "”": {},
+	"\"": {}, "„": {},
 }
 
 func (r *VerbAgreementRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
@@ -296,11 +303,11 @@ func (r *VerbAgreementRule) matchMorph(sentence *languagetool.AnalyzedSentence, 
 		if posIch+1 < len(tokens) {
 			plus1 = 1
 		}
-		ok, fv := verbDoesMatchPersonAndNumber(tokens[posIch-1], tokens[posIch+plus1], "1", "SIN", finiteVerb)
-		finiteVerb = fv
-		if !ok && !nextButOneIsModal(tokens, posIch) && (fv == nil || fv.GetToken() != "äußerst") {
-			if !tokens[posIch].IsImmunized() && fv != nil {
-				ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posIch], fv, "1:SIN", pos, whole))
+		check := verbDoesMatchPersonAndNumber(tokens[posIch-1], tokens[posIch+plus1], "1", "SIN", finiteVerb)
+		finiteVerb = check.finiteVerb
+		if !check.verbDoesMatchPersonAndNumber && !nextButOneIsModal(tokens, posIch) && check.finiteVerb != nil && check.finiteVerb.GetToken() != "äußerst" {
+			if !tokens[posIch].IsImmunized() {
+				ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posIch], check.finiteVerb, "1:SIN", pos, whole))
 			}
 		}
 	}
@@ -315,15 +322,16 @@ func (r *VerbAgreementRule) matchMorph(sentence *languagetool.AnalyzedSentence, 
 		if posDu+1 < len(tokens) {
 			plus1 = 1
 		}
-		ok, fv := verbDoesMatchPersonAndNumber(tokens[posDu-1], tokens[posDu+plus1], "2", "SIN", finiteVerb)
-		finiteVerb = fv
-		if !ok && fv != nil &&
+		check := verbDoesMatchPersonAndNumber(tokens[posDu-1], tokens[posDu+plus1], "2", "SIN", finiteVerb)
+		finiteVerb = check.finiteVerb
+		if !check.verbDoesMatchPersonAndNumber &&
+			check.finiteVerb != nil &&
 			!tokens[posDu+plus1].HasPosTagStartingWith("VER:1:SIN:KJ2") &&
 			!(tokens[posDu+plus1].HasPosTagStartingWith("ADJ:") && !tokens[posDu+plus1].HasPosTag("ADJ:PRD:GRU")) &&
 			!tokens[posDu-1].HasPosTagStartingWith("VER:1:SIN:KJ2") &&
 			!nextButOneIsModal(tokens, posDu) &&
 			!tokens[posDu].IsImmunized() {
-			ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posDu], fv, "2:SIN", pos, whole))
+			ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posDu], check.finiteVerb, "2:SIN", pos, whole))
 		}
 	}
 
@@ -333,12 +341,15 @@ func (r *VerbAgreementRule) matchMorph(sentence *languagetool.AnalyzedSentence, 
 		if posEr+1 < len(tokens) {
 			plus1 = 1
 		}
-		ok, fv := verbDoesMatchPersonAndNumber(tokens[posEr-1], tokens[posEr+plus1], "3", "SIN", finiteVerb)
-		finiteVerb = fv
-		if !ok && !nextButOneIsModal(tokens, posEr) && fv != nil &&
-			fv.GetToken() != "äußerst" && fv.GetToken() != "regen" &&
+		check := verbDoesMatchPersonAndNumber(tokens[posEr-1], tokens[posEr+plus1], "3", "SIN", finiteVerb)
+		finiteVerb = check.finiteVerb
+		if !check.verbDoesMatchPersonAndNumber &&
+			!nextButOneIsModal(tokens, posEr) &&
+			check.finiteVerb != nil &&
+			check.finiteVerb.GetToken() != "äußerst" &&
+			check.finiteVerb.GetToken() != "regen" &&
 			!tokens[posEr].IsImmunized() {
-			ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posEr], fv, "3:SIN", pos, whole))
+			ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posEr], check.finiteVerb, "3:SIN", pos, whole))
 		}
 	}
 
@@ -351,10 +362,10 @@ func (r *VerbAgreementRule) matchMorph(sentence *languagetool.AnalyzedSentence, 
 		if posWir+1 < len(tokens) {
 			plus1 = 1
 		}
-		ok, fv := verbDoesMatchPersonAndNumber(tokens[posWir-1], tokens[posWir+plus1], "1", "PLU", finiteVerb)
-		if !ok && !nextButOneIsModal(tokens, posWir) && !tokens[posWir].IsImmunized() &&
-			(fv == nil || fv.GetToken() != "äußerst") && fv != nil {
-			ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posWir], fv, "1:PLU", pos, whole))
+		check := verbDoesMatchPersonAndNumber(tokens[posWir-1], tokens[posWir+plus1], "1", "PLU", finiteVerb)
+		if !check.verbDoesMatchPersonAndNumber && !nextButOneIsModal(tokens, posWir) && !tokens[posWir].IsImmunized() &&
+			check.finiteVerb != nil && check.finiteVerb.GetToken() != "äußerst" {
+			ruleMatches = append(ruleMatches, r.ruleMatchWrongVerbSubject(tokens[posWir], check.finiteVerb, "1:PLU", pos, whole))
 		}
 	}
 	return ruleMatches
@@ -455,47 +466,58 @@ func isFiniteVerb(token *languagetool.AnalyzedTokenReadings) bool {
 	if !token.HasPosTagStartingWith("VER") {
 		return false
 	}
-	if token.HasPartialPosTag("PA2") || token.HasPartialPosTag("PRO:") || token.HasPartialPosTag("ZAL") {
+	// Java: hasAnyPartialPosTag("PA2", "PRO:", "ZAL")
+	if token.HasAnyPartialPosTag("PA2", "PRO:", "ZAL") {
 		return false
 	}
 	if token.GetToken() == "einst" {
 		return false
 	}
-	return token.HasPartialPosTag(":1:") || token.HasPartialPosTag(":2:") || token.HasPartialPosTag(":3:")
+	// Java: hasAnyPartialPosTag(":1:", ":2:", ":3:")
+	return token.HasAnyPartialPosTag(":1:", ":2:", ":3:")
 }
 
+// BooleanAndFiniteVerb ports VerbAgreementRule.BooleanAndFiniteVerb.
+type BooleanAndFiniteVerb struct {
+	verbDoesMatchPersonAndNumber bool
+	finiteVerb                   *languagetool.AnalyzedTokenReadings
+}
+
+// verbDoesMatchPersonAndNumber ports VerbAgreementRule.verbDoesMatchPersonAndNumber.
+// Java: false if neither token1 nor token2 match person/number and none is und/,/sowie/&.
+// When a finite verb is found it is saved in the returned BooleanAndFiniteVerb.
 func verbDoesMatchPersonAndNumber(token1, token2 *languagetool.AnalyzedTokenReadings, person, number string,
-	_ *languagetool.AnalyzedTokenReadings) (match bool, finiteVerb *languagetool.AnalyzedTokenReadings) {
+	finiteVerb *languagetool.AnalyzedTokenReadings) BooleanAndFiniteVerb {
 	if token1 != nil {
 		t := token1.GetToken()
 		if t == "," || t == "und" || t == "sowie" || t == "&" {
-			return true, finiteVerb
+			return BooleanAndFiniteVerb{true, finiteVerb}
 		}
 	}
 	if token2 != nil {
 		t := token2.GetToken()
 		if t == "," || t == "und" || t == "sowie" || t == "&" {
-			return true, finiteVerb
+			return BooleanAndFiniteVerb{true, finiteVerb}
 		}
 	}
-	found := false
+	foundFiniteVerb := false
 	needle := ":" + person + ":" + number
 	if isFiniteVerb(token1) {
-		found = true
+		foundFiniteVerb = true
 		finiteVerb = token1
 		if token1.HasPartialPosTag(needle) {
-			return true, finiteVerb
+			return BooleanAndFiniteVerb{true, finiteVerb}
 		}
 	}
 	if isFiniteVerb(token2) {
-		found = true
+		foundFiniteVerb = true
 		finiteVerb = token2
 		if token2.HasPartialPosTag(needle) {
-			return true, finiteVerb
+			return BooleanAndFiniteVerb{true, finiteVerb}
 		}
 	}
 	// Java: !foundFiniteVerb means match=true (no finite verb nearby → no error)
-	return !found, finiteVerb
+	return BooleanAndFiniteVerb{!foundFiniteVerb, finiteVerb}
 }
 
 func (r *VerbAgreementRule) ruleMatchWrongVerb(token *languagetool.AnalyzedTokenReadings, pos int, sentence *languagetool.AnalyzedSentence) *rules.RuleMatch {
@@ -511,38 +533,110 @@ func (r *VerbAgreementRule) ruleMatchWrongVerbSubject(subject, verb *languagetoo
 		"'ich sind' statt 'ich bin')."
 	var suggestions []string
 	// Java: RuleMatch without shortMessage (null).
+	// End pos uses start+token.length() (Java String length / UTF-16 units via GetToken length on ATR end).
 	if subject.GetStartPos() < verb.GetStartPos() {
-		rm := rules.NewRuleMatch(r, sentence, pos+subject.GetStartPos(), pos+verb.GetEndPos(), msg)
+		// Java: pos+subject.getStartPos() .. pos+verb.getStartPos()+verb.getToken().length()
+		toPos := pos + verb.GetStartPos() + utf16LenVerbAgreement(verb.GetToken())
+		rm := rules.NewRuleMatch(r, sentence, pos+subject.GetStartPos(), toPos, msg)
 		for _, vs := range r.getVerbSuggestions(verb, expectedVerbPOS, false) {
 			suggestions = append(suggestions, subject.GetToken()+" "+vs)
 		}
-		toUpper := tools.StartsWithUppercase(subject.GetToken())
+		// Java: Character.isUpperCase(subject.getToken().charAt(0))
+		toUpper := subject.GetToken() != "" && tools.StartsWithUppercase(subject.GetToken())
 		for _, ps := range getPronounSuggestions(verb, toUpper) {
 			suggestions = append(suggestions, ps+" "+verb.GetToken())
 		}
-		sortSuggestionsBySimilarity(suggestions, subject.GetToken()+" "+verb.GetToken())
+		// Java: sentence.getText().substring(subject.getStartPos(), verb.getStartPos()+verb.getToken().length())
+		markedText := verbAgreementMarkedText(sentence, subject.GetStartPos(), verb.GetStartPos()+utf16LenVerbAgreement(verb.GetToken()))
+		sortSuggestionsBySimilarity(suggestions, markedText)
 		if len(suggestions) > 0 {
 			rm.SetSuggestedReplacements(suggestions)
 		}
 		return rm
 	}
-	rm := rules.NewRuleMatch(r, sentence, pos+verb.GetStartPos(), pos+subject.GetEndPos(), msg)
-	toUpper := tools.StartsWithUppercase(verb.GetToken())
+	toPos := pos + subject.GetStartPos() + utf16LenVerbAgreement(subject.GetToken())
+	rm := rules.NewRuleMatch(r, sentence, pos+verb.GetStartPos(), toPos, msg)
+	toUpper := verb.GetToken() != "" && tools.StartsWithUppercase(verb.GetToken())
 	for _, vs := range r.getVerbSuggestions(verb, expectedVerbPOS, toUpper) {
 		suggestions = append(suggestions, vs+" "+subject.GetToken())
 	}
 	for _, ps := range getPronounSuggestions(verb, false) {
 		suggestions = append(suggestions, verb.GetToken()+" "+ps)
 	}
-	sortSuggestionsBySimilarity(suggestions, verb.GetToken()+" "+subject.GetToken())
+	markedText := verbAgreementMarkedText(sentence, verb.GetStartPos(), subject.GetStartPos()+utf16LenVerbAgreement(subject.GetToken()))
+	sortSuggestionsBySimilarity(suggestions, markedText)
 	if len(suggestions) > 0 {
 		rm.SetSuggestedReplacements(suggestions)
 	}
 	return rm
 }
 
+// verbAgreementMarkedText ports sentence.getText().substring(from, to) for sortBySimilarity.
+func verbAgreementMarkedText(sentence *languagetool.AnalyzedSentence, from, to int) string {
+	if sentence == nil {
+		return ""
+	}
+	text := sentence.GetText()
+	// GetText is the reconstructed surface; positions are UTF-16 code units in Java.
+	// Go ATR positions track UTF-16 when analysis uses the Java-faithful path.
+	runes := []rune(text)
+	// Prefer direct byte/string slice when indices fit ASCII-heavy German test corpus.
+	if from < 0 {
+		from = 0
+	}
+	if to > len(text) {
+		to = len(text)
+	}
+	if from > to {
+		return ""
+	}
+	// When text is pure BMP (typical DE), UTF-16 index == byte index for ASCII and
+	// == rune index for BMP. Use UTF-16 decode via tools if available; else slice carefully.
+	_ = runes
+	return utf16SliceVerbAgreement(text, from, to)
+}
+
+func utf16LenVerbAgreement(s string) int {
+	n := 0
+	for _, r := range s {
+		if r >= 0x10000 {
+			n += 2
+		} else {
+			n++
+		}
+	}
+	return n
+}
+
+func utf16SliceVerbAgreement(s string, from, to int) string {
+	if from < 0 {
+		from = 0
+	}
+	if to < from {
+		return ""
+	}
+	var b strings.Builder
+	i := 0
+	for _, r := range s {
+		w := 1
+		if r >= 0x10000 {
+			w = 2
+		}
+		// include runes that start in [from, to)
+		if i >= to {
+			break
+		}
+		if i+w > from {
+			b.WriteRune(r)
+		}
+		i += w
+	}
+	return b.String()
+}
+
 func (r *VerbAgreementRule) getVerbSuggestions(verb *languagetool.AnalyzedTokenReadings, expectedVerbPOS string, toUppercase bool) []string {
-	// Java uses synthesizer only — fail closed without Synth / VER reading (no surface invent).
+	// Java: language.getSynthesizer().synthesize(verbToken, "VER.*:"+expectedVerbPOS+".*", true)
+	// Fail closed without Synth / VER reading (no surface invent).
 	if r == nil || r.Synth == nil || verb == nil {
 		return nil
 	}
@@ -556,22 +650,24 @@ func (r *VerbAgreementRule) getVerbSuggestions(verb *languagetool.AnalyzedTokenR
 	if verbToken == nil {
 		return nil
 	}
-	// Java: synthesize(verbToken, "VER.*:"+expectedVerbPOS+".*", true)
+	// Java third arg true → posTagRegExp (must use SynthesizeRE, not exact-tag Synthesize).
 	tagRE := "VER.*:" + expectedVerbPOS + ".*"
-	forms, err := r.Synth.Synthesize(verbToken, tagRE)
+	forms, err := r.Synth.SynthesizeRE(verbToken, tagRE, true)
 	if err != nil || len(forms) == 0 {
 		return nil
 	}
+	// Java: new HashSet<>(asList(synthesized)) then new ArrayList<>(set) — dedupe, order not guaranteed
+	// until sortBySimilarity. Use deterministic first-seen order after set insert.
 	seen := map[string]struct{}{}
 	var out []string
 	for _, f := range forms {
-		if toUppercase {
-			f = tools.UppercaseFirstChar(f)
-		}
 		if _, ok := seen[f]; ok {
 			continue
 		}
 		seen[f] = struct{}{}
+		if toUppercase {
+			f = tools.UppercaseFirstChar(f)
+		}
 		out = append(out, f)
 	}
 	return out

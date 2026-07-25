@@ -522,7 +522,6 @@ func AnalyzeTextLocal(text string) []*AnalyzedSentence {
 	return out
 }
 
-
 // TokenTag is a soft POS/lemma inject for AnalyzeWithTagger.
 type TokenTag struct {
 	POS   string
@@ -533,6 +532,88 @@ type TokenTag struct {
 // tagWord may return multiple readings; empty/nil falls back to untagged tokens.
 func AnalyzeWithTagger(text string, tagWord func(token string) []TokenTag) *AnalyzedSentence {
 	return AnalyzeWithTaggerAndTokenizer(text, tagWord, tokenizers.NewWordTokenizer())
+}
+
+// AnalyzeWithSentenceTaggerTokenizerAndIgnore ports getRawAnalyzedSentence tagging
+// via Java Tagger.tag(List<String>): tokenize → soft-hyphen → full-sentence tagger.
+// Positions and SENT_START/SENT_END come from the tokenizer path (not tagger internals).
+func AnalyzeWithSentenceTaggerTokenizerAndIgnore(
+	text string,
+	tagSentence func(tokens []string) []*AnalyzedTokenReadings,
+	wt tokenizers.Tokenizer,
+	ignore *regexp.Regexp,
+) *AnalyzedSentence {
+	if wt == nil {
+		wt = tokenizers.NewWordTokenizer()
+	}
+	if tagSentence == nil {
+		return AnalyzeWithTokenizerAndIgnore(text, wt, ignore)
+	}
+	if _, ok := wt.(*jatok.JapaneseWordTokenizer); ok {
+		return analyzeJapaneseEncoded(wt.Tokenize(text))
+	}
+	if _, ok := wt.(*zhtok.ChineseWordTokenizer); ok {
+		return analyzeChineseEncoded(wt.Tokenize(text))
+	}
+	orig := wt.Tokenize(text)
+	cleaned, softMap := ReplaceSoftHyphens(orig, ignore)
+	positions := tokenizers.BuildPositions(cleaned)
+	tagged := tagSentence(cleaned)
+	readings := make([]*AnalyzedTokenReadings, 0, len(cleaned)+1)
+	ss := SentenceStartTagName
+	startTok := NewAnalyzedToken("", &ss, nil)
+	startR := NewAnalyzedTokenReadings(startTok)
+	startR.SetStartPos(0)
+	readings = append(readings, startR)
+	prev := ""
+	for i, tok := range cleaned {
+		var ar *AnalyzedTokenReadings
+		if i < len(tagged) && tagged[i] != nil {
+			// Rebuild ATR at tokenizer positions, keeping tagger readings/surface.
+			src := tagged[i]
+			// Ensure surface matches cleaned token (tagger may normalize case for lookup
+			// but Java keeps original token surface on the ATR).
+			rd := src.GetReadings()
+			if len(rd) == 0 {
+				at := NewAnalyzedToken(tok, nil, nil)
+				ar = NewAnalyzedTokenReadingsAt(at, positions[i])
+			} else {
+				// Primary reading with original surface
+				first := rd[0]
+				var posPtr, lemmaPtr *string
+				if first != nil {
+					posPtr = first.GetPOSTag()
+					lemmaPtr = first.GetLemma()
+				}
+				at := NewAnalyzedToken(tok, posPtr, lemmaPtr)
+				ar = NewAnalyzedTokenReadingsAt(at, positions[i])
+				for _, r := range rd[1:] {
+					if r == nil {
+						continue
+					}
+					ar.AddReading(NewAnalyzedToken(tok, r.GetPOSTag(), r.GetLemma()), "")
+				}
+			}
+			// Copy immunization / chunk tags if tagger set any (usually none pre-disambig).
+			if src.IsImmunized() {
+				ar.Immunize(0)
+			}
+			if chunks := src.GetChunkTags(); len(chunks) > 0 {
+				ar.SetChunkTags(chunks)
+			}
+		} else {
+			at := NewAnalyzedToken(tok, nil, nil)
+			ar = NewAnalyzedTokenReadingsAt(at, positions[i])
+		}
+		if prev != "" {
+			ar.SetWhitespaceBeforeToken(prev)
+		}
+		readings = append(readings, ar)
+		prev = tok
+	}
+	applySoftHyphenMetadata(readings, softMap)
+	attachSentenceEnd(readings)
+	return NewAnalyzedSentence(readings)
 }
 
 // AnalyzeWithTaggerAndTokenizer tags tokens produced by wt.

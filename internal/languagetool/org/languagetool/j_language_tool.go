@@ -290,6 +290,11 @@ type JLanguageTool struct {
 	IsKnownWord func(token string) bool
 	// TagWord optional POS/lemma inject used by Analyze (MapWordTagger-friendly).
 	TagWord func(token string) []TokenTag
+	// SentenceTagger optional full-sentence POS tagger (Java Tagger.tag(List)).
+	// When set, GetRawAnalyzedSentence prefers this over per-token TagWord so
+	// languages with sentence context (e.g. German ignoreCase on first word)
+	// get faithful tags. TagWord remains for hyphen-tagger bridges.
+	SentenceTagger func(tokens []string) []*AnalyzedTokenReadings
 	// Disambiguator optional post-tag sentence filter (multiword chunker / XML rules).
 	Disambiguator SentenceDisambiguator
 	// Chunker ports Java Language.getChunker(); runs on tagged tokens before
@@ -936,7 +941,10 @@ func (lt *JLanguageTool) GetRawAnalyzedSentence(sentence string) *AnalyzedSenten
 	var ignore *regexp.Regexp
 	ignore = lt.IgnoredCharacters
 	var s *AnalyzedSentence
-	if lt.TagWord != nil {
+	if lt.SentenceTagger != nil {
+		// Java: language.getTagger().tag(tokens) with full sentence context.
+		s = AnalyzeWithSentenceTaggerTokenizerAndIgnore(sentence, lt.SentenceTagger, wt, ignore)
+	} else if lt.TagWord != nil {
 		s = AnalyzeWithTaggerTokenizerAndIgnore(sentence, lt.TagWord, wt, ignore)
 	} else {
 		s = AnalyzeWithTokenizerAndIgnore(sentence, wt, ignore)
