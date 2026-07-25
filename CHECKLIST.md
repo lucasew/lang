@@ -981,7 +981,7 @@
 - [x] org/languagetool/rules/de/GermanWordRepeatBeginningRule.java::GermanWordRepeatBeginningRule
 - [x] org/languagetool/rules/de/GermanWordRepeatRule.java::GermanWordRepeatRule
 - [ ] org/languagetool/rules/de/GermanWrongWordInContextRule.java::GermanWrongWordInContextRule
-- [ ] org/languagetool/rules/de/InsertCommaFilter.java::InsertCommaFilter
+- [x] org/languagetool/rules/de/InsertCommaFilter.java::InsertCommaFilter
 - [x] org/languagetool/rules/de/LanguageNames.java::LanguageNames
 - [ ] org/languagetool/rules/de/LineExpander.java::LineExpander
 - [x] org/languagetool/rules/de/LongSentenceRule.java::LongSentenceRule
