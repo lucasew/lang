@@ -962,7 +962,7 @@
 - [x] org/languagetool/rules/de/FutureDateFilter.java::FutureDateFilter
 - [x] org/languagetool/rules/de/GermanCommaWhitespaceRule.java::GermanCommaWhitespaceRule
 - [ ] org/languagetool/rules/de/GermanCompoundRule.java::GermanCompoundRule
-- [ ] org/languagetool/rules/de/GermanConfusionProbabilityRule.java::GermanConfusionProbabilityRule
+- [x] org/languagetool/rules/de/GermanConfusionProbabilityRule.java::GermanConfusionProbabilityRule
 - [x] org/languagetool/rules/de/GermanDoublePunctuationRule.java::GermanDoublePunctuationRule
 - [ ] org/languagetool/rules/de/GermanFillerWordsRule.java::GermanFillerWordsRule
 - [x] org/languagetool/rules/de/GermanHelper.java::GermanHelper
