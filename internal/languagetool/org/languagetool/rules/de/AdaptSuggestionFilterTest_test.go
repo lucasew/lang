@@ -2,89 +2,29 @@ package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AdaptSuggestionFilterTest.java
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
-// Port of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDet (surface det path).
-func TestAdaptSuggestionFilter_AcceptRuleMatchWithDet(t *testing.T) {
-	f := withTestHooks(NewAdaptSuggestionFilter())
-	// Single NOM reading → one adapted det (unit path).
-	require.Equal(t, []string{"der Plan"}, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Plan"}))
-	require.Equal(t, []string{"ein Plan"}, f.SuggestWithDet("eine", "ART:IND:NOM:SIN:FEM", "ein", []string{"Plan"}))
-	require.Equal(t, []string{"mein Plan"}, f.SuggestWithDet("meine", "PRO:POS:NOM:SIN:FEM", "mein", []string{"Plan"}))
-	require.Equal(t, []string{"die Idee"}, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Idee"}))
-	require.Equal(t, []string{"meine Idee"}, f.SuggestWithDet("meine", "PRO:POS:NOM:SIN:FEM", "mein", []string{"Idee"}))
-	require.Equal(t, []string{"das Verfahren"}, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Verfahren"}))
-	require.Equal(t, []string{"mein Verfahren"}, f.SuggestWithDet("meine", "PRO:POS:NOM:SIN:FEM", "mein", []string{"Verfahren"}))
-
-	// Java Morphy "die" carries NOM+AKK FEM → MAS yields Der + Den (order unique, both present).
-	dieATR := atrWithPOS("die", "ART:DEF:NOM:SIN:FEM", "der")
-	akk := "ART:DEF:AKK:SIN:FEM"
-	lem := "der"
-	dieATR.AddReading(languagetool.NewAnalyzedToken("die", &akk, &lem), "")
-	got := f.SuggestWithDetFromATR(dieATR, []string{"Plan"})
-	require.ElementsMatch(t, []string{"der Plan", "den Plan"}, got)
-
-	// Possessive table (Java Hier steht meine/deine/… Roadmap → Plan / Idee / Verfahren)
-	type row struct {
-		tok, pos, lemma, noun string
-		want                  []string
+// adaptSuggestionFilterTestLT ports Java:
+//   private final JLanguageTool lt = new JLanguageTool(Languages.getLanguageForShortCode("de"));
+// with createDefaultTagger + createDefaultDisambiguator.
+func adaptSuggestionFilterTestLT(t *testing.T) (*AdaptSuggestionFilter, *languagetool.JLanguageTool) {
+	t.Helper()
+	lt := languagetool.NewJLanguageTool("de-DE")
+	if !WireGermanTagWord(lt) {
+		t.Skip("German tagger resources unavailable")
 	}
-	for _, tc := range []row{
-		{"meine", "PRO:POS:NOM:SIN:FEM", "mein", "Plan", []string{"mein Plan"}},
-		{"deine", "PRO:POS:NOM:SIN:FEM", "dein", "Plan", []string{"dein Plan"}},
-		{"seine", "PRO:POS:NOM:SIN:FEM", "sein", "Plan", []string{"sein Plan"}},
-		{"ihre", "PRO:POS:NOM:SIN:FEM", "ihr", "Plan", []string{"ihr Plan"}},
-		{"unsere", "PRO:POS:NOM:SIN:FEM", "unser", "Plan", []string{"unser Plan"}},
-		{"eure", "PRO:POS:NOM:SIN:FEM", "euer", "Plan", []string{"euer Plan"}},
-		{"meine", "PRO:POS:NOM:SIN:FEM", "mein", "Idee", []string{"meine Idee"}},
-		{"deine", "PRO:POS:NOM:SIN:FEM", "dein", "Idee", []string{"deine Idee"}},
-		{"seine", "PRO:POS:NOM:SIN:FEM", "sein", "Idee", []string{"seine Idee"}},
-		{"ihre", "PRO:POS:NOM:SIN:FEM", "ihr", "Idee", []string{"ihre Idee"}},
-		{"unsere", "PRO:POS:NOM:SIN:FEM", "unser", "Idee", []string{"unsere Idee"}},
-		{"eure", "PRO:POS:NOM:SIN:FEM", "euer", "Idee", []string{"eure Idee"}},
-		{"meine", "PRO:POS:NOM:SIN:FEM", "mein", "Verfahren", []string{"mein Verfahren"}},
-		{"deine", "PRO:POS:NOM:SIN:FEM", "dein", "Verfahren", []string{"dein Verfahren"}},
-		{"eine", "ART:IND:NOM:SIN:FEM", "ein", "Verfahren", []string{"ein Verfahren"}},
-		// AKK FEM det → MAS AKK forms for Plan
-		{"meine", "PRO:POS:AKK:SIN:FEM", "mein", "Plan", []string{"meinen Plan"}},
-		{"deine", "PRO:POS:AKK:SIN:FEM", "dein", "Plan", []string{"deinen Plan"}},
-		{"seine", "PRO:POS:AKK:SIN:FEM", "sein", "Plan", []string{"seinen Plan"}},
-		{"ihre", "PRO:POS:AKK:SIN:FEM", "ihr", "Plan", []string{"ihren Plan"}},
-		{"unsere", "PRO:POS:AKK:SIN:FEM", "unser", "Plan", []string{"unseren Plan"}},
-		{"eure", "PRO:POS:AKK:SIN:FEM", "euer", "Plan", []string{"euren Plan"}},
-	} {
-		got := f.SuggestWithDet(tc.tok, tc.pos, tc.lemma, []string{tc.noun})
-		require.Equal(t, tc.want, got, "tok=%s noun=%s", tc.tok, tc.noun)
-	}
-}
-
-// Port of AdaptSuggestionFilterTest.testAdaptedDet
-func TestAdaptSuggestionFilter_AdaptedDet_Twin(t *testing.T) {
-	f := withTestHooks(NewAdaptSuggestionFilter())
-	require.Equal(t, []string{"der"}, f.AdaptedDet(DetReading{Token: "die", POS: "ART:DEF:NOM:SIN:FEM", Lemma: "der"}, "Mann"))
-	require.Equal(t, []string{"die"}, f.AdaptedDet(DetReading{Token: "der", POS: "ART:DEF:NOM:SIN:MAS", Lemma: "der"}, "Frau"))
-	require.Equal(t, []string{"das"}, f.AdaptedDet(DetReading{Token: "der", POS: "ART:DEF:NOM:SIN:NEU", Lemma: "der"}, "Kind"))
-	require.Equal(t, []string{"ein"}, f.AdaptedDet(DetReading{Token: "eine", POS: "ART:IND:NOM:SIN:FEM", Lemma: "ein"}, "Plan"))
-	require.Equal(t, []string{"einen"}, f.AdaptedDet(DetReading{Token: "eine", POS: "ART:IND:AKK:SIN:FEM", Lemma: "ein"}, "Plan"))
-	require.Equal(t, []string{"eines"}, f.AdaptedDet(DetReading{Token: "einer", POS: "ART:IND:GEN:SIN:FEM", Lemma: "ein"}, "Plan"))
-	require.Equal(t, []string{"einem"}, f.AdaptedDet(DetReading{Token: "einer", POS: "ART:IND:DAT:SIN:FEM", Lemma: "ein"}, "Plan"))
-	// Title case first-char filter (Java Die → Der)
-	require.Equal(t, []string{"Der"}, f.AdaptedDet(DetReading{Token: "Die", POS: "ART:DEF:NOM:SIN:FEM", Lemma: "der"}, "Plan"))
-	// Possessive first-char filter: do not invent "dein" from lemma mein for "meine"
-	require.Equal(t, []string{"mein"}, f.AdaptedDet(DetReading{Token: "meine", POS: "PRO:POS:NOM:SIN:FEM", Lemma: "mein"}, "Plan"))
-	require.Equal(t, []string{"dein"}, f.AdaptedDet(DetReading{Token: "deine", POS: "PRO:POS:NOM:SIN:FEM", Lemma: "dein"}, "Plan"))
-}
-
-// detAdjNoun is disabled in Java (&& false); soft SuggestWithDetAdj path removed.
-func TestAdaptSuggestionFilter_DetAdjBranchDisabled(t *testing.T) {
-	// Document: Java accepts only det+noun until detAdj is uncommented upstream.
-	// Go does not invent weak-adj synthesis.
-	f := withTestHooks(NewAdaptSuggestionFilter())
-	require.NotNil(t, f)
+	WireGermanDisambiguator(lt)
+	f := WireAdaptSuggestionFilter()
+	require.NotNil(t, f.GenderOf, "GenderOf (GermanTagger)")
+	require.NotNil(t, f.Synthesize, "Synthesize (GermanSynthesizer)")
+	require.NotNil(t, f.FilterSuggestions, "FilterSuggestions (AgreementRule SuggestionFilter)")
+	return f, lt
 }
 
 // Twin of AdaptSuggestionFilterTest.testAcceptRuleMatchDevTest (Java @Ignore for development).
@@ -92,13 +32,101 @@ func TestAdaptSuggestionFilter_AcceptRuleMatchDevTest(t *testing.T) {
 	t.Skip("Java @Ignore(\"for development\")")
 }
 
-// Twin of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDetAdj (Java @Ignore WIP).
-func TestAdaptSuggestionFilter_AcceptRuleMatchWithDetAdj(t *testing.T) {
-	// Java detAdjNoun branch disabled (&& false); twin is fail-closed / skip.
-	t.Skip("Java @Ignore(\"WIP\") — detAdjNoun path not active upstream")
+// Twin of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDet.
+func TestAdaptSuggestionFilter_AcceptRuleMatchWithDet(t *testing.T) {
+	f, lt := adaptSuggestionFilterTestLT(t)
+	// MAS (Der Plan):
+	runAcceptRuleMatch(t, f, lt, "Die Roadmap ist gut.", "Roadmap", "Plan", "[Den Plan, Der Plan]")
+	// MAS (der Plan):
+	runAcceptRuleMatch(t, f, lt, "Hier steht die Roadmap.", "Roadmap", "Plan", "[den Plan, der Plan]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht eine Roadmap.", "Roadmap", "Plan", "[einen Plan, ein Plan]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht meine Roadmap.", "Roadmap", "Plan", "[meinen Plan, mein Plan]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht deine Roadmap.", "Roadmap", "Plan", "[deinen Plan, dein Plan]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht seine Roadmap.", "Roadmap", "Plan", "[seinen Plan, sein Plan]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht ihre Roadmap.", "Roadmap", "Plan", "[ihren Plan, ihr Plan]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht unsere Roadmap.", "Roadmap", "Plan", "[unseren Plan, unser Plan]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht eure Roadmap.", "Roadmap", "Plan", "[euren Plan, euer Plan]")
+	// FEM (die Idee):
+	runAcceptRuleMatch(t, f, lt, "Hier steht die Roadmap.", "Roadmap", "Idee", "[die Idee]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht eine Roadmap.", "Roadmap", "Idee", "[eine Idee]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht meine Roadmap.", "Roadmap", "Idee", "[meine Idee]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht deine Roadmap.", "Roadmap", "Idee", "[deine Idee]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht seine Roadmap.", "Roadmap", "Idee", "[seine Idee]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht ihre Roadmap.", "Roadmap", "Idee", "[ihre Idee]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht unsere Roadmap.", "Roadmap", "Idee", "[unsere Idee]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht eure Roadmap.", "Roadmap", "Idee", "[eure Idee]")
+	// NEU (das Verfahren):
+	runAcceptRuleMatch(t, f, lt, "Hier steht die Roadmap.", "Roadmap", "Verfahren", "[das Verfahren]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht eine Roadmap.", "Roadmap", "Verfahren", "[ein Verfahren]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht meine Roadmap.", "Roadmap", "Verfahren", "[mein Verfahren]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht deine Roadmap.", "Roadmap", "Verfahren", "[dein Verfahren]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht seine Roadmap.", "Roadmap", "Verfahren", "[sein Verfahren]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht ihre Roadmap.", "Roadmap", "Verfahren", "[ihr Verfahren]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht unsere Roadmap.", "Roadmap", "Verfahren", "[unser Verfahren]")
+	runAcceptRuleMatch(t, f, lt, "Hier steht eure Roadmap.", "Roadmap", "Verfahren", "[euer Verfahren]")
 }
 
-// Twin of AdaptSuggestionFilterTest.testdAdaptedDetAdj (Java method name has lowercase d).
+// Twin of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDetAdj (Java @Ignore WIP).
+func TestAdaptSuggestionFilter_AcceptRuleMatchWithDetAdj(t *testing.T) {
+	t.Skip("Java @Ignore(\"WIP\") — detAdjNoun path not active upstream (&& false)")
+}
+
+// Twin of AdaptSuggestionFilterTest.testAdaptedDet.
+func TestAdaptSuggestionFilter_AdaptedDet(t *testing.T) {
+	f, _ := adaptSuggestionFilterTestLT(t)
+	assertDet(t, f, "die", "ART:DEF:NOM:SIN:FEM", "der", "Mann", "[der]")
+	assertDet(t, f, "der", "ART:DEF:NOM:SIN:MAS", "der", "Frau", "[die]")
+	assertDet(t, f, "der", "ART:DEF:NOM:SIN:NEU", "der", "Kind", "[das]")
+
+	assertDet(t, f, "eine", "ART:IND:NOM:SIN:FEM", "ein", "Plan", "[ein]")     // eine Roadmap -> ein Plan
+	assertDet(t, f, "eine", "ART:IND:AKK:SIN:FEM", "ein", "Plan", "[einen]")   // ich habe eine Roadmap -> ich habe einen Plan
+	assertDet(t, f, "einer", "ART:IND:GEN:SIN:FEM", "ein", "Plan", "[eines]")  // die Ausführung einer Roadmap
+	assertDet(t, f, "einer", "ART:IND:DAT:SIN:FEM", "ein", "Plan", "[einem]")  // einer Roadmap -> einem Plan
+}
+
+// Twin of AdaptSuggestionFilterTest.testdAdaptedDetAdj (Java method name has lowercase d; @Ignore WIP).
 func TestAdaptSuggestionFilter_DAdaptedDetAdj(t *testing.T) {
-	t.Skip("Java @Ignore(\"WIP\") — getAdaptedDetAdj not active")
+	t.Skip("Java @Ignore(\"WIP\") — getAdaptedDetAdj not active in acceptRuleMatch")
+}
+
+// runAcceptRuleMatch ports AdaptSuggestionFilterTest.runAcceptRuleMatch.
+func runAcceptRuleMatch(t *testing.T, filter *AdaptSuggestionFilter, lt *languagetool.JLanguageTool,
+	sentenceStr, word, origReplacement, newReplacements string) {
+	t.Helper()
+	sentence := lt.GetAnalyzedSentence(sentenceStr)
+	require.NotNil(t, sentence, "GetAnalyzedSentence(%q)", sentenceStr)
+	fromPos := strings.Index(sentenceStr, word)
+	require.GreaterOrEqual(t, fromPos, 0, "word %q in %q", word, sentenceStr)
+	toPos := fromPos + len(word)
+	match := rules.NewRuleMatch(rules.NewFakeRule(""), sentence, fromPos, toPos, "fake message")
+	match.SetSuggestedReplacement(origReplacement)
+	tokenPos := -1
+	i := 0
+	tokens := sentence.GetTokensWithoutWhitespace()
+	for _, tok := range tokens {
+		if tok != nil && tok.GetToken() == word {
+			tokenPos = i
+			break
+		}
+		i++
+	}
+	require.GreaterOrEqual(t, tokenPos, 0, "Word %q not found in sentence: %q", word, sentenceStr)
+	// Java passes i after loop (equals tokenPos when found) and pattern tokens slice.
+	args := map[string]string{"sub": `\1`}
+	var patternToks []*languagetool.AnalyzedTokenReadings
+	if tokenPos >= 0 && tokenPos < len(tokens) {
+		patternToks = tokens[tokenPos : tokenPos+1]
+	}
+	newMatch := filter.AcceptRuleMatch(match, args, i, patternToks, nil)
+	require.NotNil(t, newMatch)
+	got := "[" + strings.Join(newMatch.GetSuggestedReplacements(), ", ") + "]"
+	require.Equal(t, newReplacements, got, "sentence=%q word=%q repl=%q", sentenceStr, word, origReplacement)
+}
+
+// assertDet ports AdaptSuggestionFilterTest.assertDet.
+func assertDet(t *testing.T, filter *AdaptSuggestionFilter, token, pos, lemma, replWord, expectedDet string) {
+	t.Helper()
+	adapted := filter.AdaptedDet(DetReading{Token: token, POS: pos, Lemma: lemma}, replWord)
+	got := "[" + strings.Join(adapted, ", ") + "]"
+	require.Equal(t, expectedDet, got, "det=%s pos=%s repl=%s", token, pos, replWord)
 }

@@ -3,7 +3,6 @@ package de
 import (
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 
@@ -17,64 +16,105 @@ import (
 var (
 	adaptWireOnce sync.Once
 	adaptWired    *AdaptSuggestionFilter
+
+	// agreementFilterOnce builds SuggestionFilter(AgreementRule, German) once
+	// (Java constructs per acceptRuleMatch; caching is behavior-equivalent).
+	agreementFilterOnce sync.Once
+	agreementFilterFn   func(suggs []string, template string) []string
 )
 
-var masFemNeuFind = regexp.MustCompile(`MAS|FEM|NEU`)
-
 // WireAdaptSuggestionFilter returns an AdaptSuggestionFilter with GenderOf +
-// Synthesize hooked from discovered DE resources when present (Java
-// GermanTagger.INSTANCE + GermanSynthesizer.INSTANCE). Without resources,
-// hooks stay nil (fail-closed).
+// Synthesize + FilterSuggestions hooked from discovered DE resources when present
+// (Java GermanTagger.INSTANCE + GermanSynthesizer.INSTANCE +
+// SuggestionFilter(AgreementRule, German)).
 func WireAdaptSuggestionFilter() *AdaptSuggestionFilter {
 	adaptWireOnce.Do(func() {
 		adaptWired = NewAdaptSuggestionFilter()
 		root := DiscoverGermanResourceDir()
-		// GenderOf via tagger (manual + optional german.dict + spelling expansions)
 		if tagger := openDiscoveredGermanTagger(root); tagger != nil {
 			adaptWired.GenderOf = func(word string) string {
 				return nounGenderFromTagger(tagger, word)
 			}
 		}
-		// Synthesize via GermanSynthesizer when german_synth.dict present
-		// (Java: GermanSynthesizer.INSTANCE — case/REMOVE/compound filters).
 		if openDiscoveredGermanSynthesizer() != nil || openDiscoveredGermanSynthBase() != nil {
 			adaptWired.Synthesize = synthesizeGermanRE
 		}
-		// SuggestionFilter via AgreementRule (Java AgreementRule + template)
-		agr := NewAgreementRule(nil)
-		sf := rules.NewSuggestionFilter(func(filled string) bool {
-			sent := languagetool.AnalyzePlain(filled)
-			return len(agr.Match(sent)) > 0
-		})
-		adaptWired.FilterSuggestions = sf.Filter
+		adaptWired.FilterSuggestions = defaultAgreementSuggestionFilter()
 	})
 	if adaptWired == nil {
 		return NewAdaptSuggestionFilter()
 	}
-	// return a shallow copy so callers can still override hooks in tests
+	// shallow copy so callers can still override hooks in tests
 	cp := *adaptWired
 	return &cp
 }
 
-// nounGenderFromTagger ports AdaptSuggestionFilter.getNounGender.
+// defaultAgreementSuggestionFilter ports:
+//
+//	AgreementRule agreementRule = new AgreementRule(..., german);
+//	SuggestionFilter suggestionFilter = new SuggestionFilter(agreementRule, german);
+//	suggestionFilter.filter(newSugg, template)
+//
+// Java uses lang.createDefaultJLanguageTool().analyzeText for each candidate.
+func defaultAgreementSuggestionFilter() func(suggs []string, template string) []string {
+	agreementFilterOnce.Do(func() {
+		lt := languagetool.NewJLanguageTool("de-DE")
+		if !WireGermanTagWord(lt) {
+			// fail-closed: no tags → AgreementRule cannot reject; keep identity
+			// only if tagger missing (no invent filter)
+			agreementFilterFn = nil
+			return
+		}
+		WireGermanDisambiguator(lt)
+		agr := NewAgreementRule(nil)
+		sf := rules.NewSuggestionFilter(func(filled string) bool {
+			sent := lt.GetAnalyzedSentence(filled)
+			if sent == nil {
+				return false
+			}
+			return len(agr.Match(sent)) > 0
+		})
+		agreementFilterFn = sf.Filter
+	})
+	return agreementFilterFn
+}
+
+// nounGenderFromGermanTagger ports AdaptSuggestionFilter.getNounGender via
+// GermanTagger.INSTANCE (DiscoveredGermanTagger).
+func nounGenderFromGermanTagger(word string) string {
+	return nounGenderFromTagger(DiscoveredGermanTagger(), word)
+}
+
+// nounGenderFromTagger ports AdaptSuggestionFilter.getNounGender:
+//
+//	List<AnalyzedTokenReadings> readings = GermanTagger.INSTANCE.tag(singletonList(word));
+//	first reading POS starts with SUB: → parts[3] (MAS|FEM|NEU)
 func nounGenderFromTagger(tagger *detag.GermanTagger, word string) string {
 	if tagger == nil || word == "" {
 		return ""
 	}
-	rd := tagger.Lookup(word)
-	if rd == nil {
-		return ""
-	}
-	for _, reading := range rd.GetReadings() {
-		if reading == nil || reading.GetPOSTag() == nil {
+	// Java: tag(Collections.singletonList(word)) → ignoreCase=true
+	readings := tagger.Tag([]string{word})
+	for _, atr := range readings {
+		if atr == nil {
 			continue
 		}
-		pos := *reading.GetPOSTag()
+		rds := atr.GetReadings()
+		if len(rds) == 0 {
+			continue
+		}
+		// Java: only first reading
+		r0 := rds[0]
+		if r0 == nil || r0.GetPOSTag() == nil {
+			continue
+		}
+		pos := *r0.GetPOSTag()
 		if !strings.HasPrefix(pos, "SUB:") {
 			continue
 		}
-		if m := masFemNeuFind.FindString(pos); m != "" {
-			return m
+		parts := strings.Split(pos, ":")
+		if len(parts) >= 4 {
+			return parts[3]
 		}
 	}
 	return ""
@@ -131,10 +171,8 @@ func openDiscoveredGermanTagger(resourceRoot string) *detag.GermanTagger {
 	if resourceRoot != "" {
 		sp := filepath.Join(resourceRoot, "hunspell", "spelling.txt")
 		if fileExists(sp) {
-			// Java ExpansionInfos: /A /P adj forms + underscore verb lines from same file.
 			if ex, err := detag.LoadSpellingAdjExpansionFromFile(sp); err == nil && ex != nil {
 				adjEx = ex
-				// Also available as WordTagger for exact surface hits (optional; Java uses adjInfos map only on unknown path).
 				if manuals != nil {
 					manuals = tagging.NewCombiningTagger(manuals, ex, false)
 				} else {
@@ -171,17 +209,14 @@ func openDiscoveredGermanTagger(resourceRoot string) *detag.GermanTagger {
 	if verbEx != nil {
 		gt.SetSpellingVerbExpansion(verbEx)
 	}
-	// Java: GermanCompoundTokenizer.getStrictInstance().tokenize for unknown compounds
 	gt.SplitCompound = strictCompoundSplitFromResourceDir(resourceRoot)
 	return gt
 }
 
 // strictCompoundSplitFromResourceDir ports GermanCompoundTokenizer.getStrictInstance
 // used by GermanTagger (Java: EmbeddedGermanDictionary + extras only — not hunspell .dic).
-// Loading full de_DE.dic invents atomic forms (e.g. Profitrate) and blocks compound splits
-// that Java's getStrictInstance still performs.
 func strictCompoundSplitFromResourceDir(resourceRoot string) func(word string) []string {
-	_ = resourceRoot // Java getStrictInstance does not load resourceRoot hunspell
+	_ = resourceRoot
 	return func(word string) []string {
 		if word == "" {
 			return nil
