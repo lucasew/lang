@@ -309,7 +309,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-SentenceWhitespaceRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SentenceWhitespaceRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SentenceWhitespaceRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/SentenceWhitespaceRule.java | internal/languagetool/org/languagetool/rules/de/sentence_whitespace_rule.go; internal/languagetool/org/languagetool/rules/de/SentenceWhitespaceRuleTest_test.go | f7e0670086b600ea4f4dbb16c8b9e63903fd821b | 0 | 0 |  |  | 2026-07-25T02:35:57Z |
 | docs/faithful-port-checklist.md#3.C.3-LongSentenceRule-DE | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/LongSentenceRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/LongSentenceRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/LongSentenceRule.java | internal/languagetool/org/languagetool/rules/de/long_sentence_rule.go; internal/languagetool/org/languagetool/rules/de/LongSentenceRuleTest_test.go | a3b32f031516120520aa2d747895826a159b79c9 | 0 | 0 |  |  | 2026-07-25T02:50:34Z |
 | docs/faithful-port-checklist.md#3.C.3-WiederVsWiderRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/WiederVsWiderRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/WiederVsWiderRuleTest.java | internal/languagetool/org/languagetool/rules/de/wieder_vs_wider_rule.go; internal/languagetool/org/languagetool/rules/de/WiederVsWiderRuleTest_test.go | 3f97b345e4de8e93df4f94301a291ede3a9cd2af | 0 | 0 |  |  | 2026-07-25T03:05:52Z |
-| docs/faithful-port-checklist.md#3.C.3-MissingVerbRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/MissingVerbRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/MissingVerbRuleTest.java | internal/languagetool/org/languagetool/rules/de/missing_verb_rule.go; internal/languagetool/org/languagetool/rules/de/MissingVerbRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/wire_agreement_stack.go | bf67ca5325532dbcc53a7f2c1f1c981b6053a52a | 0 | 0 |  |  | 2026-07-25T03:15:26Z |
+| docs/faithful-port-checklist.md#3.C.3-MissingVerbRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/MissingVerbRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/MissingVerbRuleTest.java | internal/languagetool/org/languagetool/rules/de/missing_verb_rule.go; internal/languagetool/org/languagetool/rules/de/MissingVerbRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/wire_agreement_stack.go | bf67ca5325532dbcc53a7f2c1f1c981b6053a52a | 0 | 0 |  |  | 2026-07-25T03:20:49Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -318,7 +318,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-WiederVsWiderRule @ 3f97b345 |
+| Notes | ACCEPT 3.C.3-MissingVerbRule @ bf67ca53 |
 
 ---
 
@@ -1385,3 +1385,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T03:05:52Z ACCEPT: 3.C.3-WiederVsWiderRule @ 3f97b345 (validator + parent green reconfirm; DE_WIEDER_VS_WIDER; lemma spiegeln; full matrix)
 - 2026-07-25T03:08:59Z implement: 3.C.3-MissingVerbRule (MISSING_VERB + MissingVerbRuleTest full matrix; min tokens; special cases)
 - 2026-07-25T03:15:26Z ready: 3.C.3-MissingVerbRule @ bf67ca53 (implementer report; parent green reconfirm MissingVerb)
+- 2026-07-25T03:18:39Z validating: 3.C.3-MissingVerbRule @ bf67ca53 (strict invent re-audit vs Java MissingVerbRule + Test)
+- 2026-07-25T03:20:49Z ACCEPT: 3.C.3-MissingVerbRule @ bf67ca53 (validator + parent green reconfirm; MISSING_VERB; PatternRule special cases; full matrix)
