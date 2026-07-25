@@ -1003,7 +1003,7 @@
 - [x] org/languagetool/rules/de/RemoveUnknownCompoundsFilter.java::RemoveUnknownCompoundsFilter
 - [x] org/languagetool/rules/de/SentenceWhitespaceRule.java::SentenceWhitespaceRule
 - [x] org/languagetool/rules/de/SentenceWithManRule.java::SentenceWithManRule
-- [ ] org/languagetool/rules/de/SentenceWithModalVerbRule.java::SentenceWithModalVerbRule
+- [x] org/languagetool/rules/de/SentenceWithModalVerbRule.java::SentenceWithModalVerbRule
 - [ ] org/languagetool/rules/de/SimilarNameRule.java::SimilarNameRule
 - [ ] org/languagetool/rules/de/SimpleReplaceRule.java::SimpleReplaceRule
 - [ ] org/languagetool/rules/de/SpellingData.java::SpellingData
