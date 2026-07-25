@@ -93,7 +93,10 @@ func (t *GermanTagger) addPartizip2FromLastPart(
 		}
 	}
 	// 1) lastPart is VER:3:SIN:PRÄ:SFT (or special PLU) → VER:PA2 + PA2:PRD
-	if isNonSep {
+	// Java nests this under the outer VER branch gated by !firstPart.equals("un")
+	// (avoids 'unbeeindruckt' → VER.* and also skips the derived PA2:PRD for "un").
+	// The inner !firstPart.equals("un") only around VER:PA2 is redundant after that gate.
+	if isNonSep && firstPart != "un" {
 		for _, taggedWord := range t.TagWordExact(lastPart) {
 			pos := taggedWord.PosTag
 			ok := strings.HasPrefix(pos, "VER:3:SIN:PRÄ:SFT")
@@ -106,15 +109,12 @@ func (t *GermanTagger) addPartizip2FromLastPart(
 			if !ok {
 				continue
 			}
-			// Java: !firstPart.equals("un") — case-sensitive
-			if firstPart != "un" {
-				fl := pos
-				if len(fl) >= 3 {
-					fl = fl[len(fl)-3:]
-				}
-				lemma := firstPart + taggedWord.Lemma
-				readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(lemma, "VER:PA2:"+fl)))
+			fl := pos
+			if len(fl) >= 3 {
+				fl = fl[len(fl)-3:]
 			}
+			lemma := firstPart + taggedWord.Lemma
+			readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(lemma, "VER:PA2:"+fl)))
 			readings = append(readings, toToken(wordOrig, tagging.NewTaggedWord(wordOrig, "PA2:PRD:GRU:VER")))
 		}
 	}

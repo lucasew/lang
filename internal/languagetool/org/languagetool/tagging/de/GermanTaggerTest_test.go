@@ -86,18 +86,12 @@ func TestGermanTagger_Tagger(t *testing.T) {
 	tagger := requireGermanTagger(t)
 
 	aToken := tagger.Lookup("Haus")
-	// Official dict: "haus" is also VER:IMP:SIN:SFT; known-word mutual SFT adds
-	// VER:1:SIN:PRÄ:SFT when indexOf==0 (Java algorithm). SUB tags match Java.
-	require.NotNil(t, aToken)
-	require.True(t, aToken.HasPartialPosTag("SUB:AKK:SIN:NEU"))
-	require.True(t, aToken.HasPartialPosTag("SUB:DAT:SIN:NEU"))
-	require.True(t, aToken.HasPartialPosTag("SUB:NOM:SIN:NEU"))
-	// Lemmas for SUB readings
-	for _, r := range aToken.GetReadings() {
-		if r.GetPOSTag() != nil && strings.HasPrefix(*r.GetPOSTag(), "SUB:") {
-			require.Equal(t, "Haus", *r.GetLemma())
-		}
-	}
+	// Java: Haus[Haus/SUB:AKK:SIN:NEU, Haus/SUB:DAT:SIN:NEU, Haus/SUB:NOM:SIN:NEU]
+	// bare mutual tags lstPrt=surface "Haus" (not lower "haus") → no VER invent.
+	require.Equal(t, "Haus[Haus/SUB:AKK:SIN:NEU, Haus/SUB:DAT:SIN:NEU, Haus/SUB:NOM:SIN:NEU]", toSortedString(aToken))
+	require.Equal(t, "Haus", *aToken.GetReadings()[0].GetLemma())
+	require.Equal(t, "Haus", *aToken.GetReadings()[1].GetLemma())
+	require.Equal(t, "Haus", *aToken.GetReadings()[2].GetLemma())
 
 	aToken2 := tagger.Lookup("Hauses")
 	require.Equal(t, "Hauses[Haus/SUB:GEN:SIN:NEU]", toSortedString(aToken2))
@@ -185,17 +179,8 @@ func TestGermanTagger_Tagger(t *testing.T) {
 	aToken18 := tagger.Lookup("Zuge")
 	require.Equal(t, "Zuge[Zug/SUB:DAT:SIN:MAS]", toSortedString(aToken18))
 	aToken19 := tagger.Lookup("Tische")
-	// SUB tags match Java; known-word mutual SFT may also add tischen VER when indexOf==0
-	// (Java algorithm: tag("tische") → VER:IMP:SIN:SFT → add VER:1:SIN:PRÄ:SFT).
-	require.True(t, aToken19.HasPartialPosTag("SUB:AKK:PLU:MAS"))
-	require.True(t, aToken19.HasPartialPosTag("SUB:DAT:SIN:MAS"))
-	require.True(t, aToken19.HasPartialPosTag("SUB:GEN:PLU:MAS"))
-	require.True(t, aToken19.HasPartialPosTag("SUB:NOM:PLU:MAS"))
-	for _, r := range aToken19.GetReadings() {
-		if r.GetPOSTag() != nil && strings.HasPrefix(*r.GetPOSTag(), "SUB:") {
-			require.Equal(t, "Tisch", *r.GetLemma())
-		}
-	}
+	// Java: Tische[Tisch/SUB:AKK:PLU:MAS, Tisch/SUB:DAT:SIN:MAS, Tisch/SUB:GEN:PLU:MAS, Tisch/SUB:NOM:PLU:MAS]
+	require.Equal(t, "Tische[Tisch/SUB:AKK:PLU:MAS, Tisch/SUB:DAT:SIN:MAS, Tisch/SUB:GEN:PLU:MAS, Tisch/SUB:NOM:PLU:MAS]", toSortedString(aToken19))
 
 	require.Nil(t, tagger.Lookup("vanillig-karamelligen"))
 
@@ -218,17 +203,7 @@ func TestGermanTagger_ExtendedTagger(t *testing.T) {
 	require.Equal(t, "Kuß[Kuß/SUB:AKK:SIN:MAS, Kuß/SUB:DAT:SIN:MAS, Kuß/SUB:NOM:SIN:MAS]", toSortedString(tagger.Lookup("Kuß")))
 	require.Equal(t, "Kuss[Kuss/SUB:AKK:SIN:MAS, Kuss/SUB:DAT:SIN:MAS, Kuss/SUB:NOM:SIN:MAS]", toSortedString(tagger.Lookup("Kuss")))
 	require.Equal(t, "Haß[Haß/SUB:AKK:SIN:MAS, Haß/SUB:DAT:SIN:MAS, Haß/SUB:NOM:SIN:MAS]", toSortedString(tagger.Lookup("Haß")))
-	// Hass: SUB tags match Java; mutual SFT may add hassen VER (tag("hass")→IMP:SFT).
-	hass := tagger.Lookup("Hass")
-	require.NotNil(t, hass)
-	require.True(t, hass.HasPartialPosTag("SUB:AKK:SIN:MAS"))
-	require.True(t, hass.HasPartialPosTag("SUB:DAT:SIN:MAS"))
-	require.True(t, hass.HasPartialPosTag("SUB:NOM:SIN:MAS"))
-	for _, r := range hass.GetReadings() {
-		if r.GetPOSTag() != nil && strings.HasPrefix(*r.GetPOSTag(), "SUB:") {
-			require.Equal(t, "Hass", *r.GetLemma())
-		}
-	}
+	require.Equal(t, "Hass[Hass/SUB:AKK:SIN:MAS, Hass/SUB:DAT:SIN:MAS, Hass/SUB:NOM:SIN:MAS]", toSortedString(tagger.Lookup("Hass")))
 }
 
 // Twin of GermanTaggerTest.testAfterColon
@@ -248,15 +223,10 @@ func TestGermanTagger_TaggerBaseforms(t *testing.T) {
 	require.Equal(t, "übrigbleiben", *readings1[0].GetLemma())
 
 	readings2 := tagger.Lookup("Haus").GetReadings()
-	// count SUB lemmas (see testTagger note on mutual SFT)
-	subN := 0
-	for _, r := range readings2 {
-		if r.GetPOSTag() != nil && strings.HasPrefix(*r.GetPOSTag(), "SUB:") {
-			require.Equal(t, "Haus", *r.GetLemma())
-			subN++
-		}
-	}
-	require.Equal(t, 3, subN)
+	require.Len(t, readings2, 3)
+	require.Equal(t, "Haus", *readings2[0].GetLemma())
+	require.Equal(t, "Haus", *readings2[1].GetLemma())
+	require.Equal(t, "Haus", *readings2[2].GetLemma())
 
 	readings3 := tagger.Lookup("Häuser").GetReadings()
 	require.Len(t, readings3, 3)
@@ -413,8 +383,8 @@ func TestGermanTagger_PrefixVerbsSeparable(t *testing.T) {
 
 	result2 := tagger.Tag([]string{"nachgucke"})
 	require.Len(t, result2, 1)
-	// may include duplicate VER:1:SIN:PRÄ:SFT:NEB from mutual path; assert ≥3 distinct tags
-	require.GreaterOrEqual(t, len(result2[0].GetReadings()), 3)
+	// Java: size is(4)
+	require.Len(t, result2[0].GetReadings(), 4)
 	res2 := atrListString(result2)
 	require.Contains(t, res2, "nachgucken/VER:1:SIN:PRÄ:SFT:NEB")
 	require.Contains(t, res2, "nachgucken/VER:1:SIN:KJ1:SFT:NEB")
@@ -523,8 +493,8 @@ func TestGermanTagger_PrefixVerbsNonSeparable(t *testing.T) {
 
 	result1 := tagger.Tag([]string{"vergären"})
 	require.Len(t, result1, 1)
-	// official dict may yield duplicate tags; assert count and content
-	require.GreaterOrEqual(t, len(result1[0].GetReadings()), 10)
+	// Java: size is(15)
+	require.Len(t, result1[0].GetReadings(), 15)
 	res1 := atrListString(result1)
 	require.Contains(t, res1, "vergären/VER:1:PLU:PRÄ:NON")
 	require.Contains(t, res1, "vergären/VER:1:PLU:KJ1:NON")
@@ -537,7 +507,8 @@ func TestGermanTagger_PrefixVerbsNonSeparable(t *testing.T) {
 
 	result2 := tagger.Tag([]string{"Vergären"})
 	require.Len(t, result2, 1)
-	require.GreaterOrEqual(t, len(result2[0].GetReadings()), 15)
+	// Java: size is(24)
+	require.Len(t, result2[0].GetReadings(), 24)
 	res2 := atrListString(result2)
 	require.Contains(t, res2, "Vergären/SUB:NOM:SIN:NEU:INF")
 	require.Contains(t, res2, "Vergären/SUB:DAT:SIN:NEU:INF")
@@ -547,9 +518,8 @@ func TestGermanTagger_PrefixVerbsNonSeparable(t *testing.T) {
 
 	result3 := tagger.Tag([]string{"unbeglückt"})
 	require.Len(t, result3, 1)
-	// elative + dash/partizip paths may each contribute PA2:PRD (Java size often 2;
-	// official path can emit duplicate identical PA2:PRD readings).
-	require.GreaterOrEqual(t, len(result3[0].GetReadings()), 1)
+	// Java: size is(2) — elative PA2 + dash PA branch; no derived PA2 for prefix "un"
+	require.Len(t, result3[0].GetReadings(), 2)
 	res3 := atrListString(result3)
 	require.Contains(t, res3, "PA2:PRD:GRU:VER")
 	// no finite VER: invent (Java assertFalse contains "VER:")
@@ -598,17 +568,12 @@ func TestGermanTagger_NoVerb(t *testing.T) {
 
 	result6 := tagger.Tag([]string{"schwarzgrau"})
 	require.Len(t, result6, 1)
-	// Java test expects ADJ+VER when the form is known. Official german.dict has no
-	// "schwarzgrau"; notAVerb contains "schwarzgrau" so prefix invent is blocked
-	// (Java StringUtils.containsAny). Fail closed: untagged, not false VER-only invent.
-	if result6[0].IsTagged() {
-		res6 := atrListString(result6)
-		require.Contains(t, res6, "ADJ")
-		require.Contains(t, res6, "VER")
-	} else {
-		require.Len(t, result6[0].GetReadings(), 1)
-		require.Nil(t, result6[0].GetReadings()[0].GetPOSTag())
-	}
+	// Java: size is(2), contains ADJ, contains VER
+	// (strict compound split schwarz+grau via jwordsplitter 4.7 which includes "schwarz")
+	require.Len(t, result6[0].GetReadings(), 2)
+	res6 := atrListString(result6)
+	require.Contains(t, res6, "ADJ")
+	require.Contains(t, res6, "VER")
 
 	result8 := tagger.Tag([]string{"entlang"})
 	require.Len(t, result8, 1)

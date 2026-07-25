@@ -104,6 +104,12 @@ func utf16FirstLowerRest(word string) string {
 }
 
 // addImpPraesSFTMutual ports the known-word IMP:SIN:SFT ↔ 1:SIN:PRÄ:SFT mutual tags.
+// Java GermanTagger.tag ~319–342:
+//   non-separable: lstPrt = removePattern(word.toLowerCase(), prefixesNonSeparable…);
+//                  frstPrt = StringUtils.removeEnd(word, lstPrt);
+//   else (bare):   lstPrt = word;  // surface casing, not full lower
+//                  frstPrt = "";
+//   then getWordTagger().tag(lstPrt)
 func (t *GermanTagger) addImpPraesSFTMutual(word string, sentenceTokens []string, idxPos int, readings []*languagetool.AnalyzedToken) []*languagetool.AnalyzedToken {
 	if t == nil || word == "" {
 		return readings
@@ -119,36 +125,33 @@ func (t *GermanTagger) addImpPraesSFTMutual(word string, sentenceTokens []string
 	if !isTitleOrLower(word) {
 		return readings
 	}
-	lstPrt := low
+	lstPrt := word // bare: surface casing (Java: lstPrt = word)
 	frstPrt := ""
 	if startsWithAnyPrefix(low, prefixesNonSeparableVerbs) {
-		// remove non-separable prefix
+		// Java: RegExUtils.removePattern(word.toLowerCase(), prefixesNonSeparableVerbsRegexp)
 		lstPrt = rePrefixesNonSeparable.ReplaceAllString(low, "")
 		if lstPrt == low || lstPrt == "" {
 			return readings
 		}
-		// first part = original prefix casing stripped from end of surface
-		frstPrt = strings.TrimSuffix(word, lstPrt)
-		// if surface was Title "Verzeih", lstPrt lower "zeih" — TrimSuffix may fail on case
-		if frstPrt == word {
-			// strip by length of prefix match on lower
-			pref := low[:len(low)-len(lstPrt)]
-			if len(word) >= len(pref) {
-				frstPrt = word[:len(pref)]
-			}
-		}
+		// Java: StringUtils.removeEnd(word, lstPrt) — case-sensitive on surface
+		frstPrt = javaRemoveEnd(word, lstPrt)
 	}
+	// Java equalsAny(lstPrt, "gar","mal","null","trotz") — case-sensitive (bare keeps surface)
 	if lstPrt == "gar" || lstPrt == "mal" || lstPrt == "null" || lstPrt == "trotz" {
 		return readings
 	}
 	// Java: sentenceTokens.indexOf(word)==0
 	//   || word.equals(word.substring(0,1).toLowerCase()+word.substring(1))
 	// First-char lower (rest unchanged), NOT full toLowerCase.
-	atStart := idxPos == 0
+	// indexOf first occurrence (not necessarily current idxPos).
+	atStart := indexOfToken(sentenceTokens, word) == 0
+	if sentenceTokens == nil {
+		atStart = idxPos == 0
+	}
 	if !atStart && !isFirstCharLowerRestUnchanged(word) {
 		return readings
 	}
-	// avoid duplicates
+	// avoid duplicates — Java: readings.toString().contains(...)
 	has := func(sub string) bool {
 		for _, r := range readings {
 			if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), sub) {

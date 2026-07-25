@@ -49,13 +49,17 @@ func TestCompoundTokenizer_ExceptionCase(t *testing.T) {
 	require.Equal(t, []string{"Flexo", "druck"}, tok.Tokenize("Flexodruck"))
 }
 
-// Sanity: embedded dict loaded (not empty invent).
+// Sanity: embedded dict loaded (not empty invent). jWordSplitter 4.7 text dict
+// (LanguageTool de.danielnaber.jwordsplitter.version) — ~58k lines / ~57k unique.
 func TestCompoundTokenizer_EmbeddedDictLoaded(t *testing.T) {
 	words := embeddedGermanDictionaryWords()
-	require.GreaterOrEqual(t, len(words), 60000)
+	require.GreaterOrEqual(t, len(words), 50000)
 	_, ok := words["bahnhof"]
 	require.True(t, ok)
 	_, ok = words["nato"]
+	require.True(t, ok)
+	// 4.7 includes "schwarz" (needed for schwarzgrau strict split in GermanTagger)
+	_, ok = words["schwarz"]
 	require.True(t, ok)
 }
 

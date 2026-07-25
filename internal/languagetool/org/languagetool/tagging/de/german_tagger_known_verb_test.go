@@ -22,11 +22,14 @@ func posTagsOf(rd *languagetool.AnalyzedTokenReadings) []string {
 }
 
 func TestImpPraesSFT_Mutual_AtStart(t *testing.T) {
+	// Java bare path: lstPrt = word (surface). Mutual tags surface form, so the
+	// MapWordTagger key must match surface (lowercase here). Title "Habe" would
+	// tag("Habe") and miss a lower-only map entry — same as real morph dict.
 	wt := tagging.MapWordTagger{
 		"habe": {tagging.NewTaggedWord("haben", "VER:IMP:SIN:SFT")},
 	}
 	tagger := NewGermanTagger(wt)
-	got := tagger.Tag([]string{"Habe", "Zeit"})
+	got := tagger.Tag([]string{"habe", "Zeit"})
 	tags := posTagsOf(got[0])
 	require.Contains(t, tags, "VER:IMP:SIN:SFT")
 	require.Contains(t, tags, "VER:1:SIN:PRÄ:SFT")
