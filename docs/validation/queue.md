@@ -320,6 +320,8 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-GermanTools | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanTools.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanToolsTest.java | internal/languagetool/org/languagetool/rules/de/german_tools.go; internal/languagetool/org/languagetool/rules/de/GermanToolsTest_test.go | 11ba402f47c8f875f37c8688a7b70577f2ba887e | 0 | 0 | | | 2026-07-25T06:09:30Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanUnpairedQuotesRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanUnpairedQuotesRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanUnpairedQuotesRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/GenericUnpairedQuotesRule.java | internal/languagetool/org/languagetool/rules/de/german_unpaired_quotes_rule.go; internal/languagetool/org/languagetool/rules/de/GermanUnpairedQuotesRuleTest_test.go; internal/languagetool/org/languagetool/rules/generic_unpaired_quotes_rule.go | 6fdf2e74f52a669ed5030306cd67241eb78c34fd | 0 | 0 | | | 2026-07-25T06:21:31Z |
 
+| docs/faithful-port-checklist.md#3.C.3-GermanUnpairedBracketsRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanUnpairedBracketsRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GenericUnpairedBracketsRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/GenericUnpairedBracketsRule.java | internal/languagetool/org/languagetool/rules/de/german_unpaired_brackets_rule.go; internal/languagetool/org/languagetool/rules/de/GenericUnpairedBracketsRuleTest_test.go; internal/languagetool/org/languagetool/rules/generic_unpaired_brackets_rule.go | c8230c26d730c340482a28a795464a0bbdeb857d | 0 | 0 | | | 2026-07-25T06:25:29Z |
+
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -328,7 +330,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-GermanUnpairedQuotesRule @ 6fdf2e74 |
+| Notes | ready 3.C.3-GermanUnpairedBracketsRule @ c8230c26 |
 
 ---
 
@@ -1433,3 +1435,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T06:17:55Z ready: 3.C.3-GermanUnpairedQuotesRule @ 6fdf2e74 (implementer report; parent green reconfirm GermanUnpairedQuotes)
 - 2026-07-25T06:18:40Z validating: 3.C.3-GermanUnpairedQuotesRule @ 6fdf2e74 (strict invent re-audit vs Java GermanUnpairedQuotesRule + Test)
 - 2026-07-25T06:21:31Z ACCEPT: 3.C.3-GermanUnpairedQuotesRule @ 6fdf2e74 (validator ACCEPT + parent green reconfirm; DE_UNPAIRED_QUOTES; full testGermanRule matrix)
+- 2026-07-25T06:24:09Z implement: 3.C.3-GermanUnpairedBracketsRule (DE GenericUnpairedBracketsRuleTest full twin; Java king)
+- 2026-07-25T06:25:29Z ready: 3.C.3-GermanUnpairedBracketsRule @ c8230c26 (implementer report; parent green reconfirm GermanUnpairedBrackets)
