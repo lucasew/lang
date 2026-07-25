@@ -34,27 +34,4 @@ func TestStyleTooOftenUsedVerbRule(t *testing.T) {
 	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Sie laufen schnell. Dann laufen sie weiter."))))
 }
 
-func TestStyleTooOftenUsedAdjectiveRule(t *testing.T) {
-	rule := NewStyleTooOftenUsedAdjectiveRule(nil)
-	require.Equal(t, 5, rule.MinPercent)
-	require.Equal(t, 100, rule.MinWordCount)
-	s1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Ein", "ART:IND:NOM:SIN:NEU", "ein"),
-		atrWithPOS("schönes", "ADJ:NOM:SIN:NEU:GRU:IND", "schön"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	s2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Noch", "ADV", "noch"),
-		atrWithPOS("ein", "ART:IND:NOM:SIN:NEU", "ein"),
-		atrWithPOS("schönes", "ADJ:NOM:SIN:NEU:GRU:IND", "schön"),
-		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Empty(t, rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2}))
-	rule.MinWordCount = 0 // bypass Java MIN_WORD_COUNT for percent gate unit test
-	require.GreaterOrEqual(t, len(rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})), 2)
-	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Ein schönes Auto. Noch ein schönes Haus."))))
-}
+// StyleTooOftenUsedAdjectiveRule twins live in style_too_often_used_adjective_rule_test.go.
