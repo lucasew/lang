@@ -934,7 +934,7 @@
 - [ ] org/languagetool/language/GermanyGerman.java::GermanyGerman
 - [ ] org/languagetool/language/NonSwissGerman.java::NonSwissGerman
 - [ ] org/languagetool/language/SwissGerman.java::SwissGerman
-- [ ] org/languagetool/rules/de/AdaptSuggestionFilter.java::AdaptSuggestionFilter
+- [x] org/languagetool/rules/de/AdaptSuggestionFilter.java::AdaptSuggestionFilter
 - [x] org/languagetool/rules/de/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule
 - [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule.GrammarCategory
