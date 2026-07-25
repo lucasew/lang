@@ -1006,7 +1006,7 @@
 - [x] org/languagetool/rules/de/SentenceWithModalVerbRule.java::SentenceWithModalVerbRule
 - [ ] org/languagetool/rules/de/SimilarNameRule.java::SimilarNameRule
 - [ ] org/languagetool/rules/de/SimpleReplaceRule.java::SimpleReplaceRule
-- [ ] org/languagetool/rules/de/SpellingData.java::SpellingData
+- [x] org/languagetool/rules/de/SpellingData.java::SpellingData
 - [x] org/languagetool/rules/de/StyleRepeatedSentenceBeginning.java::StyleRepeatedSentenceBeginning
 - [x] org/languagetool/rules/de/StyleRepeatedVeryShortSentences.java::StyleRepeatedVeryShortSentences
 - [x] org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java::StyleTooOftenUsedAdjectiveRule
