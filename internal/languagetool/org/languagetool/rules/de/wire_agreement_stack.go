@@ -94,7 +94,8 @@ func wireAgreementStack() {
 }
 
 // WireMissingVerbRule attaches TagFirstLowercased from discovered GermanTagger
-// (sentence-start uppercase verb workaround). Pass existing rule or nil.
+// (sentence-start uppercase verb workaround — Java language.getTagger().tag).
+// Pass existing rule or nil.
 func WireMissingVerbRule(r *MissingVerbRule) *MissingVerbRule {
 	if r == nil {
 		r = NewMissingVerbRule(nil)
@@ -102,9 +103,14 @@ func WireMissingVerbRule(r *MissingVerbRule) *MissingVerbRule {
 	root := DiscoverGermanResourceDir()
 	tagger := openDiscoveredGermanTagger(root)
 	if tagger != nil {
+		// Java verbAtSentenceStart:
+		//   List<AnalyzedTokenReadings> lcReadings = language.getTagger().tag(singleton);
+		//   return lcReadings.size() > 0 && lcReadings.get(0).hasPosTagStartingWith("VER");
+		// GermanTagger.Tag → TagIgnoreCase(..., true) (Java tag(List) default).
 		r.TagFirstLowercased = func(lower string) bool {
-			rd := tagger.Lookup(lower)
-			return rd != nil && rd.HasPosTagStartingWith("VER")
+			lcReadings := tagger.Tag([]string{lower})
+			return len(lcReadings) > 0 && lcReadings[0] != nil &&
+				lcReadings[0].HasPosTagStartingWith("VER")
 		}
 	}
 	return r
