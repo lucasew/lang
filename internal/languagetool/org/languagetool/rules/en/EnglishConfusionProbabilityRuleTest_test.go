@@ -7,8 +7,35 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestEnglishConfusionProbabilityRule_Constructor twins
+// EnglishConfusionProbabilityRuleTest.testConstructor:
+// constructing with FakeLanguageModel + English does not throw; id EN_CONFUSION_RULE.
+// Java @Ignore testRule (Lucene ngram index) is intentionally not ported.
 func TestEnglishConfusionProbabilityRule_Constructor(t *testing.T) {
-	r := NewEnglishConfusionProbabilityRule(ngrams.UniformLanguageModel(0.5, 1))
+	// Java: new EnglishConfusionProbabilityRule(TestTools.getEnglishMessages(),
+	//   new FakeLanguageModel(), Languages.getLanguageForShortCode("en"));
+	lm := ngrams.UniformLanguageModel(0.5, 1) // FakeLanguageModel stand-in
+	r := NewEnglishConfusionProbabilityRule(lm)
 	require.NotNil(t, r)
 	require.Equal(t, EnglishConfusionRuleID, r.GetID())
+
+	// Java-visible constructor meta (not invent)
+	require.Equal(t, []string{"confusion_sets.txt"}, r.GetFilenames())
+	require.Len(t, r.Exceptions, 483)
+	require.Len(t, EnglishConfusionAntiPatterns, 32)
+	require.NotNil(t, r.IsException)
+	require.NotNil(t, r.IsCoveredByAntiPattern)
+
+	// Example pair breaks/brakes
+	inex := r.GetIncorrectExamples()
+	require.NotEmpty(t, inex)
+	require.Contains(t, inex[0].GetExample(), "breaks")
+	cex := r.GetCorrectExamples()
+	require.NotEmpty(t, cex)
+	require.Contains(t, cex[0].GetExample(), "brakes")
+
+	// Official confusion sets loaded (getFilenames path); empty only if resource absent
+	if discoverENL2ConfusionSet("confusion_sets.txt") != "" {
+		require.NotEmpty(t, r.WordToPairs, "constructor must load confusion_sets.txt like Java CPR")
+	}
 }

@@ -13,41 +13,59 @@ import (
 func TestEnglishConfusionProbabilityRule(t *testing.T) {
 	r := NewEnglishConfusionProbabilityRule(nil)
 	require.Equal(t, EnglishConfusionRuleID, r.GetID())
-	// Java example pair
+	// Java example pair: breaks/brakes
 	inex := r.GetIncorrectExamples()
 	require.NotEmpty(t, inex)
 	require.Contains(t, inex[0].GetExample(), "breaks")
-	// Without LM, Match must not invent hits
+	cex := r.GetCorrectExamples()
+	require.NotEmpty(t, cex)
+	require.Contains(t, cex[0].GetExample(), "brakes")
+	// Without LM, Match must not invent hits even with official pairs loaded
 	require.Empty(t, r.Match(languagetool.AnalyzePlain("Don't forget to put on the breaks.")))
+	// getFilenames → confusion_sets.txt
+	require.Equal(t, []string{"confusion_sets.txt"}, r.GetFilenames())
 }
 
 func TestEnglishConfusionExceptions_Count(t *testing.T) {
-	// Java EnglishConfusionProbabilityRule.EXCEPTIONS length
-	require.Len(t, EnglishConfusionExceptions, 493)
+	// Java EnglishConfusionProbabilityRule.EXCEPTIONS length (comment-stripped string literals)
+	require.Len(t, EnglishConfusionExceptions, 483)
 	// Spot-check first/last + curly apostrophe entries
 	require.Equal(t, "he messages", EnglishConfusionExceptions[0])
 	require.Equal(t, "where, when, and who", EnglishConfusionExceptions[len(EnglishConfusionExceptions)-1])
 	require.Contains(t, EnglishConfusionExceptions, "he’s")
 	require.Contains(t, EnglishConfusionExceptions, "they’re")
 	require.Contains(t, EnglishConfusionExceptions, "it’s now better")
+	// Invent from Java // comments must not appear as exceptions
+	require.NotContains(t, EnglishConfusionExceptions, "know")
+	require.NotContains(t, EnglishConfusionExceptions, "want do")
+	require.NotContains(t, EnglishConfusionExceptions, "... is host to five classical music orchestras")
 	// Wired into constructor
 	r := NewEnglishConfusionProbabilityRule(nil)
-	require.Len(t, r.Exceptions, 493)
+	require.Len(t, r.Exceptions, 483)
 	require.True(t, r.IsLocalException("please let us know in the comments"))
 }
 
 func TestEnglishConfusionAntiPatterns_Count(t *testing.T) {
 	// Java EnglishConfusionProbabilityRule.ANTI_PATTERNS length
 	require.Len(t, EnglishConfusionAntiPatterns, 32)
+	// Wired into match immunization path
+	require.NotNil(t, NewEnglishConfusionProbabilityRule(nil).IsCoveredByAntiPattern)
 }
 
 func TestEnglishConfusionIsException_Contraction(t *testing.T) {
-	// "…n't know…" — covered from startPos-3 looks like "'t know"
+	// Java isException uses UTF-16 indices (GoogleToken.startPos / String.substring).
+	// "I don't know it" — "know" at UTF-16 8..12; covered = "'t know"
 	s := "I don't know it"
-	start := strings.Index(s, "know")
+	start := strings.Index(s, "know") // ASCII → UTF-8 == UTF-16
 	require.Equal(t, "know", s[start:start+4])
-	// covered = s[start-3:end] = "'t know"
 	require.True(t, enConfusionIsException(s, start, start+4))
+	// curly apostrophe n't: "I don't know" with U+2019 — UTF-16 "know" at 8..12
+	// (not UTF-8 byte index; ' is one UTF-16 unit).
+	s2 := "I don’t know it"
+	// Java: startPos of "know" after "I don’t " = 2 + 5 + 1 = 8
+	require.True(t, enConfusionIsException(s2, 8, 12))
+	// wrong (UTF-8) index must not be treated as a free pass for invent
+	require.False(t, enConfusionIsException(s2, strings.Index(s2, "know"), strings.Index(s2, "know")+4))
 	// non-contraction
 	require.False(t, enConfusionIsException("I do know it well", 5, 9))
 	// startPos <= 3 → false
@@ -108,6 +126,18 @@ func TestEnglishConfusion_ExceptionPhraseSkips(t *testing.T) {
 	r.SetConfusionPair(pair)
 	matches := r.Match(languagetool.AnalyzePlain("Please let us know in the comments."))
 	require.Empty(t, matches)
+}
+
+func TestEnglishConfusion_LoadsOfficialConfusionSets(t *testing.T) {
+	// Java CPR loads /en/confusion_sets.txt in constructor via getFilenames().
+	r := NewEnglishConfusionProbabilityRule(ngrams.UniformLanguageModel(0.5, 1))
+	require.NotEmpty(t, r.WordToPairs,
+		"WordToPairs must load from official en/confusion_sets.txt (fail-closed empty only if resource missing)")
+	// Spot-check a well-known pair from official file (their/there is classic)
+	// Keys exist for at least one side of a known pair.
+	hasTheir := len(r.WordToPairs["their"]) > 0 || len(r.WordToPairs["there"]) > 0
+	hasBreaks := len(r.WordToPairs["breaks"]) > 0 || len(r.WordToPairs["brakes"]) > 0
+	require.True(t, hasTheir || hasBreaks, "expected at least one official confusion pair key")
 }
 
 func enSentStart() *languagetool.AnalyzedTokenReadings {

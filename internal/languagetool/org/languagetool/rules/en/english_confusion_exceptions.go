@@ -1,7 +1,7 @@
 package en
 
 // EnglishConfusionExceptions ports EnglishConfusionProbabilityRule.EXCEPTIONS
-// (all-lowercase; match is case-insensitive). Count matches Java (493).
+// (all-lowercase; match is case-insensitive). Count matches Java (comment-stripped).
 var EnglishConfusionExceptions = []string{
 	"he messages",
 	"your invite",
@@ -9,7 +9,6 @@ var EnglishConfusionExceptions = []string{
 	"your (",
 	"your slack profile",
 	"host to five",
-	"... is host to five classical music orchestras",
 	"had I known",
 	"is not exactly known",
 	"live duet",
@@ -24,7 +23,6 @@ var EnglishConfusionExceptions = []string{
 	"on point",
 	"chapter one",
 	"usb port",
-	"Know the competition and your software, and you will win.",
 	"know the competition and",
 	"know the competition or",
 	"know your competition and",
@@ -33,7 +31,6 @@ var EnglishConfusionExceptions = []string{
 	"paste event",
 	"need to know",
 	"of you not",
-	"It would be wiser of you not to see him again.",
 	"of her element",
 	"very grateful of you",
 	"your use case",
@@ -43,9 +40,7 @@ var EnglishConfusionExceptions = []string{
 	"they’re",
 	"your look is",
 	"have you known",
-	"know",
 	"have I known",
-	"know",
 	"had I known",
 	"hang out",
 	"had you known",
@@ -101,9 +96,7 @@ var EnglishConfusionExceptions = []string{
 	"he tracks",
 	"which complains about",
 	"do your work",
-	"you",
 	"one many times",
-	"on",
 	"let us know",
 	"let me know",
 	"this way the",
@@ -111,9 +104,7 @@ var EnglishConfusionExceptions = []string{
 	"so your plan",
 	"the news man",
 	"on there,",
-	"their",
 	"in there,",
-	"their",
 	"created us equally",
 	", their,",
 	", your,",
@@ -369,7 +360,6 @@ var EnglishConfusionExceptions = []string{
 	"ad rates",
 	"your call is",
 	"you want do",
-	"want do",
 	"on his butt",
 	"message us today",
 	"sent you the invite",
