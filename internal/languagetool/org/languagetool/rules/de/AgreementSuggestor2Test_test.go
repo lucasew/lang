@@ -1,356 +1,271 @@
 package de
 
-// Twin of AgreementSuggestor2Test — synthesizer-backed suggestions.
+// Twin of org.languagetool.rules.de.AgreementSuggestor2Test
+//
+// Java:
+//   german = Languages.getLanguageForShortCode("de-DE");
+//   synthesizer = german.getSynthesizer();
+//   lt = new JLanguageTool(german);
+//   assertSuggestionN via lt.getAnalyzedSentence + AgreementSuggestor2.getSuggestions(filter)
+//
+// Go: de-DE JLanguageTool + WireGermanTagWord + openDiscoveredGermanSynthesizer
+// (GermanSynthesizer.INSTANCE). Disambiguator intentionally not wired here: our current
+// German disambiguator overstrips PA2 on "eine benötigten Unterlage" while Java keeps
+// PA2 for that fixture; AgreementSuggestor2 itself only consumes the readings it is given.
+
 import (
 	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	synthde "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/de"
 	"github.com/stretchr/testify/require"
 )
 
-func detNounReadings(det, detLemma, detPos, noun, nounLemma, nounPos string) (*languagetool.AnalyzedTokenReadings, *languagetool.AnalyzedTokenReadings) {
-	dpos, npos := detPos, nounPos
-	dl, nl := detLemma, nounLemma
-	d := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken(det, &dpos, &dl), 0)
-	n := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken(noun, &npos, &nl), len(det)+1)
-	return d, n
+func as2Setup(t *testing.T) (synthesis.Synthesizer, *languagetool.JLanguageTool) {
+	t.Helper()
+	var synth synthesis.Synthesizer
+	if gs := openDiscoveredGermanSynthesizer(); gs != nil {
+		synth = gs
+	} else if inst := synthde.Instance(); inst != nil {
+		synth = inst
+	} else {
+		t.Skip("german_synth.dict / GermanSynthesizer.INSTANCE resources required")
+	}
+	lt := languagetool.NewJLanguageTool("de-DE")
+	require.True(t, WireGermanTagWord(lt), "GermanTagger resources required for AgreementSuggestor2 twin")
+	return synth, lt
 }
 
+func as2Tokens(t *testing.T, lt *languagetool.JLanguageTool, input string) []*languagetool.AnalyzedTokenReadings {
+	t.Helper()
+	sent := lt.GetAnalyzedSentence(input)
+	require.NotNil(t, sent, "GetAnalyzedSentence(%q)", input)
+	return sent.GetTokensWithoutWhitespace()
+}
+
+func as2ListString(sugs []string) string {
+	return "[" + strings.Join(sugs, ", ") + "]"
+}
+
+// assertSuggestion1 ports AgreementSuggestor2Test.assertSuggestion1 (det + noun).
+func assertSuggestion1(t *testing.T, synth synthesis.Synthesizer, lt *languagetool.JLanguageTool, input, expected string, filter bool) {
+	t.Helper()
+	tags := as2Tokens(t, lt, input)
+	require.Equal(t, 3, len(tags), "Please use 2 tokens (det, noun) as input: %s", input)
+	got := NewAgreementSuggestor2(synth, tags[1], tags[2]).GetSuggestionsFiltered(filter)
+	require.Equal(t, expected, as2ListString(got), "assertSuggestion1(%q, filter=%v)", input, filter)
+}
+
+// assertSuggestion2 ports AgreementSuggestor2Test.assertSuggestion2 (det + adj + noun).
+func assertSuggestion2(t *testing.T, synth synthesis.Synthesizer, lt *languagetool.JLanguageTool, input, expected string) {
+	t.Helper()
+	tags := as2Tokens(t, lt, input)
+	require.Equal(t, 4, len(tags), "Please use 3 tokens (det, adj, noun) as input: %s", input)
+	got := NewAgreementSuggestor2Adj(synth, tags[1], tags[2], tags[3], ReplNone).GetSuggestions()
+	require.Equal(t, expected, as2ListString(got), "assertSuggestion2(%q)", input)
+}
+
+// assertSuggestion3 ports AgreementSuggestor2Test.assertSuggestion3 (det + adj + adj + noun).
+func assertSuggestion3(t *testing.T, synth synthesis.Synthesizer, lt *languagetool.JLanguageTool, input, expected string, filter bool) {
+	t.Helper()
+	tags := as2Tokens(t, lt, input)
+	require.Equal(t, 5, len(tags), "Please use 4 tokens (det, adj, adj, noun) as input: %s", input)
+	got := NewAgreementSuggestor2Full(synth, tags[1], tags[2], tags[3], tags[4], ReplNone).GetSuggestionsFiltered(filter)
+	require.Equal(t, expected, as2ListString(got), "assertSuggestion3(%q, filter=%v)", input, filter)
+}
+
+// Twin of AgreementSuggestor2Test.testInteractive (empty body in Java).
 func TestAgreementSuggestor2_Interactive(t *testing.T) {
-	// Smoke: construct with nil synth → empty suggestions
-	d, n := detNounReadings("der", "der", "ART:DEF:NOM:SIN:MAS", "Haus", "Haus", "SUB:NOM:SIN:NEU")
-	s := NewAgreementSuggestor2(nil, d, n)
-	require.Empty(t, s.GetSuggestions())
+	// Java test body is empty (commented assert). Keep as construct smoke.
+	synth, lt := as2Setup(t)
+	tags := as2Tokens(t, lt, "des Züchten")
+	require.Equal(t, 3, len(tags))
+	_ = NewAgreementSuggestor2(synth, tags[1], tags[2]).GetSuggestions()
 }
 
+// Twin of AgreementSuggestor2Test.testAdverbSuggestions.
 func TestAgreementSuggestor2_AdverbSuggestions(t *testing.T) {
-	// No adjectives → det+noun only path
-	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
-		"das\tder\tART:DEF:NOM:SIN:NEU\n" +
-			"Haus\tHaus\tSUB:NOM:SIN:NEU\n"))
-	require.NoError(t, err)
-	synth := synthesis.NewBaseSynthesizer("de", manual)
-	d, n := detNounReadings("der", "der", "ART:DEF:NOM:SIN:MAS", "Haus", "Haus", "SUB:NOM:SIN:NEU")
-	sugs := NewAgreementSuggestor2(synth, d, n).GetSuggestions()
-	require.NotEmpty(t, sugs)
+	synth, lt := as2Setup(t)
+	assertSuggestion3(t, synth, lt, "ein sehr schönes Tisch", "[ein sehr schöner Tisch]", true)
+	assertSuggestion3(t, synth, lt, "eines sehr schönen Tisch", "[einen sehr schönen Tisch, einem sehr schönen Tisch, eines sehr schönen Tischs, eines sehr schönen Tisches]", true)
+	assertSuggestion3(t, synth, lt, "der sehr schönen Tischen", "[dem sehr schönen Tischen, den sehr schönen Tischen, der sehr schönen Tische]", true)
 }
 
+// Twin of AgreementSuggestor2Test.testSuggestions.
 func TestAgreementSuggestor2_Suggestions(t *testing.T) {
-	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
-		"der\tder\tART:DEF:NOM:SIN:MAS\n" +
-			"den\tder\tART:DEF:AKK:SIN:MAS\n" +
-			"Hund\tHund\tSUB:NOM:SIN:MAS\n" +
-			"Hund\tHund\tSUB:AKK:SIN:MAS\n"))
-	require.NoError(t, err)
-	synth := synthesis.NewBaseSynthesizer("de", manual)
-	d, n := detNounReadings("der", "der", "ART:DEF:NOM:SIN:MAS", "Hund", "Hund", "SUB:NOM:SIN:MAS")
-	sugs := NewAgreementSuggestor2(synth, d, n).GetSuggestions()
-	require.NotEmpty(t, sugs)
-	joined := strings.Join(sugs, "|")
-	require.Contains(t, joined, "Hund")
+	synth, lt := as2Setup(t)
+	assertSuggestion1(t, synth, lt, "deine Buch", "[dein Buch, deinem Buch, deine Bücher, deinem Buche, deines Buchs, deines Buches, deiner Bücher, deinen Büchern]", false)
+	assertSuggestion1(t, synth, lt, "dieser Buch", "[dieses Buch, diesem Buch, dies Buch, dieser Bücher, diesem Buche, dieses Buchs, dieses Buches, diese Bücher, diesen Büchern]", false)
+	assertSuggestion1(t, synth, lt, "die Kabels", "[die Kabel, des Kabels, der Kabel, den Kabel, dem Kabel, das Kabel, den Kabeln]", false)
+	assertSuggestion1(t, synth, lt, "die LAN-Kabels", "[die LAN-Kabel, des LAN-Kabels, der LAN-Kabel, den LAN-Kabel, dem LAN-Kabel, das LAN-Kabel, den LAN-Kabeln]", false)
+	assertSuggestion1(t, synth, lt, "mehrere Kabels", "[mehrere Kabel, mehreren Kabeln, mehrerer Kabel]", false)
+	assertSuggestion1(t, synth, lt, "mehrere LAN-Kabels", "[mehrere LAN-Kabel, mehreren LAN-Kabeln, mehrerer LAN-Kabel]", false)
+	assertSuggestion1(t, synth, lt, "mehrere WLAN-LAN-Kabels", "[mehrere WLAN-LAN-Kabel, mehreren WLAN-LAN-Kabeln, mehrerer WLAN-LAN-Kabel]", false)
+	assertSuggestion1(t, synth, lt, "Ihren Verständnis", "[Ihrem Verständnis, Ihr Verständnis, Ihres Verständnisses]", false)
+	assertSuggestion1(t, synth, lt, "des Züchten", "[das Züchten, dem Züchten, des Züchtens]", false)
+	assertSuggestion1(t, synth, lt, "die Kühlschranktest", "[die Kühlschrankteste, die Kühlschranktests, der Kühlschranktest, den Kühlschranktest, dem Kühlschranktest, des Kühlschranktests, den Kühlschranktests, der Kühlschrankteste, der Kühlschranktests, des Kühlschranktestes, den Kühlschranktesten]", false)
+	assertSuggestion1(t, synth, lt, "die Kühlschrankverarbeitungstest", "[die Kühlschrankverarbeitungsteste, die Kühlschrankverarbeitungstests, der Kühlschrankverarbeitungstest, den Kühlschrankverarbeitungstest, dem Kühlschrankverarbeitungstest, des Kühlschrankverarbeitungstests, den Kühlschrankverarbeitungstests, der Kühlschrankverarbeitungsteste, der Kühlschrankverarbeitungstests, des Kühlschrankverarbeitungstestes, den Kühlschrankverarbeitungstesten]", false)
+	assertSuggestion2(t, synth, lt, "den gleiche Gebiete", "[dem gleichen Gebiete, den gleichen Gebieten, der gleichen Gebiete, das gleiche Gebiet, die gleichen Gebiete, dem gleichen Gebiet, des gleichen Gebietes, des gleichen Gebiets]")
+	assertSuggestion2(t, synth, lt, "den vorangegangen Versuchen", "[den vorangegangenen Versuchen, das vorangegangene Versuchen, dem vorangegangenen Versuchen, den vorangegangenen Versuch, der vorangegangene Versuch, des vorangegangenen Versuches, das vorangegangene versuchen, dem vorangegangenen versuchen, des vorangegangenen Versuchens, der vorangegangenen Versuche, dem vorangegangenen Versuch, des vorangegangenen Versuchs, des vorangegangenen versuchens, die vorangegangenen Versuche]")
+	assertSuggestion1(t, synth, lt, "der Blutflusses", "[des Blutflusses, der Blutfluss, der Blutflüsse, den Blutfluss, dem Blutfluss, den Blutflüssen, die Blutflüsse]", false)
+	assertSuggestion2(t, synth, lt, "ein anstrengenden Tag",
+		"[ein anstrengender Tag, ein anstrengendes Tag, einen anstrengenden Tag, einem anstrengenden Tag, eines anstrengenden Tags, eines anstrengenden Tages]")
+	assertSuggestion1(t, synth, lt, "dasselbe Erinnerung", "[dieselbe Erinnerung, derselben Erinnerung]", false)
+	assertSuggestion1(t, synth, lt, "derselbe Erinnerung", "[derselben Erinnerung, dieselbe Erinnerung]", false)
+	assertSuggestion1(t, synth, lt, "derselbe Frau", "[derselben Frau, dieselbe Frau]", false)
+	assertSuggestion1(t, synth, lt, "dieselben Erinnerung", "[dieselbe Erinnerung, derselben Erinnerung]", false)
+	assertSuggestion1(t, synth, lt, "derselben Mann", "[derselbe Mann, denselben Mann, demselben Mann, desselben Manns, desselben Mannes]", false)
+	assertSuggestion1(t, synth, lt, "demselben Frau", "[derselben Frau, dieselbe Frau]", false)
+	assertSuggestion1(t, synth, lt, "desselben Mann", "[denselben Mann, demselben Mann, desselben Manns, derselbe Mann, desselben Mannes]", false)
+	assertSuggestion1(t, synth, lt, "Desselben Mann", "[Denselben Mann, Demselben Mann, Desselben Manns, Derselbe Mann, Desselben Mannes]", false)
+	assertSuggestion1(t, synth, lt, "meinem Eltern", "[meine Eltern, meinen Eltern, meiner Eltern]", false)
+	assertSuggestion1(t, synth, lt, "eure Auge", "[eurem Auge, eure Augen, euer Auge, euerem Auge, euerm Auge, eures Auges, euren Augen, eueres Auges, euerer Augen]", false)
+	assertSuggestion1(t, synth, lt, "welche Internetvideo", "[welches Internetvideo, welchem Internetvideo, welche Internetvideos, welches Internetvideos, welchen Internetvideos, welcher Internetvideos]", false)
+	assertSuggestion1(t, synth, lt, "welchen Internetvideo", "[welches Internetvideo, welchem Internetvideo, welchen Internetvideos, welches Internetvideos, welche Internetvideos, welcher Internetvideos]", false)
+	assertSuggestion1(t, synth, lt, "welches Mann", "[welcher Mann, welchen Mann, welchem Mann, welches Manns, welches Mannes, welche Männer, welcher Männer, welchen Männern]", false)
+	assertSuggestion1(t, synth, lt, "welchem Frau", "[welche Frau, welcher Frau, welche Frauen, welchen Frauen, welcher Frauen]", false)
+	assertSuggestion1(t, synth, lt, "welcher Kind", "[welches Kind, welchem Kind, welcher Kinder, welchem Kinde, welches Kinds, welches Kindes, welche Kinder, welchen Kindern]", false)
+	assertSuggestion1(t, synth, lt, "Welcher Kind", "[Welches Kind, Welchem Kind, Welcher Kinder, Welchem Kinde, Welches Kinds, Welches Kindes, Welche Kinder, Welchen Kindern]", false)
 }
 
-func TestAgreementSuggestor2_SuggestionsHaus(t *testing.T) {
-	// Java skips edits==0; need PLU forms for both det and noun.
-	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
-		"das\tdas\tART:DEF:NOM:SIN:NEU\n" +
-			"die\tdas\tART:DEF:NOM:PLU:NEU\n" +
-			"Haus\tHaus\tSUB:NOM:SIN:NEU\n" +
-			"Häuser\tHaus\tSUB:NOM:PLU:NEU\n"))
-	require.NoError(t, err)
-	synth := synthesis.NewBaseSynthesizer("de", manual)
-	d, n := detNounReadings("das", "das", "ART:DEF:NOM:SIN:NEU", "Haus", "Haus", "SUB:NOM:SIN:NEU")
-	sugs := NewAgreementSuggestor2(synth, d, n).GetSuggestions()
-	require.NotEmpty(t, sugs)
-	require.Contains(t, strings.Join(sugs, "|"), "Häuser")
-}
-
-func TestAgreementSuggestor2_DetAdjNounSuggestions(t *testing.T) {
-	// Alternate case so det changes (der→den) while adj/noun may stay.
-	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
-		"der\tder\tART:DEF:NOM:SIN:MAS\n" +
-			"den\tder\tART:DEF:AKK:SIN:MAS\n" +
-			"große\tgross\tADJ:NOM:SIN:MAS:GRU:DEF\n" +
-			"großen\tgross\tADJ:AKK:SIN:MAS:GRU:DEF\n" +
-			"Hund\tHund\tSUB:NOM:SIN:MAS\n" +
-			"Hund\tHund\tSUB:AKK:SIN:MAS\n"))
-	require.NoError(t, err)
-	synth := synthesis.NewBaseSynthesizer("de", manual)
-	d, n := detNounReadings("der", "der", "ART:DEF:NOM:SIN:MAS", "Hund", "Hund", "SUB:NOM:SIN:MAS")
-	apos := "ADJ:NOM:SIN:MAS:GRU:DEF"
-	alemma := "gross"
-	adj := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("große", &apos, &alemma), 4)
-	sugs := NewAgreementSuggestor2(synth, d, n).WithAdjectives(adj, nil).GetSuggestions()
-	require.NotEmpty(t, sugs)
-}
-
-func TestAgreementSuggestor2_DetAdjAdjNounSuggestions(t *testing.T) {
-	// Second adjective path: still returns suggestions via first adj when set
-	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
-		"der\tder\tART:DEF:NOM:SIN:MAS\n" +
-			"Hund\tHund\tSUB:NOM:SIN:MAS\n"))
-	require.NoError(t, err)
-	synth := synthesis.NewBaseSynthesizer("de", manual)
-	d, n := detNounReadings("der", "der", "ART:DEF:NOM:SIN:MAS", "Hund", "Hund", "SUB:NOM:SIN:MAS")
-	apos := "ADJ:NOM:SIN:MAS:GRU:DEF"
-	a1 := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("große", &apos, nil), 4)
-	a2 := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("alte", &apos, nil), 10)
-	sugs := NewAgreementSuggestor2(synth, d, n).WithAdjectives(a1, a2).GetSuggestions()
-	// may be non-empty from det+noun fallbacks
-	_ = sugs
-}
-
-// Twin of AgreementSuggestor2Test.testSuggestionsWithReplType — Zur contractions.
-// Java tags "zur" as APPRART (not ART:); special-case path rewrites synth lemma to "der".
+// Twin of AgreementSuggestor2Test.testSuggestionsWithReplType.
 func TestAgreementSuggestor2_SuggestionsWithReplType(t *testing.T) {
-	// Java: "gehe zur Mann" → [zum Mann, zu Männern]
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			// detTemplate after DEF replace: ART:DEF:case:num:gen
-			switch {
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "MAS") && strings.Contains(posTag, "SIN"):
-				return []string{"dem"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "PLU"):
-				return []string{"den"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "FEM"):
-				return []string{"der"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:") && strings.Contains(posTag, "DAT"):
-				return []string{"Männern"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
-				return []string{"Männer"}, nil
-			case strings.Contains(posTag, "SUB:"):
-				return []string{"Mann"}, nil
-			default:
-				return nil, nil
-			}
-		},
-	}
-	// Java unit test passes raw "zur" from analysis; special-case (tok=="zur") rewrites
-	// to lemma "der" + DEF only when POS does not contain "ART:" (APPRART false-hits ART:).
-	// AgreementRule.replacePrepositionsByArticle uses ART:DEF:DAT:SIN:FEM "der" + ReplZur —
-	// that production path is the morph twin we assert (bug-for-bug with rule wiring).
-	d, n := detNounReadings("der", "der", "ART:DEF:DAT:SIN:FEM", "Mann", "Mann", "SUB:DAT:SIN:MAS")
-	sugs := NewAgreementSuggestor2(synth, d, n).WithReplacementType(ReplZur).GetSuggestions()
-	require.NotEmpty(t, sugs)
-	joined := strings.Join(sugs, "|")
-	require.True(t, strings.Contains(joined, "zum") || strings.Contains(joined, "zu "),
-		"expected zur→zum/zu contraction, got %v", sugs)
+	synth, lt := as2Setup(t)
 
-	// with adjective: after replace, det is "der" ART:DEF
-	adjPOS := "ADJ:DAT:SIN:FEM:GRU:DEF"
-	adjLem := "kuschelig"
-	adj := languagetool.NewAnalyzedTokenReadingsAt(
-		languagetool.NewAnalyzedToken("kuschelige", &adjPOS, &adjLem), 4)
-	synthAdj := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			switch {
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "FEM") && strings.Contains(posTag, "SIN"):
-				return []string{"der"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "PLU"):
-				return []string{"den"}, nil
-			case strings.HasPrefix(posTag, "ADJ:"):
-				return []string{"kuscheligen"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
-				return []string{"Ferienwohnungen"}, nil
-			case strings.Contains(posTag, "SUB:"):
-				return []string{"Ferienwohnung"}, nil
-			default:
-				return nil, nil
-			}
-		},
-	}
-	d2, n2 := detNounReadings("der", "der", "ART:DEF:DAT:SIN:FEM", "Ferienwohnung", "Ferienwohnung", "SUB:DAT:SIN:FEM")
-	sugs2 := NewAgreementSuggestor2(synthAdj, d2, n2).WithAdjectives(adj, nil).WithReplacementType(ReplZur).GetSuggestions()
-	require.NotEmpty(t, sugs2)
-	require.True(t, strings.Contains(strings.Join(sugs2, "|"), "zur") ||
-		strings.Contains(strings.Join(sugs2, "|"), "zu "),
-		"expected zur/zu contraction with adj, got %v", sugs2)
+	tags := as2Tokens(t, lt, "gehe zur Mann")
+	// tokens: [SENT_START, gehe, zur, Mann]
+	got := NewAgreementSuggestor2Full(synth, tags[2], nil, nil, tags[3], ReplZur).GetSuggestions()
+	require.Equal(t, "[zum Mann, zu Männern]", as2ListString(got))
+
+	tags = as2Tokens(t, lt, "gehe zur kuschelige Ferienwohnung")
+	got = NewAgreementSuggestor2Adj(synth, tags[2], tags[3], tags[4], ReplZur).GetSuggestions()
+	require.Equal(t, "[zur kuscheligen Ferienwohnung, zu kuscheligen Ferienwohnungen]", as2ListString(got))
 }
 
-// Twin of AgreementSuggestor2Test.testSuggestionsWithReplTypeIns
+// Twin of AgreementSuggestor2Test.testSuggestionsWithReplTypeIns.
 func TestAgreementSuggestor2_SuggestionsWithReplTypeIns(t *testing.T) {
-	// Java: "gehe ins Hauses" → [ins Haus, im Hause, im Haus, in die Häuser, in den Häusern]
-	// tok=="ins" special case synthesizes from "das" (first letter d).
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			switch {
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
-				return []string{"das"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
-				return []string{"dem"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "PLU"):
-				return []string{"die"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "PLU"):
-				return []string{"den"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:") && strings.Contains(posTag, "DAT"):
-				return []string{"Häusern"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
-				return []string{"Häuser"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, "DAT"):
-				return []string{"Hause", "Haus"}, nil
-			case strings.Contains(posTag, "SUB:"):
-				return []string{"Haus"}, nil
-			default:
-				return nil, nil
-			}
-		},
-	}
-	// Production path: replacePrepositionsByArticle → "das" ART:DEF:AKK:SIN:NEU + ReplIns
-	d, n := detNounReadings("das", "das", "ART:DEF:AKK:SIN:NEU", "Hauses", "Haus", "SUB:GEN:SIN:NEU")
-	sugs := NewAgreementSuggestor2(synth, d, n).WithReplacementType(ReplIns).GetSuggestions()
-	require.NotEmpty(t, sugs)
-	joined := strings.Join(sugs, "|")
-	require.True(t, strings.Contains(joined, "ins") || strings.Contains(joined, "im") || strings.Contains(joined, "in "),
-		"expected ins/im/in contraction, got %v", sugs)
+	synth, lt := as2Setup(t)
+	tags := as2Tokens(t, lt, "gehe ins Hauses")
+	got := NewAgreementSuggestor2Full(synth, tags[2], nil, nil, tags[3], ReplIns).GetSuggestions()
+	require.Equal(t, "[ins Haus, im Hause, im Haus, in die Häuser, in den Häusern]", as2ListString(got))
 }
 
-// Twin of AgreementSuggestor2Test.testSuggestionsWithReplTypeInsAdj
+// Twin of AgreementSuggestor2Test.testSuggestionsWithReplTypeInsAdj.
 func TestAgreementSuggestor2_SuggestionsWithReplTypeInsAdj(t *testing.T) {
-	// Java: "gehe ins großen Haus" → [im großen Haus, ins große Haus, …]
-	// Morph twin uses post-replace det "das" (AgreementRule production path).
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			switch {
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
-				return []string{"dem"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "NEU") && strings.Contains(posTag, "SIN"):
-				return []string{"das"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, "PLU") && strings.Contains(posTag, "AKK"):
-				return []string{"die"}, nil
-			case strings.HasPrefix(posTag, "ART:") && strings.Contains(posTag, "PLU") && strings.Contains(posTag, "DAT"):
-				return []string{"den"}, nil
-			case strings.HasPrefix(posTag, "ADJ:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "SIN") && strings.Contains(posTag, "NEU"):
-				return []string{"große"}, nil
-			case strings.HasPrefix(posTag, "ADJ:"):
-				return []string{"großen"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:") && strings.Contains(posTag, "DAT"):
-				return []string{"Häusern"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:"):
-				return []string{"Häuser"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, "DAT"):
-				return []string{"Hause", "Haus"}, nil
-			case strings.Contains(posTag, "SUB:"):
-				return []string{"Haus"}, nil
-			default:
-				return nil, nil
-			}
-		},
-	}
-	d, n := detNounReadings("das", "das", "ART:DEF:AKK:SIN:NEU", "Haus", "Haus", "SUB:AKK:SIN:NEU")
-	adjPOS := "ADJ:AKK:SIN:NEU:GRU:DEF"
-	adjLem := "groß"
-	adj := languagetool.NewAnalyzedTokenReadingsAt(
-		languagetool.NewAnalyzedToken("großen", &adjPOS, &adjLem), 4)
-	sugs := NewAgreementSuggestor2(synth, d, n).WithAdjectives(adj, nil).WithReplacementType(ReplIns).GetSuggestions()
-	require.NotEmpty(t, sugs)
-	joined := strings.Join(sugs, "|")
-	require.True(t, strings.Contains(joined, "ins") || strings.Contains(joined, "im") || strings.Contains(joined, "in "),
-		"expected ins/im/in with adj, got %v", sugs)
+	synth, lt := as2Setup(t)
+	tags := as2Tokens(t, lt, "gehe ins großen Haus")
+	got := NewAgreementSuggestor2Adj(synth, tags[2], tags[3], tags[4], ReplIns).GetSuggestions()
+	require.Equal(t, "[im großen Haus, ins große Haus, im großen Hause, in die großen Häuser, in den großen Häusern]", as2ListString(got))
 }
 
-// Twin of AgreementSuggestor2Test.testDetNounSuggestionsWithPreposition
+// Twin of AgreementSuggestor2Test.testSuggestionsHaus.
+func TestAgreementSuggestor2_SuggestionsHaus(t *testing.T) {
+	synth, lt := as2Setup(t)
+	assertSuggestion1(t, synth, lt, "Der Haus", "[Dem Haus, Das Haus, Der Häuser, Dem Hause, Des Hauses, Die Häuser, Den Häusern]", false)
+	assertSuggestion1(t, synth, lt, "der Haus", "[dem Haus, das Haus, der Häuser, dem Hause, des Hauses, die Häuser, den Häusern]", false)
+	assertSuggestion1(t, synth, lt, "das Haus", "[dem Haus, dem Hause, des Hauses, die Häuser, der Häuser, den Häusern]", false)
+	assertSuggestion1(t, synth, lt, "der Haus", "[dem Haus, das Haus, der Häuser, dem Hause, des Hauses, die Häuser, den Häusern]", false)
+	assertSuggestion1(t, synth, lt, "die Haus", "[das Haus, dem Haus, die Häuser, dem Hause, des Hauses, der Häuser, den Häusern]", false)
+	assertSuggestion1(t, synth, lt, "die Hauses", "[des Hauses, die Häuser, dem Hause, das Haus, dem Haus, der Häuser, den Häusern]", false)
+	assertSuggestion1(t, synth, lt, "die Häusern", "[die Häuser, den Häusern, der Häuser, dem Hause, des Hauses, das Haus, dem Haus]", false)
+	// filtered:
+	assertSuggestion1(t, synth, lt, "Der Haus", "[Dem Haus, Das Haus, Der Häuser]", true)
+	assertSuggestion1(t, synth, lt, "der Haus", "[dem Haus, das Haus, der Häuser]", true)
+	assertSuggestion1(t, synth, lt, "das Haus", "[dem Haus]", true)
+	assertSuggestion1(t, synth, lt, "der Haus", "[dem Haus, das Haus, der Häuser]", true)
+	assertSuggestion1(t, synth, lt, "die Haus", "[das Haus, dem Haus, die Häuser]", true)
+	assertSuggestion1(t, synth, lt, "die Hauses", "[des Hauses, die Häuser]", true)
+	assertSuggestion1(t, synth, lt, "die Häusern", "[die Häuser, den Häusern]", true)
+	assertSuggestion1(t, synth, lt, "unsere Buch", "[unser Buch, unserem Buch, unsere Bücher]", true)
+}
+
+// Twin of AgreementSuggestor2Test.testDetAdjNounSuggestions.
+func TestAgreementSuggestor2_DetAdjNounSuggestions(t *testing.T) {
+	synth, lt := as2Setup(t)
+	assertSuggestion2(t, synth, lt, "die neuen Unterlage", "[die neue Unterlage, die neuen Unterlagen, der neuen Unterlage, den neuen Unterlagen, der neuen Unterlagen]")
+	assertSuggestion2(t, synth, lt, "der neue Unterlagen", "[der neuen Unterlagen, der neuen Unterlage, den neuen Unterlagen, die neue Unterlage, die neuen Unterlagen]")
+	assertSuggestion2(t, synth, lt, "eine schönes Auto", "[ein schönes Auto, einem schönen Auto, eines schönen Autos]")
+	assertSuggestion2(t, synth, lt, "eine schöne Auto", "[ein schönes Auto, einem schönen Auto, eines schönen Autos]")
+	assertSuggestion2(t, synth, lt, "ein schöne Auto", "[ein schönes Auto, einem schönen Auto, eines schönen Autos]")
+	assertSuggestion2(t, synth, lt, "einen großen Auto", "[einem großen Auto, eines großen Autos, ein großes Auto]")
+	assertSuggestion2(t, synth, lt, "der schöne Auto", "[das schöne Auto, dem schönen Auto, der schönen Autos, des schönen Autos, den schönen Autos, die schönen Autos]")
+	assertSuggestion2(t, synth, lt, "der kleine Auto", "[das kleine Auto, dem kleinen Auto, der kleinen Autos, des kleinen Autos, den kleinen Autos, die kleinen Autos]")
+	assertSuggestion2(t, synth, lt, "der kleiner Auto", "[dem kleinen Auto, der kleinen Autos, das kleine Auto, des kleinen Autos, den kleinen Autos, die kleinen Autos]")
+	assertSuggestion2(t, synth, lt, "das stärkste Körperteil", "[der stärkste Körperteil, den stärksten Körperteil, dem stärksten Körperteil, des stärksten Körperteils, dem stärksten Körperteile, des stärksten Körperteiles, die stärksten Körperteile, der stärksten Körperteile, den stärksten Körperteilen]")
+	// "benötigten" ist PA2:
+	assertSuggestion2(t, synth, lt, "die benötigten Unterlage", "[die benötigte Unterlage, die benötigten Unterlagen, der benötigten Unterlage, den benötigten Unterlagen, der benötigten Unterlagen]")
+	assertSuggestion2(t, synth, lt, "eine benötigten Unterlage", "[eine benötigte Unterlage, einer benötigten Unterlage]")
+	assertSuggestion2(t, synth, lt, "die voller Verzierungen", "[die vollen Verzierungen, die volle Verzierung, den vollen Verzierungen, der vollen Verzierungen, der vollen Verzierung]")
+	assertSuggestion2(t, synth, lt, "zu zukünftigen Vorstands", "[]")
+	assertSuggestion2(t, synth, lt, "des südlichen Kontinent", "[den südlichen Kontinent, dem südlichen Kontinent, des südlichen Kontinents, des südlichen Kontinentes, der südliche Kontinent, der südlichen Kontinente, die südlichen Kontinente, den südlichen Kontinenten]")
+	assertSuggestion2(t, synth, lt, "die erwartet Entwicklung", "[die erwartete Entwicklung, der erwarteten Entwicklung, die erwarteten Entwicklungen, den erwarteten Entwicklungen, der erwarteten Entwicklungen]")
+	assertSuggestion2(t, synth, lt, "die verschieden Ämter", "[die verschiedenen Ämter, der verschiedenen Ämter, den verschiedenen Ämtern, das verschiedene Amt, dem verschiedenen Amte, des verschiedenen Amtes, dem verschiedenen Amt, des verschiedenen Amts]")
+	assertSuggestion2(t, synth, lt, "keine richtiger Fahrerin", "[keine richtige Fahrerin, keiner richtigen Fahrerin, keine richtigen Fahrerinnen, keinen richtigen Fahrerinnen, keiner richtigen Fahrerinnen]")
+	// GRU, KOM, SUP:
+	assertSuggestion2(t, synth, lt, "das schönes Auto", "[das schöne Auto, dem schönen Auto, des schönen Autos, die schönen Autos, den schönen Autos, der schönen Autos]")
+	assertSuggestion2(t, synth, lt, "das schöneren Auto", "[das schönere Auto, dem schöneren Auto, des schöneren Autos, die schöneren Autos, den schöneren Autos, der schöneren Autos]")
+	assertSuggestion2(t, synth, lt, "das schönstem Auto", "[das schönste Auto, dem schönsten Auto, des schönsten Autos, die schönsten Autos, den schönsten Autos, der schönsten Autos]")
+	assertSuggestion2(t, synth, lt, "das schönsten Auto", "[das schönste Auto, dem schönsten Auto, das schöne Auto, des schönsten Autos, die schönsten Autos, den schönsten Autos, der schönsten Autos, dem schönen Auto, des schönen Autos, die schönen Autos, den schönen Autos, der schönen Autos]")
+	assertSuggestion2(t, synth, lt, "der ikonischen Gebäuden", "[den ikonischen Gebäuden, der ikonischen Gebäude, dem ikonischen Gebäude, des ikonischen Gebäudes, die ikonischen Gebäude, das ikonische Gebäude]")
+	assertSuggestion2(t, synth, lt, "der ikonischeren Gebäuden", "[den ikonischeren Gebäuden, der ikonischeren Gebäude, dem ikonischeren Gebäude, des ikonischeren Gebäudes, die ikonischeren Gebäude, das ikonischere Gebäude]")
+	assertSuggestion2(t, synth, lt, "der ikonischsten Gebäuden", "[den ikonischsten Gebäuden, der ikonischsten Gebäude, dem ikonischsten Gebäude, des ikonischsten Gebäudes, die ikonischsten Gebäude, den ikonischen Gebäuden, der ikonischen Gebäude, das ikonischste Gebäude, dem ikonischen Gebäude, des ikonischen Gebäudes, die ikonischen Gebäude, das ikonische Gebäude]")
+	assertSuggestion2(t, synth, lt, "den meisten Fälle", "[den meisten Fällen, der meisten Fälle, die meisten Fälle]")
+}
+
+// Twin of AgreementSuggestor2Test.testDetNounSuggestionsWithPreposition.
 func TestAgreementSuggestor2_DetNounSuggestionsWithPreposition(t *testing.T) {
-	// Java: "für dein Schmuck" — without prep many cases; with "für" → AKK only [deinen Schmuck]
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			switch {
-			case strings.Contains(posTag, "PRO:POS:") && strings.Contains(posTag, ":AKK:"):
-				return []string{"deinen"}, nil
-			case strings.Contains(posTag, "PRO:POS:") && strings.Contains(posTag, ":DAT:"):
-				return []string{"deinem"}, nil
-			case strings.Contains(posTag, "PRO:POS:") && strings.Contains(posTag, ":GEN:"):
-				return []string{"deines"}, nil
-			case strings.Contains(posTag, "PRO:POS:"):
-				return []string{"dein"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":GEN:"):
-				return []string{"Schmucks", "Schmuckes"}, nil
-			case strings.Contains(posTag, "SUB:"):
-				return []string{"Schmuck"}, nil
-			default:
-				return []string{token.GetToken()}, nil
-			}
-		},
-	}
-	d, n := detNounReadings("dein", "dein", "PRO:POS:NOM:SIN:MAS:BEG", "Schmuck", "Schmuck", "SUB:NOM:SIN:MAS")
-	s := NewAgreementSuggestor2(synth, d, n)
-	all := s.GetSuggestionsFiltered(false)
-	require.NotEmpty(t, all)
-	// preposition "für" → AKK only
-	prepPOS := "APPR"
-	prep := languagetool.NewAnalyzedTokenReadingsAt(
-		languagetool.NewAnalyzedToken("für", &prepPOS, nil), 0)
-	s.WithPreposition(prep)
-	withPrep := s.GetSuggestionsFiltered(false)
-	require.NotEmpty(t, withPrep)
-	// all should be AKK forms (deinen …)
-	for _, g := range withPrep {
-		require.True(t, strings.HasPrefix(g, "deinen"), "prep restricts to AKK, got %q in %v", g, withPrep)
-	}
+	synth, lt := as2Setup(t)
+	tags := as2Tokens(t, lt, "für dein Schmuck")
+	// tokens: [SENT_START, für, dein, Schmuck]
+	suggestor := NewAgreementSuggestor2(synth, tags[2], tags[3])
+	require.Equal(t, "[deinen Schmuck, deinem Schmuck, deines Schmucks, deines Schmuckes]",
+		as2ListString(suggestor.GetSuggestionsFiltered(false)))
+	require.Equal(t, "[deinen Schmuck, deinem Schmuck]",
+		as2ListString(suggestor.GetSuggestionsFiltered(true)))
+	suggestor.SetPreposition(tags[1]) // "für"
+	require.Equal(t, "[deinen Schmuck]", as2ListString(suggestor.GetSuggestionsFiltered(false)))
+	require.Equal(t, "[deinen Schmuck]", as2ListString(suggestor.GetSuggestionsFiltered(true)))
 }
 
-// Twin of AgreementSuggestor2Test.testDetAdjNounSuggestionsWithPreposition
+// Twin of AgreementSuggestor2Test.testDetAdjNounSuggestionsWithPreposition.
 func TestAgreementSuggestor2_DetAdjNounSuggestionsWithPreposition(t *testing.T) {
-	// Java: "über ein hilfreichen Tipp" → with prep "über" AKK/DAT subset
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			switch {
-			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":AKK:") && strings.Contains(posTag, "MAS"):
-				return []string{"einen"}, nil
-			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":DAT:") && strings.Contains(posTag, "MAS"):
-				return []string{"einem"}, nil
-			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":NOM:") && strings.Contains(posTag, "MAS"):
-				return []string{"ein"}, nil
-			case strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":GEN:"):
-				return []string{"eines"}, nil
-			case strings.Contains(posTag, "ADJ:") && strings.Contains(posTag, ":NOM:") && strings.Contains(posTag, "MAS"):
-				return []string{"hilfreicher"}, nil
-			case strings.Contains(posTag, "ADJ:"):
-				return []string{"hilfreichen"}, nil
-			case strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":GEN:"):
-				return []string{"Tipps"}, nil
-			case strings.Contains(posTag, "SUB:"):
-				return []string{"Tipp"}, nil
-			default:
-				return []string{token.GetToken()}, nil
-			}
-		},
-	}
-	d, n := detNounReadings("ein", "ein", "ART:IND:NOM:SIN:MAS", "Tipp", "Tipp", "SUB:NOM:SIN:MAS")
-	adjPOS := "ADJ:AKK:SIN:MAS:GRU:IND"
-	adjLem := "hilfreich"
-	adj := languagetool.NewAnalyzedTokenReadingsAt(
-		languagetool.NewAnalyzedToken("hilfreichen", &adjPOS, &adjLem), 4)
-	s := NewAgreementSuggestor2(synth, d, n).WithAdjectives(adj, nil)
-	base := s.GetSuggestions()
-	require.NotEmpty(t, base)
-	prepPOS := "APPR"
-	prep := languagetool.NewAnalyzedTokenReadingsAt(
-		languagetool.NewAnalyzedToken("über", &prepPOS, nil), 0)
-	s.WithPreposition(prep)
-	withPrep := s.GetSuggestions()
-	require.NotEmpty(t, withPrep)
-	// über takes AKK/DAT — should not grow beyond unfiltered base set size oddly; just require non-empty AKK/DAT
-	joined := strings.Join(withPrep, "|")
-	require.True(t, strings.Contains(joined, "einen") || strings.Contains(joined, "einem"),
-		"expected AKK/DAT after über, got %v", withPrep)
+	synth, lt := as2Setup(t)
+
+	tags := as2Tokens(t, lt, "über ein hilfreichen Tipp")
+	suggestor := NewAgreementSuggestor2Adj(synth, tags[2], tags[3], tags[4], ReplNone)
+	require.Equal(t, "[ein hilfreicher Tipp, einen hilfreichen Tipp, einem hilfreichen Tipp, eines hilfreichen Tipps]",
+		as2ListString(suggestor.GetSuggestions()))
+	suggestor.SetPreposition(tags[1]) // "über"
+	require.Equal(t, "[einen hilfreichen Tipp, einem hilfreichen Tipp]",
+		as2ListString(suggestor.GetSuggestions()))
+
+	tags = as2Tokens(t, lt, "an den stacheligen Pflanzenteile")
+	suggestor = NewAgreementSuggestor2Adj(synth, tags[2], tags[3], tags[4], ReplNone)
+	require.Equal(t, "[den stacheligen Pflanzenteil, dem stacheligen Pflanzenteile, "+
+		"den stacheligen Pflanzenteilen, der stacheligen Pflanzenteile, die stacheligen Pflanzenteile, dem stacheligen Pflanzenteil, "+
+		"des stacheligen Pflanzenteiles, des stacheligen Pflanzenteils, der stachelige Pflanzenteil, das stachelige Pflanzenteil]",
+		as2ListString(suggestor.GetSuggestions()))
+	suggestor.SetPreposition(tags[1]) // "an"
+	require.Equal(t, "[den stacheligen Pflanzenteil, dem stacheligen Pflanzenteile, "+
+		"den stacheligen Pflanzenteilen, die stacheligen Pflanzenteile, dem stacheligen Pflanzenteil, das stachelige Pflanzenteil]",
+		as2ListString(suggestor.GetSuggestions()))
+}
+
+// Twin of AgreementSuggestor2Test.testDetAdjAdjNounSuggestions.
+func TestAgreementSuggestor2_DetAdjAdjNounSuggestions(t *testing.T) {
+	synth, lt := as2Setup(t)
+	assertSuggestion3(t, synth, lt, "eine solides strategisches Fundament", "[ein solides strategisches Fundament]", true)
+	assertSuggestion3(t, synth, lt, "ein solide strategisches Fundament", "[ein solides strategisches Fundament]", true)
+	assertSuggestion3(t, synth, lt, "ein solides strategische Fundament", "[ein solides strategisches Fundament]", true)
+	assertSuggestion3(t, synth, lt, "ein solides strategisches Fundamente", "[ein solides strategisches Fundament]", true)
+	assertSuggestion3(t, synth, lt, "ein solides strategisches Fundamenten", "[ein solides strategisches Fundament]", true)
+	assertSuggestion3(t, synth, lt, "die meisten kommerziellen System", "[die meisten kommerziellen Systeme]", true)
+	assertSuggestion3(t, synth, lt, "die meisten kommerzielle Systeme", "[die meisten kommerziellen Systeme]", true)
+	assertSuggestion3(t, synth, lt, "die meisten kommerziell Systeme", "[die meisten kommerziellen Systeme]", true)
+	assertSuggestion3(t, synth, lt, "die meisten kommerziell System", "[die meisten kommerziellen Systeme]", true)
+	assertSuggestion3(t, synth, lt, "Die meisten kommerziellen System", "[Die meisten kommerziellen Systeme]", true)
+	assertSuggestion3(t, synth, lt, "der meisten kommerziellen System", "[der meisten kommerziellen Systeme]", true)
+	assertSuggestion3(t, synth, lt, "der meisten kommerziellen Systems", "[der meisten kommerziellen Systeme]", true)
 }

@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -11,24 +12,18 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// AgreementSuggestor2 ports rules.de.AgreementSuggestor2.
-// Generates alternative determiner/adjective/noun forms via synthesizer for
-// case/number/gender combinations, ranked by token-level then char-level edits.
+// AgreementSuggestor2 ports org.languagetool.rules.de.AgreementSuggestor2.
+// Create suggestions for German noun phrases that lack agreement.
 type AgreementSuggestor2 struct {
-	Synth      synthesis.Synthesizer
-	Determiner *languagetool.AnalyzedTokenReadings
-	Adj1       *languagetool.AnalyzedTokenReadings
-	Adj2       *languagetool.AnalyzedTokenReadings
-	Noun       *languagetool.AnalyzedTokenReadings
-	// ReplType ports AgreementRule.ReplacementType for ins/zur contraction rewrite.
-	ReplType ReplacementType
-	// Preposition ports setPreposition — restricts cases via PrepositionToCases.
-	Preposition *languagetool.AnalyzedTokenReadings
-	// SkippedStr ports setSkipped (modifiers between det and adj/noun).
-	SkippedStr string
-	// SkipSuggestions filters generated forms.
-	SkipSuggestions map[string]struct{}
-	origPhrase      string
+	synthesizer      synthesis.Synthesizer
+	determinerToken  *languagetool.AnalyzedTokenReadings
+	adjToken1        *languagetool.AnalyzedTokenReadings
+	adjToken2        *languagetool.AnalyzedTokenReadings
+	nounToken        *languagetool.AnalyzedTokenReadings
+	replacementType  ReplacementType
+	prepositionToken *languagetool.AnalyzedTokenReadings
+	skippedStr       string
+	origPhrase       string
 }
 
 // Java templates (AgreementSuggestor2).
@@ -40,7 +35,7 @@ const (
 )
 
 var (
-	proPosTemplates = []string{
+	proPosTemplate = []string{
 		"PRO:POS:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:BEG",
 		"PRO:POS:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:B/S",
 	}
@@ -54,38 +49,56 @@ var (
 	}
 	nounTemplates = []string{
 		"SUB:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU",
-		"SUB:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:INF",
+		"SUB:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU:INF", // INF is for cases like "das Züchten" etc.
 	}
-	suggestorNumbers = []string{"SIN", "PLU"}
-	suggestorGenders = []string{"MAS", "FEM", "NEU", "NOG"}
-	suggestorCases   = []string{"NOM", "AKK", "DAT", "GEN"}
+	suggestorNumber = []string{"SIN", "PLU"}
+	suggestorGender = []string{"MAS", "FEM", "NEU", "NOG"}
+	suggestorCases  = []string{"NOM", "AKK", "DAT", "GEN"}
+	// nounCases is the default when no preposition restricts cases.
+	suggestorNounCases = []string{"NOM", "AKK", "DAT", "GEN"}
 )
 
-var defaultSkipSuggestions = map[string]struct{}{
+// skipSuggestions ports AgreementSuggestor2.skipSuggestions.
+var skipSuggestions = map[string]struct{}{
 	"unsren": {}, "unsrem": {}, "unsres": {}, "unsre": {}, "unsern": {}, "unserm": {}, "unsrer": {},
 }
 
 var (
-	reDerselben = regexp.MustCompile(`^([Dd]as|[Dd]er|[Dd]ie|[Dd]em|[Dd]es)selben?$`)
-	reWelche    = regexp.MustCompile(`^[Ww]elche[nmsr]?$`)
+	reDerselben  = regexp.MustCompile(`^([Dd]as|[Dd]er|[Dd]ie|[Dd]em|[Dd]es)selben?$`)
+	reWelche     = regexp.MustCompile(`^[Ww]elche[nmsr]?$`)
+	reHyphenTail = regexp.MustCompile(`.*-`) // Java String.replaceFirst(".*-", "")
 )
 
+// NewAgreementSuggestor2 ports AgreementSuggestor2(synthesizer, determinerToken, nounToken, replacementType)
+// with null replacementType. Prefer NewAgreementSuggestor2Full for full Java constructors.
 func NewAgreementSuggestor2(synth synthesis.Synthesizer, det, noun *languagetool.AnalyzedTokenReadings) *AgreementSuggestor2 {
+	return NewAgreementSuggestor2Full(synth, det, nil, nil, noun, ReplNone)
+}
+
+// NewAgreementSuggestor2Adj ports AgreementSuggestor2(synth, det, adj1, noun, replacementType) since 5.4.
+func NewAgreementSuggestor2Adj(synth synthesis.Synthesizer, det, adj1, noun *languagetool.AnalyzedTokenReadings, repl ReplacementType) *AgreementSuggestor2 {
+	return NewAgreementSuggestor2Full(synth, det, adj1, nil, noun, repl)
+}
+
+// NewAgreementSuggestor2Full ports AgreementSuggestor2(synth, det, adj1, adj2, noun, replacementType) since 5.6.
+func NewAgreementSuggestor2Full(synth synthesis.Synthesizer, det, adj1, adj2, noun *languagetool.AnalyzedTokenReadings, repl ReplacementType) *AgreementSuggestor2 {
 	s := &AgreementSuggestor2{
-		Synth:           synth,
-		Determiner:      det,
-		Noun:            noun,
-		SkipSuggestions: defaultSkipSuggestions,
+		synthesizer:     synth,
+		determinerToken: det,
+		adjToken1:       adj1,
+		adjToken2:       adj2,
+		nounToken:       noun,
+		replacementType: repl,
 	}
-	s.origPhrase = s.computeOrigPhrase()
+	s.origPhrase = s.getOrigPhrase()
 	return s
 }
 
-// WithAdjectives sets optional adjective tokens.
+// WithAdjectives sets optional adjective tokens (test/wire convenience; recalculates origPhrase).
 func (s *AgreementSuggestor2) WithAdjectives(adj1, adj2 *languagetool.AnalyzedTokenReadings) *AgreementSuggestor2 {
 	if s != nil {
-		s.Adj1, s.Adj2 = adj1, adj2
-		s.origPhrase = s.computeOrigPhrase()
+		s.adjToken1, s.adjToken2 = adj1, adj2
+		s.origPhrase = s.getOrigPhrase()
 	}
 	return s
 }
@@ -93,7 +106,7 @@ func (s *AgreementSuggestor2) WithAdjectives(adj1, adj2 *languagetool.AnalyzedTo
 // WithReplacementType sets ins/zur contraction rewrite for suggestions.
 func (s *AgreementSuggestor2) WithReplacementType(t ReplacementType) *AgreementSuggestor2 {
 	if s != nil {
-		s.ReplType = t
+		s.replacementType = t
 	}
 	return s
 }
@@ -101,72 +114,69 @@ func (s *AgreementSuggestor2) WithReplacementType(t ReplacementType) *AgreementS
 // WithPreposition ports AgreementSuggestor2.setPreposition.
 func (s *AgreementSuggestor2) WithPreposition(prep *languagetool.AnalyzedTokenReadings) *AgreementSuggestor2 {
 	if s != nil {
-		s.Preposition = prep
+		s.prepositionToken = prep
 	}
 	return s
+}
+
+// SetPreposition ports AgreementSuggestor2.setPreposition.
+func (s *AgreementSuggestor2) SetPreposition(prep *languagetool.AnalyzedTokenReadings) {
+	if s != nil {
+		s.prepositionToken = prep
+	}
 }
 
 // WithSkipped ports AgreementSuggestor2.setSkipped.
 func (s *AgreementSuggestor2) WithSkipped(skipped string) *AgreementSuggestor2 {
 	if s != nil {
-		s.SkippedStr = skipped
+		s.skippedStr = skipped
 	}
 	return s
 }
 
-func (s *AgreementSuggestor2) computeOrigPhrase() string {
-	if s == nil || s.Determiner == nil || s.Noun == nil {
+// SetSkipped ports AgreementSuggestor2.setSkipped.
+func (s *AgreementSuggestor2) SetSkipped(skipped string) {
+	if s != nil {
+		s.skippedStr = skipped
+	}
+}
+
+// getOrigPhrase ports AgreementSuggestor2.getOrigPhrase.
+func (s *AgreementSuggestor2) getOrigPhrase() string {
+	if s == nil || s.determinerToken == nil || s.nounToken == nil {
 		return ""
 	}
-	parts := []string{s.Determiner.GetToken()}
-	if s.Adj1 != nil {
-		parts = append(parts, s.Adj1.GetToken())
+	origElem := s.determinerToken.GetToken()
+	if s.adjToken1 != nil {
+		origElem += " " + s.adjToken1.GetToken()
 	}
-	if s.Adj2 != nil {
-		parts = append(parts, s.Adj2.GetToken())
+	if s.adjToken2 != nil {
+		origElem += " " + s.adjToken2.GetToken()
 	}
-	parts = append(parts, s.Noun.GetToken())
-	return strings.Join(parts, " ")
+	origElem += " " + s.nounToken.GetToken()
+	return origElem
 }
 
 // nounCasesForSuggestor ports AgreementSuggestor2.getNounCases.
+// Case restriction comes only from prepositionToken (Java); Zur/Ins set that in getSuggestions.
 func (s *AgreementSuggestor2) nounCasesForSuggestor() []string {
-	all := append([]string(nil), suggestorCases...)
-	if s == nil {
-		return all
-	}
-	// Java ReplacementType temporarily sets prep; Ins uses "in" (not in Java PrepositionToCases → all).
-	// Zur sets "zu" → DAT. We apply ReplType before consulting prep map.
-	if s.ReplType == ReplIns {
-		return all
-	}
-	if s.ReplType == ReplZur {
-		return []string{"DAT"}
-	}
-	if s.Preposition == nil {
-		return all
-	}
-	cases := CasesForPreposition(s.Preposition.GetToken())
-	if len(cases) == 0 {
-		return all
-	}
-	var out []string
-	seen := map[string]struct{}{}
-	for _, c := range cases {
-		name := grammaticalCaseName(c)
-		if name == "" {
-			continue
+	if s != nil && s.prepositionToken != nil {
+		// some prepositions require specific cases, so only generate those
+		casesForToken := CasesForPreposition(s.prepositionToken.GetToken())
+		if len(casesForToken) > 0 {
+			var result []string
+			for _, aCase := range casesForToken {
+				// Java: aCase.name().toLowerCase() then toUpperCase for uniqueness
+				val := strings.ToLower(grammaticalCaseName(aCase))
+				upper := strings.ToUpper(val)
+				if !containsStr(result, upper) {
+					result = append(result, upper)
+				}
+			}
+			return result
 		}
-		if _, ok := seen[name]; ok {
-			continue
-		}
-		seen[name] = struct{}{}
-		out = append(out, name)
 	}
-	if len(out) == 0 {
-		return all
-	}
-	return out
+	return append([]string(nil), suggestorNounCases...)
 }
 
 func grammaticalCaseName(c GrammaticalCase) string {
@@ -186,96 +196,96 @@ func grammaticalCaseName(c GrammaticalCase) string {
 
 // agreementSuggestion ports AgreementSuggestor2.Suggestion.
 type agreementSuggestion struct {
-	phrase          string
-	tokenLevelEdits int
-	charLevelEdits  int
+	phrase               string
+	tokenLevelEdits      int
+	charLevelCorrections int
 }
 
-// GetSuggestions ports getSuggestions(false).
+// GetSuggestions ports getSuggestions() / getSuggestions(false).
 func (s *AgreementSuggestor2) GetSuggestions() []string {
 	return s.GetSuggestionsFiltered(false)
 }
 
 // GetSuggestionsFiltered ports getSuggestions(filter).
 func (s *AgreementSuggestor2) GetSuggestionsFiltered(filter bool) []string {
-	if s == nil || s.Noun == nil || s.Determiner == nil {
+	if s == nil || s.nounToken == nil || s.determinerToken == nil {
 		return nil
 	}
-	// Java: temporary prep rewrite for Zur/Ins before internal generation
-	savedPrep := s.Preposition
-	if s.ReplType == ReplZur {
+	// Java mutates prepositionToken for Zur/Ins (does not restore).
+	if s.replacementType == ReplZur {
+		pos := ""
 		lem := "zu"
-		s.Preposition = languagetool.NewAnalyzedTokenReadingsAt(
-			languagetool.NewAnalyzedToken("zu", nil, &lem), 0)
-	} else if s.ReplType == ReplIns {
-		lem := "zu" // Java lemma is "zu" for the synthetic "in" token
-		s.Preposition = languagetool.NewAnalyzedTokenReadingsAt(
-			languagetool.NewAnalyzedToken("in", nil, &lem), 0)
+		s.prepositionToken = languagetool.NewAnalyzedTokenReadingsAt(
+			languagetool.NewAnalyzedToken("zu", &pos, &lem), 0)
+	} else if s.replacementType == ReplIns {
+		pos := ""
+		lem := "zu" // Java: new AnalyzedToken("in", "", "zu")
+		s.prepositionToken = languagetool.NewAnalyzedTokenReadingsAt(
+			languagetool.NewAnalyzedToken("in", &pos, &lem), 0)
 	}
 	sugs := s.getSuggestionsInternal()
-	s.Preposition = savedPrep
-
+	// sort so that suggestions with fewer edits come first (Java Collections.sort)
 	sort.SliceStable(sugs, func(i, j int) bool {
 		if sugs[i].tokenLevelEdits != sugs[j].tokenLevelEdits {
 			return sugs[i].tokenLevelEdits < sugs[j].tokenLevelEdits
 		}
-		return sugs[i].charLevelEdits < sugs[j].charLevelEdits
+		return sugs[i].charLevelCorrections < sugs[j].charLevelCorrections
 	})
-	// contractions mutate phrase surfaces
-	sugs = applyReplacementContractionsOnSuggestions(sugs, s.ReplType)
+	sugs = s.addContraction(sugs)
 	if filter {
 		var filtered []agreementSuggestion
-		prev := 0
+		prevCorrections := 0
 		if len(sugs) > 0 {
-			prev = sugs[0].tokenLevelEdits
+			prevCorrections = sugs[0].tokenLevelEdits
 		}
-		hadReal := false
-		for _, sug := range sugs {
-			if hadReal && sug.tokenLevelEdits > prev {
+		hadRealSuggestions := false
+		for _, suggestion := range sugs {
+			if hadRealSuggestions && suggestion.tokenLevelEdits > prevCorrections {
 				break
 			}
-			hadReal = sug.tokenLevelEdits > 0
-			filtered = append(filtered, sug)
+			hadRealSuggestions = suggestion.tokenLevelEdits > 0
+			filtered = append(filtered, suggestion)
 		}
-		sugs = filtered
+		out := make([]string, 0, len(filtered))
+		for _, k := range filtered {
+			out = append(out, k.phrase)
+		}
+		return out
 	}
 	out := make([]string, 0, len(sugs))
-	for _, sug := range sugs {
-		out = append(out, sug.phrase)
+	for _, k := range sugs {
+		out = append(out, k.phrase)
 	}
 	return out
 }
 
 func (s *AgreementSuggestor2) getSuggestionsInternal() []agreementSuggestion {
 	nounCases := s.nounCasesForSuggestor()
-	// Re-apply ReplType case restriction after prep was set for Ins/Zur in GetSuggestionsFiltered:
-	// nounCasesForSuggestor already handles ReplType first.
 	var result []agreementSuggestion
-	seen := map[string]struct{}{} // phrase+edits key like Java equals
-	for _, num := range suggestorNumbers {
-		for _, gen := range suggestorGenders {
+	for _, num := range suggestorNumber {
+		for _, gen := range suggestorGender {
 			for _, aCase := range suggestorCases {
 				if !containsStr(nounCases, aCase) {
 					continue
 				}
-				for _, detReading := range s.Determiner.GetReadings() {
+				for _, detReading := range s.determinerToken.GetReadings() {
 					if detReading == nil {
 						continue
 					}
-					genForDet := gen
 					if gen == "NOG" {
-						// Java: det/adj as MAS, noun as NOG
-						genForDet = "MAS"
+						// needed to offer suggestions for e.g. "meinem Eltern" -> "meine Eltern, ..."
+						detSynthesized := s.getDetOrPronounSynth(num, "MAS", aCase, detReading)
+						adj1Synthesized := s.getAdjSynth(num, "MAS", aCase, s.adjToken1, detReading)
+						adj2Synthesized := s.getAdjSynth(num, "MAS", aCase, s.adjToken2, detReading)
+						nounSynthesized := s.getNounSynth(num, "NOG", aCase)
+						s.combineSynth(&result, detSynthesized, adj1Synthesized, adj2Synthesized, nounSynthesized)
+					} else {
+						detSynthesized := s.getDetOrPronounSynth(num, gen, aCase, detReading)
+						adj1Synthesized := s.getAdjSynth(num, gen, aCase, s.adjToken1, detReading)
+						adj2Synthesized := s.getAdjSynth(num, gen, aCase, s.adjToken2, detReading)
+						nounSynthesized := s.getNounSynth(num, gen, aCase)
+						s.combineSynth(&result, detSynthesized, adj1Synthesized, adj2Synthesized, nounSynthesized)
 					}
-					detSyn := s.getDetOrPronounSynth(num, genForDet, aCase, detReading)
-					adj1Syn := s.getAdjSynth(num, genForDet, aCase, s.Adj1, detReading)
-					adj2Syn := s.getAdjSynth(num, genForDet, aCase, s.Adj2, detReading)
-					nounGen := gen
-					if gen == "NOG" {
-						nounGen = "NOG"
-					}
-					nounSyn := s.getNounSynth(num, nounGen, aCase)
-					s.combineSynth(&result, seen, detSyn, adj1Syn, adj2Syn, nounSyn)
 				}
 			}
 		}
@@ -292,15 +302,15 @@ func containsStr(ss []string, v string) bool {
 	return false
 }
 
+// getDetOrPronounSynth ports AgreementSuggestor2.getDetOrPronounSynth.
 func (s *AgreementSuggestor2) getDetOrPronounSynth(num, gen, aCase string, detReading *languagetool.AnalyzedToken) []string {
 	if detReading == nil || detReading.GetPOSTag() == nil {
-		return nil
+		return []string{}
 	}
 	detPos := *detReading.GetPOSTag()
 	isDef := strings.Contains(detPos, ":DEF:")
 	tok := detReading.GetToken()
 	var templates []string
-	synthReading := detReading
 	switch {
 	case reDerselben.MatchString(tok):
 		templates = []string{"PRO:DEM:NOM/AKK/DAT/GEN:SIN/PLU:MAS/FEM/NEU"}
@@ -309,26 +319,28 @@ func (s *AgreementSuggestor2) getDetOrPronounSynth(num, gen, aCase string, detRe
 	case strings.Contains(detPos, "ART:"):
 		templates = []string{detTemplate}
 	case strings.Contains(detPos, "PRO:POS:"):
-		templates = append([]string(nil), proPosTemplates...)
+		templates = append([]string(nil), proPosTemplate...)
 	case strings.Contains(detPos, "PRO:DEM:"):
 		templates = append([]string(nil), proDemTemplates...)
 	case strings.Contains(detPos, "PRO:IND:"):
 		templates = append([]string(nil), proIndTemplates...)
 	case tok == "zur":
 		templates = []string{detTemplate}
+		pos := ""
 		lem := "der"
-		synthReading = languagetool.NewAnalyzedToken("der", nil, &lem)
+		detReading = languagetool.NewAnalyzedToken("der", &pos, &lem)
 		isDef = true
 	case tok == "ins":
 		templates = []string{detTemplate}
+		pos := ""
 		lem := "der"
-		synthReading = languagetool.NewAnalyzedToken("das", nil, &lem)
+		detReading = languagetool.NewAnalyzedToken("das", &pos, &lem)
 		isDef = true
 	default:
-		return nil
+		return []string{}
 	}
 	var synthesized []string
-	origFirst, _ := utf8.DecodeRuneInString(synthReading.GetToken())
+	origFirst, _ := utf8.DecodeRuneInString(detReading.GetToken())
 	for _, template := range templates {
 		tpl := template
 		if isDef {
@@ -337,20 +349,21 @@ func (s *AgreementSuggestor2) getDetOrPronounSynth(num, gen, aCase string, detRe
 			tpl = strings.Replace(tpl, "IND/DEF", "IND", 1)
 		}
 		pos := replaceSuggestorVars(tpl, num, gen, aCase)
-		tmp := s.synthesizeToken(synthReading, pos)
+		tmp := s.synthesizeToken(detReading, pos)
 		for _, k := range tmp {
+			// filter: starts with same first char (case-insensitive)
 			if k == "" {
 				continue
 			}
-			if s.skip(k) {
-				continue
-			}
-			// first char must match (don't suggest "dein" for "mein")
 			kr, _ := utf8.DecodeRuneInString(k)
 			if strings.ToLower(string(kr)) != strings.ToLower(string(origFirst)) {
 				continue
 			}
-			if unicodeIsUpper(origFirst) {
+			if _, skip := skipSuggestions[strings.ToLower(k)]; skip {
+				continue
+			}
+			// don't suggest "dein" for "mein" etc. — keep original capitalisation
+			if unicode.IsUpper(origFirst) {
 				k = tools.UppercaseFirstChar(k)
 			}
 			synthesized = append(synthesized, k)
@@ -359,74 +372,60 @@ func (s *AgreementSuggestor2) getDetOrPronounSynth(num, gen, aCase string, detRe
 	return synthesized
 }
 
-func unicodeIsUpper(r rune) bool {
-	return r >= 'A' && r <= 'Z' || r == 'Ä' || r == 'Ö' || r == 'Ü'
-}
-
+// getAdjSynth ports AgreementSuggestor2.getAdjSynth.
 func (s *AgreementSuggestor2) getAdjSynth(num, gen, aCase string, adjToken *languagetool.AnalyzedTokenReadings, detReading *languagetool.AnalyzedToken) []string {
-	if adjToken == nil {
-		return []string{""} // noun phrase without adjective
-	}
-	if detReading == nil || detReading.GetPOSTag() == nil {
-		return nil
-	}
-	detPos := *detReading.GetPOSTag()
-	detIsDef := strings.Contains(detPos, ":DEF:") || detReading.GetToken() == "ins"
 	var adjSynthesized []string
-	seen := map[string]struct{}{}
-	for _, adjReading := range adjToken.GetReadings() {
-		if adjReading == nil || adjReading.GetPOSTag() == nil {
-			continue
-		}
-		adjPosTag := *adjReading.GetPOSTag()
-		if adjReading.GetToken() == "meisten" && num == "SIN" {
-			continue
-		}
-		if strings.HasPrefix(adjPosTag, "ADV:") {
-			tok := adjReading.GetToken()
-			if _, ok := seen[tok]; !ok {
-				seen[tok] = struct{}{}
-				adjSynthesized = append(adjSynthesized, tok)
-			}
-			continue
-		}
-		template := adjTemplate
-		if strings.HasPrefix(adjPosTag, "PA1") {
-			template = pa1Template
-		} else if strings.HasPrefix(adjPosTag, "PA2") {
-			template = pa2Template
-		}
-		if strings.Contains(adjPosTag, ":KOM:") {
-			template = strings.Replace(template, ":GRU:", ":KOM:", 1)
-		} else if strings.Contains(adjPosTag, ":SUP:") {
-			template = strings.Replace(template, ":GRU:", ":SUP:", 1)
-		}
-		if detIsDef {
-			template = strings.Replace(template, "IND/DEF", "DEF", 1)
-		} else {
-			template = strings.Replace(template, "IND/DEF", "IND", 1)
-		}
-		adjPos := replaceSuggestorVars(template, num, gen, aCase)
-		for _, form := range s.synthesizeToken(adjReading, adjPos) {
-			if form == "" {
+	if adjToken != nil {
+		for _, adjReading := range adjToken.GetReadings() {
+			if adjReading == nil || adjReading.GetPOSTag() == nil || detReading == nil || detReading.GetPOSTag() == nil {
 				continue
 			}
-			if _, ok := seen[form]; ok {
+			if adjReading.GetToken() == "meisten" && num == "SIN" {
 				continue
 			}
-			seen[form] = struct{}{}
-			adjSynthesized = append(adjSynthesized, form)
+			adjPosTag := *adjReading.GetPOSTag()
+			if strings.HasPrefix(adjPosTag, "ADV:") {
+				// adverb, nothing to synthesize
+				adjSynthesized = append(adjSynthesized, adjReading.GetToken())
+				continue
+			}
+			detIsDef := strings.Contains(*detReading.GetPOSTag(), ":DEF:") || detReading.GetToken() == "ins"
+			template := adjTemplate
+			if strings.HasPrefix(adjPosTag, "PA1") {
+				template = pa1Template
+			} else if strings.HasPrefix(adjPosTag, "PA2") {
+				template = pa2Template
+			}
+			if strings.Contains(adjPosTag, ":KOM:") {
+				template = strings.Replace(template, ":GRU:", ":KOM:", 1)
+			} else if strings.Contains(adjPosTag, ":SUP:") {
+				template = strings.Replace(template, ":GRU:", ":SUP:", 1)
+			}
+			if detIsDef {
+				template = strings.Replace(template, "IND/DEF", "DEF", 1)
+			} else {
+				template = strings.Replace(template, "IND/DEF", "IND", 1)
+			}
+			adjPos := replaceSuggestorVars(template, num, gen, aCase)
+			for _, synthNoun := range s.synthesizeToken(adjReading, adjPos) {
+				if !containsStr(adjSynthesized, synthNoun) {
+					adjSynthesized = append(adjSynthesized, synthNoun)
+				}
+			}
 		}
+	} else {
+		adjSynthesized = append(adjSynthesized, "") // noun phrase without an adjective
 	}
 	return adjSynthesized
 }
 
+// getNounSynth ports AgreementSuggestor2.getNounSynth.
 func (s *AgreementSuggestor2) getNounSynth(num, gen, aCase string) []string {
-	if s.Noun == nil {
-		return nil
+	if s.nounToken == nil {
+		return []string{}
 	}
 	var result []string
-	for _, nounReading := range s.Noun.GetReadings() {
+	for _, nounReading := range s.nounToken.GetReadings() {
 		if nounReading == nil {
 			continue
 		}
@@ -435,30 +434,29 @@ func (s *AgreementSuggestor2) getNounSynth(num, gen, aCase string) []string {
 			nounSynthesized := s.synthesizeToken(nounReading, nounPos)
 			if len(nounSynthesized) == 0 && strings.Contains(nounReading.GetToken(), "-") {
 				// hyphen compound: inflect last part only
+				// Java: firstPart from nounReading; lastTokenPart from nounToken.getToken()
 				tok := nounReading.GetToken()
 				idx := strings.LastIndex(tok, "-")
 				firstPart := tok[:idx+1]
-				lastTokenPart := tok[idx+1:]
+				// nounToken.getToken().replaceFirst(".*-", "")
+				lastTokenPart := reHyphenTail.ReplaceAllString(s.nounToken.GetToken(), "")
 				var lastLemma *string
 				if nounReading.GetLemma() != nil {
-					lem := *nounReading.GetLemma()
-					if i := strings.LastIndex(lem, "-"); i >= 0 {
-						l := lem[i+1:]
-						lastLemma = &l
-					} else {
-						lastLemma = &lem
-					}
+					// lemma.replaceFirst(".*-", "")
+					l := reHyphenTail.ReplaceAllString(*nounReading.GetLemma(), "")
+					lastLemma = &l
 				}
-				fake := languagetool.NewAnalyzedToken(lastTokenPart, strPtr("fake_value"), lastLemma)
-				for _, lastPart := range s.synthesizeToken(fake, nounPos) {
-					result = append(result, firstPart+lastPart)
+				fakePos := "fake_value"
+				fake := languagetool.NewAnalyzedToken(lastTokenPart, &fakePos, lastLemma)
+				for _, lastPartInflected := range s.synthesizeToken(fake, nounPos) {
+					result = append(result, firstPart+lastPartInflected)
 				}
 			} else {
 				result = append(result, nounSynthesized...)
 			}
 		}
 	}
-	// remove ß-forms when ss form also present (old spelling)
+	// remove forms like "Blutfluß" if there's also "Blutfluss" - must be old spelling then
 	oldSpelling := map[string]struct{}{}
 	for _, k := range result {
 		if strings.Contains(k, "ss") {
@@ -475,91 +473,70 @@ func (s *AgreementSuggestor2) getNounSynth(num, gen, aCase string) []string {
 	return filtered
 }
 
-func strPtr(s string) *string { return &s }
-
-func (s *AgreementSuggestor2) combineSynth(result *[]agreementSuggestion, seen map[string]struct{},
-	detSyn, adj1Syn, adj2Syn, nounSyn []string) {
-	if len(detSyn) == 0 || len(nounSyn) == 0 {
-		return
-	}
-	// empty adj arrays mean "no combination" in Java (except explicit "")
-	if adj1Syn == nil {
-		adj1Syn = []string{""}
-	}
-	if adj2Syn == nil {
-		adj2Syn = []string{""}
-	}
-	detTok := s.Determiner.GetToken()
-	var adj1Tok, adj2Tok string
-	if s.Adj1 != nil {
-		adj1Tok = s.Adj1.GetToken()
-	}
-	if s.Adj2 != nil {
-		adj2Tok = s.Adj2.GetToken()
-	}
-	nounTok := s.Noun.GetToken()
-	for _, det := range detSyn {
-		for _, adj1 := range adj1Syn {
-			for _, adj2 := range adj2Syn {
-				for _, noun := range nounSyn {
-					elem := det
-					if s.SkippedStr != "" {
-						elem += " " + s.SkippedStr
+// combineSynth ports AgreementSuggestor2.combineSynth.
+// Empty adj slices (nil or len 0) yield no combinations — only explicit [""] from null adjToken.
+func (s *AgreementSuggestor2) combineSynth(result *[]agreementSuggestion, detSyn, adj1Syn, adj2Syn, nounSyn []string) {
+	for _, detSynthesizedElem := range detSyn {
+		for _, adj1SynthesizedElem := range adj1Syn {
+			for _, adj2SynthesizedElem := range adj2Syn {
+				for _, nounSynthesizedElem := range nounSyn {
+					elem := detSynthesizedElem
+					if s.skippedStr != "" {
+						elem += " " + s.skippedStr
 					}
-					if adj1 != "" {
-						elem += " " + adj1
+					if adj1SynthesizedElem != "" {
+						elem += " " + adj1SynthesizedElem
 					}
-					if adj2 != "" {
-						elem += " " + adj2
+					if adj2SynthesizedElem != "" {
+						elem += " " + adj2SynthesizedElem
 					}
-					elem += " " + noun
+					elem += " " + nounSynthesizedElem
 					edits := 0
-					if det != detTok {
+					if detSynthesizedElem != s.determinerToken.GetToken() {
 						edits++
 					}
-					if s.Adj1 != nil && adj1 != adj1Tok {
+					if s.adjToken1 == nil || adj1SynthesizedElem == s.adjToken1.GetToken() {
+						// 0
+					} else {
 						edits++
 					}
-					if s.Adj2 != nil && adj2 != adj2Tok {
+					if s.adjToken2 == nil || adj2SynthesizedElem == s.adjToken2.GetToken() {
+						// 0
+					} else {
 						edits++
 					}
-					if noun != nounTok {
+					if nounSynthesizedElem != s.nounToken.GetToken() {
 						edits++
 					}
 					if edits == 0 {
 						continue
 					}
-					charEdits := agreementLevenshtein(elem, s.origPhrase)
-					key := elem + "\x00" + agreementItoa(edits)
-					if _, ok := seen[key]; ok {
-						continue
+					charLevelEdits := agreementLevenshtein(elem, s.origPhrase)
+					suggestion := agreementSuggestion{
+						phrase:               elem,
+						tokenLevelEdits:      edits,
+						charLevelCorrections: charLevelEdits,
 					}
-					seen[key] = struct{}{}
-					*result = append(*result, agreementSuggestion{
-						phrase:          elem,
-						tokenLevelEdits: edits,
-						charLevelEdits:  charEdits,
-					})
+					if !containsSuggestion(*result, suggestion) {
+						*result = append(*result, suggestion)
+					}
 				}
 			}
 		}
 	}
 }
 
-func agreementItoa(n int) string {
-	if n == 0 {
-		return "0"
+// containsSuggestion ports List.contains via Suggestion.equals (phrase + tokenLevelEdits).
+func containsSuggestion(list []agreementSuggestion, s agreementSuggestion) bool {
+	for _, x := range list {
+		if x.tokenLevelEdits == s.tokenLevelEdits && x.phrase == s.phrase {
+			return true
+		}
 	}
-	var b [12]byte
-	i := len(b)
-	for n > 0 {
-		i--
-		b[i] = byte('0' + n%10)
-		n /= 10
-	}
-	return string(b[i:])
+	return false
 }
 
+// replaceSuggestorVars ports AgreementSuggestor2.replaceVars.
 func replaceSuggestorVars(template, num, gen, aCase string) string {
 	template = strings.Replace(template, "SIN/PLU", num, 1)
 	template = strings.Replace(template, "MAS/FEM/NEU", gen, 1)
@@ -568,25 +545,26 @@ func replaceSuggestorVars(template, num, gen, aCase string) string {
 }
 
 func (s *AgreementSuggestor2) synthesizeToken(tok *languagetool.AnalyzedToken, pos string) []string {
-	if s == nil || s.Synth == nil || tok == nil || pos == "" {
+	if s == nil || s.synthesizer == nil || tok == nil || pos == "" {
 		return nil
 	}
-	forms, err := s.Synth.Synthesize(tok, pos)
+	forms, err := s.synthesizer.Synthesize(tok, pos)
 	if err != nil {
 		return nil
 	}
 	return forms
 }
 
-func (s *AgreementSuggestor2) skip(form string) bool {
-	if form == "" {
-		return false
+// addContraction ports AgreementSuggestor2.addContraction.
+// Zur mutates phrases; Ins removes non-matching entries (Java Iterator.remove).
+func (s *AgreementSuggestor2) addContraction(sugs []agreementSuggestion) []agreementSuggestion {
+	if s == nil {
+		return sugs
 	}
-	_, ok := s.SkipSuggestions[strings.ToLower(form)]
-	return ok
+	return applyReplacementContractionsOnSuggestions(sugs, s.replacementType)
 }
 
-// applyReplacementContractions ports addContraction on phrase list (tests).
+// applyReplacementContractions ports addContraction for tests that only have phrase strings.
 func applyReplacementContractions(phrases []string, t ReplacementType) []string {
 	if t == ReplNone || len(phrases) == 0 {
 		return phrases
@@ -614,26 +592,26 @@ func applyReplacementContractionsOnSuggestions(sugs []agreementSuggestion, t Rep
 		case ReplZur:
 			switch {
 			case strings.HasPrefix(p, "der"):
-				sug.phrase = "zur" + strings.TrimPrefix(p, "der")
+				sug.phrase = strings.Replace(p, "der", "zur", 1)
 			case strings.HasPrefix(p, "den"):
-				sug.phrase = "zu" + strings.TrimPrefix(p, "den")
+				sug.phrase = strings.Replace(p, "den", "zu", 1)
 			case strings.HasPrefix(p, "dem"):
-				sug.phrase = "zum" + strings.TrimPrefix(p, "dem")
+				sug.phrase = strings.Replace(p, "dem", "zum", 1)
 			}
 			out = append(out, sug)
 		case ReplIns:
 			switch {
 			case strings.HasPrefix(p, "das"):
-				sug.phrase = "ins" + strings.TrimPrefix(p, "das")
+				sug.phrase = strings.Replace(p, "das", "ins", 1)
 				out = append(out, sug)
 			case strings.HasPrefix(p, "dem"):
-				sug.phrase = "im" + strings.TrimPrefix(p, "dem")
+				sug.phrase = strings.Replace(p, "dem", "im", 1)
 				out = append(out, sug)
 			case strings.HasPrefix(p, "den"):
-				sug.phrase = "in den" + strings.TrimPrefix(p, "den")
+				sug.phrase = strings.Replace(p, "den", "in den", 1)
 				out = append(out, sug)
 			case strings.HasPrefix(p, "die"):
-				sug.phrase = "in die" + strings.TrimPrefix(p, "die")
+				sug.phrase = strings.Replace(p, "die", "in die", 1)
 				out = append(out, sug)
 			default:
 				// Java removes non-matching Ins suggestions
@@ -645,11 +623,14 @@ func applyReplacementContractionsOnSuggestions(sugs []agreementSuggestion, t Rep
 	return out
 }
 
-// agreementLevenshtein is char-level edit distance (Java LevenshteinDistance).
+// agreementLevenshtein ports Apache Commons LevenshteinDistance.getDefaultInstance().apply
+// (character-level, not rune-level: Java operates on UTF-16 code units via CharSequence).
+// For German agreement phrases (BMP only) rune == char equivalence holds.
 func agreementLevenshtein(a, b string) int {
 	if a == b {
 		return 0
 	}
+	// Java String length is UTF-16 code units; for BMP German text same as runes.
 	ra := []rune(a)
 	rb := []rune(b)
 	la, lb := len(ra), len(rb)
@@ -687,6 +668,8 @@ func agreementLevenshtein(a, b string) int {
 	}
 	return prev[lb]
 }
+
+func strPtr(s string) *string { return &s }
 
 // lemmaOf is retained for other callers in this package.
 func lemmaOf(r *languagetool.AnalyzedTokenReadings) string {

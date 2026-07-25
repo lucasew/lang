@@ -220,7 +220,10 @@ func TestNounCasesForSuggestor_PrepositionMit(t *testing.T) {
 }
 
 func TestNounCasesForSuggestor_ReplInsAllCases(t *testing.T) {
-	// Java: Ins sets prep "in" but PrepositionToCases omits "in" → all cases
-	s := NewAgreementSuggestor2(nil, nil, atrWithPOS("Haus", "SUB:AKK:SIN:NEU", "Haus")).WithReplacementType(ReplIns)
+	// Java: getSuggestions sets prep "in"; PrepositionToCases omits "in" → all cases
+	pos := ""
+	lem := "zu"
+	prep := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("in", &pos, &lem), 0)
+	s := NewAgreementSuggestor2(nil, nil, atrWithPOS("Haus", "SUB:AKK:SIN:NEU", "Haus")).WithPreposition(prep)
 	require.Equal(t, []string{"NOM", "AKK", "DAT", "GEN"}, s.nounCasesForSuggestor())
 }

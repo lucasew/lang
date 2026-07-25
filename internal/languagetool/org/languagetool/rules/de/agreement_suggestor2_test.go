@@ -1,101 +1,13 @@
 package de
 
+// Morph / unit helpers for AgreementSuggestor2 (algorithm pieces).
+// Full Java matrix lives in AgreementSuggestor2Test_test.go.
+
 import (
-	"strings"
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	"github.com/stretchr/testify/require"
 )
-
-func TestAgreementSuggestor2(t *testing.T) {
-	// Java skips edits==0 (identical phrase). Synth must return alternate forms.
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			// Tags: ART:DEF:AKK:SIN:MAS (no trailing colon after gender).
-			if strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":AKK:") {
-				return []string{"den"}, nil
-			}
-			if strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":NOM:") {
-				return []string{"der"}, nil
-			}
-			if strings.Contains(posTag, "SUB:") {
-				return []string{"Hund"}, nil
-			}
-			return []string{token.GetToken()}, nil
-		},
-	}
-	det := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("der", strp("ART:DEF:NOM:SIN:MAS"), strp("der")), 0)
-	noun := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("Hund", strp("SUB:NOM:SIN:MAS"), strp("Hund")), 4)
-	s := NewAgreementSuggestor2(synth, det, noun)
-	got := s.GetSuggestions()
-	require.NotEmpty(t, got)
-	require.Contains(t, got, "den Hund")
-}
-
-func TestAgreementSuggestor2_FilterKeepsLowestEditTier(t *testing.T) {
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			if strings.Contains(posTag, "ART:") && strings.Contains(posTag, ":AKK:") {
-				return []string{"den"}, nil
-			}
-			if strings.Contains(posTag, "ART:") {
-				return []string{"der"}, nil
-			}
-			if strings.Contains(posTag, "SUB:") && strings.Contains(posTag, ":PLU:") {
-				return []string{"Hunde"}, nil
-			}
-			if strings.Contains(posTag, "SUB:") {
-				return []string{"Hund"}, nil
-			}
-			return []string{token.GetToken()}, nil
-		},
-	}
-	det := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("der", strp("ART:DEF:NOM:SIN:MAS"), strp("der")), 0)
-	noun := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("Hund", strp("SUB:NOM:SIN:MAS"), strp("Hund")), 4)
-	s := NewAgreementSuggestor2(synth, det, noun)
-	all := s.GetSuggestionsFiltered(false)
-	filtered := s.GetSuggestionsFiltered(true)
-	require.NotEmpty(t, all)
-	require.NotEmpty(t, filtered)
-	// filtered must be a prefix tier: no more suggestions than unfiltered
-	require.LessOrEqual(t, len(filtered), len(all))
-	// at least one single-edit suggestion like "den Hund"
-	require.Contains(t, filtered, "den Hund")
-}
-
-func TestAgreementSuggestor2_ProPosTemplate(t *testing.T) {
-	// PRO:POS path uses proPosTemplates, not ART.
-	synth := synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			if token == nil {
-				return nil, nil
-			}
-			if strings.Contains(posTag, "PRO:POS:") && strings.Contains(posTag, ":AKK:") {
-				return []string{"meinen"}, nil
-			}
-			if strings.Contains(posTag, "PRO:POS:") {
-				return []string{"mein"}, nil
-			}
-			if strings.Contains(posTag, "SUB:") {
-				return []string{"Hund"}, nil
-			}
-			return nil, nil
-		},
-	}
-	det := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("mein", strp("PRO:POS:NOM:SIN:MAS:BEG"), strp("mein")), 0)
-	noun := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("Hund", strp("SUB:NOM:SIN:MAS"), strp("Hund")), 5)
-	sugs := NewAgreementSuggestor2(synth, det, noun).GetSuggestions()
-	require.NotEmpty(t, sugs)
-	require.Contains(t, sugs, "meinen Hund")
-}
 
 func TestReplaceSuggestorVars(t *testing.T) {
 	got := replaceSuggestorVars(detTemplate, "SIN", "NEU", "AKK")
@@ -105,6 +17,30 @@ func TestReplaceSuggestorVars(t *testing.T) {
 	require.Contains(t, got, "AKK")
 	require.NotContains(t, got, "PLU")
 	require.NotContains(t, got, "MAS/FEM")
+	require.Equal(t, "ART:IND/DEF:AKK:SIN:NEU", got)
 }
 
-func strp(s string) *string { return &s }
+func TestAgreementSuggestionEquals(t *testing.T) {
+	// Java Suggestion.equals: phrase + tokenLevelEdits (not charLevelCorrections)
+	a := agreementSuggestion{phrase: "dem Haus", tokenLevelEdits: 1, charLevelCorrections: 3}
+	b := agreementSuggestion{phrase: "dem Haus", tokenLevelEdits: 1, charLevelCorrections: 9}
+	c := agreementSuggestion{phrase: "dem Haus", tokenLevelEdits: 2, charLevelCorrections: 3}
+	require.True(t, containsSuggestion([]agreementSuggestion{a}, b))
+	require.False(t, containsSuggestion([]agreementSuggestion{a}, c))
+}
+
+func TestAgreementLevenshtein(t *testing.T) {
+	require.Equal(t, 0, agreementLevenshtein("abc", "abc"))
+	require.Equal(t, 1, agreementLevenshtein("abc", "ab"))
+	require.Equal(t, 1, agreementLevenshtein("abc", "abd"))
+	require.Equal(t, 3, agreementLevenshtein("", "abc"))
+}
+
+func TestApplyReplacementContractions_ZurIns(t *testing.T) {
+	// Twin surfaces of addContraction
+	got := applyReplacementContractions([]string{"der Frau", "dem Mann", "den Männern"}, ReplZur)
+	require.Equal(t, []string{"zur Frau", "zum Mann", "zu Männern"}, got)
+
+	got = applyReplacementContractions([]string{"das Haus", "dem Hause", "die Häuser", "den Häusern", "der Mann"}, ReplIns)
+	require.Equal(t, []string{"ins Haus", "im Hause", "in die Häuser", "in den Häusern"}, got)
+}
