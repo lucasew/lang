@@ -1029,7 +1029,7 @@
 - [x] org/languagetool/rules/de/YMDDateCheckFilter.java::YMDDateCheckFilter
 - [x] org/languagetool/rules/de/YMDNewYearDateFilter.java::YMDNewYearDateFilter
 - [x] org/languagetool/synthesis/GermanSynthesizer.java::GermanSynthesizer
-- [ ] org/languagetool/tagging/de/AdjectiveTags.java::AdjectiveTags
+- [x] org/languagetool/tagging/de/AdjectiveTags.java::AdjectiveTags
 - [ ] org/languagetool/tagging/de/AnalyzedGermanToken.java::AnalyzedGermanToken
 - [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger
 - [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.PrefixInfixVerb
