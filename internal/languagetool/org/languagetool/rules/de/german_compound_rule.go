@@ -16,8 +16,6 @@ var compoundsFS embed.FS
 var (
 	deCompoundOnce sync.Once
 	deCompoundData *rules.CompoundRuleData
-	chCompoundOnce sync.Once
-	chCompoundData *rules.CompoundRuleData
 
 	deCompoundAntiOnce  sync.Once
 	deCompoundAntiRules []*disambigrules.DisambiguationPatternRule
@@ -46,14 +44,6 @@ func loadDECompoundData() *rules.CompoundRuleData {
 		deCompoundData = mustLoadCompoundData(nil)
 	})
 	return deCompoundData
-}
-
-func loadCHCompoundData() *rules.CompoundRuleData {
-	chCompoundOnce.Do(func() {
-		// Java: new CompoundRuleData(new SwissExpander(), "/de/compounds.txt", "/de/compound-cities.txt")
-		chCompoundData = mustLoadCompoundData(SwissExpandLine)
-	})
-	return chCompoundData
 }
 
 // GermanCompoundRule ports org.languagetool.rules.de.GermanCompoundRule.
@@ -110,46 +100,6 @@ func (r *GermanCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 
 // GetAntiPatterns ports GermanCompoundRule.getAntiPatterns.
 func (r *GermanCompoundRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
-	return deCompoundAntiPatterns()
-}
-
-// SwissCompoundRule ports org.languagetool.rules.de.SwissCompoundRule.
-// Java extends GermanCompoundRule (inherits isMisspelled → GermanyGerman + ANTI_PATTERNS).
-type SwissCompoundRule struct {
-	*rules.AbstractCompoundRule
-	SpellingIsMisspelled func(word string) bool
-}
-
-func NewSwissCompoundRule(messages map[string]string) *SwissCompoundRule {
-	base := &rules.AbstractCompoundRule{
-		ID:                          "DE_CH_COMPOUNDS",
-		Description:                 "Zusammenschreibung von Wörtern, z. B. 'CD-ROM' statt 'CD ROM'",
-		WithHyphenMessage:           "Dieses Wort wird mit Bindestrich geschrieben.",
-		WithoutHyphenMessage:        "Dieses Wort wird zusammengeschrieben.",
-		WithOrWithoutHyphenMessage:  "Diese Wörter werden zusammengeschrieben oder mit Bindestrich getrennt.",
-		ShortDesc:                   "Zusammenschreibung von Wörtern",
-		SentenceStartsWithUpperCase: true,
-		LanguageCode:                "de",
-		Data:                        loadCHCompoundData(),
-	}
-	rules.InitCompoundRuleMeta(base, messages)
-	r := &SwissCompoundRule{AbstractCompoundRule: base}
-	// Java SwissCompoundRule extends GermanCompoundRule — same isMisspelled (GermanyGerman).
-	base.IsMisspelled = func(word string) bool {
-		if r.SpellingIsMisspelled != nil {
-			return r.SpellingIsMisspelled(word)
-		}
-		return false
-	}
-	return r
-}
-
-func (r *SwissCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	return r.AbstractCompoundRule.Match(getSentenceWithDECompoundImmunization(sentence))
-}
-
-// GetAntiPatterns ports inherited GermanCompoundRule.getAntiPatterns.
-func (r *SwissCompoundRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
 	return deCompoundAntiPatterns()
 }
 

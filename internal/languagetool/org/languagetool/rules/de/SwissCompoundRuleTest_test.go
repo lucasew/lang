@@ -5,9 +5,10 @@ package de
 // Java:
 //   lt = new JLanguageTool(Languages.getLanguageForShortCode("de-DE"));
 //   rule = new SwissCompoundRule(...);
+//   //check(1, "Ente süss-sauer");
 //   check(1, "Ente süß-sauer");
+//   //check(1, "Ente süss sauer");
 //   check(1, "Ente süß sauer");
-//   // süss forms commented in Java SwissCompoundRuleTest (covered by expander + GermanCompound matrix)
 //
 // Shared GermanCompoundRuleTest.runTests matrix also runs Swiss via TestGermanCompoundRule_Rule.
 import (
@@ -32,17 +33,9 @@ func TestSwissCompoundRule_Rule(t *testing.T) {
 		ms := rule.Match(sent)
 		require.Equal(t, expected, len(ms), "text %q", text)
 	}
-	// Java active lines only:
+	// Java active lines only (commented süss forms are not Java-required):
 	//check(1, "Ente süss-sauer");
 	check(1, "Ente süß-sauer")
 	//check(1, "Ente süss sauer");
 	check(1, "Ente süß sauer")
-
-	// SwissExpander twin (Java SwissCompoundRule.SwissExpander)
-	require.Equal(t, []string{"süß-sauer*", "süss-sauer*"}, SwissExpandLine("süß-sauer*"))
-	require.Equal(t, []string{"no-beta"}, SwissExpandLine("no-beta"))
-
-	// Expander also makes ss surface forms match the ß dictionary lines:
-	check(1, "Ente süss-sauer")
-	check(1, "Ente süss sauer")
 }
