@@ -30,6 +30,8 @@ func TestSimpleReplaceRule_Rule(t *testing.T) {
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Joe Biden sprach gestern."))))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Wir messen Conversion Rate sorgfältig."))))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Nichts zu ersetzen hier."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Rita Süssmuth sprach gestern."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Bjørn Gulden sprach gestern."))))
 
 	// Official replace.txt rows
 	checkGermanSimpleReplace(t, rule, "Jo Biden sprach gestern.", "Joe Biden")
@@ -44,9 +46,9 @@ func TestSimpleReplaceRule_Rule(t *testing.T) {
 	require.Equal(t,
 		"Meinten Sie vielleicht <suggestion>Joe Biden</suggestion>?",
 		matches[0].GetMessage())
-	// StringTools.toId(getId() + "_" + originalStr, language) — LanguageCode is getLocale "DE"
-	// (toId only special-cases "de"; DE vs de differ on umlauts only; EN twin uses Locale form).
-	wantID := tools.ToId(GermanSimpleReplaceRuleID+"_"+"Jo Biden", "DE")
+	// Java createMatch: StringTools.toId(getId()+"_"+originalStr, language)
+	// with language.getShortCode() == "de" (not getLocale Locale("DE")).
+	wantID := tools.ToId(GermanSimpleReplaceRuleID+"_"+"Jo Biden", "de")
 	sr, ok := matches[0].GetRule().(*rules.SpecificIdRule)
 	require.True(t, ok, "sub-rule specific id expected")
 	require.Equal(t, wantID, sr.GetID())
@@ -58,7 +60,7 @@ func TestSimpleReplaceRule_Rule(t *testing.T) {
 	// Multiword sub-rule id (Conversation Rate)
 	matches = rule.Match(languagetool.AnalyzePlain("Wir messen Conversation Rate sorgfältig."))
 	require.Len(t, matches, 1)
-	wantID = tools.ToId(GermanSimpleReplaceRuleID+"_"+"Conversation Rate", "DE")
+	wantID = tools.ToId(GermanSimpleReplaceRuleID+"_"+"Conversation Rate", "de")
 	sr, ok = matches[0].GetRule().(*rules.SpecificIdRule)
 	require.True(t, ok, "sub-rule specific id expected for multiword")
 	require.Equal(t, wantID, sr.GetID())
@@ -71,6 +73,33 @@ func TestSimpleReplaceRule_Rule(t *testing.T) {
 	require.Equal(t,
 		"Meinten Sie vielleicht <suggestion>Conversion Rate</suggestion>?",
 		matches[0].GetMessage())
+
+	// Umlaut keys: StringTools.toId special-cases languageCode "de" → Ä/Ö/Ü → AE/OE/UE.
+	// Official replace.txt: Rita Süßmuth=Rita Süssmuth (message override)
+	matches = rule.Match(languagetool.AnalyzePlain("Rita Süßmuth sprach gestern."))
+	require.Len(t, matches, 1)
+	require.Equal(t, []string{"Rita Süssmuth"}, matches[0].GetSuggestedReplacements())
+	require.Equal(t, "Meinten Sie die deutsche CDU-Politikerin?", matches[0].GetMessage())
+	require.Equal(t, "Falsches Wort", matches[0].GetShortMessage())
+	wantID = tools.ToId(GermanSimpleReplaceRuleID+"_"+"Rita Süßmuth", "de")
+	sr, ok = matches[0].GetRule().(*rules.SpecificIdRule)
+	require.True(t, ok, "sub-rule specific id expected for umlaut key")
+	require.Equal(t, wantID, sr.GetID())
+	require.Equal(t, "DE_SIMPLE_REPLACE_RITA_SUESSMUTH", sr.GetID())
+	require.Equal(t, "Prüft auf bestimmte falsche Wörter/Phrasen: Rita Süßmuth", sr.GetDescription())
+	require.Equal(t, 0, matches[0].GetFromPos())
+	require.Equal(t, 12, matches[0].GetToPos()) // "Rita Süßmuth" UTF-8/Java char length
+
+	// Official replace.txt: Björn Gulden=Bjørn Gulden (Ö → OE)
+	matches = rule.Match(languagetool.AnalyzePlain("Björn Gulden sprach gestern."))
+	require.Len(t, matches, 1)
+	require.Equal(t, []string{"Bjørn Gulden"}, matches[0].GetSuggestedReplacements())
+	wantID = tools.ToId(GermanSimpleReplaceRuleID+"_"+"Björn Gulden", "de")
+	sr, ok = matches[0].GetRule().(*rules.SpecificIdRule)
+	require.True(t, ok, "sub-rule specific id expected for Ö key")
+	require.Equal(t, wantID, sr.GetID())
+	require.Equal(t, "DE_SIMPLE_REPLACE_BJOERN_GULDEN", sr.GetID())
+	require.Equal(t, "Prüft auf bestimmte falsche Wörter/Phrasen: Björn Gulden", sr.GetDescription())
 }
 
 // checkGermanSimpleReplace asserts one match with the given first replacement.
@@ -93,8 +122,10 @@ func TestSimpleReplaceRule_Metadata(t *testing.T) {
 	require.Equal(t, "Prüft auf bestimmte falsche Wörter/Phrasen: $match", rule.GetDescription())
 	require.Equal(t, "Falsches Wort", rule.GetShort())
 	require.Equal(t, "Meinten Sie vielleicht $suggestions?", rule.GetMessage())
-	// Java getLocale() → new Locale("DE")
-	require.Equal(t, "DE", rule.GetLocaleCode())
+	// LanguageCode = German.getShortCode() "de" (toId channel).
+	// Java getLocale() is new Locale("DE") which normalizes to language "de".
+	require.Equal(t, "de", rule.GetLocaleCode())
+	require.Equal(t, "de", rule.LanguageCode)
 	require.Equal(t, GermanSimpleReplaceFileNames, rule.GetFileNames())
 	require.Equal(t, []string{"/de/replace.txt", "/de/replace_custom.txt"}, rule.GetFileNames())
 	require.True(t, rule.SubRuleSpecificIDs)

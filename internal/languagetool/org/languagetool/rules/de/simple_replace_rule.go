@@ -47,7 +47,8 @@ func loadDEReplace() *rules.AbstractSimpleReplaceRule2 {
 		// - description / short / message as Java overrides
 		// - suggestions separator default ", " (Java getSuggestionsSeparator not overridden)
 		// - CaseSensitivy.CI (base default)
-		// - Locale DE via LanguageCode (getLocale → new Locale("DE"))
+		// - LanguageCode = language.getShortCode() "de" (Java createMatch → StringTools.toId(..., language);
+		//   not getLocale — Locale("DE") normalizes to language "de" and is unused by ASRR2 for toId)
 		// - useSubRuleSpecificIds()
 		// - Categories.MISC (AbstractSimpleReplaceRule2 ctor)
 		// - ITSIssueType.Uncategorized (Rule default; not overridden)
@@ -59,7 +60,7 @@ func loadDEReplace() *rules.AbstractSimpleReplaceRule2 {
 			MessageTemplate: "Meinten Sie vielleicht $suggestions?",
 			// SuggestionsSeparator left empty → Match uses Java default ", "
 			CaseSens:           rules.CaseInsensitive,
-			LanguageCode:       "DE",
+			LanguageCode:       "de",
 			SubRuleSpecificIDs: true,
 			Category:           rules.CatMisc.GetCategory(nil),
 		}
@@ -88,7 +89,9 @@ type SimpleReplaceRule struct {
 
 // NewSimpleReplaceRule ports SimpleReplaceRule(ResourceBundle messages, Language language).
 // Official data is go:embed of the same replace.txt / replace_custom.txt Java loads.
-// language is German (short code "de"); getLocale is Locale("DE") — stored as LanguageCode.
+// LanguageCode stores language.getShortCode() "de" for StringTools.toId (createMatch);
+// Java getLocale() returns new Locale("DE") which normalizes to language "de" and is
+// unused by AbstractSimpleReplaceRule2 for toId / case maps.
 func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 	base := loadDEReplace()
 	r := *base
@@ -121,7 +124,9 @@ func (r *SimpleReplaceRule) GetMessage() string {
 	return r.MessageTemplate
 }
 
-// GetLocaleCode ports SimpleReplaceRule.getLocale() → Locale("DE").
+// GetLocaleCode returns the LanguageCode used for toId (language short code "de").
+// Java getLocale() is new Locale("DE") which normalizes to language "de"; ASRR2.createMatch
+// uses the Language ctor arg (getShortCode "de"), not getLocale, for StringTools.toId.
 func (r *SimpleReplaceRule) GetLocaleCode() string {
 	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
 		return ""
