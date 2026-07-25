@@ -13,14 +13,28 @@ type GermanFillerWordsRule struct {
 	*rules.AbstractStatisticStyleRule
 	fillers map[string]struct{}
 	// TestTwoFollowing / TestManyInSentence port Java UserConfig rule options (default false).
+	// Java fields: testTwoFollowing / TestManyInSentence (both read cf[2] — upstream bug).
 	TestTwoFollowing   bool
 	TestManyInSentence bool
 	sentenceMessage    string
 }
 
-const germanFillerDefaultMinPercent = 8
+const (
+	germanFillerDefaultMinPercent     = 8
+	germanFillerDefaultTwoFollowing   = false
+	germanFillerDefaultManyInSentence = false
+	germanFillerSentenceMsg1          = "Zwei potentielle Füllwörter hintereinander. Mindestens eins sollte gelöscht werden."
+	germanFillerSentenceMsg2          = "Mehr als zwei potentielle Füllwörter in einem Satz. Mindestens eins sollte gelöscht werden."
+)
 
+// NewGermanFillerWordsRule ports GermanFillerWordsRule(messages, lang, null).
 func NewGermanFillerWordsRule(messages map[string]string) *GermanFillerWordsRule {
+	return NewGermanFillerWordsRuleWithUserConfig(messages, nil)
+}
+
+// NewGermanFillerWordsRuleWithUserConfig ports
+// GermanFillerWordsRule(ResourceBundle messages, Language lang, UserConfig userConfig).
+func NewGermanFillerWordsRuleWithUserConfig(messages map[string]string, userConfig *languagetool.UserConfig) *GermanFillerWordsRule {
 	fillers := map[string]struct{}{}
 	for _, w := range []string{
 		"aber",
@@ -245,21 +259,86 @@ func NewGermanFillerWordsRule(messages map[string]string) *GermanFillerWordsRule
 	} {
 		fillers[w] = struct{}{}
 	}
+	// Java super: AbstractStatisticStyleRule(messages, lang, userConfig, DEFAULT_MIN_PERCENT)
+	// → minPercent from cf[0], excludeDirectSpeech from cf[1] or excludeDirectSpeech().
+	minPercent := germanFillerDefaultMinPercent
+	excludeDS := true // Java excludeDirectSpeech()
+	if userConfig != nil {
+		if cf := userConfig.GetConfigValueByID("FILLER_WORDS_DE"); len(cf) > 0 && cf[0] != nil {
+			if n, ok := configInt(cf[0]); ok {
+				minPercent = n
+			}
+		}
+		if cf := userConfig.GetConfigValueByID("FILLER_WORDS_DE"); len(cf) > 1 && cf[1] != nil {
+			if b, ok := cf[1].(bool); ok {
+				excludeDS = b
+			}
+		}
+	}
 	r := &GermanFillerWordsRule{
 		AbstractStatisticStyleRule: &rules.AbstractStatisticStyleRule{
 			ID:                  "FILLER_WORDS_DE",
 			Description:         "Statistische Stilanalyse: Füllwörter",
-			MinPercent:          germanFillerDefaultMinPercent,
+			MinPercent:          minPercent,
 			Denominator:         100,
-			ExcludeDirectSpeech: true,
+			ExcludeDirectSpeech: excludeDS,
 		},
-		fillers: fillers,
+		fillers:            fillers,
+		TestTwoFollowing:   germanFillerGetTwoFollowing(userConfig),
+		TestManyInSentence: germanFillerGetManyInSentence(userConfig),
 	}
 	r.ConditionFulfilled = r.conditionFulfilled
 	r.SentenceConditionFulfilled = r.sentenceConditionFulfilled
 	r.LimitMessage = r.getLimitMessage
 	rules.InitStatisticStyleMeta(r.AbstractStatisticStyleRule, messages, false)
+	if userConfig != nil {
+		if ls := userConfig.GetLinguServices(); ls != nil {
+			ls.SetThesaurusRelevantRule(r)
+		}
+	}
 	return r
+}
+
+// germanFillerGetTwoFollowing ports getTwoFollowing — reads cf[2] Boolean.
+func germanFillerGetTwoFollowing(userConfig *languagetool.UserConfig) bool {
+	if userConfig != nil {
+		cf := userConfig.GetConfigValueByID("FILLER_WORDS_DE")
+		if len(cf) > 2 && cf[2] != nil {
+			if b, ok := cf[2].(bool); ok {
+				return b
+			}
+		}
+	}
+	return germanFillerDefaultTwoFollowing
+}
+
+// germanFillerGetManyInSentence ports getManyInSentence.
+// Java bug-for-bug: also reads cf[2] (not cf[3]) — same slot as two-following.
+func germanFillerGetManyInSentence(userConfig *languagetool.UserConfig) bool {
+	if userConfig != nil {
+		cf := userConfig.GetConfigValueByID("FILLER_WORDS_DE")
+		if len(cf) > 2 && cf[2] != nil {
+			if b, ok := cf[2].(bool); ok {
+				return b
+			}
+		}
+	}
+	return germanFillerDefaultManyInSentence
+}
+
+func configInt(v any) (int, bool) {
+	switch n := v.(type) {
+	case int:
+		return n, true
+	case int32:
+		return int(n), true
+	case int64:
+		return int(n), true
+	case float64:
+		return int(n), true
+	default:
+		return 0, false
+	}
 }
 
 // NewGermanFillerWordsRuleWithMinPercent builds with explicit percent (0 = show all; twin tests).
@@ -284,6 +363,34 @@ func (r *GermanFillerWordsRule) GetID() string {
 // GetDescription ports GermanFillerWordsRule.getDescription.
 func (r *GermanFillerWordsRule) GetDescription() string {
 	return "Statistische Stilanalyse: Füllwörter"
+}
+
+// GetConfigurePercentText ports getConfigurePercentText.
+func (r *GermanFillerWordsRule) GetConfigurePercentText() string {
+	return "Anzeigen wenn mehr als ...% eines Kapitels Füllwörter sind:"
+}
+
+// GetConfigureWithoutDirectSpeachText ports getConfigureWithoutDirectSpeachText (Java spelling).
+func (r *GermanFillerWordsRule) GetConfigureWithoutDirectSpeachText() string {
+	return "Keine wörtliche Rede und Zitate berücksichtigen"
+}
+
+// GetRuleOptions ports GermanFillerWordsRule.getRuleOptions (overrides abstract base's 2-option form).
+func (r *GermanFillerWordsRule) GetRuleOptions() []*rules.RuleOption {
+	return []*rules.RuleOption{
+		rules.NewRuleOption(germanFillerDefaultMinPercent, r.GetConfigurePercentText(), 0, 100),
+		rules.NewRuleOption(true, r.GetConfigureWithoutDirectSpeachText(), nil, nil), // excludeDirectSpeech()
+		rules.NewRuleOption(germanFillerDefaultTwoFollowing, "Zeige zwei aufeinander folgende Füllwörter", nil, nil),
+		rules.NewRuleOption(germanFillerDefaultManyInSentence, "Zeige mehr als zwei Füllwörter in einem Satz", nil, nil),
+	}
+}
+
+// GetSentenceMessage ports getSentenceMessage.
+func (r *GermanFillerWordsRule) GetSentenceMessage() string {
+	if r == nil {
+		return ""
+	}
+	return r.sentenceMessage
 }
 
 func (r *GermanFillerWordsRule) getLimitMessage(limit int, percent float64) string {
@@ -331,16 +438,16 @@ func (r *GermanFillerWordsRule) sentenceConditionFulfilled(tokens []*languagetoo
 	if r == nil {
 		return false
 	}
-	r.sentenceMessage = ""
 	// Java sentenceConditionFulfilled for two-following uses fillerWords.contains +
 	// !isException only — NOT isTwoWordException / full conditionFulfilled.
+	// Java does not clear sentenceMessage first; only set when returning true.
 	if r.TestTwoFollowing {
 		prevFiller := nToken > 1 && tokens[nToken-1] != nil &&
 			r.isFillerSurface(tokens[nToken-1].GetToken()) && !germanFillerIsException(tokens, nToken-1)
 		nextFiller := nToken < len(tokens)-1 && tokens[nToken+1] != nil &&
 			r.isFillerSurface(tokens[nToken+1].GetToken()) && !germanFillerIsException(tokens, nToken+1)
 		if prevFiller || nextFiller {
-			r.sentenceMessage = "Zwei potentielle Füllwörter hintereinander. Mindestens eins sollte gelöscht werden."
+			r.sentenceMessage = germanFillerSentenceMsg1
 			r.SentenceMessage = r.sentenceMessage
 			return true
 		}
@@ -351,7 +458,7 @@ func (r *GermanFillerWordsRule) sentenceConditionFulfilled(tokens []*languagetoo
 			if r.conditionFulfilled(tokens, i) == i {
 				n++
 				if n > 1 {
-					r.sentenceMessage = "Mehr als zwei potentielle Füllwörter in einem Satz. Mindestens eins sollte gelöscht werden."
+					r.sentenceMessage = germanFillerSentenceMsg2
 					r.SentenceMessage = r.sentenceMessage
 					return true
 				}
@@ -361,7 +468,7 @@ func (r *GermanFillerWordsRule) sentenceConditionFulfilled(tokens []*languagetoo
 			if r.conditionFulfilled(tokens, i) == i {
 				n++
 				if n > 1 {
-					r.sentenceMessage = "Mehr als zwei potentielle Füllwörter in einem Satz. Mindestens eins sollte gelöscht werden."
+					r.sentenceMessage = germanFillerSentenceMsg2
 					r.SentenceMessage = r.sentenceMessage
 					return true
 				}

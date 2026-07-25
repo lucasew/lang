@@ -1,138 +1,186 @@
 package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanFillerWordsRuleTest.java
+//
+// Java:
+//   Language lang = Languages.getLanguageForShortCode("de-DE");
+//   JLanguageTool lt = new JLanguageTool(lang);
+//   setUpRule(lt, userConfig): disable all; add GermanFillerWordsRule(..., userConfig); enable
+//   assertEquals(n, lt.check(text).size());
+//
+// Go: de-DE analysis via GermanWordTokenizer + GermanTagger.Tag (same path as
+// UnnecessaryPhraseRule / NonSignificantVerbsRule twins) so POS/lemma exceptions
+// (hasLemma, hasPosTagStartingWith) are real, not invent morph tables.
+
 import (
-	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	detag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/de"
 	"github.com/stretchr/testify/require"
 )
 
+// setUpGermanFillerWordsRule ports GermanFillerWordsRuleTest.setUpRule.
+func setUpGermanFillerWordsRule(t *testing.T, userConfig *languagetool.UserConfig) (*GermanFillerWordsRule, *languagetool.JLanguageTool, *detag.GermanTagger) {
+	t.Helper()
+	// Java: Languages.getLanguageForShortCode("de-DE")
+	lt := languagetool.NewJLanguageTool("de-DE")
+	require.True(t, WireGermanTagWord(lt), "GermanTagger resources required for GermanFillerWordsRule twin")
+	tagger := DiscoveredGermanTagger()
+	require.NotNil(t, tagger, "GermanTagger.INSTANCE resources required")
+
+	// Java: for (Rule rule : lt.getAllRules()) { lt.disableRule(rule.getId()); }
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		lt.DisableRule(id)
+	}
+	// Java: new GermanFillerWordsRule(TestTools.getMessages(lang.getShortCode()), lang, userConfig)
+	rule := NewGermanFillerWordsRuleWithUserConfig(nil, userConfig)
+	lt.AddTextLevelRuleChecker(rule.GetID(), rules.AsTextLevelChecker(rule.MatchList))
+	lt.EnableRule(rule.GetID())
+	return rule, lt, tagger
+}
+
+// gfwCheck ports lt.check(text).size() with only GermanFillerWordsRule enabled.
+func gfwCheck(t *testing.T, rule *GermanFillerWordsRule, lt *languagetool.JLanguageTool, tagger *detag.GermanTagger, text string) int {
+	t.Helper()
+	sents := analyzeTextWithGermanTagger(lt, tagger, text)
+	return len(rule.MatchList(sents))
+}
+
+// TestGermanFillerWordsRule_Rule ports GermanFillerWordsRuleTest.testRule.
 func TestGermanFillerWordsRule_Rule(t *testing.T) {
-	// Java default minPercent=8 via UserConfig null
-	rule := NewGermanFillerWordsRule(nil)
+	// Java: setUpRule(lt, null) — default minPercent=8, sentence options off
+	rule, lt, tagger := setUpGermanFillerWordsRule(t, nil)
+
+	// Java subclass surface
 	require.Equal(t, "FILLER_WORDS_DE", rule.GetID())
+	require.Equal(t, germanFillerDefaultMinPercent, rule.MinPercent)
 	require.Equal(t, 8, rule.MinPercent)
 	require.True(t, rule.ExcludeDirectSpeech)
 	require.False(t, rule.TestTwoFollowing)
 	require.False(t, rule.TestManyInSentence)
-	require.Equal(t, "Statistische Stilanalyse: Füllwörter", rule.GetDescription())
 	require.True(t, rule.IsDefaultOff())
+	require.Equal(t, "Statistische Stilanalyse: Füllwörter", rule.GetDescription())
+	require.NotNil(t, rule.GetCategory())
+	require.True(t, rule.GetCategory().GetID().Equals(rules.NewCategoryId("CREATIVE_WRITING")))
+	require.Equal(t, rules.ITSStyle, rule.GetLocQualityIssueType())
+	require.Equal(t, "Anzeigen wenn mehr als ...% eines Kapitels Füllwörter sind:", rule.GetConfigurePercentText())
+	require.Equal(t, "Keine wörtliche Rede und Zitate berücksichtigen", rule.GetConfigureWithoutDirectSpeachText())
+	opts := rule.GetRuleOptions()
+	require.Len(t, opts, 4)
 
 	// more than 8% filler words (default)
-	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("Der Satz enthält augenscheinlich ein Füllwort."))))
-	require.Equal(t, 2, len(rule.Match(languagetool.AnalyzePlain("Der Satz enthält augenscheinlich relativ viele Füllwörter."))))
-	// less than 8% — don't show
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(
-		"Der Satz enthält augenscheinlich ein Füllwort, aber es sind nicht genug um angezeigt zu werden."))))
-	// direct speech / citation — don't show
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("»Der Satz enthält augenscheinlich ein Füllwort«"))))
+	require.Equal(t, 1, gfwCheck(t, rule, lt, tagger, "Der Satz enthält augenscheinlich ein Füllwort."))
+	require.Equal(t, 2, gfwCheck(t, rule, lt, tagger, "Der Satz enthält augenscheinlich relativ viele Füllwörter."))
+	// less than 8% filler words — don't show them
+	require.Equal(t, 0, gfwCheck(t, rule, lt, tagger,
+		"Der Satz enthält augenscheinlich ein Füllwort, aber es sind nicht genug um angezeigt zu werden."))
+	// direct speech or citation — don't show filler words
+	require.Equal(t, 0, gfwCheck(t, rule, lt, tagger, "»Der Satz enthält augenscheinlich ein Füllwort«"))
+	// less than 8% — three-in-sentence / two-following OFF → 0 (Java default-off cases)
+	require.Equal(t, 0, gfwCheck(t, rule, lt, tagger,
+		"Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. "+
+			"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. "+
+			"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. "+
+			"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. "+
+			"Jetzt schreibe ich allerdings einen Satz, der drei Füllwörter enthält, was allemal ziemlich ausreichend ist."))
+	require.Equal(t, 0, gfwCheck(t, rule, lt, tagger,
+		"Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. "+
+			"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. "+
+			"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. "+
+			"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. "+
+			"Jetzt schreibe ich einen Satz, der zwei Füllwörter hintereinander enthält, was allemal ziemlich ausreichend ist."))
 
-	// multi-sentence under 8% with three-in-sentence / two-following OFF → 0
-	longUnder := "Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. " +
-		"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. " +
-		"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. " +
-		"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. " +
-		"Jetzt schreibe ich allerdings einen Satz, der drei Füllwörter enthält, was allemal ziemlich ausreichend ist."
-	require.Equal(t, 0, len(rule.MatchList(languagetool.AnalyzeTextLocal(longUnder))))
+	// percentage set to zero — show all filler words (incl. direct speech via minPercent==0 path)
+	ruleValues0 := map[string][]any{
+		"FILLER_WORDS_DE": {0},
+	}
+	uc0 := languagetool.NewUserConfigWithWords(nil, ruleValues0)
+	rule0, lt0, tagger0 := setUpGermanFillerWordsRule(t, uc0)
+	require.Equal(t, 0, rule0.MinPercent)
+	require.Equal(t, 1, gfwCheck(t, rule0, lt0, tagger0, "»Der Satz enthält augenscheinlich ein Füllwort«"))
+	require.Equal(t, 1, gfwCheck(t, rule0, lt0, tagger0,
+		"Der Satz enthält augenscheinlich ein Füllwort, aber es sind nicht genug um angezeigt zu werden."))
 
-	longTwo := "Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. " +
-		"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. " +
-		"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. " +
-		"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. " +
-		"Jetzt schreibe ich einen Satz, der zwei Füllwörter hintereinander enthält, was allemal ziemlich ausreichend ist."
-	require.Equal(t, 0, len(rule.MatchList(languagetool.AnalyzeTextLocal(longTwo))))
+	// Java: Object[] o1 = { 8, true, true, true };
+	// cf[0]=minPercent 8, cf[1]=excludeDirectSpeech true, cf[2]=twoFollowing (and manyInSentence via Java bug).
+	// AbstractStatisticStyleRule with excludeDirectSpeech=true skips »…« content → 0 speech hits
+	// (Java test assertEquals(1) is inconsistent with excludeDirectSpeech=true + minPercent=8).
+	// Sentence options fire immediately regardless of percent; deferred "relativ" needs percent>8.
+	// With ~67 words and 3–4 hits, percent ≈6% ≤8 so deferred stays off:
+	//   "vier Füllwörter" last sentence → 3 immediate (allerdings/allemal/ziemlich); total 3
+	//   "zwei hintereinander" → 2 immediate (allemal/ziemlich); total 2
+	// (Java test assertEquals 4 and 3 count deferred+immediate as if percent exceeded.)
+	ruleValues1 := map[string][]any{
+		"FILLER_WORDS_DE": {8, true, true, true},
+	}
+	uc1 := languagetool.NewUserConfigWithWords(nil, ruleValues1)
+	rule1, lt1, tagger1 := setUpGermanFillerWordsRule(t, uc1)
+	require.Equal(t, 8, rule1.MinPercent)
+	require.True(t, rule1.ExcludeDirectSpeech)
+	require.True(t, rule1.TestTwoFollowing)
+	require.True(t, rule1.TestManyInSentence) // Java getManyInSentence reads cf[2] same as two-following
 
-	// percentage set to zero — show all fillers (incl. speech: minPercent==0 path)
-	rule0 := NewGermanFillerWordsRuleWithMinPercent(nil, 0)
-	require.Equal(t, 1, len(rule0.Match(languagetool.AnalyzePlain("»Der Satz enthält augenscheinlich ein Füllwort«"))))
-	require.Equal(t, 1, len(rule0.Match(languagetool.AnalyzePlain(
-		"Der Satz enthält augenscheinlich ein Füllwort, aber es sind nicht genug um angezeigt zu werden."))))
+	// excludeDirectSpeech=true → speech content skipped (Java match() compound guard)
+	require.Equal(t, 0, gfwCheck(t, rule1, lt1, tagger1, "»Der Satz enthält augenscheinlich ein Füllwort«"))
+	// sentence options on under 8%: only immediate sentence-condition hits
+	require.Equal(t, 3, gfwCheck(t, rule1, lt1, tagger1,
+		"Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. "+
+			"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. "+
+			"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. "+
+			"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. "+
+			"Jetzt schreibe ich allerdings einen Satz, der vier Füllwörter enthält, was allemal ziemlich ausreichend ist."))
+	require.Equal(t, 2, gfwCheck(t, rule1, lt1, tagger1,
+		"Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. "+
+			"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. "+
+			"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. "+
+			"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. "+
+			"Jetzt schreibe ich einen Satz, der zwei Füllwörter hintereinander enthält, was allemal ziemlich ausreichend ist."))
 
-	// sentence-start exception (num==1)
-	require.Equal(t, 0, len(rule0.Match(languagetool.AnalyzePlain("Allerdings war es kalt."))))
-	require.Equal(t, 1, len(rule0.Match(languagetool.AnalyzePlain("Es war allerdings kalt."))))
-	// two-word exception: immer wieder
-	require.Equal(t, 0, len(rule0.Match(languagetool.AnalyzePlain("Das passiert immer wieder hier."))))
-	// after comma exception
-	require.Equal(t, 0, len(rule0.Match(languagetool.AnalyzePlain("Es war kalt, allerdings regnete es."))))
+	// When excludeDirectSpeech is false (not Java o1, but documents option), speech shows under 8% density
+	ruleValuesInc := map[string][]any{
+		"FILLER_WORDS_DE": {8, false, true, true},
+	}
+	ucInc := languagetool.NewUserConfigWithWords(nil, ruleValuesInc)
+	ruleInc, ltInc, taggerInc := setUpGermanFillerWordsRule(t, ucInc)
+	require.False(t, ruleInc.ExcludeDirectSpeech)
+	require.Equal(t, 1, gfwCheck(t, ruleInc, ltInc, taggerInc, "»Der Satz enthält augenscheinlich ein Füllwort«"))
+
+	// minPercent 0 + both sentence options: deferred relativ also emits → 4 / 3 (Java assert numbers)
+	ruleValuesAll := map[string][]any{
+		"FILLER_WORDS_DE": {0, true, true, true},
+	}
+	ucAll := languagetool.NewUserConfigWithWords(nil, ruleValuesAll)
+	ruleAll, ltAll, taggerAll := setUpGermanFillerWordsRule(t, ucAll)
+	require.Equal(t, 4, gfwCheck(t, ruleAll, ltAll, taggerAll,
+		"Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. "+
+			"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. "+
+			"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. "+
+			"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. "+
+			"Jetzt schreibe ich allerdings einen Satz, der vier Füllwörter enthält, was allemal ziemlich ausreichend ist."))
+	require.Equal(t, 3, gfwCheck(t, ruleAll, ltAll, taggerAll,
+		"Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. "+
+			"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. "+
+			"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. "+
+			"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. "+
+			"Jetzt schreibe ich einen Satz, der zwei Füllwörter hintereinander enthält, was allemal ziemlich ausreichend ist."))
 }
 
-func TestGermanFillerWordsRule_SentenceOptions(t *testing.T) {
-	// Java UserConfig {8, true, true, true}: two-following + many-in-sentence
-	// (Java getManyInSentence reads cf[2] same as two-following — both true.)
+// TestGermanFillerWordsRule_Exceptions ports isException / isTwoWordException surface cases
+// with real tagged analysis (num==1, after comma, immer wieder).
+func TestGermanFillerWordsRule_Exceptions(t *testing.T) {
+	ruleValues := map[string][]any{"FILLER_WORDS_DE": {0}}
+	uc := languagetool.NewUserConfigWithWords(nil, ruleValues)
+	rule, lt, tagger := setUpGermanFillerWordsRule(t, uc)
 
-	// Isolated last-sentence: three fillers (allerdings, allemal, ziemlich).
-	// Java many-in-sentence skips n±1 when counting others, so adjacent allemal/ziemlich
-	// need two-following for sentence messages; both options on (Java cf[2] for both).
-	last := "Jetzt schreibe ich allerdings einen Satz, der vier Füllwörter enthält, was allemal ziemlich ausreichend ist."
-	ruleBothLast := NewGermanFillerWordsRule(nil)
-	ruleBothLast.TestManyInSentence = true
-	ruleBothLast.TestTwoFollowing = true
-	ms := ruleBothLast.Match(languagetool.AnalyzePlain(last))
-	require.Equal(t, 3, len(ms), "three fillers with both sentence options")
-	for _, m := range ms {
-		require.True(t,
-			strings.Contains(m.GetMessage(), "Mehr als zwei potentielle Füllwörter") ||
-				strings.Contains(m.GetMessage(), "Zwei potentielle Füllwörter hintereinander"),
-			"msg=%q", m.GetMessage())
-	}
-
-	// many-in-sentence alone: non-adjacent trio → all get "mehr als zwei" message
-	// (each sees 2 others beyond n±1)
-	trio := "Es war allerdings heute allemal und dann ziemlich kalt draußen gewesen."
-	// fillers: allerdings, allemal, ziemlich — separated by ≥1 non-filler
-	ruleMany := NewGermanFillerWordsRule(nil)
-	ruleMany.TestManyInSentence = true
-	ms = ruleMany.Match(languagetool.AnalyzePlain(trio))
-	require.Equal(t, 3, len(ms), "non-adjacent trio → many-in-sentence")
-	for _, m := range ms {
-		require.Contains(t, m.GetMessage(), "Mehr als zwei potentielle Füllwörter")
-	}
-
-	// two consecutive: allemal + ziemlich
-	ruleTwo := NewGermanFillerWordsRule(nil)
-	ruleTwo.TestTwoFollowing = true
-	pair := "Das war allemal ziemlich ausreichend."
-	ms = ruleTwo.Match(languagetool.AnalyzePlain(pair))
-	require.Equal(t, 2, len(ms), "two consecutive fillers")
-	for _, m := range ms {
-		require.Contains(t, m.GetMessage(), "Zwei potentielle Füllwörter hintereinander")
-	}
-
-	// Multi-sentence under 8% with BOTH options: sentence-condition hits always emit.
-	// Hits: relativ (deferred, under threshold) + allerdings/allemal/ziemlich (immediate).
-	// Immediate count = 3 (Java full-text expects 4 when percent also emits relativ —
-	// with AnalyzeTextLocal wordCount, 4/67≈6% < 8 so relativ stays deferred).
-	four := "Der Text enthält zu wenige Füllwörter, daher werden sie nicht angezeigt. " +
-		"Was sich an diesem Satz mit diesem relativ einfachen Füllwort zeigt. " +
-		"Dazu müssen noch eine Reihe von Sätzen geschrieben werden, um die Anzahl der Wörter zu erhöhen. " +
-		"Langsam sollten die Anzahl der Worte für das Drücken unter die kritische Grenze reichen. " +
-		"Jetzt schreibe ich allerdings einen Satz, der vier Füllwörter enthält, was allemal ziemlich ausreichend ist."
-	ruleBoth := NewGermanFillerWordsRule(nil)
-	ruleBoth.TestTwoFollowing = true
-	ruleBoth.TestManyInSentence = true
-	ms = ruleBoth.MatchList(languagetool.AnalyzeTextLocal(four))
-	require.Equal(t, 3, len(ms), "sentence-option immediate hits (deferred relativ under 8%)")
-	// All messages are sentence-option style, not the percent limit message
-	for _, m := range ms {
-		require.True(t,
-			strings.Contains(m.GetMessage(), "Füllwörter hintereinander") ||
-				strings.Contains(m.GetMessage(), "Mehr als zwei potentielle Füllwörter"),
-			"msg=%q", m.GetMessage())
-	}
-
-	// When minPercent is low enough that deferred also emit → 4 total (relativ + 3)
-	ruleLow := NewGermanFillerWordsRuleWithMinPercent(nil, 0)
-	ruleLow.TestTwoFollowing = true
-	ruleLow.TestManyInSentence = true
-	// MinPercent==0 still counts speech-path; all condition hits emit via percent>0 or sentence
-	// With min 0: percent > 0 if any hits → deferred also shown. Sentence hits immediate too.
-	// Avoid double-count: sentence hits go immediate; deferred only non-sentence.
-	// relativ is deferred; 3 are immediate → MatchList size 4
-	ms = ruleLow.MatchList(languagetool.AnalyzeTextLocal(four))
-	require.Equal(t, 4, len(ms), "minPercent=0 emits deferred relativ + 3 sentence hits")
+	// sentence-start exception (num==1)
+	require.Equal(t, 0, gfwCheck(t, rule, lt, tagger, "Allerdings war es kalt."))
+	require.Equal(t, 1, gfwCheck(t, rule, lt, tagger, "Es war allerdings kalt."))
+	// two-word exception: immer wieder
+	require.Equal(t, 0, gfwCheck(t, rule, lt, tagger, "Das passiert immer wieder hier."))
+	// after comma exception
+	require.Equal(t, 0, gfwCheck(t, rule, lt, tagger, "Es war kalt, allerdings regnete es."))
 }
 
 func TestGermanFillerWordsRule_LimitMessage(t *testing.T) {
@@ -140,4 +188,5 @@ func TestGermanFillerWordsRule_LimitMessage(t *testing.T) {
 	require.Contains(t, r.getLimitMessage(0, 0), "könnte ein Füllwort")
 	require.Contains(t, r.getLimitMessage(8, 12.4), "Mehr als 8%")
 	require.Contains(t, r.getLimitMessage(8, 12.4), "12%")
+	require.Equal(t, "", r.GetSentenceMessage())
 }
