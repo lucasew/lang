@@ -307,7 +307,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-DashRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/DashRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/DashRuleTest.java | internal/languagetool/org/languagetool/rules/de/dash_rule.go; internal/languagetool/org/languagetool/rules/de/DashRuleTest_test.go | c089ca9fcfe428223fb6063de6bc322c57c23b9a | 0 | 0 |  |  | 2026-07-25T02:11:01Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanCommaWhitespaceRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanCommaWhitespaceRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanCommaWhitespaceRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/CommaWhitespaceRule.java | internal/languagetool/org/languagetool/rules/de/german_comma_whitespace_rule.go; internal/languagetool/org/languagetool/rules/de/GermanCommaWhitespaceRuleTest_test.go | 86722836f11cf0d3d842dfc25200b9b3de88d341 | 0 | 0 |  |  | 2026-07-25T02:25:30Z |
 | docs/faithful-port-checklist.md#3.C.3-SentenceWhitespaceRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SentenceWhitespaceRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SentenceWhitespaceRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/SentenceWhitespaceRule.java | internal/languagetool/org/languagetool/rules/de/sentence_whitespace_rule.go; internal/languagetool/org/languagetool/rules/de/SentenceWhitespaceRuleTest_test.go | f7e0670086b600ea4f4dbb16c8b9e63903fd821b | 0 | 0 |  |  | 2026-07-25T02:35:57Z |
-| docs/faithful-port-checklist.md#3.C.3-LongSentenceRule-DE | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/LongSentenceRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/LongSentenceRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/LongSentenceRule.java | internal/languagetool/org/languagetool/rules/de/long_sentence_rule.go; internal/languagetool/org/languagetool/rules/de/LongSentenceRuleTest_test.go | a3b32f031516120520aa2d747895826a159b79c9 | 0 | 0 |  |  | 2026-07-25T02:44:26Z |
+| docs/faithful-port-checklist.md#3.C.3-LongSentenceRule-DE | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/LongSentenceRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/LongSentenceRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/LongSentenceRule.java | internal/languagetool/org/languagetool/rules/de/long_sentence_rule.go; internal/languagetool/org/languagetool/rules/de/LongSentenceRuleTest_test.go | a3b32f031516120520aa2d747895826a159b79c9 | 0 | 0 |  |  | 2026-07-25T02:50:34Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -316,7 +316,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-SentenceWhitespaceRule @ f7e06700 |
+| Notes | ACCEPT 3.C.3-LongSentenceRule-DE @ a3b32f03 |
 
 ---
 
@@ -1375,3 +1375,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T02:35:57Z ACCEPT: 3.C.3-SentenceWhitespaceRule @ f7e06700 (validator + parent green reconfirm; DE_SENTENCE_WHITESPACE; de-DE Check twin)
 - 2026-07-25T02:38:57Z implement: 3.C.3-LongSentenceRule-DE (TOO_LONG_SENTENCE_DE + LongSentenceRuleTest maxWords=6 spans)
 - 2026-07-25T02:44:26Z ready: 3.C.3-LongSentenceRule-DE @ a3b32f03 (implementer report; parent green reconfirm LongSentence DE; de-DE Analyze + exact spans)
+- 2026-07-25T02:48:40Z validating: 3.C.3-LongSentenceRule-DE @ a3b32f03 (strict invent re-audit vs Java DE LongSentenceRule + Test)
+- 2026-07-25T02:50:34Z ACCEPT: 3.C.3-LongSentenceRule-DE @ a3b32f03 (validator + parent green reconfirm; TOO_LONG_SENTENCE_DE; exact spans)
