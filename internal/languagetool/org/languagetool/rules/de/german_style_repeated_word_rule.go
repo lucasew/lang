@@ -13,63 +13,115 @@ import (
 // Default off (Java). Compound-part matching optional (testCompoundWords; default false).
 type GermanStyleRepeatedWordRule struct {
 	*rules.AbstractStyleRepeatedWordRule
+	// TestCompoundWords ports Java testCompoundWords (UserConfig cf[2]; default false).
 	TestCompoundWords bool
-	// IsCorrectSpell optional; used when TestCompoundWords (Java Morfologik).
+	// messages ports ResourceBundle for getRuleOptions (may be nil).
+	messages map[string]string
+	// IsCorrectSpell optional; used when TestCompoundWords (Java Morfologik Speller).
+	// Default: FilterDictIsMisspelled after UppercaseFirstChar (de_DE.dict).
 	IsCorrectSpell func(word string) bool
 }
 
+const (
+	germanStyleMaxDistanceDefault  = 1
+	germanStyleExcludeDirectSpeech = true
+	germanStyleTestCompoundDefault = false
+	germanStyleSynonymsURL         = "https://www.openthesaurus.de/synonyme/"
+	germanStyleRuleID              = "STYLE_REPEATED_WORD_RULE_DE"
+	germanStyleDesc                = "Wiederholte Worte in aufeinanderfolgenden Sätzen"
+	germanStyleOptExcludeSpeech    = "Direkte Rede und Zitate ausschließen"
+	germanStyleOptTestCompound     = "Auch zusammengesetzte Wörter prüfen"
+	germanStyleMsgSameSentence     = "Mögliches Stilproblem: Das Wort wird noch einmal im selben Satz verwendet."
+	germanStyleMsgSentenceBefore   = "Mögliches Stilproblem: Das Wort wird bereits in einem vorhergehenden Satz verwendet."
+	germanStyleMsgSentenceAfter    = "Mögliches Stilproblem: Das Wort wird auch in einem nachfolgenden Satz verwendet."
+)
+
 var styleLettersRE = regexp.MustCompile(`^[A-Za-zÄÖÜäöüß]+$`)
 
+// NewGermanStyleRepeatedWordRule ports GermanStyleRepeatedWordRule(messages, lang, null).
 func NewGermanStyleRepeatedWordRule(messages map[string]string) *GermanStyleRepeatedWordRule {
+	return NewGermanStyleRepeatedWordRuleWithUserConfig(messages, nil)
+}
+
+// NewGermanStyleRepeatedWordRuleWithUserConfig ports
+// GermanStyleRepeatedWordRule(ResourceBundle messages, Language lang, UserConfig userConfig).
+func NewGermanStyleRepeatedWordRuleWithUserConfig(messages map[string]string, userConfig *languagetool.UserConfig) *GermanStyleRepeatedWordRule {
 	base := rules.NewAbstractStyleRepeatedWordRule()
-	base.ID = "STYLE_REPEATED_WORD_RULE_DE"
-	base.Description = "Wiederholte Worte in aufeinanderfolgenden Sätzen"
-	base.MaxDistanceOfSentences = 1
-	base.ExcludeDirectSpeech = true
-	base.MessageSameSentence = func() string {
-		return "Mögliches Stilproblem: Das Wort wird noch einmal im selben Satz verwendet."
-	}
-	base.MessageSentenceBefore = func() string {
-		return "Mögliches Stilproblem: Das Wort wird bereits in einem vorhergehenden Satz verwendet."
-	}
-	base.MessageSentenceAfter = func() string {
-		return "Mögliches Stilproblem: Das Wort wird auch in einem nachfolgenden Satz verwendet."
-	}
+	base.ID = germanStyleRuleID
+	base.Description = germanStyleDesc
+	base.MaxDistanceOfSentences = germanStyleMaxDistanceDefault
+	base.ExcludeDirectSpeech = germanStyleExcludeDirectSpeech
+	base.MessageSameSentence = func() string { return germanStyleMsgSameSentence }
+	base.MessageSentenceBefore = func() string { return germanStyleMsgSentenceBefore }
+	base.MessageSentenceAfter = func() string { return germanStyleMsgSentenceAfter }
 	// Java: gehe … <marker>gehe</marker> (fixed drops second verb)
 	base.AddExamplePair(
 		rules.Wrong("Ich gehe zum Supermarkt, danach <marker>gehe</marker> ich nach Hause."),
 		rules.Fixed("Ich gehe zum Supermarkt, danach nach Hause."),
 	)
-	r := &GermanStyleRepeatedWordRule{AbstractStyleRepeatedWordRule: base}
+	// Java abstract ctor: UserConfig cf[0]/cf[1] via getId() (DE id set above).
+	base.ApplyUserConfigFromID(germanStyleRuleID, userConfig)
+
+	r := &GermanStyleRepeatedWordRule{
+		AbstractStyleRepeatedWordRule: base,
+		TestCompoundWords:             germanStyleTestCompoundDefault,
+		messages:                      messages,
+	}
+	// Java subclass: if (cf != null && cf.length > 2) testCompoundWords = (boolean) cf[2];
+	if userConfig != nil {
+		if cf := userConfig.GetConfigValueByID(germanStyleRuleID); len(cf) > 2 && cf[2] != nil {
+			if v, ok := cf[2].(bool); ok {
+				r.TestCompoundWords = v
+			}
+		}
+	}
 	base.IsTokenToCheck = r.isTokenToCheck
 	base.IsTokenPair = r.isTokenPair
 	base.IsPartOfWord = r.isPartOfWord
 	base.IsExceptionPair = r.isExceptionPair
 	// Java GermanStyleRepeatedWordRule.setURL → OpenThesaurus lemma/surface link.
 	base.SetURL = germanStyleRepeatedWordURL
-	// Java AbstractStyleRepeatedWordRule: STYLE + Style + defaultOff.
+	// Java AbstractStyleRepeatedWordRule: STYLE + Style + defaultOff (+ subclass setCategory STYLE).
 	rules.InitStyleRepeatedWordMeta(base, messages)
-	// Java: MorfologikSpeller / LinguServices; without dict compound-part checks stay fail-closed.
+	// Java: lazy Morfologik Speller(/de/hunspell/de_DE.dict) or LinguServices.
+	// Without dict, compound-part checks fail-closed (return false) — isPartOfWord only
+	// runs when TestCompoundWords; default-off path never needs the speller.
 	r.IsCorrectSpell = func(word string) bool {
 		if !FilterDictAvailable() {
 			return false
 		}
+		// Java isCorrectSpell uppercases first then Speller.isMisspelled.
 		return !FilterDictIsMisspelled(tools.UppercaseFirstChar(word))
 	}
 	return r
+}
+
+// GetRuleOptions ports GermanStyleRepeatedWordRule.getRuleOptions (3 options).
+func (r *GermanStyleRepeatedWordRule) GetRuleOptions() []*rules.RuleOption {
+	// Java: messages.getString("guiStyleRepeatedWordText") for option 0;
+	// hardcoded DE strings for exclude speech + compound words.
+	distText := "Maximum distance between two repeated words (0 - 5 sentences):"
+	if r != nil && r.messages != nil {
+		if s, ok := r.messages["guiStyleRepeatedWordText"]; ok && s != "" {
+			distText = s
+		}
+	}
+	return []*rules.RuleOption{
+		rules.NewRuleOption(germanStyleMaxDistanceDefault, distText, 0, 5),
+		rules.NewRuleOption(germanStyleExcludeDirectSpeech, germanStyleOptExcludeSpeech, 0, 5),
+		rules.NewRuleOption(germanStyleTestCompoundDefault, germanStyleOptTestCompound, 0, 5),
+	}
 }
 
 func (r *GermanStyleRepeatedWordRule) GetID() string {
 	if r != nil && r.AbstractStyleRepeatedWordRule != nil {
 		return r.AbstractStyleRepeatedWordRule.GetID()
 	}
-	return "STYLE_REPEATED_WORD_RULE_DE"
+	return germanStyleRuleID
 }
 
 // germanStyleRepeatedWordURL ports GermanStyleRepeatedWordRule.setURL.
 // Java: SYNONYMS_URL + single lemma, else token surface.
-const germanOpenThesaurusURL = "https://www.openthesaurus.de/synonyme/"
-
 func germanStyleRepeatedWordURL(token *languagetool.AnalyzedTokenReadings) string {
 	if token == nil {
 		return ""
@@ -84,9 +136,9 @@ func germanStyleRepeatedWordURL(token *languagetool.AnalyzedTokenReadings) strin
 		}
 	}
 	if len(lemmas) == 1 {
-		return germanOpenThesaurusURL + lemmas[0]
+		return germanStyleSynonymsURL + lemmas[0]
 	}
-	return germanOpenThesaurusURL + token.GetToken()
+	return germanStyleSynonymsURL + token.GetToken()
 }
 
 // isUnknownWordStyle ports GermanStyleRepeatedWordRule.isUnknownWord:
@@ -102,7 +154,8 @@ func isUnknownWordStyle(token *languagetool.AnalyzedTokenReadings) bool {
 
 func (r *GermanStyleRepeatedWordRule) isTokenToCheck(tokens []*languagetool.AnalyzedTokenReadings, n int) bool {
 	// Java: Frau/Herr + next EIG/unknown → false; else (SUB|EIG|VER|ADJ without PRO/ART/ADV/AUX/MOD) || unknown
-	if n <= 0 || n >= len(tokens) || tokens[n] == nil {
+	// Note: n==0 is allowed (SENT_START fails POS); only bounds-check n.
+	if n < 0 || n >= len(tokens) || tokens[n] == nil {
 		return false
 	}
 	if n > 0 && n < len(tokens)-1 && tokens[n+1] != nil {
@@ -115,12 +168,14 @@ func (r *GermanStyleRepeatedWordRule) isTokenToCheck(tokens []*languagetool.Anal
 		}
 	}
 	token := tokens[n]
+	// Java: ((matches SUB|EIG|VER|ADJ && !PRO|ART|ADV|AUX|MOD) || isUnknownWord) && !equalsAny(...)
 	ok := (token.MatchesPosTagRegex(`(SUB|EIG|VER|ADJ):.*`) &&
 		!token.MatchesPosTagRegex(`(PRO|A(RT|DV)|VER:(AUX|MOD)):.*`)) ||
 		isUnknownWordStyle(token)
 	if !ok {
 		return false
 	}
+	// Java Strings.CS.equalsAny — case-sensitive surface blocklist
 	switch token.GetToken() {
 	case "sicher", "weit", "Sie", "Ich", "Euch", "Eure", "Der", "all":
 		return false

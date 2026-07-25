@@ -132,6 +132,64 @@ func (r *AbstractStyleRepeatedWordRule) GetDescription() string {
 	return "Repeated words in consecutive sentences"
 }
 
+// MinToCheckParagraph ports AbstractStyleRepeatedWordRule.minToCheckParagraph.
+// Java: excludeDirectSpeech ? -1 : maxDistanceOfSentences
+func (r *AbstractStyleRepeatedWordRule) MinToCheckParagraph() int {
+	if r == nil {
+		return -1
+	}
+	if r.ExcludeDirectSpeech {
+		return -1
+	}
+	return r.MaxDistanceOfSentences
+}
+
+// GetRuleOptions ports AbstractStyleRepeatedWordRule.getRuleOptions (2 options).
+// Language subclasses (e.g. German) override with extra compound option.
+func (r *AbstractStyleRepeatedWordRule) GetRuleOptions() []*RuleOption {
+	// Defaults match Java MAX_DISTANCE_OF_SENTENCES=1, EXCLUDE_DIRECT_SPEECH=true.
+	maxDist := 1
+	excludeDS := true
+	if r != nil {
+		maxDist = r.MaxDistanceOfSentences
+		excludeDS = r.ExcludeDirectSpeech
+	}
+	// Java: messages.getString("guiStyleRepeatedWordText") / "guiStyleExcludeDirectSpeechText"
+	// English MessagesBundle defaults when no bundle is wired on this base type.
+	return []*RuleOption{
+		NewRuleOption(maxDist, "Maximum distance between two repeated words (0 - 5 sentences):", 0, 5),
+		NewRuleOption(excludeDS, "Exclude direct speech and quotations", 0, 5),
+	}
+}
+
+// ApplyUserConfigFromID ports abstract ctor UserConfig.getConfigValueByID(getId()) for
+// maxDistanceOfSentences (cf[0] Integer) and excludeDirectSpeech (cf[1] Boolean).
+func (r *AbstractStyleRepeatedWordRule) ApplyUserConfigFromID(ruleID string, userConfig *languagetool.UserConfig) {
+	if r == nil || userConfig == nil {
+		return
+	}
+	cf := userConfig.GetConfigValueByID(ruleID)
+	if cf == nil {
+		return
+	}
+	if len(cf) > 0 && cf[0] != nil {
+		switch v := cf[0].(type) {
+		case int:
+			r.MaxDistanceOfSentences = v
+		case int64:
+			r.MaxDistanceOfSentences = int(v)
+		case float64:
+			// JSON-decoded configs sometimes land as float64
+			r.MaxDistanceOfSentences = int(v)
+		}
+	}
+	if len(cf) > 1 && cf[1] != nil {
+		if v, ok := cf[1].(bool); ok {
+			r.ExcludeDirectSpeech = v
+		}
+	}
+}
+
 func hasBreakTokenStyleAbstract(tokens []*languagetool.AnalyzedTokenReadings) bool {
 	for i := 0; i < len(tokens) && i < maxTokenToCheckStyle; i++ {
 		if tokens[i] == nil {
@@ -272,8 +330,13 @@ func (r *AbstractStyleRepeatedWordRule) isTokenInSentence(
 	return false
 }
 
-func getStartsWithDirectSpeech(n int, sentences []*languagetool.AnalyzedSentence, isDirectSpeech bool) bool {
-	if n <= 0 {
+// getStartsWithDirectSpeech ports AbstractStyleRepeatedWordRule.getStartsWithDirectSpeech.
+// When excludeDirectSpeech is false Java always returns false (isDSList stays false).
+func (r *AbstractStyleRepeatedWordRule) getStartsWithDirectSpeech(n int, sentences []*languagetool.AnalyzedSentence, isDirectSpeech bool) bool {
+	if r == nil || !r.ExcludeDirectSpeech || n <= 0 {
+		return false
+	}
+	if n-1 < 0 || n-1 >= len(sentences) || sentences[n-1] == nil {
 		return false
 	}
 	sentence := sentences[n-1].GetTokensWithoutWhitespace()
@@ -316,7 +379,7 @@ func (r *AbstractStyleRepeatedWordRule) MatchList(sentences []*languagetool.Anal
 			continue
 		}
 		tokenList = append(tokenList, sentences[n].GetTokensWithoutWhitespace())
-		startsWithDirectSpeech = getStartsWithDirectSpeech(n, sentences, startsWithDirectSpeech)
+		startsWithDirectSpeech = r.getStartsWithDirectSpeech(n, sentences, startsWithDirectSpeech)
 		isDSList = append(isDSList, startsWithDirectSpeech)
 	}
 
@@ -324,7 +387,7 @@ func (r *AbstractStyleRepeatedWordRule) MatchList(sentences []*languagetool.Anal
 	for n := 0; n < len(sentences); n++ {
 		if n+maxDist < len(sentences) && sentences[n+maxDist] != nil {
 			tokenList = append(tokenList, sentences[n+maxDist].GetTokensWithoutWhitespace())
-			startsWithDirectSpeech = getStartsWithDirectSpeech(n+maxDist, sentences, startsWithDirectSpeech)
+			startsWithDirectSpeech = r.getStartsWithDirectSpeech(n+maxDist, sentences, startsWithDirectSpeech)
 			isDSList = append(isDSList, startsWithDirectSpeech)
 		}
 		if len(tokenList) > 2*maxDist+1 {

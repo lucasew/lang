@@ -1,105 +1,171 @@
 package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanStyleRepeatedWordRuleTest.java
-// Java uses tagged analysis (ADJ/SUB/VER). Morph inject only; untagged AnalyzePlain fails closed.
+//
+// Java:
+//   Language lang = Languages.getLanguageForShortCode("de-DE");
+//   JLanguageTool lt = new JLanguageTool(lang);
+//   setUpRule(lt, null | getRuleValues(1, false, true));
+//   assertEquals(n, lt.check(text).size());
+//
+// Go: de-DE analysis via GermanWordTokenizer + GermanTagger.Tag
+// (same path as UnnecessaryPhraseRule / NonSignificantVerbsRule twins).
+// Compound path wires official /de/hunspell/de_DE.dict (Java MorfologikSpeller).
+// No invent morph tables; match counts must equal Java.
+
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	detag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/de"
 	"github.com/stretchr/testify/require"
 )
 
+// setUpGermanStyleRepeatedWordRule ports GermanStyleRepeatedWordRuleTest.setUpRule.
+func setUpGermanStyleRepeatedWordRule(t *testing.T, userConfig *languagetool.UserConfig) (*GermanStyleRepeatedWordRule, *languagetool.JLanguageTool, *detag.GermanTagger) {
+	t.Helper()
+	// Java: Languages.getLanguageForShortCode("de-DE")
+	lt := languagetool.NewJLanguageTool("de-DE")
+	require.True(t, WireGermanTagWord(lt), "GermanTagger resources required for GermanStyleRepeatedWordRule twin")
+	tagger := DiscoveredGermanTagger()
+	require.NotNil(t, tagger, "GermanTagger.INSTANCE resources required")
+
+	// Java: for (Rule rule : lt.getAllRules()) { lt.disableRule(rule.getId()); }
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		lt.DisableRule(id)
+	}
+	// Java: new GermanStyleRepeatedWordRule(TestTools.getMessages(...), lang, userConfig)
+	rule := NewGermanStyleRepeatedWordRuleWithUserConfig(nil, userConfig)
+	lt.AddTextLevelRuleChecker(rule.GetID(), rules.AsTextLevelChecker(rule.MatchList))
+	lt.EnableRule(rule.GetID())
+	return rule, lt, tagger
+}
+
+// gsrwCheck ports lt.check(text).size() with only GermanStyleRepeatedWordRule enabled.
+func gsrwCheck(t *testing.T, rule *GermanStyleRepeatedWordRule, lt *languagetool.JLanguageTool, tagger *detag.GermanTagger, text string) int {
+	t.Helper()
+	sents := analyzeTextWithGermanTagger(lt, tagger, text)
+	return len(rule.MatchList(sents))
+}
+
+// getGermanStyleRuleValues ports GermanStyleRepeatedWordRuleTest.getRuleValues.
+func getGermanStyleRuleValues(numSentences int, excludeDirectSpeech, testComposedWords bool) map[string][]any {
+	return map[string][]any{
+		germanStyleRuleID: {numSentences, excludeDirectSpeech, testComposedWords},
+	}
+}
+
 func TestGermanStyleRepeatedWordRule_Meta(t *testing.T) {
 	rule := NewGermanStyleRepeatedWordRule(nil)
+	require.Equal(t, germanStyleRuleID, rule.GetID())
 	require.Equal(t, "STYLE_REPEATED_WORD_RULE_DE", rule.GetID())
-	require.Equal(t, "Wiederholte Worte in aufeinanderfolgenden Sätzen", rule.GetDescription())
+	require.Equal(t, germanStyleDesc, rule.GetDescription())
 	require.True(t, rule.DefaultOff)
+	require.True(t, rule.IsDefaultOff())
 	require.Equal(t, 1, rule.MaxDistanceOfSentences)
 	require.True(t, rule.ExcludeDirectSpeech)
 	require.False(t, rule.TestCompoundWords) // Java TEST_COMPOUND_WORDS default false
+	require.Equal(t, -1, rule.MinToCheckParagraph())
+	require.Equal(t, rules.ITSStyle, rule.GetLocQualityIssueType())
+	require.NotNil(t, rule.GetCategory())
 	require.NotEmpty(t, rule.GetIncorrectExamples())
+	opts := rule.GetRuleOptions()
+	require.Len(t, opts, 3)
+	require.Equal(t, 1, opts[0].DefaultValue)
+	require.Equal(t, true, opts[1].DefaultValue)
+	require.Equal(t, false, opts[2].DefaultValue)
+	require.Equal(t, germanStyleOptExcludeSpeech, opts[1].ConfigureText)
+	require.Equal(t, germanStyleOptTestCompound, opts[2].ConfigureText)
 }
 
+// TestGermanStyleRepeatedWordRule_Rule ports GermanStyleRepeatedWordRuleTest.testRule
+// with real de-DE tagging (Java JLanguageTool + GermanTagger).
 func TestGermanStyleRepeatedWordRule_Rule(t *testing.T) {
-	rule := NewGermanStyleRepeatedWordRule(nil)
+	// Java: setUpRule(lt, null) — defaults: maxDistance=1, excludeDirectSpeech=true, testCompoundWords=false
+	rule, lt, tagger := setUpGermanStyleRepeatedWordRule(t, nil)
 
-	// "großen" ADJ ×2 across sentences → 2
-	s1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("alte", "ADJ:NOM:SIN:MAS:GRU:DEF", "alt"),
-		atrWithPOS("Mann", "SUB:NOM:SIN:MAS", "Mann"),
-		atrWithPOS("wohnte", "VER:3:SIN:PRT:SFT", "wohnen"),
-		atrWithPOS("in", "PRP:DAT", "in"),
-		atrWithPOS("einem", "ART:IND:DAT:SIN:NEU", "ein"),
-		atrWithPOS("großen", "ADJ:DAT:SIN:NEU:GRU:IND", "groß"),
-		atrWithPOS("Haus", "SUB:DAT:SIN:NEU", "Haus"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	s2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Es", "PRO:PER:NOM:SIN:NEU", "es"),
-		atrWithPOS("stand", "VER:3:SIN:PRT:NON", "stehen"),
-		atrWithPOS("in", "PRP:DAT", "in"),
-		atrWithPOS("einem", "ART:IND:DAT:SIN:NEU", "ein"),
-		atrWithPOS("großen", "ADJ:DAT:SIN:NEU:GRU:IND", "groß"),
-		atrWithPOS("Garten", "SUB:DAT:SIN:MAS", "Garten"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 2, len(rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})))
+	// Java assertEquals(2, … großen … großen …)
+	require.Equal(t, 2, gsrwCheck(t, rule, lt, tagger,
+		"Der alte Mann wohnte in einem großen Haus. Es stand in einem großen Garten."))
+	// Java assertEquals(0, …)
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Der alte Mann wohnte in einem großen Haus. Es stand in einem weitläufigen Garten."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Endlos lang zog sich der Ton dahin, aber schließlich verklang er doch."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Die Au leuchtete im Blitz, die Glühwürmchen flimmerten vor Aufregung."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Sie sind alle in der gleichen Art hergestellt. Nur bei einem Artefakt wurde eine andere Vorgehensweise angewandt."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Ich erkannte keinen Lidschlag zu spät, dass es nicht in ihrer Absicht lag."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Dieser Schritt brachte uns näher an die Lösung. Der nächste würde das Problem für immer aus der Welt schaffen."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Er lehnte seinen Wanderstab gegen die Wand."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Zweifel lagen in der Luft, ob es richtig war, diesen Weg einzuschlagen."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Der Donnerhall verklang nur langsam in meinen Ohren. Das war mir in all den Jahren meines Lebens noch nicht passiert."))
+	// default: compound parts off → Schiffsmotor/Motor not flagged
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Der Schiffsmotor, der im Heck des Schiffs eingebaut war, röhrte. Auf Hochtouren lief der Motor."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Der Buntspecht stolzierte den Baum hoch. Schon klopfte der Specht."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Rotbraun war die Farbe der Haselnuss. Der Horizont schimmerte rot."))
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Rotbraun war die Farbe der Haselnuss. Was für eine 'Farbe'?"))
+	// excludeDirectSpeech=true → quoted Ausblick not checked
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Der Ausblick war überwätigend. \"Was für ein Ausblick!\", sagte sie auch prompt."))
+	// Frau + EIG exception
+	require.Equal(t, 0, gsrwCheck(t, rule, lt, tagger,
+		"Frau Heinrich stand unschlüssig in in ihrem Garten. Frau Müller schaute zu ihr herüber."))
 
-	// different adjectives → 0
-	s2b := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Es", "PRO:PER:NOM:SIN:NEU", "es"),
-		atrWithPOS("stand", "VER:3:SIN:PRT:NON", "stehen"),
-		atrWithPOS("in", "PRP:DAT", "in"),
-		atrWithPOS("einem", "ART:IND:DAT:SIN:NEU", "ein"),
-		atrWithPOS("weitläufigen", "ADJ:DAT:SIN:NEU:GRU:IND", "weitläufig"),
-		atrWithPOS("Garten", "SUB:DAT:SIN:MAS", "Garten"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2b})))
+	// Java: setUpRule(lt, getRuleValues(1, false, true))
+	// → maxDistance=1, excludeDirectSpeech=false, testCompoundWords=true
+	// Compound-part matching needs Java Morfologik /de/hunspell/de_DE.dict.
+	dict := deHunspellPath(t, "de_DE.dict")
+	require.True(t, WireGermanFilterSpeller(dict), "de_DE.dict required for compound-word twin (Java MorfologikSpeller)")
+	t.Cleanup(ClearGermanFilterSpeller)
 
-	// Java: Frau Heinrich … Frau Müller → 0 (Frau + next EIG not checked)
-	f1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
-		atrWithPOS("Heinrich", "EIG:NOM:SIN:FEM", "Heinrich"),
-		atrWithPOS("stand", "VER:3:SIN:PRT:NON", "stehen"),
-		atrWithPOS("unschlüssig", "ADJ:PRD:GRU", "unschlüssig"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	f2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Frau", "SUB:NOM:SIN:FEM", "Frau"),
-		atrWithPOS("Müller", "EIG:NOM:SIN:FEM", "Müller"),
-		atrWithPOS("schaute", "VER:3:SIN:PRT:SFT", "schauen"),
-		atrWithPOS("zu", "APPR:DAT", "zu"),
-		atrWithPOS("ihr", "PRO:PER:DAT:SIN:FEM", "sie"),
-		atrWithPOS("herüber", "ADV", "herüber"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{f1, f2})))
+	uc := languagetool.NewUserConfigWithWords(nil, getGermanStyleRuleValues(1, false, true))
+	rule2, lt2, tagger2 := setUpGermanStyleRepeatedWordRule(t, uc)
+	require.Equal(t, 1, rule2.MaxDistanceOfSentences)
+	require.False(t, rule2.ExcludeDirectSpeech)
+	require.True(t, rule2.TestCompoundWords)
+	require.Equal(t, 1, rule2.MinToCheckParagraph()) // excludeDirectSpeech false → maxDistance
 
-	// default TestCompoundWords=false: Schiffsmotor / Motor not matched as parts
-	ship1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Schiffsmotor", "SUB:NOM:SIN:MAS", "Schiffsmotor"),
-		atrWithPOS("röhrte", "VER:3:SIN:PRT:SFT", "röhren"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	ship2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Motor", "SUB:NOM:SIN:MAS", "Motor"),
-		atrWithPOS("lief", "VER:3:SIN:PRT:NON", "laufen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{ship1, ship2})))
+	// Java: Schiffsmotor/Schiffs same-sentence + Motor → 3
+	require.Equal(t, 3, gsrwCheck(t, rule2, lt2, tagger2,
+		"Der Schiffsmotor, der im Heck des Schiffs eingebaut war, röhrte. Auf Hochtouren lief der Motor."))
+	// Java: Buntspecht … Specht → 2
+	require.Equal(t, 2, gsrwCheck(t, rule2, lt2, tagger2,
+		"Der Buntspecht stolzierte den Baum hoch. Schon klopfte der Specht."))
+	// Java: Rotbraun … rot → 2
+	require.Equal(t, 2, gsrwCheck(t, rule2, lt2, tagger2,
+		"Rotbraun war die Farbe der Haselnuss. Der Horizont schimmerte rot."))
+	// Java: excludeDirectSpeech=false → quoted Ausblick flagged → 2
+	require.Equal(t, 2, gsrwCheck(t, rule2, lt2, tagger2,
+		"Der Ausblick war überwätigend. \"Was für ein Ausblick!\", sagte sie auch prompt."))
+}
 
-	// Java isUnknownWord: isPosTagUnknown only (not invent !isTagged).
+func TestGermanStyleRepeatedWordRule_URLOnMatch(t *testing.T) {
+	// Java setURL: single lemma → OpenThesaurus + lemma; match gets URL.
+	rule, lt, tagger := setUpGermanStyleRepeatedWordRule(t, nil)
+	text := "Der alte Mann wohnte in einem großen Haus. Es stand in einem großen Garten."
+	sents := analyzeTextWithGermanTagger(lt, tagger, text)
+	ms := rule.MatchList(sents)
+	require.Len(t, ms, 2)
+	for _, m := range ms {
+		require.NotEmpty(t, m.GetURL(), "Java setURL attaches OpenThesaurus URL")
+		require.Contains(t, m.GetURL(), "openthesaurus.de/synonyme/")
+	}
+}
+
+func TestGermanStyleRepeatedWordRule_IsUnknownWord(t *testing.T) {
+	// Java isUnknownWord: isPosTagUnknown && len>2 && letters only.
 	unk := languagetool.AnalyzePlain("Blahxyz").GetTokensWithoutWhitespace()
 	var blah *languagetool.AnalyzedTokenReadings
 	for _, tok := range unk {
@@ -111,132 +177,16 @@ func TestGermanStyleRepeatedWordRule_Rule(t *testing.T) {
 	require.NotNil(t, blah)
 	require.True(t, blah.IsPosTagUnknown())
 	require.True(t, isUnknownWordStyle(blah))
-	require.False(t, isUnknownWordStyle(atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus")))
-
-	// untagged AnalyzePlain must not invent SUB/ADJ hits
-	require.Equal(t, 0, len(rule.MatchList(languagetool.AnalyzeTextLocal(
-		"Der alte Mann wohnte in einem großen Haus. Es stand in einem großen Garten."))))
-}
-
-func TestGermanStyleRepeatedWordRule_TestCompoundWords(t *testing.T) {
-	// Java setUpRule(lt, getRuleValues(1, false, true)) → testComposedWords
-	rule := NewGermanStyleRepeatedWordRule(nil)
-	rule.TestCompoundWords = true
-	// Speller required for isSecondPartOfWord; inject true (Java Morfologik).
-	rule.IsCorrectSpell = func(word string) bool { return true }
-
-	// Schiffsmotor … Motor → 3 (Java)
-	s1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Schiffsmotor", "SUB:NOM:SIN:MAS", "Schiffsmotor"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("der", "PRELS:NOM:SIN:MAS", "der"),
-		atrWithPOS("im", "APPRART:DAT:SIN:NEU", "in"),
-		atrWithPOS("Heck", "SUB:DAT:SIN:NEU", "Heck"),
-		atrWithPOS("des", "ART:DEF:GEN:SIN:NEU", "der"),
-		atrWithPOS("Schiffs", "SUB:GEN:SIN:NEU", "Schiff"),
-		atrWithPOS("eingebaut", "VER:PA2:SFT", "einbauen"),
-		atrWithPOS("war", "VER:AUX:3:SIN:PRT:NON", "sein"),
-		atrWithPOS(",", "PKT", ","),
-		atrWithPOS("röhrte", "VER:3:SIN:PRT:SFT", "röhren"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	s2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Auf", "APPR:DAT", "auf"),
-		atrWithPOS("Hochtouren", "SUB:DAT:PLU:FEM", "Hochtour"),
-		atrWithPOS("lief", "VER:3:SIN:PRT:NON", "laufen"),
-		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Motor", "SUB:NOM:SIN:MAS", "Motor"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 3, len(rule.MatchList([]*languagetool.AnalyzedSentence{s1, s2})))
-
-	// Buntspecht … Specht → 2
-	a := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Buntspecht", "SUB:NOM:SIN:MAS", "Buntspecht"),
-		atrWithPOS("stolzierte", "VER:3:SIN:PRT:SFT", "stolzieren"),
-		atrWithPOS("den", "ART:DEF:AKK:SIN:MAS", "der"),
-		atrWithPOS("Baum", "SUB:AKK:SIN:MAS", "Baum"),
-		atrWithPOS("hoch", "ADV", "hoch"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	b := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Schon", "ADV", "schon"),
-		atrWithPOS("klopfte", "VER:3:SIN:PRT:SFT", "klopfen"),
-		atrWithPOS("der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Specht", "SUB:NOM:SIN:MAS", "Specht"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 2, len(rule.MatchList([]*languagetool.AnalyzedSentence{a, b})))
-
-	// Rotbraun … rot → 2 (compound part / shared stem via isPartOfWord)
-	c1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Rotbraun", "ADJ:PRD:GRU", "rotbraun"),
-		atrWithPOS("war", "VER:3:SIN:PRT:NON", "sein"),
-		atrWithPOS("die", "ART:DEF:NOM:SIN:FEM", "der"),
-		atrWithPOS("Farbe", "SUB:NOM:SIN:FEM", "Farbe"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	c2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Horizont", "SUB:NOM:SIN:MAS", "Horizont"),
-		atrWithPOS("schimmerte", "VER:3:SIN:PRT:SFT", "schimmern"),
-		atrWithPOS("rot", "ADJ:PRD:GRU", "rot"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 2, len(rule.MatchList([]*languagetool.AnalyzedSentence{c1, c2})))
-
-	// Ausblick … "Was für ein Ausblick!" → 2 when quotes not excluding (quoted Ausblick still flagged as Java)
-	// Java quoted path: excludeDirectSpeech + isInQuotes for single-quoted token.
-	// With „…“ opening without whitespaceBefore on next token → direct speech; may differ.
-	// Stick to same-lemma Ausblick across sentences without quotes:
-	d1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Ausblick", "SUB:NOM:SIN:MAS", "Ausblick"),
-		atrWithPOS("war", "VER:3:SIN:PRT:NON", "sein"),
-		atrWithPOS("überwältigend", "ADJ:PRD:GRU", "überwältigend"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	d2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Was", "PWS", "was"),
-		atrWithPOS("für", "APPR:AKK", "für"),
-		atrWithPOS("ein", "ART:IND:NOM:SIN:MAS", "ein"),
-		atrWithPOS("Ausblick", "SUB:NOM:SIN:MAS", "Ausblick"),
-		atrWithPOS("sagte", "VER:3:SIN:PRT:SFT", "sagen"),
-		atrWithPOS("sie", "PRO:PER:NOM:SIN:FEM", "sie"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	// same lemma, TestCompound not needed; distance 1 → 2 matches
-	// reset compounds off path still finds same lemma:
-	ruleSame := NewGermanStyleRepeatedWordRule(nil)
-	require.Equal(t, 2, len(ruleSame.MatchList([]*languagetool.AnalyzedSentence{d1, d2})))
-
-	// without IsCorrectSpell (fail-closed) compound parts must not invent
-	ruleClosed := NewGermanStyleRepeatedWordRule(nil)
-	ruleClosed.TestCompoundWords = true
-	ruleClosed.IsCorrectSpell = func(string) bool { return false }
-	closed1 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Schiffsmotor", "SUB:NOM:SIN:MAS", "Schiffsmotor"),
-		atrWithPOS("röhrte", "VER:3:SIN:PRT:SFT", "röhren"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	closed2 := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Der", "ART:DEF:NOM:SIN:MAS", "der"),
-		atrWithPOS("Motor", "SUB:NOM:SIN:MAS", "Motor"),
-		atrWithPOS("lief", "VER:3:SIN:PRT:NON", "laufen"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(ruleClosed.MatchList([]*languagetool.AnalyzedSentence{closed1, closed2})))
+	// tagged word is not "unknown"
+	_, lt, tagger := setUpGermanStyleRepeatedWordRule(t, nil)
+	sents := analyzeTextWithGermanTagger(lt, tagger, "Haus.")
+	var haus *languagetool.AnalyzedTokenReadings
+	for _, tok := range sents[0].GetTokensWithoutWhitespace() {
+		if tok != nil && tok.GetToken() == "Haus" {
+			haus = tok
+			break
+		}
+	}
+	require.NotNil(t, haus)
+	require.False(t, isUnknownWordStyle(haus))
 }
