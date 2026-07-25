@@ -1037,12 +1037,12 @@
 - [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.NominalizedVerb
 - [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.NominalizedGenitiveVerb
 - [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.ExpansionInfos
-- [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken
-- [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.POSType
-- [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.Kasus
-- [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.Numerus
-- [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.Genus
-- [ ] org/languagetool/tagging/de/GermanToken.java::GermanToken.Determination
+- [x] org/languagetool/tagging/de/GermanToken.java::GermanToken
+- [x] org/languagetool/tagging/de/GermanToken.java::GermanToken.POSType
+- [x] org/languagetool/tagging/de/GermanToken.java::GermanToken.Kasus
+- [x] org/languagetool/tagging/de/GermanToken.java::GermanToken.Numerus
+- [x] org/languagetool/tagging/de/GermanToken.java::GermanToken.Genus
+- [x] org/languagetool/tagging/de/GermanToken.java::GermanToken.Determination
 - [x] org/languagetool/tagging/de/SwissGermanTagger.java::SwissGermanTagger
 - [x] org/languagetool/tagging/de/VerbPrefixes.java::VerbPrefixes
 - [ ] org/languagetool/tagging/disambiguation/rules/de/GermanRuleDisambiguator.java::GermanRuleDisambiguator
