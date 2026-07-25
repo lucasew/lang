@@ -969,7 +969,7 @@
 - [x] org/languagetool/rules/de/GermanMultitokenSpeller.java::GermanMultitokenSpeller
 - [x] org/languagetool/rules/de/GermanNumberInWordFilter.java::GermanNumberInWordFilter
 - [x] org/languagetool/rules/de/GermanParagraphRepeatBeginningRule.java::GermanParagraphRepeatBeginningRule
-- [ ] org/languagetool/rules/de/GermanReadabilityRule.java::GermanReadabilityRule
+- [x] org/languagetool/rules/de/GermanReadabilityRule.java::GermanReadabilityRule
 - [ ] org/languagetool/rules/de/GermanRepeatedWordsRule.java::GermanRepeatedWordsRule
 - [ ] org/languagetool/rules/de/GermanSpellerRule.java::GermanSpellerRule
 - [ ] org/languagetool/rules/de/GermanSpellerRule.java::GermanSpellerRule.ExpandingReader
