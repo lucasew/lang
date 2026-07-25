@@ -2,6 +2,7 @@ package de
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -9,7 +10,8 @@ import (
 )
 
 // DuUpperLowerCaseRule ports org.languagetool.rules.de.DuUpperLowerCaseRule.
-// Java: CASING, setUrl.
+// Coherent use of Du/du, Dich/dich etc.: first use sets casing; later mismatches flag.
+// Java: TextLevelRule, Categories.CASING, setUrl, minToCheckParagraph=-1.
 type DuUpperLowerCaseRule struct {
 	Messages map[string]string
 	Category *rules.Category
@@ -18,6 +20,7 @@ type DuUpperLowerCaseRule struct {
 	correctExamples   []rules.CorrectExample
 }
 
+// Java: private static final Set<String> lowerWords = new HashSet<>(Arrays.asList(...))
 var duLowerWords = map[string]struct{}{
 	"du": {}, "dir": {}, "dich": {}, "dein": {}, "deine": {}, "deines": {}, "deins": {},
 	"deiner": {}, "deinen": {}, "deinem": {},
@@ -25,7 +28,8 @@ var duLowerWords = map[string]struct{}{
 	"eurer": {}, "euerer": {}, "eurem": {}, "euerem": {}, "eures": {}, "eueres": {},
 }
 
-// Java StringUtils.equalsAny uses these exact strings (including broken "\\u2063" literals).
+// Java StringUtils.equalsAny skip tokens after which the next token is ignored.
+// The three "\\uXXXX" source literals compile to the six-char strings \uXXXX (not U+XXXX).
 var duSkipPrev = map[string]struct{}{
 	"\"": {}, "„": {}, "‚": {}, ":": {}, "»": {}, "«": {}, "“": {}, "-": {}, "–": {},
 	"*": {}, "•": {},
@@ -37,11 +41,12 @@ func NewDuUpperLowerCaseRule(messages map[string]string) *DuUpperLowerCaseRule {
 		Messages: messages,
 		Category: rules.CatCasing.GetCategory(messages),
 	}
-	// Java: Dir… <marker>du</marker> → Du
+	// Java: addExamplePair(Example.wrong(...), Example.fixed(...))
 	r.AddExamplePair(
 		rules.Wrong("Wie geht es Dir? Bist <marker>du</marker> wieder gesund?"),
 		rules.Fixed("Wie geht es Dir? Bist <marker>Du</marker> wieder gesund?"),
 	)
+	// Java: setUrl(Tools.getUrl("https://languagetool.org/insights/de/beitrag/duzen-grossgeschrieben/"))
 	return r
 }
 
@@ -97,30 +102,45 @@ func (r *DuUpperLowerCaseRule) GetCorrectExamples() []rules.CorrectExample {
 // MinToCheckParagraph ports TextLevelRule.minToCheckParagraph (Java returns -1).
 func (r *DuUpperLowerCaseRule) MinToCheckParagraph() int { return -1 }
 
+// EstimateContextForSureMatch ports TextLevelRule.estimateContextForSureMatch → -1.
+func (r *DuUpperLowerCaseRule) EstimateContextForSureMatch() int { return -1 }
+
+// MatchList ports DuUpperLowerCaseRule.match(List<AnalyzedSentence>).
 func (r *DuUpperLowerCaseRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	var firstUse string
+	var firstUse string // Java: String firstUse = null; empty means unset
+	firstUseSet := false
 	var ruleMatches []*rules.RuleMatch
 	pos := 0
 	for _, sentence := range sentences {
+		if sentence == nil {
+			continue
+		}
 		tokens := sentence.GetTokensWithoutWhitespace()
 		for i := 0; i < len(tokens); i++ {
-			// Skip after sentence start or dialogue punctuation (Java: i>0 && …).
+			// Java: if (i > 0 && (tokens[i-1].isSentenceStart() || StringUtils.equalsAny(...))) continue;
 			if i > 0 {
 				prev := tokens[i-1]
-				if prev.IsSentenceStart() {
+				if prev != nil && prev.IsSentenceStart() {
 					continue
 				}
-				if _, ok := duSkipPrev[prev.GetToken()]; ok {
-					continue
+				if prev != nil {
+					if _, ok := duSkipPrev[prev.GetToken()]; ok {
+						continue
+					}
 				}
 			}
+			if tokens[i] == nil {
+				continue
+			}
 			word := tokens[i].GetToken()
+			// Java: word.toLowerCase() (default locale; lowerWords are plain Latin)
 			lcWord := strings.ToLower(word)
 			if _, ok := duLowerWords[lcWord]; !ok {
 				continue
 			}
-			if firstUse == "" {
+			if !firstUseSet {
 				firstUse = word
+				firstUseSet = true
 				continue
 			}
 			firstUseIsUpper := tools.StartsWithUppercase(firstUse)
@@ -129,7 +149,8 @@ func (r *DuUpperLowerCaseRule) MatchList(sentences []*languagetool.AnalyzedSente
 				replacement = tools.UppercaseFirstChar(word)
 				msg = "Vorher wurde bereits '" + firstUse + "' großgeschrieben. " +
 					"Aus Gründen der Einheitlichkeit '" + replacement + "' hier auch großschreiben?"
-			} else if !firstUseIsUpper && tools.StartsWithUppercase(word) && !tools.IsAllUppercase(word) {
+			} else if !firstUseIsUpper && tools.StartsWithUppercase(word) && !stringUtilsIsAllUpperCase(word) {
+				// Java: StringUtils.isAllUpperCase(word) — Apache Commons, not StringTools
 				replacement = tools.LowercaseFirstChar(word)
 				msg = "Vorher wurde bereits '" + firstUse + "' kleingeschrieben. " +
 					"Aus Gründen der Einheitlichkeit '" + replacement + "' hier auch kleinschreiben?"
@@ -143,4 +164,20 @@ func (r *DuUpperLowerCaseRule) MatchList(sentences []*languagetool.AnalyzedSente
 		pos += sentence.GetCorrectedTextLength()
 	}
 	return ruleMatches
+}
+
+// stringUtilsIsAllUpperCase ports Apache Commons Lang3 StringUtils.isAllUpperCase:
+// empty → false; every UTF-16 code unit must be Character.isUpperCase.
+// Java DuUpperLowerCaseRule uses this (not StringTools.isAllUppercase).
+func stringUtilsIsAllUpperCase(cs string) bool {
+	if cs == "" {
+		return false
+	}
+	for _, r := range cs {
+		// Java charAt loop; BMP-only pronouns here. Character.isUpperCase(code unit).
+		if !unicode.IsUpper(r) {
+			return false
+		}
+	}
+	return true
 }
