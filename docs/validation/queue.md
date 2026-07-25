@@ -339,7 +339,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-InsertCommaFilter | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/InsertCommaFilter.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/InsertCommaFilterTest.java; inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/GermanTagger.java | internal/languagetool/org/languagetool/rules/de/insert_comma_filter.go; internal/languagetool/org/languagetool/rules/de/InsertCommaFilterTest_test.go; internal/languagetool/org/languagetool/rules/de/insert_comma_filter_test.go | 53616cd2541a59faab6f0d8bbcca998a06f9e027 | 1 | 0 | | | 2026-07-25T09:50:26Z |
 | docs/faithful-port-checklist.md#3.C.3-MissingCommaRelativeClauseRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/MissingCommaRelativeClauseRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/MissingCommaRelativeClauseRuleTest.java | internal/languagetool/org/languagetool/rules/de/missing_comma_relative_clause_rule.go; internal/languagetool/org/languagetool/rules/de/missing_comma_relative_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/MissingCommaRelativeClauseRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/register_core.go | 29b24cec8a66a569726757a07d1abfe83a0a129b | 0 | 0 | | | 2026-07-25T10:13:36Z |
 | docs/faithful-port-checklist.md#3.C.3-PotentialCompoundFilter | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/PotentialCompoundFilter.java | internal/languagetool/org/languagetool/rules/de/potential_compound_filter.go; internal/languagetool/org/languagetool/rules/de/potential_compound_filter_test.go | 227fc37f77b68f98548e9e311bb582cedb93414d | 0 | 0 | | | 2026-07-25T10:26:04Z |
-| docs/faithful-port-checklist.md#3.C.3-PrepositionToCases | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/PrepositionToCases.java | internal/languagetool/org/languagetool/rules/de/preposition_to_cases.go; internal/languagetool/org/languagetool/rules/de/preposition_to_cases_test.go; internal/languagetool/org/languagetool/rules/de/java_name_twins.go | 22af1faa7d3576d48a35d50148931afd3d875053 | 0 | 0 | | | 2026-07-25T10:31:19Z |
+| docs/faithful-port-checklist.md#3.C.3-PrepositionToCases | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/PrepositionToCases.java | internal/languagetool/org/languagetool/rules/de/preposition_to_cases.go; internal/languagetool/org/languagetool/rules/de/preposition_to_cases_test.go; internal/languagetool/org/languagetool/rules/de/java_name_twins.go | 22af1faa7d3576d48a35d50148931afd3d875053 | 0 | 0 | | | 2026-07-25T10:34:57Z |
 
 ## Human inbox
 
@@ -349,7 +349,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ready: 3.C.3-PrepositionToCases @ 22af1faa (next fire validate)
+| Notes | ACCEPT 3.C.3-PrepositionToCases @ 22af1faa; next fire: implement next unchecked DE 3.C.3 leaf
 
 ---
 
@@ -1524,3 +1524,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T10:26:04Z ACCEPT: 3.C.3-PotentialCompoundFilter @ 227fc37f (validator ACCEPT + parent green reconfirm; setType+speller Match)
 - 2026-07-25T10:29:20Z implement: 3.C.3-PrepositionToCases (exact Java prep2Cases twin; getCasesFor; Java king)
 - 2026-07-25T10:31:19Z ready: 3.C.3-PrepositionToCases @ 22af1faa (implementer report; parent green reconfirm 113-key twin)
+- 2026-07-25T10:33:45Z validating: 3.C.3-PrepositionToCases @ 22af1faa (exact Java prep2Cases re-audit)
+- 2026-07-25T10:34:57Z ACCEPT: 3.C.3-PrepositionToCases @ 22af1faa (validator ACCEPT + parent green reconfirm; 113-key exact twin)

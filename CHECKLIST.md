@@ -993,8 +993,8 @@
 - [ ] org/languagetool/rules/de/OldSpellingRule.java::OldSpellingRule
 - [x] org/languagetool/rules/de/PassiveSentenceRule.java::PassiveSentenceRule
 - [x] org/languagetool/rules/de/PotentialCompoundFilter.java::PotentialCompoundFilter
-- [ ] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases
-- [ ] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases.Case
+- [x] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases
+- [x] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases.Case
 - [ ] org/languagetool/rules/de/ProhibitedCompoundRule.java::ProhibitedCompoundRule
 - [ ] org/languagetool/rules/de/ProhibitedCompoundRule.java::ProhibitedCompoundRule.WeightedRuleMatch
 - [ ] org/languagetool/rules/de/ProhibitedCompoundRule.java::ProhibitedCompoundRule.Pair
