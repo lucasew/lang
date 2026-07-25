@@ -1014,8 +1014,8 @@
 - [x] org/languagetool/rules/de/StyleTooOftenUsedVerbRule.java::StyleTooOftenUsedVerbRule
 - [x] org/languagetool/rules/de/SubjectVerbAgreementRule.java::SubjectVerbAgreementRule
 - [x] org/languagetool/rules/de/SubjectVerbAgreementRule.java::SubjectVerbAgreementRule.SingularPluralPair
-- [ ] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule
-- [ ] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule.SwissExpander
+- [x] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule
+- [x] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule.SwissExpander
 - [x] org/languagetool/rules/de/SwissGermanSpellerRule.java::SwissGermanSpellerRule
 - [ ] org/languagetool/rules/de/UnitConversionRule.java::UnitConversionRule
 - [ ] org/languagetool/rules/de/UnnecessaryPhraseRule.java::UnnecessaryPhraseRule
