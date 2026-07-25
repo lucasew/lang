@@ -1,5 +1,7 @@
 package de
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
 // GermanToken ports org.languagetool.tagging.de.GermanToken.
 // Java: private constructor — only static nested type constants.
 type GermanToken struct{}
@@ -113,9 +115,9 @@ const (
 	DeterminationIndefinite = DetIndefinite
 )
 
-// AnalyzedGermanToken ports tagging.de.AnalyzedGermanToken.
+// AnalyzedGermanToken ports org.languagetool.tagging.de.AnalyzedGermanToken.
+// Java fields are nullable; empty zero values are the Go twin of null.
 type AnalyzedGermanToken struct {
-	Reading       string
 	Type          POSType // empty when Java leaves type null
 	Kasus         Kasus
 	Numerus       Numerus
@@ -123,102 +125,136 @@ type AnalyzedGermanToken struct {
 	Determination Determination
 }
 
-// ParseGermanPOS ports AnalyzedGermanToken(AnalyzedToken) field extraction.
-// Java: null/short tags (<3 colon parts) leave all fields null; otherwise scan parts
-// with EIG/PA always assigning type and SUB/VER/ADJ/PRO/ART only if type still null.
-// Morphy codes map onto GermanToken.* objects (whose toString is the German name above).
-// NOG → FEMININUM (Java comment: no genus because only used as plural).
-func ParseGermanPOS(pos string) AnalyzedGermanToken {
-	a := AnalyzedGermanToken{Reading: pos}
-	if pos == "" {
-		return a
+// NewAnalyzedGermanToken ports AnalyzedGermanToken(AnalyzedToken).
+// Java: String posTag = token.getPOSTag(); then parse Morphy colon parts.
+func NewAnalyzedGermanToken(token *languagetool.AnalyzedToken) AnalyzedGermanToken {
+	if token == nil {
+		// Java would NPE on null token; no POS → all null fields.
+		return AnalyzedGermanToken{}
 	}
-	parts := splitColon(pos)
-	// Java: StringUtils.split(posTag, ':').length < 3 → all null
-	if len(parts) < 3 {
-		return a
+	posTag := token.GetPOSTag()
+	if posTag == nil {
+		return AnalyzedGermanToken{}
 	}
-	var (
-		tempType POSType
-		hasType  bool
-	)
-	for _, part := range parts {
-		switch part {
-		case "EIG":
-			tempType = POSProperNoun
-			hasType = true
-		case "SUB":
-			if !hasType {
-				tempType = POSNomen
-				hasType = true
-			}
-		case "PA1", "PA2":
-			tempType = POSPartizip
-			hasType = true
-		case "VER":
-			if !hasType {
-				tempType = POSVerb
-				hasType = true
-			}
-		case "ADJ":
-			if !hasType {
-				tempType = POSAdjektiv
-				hasType = true
-			}
-		case "PRO":
-			if !hasType {
-				tempType = POSPronomen
-				hasType = true
-			}
-		case "ART":
-			if !hasType {
-				tempType = POSDeterminer
-				hasType = true
-			}
-		case "AKK":
-			a.Kasus = KasusAkkusativ
-		case "GEN":
-			a.Kasus = KasusGenitiv
-		case "NOM":
-			a.Kasus = KasusNominativ
-		case "DAT":
-			a.Kasus = KasusDativ
-		case "PLU":
-			a.Numerus = NumerusPlural
-		case "SIN":
-			a.Numerus = NumerusSingular
-		case "MAS":
-			a.Genus = GenusMaskulinum
-		case "FEM":
-			a.Genus = GenusFemininum
-		case "NEU":
-			a.Genus = GenusNeutrum
-		case "NOG":
-			// Java: tempGenus = Genus.FEMININUM
-			a.Genus = GenusFemininum
-		case "ALG":
-			a.Genus = GenusAllgemein
-		case "IND":
-			a.Determination = DetIndefinite
-		case "DEF":
-			a.Determination = DetDefinite
-		}
-	}
-	if hasType {
-		a.Type = tempType
-	}
-	return a
+	return ParseGermanPOS(*posTag)
 }
 
-func splitColon(s string) []string {
-	var out []string
-	start := 0
-	for i := 0; i < len(s); i++ {
-		if s[i] == ':' {
-			out = append(out, s[start:i])
-			start = i + 1
+// GetType ports AnalyzedGermanToken.getType (nullable POSType).
+func (a AnalyzedGermanToken) GetType() POSType { return a.Type }
+
+// GetCasus ports AnalyzedGermanToken.getCasus (nullable Kasus).
+func (a AnalyzedGermanToken) GetCasus() Kasus { return a.Kasus }
+
+// GetNumerus ports AnalyzedGermanToken.getNumerus (nullable Numerus).
+func (a AnalyzedGermanToken) GetNumerus() Numerus { return a.Numerus }
+
+// GetGenus ports AnalyzedGermanToken.getGenus (nullable Genus).
+func (a AnalyzedGermanToken) GetGenus() Genus { return a.Genus }
+
+// GetDetermination ports AnalyzedGermanToken.getDetermination (nullable Determination).
+func (a AnalyzedGermanToken) GetDetermination() Determination { return a.Determination }
+
+// ParseGermanPOS ports the POS-tag parse body of AnalyzedGermanToken(AnalyzedToken).
+// Java: null/short tags (StringUtils.split(posTag, ':').length < 3) leave all fields null;
+// otherwise scan parts with EIG/PA always assigning type and SUB/VER/ADJ/PRO/ART only if
+// tempType still null. Kasus/Numerus/Genus/Determination: last matching part wins.
+// Morphy codes map onto GermanToken.* objects (toString = German name above).
+// NOG → FEMININUM (Java comment: no genus because only used as plural).
+func ParseGermanPOS(pos string) AnalyzedGermanToken {
+	// Java: if (posTag == null || (parts = StringUtils.split(posTag, ':')).length < 3)
+	// Empty string is non-null; StringUtils.split("", ':') → length 0 < 3 → all null.
+	if pos == "" {
+		return AnalyzedGermanToken{}
+	}
+	parts := stringUtilsSplitColon(pos)
+	if len(parts) < 3 {
+		return AnalyzedGermanToken{}
+	}
+	// Java temps start null; empty string is Go twin of null for typed string enums.
+	var (
+		tempType          POSType
+		tempCasus         Kasus
+		tempNumerus       Numerus
+		tempGenus         Genus
+		tempDetermination Determination
+	)
+	for _, part := range parts {
+		// Java if/else-if chain (order matters only for mutual exclusivity of one match per part).
+		if part == "EIG" {
+			tempType = POSProperNoun
+		} else if part == "SUB" && tempType == "" {
+			tempType = POSNomen
+		} else if part == "PA1" || part == "PA2" {
+			tempType = POSPartizip
+		} else if part == "VER" && tempType == "" {
+			tempType = POSVerb
+		} else if part == "ADJ" && tempType == "" {
+			tempType = POSAdjektiv
+		} else if part == "PRO" && tempType == "" {
+			tempType = POSPronomen
+		} else if part == "ART" && tempType == "" {
+			tempType = POSDeterminer
+		} else if part == "AKK" {
+			tempCasus = KasusAkkusativ
+		} else if part == "GEN" {
+			tempCasus = KasusGenitiv
+		} else if part == "NOM" {
+			tempCasus = KasusNominativ
+		} else if part == "DAT" {
+			tempCasus = KasusDativ
+		} else if part == "PLU" {
+			tempNumerus = NumerusPlural
+		} else if part == "SIN" {
+			tempNumerus = NumerusSingular
+		} else if part == "MAS" {
+			tempGenus = GenusMaskulinum
+		} else if part == "FEM" {
+			tempGenus = GenusFemininum
+		} else if part == "NEU" {
+			tempGenus = GenusNeutrum
+		} else if part == "NOG" {
+			// Java: tempGenus = Genus.FEMININUM; // NOG = no genus because only used as plural
+			tempGenus = GenusFemininum
+		} else if part == "ALG" {
+			tempGenus = GenusAllgemein
+		} else if part == "IND" {
+			tempDetermination = DetIndefinite
+		} else if part == "DEF" {
+			tempDetermination = DetDefinite
 		}
 	}
-	out = append(out, s[start:])
+	return AnalyzedGermanToken{
+		Type:          tempType,
+		Kasus:         tempCasus,
+		Numerus:       tempNumerus,
+		Genus:         tempGenus,
+		Determination: tempDetermination,
+	}
+}
+
+// stringUtilsSplitColon ports Apache Commons Lang3 StringUtils.split(str, ':')
+// (preserveAllTokens=false): empty tokens discarded; consecutive separators collapse.
+// See StringUtils.splitWorker(str, separatorChar, false).
+func stringUtilsSplitColon(s string) []string {
+	if s == "" {
+		return nil
+	}
+	var out []string
+	start := 0
+	match := false
+	for i := 0; i < len(s); i++ {
+		if s[i] == ':' {
+			if match {
+				out = append(out, s[start:i])
+				match = false
+			}
+			start = i + 1
+			continue
+		}
+		match = true
+	}
+	if match {
+		out = append(out, s[start:])
+	}
 	return out
 }
