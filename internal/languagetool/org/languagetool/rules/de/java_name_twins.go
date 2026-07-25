@@ -1,8 +1,6 @@
 package de
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
@@ -25,12 +23,13 @@ func (GermanTools) IsVowel(c rune) bool { return IsVowel(c) }
 // PrepositionToCases is the Java-name twin for preposition→case government.
 type PrepositionToCases struct{}
 
+// Cases ports PrepositionToCases.getCasesFor (empty list when unknown).
 func (PrepositionToCases) Cases(prep string) []GrammaticalCase {
-	return PrepositionCases[strings.ToLower(prep)]
+	return CasesForPreposition(prep)
 }
 
 func (PrepositionToCases) Allows(prep string, c GrammaticalCase) bool {
-	for _, x := range PrepositionCases[strings.ToLower(prep)] {
+	for _, x := range CasesForPreposition(prep) {
 		if x == c {
 			return true
 		}

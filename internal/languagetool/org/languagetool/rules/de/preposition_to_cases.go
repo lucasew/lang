@@ -2,17 +2,20 @@ package de
 
 import "strings"
 
-// GrammaticalCase is a German case for preposition government.
+// GrammaticalCase is PrepositionToCases.Case (Nom, Akk, Gen, Dat).
+// Twin of org.languagetool.rules.de.PrepositionToCases.Case.
 type GrammaticalCase int
 
 const (
-	CaseNom GrammaticalCase = iota
-	CaseAkk
-	CaseGen
-	CaseDat
+	CaseNom GrammaticalCase = iota // Nom
+	CaseAkk                        // Akk
+	CaseGen                        // Gen
+	CaseDat                        // Dat
 )
 
-// PrepositionCases maps lowercase preposition → allowed cases (for AgreementSuggestor etc.).
+// PrepositionCases is the prep2Cases map from PrepositionToCases static init.
+// Keys and case order match Java add(...) calls; commented-out Java adds are absent.
+// Twin of org.languagetool.rules.de.PrepositionToCases.prep2Cases.
 var PrepositionCases = map[string][]GrammaticalCase{
 	"ab":             {CaseDat},
 	"abseits":        {CaseGen},
@@ -55,13 +58,14 @@ var PrepositionCases = map[string][]GrammaticalCase{
 	"fern":           {CaseDat},
 	"fernab":         {CaseGen},
 	"für":            {CaseAkk},
+	"gegen":          {CaseAkk}, // Java: add("gegen", /*Dat,*/ Akk)
 	"gegenüber":      {CaseDat},
 	"gemäß":          {CaseDat},
 	"getreu":         {CaseDat},
 	"halber":         {CaseGen},
 	"hinsichtlich":   {CaseGen},
 	"hinter":         {CaseDat, CaseAkk},
-	"in":             {CaseDat, CaseAkk},
+	// Java: //add("in", Dat, Akk); deliberately absent
 	"in puncto":      {CaseGen},
 	"infolge":        {CaseGen},
 	"inklusive":      {CaseGen},
@@ -84,7 +88,7 @@ var PrepositionCases = map[string][]GrammaticalCase{
 	"neben":          {CaseDat, CaseAkk},
 	"nebst":          {CaseDat},
 	"nächst":         {CaseDat},
-	"ob":             {CaseGen},
+	// Java: //add("ob", Gen); deliberately absent
 	"oberhalb":       {CaseGen},
 	"ohne":           {CaseAkk},
 	"per":            {CaseAkk},
@@ -130,7 +134,12 @@ var PrepositionCases = map[string][]GrammaticalCase{
 	"über":           {CaseDat, CaseAkk},
 }
 
-// CasesForPreposition returns government cases for prep (case-insensitive), or nil.
+// CasesForPreposition ports PrepositionToCases.getCasesFor.
+// Returns the case list for prep (lowercased), or an empty non-nil slice when unknown
+// (Java: prep2Cases.getOrDefault(prep.toLowerCase(), new ArrayList<>())).
 func CasesForPreposition(prep string) []GrammaticalCase {
-	return PrepositionCases[strings.ToLower(prep)]
+	if c, ok := PrepositionCases[strings.ToLower(prep)]; ok {
+		return c
+	}
+	return []GrammaticalCase{}
 }
