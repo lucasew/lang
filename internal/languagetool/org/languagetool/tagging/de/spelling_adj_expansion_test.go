@@ -75,8 +75,8 @@ func TestSpellingAdjExpansion_PutReplaces(t *testing.T) {
 	require.NotEmpty(t, tags)
 	// last wins: /P → PA2
 	require.True(t, strings.HasPrefix(tags[0].PosTag, "PA2:"), tags[0].PosTag)
-	// exact count of tags for base form = len(TagsForAdj) after ToPA2, not double
-	require.Equal(t, len(ToPA2(TagsForAdj)), len(tags))
+	// exact count of tags for base form = len(tagsForAdj) after toPA2, not double
+	require.Equal(t, len(toPA2(tagsForAdj)), len(tags))
 }
 
 // Twin: er/A and ste/A skipped

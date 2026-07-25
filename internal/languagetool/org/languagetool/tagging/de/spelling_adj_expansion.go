@@ -85,17 +85,17 @@ func (e *SpellingAdjExpansion) addWordEndings(word string, asPA2 bool) {
 		tags   []string
 	}
 	pairs := []pair{
-		{"", TagsForAdj},
-		{"e", TagsForAdjE},
-		{"en", TagsForAdjEn},
-		{"er", TagsForAdjEr},
-		{"em", TagsForAdjEm},
-		{"es", TagsForAdjEs},
+		{"", tagsForAdj},
+		{"e", tagsForAdjE},
+		{"en", tagsForAdjEn},
+		{"er", tagsForAdjEr},
+		{"em", tagsForAdjEm},
+		{"es", tagsForAdjEs},
 	}
 	for _, p := range pairs {
 		tags := p.tags
 		if asPA2 {
-			tags = ToPA2(tags)
+			tags = toPA2(tags)
 		}
 		full := word + p.suffix
 		// Java fillAdjInfos: adjInfos.put(fullform, l) — replace, do not append

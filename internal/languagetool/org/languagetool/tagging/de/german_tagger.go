@@ -597,3 +597,13 @@ func (t *GermanTagger) Lookup(word string) *languagetool.AnalyzedTokenReadings {
 	}
 	return out[0]
 }
+
+// toPA2 ports private static GermanTagger.toPA2:
+// each tag: replace "ADJ:" → "PA2:", then append ":VER".
+func toPA2(tags []string) []string {
+	out := make([]string, len(tags))
+	for i, k := range tags {
+		out[i] = strings.ReplaceAll(k, "ADJ:", "PA2:") + ":VER"
+	}
+	return out
+}
