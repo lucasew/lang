@@ -985,7 +985,7 @@
 - [x] org/languagetool/rules/de/LanguageNames.java::LanguageNames
 - [ ] org/languagetool/rules/de/LineExpander.java::LineExpander
 - [x] org/languagetool/rules/de/LongSentenceRule.java::LongSentenceRule
-- [ ] org/languagetool/rules/de/MissingCommaRelativeClauseRule.java::MissingCommaRelativeClauseRule
+- [x] org/languagetool/rules/de/MissingCommaRelativeClauseRule.java::MissingCommaRelativeClauseRule
 - [x] org/languagetool/rules/de/MissingVerbRule.java::MissingVerbRule
 - [x] org/languagetool/rules/de/MorfologikGermanyGermanSpellerRule.java::MorfologikGermanyGermanSpellerRule
 - [x] org/languagetool/rules/de/NewYearDateFilter.java::NewYearDateFilter
