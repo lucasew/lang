@@ -324,6 +324,8 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.C.3-GermanWrongWordInContextRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanWrongWordInContextRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanWrongWordInContextRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WrongWordInContextRule.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/wrongWordInContext.txt | internal/languagetool/org/languagetool/rules/de/german_wrong_word_in_context_rule.go; internal/languagetool/org/languagetool/rules/de/GermanWrongWordInContextRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/data/wrongWordInContext.txt; internal/languagetool/org/languagetool/rules/wrong_word_in_context_rule.go | 1f4f9a4b80aeb1da81665a671281c41ecab70cb1 | 0 | 0 | | | 2026-07-25T06:41:15Z |
 
+| docs/faithful-port-checklist.md#3.C.3-GermanNumberInWordFilter | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanNumberInWordFilter.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanNumberInWordFilterTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractNumberInWordFilter.java | internal/languagetool/org/languagetool/rules/de/german_number_in_word_filter.go; internal/languagetool/org/languagetool/rules/de/GermanNumberInWordFilterTest_test.go; internal/languagetool/org/languagetool/rules/abstract_number_in_word_filter.go | 1a8b214238f08685828f0f3f7330d2e20b44ee05 | 0 | 0 | | | 2026-07-25T06:47:30Z |
+
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -332,7 +334,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b |
+| Notes | ready 3.C.3-GermanNumberInWordFilter @ 1a8b2142 |
 
 ---
 
@@ -1445,3 +1447,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T06:35:55Z ready: 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b (implementer report; parent green reconfirm GermanWrongWordInContext)
 - 2026-07-25T06:38:46Z validating: 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b (strict invent re-audit vs Java GermanWrongWordInContextRule + Test + official wrongWordInContext.txt)
 - 2026-07-25T06:41:15Z ACCEPT: 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b (validator ACCEPT + parent green reconfirm; GERMAN_WRONG_WORD_IN_CONTEXT; official wrongWordInContext.txt; full active matrix)
+- 2026-07-25T06:44:16Z implement: 3.C.3-GermanNumberInWordFilter (DE GermanNumberInWordFilterTest full twin; GermanyGerman default speller; Java king)
+- 2026-07-25T06:47:30Z ready: 3.C.3-GermanNumberInWordFilter @ 1a8b2142 (implementer report; parent green reconfirm GermanNumberInWordFilter)
