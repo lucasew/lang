@@ -1018,13 +1018,13 @@
 - [x] org/languagetool/rules/de/SwissCompoundRule.java::SwissCompoundRule.SwissExpander
 - [x] org/languagetool/rules/de/SwissGermanSpellerRule.java::SwissGermanSpellerRule
 - [x] org/languagetool/rules/de/UnitConversionRule.java::UnitConversionRule
-- [ ] org/languagetool/rules/de/UnnecessaryPhraseRule.java::UnnecessaryPhraseRule
+- [x] org/languagetool/rules/de/UnnecessaryPhraseRule.java::UnnecessaryPhraseRule
 - [ ] org/languagetool/rules/de/UpperCaseNgramRule.java::UpperCaseNgramRule
 - [ ] org/languagetool/rules/de/UppercaseNounReadingFilter.java::UppercaseNounReadingFilter
 - [x] org/languagetool/rules/de/ValidWordFilter.java::ValidWordFilter
 - [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule
 - [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule.BooleanAndFiniteVerb
-- [ ] org/languagetool/rules/de/WiederVsWiderRule.java::WiederVsWiderRule
+- [x] org/languagetool/rules/de/WiederVsWiderRule.java::WiederVsWiderRule
 - [x] org/languagetool/rules/de/WordCoherencyRule.java::WordCoherencyRule
 - [x] org/languagetool/rules/de/YMDDateCheckFilter.java::YMDDateCheckFilter
 - [x] org/languagetool/rules/de/YMDNewYearDateFilter.java::YMDNewYearDateFilter
