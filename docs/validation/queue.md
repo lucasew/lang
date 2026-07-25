@@ -317,7 +317,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-DuUpperLowerCaseRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/DuUpperLowerCaseRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/DuUpperLowerCaseRuleTest.java | internal/languagetool/org/languagetool/rules/de/du_upper_lower_case_rule.go; internal/languagetool/org/languagetool/rules/de/DuUpperLowerCaseRuleTest_test.go | 5ac659321bc1c7c163004962cf4a060348df9283 | 0 | 0 | | | 2026-07-25T05:41:30Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanWordRepeatRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanWordRepeatRuleTest.java | internal/languagetool/org/languagetool/rules/de/german_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/de/german_word_repeat_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/GermanWordRepeatRuleTest_test.go | 8284b59974ea3286a97010732e5391b36d377af6 | 0 | 0 | | | 2026-07-25T05:51:30Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanParagraphRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanParagraphRepeatBeginningRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanParagraphRepeatBeginningRuleTest.java | internal/languagetool/org/languagetool/rules/de/german_paragraph_repeat_beginning_rule.go; internal/languagetool/org/languagetool/rules/de/GermanParagraphRepeatBeginningRuleTest_test.go | 6c01fc39c9b4fff4c5a6ffcf2daeeadf00ddd5a4 | 0 | 0 | | | 2026-07-25T06:01:00Z |
-| docs/faithful-port-checklist.md#3.C.3-GermanTools | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanTools.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanToolsTest.java | internal/languagetool/org/languagetool/rules/de/german_tools.go; internal/languagetool/org/languagetool/rules/de/GermanToolsTest_test.go | 11ba402f47c8f875f37c8688a7b70577f2ba887e | 0 | 0 | | | 2026-07-25T06:06:00Z |
+| docs/faithful-port-checklist.md#3.C.3-GermanTools | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanTools.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanToolsTest.java | internal/languagetool/org/languagetool/rules/de/german_tools.go; internal/languagetool/org/languagetool/rules/de/GermanToolsTest_test.go | 11ba402f47c8f875f37c8688a7b70577f2ba887e | 0 | 0 | | | 2026-07-25T06:09:30Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -326,7 +326,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ready 3.C.3-GermanTools @ 11ba402f (await validate; already 1:1) |
+| Notes | ACCEPT 3.C.3-GermanTools @ 11ba402f |
 
 ---
 
@@ -1425,3 +1425,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T06:01:00Z ACCEPT: 3.C.3-GermanParagraphRepeatBeginningRule @ 6c01fc39 (validator ACCEPT + parent green reconfirm; ART isArticle; full testRule matrix; de-DE Check)
 - 2026-07-25T06:03:00Z implement: 3.C.3-GermanTools (DE GermanToolsTest full twin; Java king)
 - 2026-07-25T06:06:00Z ready: 3.C.3-GermanTools @ 11ba402f (implementer report; already 1:1 isVowel; parent green reconfirm GermanTools)
+- 2026-07-25T06:08:00Z validating: 3.C.3-GermanTools @ 11ba402f (strict invent re-audit vs Java GermanTools + Test)
+- 2026-07-25T06:09:30Z ACCEPT: 3.C.3-GermanTools @ 11ba402f (validator ACCEPT + parent green reconfirm; isVowel set exact; full testIsVowel matrix)
