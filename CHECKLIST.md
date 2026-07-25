@@ -1019,7 +1019,7 @@
 - [x] org/languagetool/rules/de/SwissGermanSpellerRule.java::SwissGermanSpellerRule
 - [x] org/languagetool/rules/de/UnitConversionRule.java::UnitConversionRule
 - [x] org/languagetool/rules/de/UnnecessaryPhraseRule.java::UnnecessaryPhraseRule
-- [ ] org/languagetool/rules/de/UpperCaseNgramRule.java::UpperCaseNgramRule
+- [x] org/languagetool/rules/de/UpperCaseNgramRule.java::UpperCaseNgramRule
 - [ ] org/languagetool/rules/de/UppercaseNounReadingFilter.java::UppercaseNounReadingFilter
 - [x] org/languagetool/rules/de/ValidWordFilter.java::ValidWordFilter
 - [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule
