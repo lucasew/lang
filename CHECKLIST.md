@@ -1031,12 +1031,12 @@
 - [x] org/languagetool/synthesis/GermanSynthesizer.java::GermanSynthesizer
 - [x] org/languagetool/tagging/de/AdjectiveTags.java::AdjectiveTags
 - [x] org/languagetool/tagging/de/AnalyzedGermanToken.java::AnalyzedGermanToken
-- [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger
-- [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.PrefixInfixVerb
-- [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.AdjInfo
-- [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.NominalizedVerb
-- [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.NominalizedGenitiveVerb
-- [ ] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.ExpansionInfos
+- [x] org/languagetool/tagging/de/GermanTagger.java::GermanTagger
+- [x] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.PrefixInfixVerb
+- [x] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.AdjInfo
+- [x] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.NominalizedVerb
+- [x] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.NominalizedGenitiveVerb
+- [x] org/languagetool/tagging/de/GermanTagger.java::GermanTagger.ExpansionInfos
 - [x] org/languagetool/tagging/de/GermanToken.java::GermanToken
 - [x] org/languagetool/tagging/de/GermanToken.java::GermanToken.POSType
 - [x] org/languagetool/tagging/de/GermanToken.java::GermanToken.Kasus
