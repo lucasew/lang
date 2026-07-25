@@ -1,28 +1,38 @@
 package de
 
-// Twin of GermanUnpairedQuotesRuleTest — Java uses de-DE JLanguageTool (GermanWordTokenizer).
+// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanUnpairedQuotesRuleTest.java
+//
+// Java setup:
+//   lt = new JLanguageTool(Languages.getLanguageForShortCode("de-DE"));
+//   rule = GenericUnpairedQuotesRuleTest.getQuotesRule(lt); // active GenericUnpairedQuotesRule
+//   assertMatches: rule.match(Collections.singletonList(lt.getAnalyzedSentence(input))).length
+// Soft-hyphen lt.check(...) calls only assert no throw / position mapping.
+//
+// Go: NewGermanUnpairedQuotesRule + de-DE JLanguageTool.GetAnalyzedSentence (real analysis).
+// DE quotes do not need EN-style apostrophe POS invent — base is surface + isNonWord.
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	detok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/de"
 	"github.com/stretchr/testify/require"
 )
 
-func deAnalyzeUQ(text string) *languagetool.AnalyzedSentence {
-	// Java: lt.getAnalyzedSentence → language word tokenizer (GermanWordTokenizer adds ‚).
-	return languagetool.AnalyzeWithTokenizer(text, detok.NewGermanWordTokenizer())
-}
-
+// TestGermanUnpairedQuotesRule_GermanRule ports GermanUnpairedQuotesRuleTest.testGermanRule.
 func TestGermanUnpairedQuotesRule_GermanRule(t *testing.T) {
+	// Java: getQuotesRule finds GermanUnpairedQuotesRule on de-DE; construct directly.
 	rule := NewGermanUnpairedQuotesRule(nil)
+	lt := languagetool.NewJLanguageTool("de-DE")
+
 	assertMatches := func(input string, expected int) {
 		t.Helper()
-		n := len(rule.MatchList([]*languagetool.AnalyzedSentence{deAnalyzeUQ(input)}))
+		// Java: rule.match(Collections.singletonList(lt.getAnalyzedSentence(input)))
+		sent := lt.GetAnalyzedSentence(input)
+		require.NotNil(t, sent, "GetAnalyzedSentence(%q)", input)
+		n := len(rule.MatchList([]*languagetool.AnalyzedSentence{sent}))
 		require.Equal(t, expected, n, "input=%q", input)
 	}
 
-	// correct sentences (Java):
+	// correct sentences (Java assertMatches … 0 / 2):
 	assertMatches("»Das sind die Sätze, die sie testen sollen«.", 0)
 	assertMatches("«Das sind die ‹Sätze›, die sie testen sollen».", 0)
 	assertMatches("»Das sind die ›Sätze‹, die sie testen sollen«.", 0)
@@ -43,20 +53,30 @@ func TestGermanUnpairedQuotesRule_GermanRule(t *testing.T) {
 	assertMatches("\"Das Fahrrad hat 26\" Räder.\"", 0)
 	assertMatches("und steigern » Datenbankperformance steigern » Tipps zur Performance-Verbesserung", 0)
 
-	// incorrect:
+	// incorrect sentences (Java):
 	assertMatches("\"Das Fahrrad hat 26\" Räder.\" \"Und hier fehlt das abschließende doppelte Anführungszeichen.", 1)
 	assertMatches("Die „Sätze zum Testen.", 1)
 	assertMatches("Die «Sätze zum Testen.", 1)
 	assertMatches("Die »Sätze zum Testen.", 1)
 
+	// Meta: id / URL / match.Rule attachment (Java setUrl on this DE rule)
 	require.Equal(t, "DE_UNPAIRED_QUOTES", rule.GetID())
-	require.Contains(t, rule.GetURL(), "klammern")
-	ms := rule.MatchList([]*languagetool.AnalyzedSentence{deAnalyzeUQ("Die „Sätze zum Testen.")})
+	require.Equal(t, "https://languagetool.org/insights/de/beitrag/klammern/", rule.GetURL())
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{lt.GetAnalyzedSentence("Die „Sätze zum Testen.")})
 	require.NotEmpty(t, ms)
 	require.Equal(t, rule, ms[0].GetRule())
 
-	// Java: soft-hyphen sentences that used to break position mapping — smoke (no panic).
-	// Full JLT check path maps soft hyphens via AnnotatedText; here MatchList must not panic.
+	// Example pair from Java constructor
+	require.Len(t, rule.GetIncorrectExamples(), 1)
+	require.Len(t, rule.GetCorrectExamples(), 1)
+	require.Equal(t, []string{"›"}, rule.GetIncorrectExamples()[0].GetCorrections())
+
+	// Start/end symbols (Java DE_START_SYMBOLS / DE_END_SYMBOLS)
+	require.Equal(t, []string{"„", "»", "«", "\"", "'", "‚", "›", "‹"}, rule.StartSymbols)
+	require.Equal(t, []string{"“", "«", "»", "\"", "'", "‘", "‹", "›"}, rule.EndSymbols)
+
+	// Java: soft-hyphen sentences that used to break position mapping — no throw.
+	// Full JLT check path maps soft hyphens via AnnotatedText; MatchList / Check must not panic.
 	for _, s := range []string{
 		"Im Kran\u00ADken\u00ADhaus. Auch)",
 		"Ein Kran\u00ADken\u00ADhaus. Auch)",
@@ -65,7 +85,10 @@ func TestGermanUnpairedQuotesRule_GermanRule(t *testing.T) {
 		"Kran\u00ADken\u00ADhaus. (Auch",
 	} {
 		require.NotPanics(t, func() {
-			_ = rule.MatchList([]*languagetool.AnalyzedSentence{deAnalyzeUQ(s)})
-		}, s)
+			_ = rule.MatchList([]*languagetool.AnalyzedSentence{lt.GetAnalyzedSentence(s)})
+		}, "MatchList soft-hyphen %q", s)
+		require.NotPanics(t, func() {
+			_ = lt.Check(s)
+		}, "Check soft-hyphen %q", s)
 	}
 }
