@@ -346,6 +346,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-StyleRepeatedSentenceBeginning | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleRepeatedSentenceBeginning.java | internal/languagetool/org/languagetool/rules/de/style_repeated_sentence_beginning.go; internal/languagetool/org/languagetool/rules/de/style_repeated_sentence_beginning_test.go | 4ee2abf1f5dd1b9f94dd2d974481f028475eadfc | 0 | 0 | | | 2026-07-25T11:27:41Z |
 | docs/faithful-port-checklist.md#3.C.3-StyleRepeatedVeryShortSentences | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleRepeatedVeryShortSentences.java | internal/languagetool/org/languagetool/rules/de/style_repeated_very_short_sentences.go; internal/languagetool/org/languagetool/rules/de/style_repeated_very_short_sentences_test.go | 9bf5f828ff78bea4a0fb9279f1d431d288018775 | 1 | 0 | | | 2026-07-25T11:51:01Z |
 | docs/faithful-port-checklist.md#3.C.3-StyleTooOftenUsedAdjectiveRule-DE | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java | internal/languagetool/org/languagetool/rules/de/style_too_often_used_adjective_rule.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_adjective_rule_test.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_rules_test.go; internal/languagetool/org/languagetool/rules/abstract_style_too_often_used_word_rule.go | df32ff354ecc070ce6207c4b3cbd8c64006010e1 | 0 | 0 | | | 2026-07-25T12:06:00Z |
+| docs/faithful-port-checklist.md#3.C.3-StyleTooOftenUsedNounRule-DE | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleTooOftenUsedNounRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java | internal/languagetool/org/languagetool/rules/de/style_too_often_used_noun_rule.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_noun_rule_test.go; internal/languagetool/org/languagetool/rules/abstract_style_too_often_used_word_rule.go | f26fe6fa6e646ea207842ce7d476649c97555034 | 0 | 0 | | | 2026-07-25T12:11:46Z |
 
 ## Human inbox
 
@@ -355,7 +356,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-StyleTooOftenUsedAdjectiveRule-DE @ df32ff35; next fire: implement next unchecked DE 3.C.3 leaf
+| Notes | ready 3.C.3-StyleTooOftenUsedNounRule-DE @ f26fe6fa; next fire: validate
 
 ---
 
@@ -1560,3 +1561,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T12:02:50Z ready: 3.C.3-StyleTooOftenUsedAdjectiveRule-DE @ df32ff35 (implementer report; parent green reconfirm StyleTooOften adj DE twin)
 - 2026-07-25T12:03:38Z validating: 3.C.3-StyleTooOftenUsedAdjectiveRule-DE @ df32ff35 (strict invent re-audit vs Java StyleTooOftenUsedAdjectiveRule + AbstractStyleTooOftenUsedWordRule)
 - 2026-07-25T12:06:00Z ACCEPT: 3.C.3-StyleTooOftenUsedAdjectiveRule-DE @ df32ff35 (validator ACCEPT + parent green reconfirm; ADJ:+PRO/ADV/ZUS; AbstractStyleTooOftenUsedWordRule)
+- 2026-07-25T12:08:41Z implement: 3.C.3-StyleTooOftenUsedNounRule-DE (DE StyleTooOftenUsedNounRule; SUB:+PRO/Ich/Aber/Ja/Frau|Herr exceptions; AbstractStyleTooOftenUsedWordRule; Java king)
+- 2026-07-25T12:11:46Z ready: 3.C.3-StyleTooOftenUsedNounRule-DE @ f26fe6fa (implementer report; parent green reconfirm; IsPosTagUnknown invent fix)
