@@ -1,92 +1,52 @@
 package translation
 
-// Twin of InflectorTest
+// Twin of org.languagetool.rules.en.translation.InflectorTest
+// Uses real English synthesizer + official english_synth.dict (no invent FuncSynthesizer).
+
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	"github.com/stretchr/testify/require"
 )
 
-func injectSynth() synthesis.Synthesizer {
-	return synthesis.FuncSynthesizer{
-		Synth: func(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-			return []string{token.GetToken() + "s"}, nil
-		},
-		SynthRE: func(token *languagetool.AnalyzedToken, posTag string, _ bool) ([]string, error) {
-			// crude: map POS regex to English-ish forms used in Java test
-			w := token.GetToken()
-			switch {
-			case posTag == "NNP?S" || matchRE(posTag, `NNP?S`):
-				if w == "child" {
-					return []string{"children"}, nil
-				}
-				return []string{w + "s"}, nil
-			case posTag == "VBZ":
-				return []string{w + "s"}, nil
-			case posTag == "VBD" || posTag == "VBN":
-				return []string{w + "ed"}, nil
-			case posTag == "VBG":
-				return []string{w + "ing"}, nil
-			case posTag == "JJR":
-				return []string{w + "r"}, nil // large → larger would need stem; soft
-			case posTag == "JJS":
-				return []string{w + "st"}, nil
-			default:
-				if matchRE(posTag, `NNP?S`) {
-					if w == "child" {
-						return []string{"children"}, nil
-					}
-					return []string{w + "s"}, nil
-				}
-				if matchRE(posTag, `VBZ`) {
-					return []string{w + "s"}, nil
-				}
-				if matchRE(posTag, `VBD|VBN`) {
-					return []string{w + "ed"}, nil
-				}
-				if matchRE(posTag, `VBG`) {
-					return []string{w + "ing"}, nil
-				}
-				if matchRE(posTag, `JJR`) {
-					if w == "large" {
-						return []string{"larger"}, nil
-					}
-					return []string{w + "er"}, nil
-				}
-				if matchRE(posTag, `JJS`) {
-					if w == "large" {
-						return []string{"largest"}, nil
-					}
-					return []string{w + "est"}, nil
-				}
-				return []string{w}, nil
-			}
-		},
+func requireEnglishSynth(t *testing.T) {
+	t.Helper()
+	if discoverEnglishSynthDict() == "" || defaultEnglishSynthesizer() == nil {
+		t.Skip("english_synth.dict not discoverable — Inflector needs Languages en synthesizer like Java")
 	}
 }
 
 // Port of InflectorTest.inflect
 func TestInflector_Inflect(t *testing.T) {
-	inf := NewInflector(injectSynth())
-	require.Equal(t, []string{"pumps"}, inf.Inflect("pump", "SUB:AKK:PLU:FEM"))
-	require.Equal(t, []string{"children"}, inf.Inflect("child", "SUB:NOM:PLU:NEU"))
-	require.Equal(t, []string{"walks"}, inf.Inflect("walk", "VER:3:SIN:PRÄ:NON"))
-	require.Equal(t, []string{"walked"}, inf.Inflect("walk", "VER:3:SIN:PRT:NON"))
-	require.Equal(t, []string{"walking"}, inf.Inflect("walk", "PA1:PRD:GRU:VER"))
-	require.Equal(t, []string{"walked"}, inf.Inflect("walk", "PA2:PRD:GRU:VER"))
-	require.Equal(t, []string{"larger"}, inf.Inflect("large", "ADJ:PRD:KOM"))
-	require.Equal(t, []string{"largest"}, inf.Inflect("large", "ADJ:AKK:SIN:FEM:SUP:DEF"))
-	// uninflected persons
-	require.Equal(t, []string{"walk"}, inf.Inflect("walk", "VER:1:SIN:PRÄ:NON"))
-	require.Equal(t, []string{"walk"}, inf.Inflect("walk", ""))
-	require.Equal(t, []string{"walk"}, inf.Inflect("walk", "FAKE-TAG"))
+	requireEnglishSynth(t)
+	inflector := NewInflector()
+	// Java: assertThat(...toString(), is("[pumps]")) etc.
+	require.Equal(t, []string{"pumps"}, inflector.Inflect("pump", "SUB:AKK:PLU:FEM"))     // "Pumpen"
+	require.Equal(t, []string{"children"}, inflector.Inflect("child", "SUB:NOM:PLU:NEU")) // "Kinder"
+	require.Equal(t, []string{"walks"}, inflector.Inflect("walk", "VER:3:SIN:PRÄ:NON"))   // "er geht"
+	require.Equal(t, []string{"walked"}, inflector.Inflect("walk", "VER:3:SIN:PRT:NON"))  // "ging" (-> gehen)
+	require.Equal(t, []string{"walking"}, inflector.Inflect("walk", "PA1:PRD:GRU:VER"))   // "gehend"
+	require.Equal(t, []string{"walked"}, inflector.Inflect("walk", "PA2:PRD:GRU:VER"))    // "gegangen"
+	// forms that are not inflected in English do not need to be supported here
+
+	require.Equal(t, []string{"larger"}, inflector.Inflect("large", "ADJ:PRD:KOM"))              // "größer"
+	require.Equal(t, []string{"largest"}, inflector.Inflect("large", "ADJ:AKK:SIN:FEM:SUP:DEF")) // "größte"
+
+	require.Equal(t, []string{"walk"}, inflector.Inflect("walk", "VER:1:SIN:PRÄ:NON")) // "ich gehe"
+	require.Equal(t, []string{"walk"}, inflector.Inflect("walk", "VER:2:SIN:PRÄ:NON")) // "du gehst"
+	require.Equal(t, []string{"walk"}, inflector.Inflect("walk", "VER:1:PLU:PRÄ:NON")) // "wir gehen"
+	require.Equal(t, []string{"walk"}, inflector.Inflect("walk", "VER:2:PLU:PRÄ:NON")) // "ihr geht"
+	require.Equal(t, []string{"walk"}, inflector.Inflect("walk", "VER:3:PLU:PRÄ:NON")) // "sie gehen"
+
+	// Java null → Go empty string stand-in
+	require.Equal(t, []string{"walk"}, inflector.Inflect("walk", ""))
+	require.Equal(t, []string{"walk"}, inflector.Inflect("walk", "FAKE-TAG"))
 }
 
 // Port of InflectorTest.inflectMultiWord
 func TestInflector_InflectMultiWord(t *testing.T) {
-	inf := NewInflector(injectSynth())
-	require.Equal(t, []string{"tire pumps"}, inf.Inflect("tire pump", "SUB:AKK:PLU:FEM"))
-	require.Equal(t, []string{"fake tire pumps"}, inf.Inflect("fake tire pump", "SUB:AKK:PLU:FEM"))
+	requireEnglishSynth(t)
+	inflector := NewInflector()
+	require.Equal(t, []string{"tire pumps"}, inflector.Inflect("tire pump", "SUB:AKK:PLU:FEM")) // "Pumpen"
+	require.Equal(t, []string{"fake tire pumps"}, inflector.Inflect("fake tire pump", "SUB:AKK:PLU:FEM"))
 }

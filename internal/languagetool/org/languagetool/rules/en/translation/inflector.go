@@ -1,90 +1,157 @@
 package translation
 
 import (
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Inflector ports org.languagetool.rules.en.translation.Inflector.
-// Inflects English words according to a German POS tag via a synthesizer.
+// Inflects English words according to a German POS tag.
+//
+// Java:
+//
+//	private final Synthesizer enSynth = Languages.getLanguageForShortCode("en").getSynthesizer();
 type Inflector struct {
-	Synth synthesis.Synthesizer
+	enSynth synthesis.Synthesizer
 }
 
-func NewInflector(synth synthesis.Synthesizer) *Inflector {
-	return &Inflector{Synth: synth}
+var (
+	enSynthOnce   sync.Once
+	enSynthCached synthesis.Synthesizer
+)
+
+// NewInflector ports Inflector() — English synthesizer from Languages.getLanguageForShortCode("en").getSynthesizer()
+// (English.createDefaultSynthesizer → EnglishSynthesizer.INSTANCE with official /en/english_synth.dict).
+func NewInflector() *Inflector {
+	return &Inflector{enSynth: defaultEnglishSynthesizer()}
 }
 
-// Inflect applies dePosTag-driven inflection to the last word of enToken.
+// defaultEnglishSynthesizer ports Languages.getLanguageForShortCode("en").getSynthesizer().
+// Loads the same official english_synth.dict resources Java INSTANCE uses. Nil when dict missing (fail-closed).
+func defaultEnglishSynthesizer() synthesis.Synthesizer {
+	enSynthOnce.Do(func() {
+		if p := discoverEnglishSynthDict(); p != "" {
+			enSynthCached = ensynth.OpenEnglishSynthesizerFromDictPath(p)
+		}
+	})
+	return enSynthCached
+}
+
+// discoverEnglishSynthDict finds english_synth.dict (Java /en/english_synth.dict).
+func discoverEnglishSynthDict() string {
+	if p := os.Getenv("LANG_ENGLISH_SYNTH_DICT"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	relPaths := []string{
+		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "english_synth.dict"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "english_synth.dict"),
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for {
+		for _, rel := range relPaths {
+			cand := filepath.Join(dir, rel)
+			if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+				return cand
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
+
+// Inflect ports Inflector.inflect(enToken, dePosTag).
+// enToken is the base form of the English token (from BeoLingus).
 func (inf *Inflector) Inflect(enToken, dePosTag string) []string {
 	// Java: StringUtils.replaceOnce(enToken, "to ", "").split(" ")
 	parts := strings.Split(strings.Replace(enToken, "to ", "", 1), " ")
-	if len(parts) == 0 {
-		return nil
-	}
-	lastForms := inf.inflectSingleWord(parts[len(parts)-1], dePosTag)
-	start := ""
+	lastPartForms := inf.inflectSingleWord(parts[len(parts)-1], dePosTag)
+	startParts := ""
 	if len(parts) > 1 {
-		start = strings.Join(parts[:len(parts)-1], " ")
+		// Java: String.join(" ", parts.subList(0, parts.size()-1))
+		startParts = strings.Join(parts[:len(parts)-1], " ")
 	}
-	var result []string
-	for _, last := range lastForms {
-		if start != "" {
-			// Java: (startParts + " " + lastPartForm).trim()
-			result = append(result, tools.JavaStringTrim(start+" "+last))
-		} else {
-			result = append(result, last)
-		}
+	result := make([]string, 0, len(lastPartForms))
+	for _, lastPartForm := range lastPartForms {
+		// only the last part is inflected, e.g. "tire pump" -> "tire pumps"
+		// Java: (startParts + " " + lastPartForm).trim()
+		result = append(result, tools.JavaStringTrim(startParts+" "+lastPartForm))
 	}
 	return result
 }
 
+// inflectSingleWord ports Inflector.inflectSingleWord.
+// dePosTag empty string maps Java null (Go has no null string); "" also falls through
+// the same default as Java empty-string (no regex match → base form).
 func (inf *Inflector) inflectSingleWord(enToken, dePosTag string) []string {
+	forms := make([]string, 0)
+	// Java: if (dePosTag == null) { forms.add(enToken); return forms; }
+	// Go: empty string is the null stand-in for optional tags from callers;
+	// Java "" is non-null and hits the default branch — same result (base form).
 	if dePosTag == "" {
-		return []string{enToken}
+		forms = append(forms, enToken)
+		return forms
 	}
+	// Java String.matches → full-string match
 	switch {
 	case matchRE(dePosTag, `SUB.*PLU.*`):
-		return inf.getForms(enToken, "NNP?S")
+		forms = append(forms, inf.getForms(enToken, "NNP?S")...)
 	case matchRE(dePosTag, `VER:3:SIN:PRÄ.*`):
-		return inf.getForms(enToken, "VBZ")
+		forms = append(forms, inf.getForms(enToken, "VBZ")...)
 	case matchRE(dePosTag, `VER:3:SIN:PRT:.*`):
-		return inf.getForms(enToken, "VBD")
+		forms = append(forms, inf.getForms(enToken, "VBD")...)
 	case matchRE(dePosTag, `PA1:PRD:GRU:VER`):
-		return inf.getForms(enToken, "VBG")
+		forms = append(forms, inf.getForms(enToken, "VBG")...)
 	case matchRE(dePosTag, `PA2:PRD:GRU:VER`):
-		return inf.getForms(enToken, "VBN")
+		forms = append(forms, inf.getForms(enToken, "VBN")...)
 	case matchRE(dePosTag, `ADJ:PRD:KOM|ADJ:.*:KOM.*`):
-		return inf.getForms(enToken, "JJR")
+		forms = append(forms, inf.getForms(enToken, "JJR")...)
 	case matchRE(dePosTag, `ADJ:.*:SUP.*`):
-		return inf.getForms(enToken, "JJS")
+		forms = append(forms, inf.getForms(enToken, "JJS")...)
 	default:
-		return []string{enToken}
-	}
-}
-
-func (inf *Inflector) getForms(enToken, posTagRegex string) []string {
-	// Java: synthesize(...); empty array if none — no invent of base form on empty.
-	if inf == nil || inf.Synth == nil {
-		// No synth available: fail-closed empty (Java always has English synthesizer).
-		return nil
-	}
-	tok := languagetool.NewAnalyzedToken(enToken, strPtr("fake-value"), strPtr(enToken))
-	forms, err := inf.Synth.SynthesizeRE(tok, posTagRegex, true)
-	if err != nil {
-		// Java wraps IOException as RuntimeException
-		panic(err.Error())
+		forms = append(forms, enToken)
 	}
 	return forms
 }
 
-func matchRE(s, re string) bool {
-	ok, err := regexp.MatchString(re, s)
-	return err == nil && ok
+// getForms ports Inflector.getForms — synthesize(AnalyzedToken(enToken,"fake-value",enToken), posTagRegex, true).
+func (inf *Inflector) getForms(enToken, posTagRegex string) []string {
+	if inf == nil || inf.enSynth == nil {
+		// Java always has English synthesizer; fail-closed empty if dict not discoverable.
+		return nil
+	}
+	// Java: new AnalyzedToken(enToken, "fake-value", enToken)
+	pos := "fake-value"
+	lemma := enToken
+	tok := languagetool.NewAnalyzedToken(enToken, &pos, &lemma)
+	// Java: enSynth.synthesize(..., posTagRegex, true)
+	forms, err := inf.enSynth.SynthesizeRE(tok, posTagRegex, true)
+	if err != nil {
+		// Java: catch (IOException e) { throw new RuntimeException(e); }
+		panic(err)
+	}
+	return forms
 }
 
-func strPtr(s string) *string { return &s }
+// matchRE ports Java String.matches (full-string match of the pattern).
+func matchRE(s, re string) bool {
+	ok, err := regexp.MatchString("^(?:"+re+")$", s)
+	return err == nil && ok
+}
