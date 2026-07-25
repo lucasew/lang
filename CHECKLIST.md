@@ -1008,7 +1008,7 @@
 - [ ] org/languagetool/rules/de/SimpleReplaceRule.java::SimpleReplaceRule
 - [ ] org/languagetool/rules/de/SpellingData.java::SpellingData
 - [x] org/languagetool/rules/de/StyleRepeatedSentenceBeginning.java::StyleRepeatedSentenceBeginning
-- [ ] org/languagetool/rules/de/StyleRepeatedVeryShortSentences.java::StyleRepeatedVeryShortSentences
+- [x] org/languagetool/rules/de/StyleRepeatedVeryShortSentences.java::StyleRepeatedVeryShortSentences
 - [ ] org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java::StyleTooOftenUsedAdjectiveRule
 - [ ] org/languagetool/rules/de/StyleTooOftenUsedNounRule.java::StyleTooOftenUsedNounRule
 - [ ] org/languagetool/rules/de/StyleTooOftenUsedVerbRule.java::StyleTooOftenUsedVerbRule
