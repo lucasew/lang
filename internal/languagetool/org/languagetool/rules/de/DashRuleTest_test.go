@@ -8,17 +8,24 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestDashRule_Rule ports DashRuleTest.testRule.
+// Java: JLanguageTool(Languages.getLanguageForShortCode("de-DE")).getAnalyzedSentence(text)
+// then rule.match(...).length == 0 (good) or 1 (bad). Match only reads
+// getTokensWithoutWhitespace surfaces/positions — morph tags unused.
 func TestDashRule_Rule(t *testing.T) {
-	rule := NewDashRule(nil)
+	rule := NewDashRule(nil) // Java: new DashRule(TestTools.getMessages("de"))
+	lt := languagetool.NewJLanguageTool("de-DE")
+
 	assertGood := func(text string) {
 		t.Helper()
-		require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(text))), "good %q", text)
+		require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence(text))), "good %q", text)
 	}
 	assertBad := func(text string) {
 		t.Helper()
-		require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain(text))), "bad %q", text)
+		require.Equal(t, 1, len(rule.Match(lt.GetAnalyzedSentence(text))), "bad %q", text)
 	}
 
+	// correct sentences (Java DashRuleTest):
 	assertGood("Die große Diäten-Erhöhung kam dann doch.")
 	assertGood("Die große Diätenerhöhung kam dann doch.")
 	assertGood("Die große Diäten-Erhöhungs-Manie kam dann doch.")
@@ -31,22 +38,40 @@ func TestDashRule_Rule(t *testing.T) {
 	assertGood("NORD- UND SÜDKOREA")
 	assertGood("NORD- BZW. SÜDKOREA")
 
+	// incorrect sentences:
 	assertBad("Die große Diäten- Erhöhung kam dann doch.")
 	assertBad("Die große Diäten-  Erhöhung kam dann doch.")
 	assertBad("Die große Diäten-Erhöhungs- Manie kam dann doch.")
 	assertBad("Die große Diäten- Erhöhungs-Manie kam dann doch.")
 	assertBad("MAZEDONIEN- SKOPJE Str.")
+}
 
-	// error morph: message + span covers "Diäten- Erhöhung" style fragment
-	ms := rule.Match(languagetool.AnalyzePlain("Die große Diäten- Erhöhung kam dann doch."))
+// Extra outcome checks beyond Java assert length: suggestions + meta surface of Rule.
+func TestDashRule_SuggestionsAndMeta(t *testing.T) {
+	rule := NewDashRule(nil)
+	lt := languagetool.NewJLanguageTool("de-DE")
+
+	// Java match: join always; comma form only when total '-' count ≤ 1
+	ms := rule.Match(lt.GetAnalyzedSentence("Die große Diäten- Erhöhung kam dann doch."))
 	require.Equal(t, 1, len(ms))
-	require.Greater(t, ms[0].GetToPos(), ms[0].GetFromPos())
-	// suggestion typically joins without space
-	if reps := ms[0].GetSuggestedReplacements(); len(reps) > 0 {
-		require.NotContains(t, reps[0], "Diäten- ")
-	}
+	require.Equal(t, []string{"Diäten-Erhöhung", "Diäten-, Erhöhung"}, ms[0].GetSuggestedReplacements())
+	require.Equal(t, "Fehlendes 'und' oder Komma oder überflüssiges Leerzeichen?", ms[0].ShortMessage)
+	require.Contains(t, ms[0].GetMessage(), "überflüssiges Leerzeichen")
 
-	// Java: equalsAny exact "UND"|"ODER"|"BZW" only — lowercase "und" is skipped via isUpperCase gate.
+	// two hyphens on left token → only concat suggestion
+	ms2 := rule.Match(lt.GetAnalyzedSentence("Die große Diäten-Erhöhungs- Manie kam dann doch."))
+	require.Equal(t, 1, len(ms2))
+	require.Equal(t, []string{"Diäten-Erhöhungs-Manie"}, ms2[0].GetSuggestedReplacements())
+
+	// Java equalsAny exact "UND"|"ODER"|"BZW" only; tokenizer splits "BZW." → "BZW" + "."
+	s := lt.GetAnalyzedSentence("NORD- BZW. SÜDKOREA")
+	require.Equal(t, 0, len(rule.Match(s)))
+
+	require.Equal(t, "DE_DASH", rule.GetID())
 	require.Equal(t, "Keine Leerzeichen in Bindestrich-Komposita (wie z.B. in 'Diäten- Erhöhung')", rule.GetDescription())
-	require.NotEmpty(t, rule.GetURL())
+	require.Contains(t, rule.GetURL(), "grammatik-leerzeichen")
+	require.NotNil(t, rule.GetCategory())
+	require.Len(t, rule.GetIncorrectExamples(), 1)
+	require.Len(t, rule.GetCorrectExamples(), 1)
+	require.Equal(t, []string{"Diäten-Erhöhung"}, rule.GetIncorrectExamples()[0].GetCorrections())
 }
