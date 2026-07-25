@@ -129,8 +129,8 @@ func TestOldSpellingRule_ExpandFormsIntegration(t *testing.T) {
 	}
 	sd, err := LoadSpellingDataBoth(content, "t.csv", expand)
 	require.NoError(t, err)
-	require.Equal(t, "Russlands", sd.Map["Rußlands"])
-	neu, ok := lookupOldSpelling("Rußlands", sd.Map)
+	require.Equal(t, "Russlands", sd.Map()["Rußlands"])
+	neu, ok := lookupOldSpelling("Rußlands", sd.Map())
 	require.True(t, ok)
 	require.Equal(t, "Russlands", neu)
 }

@@ -37,32 +37,27 @@ type oldSpellingHit struct {
 }
 
 var (
-	oldSpellingOnce     sync.Once
-	oldSpellingBodyKeys []string // longest first (UTF-16 length)
-	oldSpellingBodyMap  map[string]string
-	oldSpellingSentKeys []string
-	oldSpellingSentMap  map[string]string
+	oldSpellingOnce sync.Once
+	oldSpellingData *SpellingData // Java: Suppliers.memoize(() -> new SpellingData(FILE_PATH))
 )
 
-// loadOldSpelling loads Java FILE_PATH "/de/alt_neu.csv" into body + sentence-start maps
-// (SpellingData tries). Prefer official resource tree; embed is the same vendored CSV.
-func loadOldSpelling() (map[string]string, []string) {
+// oldSpellingFILEPath ports OldSpellingRule.FILE_PATH.
+const oldSpellingFILEPath = "/de/alt_neu.csv"
+
+// loadOldSpellingData ports OldSpellingRule.DATA (memoized SpellingData for FILE_PATH).
+func loadOldSpellingData() *SpellingData {
 	oldSpellingOnce.Do(func() {
-		data, err := readAltNeuCSV()
-		if err != nil {
-			panic(err)
-		}
-		// Java: new SpellingData(FILE_PATH) → getCoherencyMap with GermanSynthesizer expand.
-		sd, err := LoadSpellingDataBoth(string(data), "/de/alt_neu.csv", oldSpellingExpandForms())
-		if err != nil {
-			panic(err)
-		}
-		oldSpellingBodyMap = sd.Map
-		oldSpellingSentMap = sd.SentenceStartMap
-		oldSpellingBodyKeys = keysLongestFirst(sd.Map)
-		oldSpellingSentKeys = keysLongestFirst(sd.SentenceStartMap)
+		// Java: new SpellingData(FILE_PATH) — getCoherencyMap + GermanSynthesizer expand + tries.
+		oldSpellingData = NewSpellingData(oldSpellingFILEPath)
 	})
-	return oldSpellingBodyMap, oldSpellingBodyKeys
+	return oldSpellingData
+}
+
+// loadOldSpelling returns body map + longest-first keys (compat for tests that assert map entries).
+func loadOldSpelling() (map[string]string, []string) {
+	sd := loadOldSpellingData()
+	m := sd.Map()
+	return m, keysLongestFirst(m)
 }
 
 // readAltNeuCSV ports JLanguageTool.getDataBroker().getFromResourceDirAsLines("/de/alt_neu.csv").
@@ -91,23 +86,6 @@ func keysLongestFirst(m map[string]string) []string {
 	return keys
 }
 
-// oldSpellingExpandForms ports SpellingData's use of
-// GermanSynthesizer.INSTANCE.synthesizeForPosTags(oldSpelling, s -> true).
-// Nil only when the official german_synth.dict is not discoverable (Java always has it on classpath).
-func oldSpellingExpandForms() func(string) []string {
-	if gs := openDiscoveredGermanSynthesizer(); gs != nil {
-		return func(oldSpelling string) []string {
-			return gs.SynthesizeForPosTags(oldSpelling, func(string) bool { return true })
-		}
-	}
-	if base := openDiscoveredGermanSynthBase(); base != nil {
-		return func(oldSpelling string) []string {
-			return base.SynthesizeForPosTags(oldSpelling, func(string) bool { return true })
-		}
-	}
-	return nil
-}
-
 // OldSpellingRule ports org.languagetool.rules.de.OldSpellingRule.
 // Match uses full-text scan of SpellingData tries (body + sentence-start), not token invent.
 type OldSpellingRule struct {
@@ -118,7 +96,7 @@ type OldSpellingRule struct {
 }
 
 func NewOldSpellingRule(messages map[string]string) *OldSpellingRule {
-	_, _ = loadOldSpelling()
+	_ = loadOldSpellingData()
 	return &OldSpellingRule{
 		messages:  messages,
 		Category:  rules.CatTypos.GetCategory(messages),
@@ -153,17 +131,22 @@ func (r *OldSpellingRule) GetLocQualityIssueType() rules.ITSIssueType {
 	return r.IssueType
 }
 
-// Match ports OldSpellingRule.match: AhoCorasick-style hits on full text, longest-first,
-// ignoreMatch, then sentence-start trie hits only at begin==0.
+// Match ports OldSpellingRule.match: SpellingData AhoCorasick parseText on full text,
+// Collections.reverse (longest first), ignoreMatch, then sentence-start trie at begin==0.
 func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	if r == nil || sentence == nil {
 		return nil
 	}
-	_, _ = loadOldSpelling()
+	sd := loadOldSpellingData()
 	text := sentence.GetText()
-	hits := findOldSpellingHits(text, oldSpellingBodyKeys, oldSpellingBodyMap)
-	// Java: Collections.reverse(hits) then process — work on longest matches first.
-	// We already emit longest keys first per start; sort all by length desc, then begin.
+	// Java: DATA.get().getTrie().parseText(text)
+	rawHits := sd.GetTrie().ParseText(text)
+	hits := make([]oldSpellingHit, len(rawHits))
+	for i, h := range rawHits {
+		hits[i] = oldSpellingHit{begin: h.Begin, end: h.End, value: h.Value}
+	}
+	// Java: Collections.reverse(hits) — work on longest matches first.
+	// hankcs order is left-to-right by end; reverse + length-desc sort is faithful for overlap skip.
 	sort.SliceStable(hits, func(i, j int) bool {
 		li, lj := hits[i].end-hits[i].begin, hits[j].end-hits[j].begin
 		if li != lj {
@@ -189,7 +172,12 @@ func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rule
 		startPositions[hit.begin] = struct{}{}
 	}
 	// Sentence-start trie: only hit.begin == 0
-	sentHits := findOldSpellingHits(text, oldSpellingSentKeys, oldSpellingSentMap)
+	// Java: DATA.get().getSentenceStartTrie().parseText(text)
+	sentRaw := sd.GetSentenceStartTrie().ParseText(text)
+	sentHits := make([]oldSpellingHit, len(sentRaw))
+	for i, h := range sentRaw {
+		sentHits[i] = oldSpellingHit{begin: h.Begin, end: h.End, value: h.Value}
+	}
 	sort.SliceStable(sentHits, func(i, j int) bool {
 		return (sentHits[i].end - sentHits[i].begin) > (sentHits[j].end - sentHits[j].begin)
 	})
@@ -209,39 +197,6 @@ func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rule
 		break // Java: only one match at sentence start
 	}
 	return matches
-}
-
-func findOldSpellingHits(text string, keys []string, m map[string]string) []oldSpellingHit {
-	if text == "" || len(keys) == 0 {
-		return nil
-	}
-	var hits []oldSpellingHit
-	// Case-sensitive search of each key; positions are UTF-16 (Java String indices).
-	for _, key := range keys {
-		if key == "" {
-			continue
-		}
-		val := m[key]
-		// Scan UTF-16 window for exact key match
-		u := utf16.Encode([]rune(text))
-		ku := utf16.Encode([]rune(key))
-		if len(ku) == 0 || len(ku) > len(u) {
-			continue
-		}
-		for i := 0; i+len(ku) <= len(u); i++ {
-			match := true
-			for j := 0; j < len(ku); j++ {
-				if u[i+j] != ku[j] {
-					match = false
-					break
-				}
-			}
-			if match {
-				hits = append(hits, oldSpellingHit{begin: i, end: i + len(ku), value: val})
-			}
-		}
-	}
-	return hits
 }
 
 // addOldSpellingMatch ports addMatch (may skip AT Geschoß).
