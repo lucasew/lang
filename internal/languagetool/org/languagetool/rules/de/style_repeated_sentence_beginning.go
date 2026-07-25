@@ -11,7 +11,7 @@ import (
 // Java: Category CREATIVE_WRITING, setDefaultOff(), ITS Style.
 type StyleRepeatedSentenceBeginning struct {
 	Messages    map[string]string
-	MinRepeated int // Java MIN_REPEATED = 3
+	MinRepeated int // Java private static final MIN_REPEATED = 3
 	Category    *rules.Category
 	IssueType   rules.ITSIssueType
 	DefaultOff  bool
@@ -21,7 +21,12 @@ type StyleRepeatedSentenceBeginning struct {
 }
 
 func NewStyleRepeatedSentenceBeginning(messages map[string]string) *StyleRepeatedSentenceBeginning {
-	// Java: CREATIVE_WRITING category + setDefaultOff() + ITS Style.
+	// Java ctor:
+	//   super.setCategory(new Category(new CategoryId("CREATIVE_WRITING"),
+	//       messages.getString("category_creative_writing"), Location.INTERNAL, false));
+	//   setDefaultOff();
+	//   setLocQualityIssueType(ITSIssueType.Style);
+	//   addExamplePair(Example.wrong(... multi-marker ...), Example.fixed(...));
 	r := &StyleRepeatedSentenceBeginning{
 		Messages:    messages,
 		MinRepeated: 3,
@@ -29,7 +34,6 @@ func NewStyleRepeatedSentenceBeginning(messages map[string]string) *StyleRepeate
 		IssueType:   rules.ITSStyle,
 		DefaultOff:  true,
 	}
-	// Java: multi-marker ART:DEF:NOM subject starts
 	r.AddExamplePair(
 		rules.Wrong("<marker>Das Auto</marker> kam näher. <marker>Der Hund</marker> lief langsam über die Straße. <marker>Die Reifen</marker> quietschten."),
 		rules.Fixed("Das Auto kam näher. Langsam lief der Hund über die Straße. Die Reifen quietschten."),
@@ -100,10 +104,19 @@ func (r *StyleRepeatedSentenceBeginning) MinToCheckParagraph() int {
 	return r.MinRepeated
 }
 
+// MatchList ports StyleRepeatedSentenceBeginning.match(List<AnalyzedSentence>).
+//
+// Java control flow (bug-for-bug):
+//  1. if sentences.size() < MIN_REPEATED → empty
+//  2. tokens = getTokensWithoutWhitespace(); inspect tokens[1] only
+//  3. ART:DEF:NOM or ART:IND:NOM → scan i=2.. while !VER for SUB; end at SUB or article (noSub)
+//  4. else PRO:PER:NOM → span tokens[1] only
+//  5. else if nRepeated >= MIN_REPEATED emit RuleMatch(getDescription()) for each; clear
+//  6. pos += getCorrectedTextLength() every sentence; flush again after loop
 func (r *StyleRepeatedSentenceBeginning) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	minR := r.MinRepeated
-	if minR <= 0 {
-		minR = 3
+	minR := 3
+	if r != nil && r.MinRepeated > 0 {
+		minR = r.MinRepeated
 	}
 	if len(sentences) < minR {
 		return nil
@@ -114,8 +127,8 @@ func (r *StyleRepeatedSentenceBeginning) MatchList(sentences []*languagetool.Ana
 	var startPos, endPos []int
 	var repeated []*languagetool.AnalyzedSentence
 	flush := func() {
+		// Java: if (nRepeated >= MIN_REPEATED) { for ... new RuleMatch(this, sent, start, end, getDescription()) }
 		if nRepeated >= minR {
-			// Java: new RuleMatch(..., getDescription()) — no shortMessage.
 			msg := r.GetDescription()
 			for i := 0; i < len(repeated); i++ {
 				rm := rules.NewRuleMatch(r, repeated[i], startPos[i], endPos[i], msg)
@@ -128,6 +141,7 @@ func (r *StyleRepeatedSentenceBeginning) MatchList(sentences []*languagetool.Ana
 		nRepeated = 0
 	}
 	for _, sentence := range sentences {
+		// Java assumes non-null sentences with tokens[1]; defensive guards map to the non-match branch.
 		if sentence == nil {
 			flush()
 			continue
@@ -139,27 +153,25 @@ func (r *StyleRepeatedSentenceBeginning) MatchList(sentences []*languagetool.Ana
 			continue
 		}
 		t1 := tokens[1]
-		isArt := t1.HasPosTagStartingWith("ART:DEF:NOM") || t1.HasPosTagStartingWith("ART:IND:NOM")
-		isPro := t1.HasPosTagStartingWith("PRO:PER:NOM")
-		if isArt {
-			end := t1.GetEndPos() + pos
-			// Java: scan for SUB before VER; else end at article
+		// Java: hasPosTagStartingWith("ART:DEF:NOM") || hasPosTagStartingWith("ART:IND:NOM")
+		if t1.HasPosTagStartingWith("ART:DEF:NOM") || t1.HasPosTagStartingWith("ART:IND:NOM") {
 			noSub := true
+			// Java: for (i = 2; i < tokens.length && !tokens[i].hasPosTagStartingWith("VER"); i++)
 			for i := 2; i < len(tokens) && tokens[i] != nil && !tokens[i].HasPosTagStartingWith("VER"); i++ {
 				if tokens[i].HasPosTagStartingWith("SUB") {
 					noSub = false
-					end = tokens[i].GetEndPos() + pos
+					endPos = append(endPos, tokens[i].GetEndPos()+pos)
 					break
 				}
 			}
 			if noSub {
-				end = t1.GetEndPos() + pos
+				endPos = append(endPos, t1.GetEndPos()+pos)
 			}
 			repeated = append(repeated, sentence)
 			startPos = append(startPos, t1.GetStartPos()+pos)
-			endPos = append(endPos, end)
 			nRepeated++
-		} else if isPro {
+		} else if t1.HasPosTagStartingWith("PRO:PER:NOM") {
+			// Java: start/end = tokens[1] only
 			repeated = append(repeated, sentence)
 			startPos = append(startPos, t1.GetStartPos()+pos)
 			endPos = append(endPos, t1.GetEndPos()+pos)
