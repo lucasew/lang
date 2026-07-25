@@ -39,13 +39,22 @@ func (r *SentenceWhitespaceRule) GetDescription() string {
 	return "Fehlendes Leerzeichen zwischen Sätzen oder nach Ordnungszahlen"
 }
 
-// GetURL ports de.SentenceWhitespaceRule constructor setUrl.
+// GetMessage ports de.SentenceWhitespaceRule.getMessage(boolean).
+// Core MatchList uses MessageAfter* hooks set in the constructor (same strings).
+func (r *SentenceWhitespaceRule) GetMessage(prevSentenceEndsWithNumber bool) string {
+	if prevSentenceEndsWithNumber {
+		return "Fügen Sie nach Ordnungszahlen (1., 2. usw.) ein Leerzeichen ein."
+	}
+	return "Fügen Sie zwischen Sätzen ein Leerzeichen ein."
+}
+
+// GetURL ports de.SentenceWhitespaceRule constructor setUrl (Tools.getUrl).
 func (r *SentenceWhitespaceRule) GetURL() string {
 	return "https://languagetool.org/insights/de/beitrag/grammatik-leerzeichen/#fehler-1-leerzeichen-vor-und-nach-satzzeichen"
 }
 
 func (r *SentenceWhitespaceRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	// Java attaches this (DE rule) so setUrl is visible on matches.
+	// Java attaches this (DE rule) so setUrl/getId are visible on matches.
 	ms := r.SentenceWhitespaceRule.MatchList(sentences)
 	for _, m := range ms {
 		if m != nil {
