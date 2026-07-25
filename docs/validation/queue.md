@@ -322,7 +322,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.C.3-GermanUnpairedBracketsRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanUnpairedBracketsRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GenericUnpairedBracketsRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/GenericUnpairedBracketsRule.java | internal/languagetool/org/languagetool/rules/de/german_unpaired_brackets_rule.go; internal/languagetool/org/languagetool/rules/de/GenericUnpairedBracketsRuleTest_test.go; internal/languagetool/org/languagetool/rules/generic_unpaired_brackets_rule.go | c8230c26d730c340482a28a795464a0bbdeb857d | 0 | 0 | | | 2026-07-25T06:30:05Z |
 
-| docs/faithful-port-checklist.md#3.C.3-GermanWrongWordInContextRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanWrongWordInContextRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanWrongWordInContextRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WrongWordInContextRule.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/wrongWordInContext.txt | internal/languagetool/org/languagetool/rules/de/german_wrong_word_in_context_rule.go; internal/languagetool/org/languagetool/rules/de/GermanWrongWordInContextRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/data/wrongWordInContext.txt; internal/languagetool/org/languagetool/rules/wrong_word_in_context_rule.go | 1f4f9a4b80aeb1da81665a671281c41ecab70cb1 | 0 | 0 | | | 2026-07-25T06:35:55Z |
+| docs/faithful-port-checklist.md#3.C.3-GermanWrongWordInContextRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanWrongWordInContextRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanWrongWordInContextRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WrongWordInContextRule.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/wrongWordInContext.txt | internal/languagetool/org/languagetool/rules/de/german_wrong_word_in_context_rule.go; internal/languagetool/org/languagetool/rules/de/GermanWrongWordInContextRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/data/wrongWordInContext.txt; internal/languagetool/org/languagetool/rules/wrong_word_in_context_rule.go | 1f4f9a4b80aeb1da81665a671281c41ecab70cb1 | 0 | 0 | | | 2026-07-25T06:41:15Z |
 
 ## Human inbox
 
@@ -332,7 +332,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ready 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b |
+| Notes | ACCEPT 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b |
 
 ---
 
@@ -1443,3 +1443,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T06:30:05Z ACCEPT: 3.C.3-GermanUnpairedBracketsRule @ c8230c26 (validator ACCEPT + parent green reconfirm; UNPAIRED_BRACKETS; full DE GenericUnpairedBracketsRuleTest matrix)
 - 2026-07-25T06:34:20Z implement: 3.C.3-GermanWrongWordInContextRule (DE GermanWrongWordInContextRuleTest full twin; official wrongWordInContext.txt; Java king)
 - 2026-07-25T06:35:55Z ready: 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b (implementer report; parent green reconfirm GermanWrongWordInContext)
+- 2026-07-25T06:38:46Z validating: 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b (strict invent re-audit vs Java GermanWrongWordInContextRule + Test + official wrongWordInContext.txt)
+- 2026-07-25T06:41:15Z ACCEPT: 3.C.3-GermanWrongWordInContextRule @ 1f4f9a4b (validator ACCEPT + parent green reconfirm; GERMAN_WRONG_WORD_IN_CONTEXT; official wrongWordInContext.txt; full active matrix)
