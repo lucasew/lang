@@ -75,3 +75,25 @@ func TestInsertCommaFilter_Registered(t *testing.T) {
 	// two-token path: no POS required
 	require.Equal(t, []string{"sag, mal"}, out.GetSuggestedReplacements())
 }
+
+// TestInsertCommaFilter_PreservesType ports Java acceptRuleMatch:
+// ruleMatch.setType(match.getType()) — RuleMatch.Type, not ITS IssueType.
+func TestInsertCommaFilter_PreservesType(t *testing.T) {
+	f := NewInsertCommaFilter()
+	for _, typ := range []rules.RuleMatchType{
+		rules.RuleMatchTypeHint,
+		rules.RuleMatchTypeUnknownWord,
+		rules.RuleMatchTypeOther,
+	} {
+		m := rules.NewRuleMatch(rules.NewFakeRule("I"), nil, 0, 8, "msg")
+		m.SetType(typ)
+		m.IssueType = "should-not-be-copied" // Java does not set IssueType here
+		m.SetSuggestedReplacements([]string{"steht parkt"})
+		out := f.AcceptRuleMatch(m, nil, 1, nil, nil)
+		require.NotNil(t, out)
+		require.Equal(t, typ, out.GetType(), "setType(match.getType())")
+		require.Equal(t, []string{"steht, parkt"}, out.GetSuggestedReplacements())
+		// NewRuleMatch default has empty IssueType; filter must not copy it from match.
+		require.Equal(t, "", out.IssueType)
+	}
+}

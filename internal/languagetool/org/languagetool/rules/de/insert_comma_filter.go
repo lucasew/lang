@@ -89,7 +89,7 @@ func (f *InsertCommaFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map[string
 	}
 	out.SetSuggestedReplacements(suggestions)
 	// Java: ruleMatch.setType(match.getType())
-	out.IssueType = match.IssueType
+	out.SetType(match.GetType())
 	return out
 }
 
