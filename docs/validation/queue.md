@@ -345,7 +345,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-PassiveSentenceRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/PassiveSentenceRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStatisticSentenceStyleRule.java | internal/languagetool/org/languagetool/rules/de/passive_sentence_rule.go; internal/languagetool/org/languagetool/rules/de/passive_sentence_rule_test.go; internal/languagetool/org/languagetool/rules/ | fe468c39ef8fa243fdfe1032c9e03d0344662459 | 0 | 0 | | | 2026-07-25T11:12:01Z |
 | docs/faithful-port-checklist.md#3.C.3-StyleRepeatedSentenceBeginning | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleRepeatedSentenceBeginning.java | internal/languagetool/org/languagetool/rules/de/style_repeated_sentence_beginning.go; internal/languagetool/org/languagetool/rules/de/style_repeated_sentence_beginning_test.go | 4ee2abf1f5dd1b9f94dd2d974481f028475eadfc | 0 | 0 | | | 2026-07-25T11:27:41Z |
 | docs/faithful-port-checklist.md#3.C.3-StyleRepeatedVeryShortSentences | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleRepeatedVeryShortSentences.java | internal/languagetool/org/languagetool/rules/de/style_repeated_very_short_sentences.go; internal/languagetool/org/languagetool/rules/de/style_repeated_very_short_sentences_test.go | 9bf5f828ff78bea4a0fb9279f1d431d288018775 | 1 | 0 | | | 2026-07-25T11:51:01Z |
-| docs/faithful-port-checklist.md#3.C.3-StyleTooOftenUsedAdjectiveRule-DE | implementing | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java | internal/languagetool/org/languagetool/rules/de/style_too_often_used_adjective_rule.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_rules_test.go; internal/languagetool/org/languagetool/rules/abstract_style_too_often_used_word_rule.go | | 0 | 0 | | | 2026-07-25T11:54:44Z |
+| docs/faithful-port-checklist.md#3.C.3-StyleTooOftenUsedAdjectiveRule-DE | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/StyleTooOftenUsedAdjectiveRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleTooOftenUsedWordRule.java | internal/languagetool/org/languagetool/rules/de/style_too_often_used_adjective_rule.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_adjective_rule_test.go; internal/languagetool/org/languagetool/rules/de/style_too_often_used_rules_test.go; internal/languagetool/org/languagetool/rules/abstract_style_too_often_used_word_rule.go | df32ff354ecc070ce6207c4b3cbd8c64006010e1 | 0 | 0 | | | 2026-07-25T12:02:50Z |
 
 ## Human inbox
 
@@ -355,7 +355,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-SentenceWithModalVerbRule @ 48f357e3; next fire: implement next unchecked DE 3.C.3 leaf
+| Notes | ready 3.C.3-StyleTooOftenUsedAdjectiveRule-DE @ df32ff35; next fire: validate
 
 ---
 
@@ -1557,3 +1557,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T11:48:44Z validating: 3.C.3-StyleRepeatedVeryShortSentences @ 9bf5f828 (re-audit after full-token quote anchor fix)
 - 2026-07-25T11:51:01Z ACCEPT: 3.C.3-StyleRepeatedVeryShortSentences @ 9bf5f828 (validator ACCEPT + parent green reconfirm; full-token quote anchors; staccato short)
 - 2026-07-25T11:54:44Z implement: 3.C.3-StyleTooOftenUsedAdjectiveRule-DE (DE StyleTooOftenUsedAdjectiveRule; ADJ:+PRO/ADV/ZUS exceptions; AbstractStyleTooOftenUsedWordRule; Java king)
+- 2026-07-25T12:02:50Z ready: 3.C.3-StyleTooOftenUsedAdjectiveRule-DE @ df32ff35 (implementer report; parent green reconfirm StyleTooOften adj DE twin)
