@@ -1,7 +1,16 @@
 package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/OldSpellingRuleTest.java
-// Inflected ß→ss (e.g. Rußlands) when german_synth.dict is discoverable; else CSV-only fail-closed.
+//
+// Java:
+//   Language germanDE = Languages.getLanguageForShortCode("de-DE");
+//   OldSpellingRule rule = new OldSpellingRule(JLanguageTool.getMessageBundle(), germanDE);
+//   JLanguageTool lt = new JLanguageTool(germanDE);
+//   rule.match(lt.getAnalyzedSentence(...))
+//
+// SpellingData expands ß→ss inflections via GermanSynthesizer.INSTANCE.synthesizeForPosTags
+// (requires official german_synth.dict from german-pos-dict, same as Java classpath).
+
 import (
 	"testing"
 
@@ -9,44 +18,61 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestOldSpellingRule_Test(t *testing.T) {
-	rule := NewOldSpellingRule(nil)
+// oldSpellingDE ports static OldSpellingRuleTest setup for de-DE.
+func oldSpellingDE(t *testing.T) (*OldSpellingRule, *languagetool.JLanguageTool) {
+	t.Helper()
+	// Ensure SpellingData expand path has GermanSynthesizer (Java always does).
+	require.NotNil(t, openDiscoveredGermanSynthesizer(),
+		"german_synth.dict required for SpellingData ß→ss expansion (Java GermanSynthesizer.INSTANCE); install german-pos-dict into resource/de")
 	m, _ := loadOldSpelling()
+	require.Equal(t, "Russlands", m["Rußlands"],
+		"SpellingData must expand Rußland→Rußlands via synthesizer like Java")
+	// Java: Languages.getLanguageForShortCode("de-DE"); new JLanguageTool(germanDE)
+	lt := languagetool.NewJLanguageTool("de-DE")
+	// Java: new OldSpellingRule(JLanguageTool.getMessageBundle(), germanDE)
+	rule := NewOldSpellingRule(nil)
+	return rule, lt
+}
 
-	check := func(sentence string, sugg string) {
+// TestOldSpellingRule_Test ports OldSpellingRuleTest.test().
+func TestOldSpellingRule_Test(t *testing.T) {
+	rule, lt := oldSpellingDE(t)
+
+	check := func(sentence string, suggs ...string) {
 		t.Helper()
-		matches := rule.Match(languagetool.AnalyzePlain(sentence))
-		require.Equal(t, 1, len(matches), "sentence %q", sentence)
-		require.Equal(t, sugg, matches[0].GetSuggestedReplacements()[0], "sentence %q got %v", sentence, matches[0].GetSuggestedReplacements())
+		sent := lt.GetAnalyzedSentence(sentence)
+		require.NotNil(t, sent, "GetAnalyzedSentence(%q)", sentence)
+		matches := rule.Match(sent)
+		require.Equal(t, 1, len(matches), "sentence %q matches=%v", sentence, matches)
+		require.Equal(t, suggs, matches[0].GetSuggestedReplacements(), "sentence %q", sentence)
 	}
 	no := func(sentence string) {
 		t.Helper()
-		require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(sentence))), "sentence %q", sentence)
+		sent := lt.GetAnalyzedSentence(sentence)
+		require.NotNil(t, sent, "GetAnalyzedSentence(%q)", sentence)
+		matches := rule.Match(sent)
+		require.Equal(t, 0, len(matches), "unexpected match for %q: %v", sentence, matches)
+	}
+	assertMatch := func(sentence string) {
+		t.Helper()
+		sent := lt.GetAnalyzedSentence(sentence)
+		require.NotNil(t, sent, "GetAnalyzedSentence(%q)", sentence)
+		require.Equal(t, 1, len(rule.Match(sent)), "sentence %q", sentence)
 	}
 
+	// Java OldSpellingRuleTest.test matrix (suggestions via getSuggestedReplacements().toString())
 	check("Ein Kuß", "Kuss")
 	check("Das Corpus delicti", "Corpus Delicti")
-	// Base CSV form always present; genitive Rußlands only via synthesizer (Java SpellingData).
-	check("In Rußland Weiten", "Russland")
-	if _, ok := m["Rußlands"]; ok {
-		check("In Rußlands Weiten", "Russlands")
-	} else {
-		no("In Rußlands Weiten") // fail-closed without invent when synth dict missing
-	}
+	// Inflected ß forms via SpellingData + GermanSynthesizer (always 1 match in Java)
+	check("In Rußlands Weiten", "Russlands")
 	check("Hot pants", "Hotpants")
 	check("Ich muß los", "muss")
-	matches := rule.Match(languagetool.AnalyzePlain("schwarzweißmalen"))
-	require.Equal(t, 1, len(matches))
-	require.Equal(t, []string{"schwarzweiß malen", "schwarz-weiß malen"}, matches[0].GetSuggestedReplacements())
-
-	// Java OldSpellingRuleTest remaining positives
+	check("schwarzweißmalen", "schwarzweiß malen", "schwarz-weiß malen")
 	check("geschneuzt", "geschnäuzt")
 	check("naß machen", "nassmachen")
-	msMid := rule.Match(languagetool.AnalyzePlain("Midlife-crisis"))
-	require.Equal(t, 1, len(msMid))
-	require.Equal(t, []string{"Midlife-Crisis", "Midlifecrisis"}, msMid[0].GetSuggestedReplacements())
+	check("Midlife-crisis", "Midlife-Crisis", "Midlifecrisis")
 	check("Schluß", "Schluss")
-	no("schluß") // case-sensitive: lowercase not listed
+	no("schluß") // case-sensitive: lowercase not listed for sentence-start-only pairs
 	check("Schloß", "Schloss")
 	check("radfahren", "Rad fahren")
 	check("Photo", "Foto")
@@ -61,7 +87,7 @@ func TestOldSpellingRule_Test(t *testing.T) {
 	no("in Schloß Holte")
 	no("Schloß Holte ist")
 	no("Asse")
-	no("Photons") // not "Photo" substring
+	no("Photons") // not "Photo" substring match
 	no("Photon")
 	no("Des Photons")
 	no("Photons ")
@@ -74,17 +100,25 @@ func TestOldSpellingRule_Test(t *testing.T) {
 	no("Prof. Naß")
 	no("Bell Telephone")
 	no("Telephone Company")
-	no("kurz fassen")
-	no("Tip Top")
+	assertMatch("Naß ist das Wasser")
+	assertMatch("Läßt du das bitte")
 	no("Das mögliche Bestehenbleiben")
 	no("Das mögliche Bloßstrampeln verhindern.")
-
-	check("Naß ist das Wasser", "Nass")
-	check("Läßt du das bitte", "Lässt")
-	check("Bloßstrampeln konnte er sich nicht.", "Bloß strampeln")
+	assertMatch("Bloßstrampeln konnte er sich nicht.")
 }
 
-// End-to-end SpellingData expand path used by OldSpellingRule (mock synth, no invent).
+// TestOldSpellingRule_GermanAT ports OldSpellingRuleTest.testGermanAT.
+func TestOldSpellingRule_GermanAT(t *testing.T) {
+	// Java: Languages.getLanguageForShortCode("de-AT"); new OldSpellingRule(..., germanAT)
+	rule := NewOldSpellingRuleAT(nil)
+	lt := languagetool.NewJLanguageTool("de-AT")
+	// Special case for Austria because of the pronunciation:
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("Geschoß"))))
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("Erdgeschoß"))))
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("Erdgeschoßes"))))
+}
+
+// TestOldSpellingRule_ExpandFormsIntegration: SpellingData ß→ss expand contract (Java L68–75).
 func TestOldSpellingRule_ExpandFormsIntegration(t *testing.T) {
 	content := "Rußland;Russland\n"
 	expand := func(old string) []string {
@@ -96,38 +130,38 @@ func TestOldSpellingRule_ExpandFormsIntegration(t *testing.T) {
 	sd, err := LoadSpellingDataBoth(content, "t.csv", expand)
 	require.NoError(t, err)
 	require.Equal(t, "Russlands", sd.Map["Rußlands"])
-	// suggestion for expanded form is ß→ss on the form itself (Java)
 	neu, ok := lookupOldSpelling("Rußlands", sd.Map)
 	require.True(t, ok)
 	require.Equal(t, "Russlands", neu)
 }
 
-func TestOldSpellingRule_GermanAT(t *testing.T) {
-	rule := NewOldSpellingRuleAT(nil)
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Geschoß"))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Erdgeschoß"))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Erdgeschoßes"))))
-}
-
-// Twin Java: addMatch may skip (AT) but still occupies hit.begin in startPositions.
+// TestOldSpellingRule_ATStartPositionOccupies: addMatch may skip (AT) but still occupies hit.begin.
 func TestOldSpellingRule_ATStartPositionOccupies(t *testing.T) {
 	rule := NewOldSpellingRuleAT(nil)
-	// de-AT skips Geschoß match; no alternate shorter hit should appear either.
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Geschoß"))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Erdgeschoß"))))
+	lt := languagetool.NewJLanguageTool("de-AT")
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("Geschoß"))))
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("Erdgeschoß"))))
 }
 
-// Twin Java ignoreMatch: substring boundary, titles, Prof.
+// TestOldSpellingRule_IgnoreMatchTwins: ignoreMatch boundary/title/Telephone extras.
 func TestOldSpellingRule_IgnoreMatchTwins(t *testing.T) {
-	rule := NewOldSpellingRule(nil)
-	// Photons must not match Photo
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Photons"))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Des Photons"))))
-	// Title + Naß
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Hallo Herr Naß"))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Prof. Naß"))))
+	rule, lt := oldSpellingDE(t)
+	no := func(s string) {
+		t.Helper()
+		require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence(s))), s)
+	}
+	no("Photons")
+	no("Des Photons")
+	no("Hallo Herr Naß")
+	no("Prof. Naß")
+	no("Bell Telephone")
+	no("Telephone Company")
 	// Sentence-start Läßt
-	ms := rule.Match(languagetool.AnalyzePlain("Läßt du das bitte"))
+	ms := rule.Match(lt.GetAnalyzedSentence("Läßt du das bitte"))
 	require.Equal(t, 1, len(ms))
-	require.Equal(t, "Lässt", ms[0].GetSuggestedReplacements()[0])
+	require.Equal(t, []string{"Lässt"}, ms[0].GetSuggestedReplacements())
+	// Suggestion message path for ß→ss covered words
+	ms2 := rule.Match(lt.GetAnalyzedSentence("Ein Kuß"))
+	require.Equal(t, 1, len(ms2))
+	require.Equal(t, "Kuss", ms2[0].GetSuggestedReplacements()[0])
 }

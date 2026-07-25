@@ -1,6 +1,8 @@
 package de
 
 import (
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -21,18 +23,61 @@ var (
 
 func openDiscoveredGermanSynthesizer() *synthde.GermanSynthesizer {
 	germanSynthOnce.Do(func() {
-		root := DiscoverGermanResourceDir()
-		if root == "" {
-			return
+		// Prefer full DE resource dir (added.txt / removed / do-not-synthesize + synth dict).
+		// Fallback: third_party/german-pos-dict (Maven de.danielnaber:german-pos-dict, same as Java).
+		for _, root := range germanSynthesizerResourceCandidates() {
+			if root == "" {
+				continue
+			}
+			if gs := synthde.OpenGermanSynthesizerFromDir(root); gs != nil {
+				germanSynth = gs
+				return
+			}
+			// No full German open — try base only (no German filters).
+			if germanSynthBase == nil {
+				germanSynthBase = synthesis.OpenBaseSynthesizerFromDir("de", root)
+			}
 		}
-		if gs := synthde.OpenGermanSynthesizerFromDir(root); gs != nil {
-			germanSynth = gs
-			return
-		}
-		// No full German open — try base only (no German filters).
-		germanSynthBase = synthesis.OpenBaseSynthesizerFromDir("de", root)
 	})
 	return germanSynth
+}
+
+// germanSynthesizerResourceCandidates ports Java classpath lookup for /de/german_synth.dict.
+// Order matches other DE discovery: inspiration module resource, then third_party german-pos-dict.
+func germanSynthesizerResourceCandidates() []string {
+	var out []string
+	if root := DiscoverGermanResourceDir(); root != "" {
+		out = append(out, root)
+	}
+	// Walk-up third_party/german-pos-dict (Maven de.danielnaber:german-pos-dict; same as Java).
+	const rel = "third_party/german-pos-dict/org/languagetool/resource/de"
+	if p := walkUpRelDir(rel); p != "" {
+		if len(out) == 0 || out[0] != p {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+// walkUpRelDir finds rel by walking upward from CWD (same pattern as DiscoverGermanResourceDir).
+func walkUpRelDir(rel string) string {
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for {
+		cand := filepath.Join(dir, rel)
+		if st, err := os.Stat(cand); err == nil && st.IsDir() {
+			return cand
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
 }
 
 // openDiscoveredGermanSynthBase returns German synthesizer when present, else bare Base.

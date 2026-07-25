@@ -2,6 +2,8 @@ package de
 
 import (
 	"embed"
+	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
@@ -42,13 +44,16 @@ var (
 	oldSpellingSentMap  map[string]string
 )
 
+// loadOldSpelling loads Java FILE_PATH "/de/alt_neu.csv" into body + sentence-start maps
+// (SpellingData tries). Prefer official resource tree; embed is the same vendored CSV.
 func loadOldSpelling() (map[string]string, []string) {
 	oldSpellingOnce.Do(func() {
-		data, err := altNeuFS.ReadFile("data/alt_neu.csv")
+		data, err := readAltNeuCSV()
 		if err != nil {
 			panic(err)
 		}
-		sd, err := LoadSpellingDataBoth(string(data), "alt_neu.csv", oldSpellingExpandForms())
+		// Java: new SpellingData(FILE_PATH) → getCoherencyMap with GermanSynthesizer expand.
+		sd, err := LoadSpellingDataBoth(string(data), "/de/alt_neu.csv", oldSpellingExpandForms())
 		if err != nil {
 			panic(err)
 		}
@@ -58,6 +63,17 @@ func loadOldSpelling() (map[string]string, []string) {
 		oldSpellingSentKeys = keysLongestFirst(sd.SentenceStartMap)
 	})
 	return oldSpellingBodyMap, oldSpellingBodyKeys
+}
+
+// readAltNeuCSV ports JLanguageTool.getDataBroker().getFromResourceDirAsLines("/de/alt_neu.csv").
+func readAltNeuCSV() ([]byte, error) {
+	if root := DiscoverGermanResourceDir(); root != "" {
+		p := filepath.Join(root, "alt_neu.csv")
+		if b, err := os.ReadFile(p); err == nil {
+			return b, nil
+		}
+	}
+	return altNeuFS.ReadFile("data/alt_neu.csv")
 }
 
 func keysLongestFirst(m map[string]string) []string {
@@ -75,6 +91,9 @@ func keysLongestFirst(m map[string]string) []string {
 	return keys
 }
 
+// oldSpellingExpandForms ports SpellingData's use of
+// GermanSynthesizer.INSTANCE.synthesizeForPosTags(oldSpelling, s -> true).
+// Nil only when the official german_synth.dict is not discoverable (Java always has it on classpath).
 func oldSpellingExpandForms() func(string) []string {
 	if gs := openDiscoveredGermanSynthesizer(); gs != nil {
 		return func(oldSpelling string) []string {
