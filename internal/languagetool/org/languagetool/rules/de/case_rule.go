@@ -115,7 +115,9 @@ const (
 )
 
 var (
-	caseNumeralsEN   = regexp.MustCompile(`(?i)^([a-z]|[0-9]+|(m{0,4}(c[md]|d?c{0,3})(x[cl]|l?x{0,3})(i[xv]|v?i{0,3})))$`)
+	// caseNumeralsEN ports CaseRule.NUMERALS_EN (case-sensitive; Java Pattern without CASE_INSENSITIVE).
+	// Anchors approximate Java Matcher.matches() (full-string match).
+	caseNumeralsEN = regexp.MustCompile(`^([a-z]|[0-9]+|(m{0,4}(c[md]|d?c{0,3})(x[cl]|l?x{0,3})(i[xv]|v?i{0,3})))$`)
 	caseTwoUppercase = regexp.MustCompile(`^[A-ZÖÄÜ][A-ZÖÄÜ][a-zöäüß-]+$`)
 	caseVerhaltenRE  = regexp.MustCompile(`.+verhalten`)
 	caseIrgendEtcRE  = regexp.MustCompile(`^(irgendwelche|irgendwas|irgendein|weniger?|einiger?|mehr|aufs)$`)
@@ -926,27 +928,6 @@ func isQuestionEquivalentAfterColon(i int, tokens []*languagetool.AnalyzedTokenR
 		return true
 	}
 	return false
-}
-
-// isDet is used by AgreementRule helpers (determiner surface check for open compounds).
-var caseDeterminers = map[string]struct{}{
-	"der": {}, "die": {}, "das": {}, "dem": {}, "den": {}, "des": {},
-	"ein": {}, "eine": {}, "einem": {}, "einen": {}, "einer": {}, "eines": {},
-	"mein": {}, "meine": {}, "meinem": {}, "meinen": {}, "meiner": {}, "meines": {},
-	"dein": {}, "deine": {}, "deinem": {}, "deinen": {}, "deiner": {}, "deines": {},
-	"sein": {}, "seine": {}, "seinem": {}, "seinen": {}, "seiner": {}, "seines": {},
-	"ihr": {}, "ihre": {}, "ihrem": {}, "ihren": {}, "ihrer": {}, "ihres": {},
-	"unser": {}, "unsere": {}, "unserem": {}, "unseren": {}, "unserer": {}, "unseres": {},
-	"kein": {}, "keine": {}, "keinem": {}, "keinen": {}, "keiner": {}, "keines": {},
-	"dieser": {}, "diese": {}, "dieses": {}, "diesem": {}, "diesen": {},
-	"jener": {}, "jene": {}, "jenes": {}, "jenem": {}, "jenen": {},
-	"alle": {}, "allem": {}, "allen": {}, "aller": {}, "alles": {},
-	"viele": {}, "vieler": {}, "wenige": {},
-}
-
-func isDet(w string) bool {
-	_, ok := caseDeterminers[strings.ToLower(w)]
-	return ok
 }
 
 // splitASCIISpaceOmitEmptyDE ports org.apache.commons.lang3.StringUtils.split(s, ' ').
