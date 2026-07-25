@@ -312,7 +312,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-MissingVerbRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/MissingVerbRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/MissingVerbRuleTest.java | internal/languagetool/org/languagetool/rules/de/missing_verb_rule.go; internal/languagetool/org/languagetool/rules/de/MissingVerbRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/wire_agreement_stack.go | bf67ca5325532dbcc53a7f2c1f1c981b6053a52a | 0 | 0 |  |  | 2026-07-25T03:20:49Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanWordRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanWordRepeatBeginningRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanWordRepeatBeginningRuleTest.java | internal/languagetool/org/languagetool/rules/de/german_word_repeat_beginning_rule.go; internal/languagetool/org/languagetool/rules/de/GermanWordRepeatBeginningRuleTest_test.go | 8ae88a3b66327112ec6ec909382d10cbcc23f3b8 | 0 | 0 |  |  | 2026-07-25T03:30:01Z |
 | docs/faithful-port-checklist.md#3.C.3-SimilarNameRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SimilarNameRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SimilarNameRuleTest.java | internal/languagetool/org/languagetool/rules/de/similar_name_rule.go; internal/languagetool/org/languagetool/rules/de/SimilarNameRuleTest_test.go | f2079b4fca8158c05625fb28909681486bbf1d9f | 0 | 0 |  |  | 2026-07-25T03:45:26Z |
-| docs/faithful-port-checklist.md#3.C.3-CompoundCoherencyRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/CompoundCoherencyRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundCoherencyRuleTest.java | internal/languagetool/org/languagetool/rules/de/compound_coherency_rule.go; internal/languagetool/org/languagetool/rules/de/CompoundCoherencyRuleTest_test.go | 449211bd0a7ab02d90a0a191fe5b898625adce71 | 0 | 0 |  |  | 2026-07-25T04:05:16Z |
+| docs/faithful-port-checklist.md#3.C.3-CompoundCoherencyRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/CompoundCoherencyRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundCoherencyRuleTest.java | internal/languagetool/org/languagetool/rules/de/compound_coherency_rule.go; internal/languagetool/org/languagetool/rules/de/CompoundCoherencyRuleTest_test.go | 449211bd0a7ab02d90a0a191fe5b898625adce71 | 0 | 0 |  |  | 2026-07-25T05:12:24Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -321,7 +321,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-SimilarNameRule @ f2079b4f |
+| Notes | ACCEPT 3.C.3-CompoundCoherencyRule @ 449211bd |
 
 ---
 
@@ -1400,3 +1400,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T03:45:26Z ACCEPT: 3.C.3-SimilarNameRule @ f2079b4f (validator + parent green reconfirm; DE_SIMILAR_NAMES; full matrix; de-DE analysis)
 - 2026-07-25T03:49:02Z implement: 3.C.3-CompoundCoherencyRule (DE_COMPOUND_COHERENCY + CompoundCoherencyRuleTest full matrix; lemma hyphen fix)
 - 2026-07-25T04:05:16Z ready: 3.C.3-CompoundCoherencyRule @ 449211bd (implementer report; parent green reconfirm CompoundCoherency)
+- 2026-07-25T04:33:47Z validating: 3.C.3-CompoundCoherencyRule @ 449211bd (strict invent re-audit vs Java CompoundCoherencyRule + Test)
+- 2026-07-25T05:12:24Z ACCEPT: 3.C.3-CompoundCoherencyRule @ 449211bd (parent §10 audit after 2 hung validators; DE_COMPOUND_COHERENCY; getLemma hyphen reconstruct; full matrix; green ~0.5s)
