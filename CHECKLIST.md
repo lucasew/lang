@@ -943,8 +943,8 @@
 - [x] org/languagetool/rules/de/AgreementRuleAntiPatterns1.java::AgreementRuleAntiPatterns1
 - [x] org/languagetool/rules/de/AgreementRuleAntiPatterns2.java::AgreementRuleAntiPatterns2
 - [x] org/languagetool/rules/de/AgreementRuleAntiPatterns3.java::AgreementRuleAntiPatterns3
-- [ ] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2
-- [ ] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2.Suggestion
+- [x] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2
+- [x] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2.Suggestion
 - [x] org/languagetool/rules/de/AgreementTools.java::AgreementTools
 - [x] org/languagetool/rules/de/AustrianGermanSpellerRule.java::AustrianGermanSpellerRule
 - [x] org/languagetool/rules/de/CaseRule.java::CaseRule
