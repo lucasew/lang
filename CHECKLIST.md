@@ -992,7 +992,7 @@
 - [ ] org/languagetool/rules/de/NonSignificantVerbsRule.java::NonSignificantVerbsRule
 - [ ] org/languagetool/rules/de/OldSpellingRule.java::OldSpellingRule
 - [x] org/languagetool/rules/de/PassiveSentenceRule.java::PassiveSentenceRule
-- [ ] org/languagetool/rules/de/PotentialCompoundFilter.java::PotentialCompoundFilter
+- [x] org/languagetool/rules/de/PotentialCompoundFilter.java::PotentialCompoundFilter
 - [ ] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases
 - [ ] org/languagetool/rules/de/PrepositionToCases.java::PrepositionToCases.Case
 - [ ] org/languagetool/rules/de/ProhibitedCompoundRule.java::ProhibitedCompoundRule

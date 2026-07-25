@@ -338,7 +338,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-GermanStyleRepeatedWordRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanStyleRepeatedWordRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanStyleRepeatedWordRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStyleRepeatedWordRule.java | internal/languagetool/org/languagetool/rules/de/german_style_repeated_word_rule.go; internal/languagetool/org/languagetool/rules/de/GermanStyleRepeatedWordRuleTest_test.go; internal/languagetool/org/languagetool/rules/abstract_style_repeated_word_rule.go | 04d38a68b76cae79ba4c58350d260a581deafd95 | 0 | 0 | | | 2026-07-25T09:26:43Z |
 | docs/faithful-port-checklist.md#3.C.3-InsertCommaFilter | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/InsertCommaFilter.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/InsertCommaFilterTest.java; inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/GermanTagger.java | internal/languagetool/org/languagetool/rules/de/insert_comma_filter.go; internal/languagetool/org/languagetool/rules/de/InsertCommaFilterTest_test.go; internal/languagetool/org/languagetool/rules/de/insert_comma_filter_test.go | 53616cd2541a59faab6f0d8bbcca998a06f9e027 | 1 | 0 | | | 2026-07-25T09:50:26Z |
 | docs/faithful-port-checklist.md#3.C.3-MissingCommaRelativeClauseRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/MissingCommaRelativeClauseRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/MissingCommaRelativeClauseRuleTest.java | internal/languagetool/org/languagetool/rules/de/missing_comma_relative_clause_rule.go; internal/languagetool/org/languagetool/rules/de/missing_comma_relative_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/MissingCommaRelativeClauseRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/register_core.go | 29b24cec8a66a569726757a07d1abfe83a0a129b | 0 | 0 | | | 2026-07-25T10:13:36Z |
-| docs/faithful-port-checklist.md#3.C.3-PotentialCompoundFilter | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/PotentialCompoundFilter.java | internal/languagetool/org/languagetool/rules/de/potential_compound_filter.go; internal/languagetool/org/languagetool/rules/de/potential_compound_filter_test.go | 227fc37f77b68f98548e9e311bb582cedb93414d | 0 | 0 | | | 2026-07-25T10:22:57Z |
+| docs/faithful-port-checklist.md#3.C.3-PotentialCompoundFilter | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/PotentialCompoundFilter.java | internal/languagetool/org/languagetool/rules/de/potential_compound_filter.go; internal/languagetool/org/languagetool/rules/de/potential_compound_filter_test.go | 227fc37f77b68f98548e9e311bb582cedb93414d | 0 | 0 | | | 2026-07-25T10:26:04Z |
 
 ## Human inbox
 
@@ -348,7 +348,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ready: 3.C.3-PotentialCompoundFilter @ 227fc37f (next fire validate)
+| Notes | ACCEPT 3.C.3-PotentialCompoundFilter @ 227fc37f; next fire: implement next unchecked DE 3.C.3 leaf
 
 ---
 
@@ -1519,3 +1519,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T10:13:36Z ACCEPT: 3.C.3-MissingCommaRelativeClauseRule @ 29b24cec (validator ACCEPT + parent green reconfirm; full testMatch; real de-DE)
 - 2026-07-25T10:19:26Z implement: 3.C.3-PotentialCompoundFilter (DE PotentialCompoundFilter acceptRuleMatch; GermanyGerman default speller; Java king)
 - 2026-07-25T10:22:57Z ready: 3.C.3-PotentialCompoundFilter @ 227fc37f (implementer report; parent green reconfirm)
+- 2026-07-25T10:23:45Z validating: 3.C.3-PotentialCompoundFilter @ 227fc37f (strict invent re-audit vs Java acceptRuleMatch)
+- 2026-07-25T10:26:04Z ACCEPT: 3.C.3-PotentialCompoundFilter @ 227fc37f (validator ACCEPT + parent green reconfirm; setType+speller Match)
