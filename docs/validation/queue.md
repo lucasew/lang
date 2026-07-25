@@ -328,6 +328,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | docs/faithful-port-checklist.md#3.C.3-NonSignificantVerbsRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/NonSignificantVerbsRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/NonSignificantVerbsRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractStatisticStyleRule.java | internal/languagetool/org/languagetool/rules/de/non_significant_verbs_rule.go; internal/languagetool/org/languagetool/rules/de/NonSignificantVerbsRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/non_significant_verbs_rule_test.go; internal/languagetool/org/languagetool/rules/abstract_statistic_style_rule.go | 39cbba61e053bc50e7f2f37a45bfb33bb4ad30bf | 0 | 0 | | | 2026-07-25T07:06:26Z |
 | docs/faithful-port-checklist.md#3.C.3-OldSpellingRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/OldSpellingRule.java; inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/SpellingData.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/OldSpellingRuleTest.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/alt_neu.csv | internal/languagetool/org/languagetool/rules/de/old_spelling_rule.go; internal/languagetool/org/languagetool/rules/de/OldSpellingRuleTest_test.go | 701d3be31bdeb9157cc59d1ba2edbf87dd01b636 | 0 | 0 | | | 2026-07-25T07:21:34Z |
+| docs/faithful-port-checklist.md#3.C.3-ProhibitedCompoundRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/ProhibitedCompoundRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/ProhibitedCompoundRuleTest.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/confusion_sets.txt; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/compound_exceptions.txt | internal/languagetool/org/languagetool/rules/de/prohibited_compound_rule.go; internal/languagetool/org/languagetool/rules/de/prohibited_compound_pairs.go; internal/languagetool/org/languagetool/rules/de/prohibited_compound_resources.go; internal/languagetool/org/languagetool/rules/de/ProhibitedCompoundRuleTest_test.go | 31a2fc2828f3db5abcb111f5c50e9551910af6c4 | 0 | 0 | | | 2026-07-25T07:31:14Z |
 
 ## Human inbox
 
@@ -337,7 +338,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-OldSpellingRule @ 701d3be3 |
+| Notes | ready 3.C.3-ProhibitedCompoundRule @ 31a2fc28 (parent green reconfirm) |
 
 ---
 
@@ -1462,3 +1463,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T07:16:37Z ready: 3.C.3-OldSpellingRule @ 701d3be3 (implementer report; parent green reconfirm OldSpelling)
 - 2026-07-25T07:19:09Z validating: 3.C.3-OldSpellingRule @ 701d3be3 (strict invent re-audit vs Java OldSpellingRule + SpellingData + Test + alt_neu.csv)
 - 2026-07-25T07:21:34Z ACCEPT: 3.C.3-OldSpellingRule @ 701d3be3 (validator ACCEPT + parent green reconfirm; OLD_SPELLING_RULE; SpellingData ß→ss synth; full OldSpellingRuleTest matrix)
+- 2026-07-25T07:24:21Z implement: 3.C.3-ProhibitedCompoundRule (DE ProhibitedCompoundRuleTest full twin; FakeLanguageModel path; Java king)
+- 2026-07-25T07:31:14Z ready: 3.C.3-ProhibitedCompoundRule @ 31a2fc28 (implementer report; parent green reconfirm ProhibitedCompound)
