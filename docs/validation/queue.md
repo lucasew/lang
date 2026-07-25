@@ -316,6 +316,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-CompoundInfinitivRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/CompoundInfinitivRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundInfinitivRuleTest.java | internal/languagetool/org/languagetool/rules/de/compound_infinitiv_rule.go; internal/languagetool/org/languagetool/rules/de/compound_infinitiv_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/CompoundInfinitivRuleTest_test.go | b4bdc22d135727548b856becaff4b16cae768452 | 0 | 0 | | | 2026-07-25T05:28:00Z |
 | docs/faithful-port-checklist.md#3.C.3-DuUpperLowerCaseRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/DuUpperLowerCaseRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/DuUpperLowerCaseRuleTest.java | internal/languagetool/org/languagetool/rules/de/du_upper_lower_case_rule.go; internal/languagetool/org/languagetool/rules/de/DuUpperLowerCaseRuleTest_test.go | 5ac659321bc1c7c163004962cf4a060348df9283 | 0 | 0 | | | 2026-07-25T05:41:30Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanWordRepeatRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanWordRepeatRuleTest.java | internal/languagetool/org/languagetool/rules/de/german_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/de/german_word_repeat_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/GermanWordRepeatRuleTest_test.go | 8284b59974ea3286a97010732e5391b36d377af6 | 0 | 0 | | | 2026-07-25T05:51:30Z |
+| docs/faithful-port-checklist.md#3.C.3-GermanParagraphRepeatBeginningRule | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanParagraphRepeatBeginningRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanParagraphRepeatBeginningRuleTest.java | internal/languagetool/org/languagetool/rules/de/german_paragraph_repeat_beginning_rule.go; internal/languagetool/org/languagetool/rules/de/GermanParagraphRepeatBeginningRuleTest_test.go | 6c01fc39c9b4fff4c5a6ffcf2daeeadf00ddd5a4 | 0 | 0 | | | 2026-07-25T05:58:00Z |
 ## Human inbox
 
 **You only need to look when the loop is idle** — no `ready`, no `rejected` under CAP, no implementable leaf, only `blocked` and/or `accepted`.
@@ -324,7 +325,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-GermanWordRepeatRule @ 8284b599 |
+| Notes | ready 3.C.3-GermanParagraphRepeatBeginningRule @ 6c01fc39 (await validate) |
 
 ---
 
@@ -1417,3 +1418,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T05:48:00Z ready: 3.C.3-GermanWordRepeatRule @ 8284b599 (implementer report; parent green reconfirm GermanWordRepeat)
 - 2026-07-25T05:50:00Z validating: 3.C.3-GermanWordRepeatRule @ 8284b599 (strict invent re-audit vs Java GermanWordRepeatRule + Test)
 - 2026-07-25T05:51:30Z ACCEPT: 3.C.3-GermanWordRepeatRule @ 8284b599 (validator ACCEPT + parent green reconfirm; ignore+59 anti-patterns; full testRule matrix; de analysis)
+- 2026-07-25T05:53:00Z implement: 3.C.3-GermanParagraphRepeatBeginningRule (DE GermanParagraphRepeatBeginningRuleTest full twin; Java king)
+- 2026-07-25T05:58:00Z ready: 3.C.3-GermanParagraphRepeatBeginningRule @ 6c01fc39 (implementer report; parent green reconfirm GermanParagraphRepeatBeginning)
