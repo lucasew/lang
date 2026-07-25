@@ -936,13 +936,13 @@
 - [ ] org/languagetool/language/SwissGerman.java::SwissGerman
 - [ ] org/languagetool/rules/de/AdaptSuggestionFilter.java::AdaptSuggestionFilter
 - [x] org/languagetool/rules/de/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
-- [ ] org/languagetool/rules/de/AgreementRule.java::AgreementRule
-- [ ] org/languagetool/rules/de/AgreementRule.java::AgreementRule.GrammarCategory
-- [ ] org/languagetool/rules/de/AgreementRule.java::AgreementRule.ReplacementType
+- [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule
+- [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule.GrammarCategory
+- [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule.ReplacementType
 - [ ] org/languagetool/rules/de/AgreementRule2.java::AgreementRule2
-- [ ] org/languagetool/rules/de/AgreementRuleAntiPatterns1.java::AgreementRuleAntiPatterns1
-- [ ] org/languagetool/rules/de/AgreementRuleAntiPatterns2.java::AgreementRuleAntiPatterns2
-- [ ] org/languagetool/rules/de/AgreementRuleAntiPatterns3.java::AgreementRuleAntiPatterns3
+- [x] org/languagetool/rules/de/AgreementRuleAntiPatterns1.java::AgreementRuleAntiPatterns1
+- [x] org/languagetool/rules/de/AgreementRuleAntiPatterns2.java::AgreementRuleAntiPatterns2
+- [x] org/languagetool/rules/de/AgreementRuleAntiPatterns3.java::AgreementRuleAntiPatterns3
 - [ ] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2
 - [ ] org/languagetool/rules/de/AgreementSuggestor2.java::AgreementSuggestor2.Suggestion
 - [ ] org/languagetool/rules/de/AgreementTools.java::AgreementTools
