@@ -9,7 +9,8 @@ import (
 
 // TestEnglishConfusionProbabilityRule_Constructor twins
 // EnglishConfusionProbabilityRuleTest.testConstructor:
-// constructing with FakeLanguageModel + English does not throw; id EN_CONFUSION_RULE.
+// constructing with FakeLanguageModel + English does not throw; id CONFUSION_RULE
+// (Java EnglishConfusionProbabilityRule does not override getId).
 // Java @Ignore testRule (Lucene ngram index) is intentionally not ported.
 func TestEnglishConfusionProbabilityRule_Constructor(t *testing.T) {
 	// Java: new EnglishConfusionProbabilityRule(TestTools.getEnglishMessages(),
@@ -17,7 +18,8 @@ func TestEnglishConfusionProbabilityRule_Constructor(t *testing.T) {
 	lm := ngrams.UniformLanguageModel(0.5, 1) // FakeLanguageModel stand-in
 	r := NewEnglishConfusionProbabilityRule(lm)
 	require.NotNil(t, r)
-	require.Equal(t, EnglishConfusionRuleID, r.GetID())
+	require.Equal(t, ngrams.ConfusionRuleID, r.GetID())
+	require.Equal(t, "CONFUSION_RULE", r.GetID())
 
 	// Java-visible constructor meta (not invent)
 	require.Equal(t, []string{"confusion_sets.txt"}, r.GetFilenames())

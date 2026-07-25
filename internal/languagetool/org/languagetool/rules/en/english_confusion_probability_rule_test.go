@@ -12,7 +12,9 @@ import (
 
 func TestEnglishConfusionProbabilityRule(t *testing.T) {
 	r := NewEnglishConfusionProbabilityRule(nil)
-	require.Equal(t, EnglishConfusionRuleID, r.GetID())
+	// Java: English does not override getId → ConfusionProbabilityRule.RULE_ID
+	require.Equal(t, ngrams.ConfusionRuleID, r.GetID())
+	require.Equal(t, "CONFUSION_RULE", r.GetID())
 	// Java example pair: breaks/brakes
 	inex := r.GetIncorrectExamples()
 	require.NotEmpty(t, inex)

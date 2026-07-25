@@ -14,13 +14,10 @@ import (
 
 // EnglishConfusionProbabilityRule ports
 // org.languagetool.rules.en.EnglishConfusionProbabilityRule.
+// Java does not override getId() → inherits ConfusionProbabilityRule.RULE_ID ("CONFUSION_RULE").
 type EnglishConfusionProbabilityRule struct {
 	*ngrams.ConfusionProbabilityRule
 }
-
-// EnglishConfusionRuleID ports Java getId() override via language module registration;
-// English rule id is EN_CONFUSION_RULE (subclass SpecificIdRule uses this base).
-const EnglishConfusionRuleID = "EN_CONFUSION_RULE"
 
 // EnglishConfusionFilenames ports ConfusionProbabilityRule.getFilenames() default
 // used by EnglishConfusionProbabilityRule (no override → confusion_sets.txt).
@@ -84,7 +81,7 @@ func NewEnglishConfusionProbabilityRule(lm ngrams.LanguageModel) *EnglishConfusi
 // + example pair breaks/brakes.
 func NewEnglishConfusionProbabilityRuleGrams(lm ngrams.LanguageModel, grams int) *EnglishConfusionProbabilityRule {
 	base := ngrams.NewConfusionProbabilityRule(lm, grams)
-	base.RuleIDOverride = EnglishConfusionRuleID
+	// Java EnglishConfusionProbabilityRule does not override getId() → CONFUSION_RULE (not DE_CONFUSION_RULE-style).
 	// Java: LanguageModelUtils.getGoogleStyleWordTokenizer(language) → EnglishWordTokenizer
 	wt := entok.NewEnglishWordTokenizer()
 	base.Tokenize = wt.Tokenize
@@ -139,10 +136,10 @@ func (r *EnglishConfusionProbabilityRule) Match(sentence *languagetool.AnalyzedS
 	return r.ConfusionProbabilityRule.Match(sentence)
 }
 
-// GetID ports getId (EN_CONFUSION_RULE).
+// GetID ports inherited ConfusionProbabilityRule.getId() → CONFUSION_RULE.
 func (r *EnglishConfusionProbabilityRule) GetID() string {
 	if r == nil || r.ConfusionProbabilityRule == nil {
-		return EnglishConfusionRuleID
+		return ngrams.ConfusionRuleID
 	}
 	return r.ConfusionProbabilityRule.GetID()
 }
