@@ -210,6 +210,10 @@ func (r *CaseRule) lookup(word string) *languagetool.AnalyzedTokenReadings {
 	if r != nil && r.Lookup != nil {
 		return r.Lookup(word)
 	}
+	// Java: ((GermanTagger) language.getTagger()).lookup(word)
+	if tg := DiscoveredGermanTagger(); tg != nil {
+		return tg.Lookup(word)
+	}
 	return nil
 }
 
@@ -636,10 +640,14 @@ func (r *CaseRule) isNominalization(i int, tokens []*languagetool.AnalyzedTokenR
 	if prevToken != nil {
 		prevTokenStr = prevToken.GetToken()
 	}
-	if (prevTokenStr == "und" || prevTokenStr == "oder" || prevTokenStr == "beziehungsweise") && prevPrevToken != nil &&
-		((tokens[i].HasPartialPosTag("SUB") && tokens[i].HasPartialPosTag(":ADJ")) ||
-			(prevPrevToken.HasPartialPosTag("SUB") && !r.hasNounReading(nextReadings) &&
-				lowercaseReadings != nil && lowercaseReadings.HasPartialPosTag("ADJ") && prevTokenStr != ",")) {
+	// Java operator precedence (&& before ||):
+	// (und|oder|bzw && prevPrev!=null && SUB&&:ADJ) ||
+	// (prevPrev.SUB && !noun(next) && lowercase ADJ && prev != ",")
+	// so the second arm does NOT require und/oder (bug-for-bug with Java).
+	if ((prevTokenStr == "und" || prevTokenStr == "oder" || prevTokenStr == "beziehungsweise") && prevPrevToken != nil &&
+		tokens[i].HasPartialPosTag("SUB") && tokens[i].HasPartialPosTag(":ADJ")) ||
+		(prevPrevToken != nil && prevPrevToken.HasPartialPosTag("SUB") && !r.hasNounReading(nextReadings) &&
+			lowercaseReadings != nil && lowercaseReadings.HasPartialPosTag("ADJ") && prevTokenStr != ",") {
 		return true
 	}
 	if lowercaseReadings != nil && lowercaseReadings.HasPosTag("PA1:PRD:GRU:VER") {

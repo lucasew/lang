@@ -37,7 +37,6 @@ var caseRuleExceptionsWords = map[string]struct{}{
 	"Vertrauter":              {},
 	"Out":                     {},
 	"Packet":                  {},
-	"Paket":                   {},
 	"Adult":                   {},
 	"Apart":                   {},
 	"Universal":               {},

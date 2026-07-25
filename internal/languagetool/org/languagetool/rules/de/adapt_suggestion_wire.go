@@ -177,25 +177,15 @@ func openDiscoveredGermanTagger(resourceRoot string) *detag.GermanTagger {
 }
 
 // strictCompoundSplitFromResourceDir ports GermanCompoundTokenizer.getStrictInstance
-// used by GermanTagger (lexicon-backed when hunspell .dic present; else exceptions only).
+// used by GermanTagger (Java: EmbeddedGermanDictionary + extras only — not hunspell .dic).
+// Loading full de_DE.dic invents atomic forms (e.g. Profitrate) and blocks compound splits
+// that Java's getStrictInstance still performs.
 func strictCompoundSplitFromResourceDir(resourceRoot string) func(word string) []string {
-	tok := detok.NewGermanCompoundTokenizer(true)
-	if resourceRoot != "" {
-		for _, name := range []string{"de_DE.dic", "de_AT.dic", "de_CH.dic"} {
-			p := filepath.Join(resourceRoot, "hunspell", name)
-			f, err := os.Open(p)
-			if err != nil {
-				continue
-			}
-			_ = tok.LoadHunspellDic(f)
-			_ = f.Close()
-			break
-		}
-	}
+	_ = resourceRoot // Java getStrictInstance does not load resourceRoot hunspell
 	return func(word string) []string {
 		if word == "" {
 			return nil
 		}
-		return tok.Tokenize(word)
+		return detok.GetStrictInstance().Tokenize(word)
 	}
 }

@@ -1,7 +1,17 @@
 package de
 
-// Twin of CaseRuleTest — Java uses POS + tagger lookup (no surface invent).
+// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CaseRuleTest.java
+//
+// Java:
+//   rule = new CaseRule(TestTools.getMessages("de"), (German) Languages.getLanguageForShortCode("de-DE"));
+//   lt = new JLanguageTool(Languages.getLanguageForShortCode("de-DE"));
+//   rule.match(lt.getAnalyzedSentence(input))
+//
+// Go: de-DE JLanguageTool.GetAnalyzedSentence + real GermanTagger.Lookup + de_DE speller
+// (Java language.getTagger().lookup / getDefaultSpellingRule().isMisspelled). No AnalyzePlain invent.
+
 import (
+	"path/filepath"
 	"regexp"
 	"testing"
 
@@ -9,82 +19,526 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCaseRule_Rule(t *testing.T) {
+// newCaseRuleFixture mirrors Java CaseRuleTest setUp.
+func newCaseRuleFixture(t *testing.T) (*CaseRule, *languagetool.JLanguageTool) {
+	t.Helper()
+	lt := languagetool.NewJLanguageTool("de-DE")
+	require.True(t, WireGermanTagWord(lt), "GermanTagger resources required for CaseRule twin")
+	_ = WireGermanDisambiguator(lt)
 	rule := NewCaseRule(nil)
-	// untagged AnalyzePlain must not invent capitalization hits
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Und das Neue Haus."))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Ich habe Heute keine Zeit."))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Ein einfacher Satz zum Testen."))))
-
-	// Morph: "das" + lowercase adjective reading as noun error is complex (needs Lookup hook).
-	// Smoke: matchMorph runs without panic on tagged sentence start.
-	sent := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Ein", "ART:IND:NOM:SIN:MAS", "ein"),
-		atrWithPOS("einfacher", "ADJ:NOM:SIN:MAS:GRU:IND", "einfach"),
-		atrWithPOS("Satz", "SUB:NOM:SIN:MAS", "Satz"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.NotPanics(t, func() { _ = rule.Match(sent) })
+	// Java: ((GermanTagger) language.getTagger()).lookup — default via DiscoveredGermanTagger in CaseRule.lookup
+	if root := DiscoverGermanResourceDir(); root != "" {
+		dict := filepath.Join(root, "hunspell", "de_DE.dict")
+		require.True(t, WireGermanFilterSpeller(dict), "de_DE.dict required (Java getDefaultSpellingRule)")
+	} else {
+		t.Fatal("German resource dir not found")
+	}
+	return rule, lt
 }
 
-func TestCaseRuleCompareListsLegacy(t *testing.T) {
-	s := languagetool.AnalyzePlain("Hier ein Test")
-	toks := s.GetTokensWithoutWhitespace()
-	// tokens: "", Hier, ein, Test, .
-	require.True(t, CaseRuleCompareLists(toks, 1, 2,
-		[]*regexp.Regexp{regexp.MustCompile("Hier"), regexp.MustCompile("ein")}))
-	require.False(t, CaseRuleCompareLists(toks, 1, 2,
-		[]*regexp.Regexp{regexp.MustCompile("Hier"), regexp.MustCompile("Test")}))
+func caseRuleAssertGood(t *testing.T, rule *CaseRule, lt *languagetool.JLanguageTool, input string) {
+	t.Helper()
+	ms := rule.Match(lt.GetAnalyzedSentence(input))
+	require.Equal(t, 0, len(ms), "Did not expect error in: %q matches=%v", input, ms)
 }
 
-func TestCaseRule_EstimateContextAndURL(t *testing.T) {
-	rule := NewCaseRule(nil)
-	// Java: ANTI_PATTERNS.stream().mapToInt(List::size).max().orElse(0)
-	require.Greater(t, rule.EstimateContextForSureMatch(), 0)
-	require.Equal(t, "https://dict.leo.org/grammatik/deutsch/Rechtschreibung/Regeln/Gross-klein/index.html", rule.GetURL())
-}
-
-// Java: (prevTokenIsDas && …) || (i>1 && VER:AUX|MOD at i-2) continues the whole
-// iteration — uppercase match is skipped even when prev is not "das".
-// "Wird man Gehen nach …" with Gehen as VER:INF baseform must not flag DE_CASE.
-func TestCaseRule_AuxModSkipIndependentOfDas(t *testing.T) {
-	rule := NewCaseRule(nil)
-	rule.IsMisspelled = func(string) bool { return false }
-	toks := withPositions(
-		sentStartATR(),
-		atrWithPOS("Wird", "VER:AUX:3:SIN:PRÄ:SFT", "werden"),
-		atrWithPOS("man", "PRO:PER:NOM:SIN:3:MAS", "man"),
-		atrWithPOS("Gehen", "VER:INF:NON", "Gehen"),
-		atrWithPOS("weiter", "ADV", "weiter"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	sent := languagetool.NewAnalyzedSentence(toks)
-	// matchMorph (no anti-pattern immunization) so we isolate the Java operator-precedence continue.
-	require.Equal(t, 0, len(rule.matchMorph(toks, sent)), "VER:AUX at i-2 must skip uppercase path (Java precedence)")
+func caseRuleAssertBad(t *testing.T, rule *CaseRule, lt *languagetool.JLanguageTool, input string) {
+	t.Helper()
+	ms := rule.Match(lt.GetAnalyzedSentence(input))
+	require.Equal(t, 1, len(ms), "Did not find expected error in: %q matches=%v", input, ms)
 }
 
 // Twin of CaseRuleTest.testRuleActivation
 func TestCaseRule_RuleActivation(t *testing.T) {
-	rule := NewCaseRule(nil)
+	rule, _ := newCaseRuleFixture(t)
+	// Java: assertTrue(rule.supportsLanguage(Languages.getLanguageForShortCode("de-DE")));
 	require.True(t, rule.SupportsLanguage("de-DE"))
 	require.True(t, rule.SupportsLanguage("de"))
 	require.True(t, rule.SupportsLanguage("de-AT"))
 	require.False(t, rule.SupportsLanguage("en"))
-	require.False(t, rule.SupportsLanguage("en-US"))
 }
 
-// Twin of CaseRuleTest.testCompareLists (Java indices include SENT_START at 0)
+// Twin of CaseRuleTest.testRule
+func TestCaseRule_Rule(t *testing.T) {
+	rule, lt := newCaseRuleFixture(t)
+	caseRuleAssertGood(t, rule, lt, "(Dauer, Raum, Anwesende)")
+	caseRuleAssertGood(t, rule, lt, "Es gibt wenige Befragte.")
+	caseRuleAssertGood(t, rule, lt, "Es gibt weniger Befragte, die das machen würden.")
+	caseRuleAssertGood(t, rule, lt, "Es gibt mehr Befragte, die das machen würden.")
+	caseRuleAssertGood(t, rule, lt, "Das ist eine Abkehr von Gottes Geboten.")
+	caseRuleAssertGood(t, rule, lt, "Dem Hund Futter geben")
+	caseRuleAssertGood(t, rule, lt, "Heute spricht Frau Stieg.")
+	caseRuleAssertGood(t, rule, lt, "So könnte es auch den Handwerksbetrieben gehen, die ausbilden und deren Ausbildung dann Industriebetrieben zugutekäme.")
+	caseRuleAssertGood(t, rule, lt, "Die Firma Drosch hat nicht pünktlich geliefert.")
+	caseRuleAssertGood(t, rule, lt, "3.1 Technische Dokumentation")
+	caseRuleAssertGood(t, rule, lt, "Ein einfacher Satz zum Testen.")
+	caseRuleAssertGood(t, rule, lt, "Das Laufen fällt mir leicht.")
+	caseRuleAssertGood(t, rule, lt, "Das Winseln stört.")
+	caseRuleAssertGood(t, rule, lt, "Das schlägt nicht so zu Buche.")
+	caseRuleAssertGood(t, rule, lt, "Dirk Hetzel ist ein Name.")
+	caseRuleAssertGood(t, rule, lt, "Aber sie tat es, sodass unsere Klasse das sehen und fotografieren konnte.")
+	caseRuleAssertGood(t, rule, lt, "Sein Verhalten war okay.")
+	caseRuleAssertGood(t, rule, lt, "Hier ein Satz. \"Ein Zitat.\"")
+	caseRuleAssertGood(t, rule, lt, "Hier ein Satz. 'Ein Zitat.'")
+	caseRuleAssertGood(t, rule, lt, "Hier ein Satz. «Ein Zitat.»")
+	caseRuleAssertGood(t, rule, lt, "Hier ein Satz. »Ein Zitat.«")
+	caseRuleAssertGood(t, rule, lt, "Hier ein Satz. (Noch einer.)")
+	caseRuleAssertGood(t, rule, lt, "Hier geht es nach Tel Aviv.")
+	caseRuleAssertGood(t, rule, lt, "Unser Jüngster ist da.")
+	caseRuleAssertGood(t, rule, lt, "Alles Erfundene ist wahr.")
+	caseRuleAssertGood(t, rule, lt, "Sie hat immer ihr Bestes getan.")
+	caseRuleAssertGood(t, rule, lt, "Er wird etwas Verrücktes träumen.")
+	caseRuleAssertGood(t, rule, lt, "Er wird etwas schön Verrücktes träumen.")
+	caseRuleAssertGood(t, rule, lt, "Er wird etwas ganz schön Verrücktes träumen.")
+	caseRuleAssertGood(t, rule, lt, "Mit aufgewühltem Innerem.")
+	caseRuleAssertGood(t, rule, lt, "Mit völlig aufgewühltem Innerem.")
+	caseRuleAssertGood(t, rule, lt, "Er wird etwas so Verrücktes träumen.")
+	caseRuleAssertGood(t, rule, lt, "Tom ist etwas über dreißig.")
+	caseRuleAssertGood(t, rule, lt, "Diese Angriffe bleiben im Verborgenen.")
+	caseRuleAssertGood(t, rule, lt, "Ihr sollt mich das wissen lassen.")
+	caseRuleAssertGood(t, rule, lt, "Wenn er mich das rechtzeitig wissen lässt, gerne.")
+	caseRuleAssertGood(t, rule, lt, "Und sein völlig aufgewühltes Inneres erzählte von den Geschehnissen.")
+	caseRuleAssertGood(t, rule, lt, "Aber sein aufgewühltes Inneres erzählte von den Geschehnissen.")
+	caseRuleAssertGood(t, rule, lt, "Sein aufgewühltes Inneres erzählte von den Geschehnissen.")
+	caseRuleAssertGood(t, rule, lt, "Aber sein Inneres erzählte von den Geschehnissen.")
+	caseRuleAssertGood(t, rule, lt, "Ein Kaninchen, das zaubern kann.")
+	caseRuleAssertGood(t, rule, lt, "Keine Ahnung, wie ich das prüfen sollte.")
+	caseRuleAssertGood(t, rule, lt, "Und dann noch Strafrechtsdogmatikerinnen.")
+	caseRuleAssertGood(t, rule, lt, "Er kann ihr das bieten, was sie verdient.")
+	caseRuleAssertGood(t, rule, lt, "Das fragen sich mittlerweile viele.")
+	caseRuleAssertGood(t, rule, lt, "Ich habe gehofft, dass du das sagen würdest.")
+	caseRuleAssertGood(t, rule, lt, "Eigentlich hätte ich das wissen müssen.")
+	caseRuleAssertGood(t, rule, lt, "Mir tut es wirklich leid, Ihnen das sagen zu müssen.")
+	caseRuleAssertGood(t, rule, lt, "Der Wettkampf endete im Unentschieden.")
+	caseRuleAssertGood(t, rule, lt, "Er versuchte, Neues zu tun.")
+	caseRuleAssertGood(t, rule, lt, "Du musst das wissen, damit du die Prüfung bestehst")
+	caseRuleAssertGood(t, rule, lt, "Er kann ihr das bieten, was sie verdient.")
+	caseRuleAssertGood(t, rule, lt, "Er fragte, ob das gelingen wird.")
+	caseRuleAssertGood(t, rule, lt, "Er mag Obst, wie zum Beispel Apfelsinen.")
+	caseRuleAssertGood(t, rule, lt, "Er will die Ausgaben für Umweltschutz und Soziales kürzen.")
+	caseRuleAssertGood(t, rule, lt, "Die Musicalverfilmung „Die Schöne und das Biest“ bricht mehrere Rekorde.")
+	caseRuleAssertGood(t, rule, lt, "Joachim Sauer lobte Johannes Rau.")
+	caseRuleAssertGood(t, rule, lt, "Im Falle des Menschen ist dessen wirkendes Wollen gegeben.")
+	caseRuleAssertGood(t, rule, lt, "Szenario: 1) Zwei Galaxien verschmelzen.")
+	caseRuleAssertGood(t, rule, lt, "Existieren Außerirdische im Universum?")
+	caseRuleAssertGood(t, rule, lt, "Tom vollbringt Außerordentliches.")
+	caseRuleAssertGood(t, rule, lt, "Er führt Böses im Schilde.")
+	caseRuleAssertGood(t, rule, lt, "Es gab Überlebende.")
+	caseRuleAssertGood(t, rule, lt, "'Wir werden das stoppen.'")
+	caseRuleAssertGood(t, rule, lt, "Wahre Liebe muss das aushalten.")
+	caseRuleAssertGood(t, rule, lt, "Du kannst das machen.")
+	caseRuleAssertGood(t, rule, lt, "Vor dem Aus stehen.")
+	caseRuleAssertGood(t, rule, lt, "Ich Armer!")
+	caseRuleAssertGood(t, rule, lt, "Hallo Malte,")
+	caseRuleAssertGood(t, rule, lt, "Parks Vertraute Choi Soon Sil ist zu drei Jahren Haft verurteilt worden.")
+	caseRuleAssertGood(t, rule, lt, "Bei einer Veranstaltung Rechtsextremer passierte es.")
+	caseRuleAssertGood(t, rule, lt, "Eine Gruppe Betrunkener singt.")
+	caseRuleAssertGood(t, rule, lt, "Bei Betreten des Hauses.")
+	caseRuleAssertGood(t, rule, lt, "Das Aus für Italien ist bitter.")
+	caseRuleAssertGood(t, rule, lt, "Das Aus kam unerwartet.")
+	caseRuleAssertGood(t, rule, lt, "Anmeldung bis Fr. 1.12.")
+	caseRuleAssertGood(t, rule, lt, "Gibt es die Schuhe auch in Gr. 43?")
+	caseRuleAssertGood(t, rule, lt, "Weil er Unmündige sexuell missbraucht haben soll, wurde ein Lehrer verhaftet.")
+	caseRuleAssertGood(t, rule, lt, "Tausende Gläubige kamen.")
+	caseRuleAssertGood(t, rule, lt, "Es kamen Tausende Gläubige.")
+	caseRuleAssertGood(t, rule, lt, "Das schließen Forscher aus den gefundenen Spuren.")
+	caseRuleAssertGood(t, rule, lt, "Wieder Verletzter bei Unfall")
+	caseRuleAssertGood(t, rule, lt, "Eine Gruppe Aufständischer verwüstete die Bar.")
+	caseRuleAssertGood(t, rule, lt, "‚Dieser Satz.‘ Hier kommt der nächste Satz.")
+	caseRuleAssertGood(t, rule, lt, "Dabei werden im Wesentlichen zwei Prinzipien verwendet:")
+	caseRuleAssertGood(t, rule, lt, "Er fragte, ob das gelingen oder scheitern wird.")
+	caseRuleAssertGood(t, rule, lt, "Einen Tag nach Bekanntwerden des Skandals")
+	caseRuleAssertGood(t, rule, lt, "Das machen eher die Erwachsenen.")
+	caseRuleAssertGood(t, rule, lt, "Das ist ihr Zuhause.")
+	caseRuleAssertGood(t, rule, lt, "Das ist Sandras Zuhause.")
+	caseRuleAssertGood(t, rule, lt, "Das machen eher wohlhabende Leute.")
+	caseRuleAssertGood(t, rule, lt, "Als Erstes würde ich sofort die Struktur ändern.")
+	caseRuleAssertGood(t, rule, lt, "Er sagte: Als Erstes würde ich sofort die Struktur ändern.")
+	caseRuleAssertGood(t, rule, lt, "Das schaffen moderne E-Autos locker.")
+	caseRuleAssertGood(t, rule, lt, "Das schaffen moderne E-Autos schneller")
+	caseRuleAssertGood(t, rule, lt, "Das schaffen moderne und effizientere E-Autos schneller.")
+	caseRuleAssertGood(t, rule, lt, "Das verwalten User.")
+	caseRuleAssertGood(t, rule, lt, "Man kann das generalisieren")
+	caseRuleAssertGood(t, rule, lt, "Aber wie wir das machen und sicher gestalten, darauf konzentriert sich unsere Arbeit.")
+	caseRuleAssertGood(t, rule, lt, "Vielleicht kann man das erweitern")
+	caseRuleAssertGood(t, rule, lt, "Vielleicht soll er das generalisieren")
+	caseRuleAssertGood(t, rule, lt, "Wahrscheinlich müssten sie das überarbeiten")
+	caseRuleAssertGood(t, rule, lt, "Assistenzsysteme warnen rechtzeitig vor Gefahren.")
+	caseRuleAssertGood(t, rule, lt, "Jeremy Schulte rannte um sein Leben.")
+	caseRuleAssertGood(t, rule, lt, "Er arbeitet im Bereich Präsidiales.")
+	caseRuleAssertGood(t, rule, lt, "Er spricht Sunnitisch & Schiitisch.")
+	caseRuleAssertGood(t, rule, lt, "Er sagte, Geradliniges und Krummliniges sei unvergleichbar.")
+	caseRuleAssertGood(t, rule, lt, "Dort erfahren sie Kurioses und Erstaunliches zum Zusammenspiel von Mensch und Natur.")
+	caseRuleAssertGood(t, rule, lt, "Dabei unterscheidet die Shareware zwischen Privatem und Dienstlichem bei Fahrten ebenso wie bei Autos.")
+	caseRuleAssertGood(t, rule, lt, "Besucher erwartet Handegefertigtes, Leckeres und Informatives rund um den Hund.")
+	caseRuleAssertGood(t, rule, lt, "Der Unterschied zwischen Vorstellbarem und Machbarem war niemals geringer.")
+	caseRuleAssertGood(t, rule, lt, "Das war Fiete Lang.")
+	caseRuleAssertGood(t, rule, lt, "Wenn du an das glaubst, was du tust, kannst du Großes erreichen.")
+	caseRuleAssertGood(t, rule, lt, "Dann hat er Großes erreicht.")
+	caseRuleAssertGood(t, rule, lt, "Dann hat er Großes geleistet.")
+	caseRuleAssertGood(t, rule, lt, "Das Thema Datenaustauschverfahren ist mir wichtig.")
+	caseRuleAssertGood(t, rule, lt, "Ist das eine Frage ? Müsste das nicht anders sein?")
+	caseRuleAssertGood(t, rule, lt, "Das ist ein Satz !!! Das auch.")
+	caseRuleAssertGood(t, rule, lt, "Der russische Erdölmagnat Emanuel Nobel, der Erbauer des ersten Dieselmotorschiffes.")
+	caseRuleAssertGood(t, rule, lt, "Zur Versöhnung: Jüdische Gläubige sollen beten.")
+	caseRuleAssertGood(t, rule, lt, "Fast im Stundentakt wurden neue Infizierte gemeldet.")
+	caseRuleAssertGood(t, rule, lt, "Bert Van Den Brink")
+	caseRuleAssertGood(t, rule, lt, "“In den meisten Bundesländern werden solche Studien per se nicht durchgeführt.”")
+	caseRuleAssertGood(t, rule, lt, "Aber “in den meisten Bundesländern werden solche Studien per se nicht durchgeführt.”")
+	caseRuleAssertGood(t, rule, lt, "A) Das Haus")
+	caseRuleAssertGood(t, rule, lt, "Rabi und Polykarp Kusch an der Columbia-Universität")
+	caseRuleAssertGood(t, rule, lt, "Man geht davon aus, dass es sich dabei nicht um Reinigungsverhalten handelt.")
+	caseRuleAssertGood(t, rule, lt, "Wenn dort oft Gefahren lauern.")
+	caseRuleAssertGood(t, rule, lt, "3b) Den Bereich absichern")
+	caseRuleAssertGood(t, rule, lt, "@booba Da der Holger keine Zeit hat ...")
+	caseRuleAssertGood(t, rule, lt, "Es gibt infizierte Ärzt*innen.")
+	caseRuleAssertGood(t, rule, lt, "WUrzeln")
+	caseRuleAssertGood(t, rule, lt, "🙂 Übrigens finde ich dein neues Ordnungssystem richtig genial!")
+	caseRuleAssertGood(t, rule, lt, "Ein 10,4 Ah Lithium-Akku")
+	caseRuleAssertGood(t, rule, lt, "14:15 Uhr SpVgg Westheim")
+	caseRuleAssertGood(t, rule, lt, "Unser Wärmestrom-Tarif WärmeKompakt im Detail")
+	caseRuleAssertGood(t, rule, lt, "Autohaus Dornig GmbH")
+	caseRuleAssertGood(t, rule, lt, "Hans Pries GmbH")
+	caseRuleAssertGood(t, rule, lt, "Der Kund*innenservice war auch sehr kulant und persönlich.")
+	caseRuleAssertGood(t, rule, lt, ":D Auf dieses Frl.")
+	caseRuleAssertGood(t, rule, lt, "@b_fischer Der Bonussemester-Antrag oder der Widerspruch?")
+	caseRuleAssertGood(t, rule, lt, "Das Gedicht “Der Panther”.")
+	caseRuleAssertGood(t, rule, lt, "Klar, dass wir das brauchen.")
+	caseRuleAssertGood(t, rule, lt, "Das wird Scholz' engster Vertrauter Wolfgang Schmidt übernehmen.")
+	caseRuleAssertGood(t, rule, lt, "Bei der Fülle an Vorgaben kann das schnell vergessen werden.")
+	caseRuleAssertGood(t, rule, lt, "Majid ergänzte: ”Vorläufigen Analysen der Terrakottaröhren aus Ardais liegen ...")
+	caseRuleAssertGood(t, rule, lt, "Ist das eine Frage ? Müsste das nicht anders sein?")
+	caseRuleAssertGood(t, rule, lt, "Das ist ein Satz !!! Das auch.")
+	caseRuleAssertGood(t, rule, lt, "Liebe Kund:in")
+	caseRuleAssertGood(t, rule, lt, "Wir sollten das mal labeln.")
+	caseRuleAssertGood(t, rule, lt, "Teil 1: Der unaufhaltsame Aufstieg Bonapartes")
+	caseRuleAssertGood(t, rule, lt, "Der Absatz bestimmt, in welchem Maße diese Daten Dritten zugänglich gemacht werden.")
+	caseRuleAssertGood(t, rule, lt, "Der TN spricht Russisch - Muttersprache")
+	caseRuleAssertGood(t, rule, lt, "Ich musste das Video mehrmals stoppen, um mir über das Gesagte Gedanken zu machen.")
+	caseRuleAssertGood(t, rule, lt, "Während Besagtes Probleme verursachte.")
+	caseRuleAssertGood(t, rule, lt, "Während der Befragte Geschichten erzählte.")
+	caseRuleAssertGood(t, rule, lt, "Während ein Befragter Geschichten erzählte.")
+	caseRuleAssertGood(t, rule, lt, "... für welche ein Befragter Geld ausgegeben hat.")
+	caseRuleAssertGood(t, rule, lt, "Während die Befragte Geld verdiente.")
+	caseRuleAssertGood(t, rule, lt, "Während die Besagte Geschichten erzählte.")
+	caseRuleAssertGood(t, rule, lt, "Sind dem Zahlungspflichtigen Kosten entstanden?")
+	caseRuleAssertGood(t, rule, lt, "Jetzt, wo Protestierende und Politiker sich streiten")
+	caseRuleAssertGood(t, rule, lt, "Während die Besagte Geld verdiente.")
+	caseRuleAssertGood(t, rule, lt, "Die Nacht, die Liebe, dazu der Wein — zu nichts Gutem Ratgeber sein.")
+	caseRuleAssertGood(t, rule, lt, "Warum tun die Menschen Böses?")
+	caseRuleAssertGood(t, rule, lt, "Und das Vergangene Revue passieren lassen")
+	caseRuleAssertGood(t, rule, lt, "Seither ist das Französische Amtssprache in Frankreich.")
+	caseRuleAssertGood(t, rule, lt, "Für die Betreute Kontoauszüge holen.")
+	caseRuleAssertGood(t, rule, lt, "Das verstehen Deutsche halt nicht.")
+	caseRuleAssertGood(t, rule, lt, "12:00 - 13:00 Gemeinsames Mittagessen")
+	caseRuleAssertGood(t, rule, lt, "12:00 Gemeinsames Mittagessen")
+	caseRuleAssertGood(t, rule, lt, "Meld dich, wenn du Großes vorhast.")
+	caseRuleAssertGood(t, rule, lt, "Muss nicht der Einzelne Einschränkungen der Freiheit hinnehmen, wenn die Sicherheit der Menschen und des Staates mehr gefährdet sind?")
+	caseRuleAssertGood(t, rule, lt, "Wie reißt ein Einzelner Millionen aus ihren Sitzen?")
+	caseRuleAssertGood(t, rule, lt, "Der Aphorismus will nicht Dumme gescheit, sondern Gescheite nachdenklich machen.")
+	caseRuleAssertGood(t, rule, lt, "Während des Hochwassers den Eingeschlossenen Wasser und Nahrung bringen")
+	caseRuleAssertGood(t, rule, lt, "Aus dem Stein der Weisen macht ein Dummer Schotter.")
+	caseRuleAssertGood(t, rule, lt, "Auf dem Weg zu ihnen begegnet der Halbwüchsige Revolverhelden und Indianern.")
+	caseRuleAssertBad(t, rule, lt, "Während des Hochwassers den Eingeschlossenen Menschen Nahrung bringen")
+	caseRuleAssertBad(t, rule, lt, "Während Gefragte Menschen antworteten.")
+	caseRuleAssertBad(t, rule, lt, "Ich brauche eine Gratis App die Ohne WLAN.")
+	caseRuleAssertBad(t, rule, lt, "Alle Kommunikationsmedien die Meinem Widersacher dienen werden.")
+	caseRuleAssertBad(t, rule, lt, "Ich wünsche dir Alles Liebe.")
+	caseRuleAssertBad(t, rule, lt, "Das Auto Meines Vaters wird in Italien produziert.")
+	caseRuleAssertBad(t, rule, lt, "Nach Böhm-Bawerk steht die Allgemeine Profitrate und die Theorie der Produktionspreise im Widerspruch zum Wertgesetz des ersten Bandes.")
+	caseRuleAssertBad(t, rule, lt, "Ich sehe da keine Absolute Schranke.")
+	caseRuleAssertBad(t, rule, lt, "Manns und Fontanes Gesammelten Werken.")
+	caseRuleAssertBad(t, rule, lt, "Und das Neue Haus.")
+	caseRuleAssertBad(t, rule, lt, "Das sind die Die Lehrer.")
+	caseRuleAssertBad(t, rule, lt, "An der flachen Decke zeigt ein Großes Bildnis die Geburt Christi und die ewige Anbetung der Hirten.")
+	caseRuleAssertBad(t, rule, lt, "Und das Gesagte Wort.")
+	caseRuleAssertBad(t, rule, lt, "Und die Gesagten Wörter.")
+	caseRuleAssertBad(t, rule, lt, "Und meine Erzählte Geschichte.")
+	caseRuleAssertBad(t, rule, lt, "Und diese Erzählten Geschichten.")
+	caseRuleAssertBad(t, rule, lt, "Und eine Neue Zeit.")
+	caseRuleAssertGood(t, rule, lt, "▶︎ Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, "▶ Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, "* Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, "- Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, "• Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, ":-) Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, ";-) Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, ":) Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, ";) Dies ist ein Test")
+	caseRuleAssertGood(t, rule, lt, "..., die ins Nichts griff.")
+	caseRuleAssertGood(t, rule, lt, "Er fragte, was sie über das denken und zwinkerte ihnen zu.")
+	caseRuleAssertGood(t, rule, lt, "dem Ägyptischen, Berberischen, Semitischen, Kuschitischen, Omotischen und dem Tschadischen")
+	caseRuleAssertGood(t, rule, lt, "mit S-Bahn-ähnlichen Verkehrsmitteln")
+	caseRuleAssertGood(t, rule, lt, "mit U-Bahn-ähnlichen und günstigen Verkehrsmitteln")
+	caseRuleAssertGood(t, rule, lt, "mit Ü-Ei-großen, schweren Hagelkörnern")
+	caseRuleAssertGood(t, rule, lt, "mit E-Musik-artigen, komplizierten Harmonien")
+	caseRuleAssertGood(t, rule, lt, "eBay International AG")
+	caseRuleAssertGood(t, rule, lt, "Harald & Schön")
+	caseRuleAssertGood(t, rule, lt, "Nicholas and Stark")
+	caseRuleAssertGood(t, rule, lt, "Die Schweizerische Bewachungsgesellschaft")
+	caseRuleAssertBad(t, rule, lt, "Das machen der Töne ist schwierig.")
+	caseRuleAssertBad(t, rule, lt, "Sie Vertraute niemandem.")
+	caseRuleAssertBad(t, rule, lt, "Beten Lernt man in Nöten.")
+	caseRuleAssertBad(t, rule, lt, "Ich habe Heute keine Zeit.")
+	caseRuleAssertBad(t, rule, lt, "Er sagte, Geradliniges und krummliniges sei unvergleichbar.")
+	caseRuleAssertBad(t, rule, lt, "Er sagte, ein Geradliniges und Krummliniges Konzept ist nicht tragbar.")
+	caseRuleAssertBad(t, rule, lt, "Ä Was?")
+	caseRuleAssertBad(t, rule, lt, "… die preiswerte Variante unserer Topseller im Bereich Alternativ Mehle.")
+	caseRuleAssertBad(t, rule, lt, "…  jahrzehntelangen Mitstreitern und vielen Freunden aus Nah und Fern.")
+	caseRuleAssertBad(t, rule, lt, "Hi und Herzlich willkommen auf meiner Seite.")
+	caseRuleAssertBad(t, rule, lt, "Er ist Groß.")
+	caseRuleAssertBad(t, rule, lt, "Die Zahl ging auf Über 1.000 zurück.")
+	caseRuleAssertBad(t, rule, lt, "Er sammelt Große und kleine Tassen.")
+	caseRuleAssertBad(t, rule, lt, "Er sammelt Große, mittlere und kleine Tassen.")
+	caseRuleAssertBad(t, rule, lt, "Dann will sie mit London Über das Referendum verhandeln.")
+	caseRuleAssertBad(t, rule, lt, "Sie kann sich täglich Über vieles freuen.")
+	caseRuleAssertBad(t, rule, lt, "Der Vater (51) Fuhr nach Rom.")
+	caseRuleAssertBad(t, rule, lt, "Er müsse Überlegen, wie er das Problem löst.")
+	caseRuleAssertBad(t, rule, lt, "Er sagte, dass er Über einen Stein stolperte.")
+	caseRuleAssertBad(t, rule, lt, "Tom ist etwas über Dreißig.")
+	caseRuleAssertBad(t, rule, lt, "Unser warten wird sich lohnen.")
+	caseRuleAssertBad(t, rule, lt, "Tom kann mit fast Allem umgehen.")
+	caseRuleAssertBad(t, rule, lt, "Dabei Übersah er sie.")
+	caseRuleAssertBad(t, rule, lt, "Der Brief wird am Mittwoch in Brüssel Übergeben.")
+	caseRuleAssertBad(t, rule, lt, "Damit sollen sie die Versorgung in der Region Übernehmen.")
+	caseRuleAssertBad(t, rule, lt, "Die Unfallursache scheint geklärt, ein Lichtsignal wurde Überfahren.")
+	caseRuleAssertBad(t, rule, lt, "Der Lenker hatte die Höchstgeschwindigkeit um 76 km/h Überschritten.")
+	caseRuleAssertBad(t, rule, lt, "Das sind 10 Millionen Euro, Gleichzeitig und zusätzlich.")
+	caseRuleAssertGood(t, rule, lt, "Stets suchte er das Extreme.")
+	caseRuleAssertGood(t, rule, lt, "Ich möchte zwei Kilo Zwiebeln.")
+	caseRuleAssertGood(t, rule, lt, "Ein Menschenfreund.")
+	caseRuleAssertGood(t, rule, lt, "Der Nachfahre.")
+	caseRuleAssertGood(t, rule, lt, "Hier ein Satz, \"Ein Zitat.\"")
+	caseRuleAssertGood(t, rule, lt, "Hier ein Satz, \"ein Zitat.\"")
+	caseRuleAssertGood(t, rule, lt, "Schon Le Monde schrieb das.")
+	caseRuleAssertGood(t, rule, lt, "In Blubberdorf macht man das so.")
+	caseRuleAssertGood(t, rule, lt, "Der Thriller spielt zur Zeit des Zweiten Weltkriegs")
+	caseRuleAssertGood(t, rule, lt, "Anders als physikalische Konstanten werden mathematische Konstanten unabhängig von jedem physikalischen Maß definiert.")
+	caseRuleAssertGood(t, rule, lt, "Eine besonders einfache Klasse bilden die polylogarithmischen Konstanten.")
+	caseRuleAssertGood(t, rule, lt, "Das südlich von Berlin gelegene Dörfchen.")
+	caseRuleAssertGood(t, rule, lt, "Weil er das kommen sah, traf er Vorkehrungen.")
+	caseRuleAssertGood(t, rule, lt, "Sie werden im Allgemeinen gefasst.")
+	caseRuleAssertGood(t, rule, lt, "Sie werden im allgemeinen Fall gefasst.")
+	caseRuleAssertBad(t, rule, lt, "Sie werden im Allgemeinen Fall gefasst.")
+	caseRuleAssertGood(t, rule, lt, "Das sind Euroscheine.")
+	caseRuleAssertGood(t, rule, lt, "John Stallman isst.")
+	caseRuleAssertGood(t, rule, lt, "Das ist die neue Gesellschafterin hier.")
+	caseRuleAssertGood(t, rule, lt, "Das ist die neue Dienerin hier.")
+	caseRuleAssertGood(t, rule, lt, "Das ist die neue Geigerin hier.")
+	caseRuleAssertGood(t, rule, lt, "Die ersten Gespanne erreichen Köln.")
+	caseRuleAssertGood(t, rule, lt, "Er beschrieb den Angeklagten wie einen Schuldigen")
+	caseRuleAssertGood(t, rule, lt, "Er beschrieb den Angeklagten wie einen Schuldigen.")
+	caseRuleAssertGood(t, rule, lt, "Es dauerte bis ins neunzehnte Jahrhundert")
+	caseRuleAssertGood(t, rule, lt, "Das ist das Dümmste, was ich je gesagt habe.")
+	caseRuleAssertBad(t, rule, lt, "Das ist das Dümmste Kind.")
+	caseRuleAssertGood(t, rule, lt, "Wacht auf, Verdammte dieser Welt!")
+	caseRuleAssertGood(t, rule, lt, "Er sagt, dass Geistliche davon betroffen sind.")
+	caseRuleAssertBad(t, rule, lt, "Er sagt, dass Geistliche Würdenträger davon betroffen sind.")
+	caseRuleAssertBad(t, rule, lt, "Er sagt, dass Geistliche und weltliche Würdenträger davon betroffen sind.")
+	caseRuleAssertBad(t, rule, lt, "Er ist begeistert Von der Fülle.")
+	caseRuleAssertBad(t, rule, lt, "Er wohnt Über einer Garage.")
+	caseRuleAssertBad(t, rule, lt, "Die Anderen 90 Prozent waren krank.")
+	caseRuleAssertGood(t, rule, lt, "Man sagt, Liebe mache blind.")
+	caseRuleAssertGood(t, rule, lt, "Die Deutschen sind sehr listig.")
+	caseRuleAssertGood(t, rule, lt, "Der Lesestoff bestimmt die Leseweise.")
+	caseRuleAssertGood(t, rule, lt, "Ich habe nicht viel von einem Reisenden.")
+	caseRuleAssertGood(t, rule, lt, "Die Vereinigten Staaten")
+	caseRuleAssertGood(t, rule, lt, "Der Satz vom ausgeschlossenen Dritten.")
+	caseRuleAssertGood(t, rule, lt, "Die Ausgewählten werden gut betreut.")
+	caseRuleAssertGood(t, rule, lt, "Die ausgewählten Leute werden gut betreut.")
+	caseRuleAssertBad(t, rule, lt, "Die Ausgewählten Leute werden gut betreut.")
+	caseRuleAssertBad(t, rule, lt, "Er war dort Im März 2000.")
+	caseRuleAssertBad(t, rule, lt, "Er war dort Im Jahr 96.")
+	caseRuleAssertGood(t, rule, lt, "Die Schlinge zieht sich zu.")
+	caseRuleAssertGood(t, rule, lt, "Die Schlingen ziehen sich zu.")
+	caseRuleAssertGood(t, rule, lt, "Sie fällt auf durch ihre hilfsbereite Art. Zudem zeigt sie soziale Kompetenz.")
+	caseRuleAssertGood(t, rule, lt, "Die Lieferadresse ist Obere Brandstr. 4-7")
+	caseRuleAssertGood(t, rule, lt, "Das ist es: kein Satz.")
+	caseRuleAssertGood(t, rule, lt, "Werner Dahlheim: Die Antike.")
+	caseRuleAssertGood(t, rule, lt, "1993: Der talentierte Mr. Ripley")
+	caseRuleAssertGood(t, rule, lt, "Ian Kershaw: Der Hitler-Mythos: Führerkult und Volksmeinung.")
+	caseRuleAssertBad(t, rule, lt, "Das ist es: Kein Satz.")
+	caseRuleAssertBad(t, rule, lt, "Wen magst du lieber: Die Giants oder die Dragons?")
+	caseRuleAssertGood(t, rule, lt, "Ich frage mich: Warum?")
+	caseRuleAssertGood(t, rule, lt, "Ich frage mich: Wieso?")
+	caseRuleAssertGood(t, rule, lt, "Ich frage mich: Weshalb?")
+	caseRuleAssertGood(t, rule, lt, "Ich frage mich: Und warum?")
+	caseRuleAssertGood(t, rule, lt, "Ich frage mich: Oder wieso?")
+	caseRuleAssertGood(t, rule, lt, "Ich frage mich: Aber warum?")
+	caseRuleAssertBad(t, rule, lt, "Ich frage mich: Warum Das so ist.")
+	caseRuleAssertGood(t, rule, lt, "Das wirklich Wichtige ist dies:")
+	caseRuleAssertGood(t, rule, lt, "Das wirklich wichtige Verfahren ist dies:")
+	caseRuleAssertBad(t, rule, lt, "Das wirklich Wichtige Verfahren ist dies:")
+	caseRuleAssertBad(t, rule, lt, "Die Schöne Tür")
+	caseRuleAssertBad(t, rule, lt, "Das Blaue Auto.")
+	caseRuleAssertBad(t, rule, lt, "Ein Einfacher Satz zum Testen.")
+	caseRuleAssertBad(t, rule, lt, "Eine Einfache Frage zum Testen?")
+	caseRuleAssertBad(t, rule, lt, "Er kam Früher als sonst.")
+	caseRuleAssertBad(t, rule, lt, "Er rennt Schneller als ich.")
+	caseRuleAssertBad(t, rule, lt, "Das Winseln Stört.")
+	caseRuleAssertBad(t, rule, lt, "Sein verhalten war okay.")
+	caseRuleAssertBad(t, rule, lt, "Karten werden vom Auswahlstapel gezogen. Auch […] Der Auswahlstapel gehört zum Inhalt.")
+	caseRuleAssertGood(t, rule, lt, "Karten werden vom Auswahlstapel gezogen. […] Der Auswahlstapel gehört zum Inhalt.")
+	caseRuleAssertGood(t, rule, lt, "Im Norwegischen klingt das schöner.")
+	caseRuleAssertGood(t, rule, lt, "Übersetzt aus dem Norwegischen von Ingenieur Frederik Dingsbums.")
+	caseRuleAssertGood(t, rule, lt, "Dem norwegischen Ingenieur gelingt das gut.")
+	caseRuleAssertBad(t, rule, lt, "Dem Norwegischen Ingenieur gelingt das gut.")
+	caseRuleAssertGood(t, rule, lt, "Peter Peterson, dessen Namen auf Griechisch Stein bedeutet.")
+	caseRuleAssertGood(t, rule, lt, "Peter Peterson, dessen Namen auf Griechisch gut klingt.")
+	caseRuleAssertGood(t, rule, lt, "Das dabei Erlernte und Erlebte ist sehr nützlich.")
+	caseRuleAssertBad(t, rule, lt, "Das dabei erlernte und Erlebte Wissen ist sehr nützlich.")
+	caseRuleAssertGood(t, rule, lt, "Ein Kapitän verlässt als Letzter das sinkende Schiff.")
+	caseRuleAssertBad(t, rule, lt, "Diese Regelung wurde als Überholt bezeichnet.")
+	caseRuleAssertBad(t, rule, lt, "Die Dolmetscherin und Der Vorleser gehen spazieren.")
+	caseRuleAssertGood(t, rule, lt, "Es hilft, die Harmonie zwischen Führer und Geführten zu stützen.")
+	caseRuleAssertGood(t, rule, lt, "Das Gebäude des Auswärtigen Amts.")
+	caseRuleAssertGood(t, rule, lt, "Das Gebäude des Auswärtigen Amtes.")
+	caseRuleAssertGood(t, rule, lt, "   Im Folgenden beschreibe ich das Haus.")
+	caseRuleAssertGood(t, rule, lt, "\"Im Folgenden beschreibe ich das Haus.\"")
+	caseRuleAssertGood(t, rule, lt, "Gestern habe ich 10 Spieße gegessen.")
+	caseRuleAssertGood(t, rule, lt, "Die Verurteilten wurden mit dem Fallbeil enthauptet.")
+	caseRuleAssertGood(t, rule, lt, "Den Begnadigten kam ihre Reue zugute.")
+	caseRuleAssertGood(t, rule, lt, "Die Zahl Vier ist gerade.")
+	caseRuleAssertGood(t, rule, lt, "Ich glaube, dass das geschehen wird.")
+	caseRuleAssertGood(t, rule, lt, "Ich glaube, dass das geschehen könnte.")
+	caseRuleAssertGood(t, rule, lt, "Ich glaube, dass mir das gefallen wird.")
+	caseRuleAssertGood(t, rule, lt, "Ich glaube, dass mir das gefallen könnte.")
+	caseRuleAssertGood(t, rule, lt, "Alldem wohnte etwas faszinierend Rätselhaftes inne.")
+	caseRuleAssertGood(t, rule, lt, "Schau mich an, Kleine!")
+	caseRuleAssertGood(t, rule, lt, "Schau mich an, Süßer!")
+	caseRuleAssertGood(t, rule, lt, "Weißt du, in welchem Jahr das geschehen ist?")
+	caseRuleAssertGood(t, rule, lt, "Das wissen viele nicht.")
+	caseRuleAssertBad(t, rule, lt, "Das sagen haben hier viele.")
+	caseRuleAssertGood(t, rule, lt, "Die zum Tode Verurteilten wurden in den Hof geführt.")
+	caseRuleAssertGood(t, rule, lt, "Wenn Sie das schaffen, retten Sie mein Leben!")
+	caseRuleAssertGood(t, rule, lt, "Etwas Grünes, Schleimiges klebte an dem Stein.")
+	caseRuleAssertGood(t, rule, lt, "Er befürchtet Schlimmeres.")
+	caseRuleAssertBad(t, rule, lt, "Bis Bald!")
+	caseRuleAssertGood(t, rule, lt, "#4 Aktuelle Situation")
+	caseRuleAssertGood(t, rule, lt, "Er trinkt ein kühles Blondes.")
+	caseRuleAssertGood(t, rule, lt, "* [ ] Ein GitHub Markdown Listenpunkt")
+	caseRuleAssertGood(t, rule, lt, "Tom ist ein engagierter, gutaussehender Vierzigjähriger, der...")
+	caseRuleAssertGood(t, rule, lt, "a.) Im Zusammenhang mit ...")
+	caseRuleAssertGood(t, rule, lt, "✔︎ Weckt Aufmerksamkeit.")
+	caseRuleAssertGood(t, rule, lt, "Hallo Eckhart,")
+	caseRuleAssertGood(t, rule, lt, "Er kann Polnisch und Urdu.")
+	caseRuleAssertGood(t, rule, lt, "---> Der USB 3.0 Stecker")
+	caseRuleAssertGood(t, rule, lt, "Black Lives Matter")
+	caseRuleAssertGood(t, rule, lt, "== Schrittweise Erklärung")
+	caseRuleAssertGood(t, rule, lt, "Audi A5 Sportback 2.0 TDI")
+	caseRuleAssertGood(t, rule, lt, "§ 1 Allgemeine Bedingungen")
+	caseRuleAssertGood(t, rule, lt, "§1 Allgemeine Bedingungen")
+	caseRuleAssertGood(t, rule, lt, "[H3] Was ist Daytrading?")
+	caseRuleAssertGood(t, rule, lt, " Das ist das Aus des Airbus A380.")
+	caseRuleAssertGood(t, rule, lt, "Wir sollten ihr irgendwas Erotisches schenken.")
+	caseRuleAssertGood(t, rule, lt, "Er trank ein paar Halbe.")
+	caseRuleAssertGood(t, rule, lt, "Sie/Er hat Schuld.")
+	caseRuleAssertGood(t, rule, lt, "Das war irgendein Irrer.")
+	caseRuleAssertGood(t, rule, lt, "Wir wagen Neues.")
+	caseRuleAssertGood(t, rule, lt, "Grundsätzlich gilt aber: Essen Sie, was die Einheimischen Essen.")
+	caseRuleAssertGood(t, rule, lt, "Vielleicht reden wir später mit ein paar Einheimischen.")
+	caseRuleAssertBad(t, rule, lt, "Das existiert im Jazz zunehmend nicht mehr Bei der weiteren Entwicklung des Jazz zeigt sich das.")
+	caseRuleAssertGood(t, rule, lt, "Das denken zwar viele, ist aber total falsch.")
+	caseRuleAssertGood(t, rule, lt, "Ich habe nix Besseres gefunden.")
+	caseRuleAssertGood(t, rule, lt, "Ich habe nichts Besseres gefunden.")
+	caseRuleAssertGood(t, rule, lt, "Ich habe noch Dringendes mitzuteilen.")
+	caseRuleAssertGood(t, rule, lt, "Er isst UV-bestrahltes Obst.")
+	caseRuleAssertGood(t, rule, lt, "Er isst Na-haltiges Obst.")
+	caseRuleAssertGood(t, rule, lt, "Er vertraut auf CO2-arme Wasserkraft")
+	caseRuleAssertGood(t, rule, lt, "Das Entweder-oder ist kein Problem.")
+	caseRuleAssertGood(t, rule, lt, "Er liebt ihre Makeup-freie Haut.")
+	caseRuleAssertGood(t, rule, lt, "Das ist eine Schreibweise.")
+	caseRuleAssertBad(t, rule, lt, "Das ist Eine Schreibweise.")
+	caseRuleAssertGood(t, rule, lt, "Das ist ein Mann.")
+	caseRuleAssertBad(t, rule, lt, "Das ist Ein Mann.")
+	caseRuleAssertBad(t, rule, lt, "Sie erhalten bald unsere Neuesten Insights.")
+	caseRuleAssertBad(t, rule, lt, "Auf eine Carvingschiene sollte die Kette schon im Kalten Zustand weit durchhängen.")
+	caseRuleAssertGood(t, rule, lt, "Du Ärmste!")
+	caseRuleAssertGood(t, rule, lt, "Ich habe nur Schlechtes über den Laden gehört.")
+	caseRuleAssertGood(t, rule, lt, "Du Ärmster, leg dich besser ins Bett.")
+	caseRuleAssertGood(t, rule, lt, "Er wohnt Am Hohen Hain 6a")
+	caseRuleAssertGood(t, rule, lt, "Das Bauvorhaben Am Wiesenhang 9")
+	caseRuleAssertGood(t, rule, lt, "... und das Zwischenmenschliche Hand in Hand.")
+	caseRuleAssertGood(t, rule, lt, "Der Platz auf dem die Ahnungslosen Kopf an Kopf stehen.")
+	caseRuleAssertGood(t, rule, lt, "4.)   Bei Beschäftigung von Hilfskräften: Schadenfälle durch Hilfskräfte")
+	caseRuleAssertGood(t, rule, lt, "Es besteht aus Schülern, Arbeitstätigen und Studenten.")
+	caseRuleAssertGood(t, rule, lt, "Sie starrt ständig ins Nichts.")
+	caseRuleAssertGood(t, rule, lt, "Sowas aber auch.\u2063Das Haus ist schön.")
+	caseRuleAssertGood(t, rule, lt, "\u2063Das Haus ist schön.")
+	caseRuleAssertGood(t, rule, lt, "\u2063\u2063Das Haus ist schön.")
+	caseRuleAssertGood(t, rule, lt, "Die Mannschaft ist eine gelungene Mischung aus alten Haudegen und jungen Wilden.")
+	caseRuleAssertGood(t, rule, lt, "Alleine durch die bloße Einwohnerzahl des Landes leben im Land zahlreiche Kulturschaffende, nach einer Schätzung etwa 30.000 Künstler.")
+	caseRuleAssertGood(t, rule, lt, "Ich hatte das offenbar vergessen oder nicht ganz verstanden.")
+	caseRuleAssertGood(t, rule, lt, "Ich hatte das vergessen oder nicht ganz verstanden.")
+	caseRuleAssertGood(t, rule, lt, "Das ist ein zwingendes Muss.")
+	caseRuleAssertGood(t, rule, lt, "Er hält eine Handbreit Abstand.")
+	caseRuleAssertGood(t, rule, lt, "Das ist das Debakel und Aus für Podolski.")
+	caseRuleAssertGood(t, rule, lt, "Ein Highlight für Klein und Groß!")
+	caseRuleAssertGood(t, rule, lt, "Der schwedische Psychologe Dan Katz, Autor von 'Angst kocht auch nur mit Wasser', sieht in der Corona-Krise dennoch nicht nur Negatives.")
+}
+
+// Twin of CaseRuleTest.testSubstantivierteVerben
+func TestCaseRule_SubstantivierteVerben(t *testing.T) {
+	rule, lt := newCaseRuleFixture(t)
+	caseRuleAssertGood(t, rule, lt, "Das fahrende Auto.")
+	caseRuleAssertGood(t, rule, lt, "Das können wir so machen.")
+	caseRuleAssertGood(t, rule, lt, "Denn das Fahren ist einfach.")
+	caseRuleAssertGood(t, rule, lt, "Das Fahren ist einfach.")
+	caseRuleAssertGood(t, rule, lt, "Das Gehen fällt mir leicht.")
+	caseRuleAssertGood(t, rule, lt, "Das Ernten der Kartoffeln ist mühsam.")
+	caseRuleAssertGood(t, rule, lt, "Entschuldige das späte Weiterleiten.")
+	caseRuleAssertGood(t, rule, lt, "Ich liebe das Lesen.")
+	caseRuleAssertGood(t, rule, lt, "Das Betreten des Rasens ist verboten.")
+	caseRuleAssertGood(t, rule, lt, "Das haben wir aus eigenem Antrieb getan.")
+	caseRuleAssertGood(t, rule, lt, "Das haben wir.")
+	caseRuleAssertGood(t, rule, lt, "Das haben wir schon.")
+	caseRuleAssertGood(t, rule, lt, "Das lesen sie doch sicher in einer Minute durch.")
+	caseRuleAssertGood(t, rule, lt, "Das lesen Sie doch sicher in einer Minute durch!")
+	caseRuleAssertGood(t, rule, lt, "Formationswasser, das oxidiert war.")
+	caseRuleAssertGood(t, rule, lt, "Um das herauszubekommen diskutieren zwei Experten.")
+	caseRuleAssertGood(t, rule, lt, "Ich würde ihn dann mal nach München schicken, damit die beiden das planen/entwickeln können.")
+	caseRuleAssertGood(t, rule, lt, "Das Lesen fällt mir schwer.")
+	caseRuleAssertGood(t, rule, lt, "Sie hörten ein starkes Klopfen.")
+	caseRuleAssertGood(t, rule, lt, "Wer erledigt das Fensterputzen?")
+	caseRuleAssertGood(t, rule, lt, "Viele waren am Zustandekommen des Vertrages beteiligt.")
+	caseRuleAssertGood(t, rule, lt, "Die Sache kam ins Stocken.")
+	caseRuleAssertGood(t, rule, lt, "Das ist zum Lachen.")
+	caseRuleAssertGood(t, rule, lt, "Euer Fernbleiben fiel uns auf.")
+	caseRuleAssertGood(t, rule, lt, "Uns half nur noch lautes Rufen.")
+	caseRuleAssertGood(t, rule, lt, "Die Mitbewohner begnügten sich mit Wegsehen und Schweigen.")
+	caseRuleAssertGood(t, rule, lt, "Sie wollte auf Biegen und Brechen gewinnen.")
+	caseRuleAssertGood(t, rule, lt, "Er klopfte mit Zittern und Zagen an.")
+	caseRuleAssertGood(t, rule, lt, "Ich nehme die Tabletten auf Anraten meiner Ärztin.")
+	caseRuleAssertGood(t, rule, lt, "Sie hat ihr Soll erfüllt.")
+	caseRuleAssertGood(t, rule, lt, "Dies ist ein absolutes Muss.")
+	caseRuleAssertGood(t, rule, lt, "Das Lesen fällt mir schwer.")
+	caseRuleAssertBad(t, rule, lt, "Das fahren ist einfach.")
+	caseRuleAssertBad(t, rule, lt, "Denn das fahren ist einfach.")
+	caseRuleAssertBad(t, rule, lt, "Denn das laufen ist einfach.")
+	caseRuleAssertBad(t, rule, lt, "Denn das essen ist einfach.")
+	caseRuleAssertBad(t, rule, lt, "Denn das gehen ist einfach.")
+	caseRuleAssertBad(t, rule, lt, "Das Große Auto wurde gewaschen.")
+	caseRuleAssertBad(t, rule, lt, "Ich habe ein Neues Fahrrad.")
+}
+
+// Twin of CaseRuleTest.testPhraseExceptions
+func TestCaseRule_PhraseExceptions(t *testing.T) {
+	rule, lt := newCaseRuleFixture(t)
+	caseRuleAssertGood(t, rule, lt, "Das gilt ohne Wenn und Aber.")
+	caseRuleAssertGood(t, rule, lt, "Ohne Wenn und Aber")
+	caseRuleAssertGood(t, rule, lt, "Das gilt ohne Wenn und Aber bla blubb.")
+	caseRuleAssertGood(t, rule, lt, "Das gilt ohne wenn")
+	caseRuleAssertGood(t, rule, lt, "Das gilt ohne wenn und")
+	caseRuleAssertGood(t, rule, lt, "wenn und aber")
+	caseRuleAssertGood(t, rule, lt, "und aber")
+	caseRuleAssertGood(t, rule, lt, "aber")
+}
+
+// Twin of CaseRuleTest.testCompareLists
 func TestCaseRule_CompareLists(t *testing.T) {
-	// AnalyzePlain may not insert empty SENT_START; match Java by building tokens like LT.
-	ss := languagetool.SentenceStartTagName
-	toks := withPositions(
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
-		atrWithPOS("Hier", "ADV", "hier"),
-		atrWithPOS("ein", "ART:IND:NOM:SIN:MAS", "ein"),
-		atrWithPOS("Test", "SUB:NOM:SIN:MAS", "Test"),
-	)
-	// Java: start 0 end 2 with "", Hier, ein
+	_, lt := newCaseRuleFixture(t)
+	sentence1 := lt.GetAnalyzedSentence("Hier ein Test")
+	toks := sentence1.GetTokensWithoutWhitespace()
 	require.True(t, CaseRuleCompareLists(toks, 0, 2,
 		[]*regexp.Regexp{regexp.MustCompile(""), regexp.MustCompile("Hier"), regexp.MustCompile("ein")}))
 	require.True(t, CaseRuleCompareLists(toks, 1, 2,
@@ -94,545 +548,34 @@ func TestCaseRule_CompareLists(t *testing.T) {
 	require.False(t, CaseRuleCompareLists(toks, 0, 4,
 		[]*regexp.Regexp{regexp.MustCompile(""), regexp.MustCompile("Hier"), regexp.MustCompile("ein"), regexp.MustCompile("Test")}))
 
-	toks2 := withPositions(
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
-		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Heilige", "ADJ:NOM:SIN:NEU:GRU:DEF", "heilig"),
-		atrWithPOS("Römische", "ADJ:NOM:SIN:NEU:GRU:DEF", "römisch"),
-		atrWithPOS("Reich", "SUB:NOM:SIN:NEU", "Reich"),
-	)
+	// Java: lt.getAnalyzedSentence("das Heilige Römische Reich")
+	sentence2 := lt.GetAnalyzedSentence("das Heilige Römische Reich")
+	toks2 := sentence2.GetTokensWithoutWhitespace()
 	require.True(t, CaseRuleCompareLists(toks2, 0, 4,
 		[]*regexp.Regexp{regexp.MustCompile(""), regexp.MustCompile("das"), regexp.MustCompile("Heilige"), regexp.MustCompile("Römische"), regexp.MustCompile("Reich")}))
 	require.False(t, CaseRuleCompareLists(toks2, 8, 11,
 		[]*regexp.Regexp{regexp.MustCompile(""), regexp.MustCompile("das"), regexp.MustCompile("Heilige"), regexp.MustCompile("Römische"), regexp.MustCompile("Reich")}))
 }
 
-// Twin of CaseRuleTest.testPhraseExceptions (partial phrase not error)
-func TestCaseRule_PhraseExceptions(t *testing.T) {
-	rule := NewCaseRule(nil)
-	// Partial "ohne wenn" is not a complete exception phrase → still good (no invent hit)
-	// Full exception path needs morph: "ohne Wenn und Aber"
-	// Good: complete phrase with correct casing
-	good := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("gilt", "VER:3:SIN:PRÄ:SFT", "gelten"),
-		atrWithPOS("ohne", "APPR", "ohne"),
-		atrWithPOS("Wenn", "SUB:NOM:SIN:NEU", "Wenn"),
-		atrWithPOS("und", "KON:NEB", "und"),
-		atrWithPOS("Aber", "SUB:NOM:SIN:NEU", "Aber"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(good)))
-	// Incomplete phrase "ohne wenn" alone — no DE_CASE invent without noun morph error
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Das gilt ohne wenn"))))
+// Twin meta: estimateContextForSureMatch + getUrl + description/id (Java CaseRule).
+func TestCaseRule_Meta(t *testing.T) {
+	rule, _ := newCaseRuleFixture(t)
+	require.Greater(t, rule.EstimateContextForSureMatch(), 0)
+	require.Equal(t, "https://dict.leo.org/grammatik/deutsch/Rechtschreibung/Regeln/Gross-klein/index.html", rule.GetURL())
+	require.Equal(t, "DE_CASE", rule.GetID())
+	require.Equal(t, "Großschreibung von Nomen und substantivierten Verben", rule.GetDescription())
+	require.NotNil(t, rule.GetCategory())
+	// Example pair
+	require.NotEmpty(t, rule.GetIncorrectExamples())
+	require.NotEmpty(t, rule.GetCorrectExamples())
 }
 
-// Twin of CaseRuleTest.testSubstantivierteVerben (morph: Das + lower VER as noun error)
-func TestCaseRule_SubstantivierteVerben(t *testing.T) {
-	rule := NewCaseRule(nil)
-	// Lookup returns VER for "fahren" so "Das fahren" is potential lowercased nominalization error
-	rule.Lookup = func(word string) *languagetool.AnalyzedTokenReadings {
-		w := word
-		if word == "fahren" || word == "Fahren" {
-			return languagetool.NewAnalyzedTokenReadingsAt(
-				languagetool.NewAnalyzedToken(w, strPtr("VER:INF:NON"), strPtr("fahren")), 0)
-		}
-		if word == "laufen" || word == "Laufen" {
-			return languagetool.NewAnalyzedTokenReadingsAt(
-				languagetool.NewAnalyzedToken(w, strPtr("VER:INF:NON"), strPtr("laufen")), 0)
-		}
-		return nil
-	}
-	// Good: capitalized substantivized "Fahren"
-	good := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Fahren", "SUB:NOM:SIN:NEU:INF", "Fahren"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	require.Equal(t, 0, len(rule.Match(good)))
-
-	// Bad: "Das fahren" — lowercased after das (Java assertBad)
-	bad := languagetool.NewAnalyzedSentence(withPositions(
-		sentStartATR(),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("fahren", "VER:INF:NON", "fahren"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	))
-	ms := rule.Match(bad)
-	require.Equal(t, 1, len(ms), "Das fahren → lowercase nominalization error")
-	// untagged must not invent
-	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Das fahren ist einfach."))))
-}
-
-// caseRuleTwinLookup returns morph dict twins for CaseRuleTest surfaces
-// (Java GermanTagger.lookup when german.dict is present).
-func caseRuleTwinLookup(word string) *languagetool.AnalyzedTokenReadings {
-	// map surface → POS tags (non-ADJ SUB for nouns; VER for infinitives used in lowercase path)
-	type tags []string
-	m := map[string]tags{
-		// nouns / substantivized (hasNounReading true)
-		"Haus": {"SUB:NOM:SIN:NEU"}, "haus": {"SUB:NOM:SIN:NEU"},
-		"Zeit": {"SUB:AKK:SIN:FEM"}, "zeit": {"SUB:AKK:SIN:FEM"},
-		"Satz": {"SUB:NOM:SIN:MAS"}, "satz": {"SUB:NOM:SIN:MAS"},
-		"Auto": {"SUB:NOM:SIN:NEU"}, "auto": {"SUB:NOM:SIN:NEU"},
-		"Mann": {"SUB:NOM:SIN:MAS"}, "mann": {"SUB:NOM:SIN:MAS"},
-		"Frage": {"SUB:NOM:SIN:FEM"}, "frage": {"SUB:NOM:SIN:FEM"},
-		"Fahrrad": {"SUB:NOM:SIN:NEU"}, "fahrrad": {"SUB:NOM:SIN:NEU"},
-		"Garage": {"SUB:DAT:SIN:FEM"}, "garage": {"SUB:DAT:SIN:FEM"},
-		"Schreibweise": {"SUB:NOM:SIN:FEM"}, "schreibweise": {"SUB:NOM:SIN:FEM"},
-		"Töne": {"SUB:NOM:PLU:MAS"}, "töne": {"SUB:NOM:PLU:MAS"},
-		"Nöten": {"SUB:DAT:PLU:FEM"}, "nöten": {"SUB:DAT:PLU:FEM"},
-		"Prozent": {"SUB:NOM:PLU:NEU"}, "prozent": {"SUB:NOM:PLU:NEU"},
-		"Testen": {"SUB:DAT:SIN:NEU:INF", "VER:INF:NON"}, "testen": {"VER:INF:NON", "SUB:DAT:SIN:NEU:INF"},
-		"Laufen": {"SUB:NOM:SIN:NEU:INF", "VER:INF:NON"}, "laufen": {"VER:INF:NON"},
-		"Fahren": {"SUB:NOM:SIN:NEU:INF", "VER:INF:NON"}, "fahren": {"VER:INF:NON"},
-		"Winseln": {"SUB:NOM:SIN:NEU:INF", "VER:INF:NON"}, "winseln": {"VER:INF:NON"},
-		"Verhalten": {"SUB:NOM:SIN:NEU"}, "verhalten": {"VER:INF:NON", "SUB:NOM:SIN:NEU"},
-		"Vater": {"SUB:NOM:SIN:MAS"}, "Vaters": {"SUB:GEN:SIN:MAS"},
-		"März": {"SUB:DAT:SIN:MAS"}, "märz": {"SUB:DAT:SIN:MAS"},
-		// adjectives / adverbs (no pure SUB → can be uppercase errors when capitalized wrongly)
-		"neu": {"ADJ:PRD:GRU"}, "neue": {"ADJ:NOM:SIN:NEU:GRU:DEF"},
-		"Neue": {"ADJ:NOM:SIN:NEU:GRU:DEF", "SUB:NOM:SIN:NEU:ADJ"}, // :ADJ ignored for hasNounReading
-		"neues": {"ADJ:AKK:SIN:NEU:GRU:IND"}, "Neues": {"ADJ:AKK:SIN:NEU:GRU:IND", "SUB:AKK:SIN:NEU:ADJ"},
-		"einfacher": {"ADJ:NOM:SIN:MAS:GRU:IND"}, "Einfacher": {"ADJ:NOM:SIN:MAS:GRU:IND"},
-		"einfache": {"ADJ:NOM:SIN:FEM:GRU:IND"}, "Einfache": {"ADJ:NOM:SIN:FEM:GRU:IND"},
-		"blaue": {"ADJ:NOM:SIN:NEU:GRU:DEF"}, "Blaue": {"ADJ:NOM:SIN:NEU:GRU:DEF", "SUB:NOM:SIN:NEU:ADJ"},
-		"große": {"ADJ:NOM:SIN:NEU:GRU:DEF"}, "Große": {"ADJ:NOM:SIN:NEU:GRU:DEF", "SUB:NOM:SIN:NEU:ADJ"},
-		"heute": {"ADV"}, "Heute": {"ADV"},
-		"früher": {"ADV:TMP"}, "Früher": {"ADV:TMP"},
-		"schneller": {"ADJ:PRD:KOM"}, "Schneller": {"ADJ:PRD:KOM"},
-		"bald": {"ADV:TMP"}, "Bald": {"ADV:TMP"},
-		"groß": {"ADJ:PRD:GRU"}, "Groß": {"ADJ:PRD:GRU"},
-		"mein": {"PRO:POS"}, "meines": {"PRO:POS:GEN:SIN:MAS"}, "Meines": {"PRO:POS:GEN:SIN:MAS"},
-		"anderen": {"ADJ:NOM:PLU:MAS:GRU:DEF"}, "Anderen": {"ADJ:NOM:PLU:MAS:GRU:DEF", "SUB:NOM:PLU:MAS:ADJ"},
-		"dreißig": {"ZAL"}, "Dreißig": {"ZAL"},
-		// prepositions wrongly capitalized
-		"über": {"PRP:LOK+TMP+CAU:DAT+AKK"}, "Über": {"PRP:LOK+TMP+CAU:DAT+AKK"},
-		"im": {"APPRART:DAT:SIN:MAS"}, "Im": {"APPRART:DAT:SIN:MAS"},
-		// verbs
-		"machen": {"VER:INF:NON"}, "Machen": {"VER:INF:NON"},
-		"lernt": {"VER:3:SIN:PRÄ:SFT"}, "Lernt": {"VER:3:SIN:PRÄ:SFT"},
-		"stört": {"VER:3:SIN:PRÄ:SFT"}, "Stört": {"VER:3:SIN:PRÄ:SFT"},
-		"vertraute": {"VER:3:SIN:PRT:SFT"}, "Vertraute": {"VER:3:SIN:PRT:SFT", "SUB:NOM:SIN:FEM:ADJ"},
-		"ein": {"ART:IND:NOM:SIN:MAS"}, "Ein": {"ART:IND:NOM:SIN:MAS"},
-		"eine": {"ART:IND:NOM:SIN:FEM"}, "Eine": {"ART:IND:NOM:SIN:FEM"},
-		"kein": {"PIAT:NOM:SIN:MAS"}, "Kein": {"PIAT:NOM:SIN:MAS"},
-	}
-	ts, ok := m[word]
-	if !ok {
-		return nil
-	}
-	var readings []*languagetool.AnalyzedToken
-	for _, p := range ts {
-		pp, ww := p, word
-		readings = append(readings, languagetool.NewAnalyzedToken(ww, &pp, &ww))
-	}
-	if len(readings) == 0 {
-		return nil
-	}
-	atr := languagetool.NewAnalyzedTokenReadingsAt(readings[0], 0)
-	for _, rd := range readings[1:] {
-		atr.AddReading(rd, "")
-	}
-	return atr
-}
-
-func newCaseRuleTwin() *CaseRule {
-	r := NewCaseRule(nil)
-	r.Lookup = caseRuleTwinLookup
-	// known lowercased common words are not misspelled (Java speller)
-	r.IsMisspelled = func(w string) bool {
-		known := map[string]bool{
-			"haus": true, "zeit": true, "satz": true, "testen": true, "laufen": true,
-			"fahren": true, "neu": true, "neue": true, "neues": true, "heute": true, "groß": true,
-			"große": true, "mein": true, "meines": true, "vater": true, "vaters": true, "einfach": true,
-			"einfacher": true, "einfache": true, "blaue": true, "auto": true, "mann": true,
-			"frage": true, "fahrrad": true, "garage": true, "schreibweise": true, "töne": true,
-			"nöten": true, "prozent": true, "winseln": true, "verhalten": true, "märz": true,
-			"früher": true, "schneller": true, "bald": true, "anderen": true, "dreißig": true,
-			"über": true, "im": true, "machen": true, "lernt": true, "stört": true,
-			"vertraute": true, "ein": true, "eine": true, "kein": true, "okay": true,
-		}
-		return !known[w]
-	}
-	return r
-}
-
-// Twin of CaseRuleTest.testRule good/bad morph samples (POS inject + Lookup twin).
-func TestCaseRule_MorphJavaSamples(t *testing.T) {
-	rule := newCaseRuleTwin()
-
-	assertGood := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
-		t.Helper()
-		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
-		ms := rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))
-		require.Equal(t, 0, len(ms), "good %s got %d", label, len(ms))
-	}
-	assertBad := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
-		t.Helper()
-		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
-		ms := rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))
-		require.GreaterOrEqual(t, len(ms), 1, "bad %s", label)
-	}
-
-	// Java assertGood
-	assertGood("Ein einfacher Satz zum Testen.",
-		atrWithPOS("Ein", "ART:IND:NOM:SIN:MAS", "ein"),
-		atrWithPOS("einfacher", "ADJ:NOM:SIN:MAS:GRU:IND", "einfach"),
-		atrWithPOS("Satz", "SUB:NOM:SIN:MAS", "Satz"),
-		atrWithPOS("zum", "APPRART:DAT:SIN:NEU", "zu"),
-		atrWithPOS("Testen", "SUB:DAT:SIN:NEU:INF", "Testen"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertGood("Das Laufen fällt mir leicht.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Laufen", "SUB:NOM:SIN:NEU:INF", "Laufen"),
-		atrWithPOS("fällt", "VER:3:SIN:PRÄ:SFT", "fallen"),
-		atrWithPOS("mir", "PRO:PER:DAT:SIN:1", "ich"),
-		atrWithPOS("leicht", "ADV", "leicht"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertGood("Das Fahren ist einfach.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Fahren", "SUB:NOM:SIN:NEU:INF", "Fahren"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertGood("Sein Verhalten war okay.",
-		atrWithPOS("Sein", "PRO:POS:NOM:SIN:NEU", "sein"),
-		atrWithPOS("Verhalten", "SUB:NOM:SIN:NEU", "Verhalten"),
-		atrWithPOS("war", "VER:3:SIN:PRT:NON", "sein"),
-		atrWithPOS("okay", "ADJ:PRD:GRU", "okay"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertGood("A) Das Haus",
-		atrWithPOS("A", "ABK", "A"),
-		atrWithPOS(")", "SONST", ")"),
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-	)
-	assertGood("Das Winseln stört.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Winseln", "SUB:NOM:SIN:NEU:INF", "Winseln"),
-		atrWithPOS("stört", "VER:3:SIN:PRÄ:SFT", "stören"),
-		atrWithPOS(".", "PKT", "."),
-	)
-
-	// Java assertBad
-	assertBad("Und das Neue Haus.",
-		atrWithPOS("Und", "KON:NEB", "und"),
-		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Neue", "ADJ:NOM:SIN:NEU:GRU:DEF", "neu"),
-		atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Ich habe Heute keine Zeit.",
-		atrWithPOS("Ich", "PRO:PER:NOM:SIN:1", "ich"),
-		atrWithPOS("habe", "VER:1:SIN:PRÄ:NON", "haben"),
-		atrWithPOS("Heute", "ADV", "heute"),
-		atrWithPOS("keine", "PIAT:AKK:SIN:FEM", "kein"),
-		atrWithPOS("Zeit", "SUB:AKK:SIN:FEM", "Zeit"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Er ist Groß.",
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:3:MAS", "er"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("Groß", "ADJ:PRD:GRU", "groß"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Das fahren ist einfach.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("fahren", "VER:INF:NON", "fahren"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Das Auto Meines Vaters.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS("Meines", "PRO:POS:GEN:SIN:MAS", "mein"),
-		atrWithPOS("Vaters", "SUB:GEN:SIN:MAS", "Vater"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Ein Einfacher Satz zum Testen.",
-		atrWithPOS("Ein", "ART:IND:NOM:SIN:MAS", "ein"),
-		atrWithPOS("Einfacher", "ADJ:NOM:SIN:MAS:GRU:IND", "einfach"),
-		atrWithPOS("Satz", "SUB:NOM:SIN:MAS", "Satz"),
-		atrWithPOS("zum", "APPRART:DAT:SIN:NEU", "zu"),
-		atrWithPOS("Testen", "SUB:DAT:SIN:NEU:INF", "Testen"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Eine Einfache Frage zum Testen?",
-		atrWithPOS("Eine", "ART:IND:NOM:SIN:FEM", "ein"),
-		atrWithPOS("Einfache", "ADJ:NOM:SIN:FEM:GRU:IND", "einfach"),
-		atrWithPOS("Frage", "SUB:NOM:SIN:FEM", "Frage"),
-		atrWithPOS("zum", "APPRART:DAT:SIN:NEU", "zu"),
-		atrWithPOS("Testen", "SUB:DAT:SIN:NEU:INF", "Testen"),
-		atrWithPOS("?", "PKT", "?"),
-	)
-	assertBad("Das Blaue Auto.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Blaue", "ADJ:NOM:SIN:NEU:GRU:DEF", "blau"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Er kam Früher als sonst.",
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:3:MAS", "er"),
-		atrWithPOS("kam", "VER:3:SIN:PRT:NON", "kommen"),
-		atrWithPOS("Früher", "ADV:TMP", "früh"),
-		atrWithPOS("als", "KON:NEB", "als"),
-		atrWithPOS("sonst", "ADV", "sonst"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	// Java: surface often untagged; lowercase lookup ADJ:PRD:KOM skips isAdjectiveAsNoun
-	// (CaseRule.java comment: avoid false true for ADJ:PRD:KOM when posTag == null).
-	assertBad("Er rennt Schneller als ich.",
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:3:MAS", "er"),
-		atrWithPOS("rennt", "VER:3:SIN:PRÄ:SFT", "rennen"),
-		atrWithPOS("Schneller", "", ""),
-		atrWithPOS("als", "KON:NEB", "als"),
-		atrWithPOS("ich", "PRO:PER:NOM:SIN:1", "ich"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Das Winseln Stört.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Winseln", "SUB:NOM:SIN:NEU:INF", "Winseln"),
-		atrWithPOS("Stört", "VER:3:SIN:PRÄ:SFT", "stören"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Sein verhalten war okay.",
-		atrWithPOS("Sein", "PRO:POS:NOM:SIN:NEU", "sein"),
-		atrWithPOS("verhalten", "VER:INF:NON", "verhalten"),
-		atrWithPOS("war", "VER:3:SIN:PRT:NON", "sein"),
-		atrWithPOS("okay", "ADJ:PRD:GRU", "okay"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Bis Bald!",
-		atrWithPOS("Bis", "APPR", "bis"),
-		atrWithPOS("Bald", "ADV:TMP", "bald"),
-		atrWithPOS("!", "PKT", "!"),
-	)
-	assertBad("Das ist Ein Mann.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("Ein", "ART:IND:NOM:SIN:MAS", "ein"),
-		atrWithPOS("Mann", "SUB:NOM:SIN:MAS", "Mann"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Das ist Eine Schreibweise.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("Eine", "ART:IND:NOM:SIN:FEM", "ein"),
-		atrWithPOS("Schreibweise", "SUB:NOM:SIN:FEM", "Schreibweise"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Das machen der Töne ist schwierig.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("machen", "VER:INF:NON", "machen"),
-		atrWithPOS("der", "ART:DEF:GEN:PLU:MAS", "der"),
-		atrWithPOS("Töne", "SUB:GEN:PLU:MAS", "Ton"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("schwierig", "ADJ:PRD:GRU", "schwierig"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Sie Vertraute niemandem.",
-		atrWithPOS("Sie", "PRO:PER:NOM:SIN:3:FEM", "sie"),
-		atrWithPOS("Vertraute", "VER:3:SIN:PRT:SFT", "vertrauen"),
-		atrWithPOS("niemandem", "PRO:IND:DAT:SIN:MAS", "niemand"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Beten Lernt man in Nöten.",
-		atrWithPOS("Beten", "VER:INF:NON", "beten"),
-		atrWithPOS("Lernt", "VER:3:SIN:PRÄ:SFT", "lernen"),
-		atrWithPOS("man", "PRO:IND:NOM:SIN:MAS", "man"),
-		atrWithPOS("in", "APPR", "in"),
-		atrWithPOS("Nöten", "SUB:DAT:PLU:FEM", "Not"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Ich habe ein Neues Fahrrad.",
-		atrWithPOS("Ich", "PRO:PER:NOM:SIN:1", "ich"),
-		atrWithPOS("habe", "VER:1:SIN:PRÄ:NON", "haben"),
-		atrWithPOS("ein", "ART:IND:AKK:SIN:NEU", "ein"),
-		atrWithPOS("Neues", "ADJ:AKK:SIN:NEU:GRU:IND", "neu"),
-		atrWithPOS("Fahrrad", "SUB:AKK:SIN:NEU", "Fahrrad"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Das Große Auto wurde gewaschen.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Große", "ADJ:NOM:SIN:NEU:GRU:DEF", "groß"),
-		atrWithPOS("Auto", "SUB:NOM:SIN:NEU", "Auto"),
-		atrWithPOS("wurde", "VER:AUX:3:SIN:PRT:SFT", "werden"),
-		atrWithPOS("gewaschen", "PA2:PRD:GRU:VER", "waschen"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Das ist es: Kein Satz.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("es", "PRO:PER:NOM:SIN:3:NEU", "es"),
-		atrWithPOS(":", "PKT", ":"),
-		atrWithPOS("Kein", "PIAT:NOM:SIN:MAS", "kein"),
-		atrWithPOS("Satz", "SUB:NOM:SIN:MAS", "Satz"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Er wohnt Über einer Garage.",
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:3:MAS", "er"),
-		atrWithPOS("wohnt", "VER:3:SIN:PRÄ:SFT", "wohnen"),
-		atrWithPOS("Über", "PRP:LOK+TMP+CAU:DAT+AKK", "über"),
-		atrWithPOS("einer", "ART:IND:DAT:SIN:FEM", "ein"),
-		atrWithPOS("Garage", "SUB:DAT:SIN:FEM", "Garage"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Er war dort Im März 2000.",
-		atrWithPOS("Er", "PRO:PER:NOM:SIN:3:MAS", "er"),
-		atrWithPOS("war", "VER:3:SIN:PRT:NON", "sein"),
-		atrWithPOS("dort", "ADV", "dort"),
-		atrWithPOS("Im", "APPRART:DAT:SIN:MAS", "in"),
-		atrWithPOS("März", "SUB:DAT:SIN:MAS", "März"),
-		atrWithPOS("2000", "ZAL", "2000"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Die Anderen 90 Prozent waren krank.",
-		atrWithPOS("Die", "ART:DEF:NOM:PLU:MAS", "der"),
-		atrWithPOS("Anderen", "ADJ:NOM:PLU:MAS:GRU:DEF", "ander"),
-		atrWithPOS("90", "ZAL", "90"),
-		atrWithPOS("Prozent", "SUB:NOM:PLU:NEU", "Prozent"),
-		atrWithPOS("waren", "VER:3:PLU:PRT:NON", "sein"),
-		atrWithPOS("krank", "ADJ:PRD:GRU", "krank"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Tom ist etwas über Dreißig.",
-		atrWithPOS("Tom", "EIG:NOM:SIN:MAS", "Tom"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("etwas", "ADV", "etwas"),
-		atrWithPOS("über", "PRP:LOK+TMP+CAU:DAT+AKK", "über"),
-		atrWithPOS("Dreißig", "ZAL", "dreißig"),
-		atrWithPOS(".", "PKT", "."),
-	)
-
-	// untagged must not invent
-	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Und das Neue Haus."))))
-	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Ich habe Heute keine Zeit."))))
-	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Ein Einfacher Satz zum Testen."))))
-	require.Equal(t, 0, len(NewCaseRule(nil).Match(languagetool.AnalyzePlain("Das ist Ein Mann."))))
-}
-
-// Twin of CaseRuleTest.testSubstantivierteVerben — more Java good/bad infinitive nominalizations.
-func TestCaseRule_SubstantivierteVerben_JavaTable(t *testing.T) {
-	rule := newCaseRuleTwin()
-	// extend lookup for more infinitives used in Java testSubstantivierteVerben
-	base := caseRuleTwinLookup
-	rule.Lookup = func(word string) *languagetool.AnalyzedTokenReadings {
-		if r := base(word); r != nil {
-			return r
-		}
-		inf := map[string]string{
-			"gehen": "gehen", "Gehen": "gehen",
-			"essen": "essen", "Essen": "essen",
-			"lesen": "lesen", "Lesen": "lesen",
-		}
-		if lem, ok := inf[word]; ok {
-			w := word
-			if toolsStartsUpper(word) {
-				return languagetool.NewAnalyzedTokenReadingsAt(
-					languagetool.NewAnalyzedToken(w, strPtr("SUB:NOM:SIN:NEU:INF"), &lem), 0)
-			}
-			return languagetool.NewAnalyzedTokenReadingsAt(
-				languagetool.NewAnalyzedToken(w, strPtr("VER:INF:NON"), &lem), 0)
-		}
-		return nil
-	}
-	known := map[string]bool{"gehen": true, "essen": true, "lesen": true, "fahren": true, "laufen": true}
-	prevMiss := rule.IsMisspelled
-	rule.IsMisspelled = func(w string) bool {
-		if known[w] {
-			return false
-		}
-		return prevMiss(w)
-	}
-
-	assertGood := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
-		t.Helper()
-		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
-		ms := rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))
-		require.Equal(t, 0, len(ms), "good %s", label)
-	}
-	assertBad := func(label string, toks ...*languagetool.AnalyzedTokenReadings) {
-		t.Helper()
-		all := append([]*languagetool.AnalyzedTokenReadings{sentStartATR()}, toks...)
-		ms := rule.Match(languagetool.NewAnalyzedSentence(withPositions(all...)))
-		require.GreaterOrEqual(t, len(ms), 1, "bad %s", label)
-	}
-
-	assertGood("Denn das Fahren ist einfach.",
-		atrWithPOS("Denn", "KON:NEB", "denn"),
-		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Fahren", "SUB:NOM:SIN:NEU:INF", "Fahren"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertGood("Das Gehen fällt mir leicht.",
-		atrWithPOS("Das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("Gehen", "SUB:NOM:SIN:NEU:INF", "Gehen"),
-		atrWithPOS("fällt", "VER:3:SIN:PRÄ:SFT", "fallen"),
-		atrWithPOS("mir", "PRO:PER:DAT:SIN:1", "ich"),
-		atrWithPOS("leicht", "ADV", "leicht"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertGood("Ich liebe das Lesen.",
-		atrWithPOS("Ich", "PRO:PER:NOM:SIN:1", "ich"),
-		atrWithPOS("liebe", "VER:1:SIN:PRÄ:SFT", "lieben"),
-		atrWithPOS("das", "ART:DEF:AKK:SIN:NEU", "das"),
-		atrWithPOS("Lesen", "SUB:AKK:SIN:NEU:INF", "Lesen"),
-		atrWithPOS(".", "PKT", "."),
-	)
-
-	assertBad("Denn das fahren ist einfach.",
-		atrWithPOS("Denn", "KON:NEB", "denn"),
-		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("fahren", "VER:INF:NON", "fahren"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Denn das laufen ist einfach.",
-		atrWithPOS("Denn", "KON:NEB", "denn"),
-		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("laufen", "VER:INF:NON", "laufen"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Denn das essen ist einfach.",
-		atrWithPOS("Denn", "KON:NEB", "denn"),
-		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("essen", "VER:INF:NON", "essen"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	)
-	assertBad("Denn das gehen ist einfach.",
-		atrWithPOS("Denn", "KON:NEB", "denn"),
-		atrWithPOS("das", "ART:DEF:NOM:SIN:NEU", "das"),
-		atrWithPOS("gehen", "VER:INF:NON", "gehen"),
-		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
-		atrWithPOS("einfach", "ADJ:PRD:GRU", "einfach"),
-		atrWithPOS(".", "PKT", "."),
-	)
-}
-
-func toolsStartsUpper(s string) bool {
-	// local helper for Lookup twin only (mirrors Character.isUpperCase first letter)
-	if s == "" {
-		return false
-	}
-	r := []rune(s)[0]
-	return (r >= 'A' && r <= 'Z') || r == 'Ä' || r == 'Ö' || r == 'Ü'
+// Java operator-precedence: (prevTokenIsDas && …) || (i>1 && VER:AUX|MOD at i-2)
+// continues the whole iteration — uppercase match is skipped even when prev is not "das".
+func TestCaseRule_AuxModSkipIndependentOfDas(t *testing.T) {
+	rule, lt := newCaseRuleFixture(t)
+	// "Wird man Gehen nach Hause?"-style: modal/aux two tokens before baseform
+	// Real analysis: "Wir werden das stoppen." is assertGood in testRule; keep morph-level unit.
+	caseRuleAssertGood(t, rule, lt, "Wir werden das stoppen.")
+	caseRuleAssertGood(t, rule, lt, "Wahre Liebe muss das aushalten.")
 }
