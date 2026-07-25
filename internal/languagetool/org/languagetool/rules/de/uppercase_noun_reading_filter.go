@@ -1,21 +1,25 @@
 package de
 
 import (
-	"fmt"
-	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	detag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UppercaseNounReadingFilter ports org.languagetool.rules.de.UppercaseNounReadingFilter.
-// TagPOS ports GermanTagger.INSTANCE.tag for the uppercased form (POS strings).
-// Nil TagPOS (and no default) → fail-closed drop (do not invent noun readings).
+// Accepts rule matches when the uppercased word of the "token" argument has a noun
+// reading, e.g. German "stand" (past of "stehen") → "Stand" (noun) → accept.
+//
+// Java uses GermanTagger.INSTANCE.tag(singletonList(uppercase)).
+// Go: DiscoveredGermanTagger / optional Tag override (same pattern as InsertCommaFilter).
+// Without a tagger → fail-closed drop (do not invent noun readings).
 type UppercaseNounReadingFilter struct {
-	// TagPOS returns POS tags for a surface form; nil uses default or fail-closed.
-	TagPOS func(uppercased string) []string
+	// Tag ports GermanTagger.INSTANCE for uppercased-token lookups (tests may inject).
+	// Nil → resolveTagger → default / DiscoveredGermanTagger.
+	Tag *detag.GermanTagger
 }
 
 func NewUppercaseNounReadingFilter() *UppercaseNounReadingFilter {
@@ -23,56 +27,57 @@ func NewUppercaseNounReadingFilter() *UppercaseNounReadingFilter {
 }
 
 var (
-	uppercaseNounTagMu      sync.RWMutex
-	defaultUppercaseNounTag func(string) []string
+	uppercaseNounTaggerMu      sync.RWMutex
+	defaultUppercaseNounTagger *detag.GermanTagger
 )
 
-// SetDefaultUppercaseNounTagger wires German tagger POS for this filter.
-func SetDefaultUppercaseNounTagger(tag func(string) []string) {
-	uppercaseNounTagMu.Lock()
-	defer uppercaseNounTagMu.Unlock()
-	defaultUppercaseNounTag = tag
+// SetDefaultUppercaseNounGermanTagger installs the GermanTagger.INSTANCE twin.
+func SetDefaultUppercaseNounGermanTagger(t *detag.GermanTagger) {
+	uppercaseNounTaggerMu.Lock()
+	defer uppercaseNounTaggerMu.Unlock()
+	defaultUppercaseNounTagger = t
 }
 
-func (f *UppercaseNounReadingFilter) resolveTag() func(string) []string {
-	if f != nil && f.TagPOS != nil {
-		return f.TagPOS
+// SetDefaultUppercaseNounTagger is a legacy POS-func hook kept for WireGermanTaggerDefaults
+// compatibility; production tagging uses GermanTagger.Tag (see AcceptRuleMatch), not the
+// []string invent path.
+func SetDefaultUppercaseNounTagger(_ func(string) []string) {
+	uppercaseNounTaggerMu.Lock()
+	defer uppercaseNounTaggerMu.Unlock()
+	if defaultUppercaseNounTagger == nil {
+		defaultUppercaseNounTagger = DiscoveredGermanTagger()
 	}
-	uppercaseNounTagMu.RLock()
-	defer uppercaseNounTagMu.RUnlock()
-	return defaultUppercaseNounTag
 }
 
-// hasNounReading ports the Java loop:
-// tag.hasPartialPosTag("SUB:") && !tag.hasPartialPosTag("ADJ")
-func hasNounReadingFromPOS(tags []string) bool {
-	if len(tags) == 0 {
-		return false
+func (f *UppercaseNounReadingFilter) resolveTagger() *detag.GermanTagger {
+	if f != nil && f.Tag != nil {
+		return f.Tag
 	}
-	hasSUB, hasADJ := false, false
-	for _, t := range tags {
-		if strings.Contains(t, "SUB:") {
-			hasSUB = true
-		}
-		if strings.Contains(t, "ADJ") {
-			hasADJ = true
-		}
+	uppercaseNounTaggerMu.RLock()
+	t := defaultUppercaseNounTagger
+	uppercaseNounTaggerMu.RUnlock()
+	if t != nil {
+		return t
 	}
-	return hasSUB && !hasADJ
+	return DiscoveredGermanTagger()
 }
 
-// Accept reports whether the uppercased token has a pure noun reading (for tests).
-// Without TagPOS → false (fail-closed; no soft invent).
+// Accept reports whether the uppercased token has a pure noun reading
+// (hasPartialPosTag("SUB:") && !hasPartialPosTag("ADJ")). Used by tests.
+// Without a tagger → false (fail-closed; no invent).
 func (f *UppercaseNounReadingFilter) Accept(token string) bool {
-	if token == "" {
-		panic("token required for UppercaseNounReadingFilter")
-	}
-	upper := tools.UppercaseFirstChar(token)
-	tag := f.resolveTag()
-	if tag == nil {
+	uppercase := tools.UppercaseFirstChar(token)
+	tagger := f.resolveTagger()
+	if tagger == nil {
 		return false
 	}
-	return hasNounReadingFromPOS(tag(upper))
+	// Java: GermanTagger.INSTANCE.tag(Collections.singletonList(uppercase))
+	for _, tag := range tagger.Tag([]string{uppercase}) {
+		if tag != nil && tag.HasPartialPosTag("SUB:") && !tag.HasPartialPosTag("ADJ") {
+			return true
+		}
+	}
+	return false
 }
 
 // AcceptRuleMatch ports UppercaseNounReadingFilter.acceptRuleMatch.
@@ -82,17 +87,33 @@ func (f *UppercaseNounReadingFilter) AcceptRuleMatch(match *rules.RuleMatch, arg
 	if match == nil {
 		return nil
 	}
+	// Java: String token = arguments.get("token"); if (token == null) throw ...
 	token, ok := arguments["token"]
-	if !ok || token == "" {
-		// Java: throw new RuntimeException("Set 'token' for filter ... in rule " + id)
+	if !ok {
 		ruleID := ""
-		if match.GetRule() != nil {
-			ruleID = fmt.Sprintf("%v", match.GetRule())
+		if r := match.GetRule(); r != nil {
+			if idr, ok := r.(rules.RuleWithID); ok {
+				ruleID = idr.GetID()
+			}
 		}
+		// Java: "Set 'token' for filter " + UppercaseNounReadingFilter.class.getName() + " in rule " + match.getRule().getId()
 		panic("Set 'token' for filter org.languagetool.rules.de.UppercaseNounReadingFilter in rule " + ruleID)
 	}
-	if !f.Accept(token) {
+	uppercase := tools.UppercaseFirstChar(token)
+	tagger := f.resolveTagger()
+	if tagger == nil {
+		// Java INSTANCE is never null; without resources fail-closed (no invent).
 		return nil
 	}
-	return match
+	// Java: List<AnalyzedTokenReadings> tags = GermanTagger.INSTANCE.tag(Collections.singletonList(uppercase));
+	// for (AnalyzedTokenReadings tag : tags) {
+	//   if (tag.hasPartialPosTag("SUB:") && !tag.hasPartialPosTag("ADJ")) return match;
+	// }
+	// return null;
+	for _, tag := range tagger.Tag([]string{uppercase}) {
+		if tag != nil && tag.HasPartialPosTag("SUB:") && !tag.HasPartialPosTag("ADJ") {
+			return match
+		}
+	}
+	return nil
 }
