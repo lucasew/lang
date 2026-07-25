@@ -2,6 +2,7 @@ package de
 
 import (
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -9,34 +10,42 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// prohibitedPair ports ProhibitedCompoundRule.Pair (all-lowercase parts in source list).
+// prohibitedPair ports ProhibitedCompoundRule.Pair.
 type prohibitedPair struct {
 	part1, desc1, part2, desc2 string
 }
 
 // ProhibitedCompoundRule ports org.languagetool.rules.de.ProhibitedCompoundRule.
-// Language model: Frequency[token] count (Java BaseLanguageModel.getCount).
-// Without Frequency, Match fails closed (Java requires LanguageModel).
+//
+// Language model: Frequency[token] ports BaseLanguageModel.getCount(token)
+// (Java FakeLanguageModel map / Lucene LM). Without Frequency, Match fails closed
+// (Java constructor requires non-null LanguageModel).
 type ProhibitedCompoundRule struct {
 	Messages map[string]string
 	// Frequency ports BaseLanguageModel.getCount(word); nil → fail-closed Match.
 	Frequency map[string]int64
-	// IsMisspelled optional; nil uses FilterDictIsMisspelled.
+	// IsMisspelled optional override; nil uses GermanyGerman default spelling rule
+	// (FilterDictIsMisspelled after DiscoverGermanHunspellDict wire).
 	IsMisspelled func(word string) bool
-	// Blacklist extra words (compound_exceptions.txt); optional.
+	// Blacklist extra words (tests); official /de/compound_exceptions.txt always applied.
 	Blacklist map[string]struct{}
-	// Premium / Category / IssueType / Tags mirror Rule metadata for SpecificIdRule (Java isPremium/getCategory/…).
+	// Premium / Category / IssueType / Tags mirror Rule metadata for SpecificIdRule.
 	Premium   bool
 	Category  *rules.Category
 	IssueType rules.ITSIssueType
 	Tags      []rules.Tag
+	// confusionPair ports evaluation-only single pair (setConfusionPair); nil = normal.
+	confusionPair *prohibitedPair
 	// incorrectExamples / correctExamples port Rule.addExamplePair.
 	incorrectExamples []rules.IncorrectExample
 	correctExamples   []rules.CorrectExample
 }
 
+// Java HERRN_FRAU
 var herrnFrauRE = regexp.MustCompile(`^(Herrn?|Frau|Dr|Prof|Mag|Hr|Fr|Mr|Mrs|Ms|Fräulein)$`)
 
+// Java blacklistRegex — MatchString on wordPart is equivalent to matches(".*"+k+".*")
+// for these patterns (anchors in k handled by the pattern itself).
 var prohibitedBlacklistRegexes = []*regexp.Regexp{
 	regexp.MustCompile(`Lande(basis|basen|region|gebiets?|gebieten?|regionen|betriebs?|betrieben?|offizieren?|bereichs?|bereichen?|einrichtung|einrichtungen|massen?|plans?|versuchs?|versuchen?)`),
 	regexp.MustCompile(`Model(vertrags?|verträgen?|erfahrung|erfahrungen|szene|welt)`),
@@ -72,6 +81,14 @@ func NewProhibitedCompoundRule(messages map[string]string) *ProhibitedCompoundRu
 	return r
 }
 
+// NewProhibitedCompoundRuleWithFrequency ports
+// new ProhibitedCompoundRule(messages, new FakeLanguageModel(map), null, language).
+func NewProhibitedCompoundRuleWithFrequency(messages map[string]string, freq map[string]int64) *ProhibitedCompoundRule {
+	r := NewProhibitedCompoundRule(messages)
+	r.Frequency = freq
+	return r
+}
+
 // AddExamplePair ports Rule.addExamplePair.
 func (r *ProhibitedCompoundRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
 	if r == nil {
@@ -103,17 +120,26 @@ func (r *ProhibitedCompoundRule) GetCorrectExamples() []rules.CorrectExample {
 	return out
 }
 
-// NewProhibitedCompoundRuleWithFrequency ports FakeLanguageModel constructor path.
-func NewProhibitedCompoundRuleWithFrequency(messages map[string]string, freq map[string]int64) *ProhibitedCompoundRule {
-	r := NewProhibitedCompoundRule(messages)
-	r.Frequency = freq
-	return r
-}
-
 func (r *ProhibitedCompoundRule) GetID() string { return "DE_PROHIBITED_COMPOUNDS" }
 
 func (r *ProhibitedCompoundRule) GetDescription() string {
 	return "Markiert wahrscheinlich falsche Komposita wie 'Lehrzeile', wenn 'Leerzeile' häufiger vorkommt."
+}
+
+// SetConfusionPair ports setConfusionPair (evaluation: ignore auto pairs, use only this).
+// Pass nil to reset.
+func (r *ProhibitedCompoundRule) SetConfusionPair(part1, desc1, part2, desc2 string) {
+	if r == nil {
+		return
+	}
+	r.confusionPair = &prohibitedPair{part1, desc1, part2, desc2}
+}
+
+// ClearConfusionPair resets evaluation pair (Java setConfusionPair(null)).
+func (r *ProhibitedCompoundRule) ClearConfusionPair() {
+	if r != nil {
+		r.confusionPair = nil
+	}
 }
 
 func (r *ProhibitedCompoundRule) getCount(word string) int64 {
@@ -127,29 +153,45 @@ func (r *ProhibitedCompoundRule) isMisspelled(word string) bool {
 	if r != nil && r.IsMisspelled != nil {
 		return r.IsMisspelled(word)
 	}
+	// Java: linguServices == null → GermanyGerman.getDefaultSpellingRule().isMisspelled
+	ensureProhibitedSpellerWired()
 	return FilterDictIsMisspelled(word)
 }
 
+func ensureProhibitedSpellerWired() {
+	if FilterDictAvailable() {
+		return
+	}
+	if p := DiscoverGermanHunspellDict("DE"); p != "" {
+		_ = WireGermanFilterSpeller(p)
+	}
+}
+
+// getThreshold ports getThreshold() → 0.
 func (r *ProhibitedCompoundRule) getThreshold() int64 { return 0 }
 
+// RemoveHyphensAndAdaptCase ports removeHyphensAndAdaptCase.
+// Returns "" when Java returns null (no hyphens, or any part length ≤ 1).
+func (r *ProhibitedCompoundRule) RemoveHyphensAndAdaptCase(word string) string {
+	return removeHyphensAndAdaptCase(word)
+}
+
 func removeHyphensAndAdaptCase(word string) string {
-	// Java returns null when no hyphens or short parts; Go uses "" for none
-	if !strings.Contains(word, "-") {
+	parts := strings.Split(word, "-")
+	if len(parts) <= 1 {
 		return ""
 	}
-	parts := strings.Split(word, "-")
-	for _, p := range parts {
-		if utf16LenDE(p) <= 1 {
+	var b strings.Builder
+	for i, part := range parts {
+		if utf16LenDE(part) <= 1 {
+			// don't: S-Bahn → Sbahn
 			return ""
 		}
-	}
-	var b strings.Builder
-	for i, p := range parts {
 		if i == 0 {
-			b.WriteString(p)
-			continue
+			b.WriteString(part)
+		} else {
+			b.WriteString(tools.LowercaseFirstChar(part))
 		}
-		b.WriteString(tools.LowercaseFirstChar(p))
 	}
 	return b.String()
 }
@@ -159,6 +201,9 @@ func (r *ProhibitedCompoundRule) Match(sentence *languagetool.AnalyzedSentence) 
 		// Java requires LanguageModel; without Frequency fail closed (no Prefer invent).
 		return nil
 	}
+	// Ensure pair resources (Aho-Corasick twin) are loaded.
+	initProhibitedResources()
+
 	tokens := sentence.GetTokensWithoutWhitespace()
 	var ruleMatches []*rules.RuleMatch
 	var prev *languagetool.AnalyzedTokenReadings
@@ -168,8 +213,8 @@ func (r *ProhibitedCompoundRule) Match(sentence *languagetool.AnalyzedSentence) 
 		}
 		tmpWord := readings.GetToken()
 		// Java: continue without updating prevReadings on name / title skips.
-		if prev != nil && prev.HasPartialPosTag("EIG:") && tools.StartsWithUppercase(tmpWord) &&
-			(readings.HasPartialPosTag("EIG:") || !readings.IsTagged()) {
+		if prev != nil && prev.HasAnyPartialPosTag("EIG:") && tools.StartsWithUppercase(tmpWord) &&
+			(readings.HasAnyPartialPosTag("EIG:") || readings.IsPosTagUnknown()) {
 			// assume name, e.g. "Bianca Baalhorn" (avoid: Baalhorn => Ballhorn)
 			continue
 		}
@@ -192,6 +237,7 @@ func (r *ProhibitedCompoundRule) Match(sentence *languagetool.AnalyzedSentence) 
 }
 
 func blacklistMatch(wordPart string) bool {
+	// Java: blacklistRegex.stream().noneMatch(k -> wordPart.matches(".*" + k + ".*"))
 	for _, re := range prohibitedBlacklistRegexes {
 		if re.MatchString(wordPart) {
 			return true
@@ -208,68 +254,69 @@ func (r *ProhibitedCompoundRule) getMatches(
 	wordPart string,
 	toPosCorrection int,
 ) int {
-	// Java: tagged non-SUB (except EIG) skip; length <= 6 skip
-	if readings.IsTagged() && !readings.HasPartialPosTag("SUB") && !readings.HasPosTagStartingWith("EIG:") ||
-		utf16LenDE(wordPart) <= 6 {
-		// AnalyzePlain: IsTagged false → don't skip by POS
-		if readings.IsTagged() && !readings.HasPartialPosTag("SUB") && !readings.HasPosTagStartingWith("EIG:") {
-			return partsStartPos + utf16LenDE(wordPart) + 1
+	// Java:
+	// if ((readings.isTagged() && !readings.hasPartialPosTag("SUB")) && !readings.hasPosTagStartingWith("EIG:")
+	//     || wordPart.length() <= 6)
+	skipPOS := readings.IsTagged() && !readings.HasPartialPosTag("SUB") && !readings.HasPosTagStartingWith("EIG:")
+	if skipPOS || utf16LenDE(wordPart) <= 6 {
+		return partsStartPos + utf16LenDE(wordPart) + 1
+	}
+
+	// Collect candidate pairs (Java AhoCorasick parseText → pairMap, or confusionPair eval).
+	var candidatePairs []prohibitedPair
+	if r.confusionPair == nil {
+		for _, stem := range prohibitedStems() {
+			if !strings.Contains(wordPart, stem) {
+				continue
+			}
+			// might get duplicates; only one match per word kept
+			candidatePairs = append(candidatePairs, prohibitedPairLookup(stem)...)
 		}
-		if utf16LenDE(wordPart) <= 6 {
-			return partsStartPos + utf16LenDE(wordPart) + 1
+	} else {
+		// Java addAllCaseVariants(candidatePairs, confusionPair)
+		candidatePairs = append(candidatePairs, *r.confusionPair)
+		uc1 := tools.UppercaseFirstChar(r.confusionPair.part1)
+		uc2 := tools.UppercaseFirstChar(r.confusionPair.part2)
+		if r.confusionPair.part1 != uc1 || r.confusionPair.part2 != uc2 {
+			candidatePairs = append(candidatePairs, prohibitedPair{uc1, r.confusionPair.desc1, uc2, r.confusionPair.desc2})
 		}
 	}
 
-	type cand struct {
+	type weightedRuleMatch struct {
+		weight  int64
 		pair    prohibitedPair
 		variant string
-		weight  int64
 	}
-	var weighted []cand
+	var weighted []weightedRuleMatch
 
-	// Collect candidate pairs where either part appears in wordPart
-	for _, pair := range AllProhibitedPairs() {
-		// case variants: try lc pair and first-upper variants
-		variants := []prohibitedPair{pair}
-		uc1, uc2 := tools.UppercaseFirstChar(pair.part1), tools.UppercaseFirstChar(pair.part2)
-		if pair.part1 != uc1 || pair.part2 != uc2 {
-			variants = append(variants, prohibitedPair{uc1, pair.desc1, uc2, pair.desc2})
+	for _, pair := range candidatePairs {
+		var variant string
+		// Java: wordPart.replaceFirst(pair.part1, pair.part2) — regex first match
+		if strings.Contains(wordPart, pair.part1) {
+			variant = replaceFirstRegex(wordPart, pair.part1, pair.part2)
+		} else if strings.Contains(wordPart, pair.part2) {
+			variant = replaceFirstRegex(wordPart, pair.part2, pair.part1)
+		} else {
+			// Java: partsStartPos += …; continue — only skips this pair
+			continue
 		}
-		for _, p := range variants {
-			// Java: wordPart.replaceFirst(pair.part1, pair.part2) — regex first match.
-			var variant string
-			if strings.Contains(wordPart, p.part1) {
-				variant = replaceFirstRegex(wordPart, p.part1, p.part2)
-			} else if strings.Contains(wordPart, p.part2) {
-				variant = replaceFirstRegex(wordPart, p.part2, p.part1)
-			} else {
-				continue
-			}
-			if variant == "" || variant == wordPart {
-				continue
-			}
-			wordCount := r.getCount(wordPart)
-			variantCount := r.getCount(variant)
+		wordCount := r.getCount(wordPart)
+		variantCount := r.getCount(variant)
 
-			if r.isBlacklistedWord(wordPart) {
-				continue
-			}
-			if variantCount > r.getThreshold() && wordCount == 0 &&
-				!blacklistMatch(wordPart) && !r.isMisspelled(variant) {
-				weighted = append(weighted, cand{pair: p, variant: variant, weight: variantCount})
-			}
+		// Java: !blacklist.contains(wordPart) && !isMisspelled(variant) && noneMatch blacklistRegex
+		if variantCount > r.getThreshold() && wordCount == 0 &&
+			!r.isBlacklistedWord(wordPart) &&
+			!r.isMisspelled(variant) &&
+			!blacklistMatch(wordPart) {
+			weighted = append(weighted, weightedRuleMatch{weight: variantCount, pair: pair, variant: variant})
 		}
 	}
 
 	if len(weighted) > 0 {
-		// sort by weight desc
-		for i := 0; i < len(weighted); i++ {
-			for j := i + 1; j < len(weighted); j++ {
-				if weighted[j].weight > weighted[i].weight {
-					weighted[i], weighted[j] = weighted[j], weighted[i]
-				}
-			}
-		}
+		// Java Collections.sort(weightedMatches) — most popular alternative first
+		sort.SliceStable(weighted, func(i, j int) bool {
+			return weighted[i].weight > weighted[j].weight
+		})
 		best := weighted[0]
 		msg := "Möglicher Tippfehler: " + best.pair.part1 + "/" + best.pair.part2
 		if best.pair.desc1 != "" && best.pair.desc2 != "" {
@@ -278,12 +325,7 @@ func (r *ProhibitedCompoundRule) getMatches(
 		}
 		fromPos := readings.GetStartPos() + partsStartPos
 		toPos := fromPos + utf16LenDE(wordPart) + toPosCorrection
-		// clamp to token end for hyphenated partials
-		if toPos > readings.GetEndPos() {
-			toPos = readings.GetEndPos()
-		}
-		// Java: SpecificIdRule(toId(RULE_ID_part1_part2), desc, isPremium, category, issueType, tags)
-		// then new RuleMatch(idRule, …) + setSuggestedReplacement (no shortMessage).
+		// Java SpecificIdRule(toId(RULE_ID_part1_part2, language), desc, isPremium, category, issueType, tags)
 		id := tools.ToId(r.GetID()+"_"+best.pair.part1+"_"+best.pair.part2, "de")
 		desc := "Markiert wahrscheinlich falsche Komposita mit Teilwort '" +
 			tools.UppercaseFirstChar(best.pair.part1) + "' statt '" +
