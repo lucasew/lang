@@ -1,60 +1,116 @@
 package de
 
-// POSType ports GermanToken.POSType name strings (toString values).
+// GermanToken ports org.languagetool.tagging.de.GermanToken.
+// Java: private constructor — only static nested type constants.
+type GermanToken struct{}
+
+// POSType ports GermanToken.POSType. String value == Java POSType.toString().
 type POSType string
 
 const (
-	POSNomen      POSType = "Nomen"
-	POSVerb       POSType = "Verb"
-	POSAdjektiv   POSType = "Adjektiv"
+	// POSNomen ports POSType.NOMEN.
+	POSNomen POSType = "Nomen"
+	// POSVerb ports POSType.VERB.
+	POSVerb POSType = "Verb"
+	// POSAdjektiv ports POSType.ADJEKTIV.
+	POSAdjektiv POSType = "Adjektiv"
+	// POSDeterminer ports POSType.DETERMINER.
 	POSDeterminer POSType = "Determiner"
-	POSPronomen   POSType = "Pronomen"
-	POSPartizip   POSType = "Partizip"
+	// POSPronomen ports POSType.PRONOMEN.
+	POSPronomen POSType = "Pronomen"
+	// POSPartizip ports POSType.PARTIZIP.
+	POSPartizip POSType = "Partizip"
+	// POSProperNoun ports POSType.PROPER_NOUN.
 	POSProperNoun POSType = "Eigenname"
-	POSOther      POSType = "Other"
+	// POSOther ports POSType.OTHER (e.g. sentence start).
+	POSOther POSType = "Other"
 )
 
-// Kasus ports Morphy case codes used by AnalyzedGermanToken / agreement tools.
-// (GermanToken.Kasus toString is Nominativ/…; Morphy tags use NOM/….)
+// Kasus ports GermanToken.Kasus. String value == Java Kasus.toString().
+// AnalyzedGermanToken maps Morphy tag parts NOM/AKK/DAT/GEN onto these objects.
 type Kasus string
 
 const (
-	KasusNom Kasus = "NOM"
-	KasusAkk Kasus = "AKK"
-	KasusDat Kasus = "DAT"
-	KasusGen Kasus = "GEN"
+	// KasusNominativ ports Kasus.NOMINATIV.
+	KasusNominativ Kasus = "Nominativ"
+	// KasusAkkusativ ports Kasus.AKKUSATIV.
+	KasusAkkusativ Kasus = "Akkusativ"
+	// KasusDativ ports Kasus.DATIV.
+	KasusDativ Kasus = "Dativ"
+	// KasusGenitiv ports Kasus.GENITIV.
+	KasusGenitiv Kasus = "Genitiv"
+	// KasusOther ports Kasus.OTHER.
+	KasusOther Kasus = "Other"
 )
 
-// Numerus ports Morphy number codes.
+// Short aliases (same values) for Morphy-oriented call sites / historical names.
+const (
+	KasusNom = KasusNominativ
+	KasusAkk = KasusAkkusativ
+	KasusDat = KasusDativ
+	KasusGen = KasusGenitiv
+)
+
+// Numerus ports GermanToken.Numerus. String value == Java Numerus.toString().
+// AnalyzedGermanToken maps Morphy SIN/PLU onto these objects.
 type Numerus string
 
 const (
-	NumerusSin Numerus = "SIN"
-	NumerusPlu Numerus = "PLU"
+	// NumerusSingular ports Numerus.SINGULAR.
+	NumerusSingular Numerus = "Singular"
+	// NumerusPlural ports Numerus.PLURAL.
+	NumerusPlural Numerus = "Plural"
+	// NumerusOther ports Numerus.OTHER.
+	NumerusOther Numerus = "Other"
 )
 
-// Genus ports Morphy gender codes (ALG = Allgemein).
-// NOG is not a stored genus in Java AnalyzedGermanToken — it maps to FEMININUM.
+// Short aliases for Morphy-oriented call sites.
+const (
+	NumerusSin = NumerusSingular
+	NumerusPlu = NumerusPlural
+)
+
+// Genus ports GermanToken.Genus. String value == Java Genus.toString().
+// AnalyzedGermanToken maps Morphy MAS/FEM/NEU/ALG (and NOG→FEMININUM) onto these objects.
 type Genus string
 
 const (
-	GenusMas Genus = "MAS"
-	GenusFem Genus = "FEM"
-	GenusNeu Genus = "NEU"
-	// GenusALG ports Genus.ALLGEMEIN (Morphy ALG expands to all genders).
-	GenusALG Genus = "ALG"
-	// GenusNoG is retained only for legacy callers; ParseGermanPOS maps NOG → GenusFem.
-	GenusNoG Genus = "NOG"
+	// GenusNeutrum ports Genus.NEUTRUM.
+	GenusNeutrum Genus = "Neutrum"
+	// GenusMaskulinum ports Genus.MASKULINUM.
+	GenusMaskulinum Genus = "Maskulinum"
+	// GenusFemininum ports Genus.FEMININUM.
+	GenusFemininum Genus = "Femininum"
+	// GenusOther ports Genus.OTHER.
+	GenusOther Genus = "Other"
+	// GenusAllgemein ports Genus.ALLGEMEIN (Morphy ALG = Mas, Fem, or Neu).
+	GenusAllgemein Genus = "Allgemein"
 )
 
-// Determination ports GermanToken.Determination object identity for agreement strings.
-// Java toString is "definit"/"indefinit"; Go agreement strings use DEFINITE/INDEFINITE
-// (existing twin of AgreementTools.makeString).
+// Short aliases for Morphy-oriented call sites.
+const (
+	GenusMas = GenusMaskulinum
+	GenusFem = GenusFemininum
+	GenusNeu = GenusNeutrum
+	// GenusALG ports Genus.ALLGEMEIN.
+	GenusALG = GenusAllgemein
+)
+
+// Determination ports GermanToken.Determination. String value == Java Determination.toString().
+// AnalyzedGermanToken maps Morphy DEF/IND onto these objects.
 type Determination string
 
 const (
-	DetDefinite   Determination = "DEFINITE"
-	DetIndefinite Determination = "INDEFINITE"
+	// DetDefinite ports Determination.DEFINITE.
+	DetDefinite Determination = "definit"
+	// DetIndefinite ports Determination.INDEFINITE.
+	DetIndefinite Determination = "indefinit"
+)
+
+// DeterminationDefinite / DeterminationIndefinite are Java-name twins of DEFINITE / INDEFINITE.
+const (
+	DeterminationDefinite   = DetDefinite
+	DeterminationIndefinite = DetIndefinite
 )
 
 // AnalyzedGermanToken ports tagging.de.AnalyzedGermanToken.
@@ -70,6 +126,7 @@ type AnalyzedGermanToken struct {
 // ParseGermanPOS ports AnalyzedGermanToken(AnalyzedToken) field extraction.
 // Java: null/short tags (<3 colon parts) leave all fields null; otherwise scan parts
 // with EIG/PA always assigning type and SUB/VER/ADJ/PRO/ART only if type still null.
+// Morphy codes map onto GermanToken.* objects (whose toString is the German name above).
 // NOG → FEMININUM (Java comment: no genus because only used as plural).
 func ParseGermanPOS(pos string) AnalyzedGermanToken {
 	a := AnalyzedGermanToken{Reading: pos}
@@ -119,28 +176,28 @@ func ParseGermanPOS(pos string) AnalyzedGermanToken {
 				hasType = true
 			}
 		case "AKK":
-			a.Kasus = KasusAkk
+			a.Kasus = KasusAkkusativ
 		case "GEN":
-			a.Kasus = KasusGen
+			a.Kasus = KasusGenitiv
 		case "NOM":
-			a.Kasus = KasusNom
+			a.Kasus = KasusNominativ
 		case "DAT":
-			a.Kasus = KasusDat
+			a.Kasus = KasusDativ
 		case "PLU":
-			a.Numerus = NumerusPlu
+			a.Numerus = NumerusPlural
 		case "SIN":
-			a.Numerus = NumerusSin
+			a.Numerus = NumerusSingular
 		case "MAS":
-			a.Genus = GenusMas
+			a.Genus = GenusMaskulinum
 		case "FEM":
-			a.Genus = GenusFem
+			a.Genus = GenusFemininum
 		case "NEU":
-			a.Genus = GenusNeu
+			a.Genus = GenusNeutrum
 		case "NOG":
 			// Java: tempGenus = Genus.FEMININUM
-			a.Genus = GenusFem
+			a.Genus = GenusFemininum
 		case "ALG":
-			a.Genus = GenusALG
+			a.Genus = GenusAllgemein
 		case "IND":
 			a.Determination = DetIndefinite
 		case "DEF":
@@ -165,7 +222,3 @@ func splitColon(s string) []string {
 	out = append(out, s[start:])
 	return out
 }
-
-// GermanToken is the Java-name twin namespace for POS/Kasus/Numerus constants
-// (org.languagetool.tagging.de.GermanToken).
-type GermanToken struct{}

@@ -23,11 +23,13 @@ func atrWithPOS(token, pos, lemma string) *languagetool.AnalyzedTokenReadings {
 func TestGetAgreementCategories_DetAndNoun(t *testing.T) {
 	det := atrWithPOS("die", "ART:DEF:NOM:SIN:FEM", "die")
 	cats := GetAgreementCategories(det, nil, false)
-	require.Contains(t, cats, "NOM/SIN/FEM/DEFINITE")
+	// Java AgreementTools.makeString uses GermanToken.*.toString()
+	// → Nominativ/Singular/Femininum/definit (not Morphy NOM/SIN/FEM/DEFINITE).
+	require.Contains(t, cats, "Nominativ/Singular/Femininum/definit")
 
 	noun := atrWithPOS("Haus", "SUB:NOM:SIN:NEU", "Haus")
 	ncats := GetAgreementCategories(noun, nil, false)
-	require.Contains(t, ncats, "NOM/SIN/NEU/DEFINITE")
+	require.Contains(t, ncats, "Nominativ/Singular/Neutrum/definit")
 	require.False(t, CategoriesIntersect(cats, ncats), "die(FEM) vs Haus(NEU) must not agree")
 }
 
