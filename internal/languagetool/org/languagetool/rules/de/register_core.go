@@ -126,9 +126,10 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
+	// Java German.getRelevantRules: new LongSentenceRule(messages, userConfig, 40)
 	ls := NewLongSentenceRule(map[string]string{
-		"long_sentence_rule_msg2": "Dieser Satz ist zu lang (%d Wörter)",
-	}, 40)
+		"long_sentence_rule_msg2": "Dieser Satz hat mehr als {0} Wörter. Kürzen Sie den Satz oder teilen Sie ihn, um die Lesbarkeit zu verbessern.",
+	}, nil, 40)
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 
 	// No soft invent token sequences (e.g. DE_WEGEN_DEM). Java covers wegen/trotz via

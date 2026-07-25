@@ -10,7 +10,7 @@ import (
 // Java getDescription strings for DE wrappers / embedded bases.
 func TestMeta_GetDescriptions(t *testing.T) {
 	require.Equal(t, "Synonyme für wiederholte Wörter.", NewGermanRepeatedWordsRule(nil).GetDescription())
-	require.Equal(t, "Findet lange Sätze", NewLongSentenceRule(nil, 40).GetDescription())
+	require.Equal(t, "Findet lange Sätze", NewLongSentenceRule(nil, nil, 40).GetDescription())
 	require.Equal(t, "Zusammenschreibung von Wörtern, z. B. 'CD-ROM' statt 'CD ROM'", NewGermanCompoundRule(nil).GetDescription())
 	require.Equal(t, "Wiederholte Worte in aufeinanderfolgenden Sätzen", NewGermanStyleRepeatedWordRule(nil).GetDescription())
 	require.Equal(t, "Mögliche Wortverwechslungen: $match", NewGermanWrongWordInContextRule(nil).GetDescription())
