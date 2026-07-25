@@ -372,6 +372,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.1-ReadabilityRule | accepted | inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ReadabilityRule.java | internal/languagetool/org/languagetool/rules/readability_rule.go; internal/languagetool/org/languagetool/rules/readability_rule_test.go | 1b62a04c7f44a4366baa113173a534b529ae7659 | 0 | 0 |  |  | 2026-07-25T23:02:12Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanReadabilityRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanReadabilityRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ReadabilityRule.java | internal/languagetool/org/languagetool/rules/de/german_readability_rule.go; internal/languagetool/org/languagetool/rules/de/german_readability_rule_test.go; internal/languagetool/org/languagetool/rules/de/GermanReadabilityRuleTest_test.go; internal/languagetool/org/languagetool/rules/readability_rule.go | 35e5b2847134d52d1007cfa84ca3c16a8ccf9bf4 | 0 | 0 |  |  | 2026-07-25T23:16:00Z |
 | docs/faithful-port-checklist.md#3.C.3-PortugueseReadabilityRule | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseReadabilityRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/ReadabilityRule.java | internal/languagetool/org/languagetool/rules/pt/portuguese_readability_rule.go; internal/languagetool/org/languagetool/rules/pt/portuguese_readability_rule_test.go; internal/languagetool/org/languagetool/rules/readability_rule.go | f0ad4c0482b2cf53894d336678d50b51db247920 | 0 | 0 |  |  | 2026-07-25T23:31:40Z |
+| docs/faithful-port-checklist.md#3.C.3-PortugueseWordRepeatRule | implementing | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/pt/src/test/java/org/languagetool/rules/pt/PortugueseWordRepeatRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/pt/portuguese_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/pt/PortugueseWordRepeatRuleTest_test.go; internal/languagetool/org/languagetool/rules/word_repeat_rule.go |  | 0 | 0 |  |  | 2026-07-25T23:34:30Z |
 
 ## Human inbox
 
@@ -381,7 +382,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ACCEPT 3.C.3-PortugueseReadabilityRule @ f0ad4c04; next: implement next open leaf |
+| Notes | implementing 3.C.3-PortugueseWordRepeatRule |
 
 ---
 
@@ -1704,3 +1705,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T23:21:42Z ready: 3.C.3-PortugueseReadabilityRule @ f0ad4c04
 - 2026-07-25T23:23:45Z validating: 3.C.3-PortugueseReadabilityRule @ f0ad4c04 (strict invent re-audit vs Java PortugueseReadabilityRule + ReadabilityRule FRE/syllables/TEXT_ANALYSIS)
 - 2026-07-25T23:31:40Z ACCEPT: 3.C.3-PortugueseReadabilityRule @ f0ad4c04 (validator ACCEPT + parent green reconfirm; PT FRE 206.84; vowels/syllables; Análise de Texto; CHECKLIST PortugueseReadabilityRule [x])
+- 2026-07-25T23:34:30Z implement: 3.C.3-PortugueseWordRepeatRule (PT PortugueseWordRepeatRule; full testIgnore twin; WordRepeatRule ACCEPTed base; Java king; fix invent case/category)
