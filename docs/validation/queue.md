@@ -364,6 +364,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-AgreementTools | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/AgreementTools.java | internal/languagetool/org/languagetool/rules/de/agreement_tools.go; internal/languagetool/org/languagetool/rules/de/agreement_tools_test.go | 48c94cf6e2e33156fe822a6b552c942b162d57d2 | 0 | 0 | | | 2026-07-25T20:15:01Z |
 | docs/faithful-port-checklist.md#3.C.3-AgreementSuggestor2 | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/AgreementSuggestor2.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementSuggestor2Test.java | internal/languagetool/org/languagetool/rules/de/agreement_suggestor2.go; internal/languagetool/org/languagetool/rules/de/agreement_suggestor2_test.go; internal/languagetool/org/languagetool/rules/de/AgreementSuggestor2Test_test.go | dff3fa276342b56482edbf9a55d52dba16d509b4 | 0 | 0 |  |  | 2026-07-25T20:46:04Z |
 | docs/faithful-port-checklist.md#3.C.3-AgreementRule2 | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/AgreementRule2.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java | internal/languagetool/org/languagetool/rules/de/agreement_rule2.go; internal/languagetool/org/languagetool/rules/de/agreement_rule2_morph_test.go; internal/languagetool/org/languagetool/rules/de/AgreementRule2Test_test.go | 4caa5414259982a25aa8eff2d12edcd1197160e6 | 0 | 0 |  |  | 2026-07-25T21:02:38Z |
+| docs/faithful-port-checklist.md#3.C.3-GermanSpellerRule | blocked | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/GermanSpellerRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanSpellerRuleTest.java | internal/languagetool/org/languagetool/rules/de/german_speller_rule.go; internal/languagetool/org/languagetool/rules/de/german_speller_*.go; internal/languagetool/org/languagetool/rules/de/GermanSpellerRuleTest_test.go | 693a9d3e29cf5cb4875aae846e00a1d3237edbdd | 0 | 0 | partial progress @ 693a9d3e: TagPOS via GermanTagger; strict compound tokenizer; ExpandingReader→LineExpander; twin matrix for isMisspelled/ignore/prohibit/onlySuggest; not full ready | affix-capable pure-Go HunspellDictionary missing; Java DumontsHunspellDictionary.spell(.dic+.aff) free compound+affix; Go morfologik FSA-only; remaining Java≠Go (Wollschafs, free-compound Match, plural compounds); same class as 3.C.2-VagueSpellChecker; invent forbidden; revisit when affix HunspellDictionary twin exists | 2026-07-25T21:32:31Z |
 
 ## Human inbox
 
@@ -372,8 +373,8 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | When idle | Summary |
 |-----------|---------|
 | Last idle at | _(never)_ |
-| Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.C.3-AgreementRule2 @ 4caa5414; next fire: implement next leaf (GermanSpellerRule)
+| Blocked lines |  (missing french.dict);  (HanLP);  (pure-Hunspell affix dict missing; invent removed @ 9b184b7c);  (affix HunspellDictionary missing; partial @ 693a9d3e)
+| Notes | blocked 3.C.3-GermanSpellerRule @ 693a9d3e (affix Hunspell); next fire: implement other unchecked leaf
 
 ---
 
@@ -1662,3 +1663,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T20:57:11Z ready: 3.C.3-AgreementRule2 @ 4caa5414 (implementer report; parent green reconfirm AgreementRule2; empty-categories retainAll; quote set; SynthesizeRE; invent early-return/break fixed)
 - 2026-07-25T20:58:50Z validating: 3.C.3-AgreementRule2 @ 4caa5414 (strict invent re-audit vs Java AgreementRule2 + AgreementRule2Test)
 - 2026-07-25T21:02:38Z ACCEPT: 3.C.3-AgreementRule2 @ 4caa5414 (validator ACCEPT + parent green reconfirm; retainAll/quotes/SynthesizeRE; CHECKLIST AgreementRule2 [x])
+- 2026-07-25T21:03:55Z implement: 3.C.3-GermanSpellerRule (DE GermanSpellerRule+ExpandingReader; full GermanSpellerRuleTest twin; Java king; LineExpander ACCEPTed)
+- 2026-07-25T21:32:31Z blocked: 3.C.3-GermanSpellerRule @ 693a9d3e — partial progress (TagPOS/strict tokenizer/ExpandingReader/twins); blocked on missing affix-capable pure-Go HunspellDictionary (Java DumontsHunspellDictionary); invent forbidden; skip/revisit
