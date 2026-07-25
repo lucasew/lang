@@ -939,7 +939,7 @@
 - [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule
 - [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule.GrammarCategory
 - [x] org/languagetool/rules/de/AgreementRule.java::AgreementRule.ReplacementType
-- [ ] org/languagetool/rules/de/AgreementRule2.java::AgreementRule2
+- [x] org/languagetool/rules/de/AgreementRule2.java::AgreementRule2
 - [x] org/languagetool/rules/de/AgreementRuleAntiPatterns1.java::AgreementRuleAntiPatterns1
 - [x] org/languagetool/rules/de/AgreementRuleAntiPatterns2.java::AgreementRuleAntiPatterns2
 - [x] org/languagetool/rules/de/AgreementRuleAntiPatterns3.java::AgreementRuleAntiPatterns3
