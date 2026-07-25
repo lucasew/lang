@@ -356,6 +356,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-VerbAgreementRule | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/rules/de/VerbAgreementRule.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/VerbAgreementRuleTest.java | internal/languagetool/org/languagetool/rules/de/verb_agreement_rule.go; internal/languagetool/org/languagetool/rules/de/verb_agreement_anti_patterns.go; internal/languagetool/org/languagetool/rules/de/VerbAgreementRuleTest_test.go; internal/languagetool/org/languagetool/rules/de/verb_agreement_morph_test.go; internal/languagetool/org/languagetool/rules/de/verb_agreement_textlevel_test.go | 346dbc316057d6364c4885b1323798b02df56d59 | 0 | 0 | | | 2026-07-25T14:05:28Z |
 | docs/faithful-port-checklist.md#3.C.3-GermanSynthesizer | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/synthesis/GermanSynthesizer.java; inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/synthesis/GermanSynthesizerTest.java; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/german_synth.dict; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/german_tags.txt; inspiration/languagetool/languagetool-language-modules/de/src/main/resources/org/languagetool/resource/de/de.sor | internal/languagetool/org/languagetool/synthesis/de/german_synthesizer.go; internal/languagetool/org/languagetool/synthesis/de/german_synthesizer_twin_test.go; internal/languagetool/org/languagetool/synthesis/de/german_synthesizer_test.go; internal/languagetool/org/languagetool/synthesis/GermanSynthesizerTest_test.go; internal/languagetool/org/languagetool/synthesis/german_synthesizer.go | 40b6889a3ea4a66057f1f501264470b1aa2bb67a | 0 | 0 | | | 2026-07-25T14:22:39Z |
 | docs/faithful-port-checklist.md#3.A.2-GermanToken | accepted | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/GermanToken.java | internal/languagetool/org/languagetool/tagging/de/german_token.go; internal/languagetool/org/languagetool/tagging/de/GermanTokenTest_test.go | ca7aa7f8d05c8de4b0cfe6ca7f875f9606b86840 | 0 | 0 | | | 2026-07-25T14:40:36Z |
+| docs/faithful-port-checklist.md#3.A.2-AdjectiveTags | ready | inspiration/languagetool/languagetool-language-modules/de/src/main/java/org/languagetool/tagging/de/AdjectiveTags.java | internal/languagetool/org/languagetool/tagging/de/adjective_tags.go; internal/languagetool/org/languagetool/tagging/de/adjective_tags_test.go | c1105c455194f2ea95432c9f93c1b622c9981568 | 0 | 0 | | | 2026-07-25T14:46:05Z |
 
 ## Human inbox
 
@@ -365,7 +366,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c) |
-| Notes | ACCEPT 3.A.2-GermanToken @ ca7aa7f8; next fire: implement next leaf (AdjectiveTags / AnalyzedGermanToken before GermanTagger)
+| Notes | ready 3.A.2-AdjectiveTags @ c1105c45; next fire: validate AdjectiveTags (exact lists; invent helpers removed)
 
 ---
 
@@ -1610,3 +1611,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-25T14:33:53Z ready: 3.A.2-GermanToken @ ca7aa7f8 (implementer report; parent green reconfirm tagging/de; Java toString Kasus/Numerus/Genus/Determination)
 - 2026-07-25T14:38:48Z validating: 3.A.2-GermanToken @ ca7aa7f8 (strict invent re-audit vs Java GermanToken enums + toString)
 - 2026-07-25T14:40:36Z ACCEPT: 3.A.2-GermanToken @ ca7aa7f8 (validator ACCEPT + parent green reconfirm; toString enums POSType/Kasus/Numerus/Genus/Determination)
+- 2026-07-25T14:43:48Z implement: 3.A.2-AdjectiveTags (DE AdjectiveTags exact tag lists; leaf before AnalyzedGermanToken/GermanTagger; Java king)
+- 2026-07-25T14:46:05Z ready: 3.A.2-AdjectiveTags @ c1105c45 (implementer report; parent green reconfirm tagging/de; exact 1+15+44+7+2+4 lists; invent HasAdjectiveTag/ForEnding removed; toPA2→GermanTagger)
