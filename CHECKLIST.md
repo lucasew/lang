@@ -1022,8 +1022,8 @@
 - [x] org/languagetool/rules/de/UpperCaseNgramRule.java::UpperCaseNgramRule
 - [x] org/languagetool/rules/de/UppercaseNounReadingFilter.java::UppercaseNounReadingFilter
 - [x] org/languagetool/rules/de/ValidWordFilter.java::ValidWordFilter
-- [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule
-- [ ] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule.BooleanAndFiniteVerb
+- [x] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule
+- [x] org/languagetool/rules/de/VerbAgreementRule.java::VerbAgreementRule.BooleanAndFiniteVerb
 - [x] org/languagetool/rules/de/WiederVsWiderRule.java::WiederVsWiderRule
 - [x] org/languagetool/rules/de/WordCoherencyRule.java::WordCoherencyRule
 - [x] org/languagetool/rules/de/YMDDateCheckFilter.java::YMDDateCheckFilter
