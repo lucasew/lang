@@ -47,8 +47,8 @@ func NewUnnecessaryPhraseRule(messages map[string]string) *UnnecessaryPhraseRule
 			// Java getId: UNNECESSARY_PHRASES_DE
 			ID:                  "UNNECESSARY_PHRASES_DE",
 			Description:         "Statistische Stilanalyse: Potenzielle Phrasen",
-			MinPercent:          8, // Java DEFAULT_MIN_PER_MILL
-			Denominator:         10000,
+			MinPercent:          unnecessaryPhraseDefaultMinPerMill, // Java DEFAULT_MIN_PER_MILL
+			Denominator:         10000, // Java denominator()
 			ExcludeDirectSpeech: true,
 		},
 		phrases: phrases,
@@ -110,11 +110,12 @@ func firstCharToLowerPhrase(tokens []*languagetool.AnalyzedTokenReadings, nToken
 	return strings.ToLower(first) + rest
 }
 
+// isUnnecessaryPhraseException ports Java isException: only "an"+"sich" when any
+// token hasLemma("drücken") — no surface-prefix invent.
 func isUnnecessaryPhraseException(tokens []*languagetool.AnalyzedTokenReadings, phrase []string) bool {
 	if len(phrase) == 2 && phrase[0] == "an" && phrase[1] == "sich" {
 		for j := 1; j < len(tokens); j++ {
-			if tokens[j] != nil && (tokens[j].HasAnyLemma("drücken") ||
-				strings.HasPrefix(strings.ToLower(tokens[j].GetToken()), "drück")) {
+			if tokens[j] != nil && tokens[j].HasLemma("drücken") {
 				return true
 			}
 		}
