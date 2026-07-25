@@ -58,8 +58,9 @@ var subjectVerbQuestionPronouns = map[string]struct{}{
 var (
 	subjectVerbAntiOnce  sync.Once
 	subjectVerbAntiRules []*disambigrules.DisambiguationPatternRule
-	// Java: "wer|(?i)alle[nr]?|(?i)jede[rs]?|(?i)manche[nrs]?"
-	leftRegexAlle = regexp.MustCompile(`(?i)^(wer|alle[nr]?|jede[rs]?|manche[nrs]?)$`)
+	// Java Pattern.compile("wer|(?i)alle[nr]?|(?i)jede[rs]?|(?i)manche[nrs]?") + Matcher.matches().
+	// "wer" is case-sensitive; alle/jede/manche are case-insensitive from embedded (?i).
+	leftRegexAlle = regexp.MustCompile(`^(?:wer|(?i:alle[nr]?)|(?i:jede[rs]?)|(?i:manche[nrs]?))$`)
 )
 
 func NewSubjectVerbAgreementRule(messages map[string]string) *SubjectVerbAgreementRule {
@@ -78,6 +79,14 @@ func NewSubjectVerbAgreementRule(messages map[string]string) *SubjectVerbAgreeme
 		rules.Wrong("Die Autos <marker>ist</marker> schnell."),
 		rules.Fixed("Die Autos <marker>sind</marker> schnell."),
 	)
+	// Java language.getTagger().lookup(token.toLowerCase()) for containsOnlyInfinitivesToTheLeft.
+	// Wire process-wide GermanTagger when available (same resource Java uses).
+	if tg := DiscoveredGermanTagger(); tg != nil {
+		r.LookupInfinitive = func(lowerWord string) bool {
+			rd := tg.Lookup(lowerWord)
+			return rd != nil && rd.HasPosTagStartingWith("VER:INF")
+		}
+	}
 	return r
 }
 
@@ -149,6 +158,11 @@ func (r *SubjectVerbAgreementRule) GetCategory() *rules.Category {
 		return nil
 	}
 	return r.Category
+}
+
+// GetAntiPatterns ports SubjectVerbAgreementRule.getAntiPatterns.
+func (r *SubjectVerbAgreementRule) GetAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	return subjectVerbAntiPatternRules()
 }
 
 func subjectVerbAntiPatternRules() []*disambigrules.DisambiguationPatternRule {
@@ -271,8 +285,9 @@ func (r *SubjectVerbAgreementRule) getSingularMatchOrNull(tokens []*languagetool
 	if !match {
 		return nil
 	}
-	// Java embeds <suggestion>…</suggestion> in the message (RuleMatch extracts replacements).
-	// No shortMessage in Java constructor. Keep structured suggestion for Go clients.
+	// Java: new RuleMatch(this, sentence, start, end, message) — message embeds
+	// <suggestion>…</suggestion> (Java RuleMatch extracts replacements from message).
+	// Go NewRuleMatch does not yet auto-extract; set structured suggestion for parity.
 	sug := getPluralFor(tokenStr)
 	msg := "Bitte prüfen, ob hier <suggestion>" + sug + "</suggestion> stehen sollte."
 	rm := rules.NewRuleMatch(r, sentence, token.GetStartPos(), token.GetEndPos(), msg)
@@ -360,6 +375,10 @@ func hasUnknownTokenToTheRight(tokens []*languagetool.AnalyzedTokenReadings, sta
 }
 
 func hasUnknownTokenAt(tokens []*languagetool.AnalyzedTokenReadings, startPos, endPos int) bool {
+	// Java: for (int i = startPos; i < endPos; i++) — any reading with hasNoTag.
+	if startPos < 0 {
+		startPos = 0
+	}
 	if endPos > len(tokens) {
 		endPos = len(tokens)
 	}
@@ -367,14 +386,8 @@ func hasUnknownTokenAt(tokens []*languagetool.AnalyzedTokenReadings, startPos, e
 		if tokens[i] == nil {
 			continue
 		}
-		// Only treat as unknown when token claims to be open-class but has no tag
-		// Java: any reading with hasNoTag. Soft: skip sentence markers.
-		if tokens[i].IsSentenceStart() || tokens[i].IsSentenceEnd() {
-			continue
-		}
 		for _, at := range tokens[i].GetReadings() {
 			if at != nil && at.HasNoTag() {
-				// Java: unknown token to the left/right suppresses the match.
 				return true
 			}
 		}
@@ -413,12 +426,13 @@ func containsRegexToTheLeft(re *regexp.Regexp, tokens []*languagetool.AnalyzedTo
 }
 
 func isFollowedByNominativePlural(tokens []*languagetool.AnalyzedTokenReadings, startPos int) bool {
+	// Java: token.hasAnyPartialPosTag("SUB", "PRO") && (NOM:PLU || chunk NPP)
 	for i := startPos; i < len(tokens); i++ {
 		t := tokens[i]
 		if t == nil {
 			continue
 		}
-		if (t.HasPartialPosTag("SUB") || t.HasPartialPosTag("PRO")) &&
+		if t.HasAnyPartialPosTag("SUB", "PRO") &&
 			(t.HasPartialPosTag("NOM:PLU") || hasChunk(t, chunkNPP)) {
 			return true
 		}
@@ -452,19 +466,21 @@ func (r *SubjectVerbAgreementRule) containsOnlyInfinitivesToTheLeft(tokens []*la
 }
 
 func getSingularFor(token string) string {
+	// Java: throw new RuntimeException("No singular found for '…'")
 	for _, p := range subjectVerbPairs {
 		if p.Plural == token {
 			return p.Singular
 		}
 	}
-	return token
+	panic("No singular found for '" + token + "'")
 }
 
 func getPluralFor(token string) string {
+	// Java: throw new RuntimeException("No plural found for '…'")
 	for _, p := range subjectVerbPairs {
 		if p.Singular == token {
 			return p.Plural
 		}
 	}
-	return token
+	panic("No plural found for '" + token + "'")
 }

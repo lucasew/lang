@@ -8,7 +8,8 @@ import (
 )
 
 func TestSubjectVerbAntiPatternsCount(t *testing.T) {
-	require.GreaterOrEqual(t, len(SubjectVerbAntiPatterns), 50)
+	// Java ANTI_PATTERNS has exactly 57 lists.
+	require.Equal(t, 57, len(SubjectVerbAntiPatterns))
 }
 
 func TestSubjectVerbAgreementRule_ContainsOnlyInfinitives(t *testing.T) {
@@ -27,7 +28,10 @@ func TestSubjectVerbAgreementRule_ContainsOnlyInfinitives(t *testing.T) {
 	require.True(t, r.containsOnlyInfinitivesToTheLeft(toks, 3),
 		"Kopieren + Einfügen should count as two infinitives")
 
+	// When LookupInfinitive is absent (nil hook), never suppress via this path.
+	// (Constructor may auto-wire GermanTagger when resources exist; clear for this case.)
 	rNone := NewSubjectVerbAgreementRule(nil)
+	rNone.LookupInfinitive = nil
 	require.False(t, rNone.containsOnlyInfinitivesToTheLeft(toks, 3),
 		"without LookupInfinitive, must not claim infinitives")
 

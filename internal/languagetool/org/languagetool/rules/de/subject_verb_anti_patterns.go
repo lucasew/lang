@@ -124,7 +124,8 @@ var SubjectVerbAntiPatterns = [][]*patterns.PatternToken{
 		patterns.TokenRegex("ist|war"),
 	},
 	{
-		patterns.PosRegex(languagetool.SentenceStartTagName),
+		// Java: posRegex(SENTENCE_START_TAGNAME+"|KON:UNT")
+		patterns.PosRegex(languagetool.SentenceStartTagName + "|KON:UNT"),
 		patterns.PosRegex("(EIG|SUB):.*"),
 		patterns.NewPatternTokenBuilder().CsToken("und").SetSkip(3).Build(),
 		patterns.TokenRegex("sind|waren"),
