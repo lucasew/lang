@@ -35,10 +35,11 @@ const (
 	styleShortExcludeDirectSpeech = true
 )
 
-// Java OPENING_QUOTES / ENDING_QUOTES.
+// Java OPENING_QUOTES / ENDING_QUOTES — Pattern.matcher(token).matches() is full-token.
+// Anchor like abstract_style_repeated_word_rule / abstract_statistic_style_rule.
 var (
-	styleShortOpenQuotes   = regexp.MustCompile(`[\"“„»«]`)
-	styleShortEndingQuotes = regexp.MustCompile(`[\"“”»«]`)
+	styleShortOpenQuotes   = regexp.MustCompile(`^["“„»«]$`)
+	styleShortEndingQuotes = regexp.MustCompile(`^["“”»«]$`)
 )
 
 // NewStyleRepeatedVeryShortSentences ports

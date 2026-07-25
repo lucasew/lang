@@ -197,6 +197,54 @@ func TestStyleRepeatedVeryShortSentences_DirectSpeechExclude(t *testing.T) {
 	require.Equal(t, 3, len(ms), "quoted shorts match when excludeDirectSpeech=false")
 }
 
+// TestStyleRepeatedVeryShortSentences_QuoteFullTokenMatch asserts Java
+// OPENING_QUOTES/ENDING_QUOTES.matcher(token).matches() — full token only.
+// Multi-char surfaces that merely contain a quote (e.g. „foo, "bar) must not
+// open/close direct speech the way unanchored MatchString would.
+func TestStyleRepeatedVeryShortSentences_QuoteFullTokenMatch(t *testing.T) {
+	// Pattern-level: single quote char matches; multi-char containing quote does not.
+	require.True(t, styleShortOpenQuotes.MatchString(`„`))
+	require.True(t, styleShortOpenQuotes.MatchString(`"`))
+	require.False(t, styleShortOpenQuotes.MatchString(`„foo`), "substring open must not match")
+	require.False(t, styleShortOpenQuotes.MatchString(`"bar`), "substring open must not match")
+	require.True(t, styleShortEndingQuotes.MatchString(`“`))
+	require.True(t, styleShortEndingQuotes.MatchString(`"`))
+	require.False(t, styleShortEndingQuotes.MatchString(`"bar`), "substring end must not match")
+	require.False(t, styleShortEndingQuotes.MatchString(`foo“`), "substring end must not match")
+
+	rule := NewStyleRepeatedVeryShortSentences(nil)
+	// Hand-built: token surface contains open quote but is not a single-char quote token.
+	// Next token has !WhitespaceBefore (zero-value), so unanchored open would set
+	// beginsWithDirectSpeech and exclude; Java full-token does not.
+	// tokens.length=4 → >3 && <= minWords+2 → eligible short.
+	multiOpenShort := func(openContaining, word string) *languagetool.AnalyzedSentence {
+		next := atrWithPOS(word, "SUB:NOM:SIN:NEU", word)
+		// explicit: no whitespace before next (would satisfy Java open-quote side condition)
+		next.SetWhitespaceBefore(false)
+		return languagetool.NewAnalyzedSentence(withPositions(
+			sentStartATR(),
+			atrWithPOS(openContaining, "UNKNOWN", openContaining),
+			next,
+			atrWithPOS(".", "PKT", "."),
+		))
+	}
+	sents := []*languagetool.AnalyzedSentence{
+		multiOpenShort(`„foo`, "lief"),
+		multiOpenShort(`"bar`, "rief"),
+		multiOpenShort(`„baz`, "ging"),
+	}
+	for _, s := range sents {
+		n := len(s.GetTokensWithoutWhitespace())
+		require.Greater(t, n, 3)
+		require.LessOrEqual(t, n, rule.MinWords+2)
+		// sanity: multi-char first content token contains a quote char
+		require.Greater(t, len([]rune(s.GetTokensWithoutWhitespace()[1].GetToken())), 1)
+	}
+	ms := rule.MatchList(sents)
+	require.Equal(t, 3, len(ms),
+		"multi-char tokens containing quotes must NOT start direct speech (Java Matcher.matches)")
+}
+
 func TestStyleRepeatedVeryShortSentences_ParagraphEndInteraction(t *testing.T) {
 	rule := NewStyleRepeatedVeryShortSentences(nil)
 	// Java: include when (!paragraphEnd || nPara > 0)
