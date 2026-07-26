@@ -35,11 +35,11 @@ func TestPortugueseUnitConversionRule_MatchPounds(t *testing.T) {
 	require.Contains(t, joined, "toneladas")
 }
 
-func TestBrazilianToponymMapLoader(t *testing.T) {
-	var l BrazilianToponymMapLoader
-	m := l.Load()
-	require.NotNil(t, m)
-	require.Contains(t, l.States(), "SP")
+func TestBrazilianToponymMapLoader_Smoke(t *testing.T) {
+	// Full twins live in brazilian_toponym_map_loader_test.go.
+	m := NewBrazilianToponymMapLoader().BuildMap()
+	require.Equal(t, 27, len(m))
+	require.Contains(t, m["SP"], "são paulo")
 }
 
 func TestConfusionPairsDataLoader(t *testing.T) {

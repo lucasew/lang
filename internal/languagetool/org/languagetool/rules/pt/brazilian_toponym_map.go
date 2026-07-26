@@ -1,27 +1,17 @@
 package pt
 
 import (
-	"bufio"
-	"embed"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"strings"
 	"sync"
 )
 
-//go:embed data/brazilian_municipalities/*.tsv
-var municipalitiesFS embed.FS
-
-var brStates = []string{
-	"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
-	"MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
-	"RS", "RO", "RR", "SC", "SP", "SE", "TO",
-}
-
 // BrazilianToponymMap ports org.languagetool.rules.pt.BrazilianToponymMap.
+// Construction uses BrazilianToponymMapLoader.buildMap() (Java ctor).
+// Full Map method fidelity is a separate checklist line.
 type BrazilianToponymMap struct {
-	// state → lowercased municipality names (hyphen→space)
+	// state → normalised municipality names (loader: hyphen→space, lower)
 	byState map[string][]string
-	// any valid municipality name (for quick membership)
+	// any valid municipality name (for quick membership; derived from byState)
 	all map[string]struct{}
 }
 
@@ -30,32 +20,19 @@ var (
 	brToponymMap  *BrazilianToponymMap
 )
 
-// LoadBrazilianToponymMap loads embedded state TSV lists once.
+// LoadBrazilianToponymMap loads once via BrazilianToponymMapLoader.BuildMap
+// (Java: map = new BrazilianToponymMapLoader().buildMap()).
 func LoadBrazilianToponymMap() *BrazilianToponymMap {
 	brToponymOnce.Do(func() {
+		raw := NewBrazilianToponymMapLoader().BuildMap()
 		m := &BrazilianToponymMap{
-			byState: map[string][]string{},
+			byState: raw,
 			all:     map[string]struct{}{},
 		}
-		for _, state := range brStates {
-			path := "data/brazilian_municipalities/" + state + ".tsv"
-			f, err := municipalitiesFS.Open(path)
-			if err != nil {
-				continue
+		for _, list := range raw {
+			for _, n := range list {
+				m.all[n] = struct{}{}
 			}
-			var list []string
-			sc := bufio.NewScanner(f)
-			for sc.Scan() {
-				line := tools.JavaStringTrim(sc.Text())
-				if line == "" {
-					continue
-				}
-				norm := strings.ToLower(strings.ReplaceAll(line, "-", " "))
-				list = append(list, norm)
-				m.all[norm] = struct{}{}
-			}
-			_ = f.Close()
-			m.byState[state] = list
 		}
 		brToponymMap = m
 	})
