@@ -12,18 +12,9 @@ import (
 
 const TokenAgreementNounVerbRuleID = "UK_NOUN_VERB_INFLECTION_AGREEMENT"
 
-// TokenAgreementNounVerbRule ports TokenAgreementNounVerbRule (state-machine Match).
+// TokenAgreementNounVerbRule ports TokenAgreementNounVerbRule.
 type TokenAgreementNounVerbRule struct {
 	*tokenAgreementMatch
-}
-
-func hasVerbReading(tok *languagetool.AnalyzedTokenReadings) bool {
-	for _, p := range CollectPOSTags(tok) {
-		if taguk.IPOSVerb.Match(p) {
-			return true
-		}
-	}
-	return false
 }
 
 func NewTokenAgreementNounVerbRule() *TokenAgreementNounVerbRule {
@@ -34,105 +25,12 @@ func NewTokenAgreementNounVerbRule() *TokenAgreementNounVerbRule {
 func NewTokenAgreementNounVerbRuleWithMessages(messages map[string]string) *TokenAgreementNounVerbRule {
 	r := &TokenAgreementNounVerbRule{}
 	r.tokenAgreementMatch = &tokenAgreementMatch{
-		ruleID: TokenAgreementNounVerbRuleID,
-		// Java getDescription / getShort
-		description:  "Узгодження іменника та дієслова за родом, числом та особою",
-		shortMsg:     "Узгодження іменника з дієсловом",
-		isLeftToken:  HasNounOrPronSubjectReading,
-		isRightToken: hasVerbReading,
-		pairChecker:  nounVerbAgree,
-		exception:    IsNounVerbException,
+		ruleID:      TokenAgreementNounVerbRuleID,
+		description: "Узгодження іменника та дієслова за родом, числом та особою",
+		shortMsg:    "Узгодження іменника з дієсловом",
 	}
 	initTokenAgreementMeta(r.tokenAgreementMatch, messages)
 	return r
-}
-
-func nounVerbAgree(noun, verb *languagetool.AnalyzedTokenReadings) bool {
-	nTags := CollectPOSTags(noun)
-	vTags := CollectPOSTags(verb)
-	// proper names soft: prop without clear person/number often skip
-	if isProperNameOnly(nTags) && len(GetNounInflections(nTags)) == 0 {
-		return true
-	}
-	// personal pronouns: use person/number soft matrix
-	if hasPronPers(nTags) {
-		return pronVerbAgree(nTags, vTags)
-	}
-	if len(GetNounInflections(nTags)) == 0 || len(GetVerbInflections(vTags)) == 0 {
-		return true // insufficient data
-	}
-	return VerbInflectionsOverlap(vTags, nTags)
-}
-
-func hasPronPers(tags []string) bool {
-	for _, t := range tags {
-		if strings.Contains(t, "pron:pers") {
-			return true
-		}
-	}
-	return false
-}
-
-func isProperNameOnly(tags []string) bool {
-	if len(tags) == 0 {
-		return false
-	}
-	for _, t := range tags {
-		if !strings.Contains(t, "prop") {
-			return false
-		}
-	}
-	return true
-}
-
-// pronVerbAgree soft-matches personal pronouns to verb person/number.
-func pronVerbAgree(nTags, vTags []string) bool {
-	// extract :1/:2/:3 and s/p from both
-	var nPers, nNum, vPers, vNum string
-	for _, t := range nTags {
-		if !strings.Contains(t, "pron:pers") {
-			continue
-		}
-		for _, p := range []string{":1", ":2", ":3"} {
-			if strings.Contains(t, p) {
-				nPers = p
-			}
-		}
-		if strings.Contains(t, ":p:") || strings.HasSuffix(t, ":p") || strings.Contains(t, ":p:v_") {
-			nNum = "p"
-		} else if strings.Contains(t, ":s:") || strings.Contains(t, ":m:") || strings.Contains(t, ":f:") || strings.Contains(t, ":n:") {
-			nNum = "s"
-		}
-		// Ukrainian: noun:…:p:v_naz:pron:pers:1
-		if strings.Contains(t, ":p:") {
-			nNum = "p"
-		}
-	}
-	for _, t := range vTags {
-		if !strings.HasPrefix(t, "verb") {
-			continue
-		}
-		for _, p := range []string{":1", ":2", ":3"} {
-			if strings.Contains(t, p) {
-				vPers = p
-			}
-		}
-		if strings.Contains(t, ":p:") || strings.Contains(t, ":p:3") || strings.Contains(t, "past:p") {
-			vNum = "p"
-		} else if strings.Contains(t, ":s:") || strings.Contains(t, "past:m") || strings.Contains(t, "past:f") || strings.Contains(t, "past:n") {
-			vNum = "s"
-		}
-	}
-	if nPers == "" || vPers == "" {
-		return true // insufficient
-	}
-	if nPers != vPers {
-		return false
-	}
-	if nNum != "" && vNum != "" && nNum != vNum {
-		return false
-	}
-	return true
 }
 
 var (
@@ -150,122 +48,173 @@ var (
 	}
 )
 
-// isPredictOrInsert ports PosTagHelper.isPredictOrInsert.
+// isPredictOrInsertPOS ports PosTagHelper.isPredictOrInsert.
 func isPredictOrInsertPOS(pos string) bool {
 	return nounVerbPredInsRE.MatchString(pos)
 }
 
-// Match ports TokenAgreementNounVerbRule.match state machine.
+// nounVerbState ports TokenAgreementNounVerbRule.State.
+type nounVerbState struct {
+	nounPos                   int
+	nounTokenReadings         []string // POS tags of selected noun/яка readings
+	nounAnalyzedTokenReadings *languagetool.AnalyzedTokenReadings
+}
+
+// Match ports TokenAgreementNounVerbRule.match.
 func (r *TokenAgreementNounVerbRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	if sentence == nil {
 		return nil
 	}
 	tokens := sentence.GetTokensWithoutWhitespace()
-	var out []*rules.RuleMatch
+	var ruleMatches []*rules.RuleMatch
+	var state *nounVerbState
 
-	nounPos := -1
-	var nounTok *languagetool.AnalyzedTokenReadings
-	var nounTags []string // v_naz noun / яка readings used for master inflections
-
+	// Java: for (int i = 1; i < tokens.length; i++)
 	start := 1
 	if len(tokens) > 0 && tokens[0] != nil && !tokens[0].IsSentenceStart() && firstPOS(tokens[0]) != "SENT_START" {
 		start = 0
 	}
 	for i := start; i < len(tokens); i++ {
-		tok := tokens[i]
-		if tok == nil {
-			nounPos = -1
+		tokenReadings := tokens[i]
+		if tokenReadings == nil {
+			state = nil
 			continue
 		}
-		if firstPOS(tok) == "" {
-			nounPos = -1
+		posTag0 := firstPOS(tokenReadings)
+		if posTag0 == "" {
+			state = nil
 			continue
 		}
 
-		clean := cleanTokenSurface(tok)
-		// subject start: noun.*:v_naz or "яка"
-		if HasPosTagRE(tok, nounVerbNazRE) || strings.EqualFold(clean, "яка") {
-			nPos, nTok, nTags, ok := collectNounVerbSubject(tokens, i)
+		if state == nil {
+			// no need to start checking on last token
+			if i == len(tokens)-1 {
+				continue
+			}
+		}
+
+		cleanToken := cleanTokenSurface(tokenReadings)
+
+		if HasPosTagRE(tokenReadings, nounVerbNazRE) || strings.EqualFold(cleanToken, "яка") {
+			st, ok := collectNounVerbSubjectState(tokens, i)
 			if !ok {
-				nounPos = -1
+				state = nil
 				continue
 			}
-			nounPos = nPos
-			nounTok = nTok
-			nounTags = nTags
+			state = st
 			continue
 		}
 
-		if nounPos < 0 || nounTok == nil {
+		if state == nil {
 			continue
 		}
 
-		// ignorable particles / pure adv (Java continue — keep state)
-		if _, ok := nounVerbSkipToks[tok.GetToken()]; ok {
+		if _, ok := nounVerbSkipToks[tokenReadings.GetToken()]; ok {
 			continue
 		}
-		if hasPosTagPartAll(tok, "adv") {
+		if hasPosTagPartAll(tokenReadings, "adv") {
 			continue
 		}
 
-		// collect verb readings on this token
-		var verbTags []string
+		// see if we get a following verb
+		var verbTokenReadings []string
 		clear := false
-		for _, p := range CollectPOSTags(tok) {
-			if p == "" || p == "SENT_END" || p == "PARA_END" {
+		for _, rdg := range tokenReadings.GetReadings() {
+			if rdg == nil {
 				continue
 			}
-			if strings.HasPrefix(p, "<") {
+			verbPosTag := ""
+			if rdg.GetPOSTag() != nil {
+				verbPosTag = *rdg.GetPOSTag()
+			}
+			if verbPosTag == "" || verbPosTag == "SENT_END" || verbPosTag == "PARA_END" {
+				continue
+			}
+			if strings.HasPrefix(verbPosTag, "<") {
+				verbTokenReadings = nil
 				clear = true
 				break
 			}
-			if strings.HasPrefix(p, "verb") {
-				verbTags = append(verbTags, p)
-			} else if isPredictOrInsertPOS(p) {
+			if strings.HasPrefix(verbPosTag, "verb") {
+				verbTokenReadings = append(verbTokenReadings, verbPosTag)
+			} else if isPredictOrInsertPOS(verbPosTag) {
 				// ignore
 			} else {
+				verbTokenReadings = nil
 				clear = true
 				break
 			}
 		}
-		if clear || len(verbTags) == 0 {
-			nounPos = -1
+		if clear || len(verbTokenReadings) == 0 {
+			state = nil
 			continue
 		}
 
-		master := GetNounInflections(nounTags)
-		slave := GetVerbInflections(verbTags)
-		if !verbInflectionsOverlapLists(master, slave) {
-			// Java: clear subject + break entire match loop
-			if IsNounVerbException(tokens, nounPos, i) {
+		masterInflections := GetNounInflections(state.nounTokenReadings)
+		slaveInflections := GetVerbInflections(verbTokenReadings)
+
+		if !verbInflectionsOverlapLists(masterInflections, slaveInflections) {
+			if IsNounVerbException(tokens, state.nounPos, i) {
+				// Java: state.nounTokenReadings.clear(); break;
+				state = nil
 				break
 			}
-			// Java flags whenever Collections.disjoint — including empty master with non-empty slave
+
+			// Java: LemmaHelper.hasLemma(state.nounTokenReadings, "який") on selected readings.
 			kind := "іменник"
-			if HasLemmaToken(nounTok, "який") {
+			if hasSelectedYakyi(state) {
 				kind = "займенник"
 			}
-			// Java: "Не узгоджено %s з дієсловом: \"%s\" (%s) і \"%s\" (%s)"
-			msg := "Не узгоджено " + kind + " з дієсловом: \"" + nounTok.GetToken() +
-				"\" (" + formatVerbPersonInflections(master, true) + ") і \"" + tok.GetToken() +
-				"\" (" + formatVerbPersonInflections(slave, false) + ")"
-			m := rules.NewRuleMatch(r, sentence, nounTok.GetStartPos(), tok.GetEndPos(), msg)
+
+			msg := "Не узгоджено " + kind + " з дієсловом: \"" +
+				firstSelectedToken(state) + "\" (" + formatVerbPersonInflections(masterInflections, true) +
+				") і \"" + tokenReadings.GetToken() + "\" (" +
+				formatVerbPersonInflections(slaveInflections, false) + ")"
+			m := rules.NewRuleMatch(r, sentence, state.nounAnalyzedTokenReadings.GetStartPos(), tokenReadings.GetEndPos(), msg)
 			m.ShortMessage = r.shortMsg
-			out = append(out, m)
+			ruleMatches = append(ruleMatches, m)
 		}
-		nounPos = -1
+
+		state = nil
 	}
-	return out
+	return ruleMatches
+}
+
+func hasSelectedYakyi(state *nounVerbState) bool {
+	if state == nil || state.nounAnalyzedTokenReadings == nil {
+		return false
+	}
+	// Java: hasLemma(state.nounTokenReadings, "який") on selected readings only.
+	for _, pos := range state.nounTokenReadings {
+		if strings.Contains(pos, ":f:v_naz") {
+			// check lemma on token readings with this pos
+			for _, rdg := range state.nounAnalyzedTokenReadings.GetReadings() {
+				if rdg == nil || rdg.GetPOSTag() == nil || rdg.GetLemma() == nil {
+					continue
+				}
+				if *rdg.GetPOSTag() == pos && *rdg.GetLemma() == "який" {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func firstSelectedToken(state *nounVerbState) string {
+	if state == nil || state.nounAnalyzedTokenReadings == nil {
+		return ""
+	}
+	// Java: state.nounTokenReadings.get(0).getToken()
+	return state.nounAnalyzedTokenReadings.GetToken()
 }
 
 // formatVerbPersonInflections ports TokenAgreementNounVerbRule.formatInflections.
-// noun flag is unused in Java body but kept for signature parity.
 func formatVerbPersonInflections(infs []VerbInflection, noun bool) string {
 	_ = noun
 	if len(infs) == 0 {
 		return ""
 	}
-	// Java Collections.sort by gender GEN_ORDER
 	sorted := append([]VerbInflection(nil), infs...)
 	sort.SliceStable(sorted, func(i, j int) bool {
 		return verbInflectionOrder(sorted[i]) < verbInflectionOrder(sorted[j])
@@ -300,7 +249,6 @@ func formatVerbPersonInflections(infs []VerbInflection, noun bool) string {
 }
 
 func verbInflectionOrder(inf VerbInflection) int {
-	// InflectionHelper.GEN_ORDER; null gender → 0 in Java compareTo
 	if inf.Gender == "" {
 		return 0
 	}
@@ -310,71 +258,82 @@ func verbInflectionOrder(inf VerbInflection) int {
 	return 99
 }
 
-// collectNounVerbSubject ports the Java noun/яка state builder. ok=false → clear state.
-func collectNounVerbSubject(tokens []*languagetool.AnalyzedTokenReadings, i int) (nounPos int, nounTok *languagetool.AnalyzedTokenReadings, nounTags []string, ok bool) {
+// collectNounVerbSubjectState ports the Java subject-state builder.
+// ok=false → clear state (Java state=null).
+func collectNounVerbSubjectState(tokens []*languagetool.AnalyzedTokenReadings, i int) (*nounVerbState, bool) {
 	if i < 0 || i >= len(tokens) || tokens[i] == nil {
-		return -1, nil, nil, false
+		return nil, false
 	}
 	tok := tokens[i]
 	clean := cleanTokenSurface(tok)
-	nounPos = -1
+	state := &nounVerbState{nounPos: -1}
+
 	for _, rdg := range tok.GetReadings() {
-		if rdg == nil || rdg.GetPOSTag() == nil {
+		if rdg == nil {
 			continue
 		}
-		pos := *rdg.GetPOSTag()
+		nounPosTag := ""
+		if rdg.GetPOSTag() != nil {
+			nounPosTag = *rdg.GetPOSTag()
+		}
+		// can happen for words with \u0301 or \u00AD
+		if nounPosTag == "" {
+			continue
+		}
 		lem := ""
 		if rdg.GetLemma() != nil {
 			lem = *rdg.GetLemma()
 		}
-		if lem == "який" && strings.Contains(pos, ":f:v_naz") {
-			nounPos = i
-			nounTok = tok
-			nounTags = append(nounTags, pos)
+
+		if lem == "який" && strings.Contains(nounPosTag, ":f:v_naz") {
+			state.nounPos = i
+			state.nounTokenReadings = append(state.nounTokenReadings, nounPosTag)
+			state.nounAnalyzedTokenReadings = tok
 			continue
 		}
 		if strings.EqualFold(clean, "хто") {
-			// ignore: хто + future f/p verb
+			// ignore: про те, хто була ця клята Пандора
 			if tokenSearchVerbFPSkipPart(tokens, i+1) >= 0 {
-				return -1, nil, nil, false
+				return nil, false
 			}
 			if i < len(tokens)-1 && hasPosTagPartAll(tokens[i+1], "adv") &&
 				tokenSearchVerbFPSkipPart(tokens, i+2) >= 0 {
-				return -1, nil, nil, false
+				return nil, false
 			}
 		}
-		if strings.HasPrefix(pos, "noun") && strings.Contains(pos, "v_naz") {
-			nounPos = i
-			nounTok = tok
-			nounTags = append(nounTags, pos)
+		if strings.HasPrefix(nounPosTag, "noun") && strings.Contains(nounPosTag, "v_naz") {
+			state.nounPos = i
+			state.nounTokenReadings = append(state.nounTokenReadings, nounPosTag)
+			state.nounAnalyzedTokenReadings = tok
 			continue
 		}
-		if strings.HasPrefix(pos, "noun") && strings.Contains(pos, "v_kly") {
+		if strings.HasPrefix(nounPosTag, "noun") && strings.Contains(nounPosTag, "v_kly") {
 			continue // ignore
 		}
-		if isPredictOrInsertPOS(pos) {
+		if isPredictOrInsertPOS(nounPosTag) {
 			continue
 		}
 		// Java: adj:.:(v_naz|v_kly).* || (adj:m:v_zna:rinanim && !prep) && !blocked
-		// (blocked list binds only to the rinanim branch via && precedence)
-		if nounVerbAdjNazRE.MatchString(pos) {
-			continue // adj readings not used for master inflections
+		// due to &&/|| precedence: A || ((B && !prep) && !blocked)
+		if nounVerbAdjNazRE.MatchString(nounPosTag) {
+			// adj readings not used for master inflections (Java adjTokenReadings only)
+			continue
 		}
-		if nounVerbAdjZnaRE.MatchString(pos) &&
+		if strings.HasPrefix(nounPosTag, "adj:m:v_zna:rinanim") &&
 			!(i > 0 && tokens[i-1] != nil && HasPosTagStart(tokens[i-1], "prep")) {
 			lower := strings.ToLower(tok.GetToken())
 			if _, block := nounVerbAdjBlock[lower]; block {
-				return -1, nil, nil, false
+				return nil, false
 			}
 			continue
 		}
 		// other reading → clear whole state
-		return -1, nil, nil, false
+		return nil, false
 	}
-	if nounPos < 0 || nounTok == nil || len(nounTags) == 0 {
-		return -1, nil, nil, false
+	if state.nounPos < 0 || state.nounAnalyzedTokenReadings == nil || len(state.nounTokenReadings) == 0 {
+		return nil, false
 	}
-	return nounPos, nounTok, nounTags, true
+	return state, true
 }
 
 // tokenSearchVerbFPSkipPart ports LemmaHelper.tokenSearch(verb.*:[fp], ignore part, FORWARD).
@@ -382,15 +341,15 @@ func tokenSearchVerbFPSkipPart(tokens []*languagetool.AnalyzedTokenReadings, pos
 	if tokens == nil || pos < 0 {
 		return -1
 	}
-	for i := pos; i < len(tokens); i++ {
-		if tokens[i] == nil {
+	for j := pos; j < len(tokens); j++ {
+		if tokens[j] == nil {
 			continue
 		}
-		if HasPosTagRE(tokens[i], nounVerbPartRE) {
+		if HasPosTagRE(tokens[j], nounVerbPartRE) {
 			continue
 		}
-		if HasPosTagRE(tokens[i], nounVerbFPVerbRE) {
-			return i
+		if HasPosTagRE(tokens[j], nounVerbFPVerbRE) {
+			return j
 		}
 	}
 	return -1

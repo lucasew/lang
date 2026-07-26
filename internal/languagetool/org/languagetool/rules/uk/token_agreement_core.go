@@ -1973,6 +1973,16 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		HasPosTagRE(tokens[nounPos-2], regexp.MustCompile(`noun.*:v_naz.*prop.*`)) {
 		return true
 	}
+
+	// невідомі прізвища, як іменник — Любов Євтушок зауважила
+	// Java: capitalized prev + capitalized subject + prev noun inflections overlap verb
+	if verbPos > 2 &&
+		IsCapitalized(noun.GetToken()) &&
+		IsCapitalized(tokens[nounPos-1].GetToken()) &&
+		VerbInflectionsOverlap(CollectPOSTags(verb), CollectPOSTags(tokens[nounPos-1])) {
+		return true
+	}
+
 	// Тарас ЗАКУСИЛО (all-upper verb)
 	if isAllUpper(verb.GetToken()) {
 		return true
@@ -2180,7 +2190,8 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 			return true
 		}
 		// моя мама й сестра мешкали — conj before subject
-		m := &SearchMatch{IgnoreQuotes: true, Limit: 7}
+		// Java: new Match().ignoreInserts().limit(7).target(CONJ_FOR_PLURAL).skip(...)
+		m := &SearchMatch{IgnoreQuotes: true, Limit: 7, IgnoreInserts: true}
 		m.Target(ConditionTokenRE(conjForPluralTokenRE))
 		m.Skip(ConditionPostag(regexp.MustCompile(`(?:noun.*?v_naz|(?:adj|numr):.:v_naz|adv|part).*`)))
 		pos0left := m.MBeforeATR(tokens, nounPos-1)
