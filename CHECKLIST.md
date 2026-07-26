@@ -1406,7 +1406,7 @@
 - [x] org/languagetool/rules/pt/PortugueseOrthographyReplaceRule.java::PortugueseOrthographyReplaceRule
 - [ ] org/languagetool/rules/pt/PortugueseProclisisFilter.java::PortugueseProclisisFilter
 - [x] org/languagetool/rules/pt/PortugueseReadabilityRule.java::PortugueseReadabilityRule
-- [ ] org/languagetool/rules/pt/PortugueseRedundancyRule.java::PortugueseRedundancyRule
+- [x] org/languagetool/rules/pt/PortugueseRedundancyRule.java::PortugueseRedundancyRule
 - [ ] org/languagetool/rules/pt/PortugueseReplaceRule.java::PortugueseReplaceRule
 - [x] org/languagetool/rules/pt/PortugueseSuppressMisspelledSuggestionsFilter.java::PortugueseSuppressMisspelledSuggestionsFilter
 - [ ] org/languagetool/rules/pt/PortugueseUnitConversionRule.java::PortugueseUnitConversionRule
