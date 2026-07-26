@@ -407,6 +407,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-MorfologikPortugueseSpellerRule | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/MorfologikPortugueseSpellerRule.java; inspiration/languagetool/languagetool-language-modules/pt/src/test/java/org/languagetool/rules/pt/MorfologikPortugueseSpellerRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/spelling/morfologik/MorfologikSpellerRule.java | internal/languagetool/org/languagetool/rules/pt/morfologik_portuguese_speller_rule.go; internal/languagetool/org/languagetool/rules/pt/morfologik_portuguese_speller_rule_test.go; internal/languagetool/org/languagetool/rules/pt/morfologik_portuguese_speller_extras.go; internal/languagetool/org/languagetool/rules/pt/morfologik_portuguese_speller_extras_test.go; internal/languagetool/org/languagetool/rules/pt/MorfologikPortugueseSpellerRuleTest_test.go; internal/languagetool/org/languagetool/rules/spelling/morfologik/morfologik_plain_text.go; internal/languagetool/org/languagetool/rules/pt/portuguese_speller_tagger_wire.go | 879611c6cfe2a212232c11df3c52e95af6b00eea | 1 | 0 |  |  | 2026-07-26T06:32:30Z |
 | docs/faithful-port-checklist.md#3.C.3-DateFilterHelper-RU | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/DateFilterHelper.java | internal/languagetool/org/languagetool/rules/ru/date_filter_helper.go; internal/languagetool/org/languagetool/rules/ru/date_filter_helper_test.go; internal/languagetool/org/languagetool/rules/ru/date_check_filter.go | 25002514323aaf58e833b34bb2332010b89b9d5e | 0 | 0 |  |  | 2026-07-26T06:41:37Z |
 | docs/faithful-port-checklist.md#3.C.3-DateCheckFilter-RU | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/DateCheckFilter.java; inspiration/languagetool/languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/DateCheckFilterTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractDateCheckFilter.java | internal/languagetool/org/languagetool/rules/ru/date_check_filter.go; internal/languagetool/org/languagetool/rules/ru/date_check_filter_test.go; internal/languagetool/org/languagetool/rules/ru/DateCheckFilterTest_test.go | 5e16b28f57f93571d6281b74f043cc091212377b | 0 | 0 |  |  | 2026-07-26T06:50:06Z |
+| docs/faithful-port-checklist.md#3.C.3-FutureDateFilter-RU | implementing | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/FutureDateFilter.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractFutureDateFilter.java | internal/languagetool/org/languagetool/rules/ru/future_date_filter.go; internal/languagetool/org/languagetool/rules/ru/future_date_filter_test.go |  | 0 | 0 |  |  | 2026-07-26T06:53:45Z |
 
 ## Human inbox
 
@@ -416,7 +417,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ACCEPT 3.C.3-DateCheckFilter-RU @ 5e16b28f; next fire: implement next leaf |
+| Notes | implementing 3.C.3-FutureDateFilter-RU (DateFilterHelper months; AbstractFutureDateFilter) |
 
 ---
 
@@ -1883,3 +1884,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T06:46:31Z ready: 3.C.3-DateCheckFilter-RU @ 5e16b28f (implementer report; parent green reconfirm; own day/month/Roman; no DateFilterHelper invent wiring)
 - 2026-07-26T06:48:43Z validating: 3.C.3-DateCheckFilter-RU @ 5e16b28f
 - 2026-07-26T06:50:06Z ACCEPT: 3.C.3-DateCheckFilter-RU @ 5e16b28f (validator + parent green reconfirm; CHECKLIST RU DateCheckFilter note; own day/month/Roman)
+- 2026-07-26T06:53:45Z implement: 3.C.3-FutureDateFilter-RU (FutureDateFilter+DateFilterHelper getMonth/getCalendar; AcceptRuleMatch future-only; EN twin pattern)
