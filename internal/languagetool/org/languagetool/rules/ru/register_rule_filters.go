@@ -28,6 +28,9 @@ func init() {
 	c.Register("org.languagetool.rules.ru.FutureDateFilter", func() patterns.RuleFilter {
 		return NewFutureDateFilter()
 	})
+	c.Register("org.languagetool.rules.ru.INNNumberFilter", func() patterns.RuleFilter {
+		return NewINNNumberFilter()
+	})
 }
 
 
