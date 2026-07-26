@@ -793,9 +793,39 @@ func TestUkrainianTagger_DynamicTaggingFullOthers(t *testing.T) {
 	TestUkrainianTagger_DynamicTaggingFullTagMatch(t)
 }
 
-// Twin of UkrainianTaggerTest.testDynamicTaggingInvalidLeft
+// Twin of UkrainianTaggerTest.testDynamicTaggingInvalidLeft — full myAssert outcomes
+// (same expectations as javaUkrainianTaggerMyAssertCases / not-tagged matrix).
 func TestUkrainianTagger_DynamicTaggingInvalidLeft(t *testing.T) {
-	require.True(t, IsDashPrefixInvalid("foo") || !IsDashPrefixInvalid("foo"))
+	if DiscoverUkrainianPOSDict() == "" {
+		t.Skip("ukrainian.dict not discoverable")
+	}
+	// Java assertTagged cases (exact expected strings from UkrainianTaggerTest.java)
+	tagged := []struct{ in, want string }{
+		{"авіа-переліт", "авіа-переліт/[авіа-переліт]noun:inanim:m:v_naz:bad|авіа-переліт/[авіа-переліт]noun:inanim:m:v_zna:bad"},
+		{"авто-салон", "авто-салон/[авто-салон]noun:inanim:m:v_naz:bad|авто-салон/[авто-салон]noun:inanim:m:v_zna:bad"},
+		{"квазі-держави", "квазі-держави/[квазі-держава]noun:inanim:f:v_rod:bad|квазі-держави/[квазі-держава]noun:inanim:p:v_kly:bad|квазі-держави/[квазі-держава]noun:inanim:p:v_naz:bad|квазі-держави/[квазі-держава]noun:inanim:p:v_zna:bad"},
+		{"мульти-візу", "мульти-візу/[мульти-віза]noun:inanim:f:v_zna:bad"},
+		{"контр-міри", "контр-міри/[контр-міра]noun:inanim:f:v_rod:bad|контр-міри/[контр-міра]noun:inanim:p:v_kly:bad|контр-міри/[контр-міра]noun:inanim:p:v_naz:bad|контр-міри/[контр-міра]noun:inanim:p:v_zna:bad"},
+		{"кіно-критика", "кіно-критика/[кіно-критик]noun:anim:m:v_rod:bad|кіно-критика/[кіно-критик]noun:anim:m:v_zna:bad|кіно-критика/[кіно-критика]noun:inanim:f:v_naz:bad"},
+		{"древньо-римський", "древньо-римський/[древньо-римський]adj:m:v_kly:bad|древньо-римський/[древньо-римський]adj:m:v_naz:bad|древньо-римський/[древньо-римський]adj:m:v_zna:rinanim:bad"},
+		{"давньо-римський", "давньо-римський/[давньо-римський]adj:m:v_kly:bad|давньо-римський/[давньо-римський]adj:m:v_naz:bad|давньо-римський/[давньо-римський]adj:m:v_zna:rinanim:bad"},
+		{"максимально-можливу", "максимально-можливу/[максимально-можливий]adj:f:v_zna:bad"},
+		{"загально-правовий", "загально-правовий/[загально-правовий]adj:m:v_kly:bad|загально-правовий/[загально-правовий]adj:m:v_naz:bad|загально-правовий/[загально-правовий]adj:m:v_zna:rinanim:bad"},
+		{"відео-навчання", "відео-навчання/[відео-навчання]noun:inanim:n:v_kly:bad|відео-навчання/[відео-навчання]noun:inanim:n:v_naz:bad|відео-навчання/[відео-навчання]noun:inanim:n:v_rod:bad|відео-навчання/[відео-навчання]noun:inanim:n:v_zna:bad|відео-навчання/[відео-навчання]noun:inanim:p:v_kly:bad|відео-навчання/[відео-навчання]noun:inanim:p:v_naz:bad|відео-навчання/[відео-навчання]noun:inanim:p:v_zna:bad"},
+		{"В2В-рішень", "В2В-рішень/[В2В-рішення]noun:inanim:p:v_rod:bad"},
+		{"кіно-Європа", "кіно-Європа/[кіно-Європа]noun:inanim:f:v_naz:prop:geo"},
+	}
+	for _, tc := range tagged {
+		t.Run(tc.in, func(t *testing.T) {
+			require.Equal(t, tc.want, myAssertUkrainianTagger(tc.in), "input=%q", tc.in)
+		})
+	}
+	// Java assertNotTagged
+	for _, w := range []string{"теле-та", "квазі-я", "макро-і"} {
+		t.Run("not:"+w, func(t *testing.T) {
+			require.Equal(t, w+"/[null]null", myAssertUkrainianTagger(w), "assertNotTagged %q", w)
+		})
+	}
 }
 
 // Twin of UkrainianTaggerTest.testDynamicTaggingAdvPre
