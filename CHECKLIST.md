@@ -1419,7 +1419,7 @@
 - [x] org/languagetool/rules/pt/PortugueseWrongWordInContextRule.java::PortugueseWrongWordInContextRule
 - [x] org/languagetool/rules/pt/PostReformPortugueseCompoundRule.java::PostReformPortugueseCompoundRule
 - [ ] org/languagetool/rules/pt/PostReformPortugueseDashRule.java::PostReformPortugueseDashRule
-- [ ] org/languagetool/rules/pt/PreReformPortugueseCompoundRule.java::PreReformPortugueseCompoundRule
+- [x] org/languagetool/rules/pt/PreReformPortugueseCompoundRule.java::PreReformPortugueseCompoundRule
 - [ ] org/languagetool/rules/pt/PreReformPortugueseDashRule.java::PreReformPortugueseDashRule
 - [ ] org/languagetool/rules/pt/RegularIrregularParticipleFilter.java::RegularIrregularParticipleFilter
 - [x] org/languagetool/rules/pt/RomanNumeralFilter.java::RomanNumeralFilter
