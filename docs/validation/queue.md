@@ -410,6 +410,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-FutureDateFilter-RU | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/FutureDateFilter.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractFutureDateFilter.java | internal/languagetool/org/languagetool/rules/ru/future_date_filter.go; internal/languagetool/org/languagetool/rules/ru/future_date_filter_test.go | 9c708278e88e0aa9859eac8a00da808a88564524 | 0 | 0 |  |  | 2026-07-26T06:59:57Z |
 | docs/faithful-port-checklist.md#3.C.3-INNNumberFilter | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/INNNumberFilter.java | internal/languagetool/org/languagetool/rules/ru/inn_number_filter.go; internal/languagetool/org/languagetool/rules/ru/inn_number_filter_test.go; internal/languagetool/org/languagetool/rules/ru/register_rule_filters.go | 0722e07cf10ce019908eb075259769c2cc18cdac | 0 | 0 |  |  | 2026-07-26T07:09:52Z |
 | docs/faithful-port-checklist.md#3.C.3-RussianDashRule | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/RussianDashRule.java; inspiration/languagetool/languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianDashRuleTest.java; inspiration/languagetool/languagetool-language-modules/ru/src/main/resources/org/languagetool/resource/ru/compounds.txt; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractDashRule.java | internal/languagetool/org/languagetool/rules/ru/russian_dash_rule.go; internal/languagetool/org/languagetool/rules/ru/RussianDashRuleTest_test.go; internal/languagetool/org/languagetool/rules/ru/data/compounds.txt; internal/languagetool/org/languagetool/rules/abstract_dash_rule.go | 5e130e88b73c61f526305c81d26be72419175504 | 0 | 0 |  |  | 2026-07-26T07:19:52Z |
+| docs/faithful-port-checklist.md#3.C.3-RussianCompoundRule | implementing | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/RussianCompoundRule.java; inspiration/languagetool/languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianCompoundRuleTest.java; inspiration/languagetool/languagetool-language-modules/ru/src/main/resources/org/languagetool/resource/ru/compounds.txt; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractCompoundRule.java | internal/languagetool/org/languagetool/rules/ru/russian_compound_rule.go; internal/languagetool/org/languagetool/rules/ru/RussianCompoundRuleTest_test.go; internal/languagetool/org/languagetool/rules/ru/data/compounds.txt; internal/languagetool/org/languagetool/rules/abstract_compound_rule.go |  | 0 | 0 |  |  | 2026-07-26T07:24:05Z |
 
 ## Human inbox
 
@@ -419,7 +420,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ACCEPT 3.C.3-RussianDashRule @ 5e130e88; next fire: implement next leaf |
+| Notes | implementing 3.C.3-RussianCompoundRule (RU_COMPOUNDS; compounds.txt; full RussianCompoundRuleTest twin) |
 
 ---
 
@@ -1898,3 +1899,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T07:16:00Z ready: 3.C.3-RussianDashRule @ 5e130e88 (implementer report; parent green reconfirm; full RussianDashRuleTest; official compounds.txt; empty tags)
 - 2026-07-26T07:18:45Z validating: 3.C.3-RussianDashRule @ 5e130e88
 - 2026-07-26T07:19:52Z ACCEPT: 3.C.3-RussianDashRule @ 5e130e88 (validator + parent green reconfirm; CHECKLIST RU RussianDashRule note; official compounds.txt)
+- 2026-07-26T07:24:05Z implement: 3.C.3-RussianCompoundRule (RussianCompoundRule+AbstractCompoundRule; official /ru/compounds.txt; sentenceStartsWithUpperCase; full test twin)
