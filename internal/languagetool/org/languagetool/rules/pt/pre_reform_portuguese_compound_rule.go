@@ -11,6 +11,10 @@ import (
 //go:embed data/pre-reform-compounds.txt
 var preReformFS embed.FS
 
+// PreReformPortugueseCompoundFilePath is the official resource path Java loads
+// (CompoundRuleData("/pt/pre-reform-compounds.txt")).
+const PreReformPortugueseCompoundFilePath = "/pt/pre-reform-compounds.txt"
+
 var (
 	preReformOnce sync.Once
 	preReformData *rules.CompoundRuleData
@@ -23,7 +27,7 @@ func loadPreReformCompounds() *rules.CompoundRuleData {
 			panic(err)
 		}
 		defer f.Close()
-		d, err := rules.NewCompoundRuleData(f, "/pt/pre-reform-compounds.txt")
+		d, err := rules.NewCompoundRuleData(f, PreReformPortugueseCompoundFilePath)
 		if err != nil {
 			panic(err)
 		}
@@ -37,6 +41,10 @@ type PreReformPortugueseCompoundRule struct {
 	*rules.AbstractCompoundRule
 }
 
+// NewPreReformPortugueseCompoundRule constructs PT_COMPOUNDS_PRE_REFORM.
+// Java ctor: four Portuguese messages to AbstractCompoundRule, then
+// setCategory(COMPOUNDING), setLocQualityIssueType(Grammar), useSubRuleSpecificIds().
+// No getUrl override (empty URL). No mergeCompound override (default base only).
 func NewPreReformPortugueseCompoundRule(messages map[string]string) *PreReformPortugueseCompoundRule {
 	base := &rules.AbstractCompoundRule{
 		Messages:                   messages,
@@ -46,8 +54,20 @@ func NewPreReformPortugueseCompoundRule(messages map[string]string) *PreReformPo
 		WithoutHyphenMessage:       "Esta palavra é composta por justaposição.",
 		WithOrWithoutHyphenMessage: "Esta palavra pode ser composta por justaposição ou hifenizada.",
 		ShortDesc:                  "Este conjunto forma uma palavra composta.",
-		Data:                       loadPreReformCompounds(),
+		// Java: super.setCategory(Categories.COMPOUNDING.getCategory(messages));
+		Category: rules.CatCompounding.GetCategory(messages),
+		// Java: setLocQualityIssueType(ITSIssueType.Grammar);
+		IssueType: rules.ITSGrammar,
+		// Java: no getUrl override → empty URL
+		// Java Language.getShortCode for StringTools.toId (pt-BR → "pt").
+		LanguageCode: "pt",
+		// Java AbstractCompoundRule.sentenceStartsWithUpperCase default true
+		// (needed so "Guarda chuva" matches data entry "guarda chuva").
+		SentenceStartsWithUpperCase: true,
+		Data:                        loadPreReformCompounds(),
 	}
+	// Java: no mergeCompound override → MergeCompoundFn left nil (default base).
+	// Java: this.useSubRuleSpecificIds();
 	base.UseSubRuleSpecificIDs()
 	return &PreReformPortugueseCompoundRule{AbstractCompoundRule: base}
 }
