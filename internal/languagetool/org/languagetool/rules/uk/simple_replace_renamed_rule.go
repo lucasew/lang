@@ -1,7 +1,6 @@
 package uk
 
 import (
-	"bufio"
 	"embed"
 	"net/url"
 	"regexp"
@@ -10,21 +9,25 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 )
 
+// Official rules/uk/replace_renamed.txt (byte-identical to Java
+// ExtraDictionaryLoader.loadLists("/uk/replace_renamed.txt")).
+//
 //go:embed data/replace_renamed.txt
 var renamedFS embed.FS
 
 var (
 	renamedOnce sync.Once
-	// renamedMap keys as in Java ExtraDictionaryLoader.loadLists (original case).
+	// renamedMap ports SimpleReplaceRenamedRule.RENAMED_LIST (LoadLists order of values).
 	renamedMap map[string][]string
 
 	// geoPostagPattern ports SimpleReplaceRenamedRule.GEO_POSTAG_PATTERN:
-	// noun:inanim.*?:prop.*|adj.*  (full match, Java Pattern.matches).
-	geoPostagPattern = regexp.MustCompile(`^(?:noun:inanim.*?:prop.*|adj.*)$`)
+	// Pattern.compile("noun:inanim.*?:prop.*|adj.*") with Matcher.matches().
+	geoPostagPattern = regexp.MustCompile(`noun:inanim.*?:prop.*|adj.*`)
 
+	// decomunizationURL ports SimpleReplaceRenamedRule.DECOMUNIZATION_URL.
 	decomunizationURL = mustParseURL("https://uk.wikipedia.org/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D1%82%D0%BE%D0%BF%D0%BE%D0%BD%D1%96%D0%BC%D1%96%D0%B2_%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D0%B8,_%D0%BF%D0%B5%D1%80%D0%B5%D0%B9%D0%BC%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%85_%D0%B2%D0%BD%D0%B0%D1%81%D0%BB%D1%96%D0%B4%D0%BE%D0%BA_%D0%B4%D0%B5%D0%BA%D0%BE%D0%BC%D1%83%D0%BD%D1%96%D0%B7%D0%B0%D1%86%D1%96%D1%97")
 )
 
@@ -36,6 +39,7 @@ func mustParseURL(s string) *url.URL {
 	return u
 }
 
+// loadRenamed ports static RENAMED_LIST = ExtraDictionaryLoader.loadLists("/uk/replace_renamed.txt").
 func loadRenamed() map[string][]string {
 	renamedOnce.Do(func() {
 		f, err := renamedFS.Open("data/replace_renamed.txt")
@@ -43,26 +47,8 @@ func loadRenamed() map[string][]string {
 			panic(err)
 		}
 		defer f.Close()
-		// Java: line.split(" *= *|\\|") then put(split[0], subList(1, length))
-		m := map[string][]string{}
-		sc := bufio.NewScanner(f)
-		buf := make([]byte, 0, 64*1024)
-		sc.Buffer(buf, 1024*1024)
-		for sc.Scan() {
-			line := sc.Text()
-			if strings.HasPrefix(line, "#") || tools.JavaStringTrim(line) == "" {
-				continue
-			}
-			// split on " *= *|" or "|"
-			parts := splitRenamedJava(line)
-			if len(parts) < 2 {
-				continue
-			}
-			key := parts[0]
-			list := parts[1:]
-			m[key] = list
-		}
-		if err := sc.Err(); err != nil {
+		m, err := LoadLists(f)
+		if err != nil {
 			panic(err)
 		}
 		renamedMap = m
@@ -70,33 +56,16 @@ func loadRenamed() map[string][]string {
 	return renamedMap
 }
 
-// splitRenamedJava ports Java line.split(" *= *|\\|").
-func splitRenamedJava(line string) []string {
-	// First field ends at " = " or "=" with optional spaces; rest split by |
-	eq := regexp.MustCompile(` *= *`).FindStringIndex(line)
-	if eq == nil {
-		return nil
-	}
-	key := line[:eq[0]]
-	rest := line[eq[1]:]
-	out := []string{key}
-	if rest == "" {
-		return out
-	}
-	for _, p := range strings.Split(rest, "|") {
-		out = append(out, p)
-	}
-	return out
-}
-
 // SimpleReplaceRenamedRule ports org.languagetool.rules.uk.SimpleReplaceRenamedRule.
-// Match is lemma + GEO POS only (Java); without tags/lemmas fail closed (no surface invent).
+// Match is lemma + GEO POS only (Java PosTagHelper.hasPosTag + RENAMED_LIST);
+// without tags/lemmas, fails closed like untagged analysis (no surface invent).
 // Java: setLocQualityIssueType(ITSIssueType.Style).
 type SimpleReplaceRenamedRule struct {
 	messages  map[string]string
 	IssueType rules.ITSIssueType
 }
 
+// NewSimpleReplaceRenamedRule ports SimpleReplaceRenamedRule(ResourceBundle).
 func NewSimpleReplaceRenamedRule(messages map[string]string) *SimpleReplaceRenamedRule {
 	_ = loadRenamed()
 	return &SimpleReplaceRenamedRule{
@@ -119,34 +88,44 @@ func (r *SimpleReplaceRenamedRule) GetLocQualityIssueType() rules.ITSIssueType {
 	return r.IssueType
 }
 
+// Match ports SimpleReplaceRenamedRule.match.
 func (r *SimpleReplaceRenamedRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || sentence == nil {
+		return nil
+	}
 	m := loadRenamed()
 	tokens := sentence.GetTokensWithoutWhitespace()
-	var out []*rules.RuleMatch
+	var ruleMatches []*rules.RuleMatch
+
 	for _, tokenReadings := range tokens {
-		if tokenReadings == nil || tokenReadings.IsSentenceStart() {
+		if tokenReadings == nil {
 			continue
 		}
-		// LinkedHashSet order of first-seen lemmas
+
+		// Java LinkedHashSet: insertion order of first-seen renamed lemmas.
 		var renamedLemmas []string
 		seen := map[string]bool{}
-		clear := false
+		overlapClear := false
+
 		for _, reading := range tokenReadings.GetReadings() {
 			if reading == nil {
 				continue
 			}
+			// Java: if SENTENCE_END_TAGNAME.equals(reading.getPOSTag()) continue;
 			pos := reading.GetPOSTag()
 			if pos != nil && *pos == languagetool.SentenceEndTagName {
 				continue
 			}
+
 			lemmaPtr := reading.GetLemma()
+			// Java: if (lemma != null) { ... } — null lemma: skip reading, no clear.
 			if lemmaPtr == nil {
 				continue
 			}
 			lemma := *lemmaPtr
-			repl, inList := m[lemma]
-			_ = repl
-			if inList && geoPOSMatch(pos) {
+
+			// Java: RENAMED_LIST.containsKey(lemma) && PosTagHelper.hasPosTag(reading, GEO_POSTAG_PATTERN)
+			if _, inList := m[lemma]; inList && taguk.HasPosTagToken(reading, geoPostagPattern) {
 				if !seen[lemma] {
 					seen[lemma] = true
 					renamedLemmas = append(renamedLemmas, lemma)
@@ -154,53 +133,69 @@ func (r *SimpleReplaceRenamedRule) Match(sentence *languagetool.AnalyzedSentence
 			} else {
 				// overlaps with normal lemma
 				renamedLemmas = nil
-				clear = true
+				overlapClear = true
 				break
 			}
 		}
-		if clear || len(renamedLemmas) == 0 {
+
+		if overlapClear || len(renamedLemmas) == 0 {
 			continue
 		}
+
 		info := ""
 		var replacements []string
 		for _, lemma := range renamedLemmas {
 			repl := m[lemma]
 			if len(repl) == 0 {
+				// Java: repl.get(0) would throw; official lists always have ≥1 value field.
 				continue
 			}
+			// Java: replacements.add(repl.get(0));
 			replacements = append(replacements, repl[0])
-			// Java: for i=1; i<repl.size()-1; i++
+			// Java: for (int i = 1; i < repl.size() - 1; i++) replacements.add(repl.get(i));
 			for i := 1; i < len(repl)-1; i++ {
 				replacements = append(replacements, repl[i])
 			}
+			// kinda cheating - getting first explanation we find
 			if info == "" && len(repl) > 1 {
 				info = repl[len(repl)-1]
 			}
 		}
-		if len(replacements) == 0 {
-			continue
-		}
-		// Java createRuleMatch: message uses first lemma as tokenStr
+
+		// Java createRuleMatch(tokenReadings, replacements, renamedLemmas.iterator().next(), info, sentence)
 		msgLemma := renamedLemmas[0]
-		msg := "«" + msgLemma + "» було перейменовано"
-		if info != "" {
-			msg += " (" + info + ")"
-		}
-		rm := rules.NewRuleMatch(r, sentence, tokenReadings.GetStartPos(), tokenReadings.GetEndPos(), msg)
-		rm.ShortMessage = "Перейменована назва"
-		rm.SetSuggestedReplacements(replacements)
-		if strings.Contains(info, "декомуніз") {
-			rm.URL = decomunizationURL.String()
-		}
-		out = append(out, rm)
+		rm := r.createRuleMatch(tokenReadings, replacements, msgLemma, info, sentence)
+		ruleMatches = append(ruleMatches, rm)
 	}
-	return out
+	return ruleMatches
 }
 
-// geoPOSMatch ports PosTagHelper.hasPosTag(reading, GEO_POSTAG_PATTERN) for one reading.
-func geoPOSMatch(pos *string) bool {
-	if pos == nil {
-		return false
+// getMessage ports SimpleReplaceRenamedRule.getMessage.
+func (r *SimpleReplaceRenamedRule) getMessage(tokenStr, info string) string {
+	msg := "«" + tokenStr + "» було перейменовано"
+	if info != "" {
+		msg += " (" + info + ")"
 	}
-	return geoPostagPattern.MatchString(*pos)
+	return msg
+}
+
+// createRuleMatch ports SimpleReplaceRenamedRule.createRuleMatch.
+// Note: Java param is named `msg` but holds the first renamed lemma (tokenStr for getMessage).
+func (r *SimpleReplaceRenamedRule) createRuleMatch(
+	readings *languagetool.AnalyzedTokenReadings,
+	replacements []string,
+	msgLemma string,
+	info string,
+	sentence *languagetool.AnalyzedSentence,
+) *rules.RuleMatch {
+	msg := r.getMessage(msgLemma, info)
+	// Java: new RuleMatch(this, sentence, start, end, msg, "Перейменована назва")
+	potential := rules.NewRuleMatch(r, sentence, readings.GetStartPos(), readings.GetEndPos(), msg)
+	potential.ShortMessage = "Перейменована назва"
+	potential.SetSuggestedReplacements(replacements)
+	if strings.Contains(info, "декомуніз") {
+		// Java: potentialRuleMatch.setUrl(DECOMUNIZATION_URL)
+		potential.URL = decomunizationURL.String()
+	}
+	return potential
 }

@@ -1,85 +1,74 @@
-package uk
+package uk_test
 
 // Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/SimpleReplaceRenamedRuleTest.java
-// Lemma + GEO POS only (Java); AnalyzePlain injects lemma/POS (no surface invent).
+//
+// Java setup:
+//   SimpleReplaceRenamedRule rule = new SimpleReplaceRenamedRule(TestTools.getEnglishMessages());
+//   JLanguageTool lt = new JLanguageTool(Ukrainian.DEFAULT_VARIANT);
+//   rule.match(lt.getAnalyzedSentence(...));
+//
+// Go: real Ukrainian analysis — UkrainianTagger + official ukrainian.dict +
+// UkrainianHybridDisambiguator (same wire as Soft twin). External package uk_test
+// avoids import cycle with tagging/disambiguation/uk → rules/uk.
+
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	rulesuk "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
+// TestSimpleReplaceRenamedRule_Rule twins SimpleReplaceRenamedRuleTest.testRule —
+// every active Java case with Java-visible outcomes.
 func TestSimpleReplaceRenamedRule_Rule(t *testing.T) {
-	rule := NewSimpleReplaceRenamedRule(nil)
+	// Java: new SimpleReplaceRenamedRule(TestTools.getEnglishMessages())
+	rule := rulesuk.NewSimpleReplaceRenamedRule(nil)
+	// Java: new JLanguageTool(Ukrainian.DEFAULT_VARIANT)
+	lt := wireUKSoftLT(t)
 
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Київ."))))
+	// correct sentences:
+	// matches = rule.match(lt.getAnalyzedSentence("Київ."));
+	// assertEquals(0, matches.length);
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("Київ."))))
 
-	// Дніпродзержинська → noun + adj lemmas with prop/adj tags (Java Morphy)
-	matches := rule.Match(withUKLemmas("Дніпродзержинська", []lemmaPOS{
-		{"Дніпродзержинськ", "noun:inanim:f:v_naz:prop:geo"},
-		{"дніпродзержинський", "adj:f:v_naz"},
-	}))
+	// matches = rule.match(lt.getAnalyzedSentence("Дніпродзержинська"));
+	// assertEquals(1, matches.length);
+	// assertEquals(Arrays.asList("Кам'янське", "кам'янський"), matches[0].getSuggestedReplacements());
+	// assertTrue(matches[0].getMessage().contains("2016"));
+	matches := rule.Match(lt.GetAnalyzedSentence("Дніпродзержинська"))
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, []string{"Кам'янське", "кам'янський"}, matches[0].GetSuggestedReplacements())
 	require.Contains(t, matches[0].GetMessage(), "2016")
 
-	matches = rule.Match(withUKLemmas("дніпродзержинського.", []lemmaPOS{
-		{"дніпродзержинський", "adj:m:v_rod"},
-	}))
+	// matches = rule.match(lt.getAnalyzedSentence("дніпродзержинського."));
+	// assertEquals(1, matches.length);
+	// assertEquals(Arrays.asList("кам'янський"), matches[0].getSuggestedReplacements());
+	matches = rule.Match(lt.GetAnalyzedSentence("дніпродзержинського."))
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, []string{"кам'янський"}, matches[0].GetSuggestedReplacements())
 
-	matches = rule.Match(withUKLemmas("Червонознам'янка.", []lemmaPOS{
-		{"Червонознам'янка", "noun:inanim:f:v_naz:prop:geo"},
-	}))
+	// matches = rule.match(lt.getAnalyzedSentence("Червонознам'янка."));
+	// assertEquals(1, matches.length);
+	// assertEquals(Arrays.asList("Знам'янка", "Знаменка"), matches[0].getSuggestedReplacements());
+	matches = rule.Match(lt.GetAnalyzedSentence("Червонознам'янка."))
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, []string{"Знам'янка", "Знаменка"}, matches[0].GetSuggestedReplacements())
+	// Java createRuleMatch: info contains "декомуніз" → DECOMUNIZATION_URL
 	require.Contains(t, matches[0].URL, "wikipedia")
 
-	matches = rule.Match(withUKLemmas("Переяслав-Хмельницький.", []lemmaPOS{
-		{"Переяслав-Хмельницький", "noun:inanim:m:v_naz:prop:geo"},
-		{"переяслав-хмельницький", "adj:m:v_naz"},
-	}))
-	// Only lemmas present in file fire; adj key may differ — check file keys
-	// File has Переяслав-Хмельницький=Переяслав only (one entry). Second adj may clear set if not in map.
-	// Java: if adj lemma not in list → clear all. So inject only noun lemma for twin.
-	matches = rule.Match(withUKLemmas("Переяслав-Хмельницький.", []lemmaPOS{
-		{"Переяслав-Хмельницький", "noun:inanim:m:v_naz:prop:geo"},
-	}))
+	// matches = rule.match(lt.getAnalyzedSentence("Переяслав-Хмельницький."));
+	// assertEquals(1, matches.length);
+	// assertEquals(Arrays.asList("Переяслав", "переяславський"), matches[0].getSuggestedReplacements());
+	matches = rule.Match(lt.GetAnalyzedSentence("Переяслав-Хмельницький."))
 	require.Equal(t, 1, len(matches))
-	require.Equal(t, []string{"Переяслав"}, matches[0].GetSuggestedReplacements())
+	require.Equal(t, []string{"Переяслав", "переяславський"}, matches[0].GetSuggestedReplacements())
 }
 
-func TestSimpleReplaceRenamedRule_FailClosedWithoutPOS(t *testing.T) {
-	rule := NewSimpleReplaceRenamedRule(nil)
-	// Surface-only (no lemma/POS) never matches — no invent.
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Дніпродзержинська"))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Червонознам'янка."))))
-}
-
-type lemmaPOS struct {
-	lemma, pos string
-}
-
-// withUKLemmas builds a one-token sentence and injects lemma/POS readings (Java Morphy stand-in).
-func withUKLemmas(text string, readings []lemmaPOS) *languagetool.AnalyzedSentence {
-	sent := languagetool.AnalyzePlain(text)
-	nws := sent.GetTokensWithoutWhitespace()
-	// first content token
-	for _, tok := range nws {
-		if tok == nil || tok.IsSentenceStart() {
-			continue
-		}
-		// skip pure punct
-		if tok.GetToken() == "." || tok.GetToken() == "!" || tok.GetToken() == "?" {
-			continue
-		}
-		for _, rp := range readings {
-			lem := rp.lemma
-			pos := rp.pos
-			tok.AddReading(languagetool.NewAnalyzedToken(tok.GetToken(), &pos, &lem), "test")
-		}
-		break
-	}
-	return sent
+// TestSimpleReplaceRenamedRule_Meta twins Java id / description / Style ITS.
+func TestSimpleReplaceRenamedRule_Meta(t *testing.T) {
+	rule := rulesuk.NewSimpleReplaceRenamedRule(nil)
+	require.Equal(t, "UK_SIMPLE_REPLACE_RENAMED", rule.GetID())
+	require.Equal(t, "Пропозиція поточної назви для перейменованих власних назв", rule.GetDescription())
+	require.Equal(t, rules.ITSStyle, rule.GetLocQualityIssueType())
 }
