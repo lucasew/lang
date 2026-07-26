@@ -3,7 +3,6 @@ package synthesis
 import (
 	"bufio"
 	"os"
-	"strings"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -54,7 +53,9 @@ func OpenMorfologikSynthLookup(dictPath string) (func(lemma, posTag string) []st
 	return MorfologikSynthLookup(d), nil
 }
 
-// LoadPossibleTagsFile ports SynthesizerTools.loadWords for english_tags.txt.
+// LoadPossibleTagsFile ports SynthesizerTools.loadWords (tags files e.g. english_tags.txt).
+// Java does not dedupe: duplicate lines are kept so RE synthesis can emit duplicate forms
+// (Serbian serbian_synth_tags.txt has intentional repeats; EkavianSynthesizerTest expects them).
 func LoadPossibleTagsFile(path string) ([]string, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -62,18 +63,15 @@ func LoadPossibleTagsFile(path string) ([]string, error) {
 	}
 	defer f.Close()
 	var tags []string
-	seen := map[string]struct{}{}
 	sc := bufio.NewScanner(f)
+	// Serbian tags file is large (~20k lines); grow scanner buffer if needed.
+	sc.Buffer(make([]byte, 0, 64*1024), 1024*1024)
 	for sc.Scan() {
 		// Java SynthesizerTools.loadWords: nextLine().trim() (String.trim).
 		line := tools.JavaStringTrim(sc.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
+		if line == "" || line[0] == '#' { // ignore empty lines and comments
 			continue
 		}
-		if _, ok := seen[line]; ok {
-			continue
-		}
-		seen[line] = struct{}{}
 		tags = append(tags, line)
 	}
 	return tags, sc.Err()
