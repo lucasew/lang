@@ -1393,8 +1393,8 @@
 - [ ] org/languagetool/rules/pt/PortugalPortugueseReplaceRule.java::PortugalPortugueseReplaceRule
 - [ ] org/languagetool/rules/pt/PortugueseAccentuationCheckRule.java::PortugueseAccentuationCheckRule
 - [x] org/languagetool/rules/pt/PortugueseAccentuationDataLoader.java::PortugueseAccentuationDataLoader
-- [ ] org/languagetool/rules/pt/PortugueseAgreementReplaceRule.java::PortugueseAgreementReplaceRule
-- [ ] org/languagetool/rules/pt/PortugueseArchaismsRule.java::PortugueseArchaismsRule
+- [x] org/languagetool/rules/pt/PortugueseAgreementReplaceRule.java::PortugueseAgreementReplaceRule
+- [x] org/languagetool/rules/pt/PortugueseArchaismsRule.java::PortugueseArchaismsRule
 - [x] org/languagetool/rules/pt/PortugueseBarbarismsRule.java::PortugueseBarbarismsRule
 - [x] org/languagetool/rules/pt/PortugueseClicheRule.java::PortugueseClicheRule
 - [x] org/languagetool/rules/pt/PortugueseColourHyphenationRule.java::PortugueseColourHyphenationRule
@@ -1407,11 +1407,11 @@
 - [ ] org/languagetool/rules/pt/PortugueseProclisisFilter.java::PortugueseProclisisFilter
 - [x] org/languagetool/rules/pt/PortugueseReadabilityRule.java::PortugueseReadabilityRule
 - [x] org/languagetool/rules/pt/PortugueseRedundancyRule.java::PortugueseRedundancyRule
-- [ ] org/languagetool/rules/pt/PortugueseReplaceRule.java::PortugueseReplaceRule
+- [x] org/languagetool/rules/pt/PortugueseReplaceRule.java::PortugueseReplaceRule
 - [x] org/languagetool/rules/pt/PortugueseSuppressMisspelledSuggestionsFilter.java::PortugueseSuppressMisspelledSuggestionsFilter
 - [ ] org/languagetool/rules/pt/PortugueseUnitConversionRule.java::PortugueseUnitConversionRule
-- [ ] org/languagetool/rules/pt/PortugueseWeaselWordsRule.java::PortugueseWeaselWordsRule
-- [ ] org/languagetool/rules/pt/PortugueseWikipediaRule.java::PortugueseWikipediaRule
+- [x] org/languagetool/rules/pt/PortugueseWeaselWordsRule.java::PortugueseWeaselWordsRule
+- [x] org/languagetool/rules/pt/PortugueseWikipediaRule.java::PortugueseWikipediaRule
 - [x] org/languagetool/rules/pt/PortugueseWordCoherencyRule.java::PortugueseWordCoherencyRule
 - [x] org/languagetool/rules/pt/PortugueseWordRepeatBeginningRule.java::PortugueseWordRepeatBeginningRule
 - [x] org/languagetool/rules/pt/PortugueseWordRepeatRule.java::PortugueseWordRepeatRule
