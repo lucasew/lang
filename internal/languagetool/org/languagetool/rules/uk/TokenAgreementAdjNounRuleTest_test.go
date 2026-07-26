@@ -616,7 +616,7 @@ func TestTokenAgreementAdjNounRule_ExceptionsAdj(t *testing.T) {
 	lt, r := wireTokenAgreementAdjNoun(t)
 
 	adjNounEmpty(t, lt, r, "жадібна землі")
-	adjNounEmpty(t, lt, r, "вдячний батьку")
+	adjNounEmpty(t, lt, r, "вдячного батьку")
 	adjNounEmpty(t, lt, r, "Я вдячний редакторові Вільяму Філліпсу")
 	adjNounEmpty(t, lt, r, "радий присутності генерала")
 	adjNounEmpty(t, lt, r, "відомий мешканцям")
@@ -799,8 +799,55 @@ func TestTokenAgreementAdjNounRule_ExceptionsInsertPhrase(t *testing.T) {
 	adjNounEmpty(t, lt, r, "в Житомирській чи, скажімо, Миколаївській областях")
 }
 
+// TestTokenAgreementAdjNounRule_Pronouns twins testPronouns (@Test, not @Ignore).
+func TestTokenAgreementAdjNounRule_Pronouns(t *testing.T) {
+	lt, r := wireTokenAgreementAdjNoun(t)
+
+	// pron
+	adjNounEmpty(t, lt, r, "усі решта")
+	adjNounEmpty(t, lt, r, "єдину для всіх схему")
+
+	adjNounEmpty(t, lt, r, "без таких документів")
+	adjNounEmpty(t, lt, r, "згідно з якими африканцям")
+	adjNounEmpty(t, lt, r, "чиновників, яким доступ")
+
+	adjNounEmpty(t, lt, r, "так само")
+	adjNounEmpty(t, lt, r, "перед тим гарант")
+	adjNounEmpty(t, lt, r, "усього місяць тому")
+
+	// this, that...
+	adjNounEmpty(t, lt, r, "це мова сото")
+	adjNounEmpty(t, lt, r, "без якої сім’я не проживе")
+
+	adjNounEmpty(t, lt, r, "ВО «Свобода», лідер котрої Олег Тягрибок")
+
+	adjNounEmpty(t, lt, r, "стільки само свідків")
+
+	adjNounEmpty(t, lt, r, "що таке звук?")
+
+	adjNounEmpty(t, lt, r, "обстрілює один за одним охоронців.")
+
+	adjNounEmpty(t, lt, r, "повів сам військо")
+	adjNounEmpty(t, lt, r, "що ж таке геноцид")
+	adjNounEmpty(t, lt, r, "що воно таке еліта")
+	adjNounEmpty(t, lt, r, "Таких меншість.")
+
+	adjNounEmpty(t, lt, r, "той родом з Білорусі")
+	adjNounEmpty(t, lt, r, "в нашу Богом забуту Данину")
+
+	adjNounEmpty(t, lt, r, "той кібернетикою займається")
+
+	adjNounEmpty(t, lt, r, "такого світ ще не бачив")
+	// Java: // assertEmptyMatch("на таке Євросоюз напевне не наважиться");
+	adjNounHasError(t, lt, r, "позицію у такій спосіб, — ділиться думками")
+
+	// Java commented TODOs omitted:
+	// // assertEmptyMatch("до такого студенти не готові");
+	// // assertEquals(1, rule.match(...("із такою самого зневагою"))...);
+	// // assertHasError("на вибори само висуванцем");
+}
+
 // TestTokenAgreementAdjNounRule_SpecialChars twins testSpecialChars.
-// testPronouns is @Ignore in Java — not twinned as active.
 func TestTokenAgreementAdjNounRule_SpecialChars(t *testing.T) {
 	lt, r := wireTokenAgreementAdjNoun(t)
 
