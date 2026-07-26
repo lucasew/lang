@@ -23,6 +23,7 @@ func loadCompoundData() *rules.CompoundRuleData {
 			panic(err)
 		}
 		defer f.Close()
+		// Java: new CompoundRuleData("/ru/compounds.txt")
 		d, err := rules.NewCompoundRuleData(f, "/ru/compounds.txt")
 		if err != nil {
 			panic(err)
@@ -33,21 +34,30 @@ func loadCompoundData() *rules.CompoundRuleData {
 }
 
 // RussianCompoundRule ports org.languagetool.rules.ru.RussianCompoundRule.
+// Java extends AbstractCompoundRule with RU hyphen/joined messages; no shortMessage,
+// no useSubRuleSpecificIds, no anti-patterns, no isMisspelled override.
 type RussianCompoundRule struct {
 	*rules.AbstractCompoundRule
 }
 
+// NewRussianCompoundRule constructs RU_COMPOUNDS.
+// Java: RussianCompoundRule(messages, lang, userConfig) →
+// super(messages, lang, userConfig, withHyphen, withoutHyphen, withOrWithout);
+// addExamplePair; sentenceStartsWithUpperCase = true.
 func NewRussianCompoundRule(messages map[string]string) *RussianCompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
-		ID:                          "RU_COMPOUNDS",
-		Description:                 "Правописание через дефис",
-		WithHyphenMessage:           "Эти слова должны быть написаны через дефис.",
-		WithoutHyphenMessage:        "Эти слова должны быть написаны слитно.",
-		WithOrWithoutHyphenMessage:  "Эти слова могут быть написаны через дефис или слитно.",
+		ID:          "RU_COMPOUNDS",
+		Description: "Правописание через дефис",
+		// Java RussianCompoundRule ctor messages (3-arg super → shortDesc null):
+		WithHyphenMessage:          "Эти слова должны быть написаны через дефис.",
+		WithoutHyphenMessage:       "Эти слова должны быть написаны слитно.",
+		WithOrWithoutHyphenMessage: "Эти слова могут быть написаны через дефис или слитно.",
+		// Java: super.sentenceStartsWithUpperCase = true (also AbstractCompoundRule default).
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCompoundData(),
 	}
+	// Java AbstractCompoundRule: Categories.MISC + ITSIssueType.Misspelling.
+	rules.InitCompoundRuleMeta(base, messages)
 	// Java: конференц зале → конференц-зале
 	base.AddExamplePair(
 		rules.Wrong("Собрание состоится в <marker>конференц зале</marker>."),
