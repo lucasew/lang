@@ -1397,7 +1397,7 @@
 - [ ] org/languagetool/rules/pt/PortugueseArchaismsRule.java::PortugueseArchaismsRule
 - [ ] org/languagetool/rules/pt/PortugueseBarbarismsRule.java::PortugueseBarbarismsRule
 - [x] org/languagetool/rules/pt/PortugueseClicheRule.java::PortugueseClicheRule
-- [ ] org/languagetool/rules/pt/PortugueseColourHyphenationRule.java::PortugueseColourHyphenationRule
+- [x] org/languagetool/rules/pt/PortugueseColourHyphenationRule.java::PortugueseColourHyphenationRule
 - [x] org/languagetool/rules/pt/PortugueseConfusionProbabilityRule.java::PortugueseConfusionProbabilityRule
 - [x] org/languagetool/rules/pt/PortugueseDiacriticsRule.java::PortugueseDiacriticsRule
 - [ ] org/languagetool/rules/pt/PortugueseEnclisisFilter.java::PortugueseEnclisisFilter
