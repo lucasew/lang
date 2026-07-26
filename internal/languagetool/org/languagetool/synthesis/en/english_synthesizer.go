@@ -57,8 +57,14 @@ func englishIsException(w string) bool {
 	return ok
 }
 
-// INSTANCE ports EnglishSynthesizer.INSTANCE.
-var INSTANCE = NewEnglishSynthesizer(nil)
+// INSTANCE ports EnglishSynthesizer.INSTANCE (lazy official load via Instance()).
+// Prefer Instance(); INSTANCE is kept in sync on successful load for Java-field naming.
+var INSTANCE *EnglishSynthesizer
+
+// bindINSTANCE is called from Instance() once so INSTANCE matches Java singleton field name.
+func bindINSTANCE(s *EnglishSynthesizer) {
+	INSTANCE = s
+}
 
 func (s *EnglishSynthesizer) suggestAorAn(word string) string {
 	if s != nil && s.SuggestAorAn != nil {

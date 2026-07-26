@@ -1,36 +1,32 @@
 package en
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
-func findEnglishSynthDict(t *testing.T) string {
-	t.Helper()
-	dir, _ := filepath.Abs(".")
-	for i := 0; i < 12; i++ {
-		cand := filepath.Join(dir, "third_party/english-pos-dict/org/languagetool/resource/en/english_synth.dict")
-		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
-			return cand
-		}
-		dir = filepath.Dir(dir)
-	}
-	return ""
-}
+// Open path fail-closed + successful load from discovered dict.
+func TestOpenEnglishSynthesizer_FromDict(t *testing.T) {
+	require.Nil(t, OpenEnglishSynthesizerFromDir(""))
+	require.Nil(t, OpenEnglishSynthesizerFromDir(t.TempDir()))
+	require.Nil(t, OpenEnglishSynthesizerFromDictPath(""))
 
-func TestOpenEnglishSynthesizerFromDict_RealDict(t *testing.T) {
-	p := findEnglishSynthDict(t)
+	p := DiscoverEnglishSynthDict()
 	if p == "" {
-		t.Skip("english_synth.dict not in tree")
+		t.Skip("english_synth.dict not discoverable")
 	}
 	s := OpenEnglishSynthesizerFromDictPath(p)
 	require.NotNil(t, s)
 	require.NotNil(t, s.Lookup)
-	require.NotEmpty(t, s.PossibleTags, "english_tags.txt should load")
+	require.NotEmpty(t, s.PossibleTags)
+	require.Equal(t, EnglishSynthResource, s.ResourceFileName)
+	require.Equal(t, EnglishTagsFile, s.TagFileName)
+	require.Equal(t, EnglishSorFile, s.SorFileName)
+	// Inspiration supplements when manuals are not beside third_party dict.
+	require.NotNil(t, s.Manual, "added.txt from inspiration module")
+	require.NotNil(t, s.NumberSpeller, "en.sor number speller")
 
 	lemma := "president"
 	tok := languagetool.NewAnalyzedToken("president", strp("NN"), &lemma)
@@ -49,3 +45,17 @@ func TestOpenEnglishSynthesizerFromDict_RealDict(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, forms)
 }
+
+// Instance singleton binds INSTANCE to loaded official synthesizer.
+func TestEnglishSynthesizer_Instance(t *testing.T) {
+	s := Instance()
+	if s == nil {
+		t.Skip("english_synth.dict / official EN synth resources not available")
+	}
+	require.Same(t, s, Instance())
+	require.Same(t, s, INSTANCE)
+	require.NotNil(t, s.Lookup)
+	require.NotEmpty(t, s.PossibleTags)
+}
+
+func strp(s string) *string { return &s }
