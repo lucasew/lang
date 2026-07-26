@@ -1570,9 +1570,9 @@
 - [x] org/languagetool/rules/uk/TokenAgreementPrepNounExceptionHelper.java::TokenAgreementPrepNounExceptionHelper
 - [x] org/languagetool/rules/uk/TokenAgreementPrepNounRule.java::TokenAgreementPrepNounRule
 - [x] org/languagetool/rules/uk/TokenAgreementPrepNounRule.java::TokenAgreementPrepNounRule.State
-- [ ] org/languagetool/rules/uk/TokenAgreementVerbNounExceptionHelper.java::TokenAgreementVerbNounExceptionHelper
-- [ ] org/languagetool/rules/uk/TokenAgreementVerbNounRule.java::TokenAgreementVerbNounRule
-- [ ] org/languagetool/rules/uk/TokenAgreementVerbNounRule.java::TokenAgreementVerbNounRule.State
+- [x] org/languagetool/rules/uk/TokenAgreementVerbNounExceptionHelper.java::TokenAgreementVerbNounExceptionHelper
+- [x] org/languagetool/rules/uk/TokenAgreementVerbNounRule.java::TokenAgreementVerbNounRule
+- [x] org/languagetool/rules/uk/TokenAgreementVerbNounRule.java::TokenAgreementVerbNounRule.State
 - [ ] org/languagetool/rules/uk/TypographyRule.java::TypographyRule
 - [x] org/languagetool/rules/uk/UkrainianCommaWhitespaceRule.java::UkrainianCommaWhitespaceRule
 - [x] org/languagetool/rules/uk/UkrainianUppercaseSentenceStartRule.java::UkrainianUppercaseSentenceStartRule
