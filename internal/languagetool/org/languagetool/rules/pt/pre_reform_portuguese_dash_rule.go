@@ -11,6 +11,10 @@ import (
 //go:embed data/pre-reform-compounds.txt
 var preReformCompoundsFS embed.FS
 
+// preReformCompoundsResourcePath is the official Java resource path loaded by
+// PreReformPortugueseDashRule.getCompoundsData (JLanguageTool resource dir).
+const preReformCompoundsResourcePath = "/pt/pre-reform-compounds.txt"
+
 var (
 	preDashOnce     sync.Once
 	preDashPatterns []string
@@ -18,6 +22,7 @@ var (
 
 func loadPreReformDashPatterns() []string {
 	preDashOnce.Do(func() {
+		// Java: loadCompoundFile("/pt/pre-reform-compounds.txt") once (DCL / sync.Once).
 		f, err := preReformCompoundsFS.Open("data/pre-reform-compounds.txt")
 		if err != nil {
 			panic(err)
@@ -38,12 +43,16 @@ type PreReformPortugueseDashRule struct {
 }
 
 func NewPreReformPortugueseDashRule(messages map[string]string) *PreReformPortugueseDashRule {
+	// Java: super(messages); setLocQualityIssueType(ITSIssueType.Typographical);
+	// No setUrl / addExamplePair in Java PT pre-reform dash rule.
+	// getDescription is exactly "Travessões no lugar de hífens" (no pré-Acordo suffix).
 	base := &rules.AbstractDashRule{
 		ID:               "PT_PREAO_DASH_RULE",
 		CompoundPatterns: loadPreReformDashPatterns(),
 		Message:          "Um travessão foi utilizado em vez de um hífen.",
-		Description:      "Travessões no lugar de hífens (pré-Acordo Ortográfico)",
-		IsLetter:         isPortugueseLetter,
+		Description:      "Travessões no lugar de hífens",
+		IsLetter:         isPortugueseLetter, // shared with PostReform (identical Java PATTERN)
+		IssueType:        rules.ITSTypographical,
 	}
 	rules.InitDashRuleMeta(base, messages)
 	return &PreReformPortugueseDashRule{AbstractDashRule: base}
