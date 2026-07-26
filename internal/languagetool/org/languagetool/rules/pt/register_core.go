@@ -120,7 +120,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	sr := NewPortugueseReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 
-	bar := NewPortugueseBarbarismsRule(nil)
+	bar := NewPortugueseBarbarismsRule(nil, PortugueseBarbarismsBRFilePath)
 	lt.AddRuleChecker(bar.GetID(), rules.AsSentenceCheckerSimple(bar.Match))
 
 	cl := NewPortugueseClicheRule(nil, PortugueseClicheFilePath)
