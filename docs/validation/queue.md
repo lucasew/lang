@@ -396,6 +396,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-PreReformPortugueseDashRule | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PreReformPortugueseDashRule.java; inspiration/languagetool/languagetool-language-modules/pt/src/test/java/org/languagetool/rules/pt/PreReformPortugueseDashRuleTest.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/resource/pt/pre-reform-compounds.txt; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractDashRule.java | internal/languagetool/org/languagetool/rules/pt/pre_reform_portuguese_dash_rule.go; internal/languagetool/org/languagetool/rules/pt/PreReformPortugueseDashRuleTest_test.go; internal/languagetool/org/languagetool/rules/pt/data/pre-reform-compounds.txt; internal/languagetool/org/languagetool/rules/abstract_dash_rule.go | bce4b6add480fe8a5789f0893507dfe41a4e7376 | 0 | 0 |  |  | 2026-07-26T03:24:34Z |
 | docs/faithful-port-checklist.md#3.C.3-RegularIrregularParticipleFilter | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/RegularIrregularParticipleFilter.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/synthesis/pt/PortugueseSynthesizer.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/patterns/RuleFilter.java | internal/languagetool/org/languagetool/rules/pt/regular_irregular_participle_filter.go; internal/languagetool/org/languagetool/rules/pt/regular_irregular_participle_filter_test.go; internal/languagetool/org/languagetool/synthesis/pt/ | 23dabdd4315bd0e30ef207bcb2f2ef12dc6e1666 | 0 | 0 |  |  | 2026-07-26T03:40:30Z |
 | docs/faithful-port-checklist.md#3.C.3-BrazilianToponymMapLoader | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/BrazilianToponymMapLoader.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/resource/pt/brazilian_municipalities/ | internal/languagetool/org/languagetool/rules/pt/brazilian_toponym_map_loader.go; internal/languagetool/org/languagetool/rules/pt/data/brazilian_municipalities/ | 3b73bfca32c936e86be71c9f47b63338b4ddc8ef | 0 | 0 |  |  | 2026-07-26T03:50:46Z |
+| docs/faithful-port-checklist.md#3.C.3-BrazilianToponymMap | implementing | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/BrazilianToponymMap.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/BrazilianToponymMapLoader.java | internal/languagetool/org/languagetool/rules/pt/brazilian_toponym_map.go; internal/languagetool/org/languagetool/rules/pt/brazilian_toponym_map_loader.go |  | 0 | 0 |  |  | 2026-07-26T03:54:08Z |
 
 ## Human inbox
 
@@ -405,7 +406,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ACCEPT 3.C.3-BrazilianToponymMapLoader @ 3b73bfca; next fire: implement BrazilianToponymMap |
+| Notes | implementing 3.C.3-BrazilianToponymMap |
 
 ---
 
@@ -1824,3 +1825,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T03:47:59Z ready: 3.C.3-BrazilianToponymMapLoader @ 3b73bfca (implementer report; parent green reconfirm; 27 states exact; TSV identical; no silent skip)
 - 2026-07-26T03:48:55Z validating: 3.C.3-BrazilianToponymMapLoader @ 3b73bfca
 - 2026-07-26T03:50:46Z ACCEPT: 3.C.3-BrazilianToponymMapLoader @ 3b73bfca (validator + parent green reconfirm; CHECKLIST BrazilianToponymMapLoader [x])
+- 2026-07-26T03:54:08Z implement: 3.C.3-BrazilianToponymMap (PT; ctor loader.buildMap; toponymIter suffix; isValidToponym; getStatesWithMunicipality; isToponymInState)
