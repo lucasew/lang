@@ -1404,7 +1404,7 @@
 - [ ] org/languagetool/rules/pt/PortugueseFillerWordsRule.java::PortugueseFillerWordsRule
 - [x] org/languagetool/rules/pt/PortugueseMultitokenSpeller.java::PortugueseMultitokenSpeller
 - [x] org/languagetool/rules/pt/PortugueseOrthographyReplaceRule.java::PortugueseOrthographyReplaceRule
-- [ ] org/languagetool/rules/pt/PortugueseProclisisFilter.java::PortugueseProclisisFilter
+- [x] org/languagetool/rules/pt/PortugueseProclisisFilter.java::PortugueseProclisisFilter
 - [x] org/languagetool/rules/pt/PortugueseReadabilityRule.java::PortugueseReadabilityRule
 - [x] org/languagetool/rules/pt/PortugueseRedundancyRule.java::PortugueseRedundancyRule
 - [x] org/languagetool/rules/pt/PortugueseReplaceRule.java::PortugueseReplaceRule
