@@ -1399,7 +1399,7 @@
 - [ ] org/languagetool/rules/pt/PortugueseClicheRule.java::PortugueseClicheRule
 - [ ] org/languagetool/rules/pt/PortugueseColourHyphenationRule.java::PortugueseColourHyphenationRule
 - [x] org/languagetool/rules/pt/PortugueseConfusionProbabilityRule.java::PortugueseConfusionProbabilityRule
-- [ ] org/languagetool/rules/pt/PortugueseDiacriticsRule.java::PortugueseDiacriticsRule
+- [x] org/languagetool/rules/pt/PortugueseDiacriticsRule.java::PortugueseDiacriticsRule
 - [ ] org/languagetool/rules/pt/PortugueseEnclisisFilter.java::PortugueseEnclisisFilter
 - [ ] org/languagetool/rules/pt/PortugueseFillerWordsRule.java::PortugueseFillerWordsRule
 - [x] org/languagetool/rules/pt/PortugueseMultitokenSpeller.java::PortugueseMultitokenSpeller
