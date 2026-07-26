@@ -1417,7 +1417,7 @@
 - [x] org/languagetool/rules/pt/PortugueseWordRepeatRule.java::PortugueseWordRepeatRule
 - [x] org/languagetool/rules/pt/PortugueseWordinessRule.java::PortugueseWordinessRule
 - [x] org/languagetool/rules/pt/PortugueseWrongWordInContextRule.java::PortugueseWrongWordInContextRule
-- [ ] org/languagetool/rules/pt/PostReformPortugueseCompoundRule.java::PostReformPortugueseCompoundRule
+- [x] org/languagetool/rules/pt/PostReformPortugueseCompoundRule.java::PostReformPortugueseCompoundRule
 - [ ] org/languagetool/rules/pt/PostReformPortugueseDashRule.java::PostReformPortugueseDashRule
 - [ ] org/languagetool/rules/pt/PreReformPortugueseCompoundRule.java::PreReformPortugueseCompoundRule
 - [ ] org/languagetool/rules/pt/PreReformPortugueseDashRule.java::PreReformPortugueseDashRule
