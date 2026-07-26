@@ -24,6 +24,7 @@ func loadSpecificCase() (map[string]string, int) {
 			panic(err)
 		}
 		defer f.Close()
+		// Java: JLanguageTool.getDataBroker().getFromResourceDirAsLines("/ru/specific_case.txt")
 		m, maxLen, err := rules.LoadSpecificCasePhrases(f)
 		if err != nil {
 			panic(err)
@@ -35,6 +36,8 @@ func loadSpecificCase() (map[string]string, int) {
 }
 
 // RussianSpecificCaseRule ports org.languagetool.rules.ru.RussianSpecificCaseRule.
+// Java extends Rule directly (not AbstractSpecificCaseRule); match algorithm is identical.
+// Shared AbstractSpecificCaseRule base carries the algorithm; RU configures messages/meta.
 type RussianSpecificCaseRule struct {
 	*rules.AbstractSpecificCaseRule
 }
@@ -42,16 +45,22 @@ type RussianSpecificCaseRule struct {
 func NewRussianSpecificCaseRule(messages map[string]string) *RussianSpecificCaseRule {
 	m, maxLen := loadSpecificCase()
 	base := &rules.AbstractSpecificCaseRule{
-		Messages:                   messages,
-		LcToProper:                 m,
-		MaxPhraseLen:               maxLen,
-		ID:                         "RU_SPECIFIC_CASE",
-		Description:                "Написание специальных наименований в верхнем или нижнем регистре",
-		InitialCapitalMessage:      "Для специальных наименований используйте начальную заглавную букву.",
-		OtherCapitalizationMessage: "Для специальных наименований используйте предложенное написание заглавных букв.",
-		ShortMsg:                   "Специальное написание",
+		Messages:     messages,
+		LcToProper:   m,
+		MaxPhraseLen: maxLen,
+		ID:           "RU_SPECIFIC_CASE",
+		// Java RussianSpecificCaseRule.getDescription
+		Description: "Написание специальных наименований в верхнем или нижнем регистре",
+		// Java match: allWordsUppercase(properSpelling) branch
+		InitialCapitalMessage: "Для специальных наименований используйте начальную заглавную букву.",
+		// Java match: else branch (full upstream string)
+		OtherCapitalizationMessage: "Для специальных наименований используйте предложенное написание заглавных и строчных букв.",
+		// Java: new RuleMatch(..., msg) — no short message argument and no getShortMessage override.
+		// Do not invent a Russian short message; leave ShortMsg empty.
 	}
-	// Java: рытый банк → Рытый Банк (fixed example omits trailing period, same as upstream)
+	// Java: super.setCategory(Categories.CASING.getCategory(messages)); setLocQualityIssueType(Misspelling)
+	rules.InitSpecificCaseMeta(base, messages)
+	// Java addExamplePair: fixed example omits trailing period (upstream quirk)
 	base.AddExamplePair(
 		rules.Wrong("Река <marker>рытый банк</marker> находится в Прикаспийской низменности."),
 		rules.Fixed("Река <marker>Рытый Банк</marker> находится в Прикаспийской низменности"),
