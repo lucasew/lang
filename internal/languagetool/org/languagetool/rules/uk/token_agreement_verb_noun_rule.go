@@ -289,15 +289,19 @@ func formatVerbCaseGov(cases map[string]struct{}) string {
 	return "вимагає: " + strings.Join(names, ", ")
 }
 
-// formatFoundCases lists case names on object readings (TokenAgreementAdjNounRule.formatInflections subset).
+// formatFoundCases lists case names on object readings
+// (Java InflectionHelper noun+adj+numr then TokenAgreementAdjNounRule.formatInflections).
 func formatFoundCases(indirTags, nazTags []string) string {
-	infs := GetNounInflectionsFromTags(append(append([]string{}, indirTags...), nazTags...), nil)
-	infs = append(infs, GetAdjCaseInflections(append(append([]string{}, indirTags...), nazTags...))...)
+	all := append(append([]string{}, indirTags...), nazTags...)
+	infs := GetNounInflectionsFromTags(all, nil)
+	infs = append(infs, GetAdjCaseInflections(all)...)
+	infs = append(infs, GetNumrCaseInflections(all)...)
 	infs = dedupeInflections(infs)
 	return formatAdjNounInflections(infs, false)
 }
 
 // verbNounSuggestions ports TokenAgreementVerbNounRule.getSuggestions + surface wrap.
+// Java still applies verbReplace even when getSuggestions returns empty (cases empty).
 func (r *TokenAgreementVerbNounRule) verbNounSuggestions(
 	cases map[string]struct{},
 	tokens []*languagetool.AnalyzedTokenReadings,
@@ -305,11 +309,24 @@ func (r *TokenAgreementVerbNounRule) verbNounSuggestions(
 	verbTok, nounTok *languagetool.AnalyzedTokenReadings,
 	verbReplace string,
 ) []string {
-	if r == nil || r.Synth == nil || nounTok == nil || verbTok == nil {
+	if r == nil || nounTok == nil || verbTok == nil {
 		return nil
 	}
-	// Java getSuggestions: empty cases → empty list
-	if len(cases) == 0 {
+	// middle tokens between verb and noun
+	var inside strings.Builder
+	for ii := verbPos + 1; ii < nounPos && ii < len(tokens); ii++ {
+		if tokens[ii] == nil {
+			continue
+		}
+		inside.WriteByte(' ')
+		inside.WriteString(tokens[ii].GetToken())
+	}
+	// Java: if verbReplace != null → sole suggestion (overrides synthesize)
+	if verbReplace != "" {
+		return []string{verbReplace + inside.String() + " " + nounTok.GetToken()}
+	}
+	// Java getSuggestions needs synthesizer; empty cases → empty list
+	if r.Synth == nil || len(cases) == 0 {
 		return nil
 	}
 	var caseList []string
@@ -349,19 +366,7 @@ func (r *TokenAgreementVerbNounRule) verbNounSuggestions(
 	if strings.EqualFold(cleanTokenSurface(nounTok), "піку") && containsStr(forms, "піка") {
 		forms = []string{"піка"}
 	}
-	// middle tokens between verb and noun
-	var inside strings.Builder
-	for ii := verbPos + 1; ii < nounPos && ii < len(tokens); ii++ {
-		if tokens[ii] == nil {
-			continue
-		}
-		inside.WriteByte(' ')
-		inside.WriteString(tokens[ii].GetToken())
-	}
 	out := make([]string, 0, len(forms))
-	if verbReplace != "" {
-		return []string{verbReplace + inside.String() + " " + nounTok.GetToken()}
-	}
 	for _, s := range forms {
 		out = append(out, verbTok.GetToken()+inside.String()+" "+s)
 	}

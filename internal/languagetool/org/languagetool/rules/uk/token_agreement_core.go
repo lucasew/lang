@@ -1092,27 +1092,14 @@ func tokenSearchPosRE(tokens []*languagetool.AnalyzedTokenReadings, pos int, pos
 }
 
 // hasCaseGovPosRE ports hasCaseGovernment(readings, posPattern, case).
+// Java: getCaseGovernments(readings, Pattern).contains(rvCase) — includes getCustomGovs.
 func hasCaseGovPosRE(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp, rvCase string) bool {
 	if tok == nil || posRE == nil || rvCase == "" {
 		return false
 	}
-	cg := LoadCaseGovernmentHelper()
-	for _, r := range tok.GetReadings() {
-		if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
-			continue
-		}
-		if !posRE.MatchString(*r.GetPOSTag()) {
-			continue
-		}
-		if cg.HasCaseGovernment(*r.GetLemma(), rvCase) {
-			return true
-		}
-		// adjp:pasv always adds v_oru
-		if rvCase == "v_oru" && strings.Contains(*r.GetPOSTag(), "adjp:pasv") {
-			return true
-		}
-	}
-	return false
+	cases := LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadingsRE(tok, posRE)
+	_, ok := cases[rvCase]
+	return ok
 }
 
 // adjNounNumberVNazRE ports TokenAgreementAdjNounExceptionHelper.NUMBER_V_NAZ.
@@ -2525,10 +2512,11 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 		HasPosTagStart(noun, "adj:m:v_rod") {
 		return true
 	}
-	// fixed phrases (Java tokenLine mNow)
+	// fixed phrases (Java tokenLine mNow) — pass comma glued; NewSearchMatch expands ", " → " ,"
 	for _, phrase := range []string{
-		"не те щоб", "не те що", "не останньою чергою",
+		"не те щоб", "не те що", "не останньою чергою", "не те, що",
 		"світ за очі", "ні світ ні", "станом на", "страх як", "жах як",
+		"куди очі",
 	} {
 		// mNow at nounPos: exact phrase starting at noun
 		if NewSearchMatch(phrase).MNowATR(tokens, nounPos) >= 0 {
@@ -2537,16 +2525,6 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 		if NewSearchMatch(phrase).MNowATR(tokens, verbPos) >= 0 {
 			return true
 		}
-	}
-	// куди очі
-	if NewSearchMatch("куди очі").MNowATR(tokens, nounPos) >= 0 ||
-		NewSearchMatch("куди очі").MNowATR(tokens, verbPos) >= 0 {
-		return true
-	}
-	// не те, що — comma as separate token
-	if NewSearchMatch("не те , що").MNowATR(tokens, nounPos) >= 0 ||
-		NewSearchMatch("не те , що").MNowATR(tokens, verbPos) >= 0 {
-		return true
 	}
 
 	nounLower := CleanTokenLower(noun)

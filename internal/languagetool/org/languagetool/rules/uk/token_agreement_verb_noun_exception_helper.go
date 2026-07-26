@@ -68,10 +68,11 @@ func IsVerbNounHardAdjNoun(tokens []*languagetool.AnalyzedTokenReadings, i int, 
 		line string
 		skip int
 	}{
+		// Java tokenLine: replace(",", " ,") then split — pass comma glued as Java source does.
 		{"не те щоб", 3},
 		{"не те що", 3},
 		{"не останньою чергою", 3},
-		{"не те , що", 4},
+		{"не те, що", 4},
 		{"світ за очі", 3},
 		{"ні світ ні", 3},
 		{"куди очі", 3},
