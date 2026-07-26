@@ -1,7 +1,8 @@
 package pt
 
-// Unit tests for Portuguese Wikipedia / Redundancy / Wordiness ASR2 ports.
-// No dedicated Java Wikipedia/Redundancy/Wordiness twin tests in the PT module;
+// Unit tests for Portuguese Wikipedia / Wordiness ASR2 ports.
+// Redundancy has PortugueseRedundancyRuleTest_test.go.
+// No dedicated Java Wikipedia/Wordiness twin tests in the PT module;
 // assertions follow rule examples and dictionary entries.
 import (
 	"testing"
@@ -22,16 +23,6 @@ func TestPortugueseWikipediaRule(t *testing.T) {
 	require.Equal(t, 1, len(matches))
 	// Sentence-start capitalization of multiword suggestion
 	require.Equal(t, "A meu ver", matches[0].GetSuggestedReplacements()[0])
-}
-
-func TestPortugueseRedundancyRule(t *testing.T) {
-	rule := NewPortugueseRedundancyRule(nil)
-	// Example from Java rule: duna de areia → duna
-	matches := rule.Match(languagetool.AnalyzePlain("A duna de areia era enorme."))
-	require.Equal(t, 1, len(matches))
-	require.Equal(t, "duna", matches[0].GetSuggestedReplacements()[0])
-
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("A duna era enorme."))))
 }
 
 func TestPortugueseWordinessRule(t *testing.T) {

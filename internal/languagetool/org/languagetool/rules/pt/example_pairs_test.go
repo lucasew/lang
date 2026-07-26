@@ -9,7 +9,7 @@ import (
 func TestPT_ExamplePairs(t *testing.T) {
 	require.Equal(t, []string{"duradouro"}, NewPortugueseWordCoherencyRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"coupé"}, NewPortugueseDiacriticsRule(nil).GetIncorrectExamples()[0].GetCorrections())
-	require.Equal(t, []string{"duna"}, NewPortugueseRedundancyRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"duna"}, NewPortugueseRedundancyRule(nil, PortugueseRedundancyFilePath).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"abstrato"}, NewPortugueseAgreementReplaceRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"infligiu"}, NewPortugueseWrongWordInContextRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"hospedeira de bordo"}, NewPortugalPortugueseReplaceRule(nil).GetIncorrectExamples()[0].GetCorrections())
