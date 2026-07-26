@@ -132,7 +132,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	rd := NewPortugueseRedundancyRule(nil, PortugueseRedundancyFilePath)
 	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
 
-	pe := NewPortugueseWordinessRule(nil)
+	pe := NewPortugueseWordinessRule(nil, PortugueseWordinessFilePath)
 	lt.AddRuleChecker(pe.GetID(), rules.AsSentenceCheckerSimple(pe.Match))
 
 	wiki := NewPortugueseWikipediaRule(nil)

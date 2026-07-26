@@ -26,7 +26,7 @@ func TestPortugueseWikipediaRule(t *testing.T) {
 }
 
 func TestPortugueseWordinessRule(t *testing.T) {
-	rule := NewPortugueseWordinessRule(nil)
+	rule := NewPortugueseWordinessRule(nil, PortugueseWordinessFilePath)
 	matches := rule.Match(languagetool.AnalyzePlain("A forma como ele fala impressiona."))
 	require.Equal(t, 1, len(matches))
 	// First token of match is capitalized → suggestion capitalised

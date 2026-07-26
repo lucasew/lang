@@ -10,7 +10,7 @@ import (
 func TestPT_ExamplePairs_More(t *testing.T) {
 	require.Equal(t, []string{"XYZ"}, NewPortugueseWeaselWordsRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"currículo"}, NewPortugueseBarbarismsRule(nil, PortugueseBarbarismsBRFilePath).GetIncorrectExamples()[0].GetCorrections())
-	require.Equal(t, []string{"Raramente acontece"}, NewPortugueseWordinessRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Raramente acontece"}, NewPortugueseWordinessRule(nil, PortugueseWordinessFilePath).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"quente"}, NewPortugueseClicheRule(nil, PortugueseClicheFilePath).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"Foi"}, NewPortugueseWordRepeatBeginningRule(nil).GetIncorrectExamples()[0].GetCorrections())
 }
