@@ -20,16 +20,26 @@ const srSynthResourceRel = "inspiration/languagetool/languagetool-language-modul
 // tags and would miss serbian_synth_tags.txt under dictionary/.
 
 var (
-	ekavianInstanceOnce sync.Once
-	ekavianInstance     *EkavianSynthesizer
+	ekavianInstanceOnce  sync.Once
+	ekavianInstance      *EkavianSynthesizer
+	jekavianInstanceOnce sync.Once
+	jekavianInstance     *JekavianSynthesizer
 )
 
 // INSTANCE ports a lazy official Ekavian load (Go convenience; Java has no field).
 // Prefer Instance(); INSTANCE is bound on successful load.
 var INSTANCE *EkavianSynthesizer
 
+// JEKAVIAN_INSTANCE ports a lazy official Jekavian load (Go convenience; Java has no field).
+// Prefer JekavianInstance(); JEKAVIAN_INSTANCE is bound on successful load.
+var JEKAVIAN_INSTANCE *JekavianSynthesizer
+
 func bindINSTANCE(s *EkavianSynthesizer) {
 	INSTANCE = s
+}
+
+func bindJEKAVIAN_INSTANCE(s *JekavianSynthesizer) {
+	JEKAVIAN_INSTANCE = s
 }
 
 // Instance returns EkavianSynthesizer loaded from official LT resources.
@@ -42,6 +52,18 @@ func Instance() *EkavianSynthesizer {
 		}
 	})
 	return ekavianInstance
+}
+
+// JekavianInstance returns JekavianSynthesizer loaded from official LT resources.
+// Nil if jekavian serbian_synth.dict cannot be opened (fail-closed).
+func JekavianInstance() *JekavianSynthesizer {
+	jekavianInstanceOnce.Do(func() {
+		if p := DiscoverJekavianSynthDict(); p != "" {
+			jekavianInstance = OpenJekavianSynthesizerFromDictPath(p)
+			bindJEKAVIAN_INSTANCE(jekavianInstance)
+		}
+	})
+	return jekavianInstance
 }
 
 // DiscoverEkavianSynthDict finds ekavian serbian_synth.dict
@@ -63,20 +85,33 @@ func DiscoverEkavianSynthDict() string {
 			return cand
 		}
 	}
-	relPaths := []string{
-		filepath.Join(srSynthResourceRel, "dictionary", "ekavian", "serbian_synth.dict"),
+	return walkUpSRSynthDict(filepath.Join("dictionary", "ekavian", "serbian_synth.dict"))
+}
+
+// DiscoverJekavianSynthDict finds jekavian serbian_synth.dict
+// (Java RESOURCE_FILENAME /sr/dictionary/jekavian/serbian_synth.dict).
+// Order: LANG_JEKAVIAN_SYNTH_DICT, inspiration module nested path.
+func DiscoverJekavianSynthDict() string {
+	if p := os.Getenv("LANG_JEKAVIAN_SYNTH_DICT"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
 	}
+	return walkUpSRSynthDict(filepath.Join("dictionary", "jekavian", "serbian_synth.dict"))
+}
+
+// walkUpSRSynthDict walks parents of cwd for inspiration/.../resource/sr/<rel>.
+func walkUpSRSynthDict(relUnderSR string) string {
+	rel := filepath.Join(srSynthResourceRel, relUnderSR)
 	wd, err := os.Getwd()
 	if err != nil {
 		return ""
 	}
 	dir := wd
 	for i := 0; i < 14; i++ {
-		for _, rel := range relPaths {
-			p := filepath.Join(dir, rel)
-			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-				return p
-			}
+		p := filepath.Join(dir, rel)
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
@@ -97,7 +132,10 @@ func OpenEkavianSynthesizerFromDictPath(dictPath string) *EkavianSynthesizer {
 	return &EkavianSynthesizer{SerbianSynthesizer: s}
 }
 
-// OpenJekavianSynthesizerFromDictPath loads Jekavian dict with the same nested tags layout.
+// OpenJekavianSynthesizerFromDictPath loads official Jekavian synthesizer resources.
+// dictPath is .../dictionary/jekavian/serbian_synth.dict (fail-closed if missing/unreadable).
+// Nested tags layout matches Ekavian: tags at dictionary/serbian_synth_tags.txt
+// (Java TAGS_FILE_NAME), not beside the dict under jekavian/.
 func OpenJekavianSynthesizerFromDictPath(dictPath string) *JekavianSynthesizer {
 	s := openSerbianSynthesizerFromDictPath(dictPath, JekavianSynthDict)
 	if s == nil {

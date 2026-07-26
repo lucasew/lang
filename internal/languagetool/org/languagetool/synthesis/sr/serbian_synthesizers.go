@@ -83,7 +83,7 @@ func (s *EkavianSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, pos
 var _ synthesis.Synthesizer = (*EkavianSynthesizer)(nil)
 
 // JekavianSynthesizer ports org.languagetool.synthesis.sr.JekavianSynthesizer.
-// Path constants / constructor aligned; ready claim is EkavianSynthesizer only.
+// No method overrides — only resource path constants (jekavian/serbian_synth.dict).
 type JekavianSynthesizer struct{ *SerbianSynthesizer }
 
 // NewJekavianSynthesizer ports JekavianSynthesizer() path wiring.
