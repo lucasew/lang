@@ -1456,7 +1456,7 @@
 - [ ] org/languagetool/rules/ru/INNNumberFilter.java::INNNumberFilter
 - [x] org/languagetool/rules/ru/MorfologikRussianSpellerRule.java::MorfologikRussianSpellerRule
 - [x] org/languagetool/rules/ru/MorfologikRussianYOSpellerRule.java::MorfologikRussianYOSpellerRule
-- [ ] org/languagetool/rules/ru/NoDisambiguationRussianPartialPosTagFilter.java::NoDisambiguationRussianPartialPosTagFilter
+- [x] org/languagetool/rules/ru/NoDisambiguationRussianPartialPosTagFilter.java::NoDisambiguationRussianPartialPosTagFilter
 - [ ] org/languagetool/rules/ru/RussianCompoundRule.java::RussianCompoundRule
 - [x] org/languagetool/rules/ru/RussianConfusionProbabilityRule.java::RussianConfusionProbabilityRule
 - [ ] org/languagetool/rules/ru/RussianDashRule.java::RussianDashRule
