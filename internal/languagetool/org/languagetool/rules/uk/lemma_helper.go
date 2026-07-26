@@ -589,3 +589,18 @@ func IsCapitalized(word string) bool {
 	}
 	return true
 }
+
+// IsAllUppercaseUk ports LemmaHelper.isAllUppercaseUk.
+// Allows '-', en-dash, apostrophe, combining acute, soft hyphen as non-letter skips.
+// Empty string returns true (Java loop never fails).
+func IsAllUppercaseUk(word string) bool {
+	for _, ch := range word {
+		if ch == '-' || ch == '\u2013' || ch == '\'' || ch == '\u0301' || ch == '\u00AD' {
+			continue
+		}
+		if !unicode.IsUpper(ch) {
+			return false
+		}
+	}
+	return true
+}

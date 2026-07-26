@@ -1,118 +1,184 @@
 package uk
 
 // Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/MixedAlphabetsRuleTest.java
-// POS/lemma inject for prep, fname, and гепатит|група|турнір arms (Java FreeLing tags).
+//
+// Java setup:
+//   MixedAlphabetsRule rule = new MixedAlphabetsRule(TestTools.getMessages("uk"));
+//   JLanguageTool lt = new JLanguageTool(Ukrainian.DEFAULT_VARIANT);
+//   rule.match(lt.getAnalyzedSentence(...));
+//
+// Go: real UkrainianWordTokenizer + UkrainianTagger (official ukrainian.dict)
+// via wireUKWordRepeatLT — same path as Typography / UkrainianWordRepeat twins.
+
 import (
-	"strings"
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
+// TestMixedAlphabetsRule_Rule twins MixedAlphabetsRuleTest.testRule.
 func TestMixedAlphabetsRule_Rule(t *testing.T) {
+	// Java: new MixedAlphabetsRule(TestTools.getMessages("uk"))
 	rule := NewMixedAlphabetsRule(nil)
-	assert0 := func(s string) {
-		t.Helper()
-		require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(s))), "good %q", s)
-	}
-	assert1 := func(s, msg string, suggs ...string) {
-		t.Helper()
-		m := rule.Match(analyzeMixed(s))
-		require.Equal(t, 1, len(m), "bad %q got %d", s, len(m))
-		if msg != "" {
-			require.Equal(t, msg, m[0].GetMessage(), "msg %q", s)
-		}
-		if len(suggs) > 0 {
-			require.Equal(t, suggs, m[0].GetSuggestedReplacements(), "sugg %q", s)
-		}
-	}
+	// Java: new JLanguageTool(Ukrainian.DEFAULT_VARIANT)
+	lt := wireUKWordRepeatLT(t)
 
-	assert0("сміття")
-	assert0("not mixed")
-	assert0("123454")
-	assert0("x = a якщо")
-	assert0("x − a та y − b")
-	assert0("записати x та y через параметр t")
-	assert0("ЛЮДИНИ І НАЦІЇ")
+	// correct sentences:
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("сміття"))))
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("not mixed"))))
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("123454"))))
 
-	assert1("смiття", "Вжито кириличні й латинські літери в одному слові", "сміття")
-	assert1("mіхed", "Вжито кириличні літери замість латинських", "mixed")
-	assert1("горíти", "Вжито кириличні й латинські літери в одному слові", "горі́ти")
-	assert1("двоáктний", "Вжито кириличні й латинські літери в одному слові")
-	assert1("Чорного i Азовського", "Вжито латинську «i» замість кириличної", "і")
-	assert1("A нема", "Вжито латинську «A» замість кириличної", "А")
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("x = a якщо"))))
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("x − a та y − b"))))
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("записати x та y через параметр t"))))
 
-	// capitalized name before І (LemmaHelper.isCapitalized)
-	assert1("Петро І", "Вжито кириличну літеру замість латинської", "I")
-	// І. needs fname POS (not :abbr)
-	assert1("Миколая І.", "Вжито кириличну літеру замість латинської", "I.")
-	// next surface "квартал" / "ст."
-	assert1("У І кварталі", "Вжито кириличну літеру замість латинської", "I")
-	assert0("ЗА І ПРОТИ")
-	assert0("Ленін В. І.")
-	assert0("Тому І.    Вишенський радить ")
-	assert1("у І ст.", "Вжито кириличну літеру замість латинської", "I")
+	require.Equal(t, 0, len(rule.Match(lt.GetAnalyzedSentence("ЛЮДИНИ І НАЦІЇ"))))
 
-	assert1("XІ", "Вжито кириличні літери замість латинських", "XI")
-	assert1("ХI", "Вжито кириличні літери замість латинських", "XI")
-	assert1("VIIІ-го", "Вжито кириличні літери замість латинських. Також: до римських цифр букви не дописуються.", "VIII")
-	assert1("ІІІ-го", "Вжито кириличні літери замість латинських на позначення римської цифри. Також: до римських цифр букви не дописуються.", "III")
-	assert1("ХІ", "Вжито кириличні літери замість латинських на позначення римської цифри", "XI")
-	assert1("СOVID-19", "Вжито кириличні літери замість латинських", "COVID-19")
-	assert1("австрo-турецької", "Вжито кириличні й латинські літери в одному слові", "австро-турецької")
+	// incorrect sentences:
+	matches := rule.Match(lt.GetAnalyzedSentence("смiття")) // latin i
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні й латинські літери в одному слові", matches[0].GetMessage())
+	require.Equal(t, []string{"сміття"}, matches[0].GetSuggestedReplacements())
 
-	// lemma гепатит / група on first reading
-	assert1("Щеплення від гепатиту В.", "Вжито кириличну літеру замість латинської", "B")
-	assert1("група А", "Вжито кириличну літеру замість латинської", "A")
-	assert1("На 0,6°С.", "Вжито кириличну літеру замість латинської", "C")
+	matches = rule.Match(lt.GetAnalyzedSentence("mіхed")) // cyrillic i and x
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні літери замість латинських", matches[0].GetMessage())
+	require.Equal(t, []string{"mixed"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("горíти")) // umlaut instead of accented і
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні й латинські літери в одному слові", matches[0].GetMessage())
+	require.Equal(t, []string{"горі́ти"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("двоáктний")) // latin á
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні й латинські літери в одному слові", matches[0].GetMessage())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Чорного i Азовського")) // latin i
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито латинську «i» замість кириличної", matches[0].GetMessage())
+	require.Equal(t, []string{"і"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("A нема")) // latin A
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито латинську «A» замість кириличної", matches[0].GetMessage())
+	require.Equal(t, []string{"А"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Петро І")) // cyrillic І
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "I", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(lt.GetAnalyzedSentence("сибірську колекцію Петра І.\n\n Всім")) // cyrillic І
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "I.", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Миколая І.")) // cyrillic І
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "I.", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(lt.GetAnalyzedSentence("У І кварталі")) // cyrillic І
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "I", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(lt.GetAnalyzedSentence("ЗА І ПРОТИ")) // cyrillic І
+	require.Equal(t, 0, len(matches))
+
+	// ambiguous without semantics:
+	// російський хемік Александр І. Опарін (1894–1980)
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Ленін В. І."))
+	require.Equal(t, 0, len(matches))
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Тому І.    Вишенський радить "))
+	require.Equal(t, 0, len(matches))
+
+	matches = rule.Match(lt.GetAnalyzedSentence("у І ст.")) // cyrillic І
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "I", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(lt.GetAnalyzedSentence("XІ")) // cyrillic І and latin X
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні літери замість латинських", matches[0].GetMessage())
+	require.Equal(t, []string{"XI"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("ХI")) // cyrillic X and latin I
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні літери замість латинських", matches[0].GetMessage())
+	require.Equal(t, []string{"XI"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("VIIІ-го")) // latin VII and cyrillic І
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні літери замість латинських. Також: до римських цифр букви не дописуються.", matches[0].GetMessage())
+	require.Equal(t, []string{"VIII"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("ІІІ-го")) // cyrillic І
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні літери замість латинських на позначення римської цифри. Також: до римських цифр букви не дописуються.", matches[0].GetMessage())
+	require.Equal(t, []string{"III"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("ХІ")) // cyrillic both X and I used for latin number
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні літери замість латинських на позначення римської цифри", matches[0].GetMessage())
+	require.Equal(t, []string{"XI"}, matches[0].GetSuggestedReplacements())
+
+	// we split tokens for latin numbers with \u2013 inside now
+	// matches = rule.match(lt.getAnalyzedSentence("ХI\u2013XX")); // commented in Java
+
+	matches = rule.Match(lt.GetAnalyzedSentence("СOVID-19")) // cyrillic С
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні літери замість латинських", matches[0].GetMessage())
+	require.Equal(t, []string{"COVID-19"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("австрo-турецької")) // latin o mixed
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличні й латинські літери в одному слові", matches[0].GetMessage())
+	require.Equal(t, []string{"австро-турецької"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Щеплення від гепатиту В.")) // cyrillic B
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "B", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(lt.GetAnalyzedSentence("група А")) // cyrillic А
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "A", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(lt.GetAnalyzedSentence("На 0,6°С.")) // cyrillic С
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Вжито кириличну літеру замість латинської", matches[0].GetMessage())
+	require.Equal(t, "C", matches[0].GetSuggestedReplacements()[0])
 }
 
-func TestMixedAlphabetsRule_FailClosedWithoutLemmaPOS(t *testing.T) {
-	rule := NewMixedAlphabetsRule(nil)
-	// no lemma on гепатиту → no common-cyr group match
-	require.Empty(t, rule.Match(languagetool.AnalyzePlain("Щеплення від гепатиту В.")))
-	// no fname POS → no І. after name
-	// "Миколая І." without tags: І + . may still join; fname arm fails closed
-	// (capitalized arm only for bare І, not І.)
-	m := rule.Match(languagetool.AnalyzePlain("Миколая І."))
-	// may be 0 if only fname arm applied
-	for _, rm := range m {
-		require.NotContains(t, rm.GetSuggestedReplacements(), "I.", "fname arm without POS")
-	}
-}
-
+// TestMixedAlphabetsRule_CombiningChars twins MixedAlphabetsRuleTest.testCombiningChars.
 func TestMixedAlphabetsRule_CombiningChars(t *testing.T) {
 	rule := NewMixedAlphabetsRule(nil)
-	matches := rule.Match(languagetool.AnalyzePlain("Білоруський - українці"))
+	lt := wireUKWordRepeatLT(t)
+
+	// й and ї are done via combining characters: и + U+0306, і + U+0308
+	matches := rule.Match(lt.GetAnalyzedSentence("Білоруський - українці"))
 	require.Equal(t, 2, len(matches))
 	require.Equal(t, "Білоруський", matches[0].GetSuggestedReplacements()[0])
 	require.Equal(t, "українці", matches[1].GetSuggestedReplacements()[0])
 }
 
-// analyzeMixed injects FreeLing-style tags for MixedAlphabets POS/lemma arms.
-func analyzeMixed(text string) *languagetool.AnalyzedSentence {
-	return languagetool.AnalyzeWithTagger(text, func(tok string) []languagetool.TokenTag {
-		low := strings.ToLower(tok)
-		switch {
-		case low == "миколая" || low == "петро":
-			return []languagetool.TokenTag{{POS: "noun:m:v_naz:fname", Lemma: low}}
-		case low == "у" || low == "від" || low == "в":
-			return []languagetool.TokenTag{{POS: "prep", Lemma: low}}
-		case strings.HasPrefix(low, "гепатит"):
-			return []languagetool.TokenTag{{POS: "noun:m:v_rod", Lemma: "гепатит"}}
-		case low == "група":
-			return []languagetool.TokenTag{{POS: "noun:f:v_naz", Lemma: "група"}}
-		case low == "турнір":
-			return []languagetool.TokenTag{{POS: "noun:m:v_naz", Lemma: "турнір"}}
-		default:
-			return nil
-		}
-	})
+// TestMixedAlphabetsRule_Metadata checks id / description / short / category.
+func TestMixedAlphabetsRule_Metadata(t *testing.T) {
+	r := NewMixedAlphabetsRule(nil)
+	require.Equal(t, "UK_MIXED_ALPHABETS", r.GetID())
+	require.Equal(t, "Змішування кирилиці й латиниці", r.GetDescription())
+	require.Equal(t, "Мішанина розкладок", r.getShort())
+	require.NotNil(t, r.GetCategory())
+	require.Equal(t, "MISC", r.GetCategory().GetID().String())
 }
 
+// TestMixedAlphabets_REFullMatch guards Java Matcher.matches() full-string semantics.
 func TestMixedAlphabets_REFullMatch(t *testing.T) {
-	// Java Matcher.matches() — must not fire on embedded roman digits
 	require.True(t, likelyLatinNumber.MatchString("XXI"))
 	require.False(t, likelyLatinNumber.MatchString("preXXIpost"))
 	require.True(t, cyrillicFirstLetter.MatchString("Київ"))
