@@ -438,7 +438,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-HiddenCharacterRule-UK | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/HiddenCharacterRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/HiddenCharacterRuleTest.java | internal/languagetool/org/languagetool/rules/uk/hidden_character_rule.go; internal/languagetool/org/languagetool/rules/uk/HiddenCharacterRuleTest_test.go | 306dfc696ade3e39afa84f5b397f1d30bf9ee56c | 0 | 0 |  |  | 2026-07-26T12:26:13Z |
 | docs/faithful-port-checklist.md#3.C.3-PunctuationCheckRule-UK | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/PunctuationCheckRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/PunctuationCheckRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractPunctuationCheckRule.java | internal/languagetool/org/languagetool/rules/uk/punctuation_check_rule.go; internal/languagetool/org/languagetool/rules/uk/PunctuationCheckRuleTest_test.go; internal/languagetool/org/languagetool/rules/abstract_punctuation_check_rule.go | aa788c0d1d5a13a8be3885c3bcc8e079883ef810 | 0 | 0 |  |  | 2026-07-26T12:35:09Z |
 | docs/faithful-port-checklist.md#3.C.3-UkrainianWordRepeatRule | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/UkrainianWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/UkrainianWordRepeatRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/uk/ukrainian_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/uk/UkrainianWordRepeatRuleTest_test.go; internal/languagetool/org/languagetool/rules/word_repeat_rule.go | ec0562600df11a1f7f582ea311393d6c03a39583 | 0 | 0 |  |  | 2026-07-26T12:51:26Z |
-| docs/faithful-port-checklist.md#3.C.3-TypographyRule-UK | ready | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/TypographyRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TypographyRuleTest.java | internal/languagetool/org/languagetool/rules/uk/typography_rule.go; internal/languagetool/org/languagetool/rules/uk/TypographyRuleTest_test.go | e55fe6c3069207012b3fe4a88d25d58e77705be3 | 0 | 0 |  |  | 2026-07-26T12:58:26Z |
+| docs/faithful-port-checklist.md#3.C.3-TypographyRule-UK | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/TypographyRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TypographyRuleTest.java | internal/languagetool/org/languagetool/rules/uk/typography_rule.go; internal/languagetool/org/languagetool/rules/uk/TypographyRuleTest_test.go | e55fe6c3069207012b3fe4a88d25d58e77705be3 | 0 | 0 |  |  | 2026-07-26T13:05:45Z |
 
 ## Human inbox
 
@@ -448,7 +448,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ready 3.C.3-TypographyRule-UK @ e55fe6c3; next fire: validate |
+| Notes | ACCEPT 3.C.3-TypographyRule-UK @ e55fe6c3; next fire: implement next unchecked 3.C.3 leaf |
 
 ---
 
@@ -2040,3 +2040,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T12:51:26Z ACCEPT: 3.C.3-UkrainianWordRepeatRule @ ec056260 (validator + parent green reconfirm)
 - 2026-07-26T12:54:06Z implement: 3.C.3-TypographyRule-UK (uk.TypographyRule; short/en/em dash; full TypographyRuleTest twin; leaf after WordRepeat)
 - 2026-07-26T12:58:26Z ready: 3.C.3-TypographyRule-UK @ e55fe6c3 (implementer report; parent green reconfirm; DASH; full TypographyRuleTest twin; real UK analysis)
+- 2026-07-26T13:03:52Z validating: 3.C.3-TypographyRule-UK @ e55fe6c3
+- 2026-07-26T13:05:45Z ACCEPT: 3.C.3-TypographyRule-UK @ e55fe6c3 (validator + parent green reconfirm)
