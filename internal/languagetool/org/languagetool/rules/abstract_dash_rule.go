@@ -25,10 +25,14 @@ type AbstractDashRule struct {
 	Tags []Tag
 	// URL ports Rule.url (Java setUrl).
 	URL string
+	// IssueType ports Rule.locQualityIssueType (Java default Uncategorized;
+	// PT dash subclasses set Typographical).
+	IssueType ITSIssueType
 	// incorrectExamples / correctExamples port Rule.addExamplePair.
 	incorrectExamples []IncorrectExample
 	correctExamples   []CorrectExample
-	// IsLetter reports whether r is a word character for boundary checks.
+	// IsLetter reports whether r is a word character for boundary checks
+	// (inverse of Java AbstractDashRule.isBoundary on a single-char string).
 	// When nil, ASCII letters are used (EN/PL default). RU/PT override this.
 	IsLetter func(r rune) bool
 }
@@ -85,6 +89,21 @@ func (r *AbstractDashRule) GetURL() string {
 func (r *AbstractDashRule) SetURL(u string) {
 	if r != nil {
 		r.URL = u
+	}
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AbstractDashRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil {
+		return ""
+	}
+	return r.IssueType
+}
+
+// SetLocQualityIssueType ports Rule.setLocQualityIssueType.
+func (r *AbstractDashRule) SetLocQualityIssueType(it ITSIssueType) {
+	if r != nil {
+		r.IssueType = it
 	}
 }
 
