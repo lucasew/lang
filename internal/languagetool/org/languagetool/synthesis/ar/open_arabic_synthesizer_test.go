@@ -1,8 +1,6 @@
 package ar
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -15,22 +13,25 @@ func TestOpenArabicSynthesizerFromDir_Missing(t *testing.T) {
 }
 
 func TestOpenArabicSynthesizerFromDictPath_RealDict(t *testing.T) {
-	dir, _ := os.Getwd()
-	var dict string
-	for i := 0; i < 12; i++ {
-		cand := filepath.Join(dir, "inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/resource/ar/arabic_synth.dict")
-		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
-			dict = cand
-			break
-		}
-		dir = filepath.Dir(dir)
-	}
-	if dict == "" {
+	p := DiscoverArabicSynthDict()
+	if p == "" {
 		t.Skip("arabic_synth.dict not found")
 	}
-	s := OpenArabicSynthesizerFromDictPath(dict)
+	s := OpenArabicSynthesizerFromDictPath(p)
 	require.NotNil(t, s)
 	require.NotNil(t, s.Lookup)
+	require.NotEmpty(t, s.PossibleTags)
 	// getPosTagCorrection must not panic / identity-only (Arabic type)
 	_ = s.GetPosTagCorrection("Nxx-M1I-xW-L")
+	// Java TAGS_FILE_NAME is arabic_tags.txt (not arabic_synth.dict_tags.txt)
+	require.Equal(t, ArabicTagsFile, s.TagFileName)
+	require.Equal(t, ArabicSynthDict, s.ResourceFileName)
+}
+
+func TestDiscoverArabicSynthDict(t *testing.T) {
+	p := DiscoverArabicSynthDict()
+	if p == "" {
+		t.Skip("arabic_synth.dict not discoverable")
+	}
+	require.Contains(t, p, "arabic_synth.dict")
 }

@@ -31,8 +31,14 @@ func NewArabicSynthesizer(manual *synthesis.ManualSynthesizer) *ArabicSynthesize
 	}
 }
 
-// INSTANCE is the default shared synthesizer (no dict loaded until Manual/Lookup is set).
-var INSTANCE = NewArabicSynthesizer(nil)
+// INSTANCE ports ArabicSynthesizer.INSTANCE (lazy official load via Instance()).
+// Prefer Instance(); INSTANCE is kept in sync on successful load for Java-field naming.
+var INSTANCE *ArabicSynthesizer
+
+// bindINSTANCE is called from Instance() once so INSTANCE matches Java singleton field name.
+func bindINSTANCE(s *ArabicSynthesizer) {
+	INSTANCE = s
+}
 
 // Synthesize ports ArabicSynthesizer.synthesize(token, posTag):
 // lookup lemma|posTag then correctStem each form.
