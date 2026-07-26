@@ -1,4 +1,2 @@
-# archaisms-pt-PT.txt
+# archaisms-pt-BR.txt
 #
-câmera=câmara
-câmeras=câmaras
