@@ -408,7 +408,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-DateFilterHelper-RU | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/DateFilterHelper.java | internal/languagetool/org/languagetool/rules/ru/date_filter_helper.go; internal/languagetool/org/languagetool/rules/ru/date_filter_helper_test.go; internal/languagetool/org/languagetool/rules/ru/date_check_filter.go | 25002514323aaf58e833b34bb2332010b89b9d5e | 0 | 0 |  |  | 2026-07-26T06:41:37Z |
 | docs/faithful-port-checklist.md#3.C.3-DateCheckFilter-RU | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/DateCheckFilter.java; inspiration/languagetool/languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/DateCheckFilterTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractDateCheckFilter.java | internal/languagetool/org/languagetool/rules/ru/date_check_filter.go; internal/languagetool/org/languagetool/rules/ru/date_check_filter_test.go; internal/languagetool/org/languagetool/rules/ru/DateCheckFilterTest_test.go | 5e16b28f57f93571d6281b74f043cc091212377b | 0 | 0 |  |  | 2026-07-26T06:50:06Z |
 | docs/faithful-port-checklist.md#3.C.3-FutureDateFilter-RU | accepted | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/FutureDateFilter.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractFutureDateFilter.java | internal/languagetool/org/languagetool/rules/ru/future_date_filter.go; internal/languagetool/org/languagetool/rules/ru/future_date_filter_test.go | 9c708278e88e0aa9859eac8a00da808a88564524 | 0 | 0 |  |  | 2026-07-26T06:59:57Z |
-| docs/faithful-port-checklist.md#3.C.3-INNNumberFilter | implementing | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/INNNumberFilter.java | internal/languagetool/org/languagetool/rules/ru/inn_number_filter.go; internal/languagetool/org/languagetool/rules/ru/inn_number_filter_test.go |  | 0 | 0 |  |  | 2026-07-26T07:04:01Z |
+| docs/faithful-port-checklist.md#3.C.3-INNNumberFilter | ready | inspiration/languagetool/languagetool-language-modules/ru/src/main/java/org/languagetool/rules/ru/INNNumberFilter.java | internal/languagetool/org/languagetool/rules/ru/inn_number_filter.go; internal/languagetool/org/languagetool/rules/ru/inn_number_filter_test.go; internal/languagetool/org/languagetool/rules/ru/register_rule_filters.go | 0722e07cf10ce019908eb075259769c2cc18cdac | 0 | 0 |  |  | 2026-07-26T07:06:31Z |
 
 ## Human inbox
 
@@ -418,7 +418,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | implementing 3.C.3-INNNumberFilter (RU INN checksum filter; AcceptRuleMatch) |
+| Notes | ready 3.C.3-INNNumberFilter @ 0722e07c; next fire: validate |
 
 ---
 
@@ -1890,3 +1890,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T06:58:42Z validating: 3.C.3-FutureDateFilter-RU @ 9c708278
 - 2026-07-26T06:59:57Z ACCEPT: 3.C.3-FutureDateFilter-RU @ 9c708278 (validator + parent green reconfirm; CHECKLIST RU FutureDateFilter note)
 - 2026-07-26T07:04:01Z implement: 3.C.3-INNNumberFilter (INNNumberFilter 10/12 digit checksum; AcceptRuleMatch; register filter; outcome twins)
+- 2026-07-26T07:06:31Z ready: 3.C.3-INNNumberFilter @ 0722e07c (implementer report; parent green reconfirm; AcceptRuleMatch 10/12 checksum; register)
