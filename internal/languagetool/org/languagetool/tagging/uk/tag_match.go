@@ -459,6 +459,7 @@ func taggedWordsToTokens(surface string, words []tagging.TaggedWord) []*language
 }
 
 // FullTagMatchViaTagMatch reimplements FullTagMatchReadings using TagMatch.
+// Java: left = tagAsIsAndWithLowerCase, right = tagEitherCase (not first-hit-only).
 func FullTagMatchViaTagMatch(token string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
 	t := strings.ReplaceAll(token, "–", "-")
 	t = strings.ReplaceAll(t, "—", "-")
@@ -471,8 +472,11 @@ func FullTagMatchViaTagMatch(token string, tagWord func(string) []tagging.Tagged
 	if left == "" || right == "" {
 		return nil
 	}
-	leftTags := lookupBothCases(left, tagWord)
-	rightTags := lookupBothCases(right, tagWord)
+	// Java doGuessCompoundTag: leftWdList = tagAsIsAndWithLowerCase(leftWord)
+	// rightWdList = tagEitherCase(rightWord) — keep both as-is and lower when present
+	// so Москви-ріки yields Москва-ріка + москва-ріка:alt.
+	leftTags := tagAsIsAndWithLowerCase(left, tagWord)
+	rightTags := tagEitherCase(right, tagWord)
 	if len(leftTags) == 0 || len(rightTags) == 0 {
 		return nil
 	}

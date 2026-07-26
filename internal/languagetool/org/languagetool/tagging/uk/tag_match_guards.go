@@ -55,6 +55,10 @@ func AllowFullTagMatch(token string, tagWord func(string) []tagging.TaggedWord) 
 	if DynamicUpperRightBlocks(token, tagWord) {
 		return false
 	}
+	// dual capitalized NAME (Квітку-Основ'яненко) → Java returns null before tagMatch
+	if DynamicDualNameBlocks(token, tagWord) {
+		return false
+	}
 
 	if len(leftTags) == 0 {
 		return false
@@ -117,6 +121,10 @@ func DynamicFinalOAdjReadings(token string, tagWord func(string) []tagging.Tagge
 	}
 	// already handled as dash prefix / invalid
 	if IsDashPrefix(left) || IsDashPrefixInvalid(left) {
+		return nil
+	}
+	// Java dual NAME return null exits doGuessCompoundTag before tryOWithAdj
+	if DynamicDualNameBlocks(token, tagWord) {
 		return nil
 	}
 	// same part/conj/pron guards as AllowFullTagMatch / doGuessCompoundTag

@@ -53,40 +53,100 @@ func leftOAdjDictOK(leftWord string, tagWord func(string) []tagging.TaggedWord) 
 	if tagWord == nil {
 		return false
 	}
-	leftLow := strings.ToLower(leftWord)
-	if _, ok := leftOAdj[leftLow]; ok {
+	if _, ok := leftOAdj[strings.ToLower(leftWord)]; ok {
 		return true
 	}
-	// tagBothCases(left, ^adv.*|.*?numr.*)
-	if hasPOSPrefixOrContains(tagWord, leftWord, func(pos string) bool {
+	return len(oAdjLeftTaggedWords(leftWord, tagWord)) > 0
+}
+
+// oAdjLeftTaggedWords ports oAdjMatch's left-side tagBothCases ladder (Java):
+//
+//	tagBothCases(left, ^adv.*|.*?numr.*)
+//	tagBothCases(oToYj(left), ^adj.*)
+//	if left.length()>4: tagBothCases(leftBase, ^noun.*)
+//	tagBothCases(leftBase+"а", (noun:inanim:f:v_naz|numr).*)
+//
+// Used both for acceptance and for :bad evidence (hasPosTagPart2(taggedWords, ":bad")).
+// When left ∈ LEFT_O_ADJ, returns nil (no evidence list; caller treats membership separately).
+func oAdjLeftTaggedWords(leftWord string, tagWord func(string) []tagging.TaggedWord) []tagging.TaggedWord {
+	if tagWord == nil || leftWord == "" {
+		return nil
+	}
+	leftLow := strings.ToLower(leftWord)
+	// tagBothCases(leftWord, Pattern.compile("^adv.*|.*?numr.*"))
+	if tws := filterTagBothCases(leftWord, tagWord, func(pos string) bool {
 		return strings.HasPrefix(pos, "adv") || strings.Contains(pos, "numr")
-	}) {
-		return true
+	}); len(tws) > 0 {
+		return tws
 	}
 	// oToYj as adj
-	if hasPOSPrefixOrContains(tagWord, oToYj(leftLow), func(pos string) bool {
+	if tws := filterTagBothCases(oToYj(leftLow), tagWord, func(pos string) bool {
 		return strings.HasPrefix(pos, "adj")
-	}) {
-		return true
+	}); len(tws) > 0 {
+		return tws
 	}
-	// leftBase as noun (drop final o/e)
 	rs := []rune(leftLow)
-	if len(rs) > 1 {
-		base := string(rs[:len(rs)-1])
-		if hasPOSPrefixOrContains(tagWord, base, func(pos string) bool {
+	if len(rs) < 2 {
+		return nil
+	}
+	base := string(rs[:len(rs)-1])
+	// Java: if taggedWords.isEmpty() && leftWord.length() > 4 → leftBase as noun
+	if tagging.UTF16Len(leftWord) > 4 {
+		if tws := filterTagBothCases(base, tagWord, func(pos string) bool {
 			return strings.HasPrefix(pos, "noun")
-		}) {
-			return true
-		}
-		// leftBase+"а" as noun:inanim:f:v_naz or numr
-		if hasPOSPrefixOrContains(tagWord, base+"а", func(pos string) bool {
-			return strings.HasPrefix(pos, "numr") ||
-				(strings.HasPrefix(pos, "noun") && strings.Contains(pos, "f:v_naz"))
-		}) {
-			return true
+		}); len(tws) > 0 {
+			return tws
 		}
 	}
-	return false
+	// tagBothCases(leftBase+"а", Pattern.compile("(noun:inanim:f:v_naz|numr).*"))
+	// always attempted after leftBase (even when length ≤ 4 and leftBase was skipped)
+	if tws := filterTagBothCases(base+"а", tagWord, func(pos string) bool {
+		if strings.HasPrefix(pos, "numr") {
+			return true
+		}
+		return strings.HasPrefix(pos, "noun:inanim:f:v_naz")
+	}); len(tws) > 0 {
+		return tws
+	}
+	return nil
+}
+
+// filterTagBothCases ports CompoundTagger.tagBothCases + POS filter.
+func filterTagBothCases(word string, tagWord func(string) []tagging.TaggedWord, ok func(string) bool) []tagging.TaggedWord {
+	if word == "" || tagWord == nil {
+		return nil
+	}
+	var out []tagging.TaggedWord
+	seen := map[string]struct{}{}
+	add := func(w string) {
+		for _, tw := range tagWord(w) {
+			if !ok(tw.PosTag) {
+				continue
+			}
+			key := tw.Lemma + "|" + tw.PosTag
+			if _, dup := seen[key]; dup {
+				continue
+			}
+			seen[key] = struct{}{}
+			out = append(out, tw)
+		}
+	}
+	add(word)
+	low := strings.ToLower(word)
+	if low != word {
+		add(low)
+	} else {
+		// Java: capitalize when already lower
+		rs := []rune(word)
+		if len(rs) > 0 {
+			rs[0] = unicode.ToUpper(rs[0])
+			cap := string(rs)
+			if cap != word {
+				add(cap)
+			}
+		}
+	}
+	return out
 }
 
 func hasPOSPrefixOrContains(tagWord func(string) []tagging.TaggedWord, w string, ok func(string) bool) bool {
@@ -227,37 +287,21 @@ func isCapitalizedWord(s string) bool {
 	return true
 }
 
-// MissingHyphenCandidates returns alternate surfaces to try when word is untagged
-// (e.g. insert hyphen after known prefix, or before -небудь).
+// MissingHyphenCandidates ports UkrainianTagger MISSING_HYPHEN only:
+// Pattern.compile("([а-яіїєґ']+)(небудь)") — not inventing dash after anti/mini/….
+// Solid no-dash prefixes (мінітест, …) are handled by guessOtherTagsInternal / DynamicNoDashPrefixReadings.
 func MissingHyphenCandidates(token string) []string {
 	if strings.Contains(token, "-") {
 		return nil
 	}
 	lower := strings.ToLower(token)
-	var out []string
-	for _, prefix := range []string{"напів", "пів", "анти", "псевдо", "міні", "віце", "екс"} {
-		if !strings.HasPrefix(lower, prefix) || len(lower) <= len(prefix)+1 {
-			continue
-		}
-		rs := []rune(token)
-		pr := []rune(prefix)
-		if len(rs) <= len(pr) {
-			continue
-		}
-		next := rs[len(pr)]
-		if !unicode.IsLetter(next) {
-			continue
-		}
-		cand := string(rs[:len(pr)]) + "-" + string(rs[len(pr):])
-		out = append(out, cand)
-	}
 	if strings.HasSuffix(lower, "небудь") && tagging.UTF16Len(lower) > tagging.UTF16Len("небудь")+2 {
 		rs := []rune(token)
 		suf := []rune("небудь")
 		stem := string(rs[:len(rs)-len(suf)])
-		out = append(out, stem+"-небудь")
+		return []string{stem + "-небудь"}
 	}
-	return out
+	return nil
 }
 
 // CompoundNumrReadings tags forms like "2-х", "3-ом" soft.

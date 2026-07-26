@@ -117,13 +117,11 @@ func DynamicUpperRightCompoundReadings(token string, tagWord func(string) []tagg
 		return nil
 	}
 
-	// Кримсько-Татарський — full lower compound has adj…:bad
+	// Кримсько-Татарський — Java hasPosTag2(lower, Pattern.compile("adj.*bad"))
+	// Matcher.matches(): full string must end at "bad" (adj:…:bad:err does NOT match).
 	lowerCompound := tagAsIsAndWithLowerCase(strings.ToLower(t), tagWord)
-	for _, tw := range lowerCompound {
-		if strings.HasPrefix(tw.PosTag, "adj") && strings.Contains(tw.PosTag, "bad") {
-			// return as surface token with those tags
-			return taggedWordsToSurfaceTokens(token, lowerCompound)
-		}
+	if HasPosTag2(lowerCompound, adjEndsWithBadRE) {
+		return taggedWordsToSurfaceTokens(token, lowerCompound)
 	}
 
 	// tryOWithAdj when right capitalized OR left ends with о OR right is adj
@@ -196,14 +194,34 @@ func hasAdjTag(tags []tagging.TaggedWord) bool {
 	return false
 }
 
+// adjEndsWithBadRE ports Java Pattern.compile("adj.*bad") with Matcher.matches().
+// "adj:m:v_naz:bad" matches; "adj:m:v_naz:bad:err" does not (trailing :err).
+var adjEndsWithBadRE = regexp.MustCompile(`^adj.*bad$`)
+
 func hasNonPropNoun(tags []tagging.TaggedWord) bool {
-	// Java: noun(?!.prop).* — noun without prop
+	// Java: Pattern.compile("noun(?!.prop).*") Matcher.matches().
+	// RE2 has no lookaround: equivalent is starts with "noun" and NOT
+	// (len>"noun"+5 and pos[len("noun")+1:len("noun")+5]=="prop"),
+	// i.e. not "noun" + any1char + "prop" at the start (blocks "noun:prop…").
 	for _, tw := range tags {
-		if strings.HasPrefix(tw.PosTag, "noun") && !strings.Contains(tw.PosTag, "prop") {
+		if matchesNounNotImmediateProp(tw.PosTag) {
 			return true
 		}
 	}
 	return false
+}
+
+// matchesNounNotImmediateProp ports Java "noun(?!.prop).*" full match without lookaround.
+func matchesNounNotImmediateProp(pos string) bool {
+	if !strings.HasPrefix(pos, "noun") {
+		return false
+	}
+	rest := pos[len("noun"):]
+	// (?!.prop) fails when rest matches .prop at start (1 char + "prop")
+	if len(rest) >= 5 && rest[1:5] == "prop" {
+		return false
+	}
+	return true
 }
 
 func toolsIsCapitalized(s string) bool {

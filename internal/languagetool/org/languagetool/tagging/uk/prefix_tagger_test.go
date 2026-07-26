@@ -8,12 +8,14 @@ import (
 )
 
 func TestUkrainianTagger_DynamicTaggingPiv(t *testing.T) {
+	// Java: solid "півгодини" is a dictionary lemma (not no-dash invent of пів+години).
+	// Official dict has noun:inanim:p:v_*:nv:alt for the full form.
 	wt := tagging.MapWordTagger{
-		"години": {tagging.NewTaggedWord("година", "noun:inanim:p:v_naz")},
+		"півгодини": {tagging.NewTaggedWord("півгодини", "noun:inanim:p:v_naz:nv:alt")},
 	}
 	tg := NewUkrainianTagger(wt)
 	got := tg.Tag([]string{"півгодини"})
-	require.True(t, got[0].IsTagged(), "пів+години should tag via no-dash prefix")
+	require.True(t, got[0].IsTagged(), "півгодини is a solid dict form in Java")
 	require.Contains(t, *got[0].GetReadings()[0].GetLemma(), "годин")
 }
 

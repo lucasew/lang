@@ -228,7 +228,8 @@ func DynamicDualPropReadings(token string, tagWord func(string) []tagging.Tagged
 	if has(leftTags, lnameRod) && has(rightTags, lnameRod) {
 		return []struct{ Lemma, POS string }{{Lemma: token, POS: "noninfl:prop:lname"}}
 	}
-	// bad: both name but not handled above → leave untagged (Java returns null)
+	// bad: both name but not handled above → Java returns null from doGuessCompoundTag
+	// (blocks tagMatch). Callers use DynamicDualNameBlocks for that short-circuit.
 	if has(leftTags, anyName) && has(rightTags, anyName) {
 		return nil
 	}
@@ -236,4 +237,44 @@ func DynamicDualPropReadings(token string, tagWord func(string) []tagging.Tagged
 		return []struct{ Lemma, POS string }{{Lemma: token, POS: "noninfl:prop"}}
 	}
 	return nil
+}
+
+// DynamicDualNameBlocks ports dual-capitalized NAME short-circuit:
+// // bad: Квітки-Основ'яненко — both noun:anim:.*name.* → return null (no tagMatch).
+// True only when both sides start upper and both have name POS, and none of the
+// positive dual-prop arms (geo/fname/lname/prop) would have returned a reading.
+func DynamicDualNameBlocks(token string, tagWord func(string) []tagging.TaggedWord) bool {
+	if tagWord == nil || token == "" || !strings.Contains(token, "-") {
+		return false
+	}
+	if strings.Count(token, "-") != 1 {
+		return false
+	}
+	// Positive dual-prop hit → not a block
+	if len(DynamicDualPropReadings(token, tagWord)) > 0 {
+		return false
+	}
+	dash := strings.LastIndex(token, "-")
+	leftWord, rightWord := token[:dash], token[dash+1:]
+	if leftWord == "" || rightWord == "" {
+		return false
+	}
+	lr, rr := []rune(leftWord), []rune(rightWord)
+	if !unicode.IsUpper(lr[0]) || !unicode.IsUpper(rr[0]) {
+		return false
+	}
+	leftTags := lookupBothCases(leftWord, tagWord)
+	rightTags := lookupBothCases(rightWord, tagWord)
+	anyName := func(pos string) bool {
+		return strings.HasPrefix(pos, "noun:anim:") && strings.Contains(pos, "name")
+	}
+	has := func(tags []tagging.TaggedWord) bool {
+		for _, tw := range tags {
+			if anyName(tw.PosTag) {
+				return true
+			}
+		}
+		return false
+	}
+	return has(leftTags) && has(rightTags)
 }

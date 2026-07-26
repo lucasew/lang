@@ -160,13 +160,14 @@ func tryOWithAdjTokens(word, leftWord string, rightTokens []*languagetool.Analyz
 	}
 
 	// Java oAdjMatch extraTag matrix (LEFT_O_ADJ / invalid / noDash / adjp).
+	// left evidence is the same taggedWords ladder that accepted the left (oAdjLeftTaggedWords),
+	// not merely tagAsIsAndWithLowerCase(leftWord) — so учбово → учбовий:bad yields :bad.
 	extraTag := ""
 	leftLow := strings.ToLower(leftWord)
 	if _, inLeftO := leftOAdj[leftLow]; !inLeftO {
 		// allCapTokens: analyzeAllCapitamizedAdj — skip :bad when dual-capitalized adj exists
 		allCap := AnalyzeAllCapitalizedAdj(word, tagWord)
-		// adv left + adjp right → :bad
-		leftEvidence := tagAsIsAndWithLowerCase(leftWord, tagWord)
+		leftEvidence := oAdjLeftTaggedWords(leftWord, tagWord)
 		hasAdv := false
 		hasBadEvidence := false
 		for _, tw := range leftEvidence {

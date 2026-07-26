@@ -279,6 +279,32 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				}
 			}
 		}
+		// Java MISSING_APO in additionalTags — before guessOtherTags / no-dash.
+		// напівяпонка → dict напів'японка + :bad (lemma keeps apostrophe).
+		if len(readings) == 0 {
+			for _, cand := range MissingApostropheCandidates(w) {
+				// Java filter2: drop bad|arch|alt|abbr|slang|subst|short|long then add :bad
+				for _, tw := range filterMissingApoTags(exact(cand)) {
+					tw2 := tw
+					tw2.PosTag = AddIfNotContains(tw2.PosTag, ":bad")
+					readings = append(readings, toTok(surface, tw2))
+				}
+				if len(readings) > 0 {
+					break
+				}
+			}
+		}
+		// Java MISSING_HYPHEN only: …небудь (not inventing dash after anti/mini/…).
+		if len(readings) == 0 {
+			for _, cand := range MissingHyphenCandidates(w) {
+				if strings.HasSuffix(strings.ToLower(cand), "-небудь") {
+					if nebud := NebudMissingHyphenReadings(surface, cand, exact); len(nebud) > 0 {
+						readings = nebud
+						break
+					}
+				}
+			}
+		}
 		// Java guessOtherTags: capitalized *штрассе / *дзе / *швілі / *іані paradigms.
 		if len(readings) == 0 {
 			if other := GuessOtherTagsReadings(w); len(other) > 0 {
@@ -297,9 +323,11 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = alt
 			}
 		}
-		// Java ALLCAPS → capitalizeProperName + noun.*:prop|noninfl re-tag (needs dict).
+		// Java ALLCAPS → capitalizeProperName + getAdjustedAnalyzedTokens (full re-tag
+		// including compounds: БАЛОГИ-КОЛЕСНІКОВА → Балоги-Колеснікова dual lname).
+		// Filter noun.*?:prop.*|noninfl.*; remap surface to original.
 		// Java tokens.addAll(newTokens) without de-dupe (УКРАЇНА keeps duplicate :alt).
-		if prop := AllCapsPropReadings(w, t.TagWord); len(prop) > 0 {
+		if prop := allCapsPropFullReadings(w, surface, t); len(prop) > 0 {
 			if len(readings) == 0 {
 				readings = prop
 			} else {
@@ -321,63 +349,6 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				return rs
 			}); len(pref) > 0 {
 				readings = pref
-			}
-		}
-		if len(readings) == 0 {
-			for _, cand := range MissingApostropheCandidates(w) {
-				// Java filter2: drop bad|arch|alt|abbr|slang|subst|short|long then add :bad
-				for _, tw := range filterMissingApoTags(exact(cand)) {
-					tw2 := tw
-					tw2.PosTag = AddIfNotContains(tw2.PosTag, ":bad")
-					readings = append(readings, toTok(surface, tw2))
-				}
-				if len(readings) > 0 {
-					break
-				}
-			}
-		}
-		if len(readings) == 0 {
-			for _, cand := range MissingHyphenCandidates(w) {
-				// re-tag hyphenated candidate via compound path specials
-				if dyn := DynamicAdjReadings(cand, exact); len(dyn) > 0 {
-					for _, d := range dyn {
-						p, l := d.POS, d.Lemma
-						readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
-					}
-					break
-				}
-				if pref := TryNoDashPrefixTags(strings.ReplaceAll(cand, "-", ""), func(right string) []*languagetool.AnalyzedToken {
-					var rs []*languagetool.AnalyzedToken
-					for _, tw := range exact(right) {
-						rs = append(rs, toTok(right, tw))
-					}
-					return rs
-				}); len(pref) > 0 {
-					readings = pref
-					break
-				}
-				// -небудь indefinite pronouns (Java MISSING_HYPHEN + pronoun POS + :bad)
-				if strings.HasSuffix(strings.ToLower(cand), "-небудь") {
-					if nebud := NebudMissingHyphenReadings(surface, cand, exact); len(nebud) > 0 {
-						readings = nebud
-						break
-					}
-				}
-				// direct right-of-hyphen dict lookup (мінітест → міні-тест → тест)
-				if i := strings.Index(cand, "-"); i > 0 {
-					right := cand[i+1:]
-					for _, tw := range exact(right) {
-						readings = append(readings, toTok(surface, tw))
-					}
-					if low := strings.ToLower(right); len(readings) == 0 && right != low {
-						for _, tw := range exact(low) {
-							readings = append(readings, toTok(surface, tw))
-						}
-					}
-					if len(readings) > 0 {
-						break
-					}
-				}
 			}
 		}
 		if len(readings) == 0 {
@@ -484,6 +455,51 @@ func toTok(surface string, tw tagging.TaggedWord) *languagetool.AnalyzedToken {
 		lemma = &l
 	}
 	return languagetool.NewAnalyzedToken(surface, pos, lemma)
+}
+
+// allCapsPropFullReadings ports UkrainianTagger ALLCAPS arm:
+// capitalizeProperName + getAdjustedAnalyzedTokens (full re-analysis for hyphenated
+// forms; dict-only for solid tokens). Filters noun.*?:prop.*|noninfl.* full match.
+func allCapsPropFullReadings(word, surface string, t *UkrainianTagger) []*languagetool.AnalyzedToken {
+	if t == nil || tagging.UTF16Len(word) <= 2 || !isAllUppercaseUk(word) {
+		return nil
+	}
+	// pure latin romans handled as number:latin
+	if reLatinNum.MatchString(word) {
+		return nil
+	}
+	adjusted := capitalizeProperName(word)
+	if adjusted == "" || adjusted == word {
+		return nil
+	}
+	// Solid ALLCAPS: dict re-tag only (УКРАЇНА → Україна).
+	if !strings.Contains(adjusted, "-") {
+		return AllCapsPropReadings(word, t.TagWord)
+	}
+	// Hyphenated ALLCAPS: full Tag on title-case form (БАЛОГИ-КОЛЕСНІКОВА → dual lname).
+	// Recursion-safe: adjusted is not ALLCAPS.
+	rs := t.Tag([]string{adjusted})
+	if len(rs) == 0 || rs[0] == nil {
+		return nil
+	}
+	var out []*languagetool.AnalyzedToken
+	for _, rd := range rs[0].GetReadings() {
+		if rd == nil || rd.GetPOSTag() == nil {
+			continue
+		}
+		pos := *rd.GetPOSTag()
+		// Java Pattern.compile("noun.*?:prop.*|noninfl.*") Matcher.matches()
+		if !allCapsPropPOSRE.MatchString(pos) {
+			continue
+		}
+		lem := ""
+		if rd.GetLemma() != nil {
+			lem = *rd.GetLemma()
+		}
+		p, l := pos, lem
+		out = append(out, languagetool.NewAnalyzedToken(surface, &p, &l))
+	}
+	return out
 }
 
 // mergeUniqueAnalyzedTokens appends extras whose (POS, lemma) are not already in base
