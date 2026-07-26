@@ -141,8 +141,3 @@ func (r *PortugueseAgreementReplaceRule) Match(sentence *languagetool.AnalyzedSe
 	return r.AbstractSimpleReplaceRule.Match(sentence)
 }
 
-// joinCommaPT is shared by PortugueseReplaceRule message formatting
-// (String.join(", ", replacements) equivalent). Kept for that ASR1 sibling.
-func joinCommaPT(ss []string) string {
-	return strings.Join(ss, ", ")
-}

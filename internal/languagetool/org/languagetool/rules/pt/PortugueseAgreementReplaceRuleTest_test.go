@@ -134,7 +134,3 @@ func TestPortugueseAgreementReplaceRule_Metadata(t *testing.T) {
 	require.Equal(t, "<marker>abstrato</marker>", corr[0].GetExample())
 }
 
-// Soft smoke retained only as PortugueseReplaceRule load (sibling ASR1; dictionary may be comments-only).
-func TestPortugueseReplaceRule_Loads(t *testing.T) {
-	_ = NewPortugueseReplaceRule(nil)
-}
