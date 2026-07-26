@@ -1460,7 +1460,7 @@
 - [ ] org/languagetool/rules/ru/RussianCompoundRule.java::RussianCompoundRule
 - [x] org/languagetool/rules/ru/RussianConfusionProbabilityRule.java::RussianConfusionProbabilityRule
 - [ ] org/languagetool/rules/ru/RussianDashRule.java::RussianDashRule
-- [ ] org/languagetool/rules/ru/RussianFillerWordsRule.java::RussianFillerWordsRule
+- [x] org/languagetool/rules/ru/RussianFillerWordsRule.java::RussianFillerWordsRule
 - [x] org/languagetool/rules/ru/RussianPartialPosTagFilter.java::RussianPartialPosTagFilter
 - [ ] org/languagetool/rules/ru/RussianSimpleReplaceRule.java::RussianSimpleReplaceRule
 - [ ] org/languagetool/rules/ru/RussianSimpleWordRepeatRule.java::RussianSimpleWordRepeatRule
