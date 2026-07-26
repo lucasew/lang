@@ -23,7 +23,8 @@ func loadWordRootData() *rules.WordCoherencyData {
 			panic(err)
 		}
 		defer f.Close()
-		// Surface forms only (no Russian tagger expansion).
+		// Java WordCoherencyDataLoader.loadWords("/ru/wordrootrep.txt"): exact semicolon
+		// pairs only (no invent expansion). Lemmas come from the tagger at match time.
 		d, err := rules.LoadWordCoherencyData(f, "/ru/wordrootrep.txt", false)
 		if err != nil {
 			panic(err)
@@ -36,8 +37,11 @@ func loadWordRootData() *rules.WordCoherencyData {
 // RussianWordRootRepeatRule ports org.languagetool.rules.ru.RussianWordRootRepeatRule.
 type RussianWordRootRepeatRule struct {
 	*rules.AbstractWordCoherencyRule
+	// DefaultOff ports Rule.setDefaultOff() (Java constructor calls setDefaultOff()).
+	DefaultOff bool
 }
 
+// NewRussianWordRootRepeatRule ports RussianWordRootRepeatRule(ResourceBundle messages).
 func NewRussianWordRootRepeatRule(messages map[string]string) *RussianWordRootRepeatRule {
 	d := loadWordRootData()
 	base := &rules.AbstractWordCoherencyRule{
@@ -45,19 +49,39 @@ func NewRussianWordRootRepeatRule(messages map[string]string) *RussianWordRootRe
 		Description: "Повтор однокоренных слов",
 		WordMap:     d.WordMap,
 		ToBase:      d.ToBase,
+		// Java getMessage: «w1» и «w2» – однокоренные слова, их не стоит использовать одновременно
+		// (en-dash U+2013 between clause and rest).
 		MessageFn: func(word1, word2 string) string {
 			return "«" + word1 + "» и «" + word2 + "» – однокоренные слова, их не стоит использовать одновременно"
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
-	// Java: абрикосный → абрикосов (root-repeat style fix)
+	// Java:
+	// addExamplePair(Example.wrong("Абрикос рос в саду. У меня на столе стоит <marker>абрикосный</marker> сок."),
+	//                Example.fixed("Абрикос рос в саду. У меня на столе стоит сок из <marker>абрикосов</marker>."));
 	base.AddExamplePair(
 		rules.Wrong("Абрикос рос в саду. У меня на столе стоит <marker>абрикосный</marker> сок."),
 		rules.Fixed("Абрикос рос в саду. У меня на столе стоит сок из <marker>абрикосов</marker>."),
 	)
-	return &RussianWordRootRepeatRule{AbstractWordCoherencyRule: base}
+	r := &RussianWordRootRepeatRule{AbstractWordCoherencyRule: base}
+	// Java: setDefaultOff();
+	r.SetDefaultOff()
+	return r
 }
 
+// SetDefaultOff ports Rule.setDefaultOff().
+func (r *RussianWordRootRepeatRule) SetDefaultOff() {
+	if r != nil {
+		r.DefaultOff = true
+	}
+}
+
+// IsDefaultOff ports Rule.isDefaultOff().
+func (r *RussianWordRootRepeatRule) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
+}
+
+// MatchList ports AbstractWordCoherencyRule.match over sentences.
 func (r *RussianWordRootRepeatRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	return r.AbstractWordCoherencyRule.Match(sentences)
 }

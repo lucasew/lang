@@ -127,6 +127,9 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	// Java RussianWordRootRepeatRule / RussianVerbConjugationRule — missing from prior invent path.
 	wrr := NewRussianWordRootRepeatRule(nil)
 	lt.AddTextLevelRuleChecker(wrr.GetID(), rules.AsTextLevelChecker(wrr.MatchList))
+	if wrr.IsDefaultOff() {
+		lt.MarkDefaultOff(wrr.GetID())
+	}
 
 	vc := NewRussianVerbConjugationRule(nil)
 	lt.AddRuleChecker(vc.GetID(), rules.AsSentenceCheckerSimple(vc.Match))
