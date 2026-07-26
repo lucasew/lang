@@ -435,6 +435,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-DateCheckFilter-SR | accepted | inspiration/languagetool/languagetool-language-modules/sr/src/main/java/org/languagetool/rules/sr/DateCheckFilter.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractDateCheckFilter.java | internal/languagetool/org/languagetool/rules/sr/date_check_filter.go; internal/languagetool/org/languagetool/rules/sr/date_check_filter_test.go | 7ee632b607e3d4c5f899f4561031cf3d4e4024ce | 0 | 0 |  |  | 2026-07-26T11:50:18Z |
 | docs/faithful-port-checklist.md#3.C.3-CompoundRule-SV | accepted | inspiration/languagetool/languagetool-language-modules/sv/src/main/java/org/languagetool/rules/sv/CompoundRule.java; inspiration/languagetool/languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/CompoundRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractCompoundRule.java; inspiration/languagetool/languagetool-language-modules/sv/src/main/resources/org/languagetool/resource/sv/compounds.txt | internal/languagetool/org/languagetool/rules/sv/compound_rule.go; internal/languagetool/org/languagetool/rules/sv/CompoundRuleTest_test.go; internal/languagetool/org/languagetool/rules/sv/data/compounds.txt; internal/languagetool/org/languagetool/rules/abstract_compound_rule.go | 50602271a2e9f3a314a90a0b321f402172014cca | 0 | 0 |  |  | 2026-07-26T12:02:19Z |
 | docs/faithful-port-checklist.md#3.C.3-WordCoherencyRule-SV | accepted | inspiration/languagetool/languagetool-language-modules/sv/src/main/java/org/languagetool/rules/sv/WordCoherencyRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractWordCoherencyRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordCoherencyDataLoader.java; inspiration/languagetool/languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/coherency.txt | internal/languagetool/org/languagetool/rules/sv/word_coherency_rule.go; internal/languagetool/org/languagetool/rules/sv/word_coherency_rule_test.go; internal/languagetool/org/languagetool/rules/sv/data/coherency.txt; internal/languagetool/org/languagetool/rules/abstract_word_coherency_rule.go; internal/languagetool/org/languagetool/rules/word_coherency_data_loader.go | b854059465d9fdeb65e8dc15381dfc3d9c7598cc | 0 | 0 |  |  | 2026-07-26T12:11:13Z |
+| docs/faithful-port-checklist.md#3.C.3-HiddenCharacterRule-UK | implementing | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/HiddenCharacterRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/HiddenCharacterRuleTest.java | internal/languagetool/org/languagetool/rules/uk/hidden_character_rule.go; internal/languagetool/org/languagetool/rules/uk/HiddenCharacterRuleTest_test.go | | 0 | 0 |  |  | 2026-07-26T12:15:50Z |
 
 ## Human inbox
 
@@ -444,7 +445,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ACCEPT 3.C.3-WordCoherencyRule-SV @ b8540594; next fire: implement next unchecked 3.C.3 leaf |
+| Notes | implementing 3.C.3-HiddenCharacterRule-UK |
 
 ---
 
@@ -2022,3 +2023,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T12:07:03Z ready: 3.C.3-WordCoherencyRule-SV @ b8540594 (implementer report; parent green reconfirm; SV_WORD_COHERENCY; official /sv/coherency.txt identical; mejl/mail matrix twin)
 - 2026-07-26T12:08:58Z validating: 3.C.3-WordCoherencyRule-SV @ b8540594
 - 2026-07-26T12:11:13Z ACCEPT: 3.C.3-WordCoherencyRule-SV @ b8540594 (validator + parent green reconfirm)
+- 2026-07-26T12:15:50Z implement: 3.C.3-HiddenCharacterRule-UK (uk.HiddenCharacterRule; soft hyphen U+00AD; full HiddenCharacterRuleTest twin; leaf after SV)
