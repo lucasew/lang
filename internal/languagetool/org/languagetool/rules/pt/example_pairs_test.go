@@ -12,7 +12,7 @@ func TestPT_ExamplePairs(t *testing.T) {
 	require.Equal(t, []string{"duna"}, NewPortugueseRedundancyRule(nil, PortugueseRedundancyFilePath).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"abstrato"}, NewPortugueseAgreementReplaceRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"infligiu"}, NewPortugueseWrongWordInContextRule(nil).GetIncorrectExamples()[0].GetCorrections())
-	require.Equal(t, []string{"hospedeira de bordo"}, NewPortugalPortugueseReplaceRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"hospedeira de bordo"}, NewPortugalPortugueseReplaceRule(nil, PortugalPortugueseReplaceFilePath).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"aeromoça"}, NewBrazilianPortugueseReplaceRule(nil, BrazilianPortugueseReplaceFilePath).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"é"}, NewPortugueseWordRepeatRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"what's"}, NewEnglishContractionSpellingRule(nil).GetIncorrectExamples()[0].GetCorrections())
