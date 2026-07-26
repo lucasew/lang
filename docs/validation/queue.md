@@ -455,6 +455,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.A.2-UkrainianTagger-testTagger | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/uk/UkrainianTagger.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/uk/UkrainianTaggerTest.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/uk/CompoundTagger.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/tagging/uk/PosTagHelper.java | internal/languagetool/org/languagetool/tagging/uk/; internal/languagetool/org/languagetool/tagging/uk/UkrainianTaggerTest_test.go; internal/languagetool/org/languagetool/tagging/uk/UkrainianTaggerTest_matrix_test.go | 052ce20e4cb1c27b7b7f231879e150c37dc00c07 | 1 | 0 | | | 2026-07-26T18:28:20Z |
 | docs/faithful-port-checklist.md#3.C.3-UkrainianSynthesizer | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/synthesis/uk/UkrainianSynthesizer.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/synthesis/uk/UkrainianSynthesizerTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/synthesis/BaseSynthesizer.java | internal/languagetool/org/languagetool/synthesis/uk/ | b743319be3f1e7844dc85691bf7bbcdbff7a75b4 | 0 | 0 | | | 2026-07-26T18:45:20Z |
 | docs/faithful-port-checklist.md#3.A.2-PortugueseTagger-testTagger | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/tagging/pt/PortugueseTagger.java; inspiration/languagetool/languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java; inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/TestTools.java | internal/languagetool/org/languagetool/tagging/pt/ | 268af43b390e16a21c05d770c5a5269a9a7413a8 | 0 | 0 | | | 2026-07-26T18:56:00Z |
+| docs/faithful-port-checklist.md#3.C.3-PortugueseSynthesizer | ready | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/synthesis/pt/PortugueseSynthesizer.java; inspiration/languagetool/languagetool-language-modules/pt/src/test/java/org/languagetool/synthesis/pt/PortugueseSynthesizerTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/synthesis/BaseSynthesizer.java | internal/languagetool/org/languagetool/synthesis/pt/ | 769075679626fd2b9973967bd841aaec5cc67813 | 0 | 0 | implementer ready @ 76907567: Instance+official portuguese_synth.dict/tags/pt.sor; full testSynthesizeString twin; invent NoTests removed; parent go test synthesis/pt green |  | 2026-07-26T19:01:40Z |
 
 ## Human inbox
 
@@ -464,7 +465,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | accepted 3.A.2-PortugueseTagger-testTagger @ 268af43b; next fire: pick next implementable leaf |
+| Notes | ready 3.C.3-PortugueseSynthesizer @ 76907567; next fire: validate |
 
 ---
 
@@ -2136,3 +2137,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T18:53:00Z ready: 3.A.2-PortugueseTagger-testTagger @ 268af43b (full myAssert + official portuguese.dict; parent go test tagging/pt green)
 - 2026-07-26T18:53:40Z validating: 3.A.2-PortugueseTagger-testTagger @ 268af43b
 - 2026-07-26T18:56:00Z ACCEPT: 3.A.2-PortugueseTagger-testTagger @ 268af43b (validator ACCEPT + parent green reconfirm; official portuguese.dict; full PortugueseTaggerTest myAssert twin)
+- 2026-07-26T18:58:50Z implement: 3.C.3-PortugueseSynthesizer (pt.PortugueseSynthesizer; full PortugueseSynthesizerTest twin; official portuguese_synth.dict; leaf after PortugueseTagger ACCEPT)
+- 2026-07-26T19:01:40Z ready: 3.C.3-PortugueseSynthesizer @ 76907567 (full testSynthesizeString + official synth dict; parent go test synthesis/pt green)
