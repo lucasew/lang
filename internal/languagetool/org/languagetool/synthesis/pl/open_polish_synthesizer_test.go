@@ -1,8 +1,6 @@
 package pl
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -14,23 +12,29 @@ func TestOpenPolishSynthesizerFromDir_Missing(t *testing.T) {
 	require.Nil(t, OpenPolishSynthesizerFromDictPath(""))
 }
 
-func TestOpenPolishSynthesizerFromDictPath_RealDict(t *testing.T) {
-	dir, _ := os.Getwd()
-	var dict string
-	for i := 0; i < 12; i++ {
-		cand := filepath.Join(dir, "inspiration/languagetool/languagetool-language-modules/pl/src/main/resources/org/languagetool/resource/pl/polish_synth.dict")
-		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
-			dict = cand
-			break
-		}
-		dir = filepath.Dir(dir)
+func TestOpenPolishSynthesizer_FromDict(t *testing.T) {
+	p := DiscoverPolishSynthDict()
+	if p == "" {
+		t.Skip("polish_synth.dict not discoverable")
 	}
-	if dict == "" {
-		t.Skip("polish_synth.dict not found")
-	}
-	s := OpenPolishSynthesizerFromDictPath(dict)
+	s := OpenPolishSynthesizerFromDictPath(p)
 	require.NotNil(t, s)
 	require.NotNil(t, s.Lookup)
+	require.NotEmpty(t, s.PossibleTags)
+	require.Equal(t, ResourceFilename, s.ResourceFileName)
+	require.Equal(t, TagsFileName, s.TagFileName)
 	// getPosTagCorrection retained on Polish type
 	require.Contains(t, s.GetPosTagCorrection("foo.bar"), ".*|.*")
+}
+
+func TestPolishSynthesizer_Instance(t *testing.T) {
+	s := Instance()
+	if s == nil {
+		t.Skip("polish_synth.dict / official PL synth resources not available")
+	}
+	require.Same(t, s, INSTANCE)
+	require.NotNil(t, s.Lookup)
+	require.NotEmpty(t, s.PossibleTags)
+	require.Equal(t, ResourceFilename, s.ResourceFileName)
+	require.Equal(t, TagsFileName, s.TagFileName)
 }

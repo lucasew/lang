@@ -8,8 +8,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 )
 
-// Java PolishSynthesizer constants.
+// Java PolishSynthesizer.RESOURCE_FILENAME / TAGS_FILE_NAME and internal tags.
 const (
+	ResourceFilename     = "/pl/polish_synth.dict"
+	TagsFileName         = "/pl/polish_tags.txt"
 	potentialNegationTag = ":aff"
 	negationTag          = ":neg"
 	compTag              = "com"
@@ -17,38 +19,40 @@ const (
 )
 
 var (
-	// segments matching .*[a-z]\.[a-z].* expand for setpos (getPosTagCorrection).
+	// Java PATTERN = Pattern.compile(".*[a-z]\\.[a-z].*")
 	plPosDotSegment = regexp.MustCompile(`.*[a-z]\.[a-z].*`)
-	negationTagRE   = regexp.MustCompile(negationTag)
+	// Java NEGATION_TAG_PATTERN = Pattern.compile(NEGATION_TAG)
+	negationTagRE = regexp.MustCompile(negationTag)
 )
 
-// PolishSynthesizer ports synthesis.pl.PolishSynthesizer.
+// PolishSynthesizer ports org.languagetool.synthesis.pl.PolishSynthesizer.
 type PolishSynthesizer struct {
 	*synthesis.BaseSynthesizer
 }
 
+// NewPolishSynthesizer ports private PolishSynthesizer() / deprecated Language ctor.
+// Java: super(RESOURCE_FILENAME, TAGS_FILE_NAME, "pl")
 func NewPolishSynthesizer(manual *synthesis.ManualSynthesizer) *PolishSynthesizer {
 	base := synthesis.NewBaseSynthesizer("pl", manual)
-	base.ResourceFileName = "/pl/polish_synth.dict"
-	base.TagFileName = "/pl/polish_tags.txt"
+	base.ResourceFileName = ResourceFilename
+	base.TagFileName = TagsFileName
 	return &PolishSynthesizer{BaseSynthesizer: base}
 }
 
-// INSTANCE ports PolishSynthesizer.INSTANCE.
-var INSTANCE = NewPolishSynthesizer(nil)
-
 // Synthesize ports PolishSynthesizer.synthesize(token, posTag).
-// null posTag → nil (Java null); + in tag forces regexp path.
+// Java null posTag → nil; empty string is not null in Java (Go uses "" for null).
 func (s *PolishSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
 	if posTag == "" {
-		// Java: if (posTag == null) return null; empty string is not null — treat as miss
+		// Java: if (posTag == null) return null;
 		return nil, nil
 	}
-	if token == nil {
+	if s == nil || s.BaseSynthesizer == nil || token == nil {
 		return nil, nil
 	}
 	isNegated := isNegatedPL(token, posTag)
-	if strings.Contains(posTag, "+") {
+	// Java: if (posTag.indexOf('+') > 0) return synthesize(token, posTag, true);
+	// indexOf > 0: '+' at position 0 does not force the regexp path.
+	if strings.Index(posTag, "+") > 0 {
 		return s.SynthesizeRE(token, posTag, true)
 	}
 	return s.getWordForms(token, posTag, isNegated), nil
@@ -57,9 +61,10 @@ func (s *PolishSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag
 // SynthesizeRE ports PolishSynthesizer.synthesize(token, pos, posTagRegExp).
 func (s *PolishSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, pos string, posTagRegExp bool) ([]string, error) {
 	if pos == "" {
+		// Java: if (pos == null) return null;
 		return nil, nil
 	}
-	if token == nil {
+	if s == nil || s.BaseSynthesizer == nil || token == nil {
 		return nil, nil
 	}
 	if !posTagRegExp {
@@ -68,15 +73,17 @@ func (s *PolishSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, pos 
 	posTag := pos
 	isNegated := isNegatedPL(token, posTag)
 	if isNegated {
+		// Java: posTag = posTag.replace(NEGATION_TAG, POTENTIAL_NEGATION_TAG + "?");
 		posTag = strings.ReplaceAll(posTag, negationTag, potentialNegationTag+"?")
 	}
-	// Java: Pattern.compile(posTag.replace('+', '|'))
+	// Java: Pattern.compile(posTag.replace('+', '|')); Matcher.matches() on full tag.
 	pattern := strings.ReplaceAll(posTag, "+", "|")
 	re, err := regexp.Compile("^(?:" + pattern + ")$")
 	if err != nil {
-		// Java: printStackTrace and return what was collected (empty)
+		// Java PatternSyntaxException: printStackTrace, return collected (empty) after HashSet.
 		return []string{}, nil
 	}
+	// Java: Set<String> hs = new HashSet<>(results); results.clear(); results.addAll(hs);
 	seen := map[string]struct{}{}
 	var results []string
 	for _, tag := range s.possibleTags() {
@@ -94,18 +101,20 @@ func (s *PolishSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, pos 
 	return results, nil
 }
 
-// isNegatedPL ports Java isNegated calculation (operator precedence && before ||):
+// isNegatedPL ports Java isNegated calculation (operator precedence && before ||).
 //
-//	posTag has :neg || (token POS has :neg && posTag lacks com && posTag lacks sup)
+//	Only when token.getPOSTag() != null:
+//	posTag.indexOf(":neg") > 0
+//	  || token.getPOSTag().indexOf(":neg") > 0
+//	     && !(posTag.indexOf("com") > 0)
+//	     && !(posTag.indexOf("sup") > 0)
 func isNegatedPL(token *languagetool.AnalyzedToken, posTag string) bool {
-	if token == nil {
+	if token == nil || token.GetPOSTag() == nil {
+		// Java: isNegated stays false when token POS is null.
 		return false
 	}
-	tokenPOS := ""
-	if token.GetPOSTag() != nil {
-		tokenPOS = *token.GetPOSTag()
-	}
-	// Java indexOf > 0 (not found is -1; at index 0 is false)
+	tokenPOS := *token.GetPOSTag()
+	// Java indexOf > 0 (not found is -1; match at index 0 is false)
 	a := strings.Index(posTag, negationTag) > 0
 	b := strings.Index(tokenPOS, negationTag) > 0
 	c := !(strings.Index(posTag, compTag) > 0)
@@ -114,69 +123,43 @@ func isNegatedPL(token *languagetool.AnalyzedToken, posTag string) bool {
 }
 
 // getWordForms ports PolishSynthesizer.getWordForms.
-// Negated: lookup lemma|:aff (neg→aff) and prefix "nie".
+// Java uses DictionaryLookup(getDictionary()) only — not Base.lookup (no manual/removal).
+// Negated: lookup lemma|:aff (neg→aff replaceFirst) and prefix "nie".
 func (s *PolishSynthesizer) getWordForms(token *languagetool.AnalyzedToken, posTag string, isNegated bool) []string {
 	lemma := ""
-	if token.GetLemma() != nil {
+	if token != nil && token.GetLemma() != nil {
 		lemma = *token.GetLemma()
 	}
-	if lemma == "" {
-		lemma = token.GetToken()
-	}
 	if isNegated {
-		affTag := negationTagRE.ReplaceAllString(posTag, potentialNegationTag)
+		// Java: NEGATION_TAG_PATTERN.matcher(posTag).replaceFirst(POTENTIAL_NEGATION_TAG)
+		affTag := posTag
+		if idx := negationTagRE.FindStringIndex(posTag); idx != nil {
+			affTag = posTag[:idx[0]] + potentialNegationTag + posTag[idx[1]:]
+		}
 		var forms []string
-		for _, stem := range s.lookupLemmaTag(lemma, affTag) {
+		for _, stem := range s.lookupDictOnly(lemma, affTag) {
 			forms = append(forms, "nie"+stem)
 		}
 		return forms
 	}
-	return s.lookupLemmaTag(lemma, posTag)
+	return s.lookupDictOnly(lemma, posTag)
 }
 
-func (s *PolishSynthesizer) lookupLemmaTag(lemma, posTag string) []string {
-	if s == nil || s.BaseSynthesizer == nil || lemma == "" {
+// lookupDictOnly is Java DictionaryLookup(getDictionary()).lookup(lemma+"|"+posTag) stems.
+func (s *PolishSynthesizer) lookupDictOnly(lemma, posTag string) []string {
+	if s == nil || s.BaseSynthesizer == nil || s.Lookup == nil {
 		return nil
 	}
-	var out []string
-	if s.Lookup != nil {
-		out = append(out, s.Lookup(lemma, posTag)...)
-	}
-	if s.Manual != nil {
-		out = append(out, s.Manual.Lookup(lemma, posTag)...)
-	}
-	if s.Removal != nil {
-		filtered := out[:0]
-		for _, f := range out {
-			removed := false
-			for _, r := range s.Removal.Lookup(lemma, posTag) {
-				if r == f {
-					removed = true
-					break
-				}
-			}
-			if !removed {
-				filtered = append(filtered, f)
-			}
-		}
-		out = filtered
-	}
-	return out
+	return s.Lookup(lemma, posTag)
 }
 
 func (s *PolishSynthesizer) possibleTags() []string {
 	if s == nil || s.BaseSynthesizer == nil {
 		return nil
 	}
+	// Java: load possibleTags from TAGS_FILE_NAME once; Open path sets PossibleTags.
 	if len(s.PossibleTags) > 0 {
 		return s.PossibleTags
-	}
-	if s.Manual != nil {
-		var tags []string
-		for t := range s.Manual.GetPossibleTags() {
-			tags = append(tags, t)
-		}
-		return tags
 	}
 	return nil
 }
@@ -190,7 +173,8 @@ func (s *PolishSynthesizer) GetPosTagCorrection(posTag string) string {
 	pos := -1
 	for i, t := range tags {
 		if plPosDotSegment.MatchString(t) {
-			// Java: Pattern.LITERAL "." → ".*|.*"
+			// Java: "(.*" + DOT.matcher(tags[i]).replaceAll(".*|.*") + ".*)"
+			// DOT is Pattern.LITERAL "."
 			tags[i] = "(.*" + strings.ReplaceAll(t, ".", ".*|.*") + ".*)"
 			pos = i
 		}
