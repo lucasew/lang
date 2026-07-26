@@ -83,23 +83,9 @@ func collectPOSTagsRU(atr *languagetool.AnalyzedTokenReadings) []string {
 	return out
 }
 
-// NoDisambiguationRussianPartialPosTagFilter ports
-// org.languagetool.rules.ru.NoDisambiguationRussianPartialPosTagFilter
-// (PartialPosTagFilter + Russian tagger only, no disambiguator).
-// When tag is nil, uses the process-wide filter tagger from SetDefaultRussianPartialPosTagger.
-// Without a wired tagger, Accept fails closed (do not invent POS).
-type NoDisambiguationRussianPartialPosTagFilter struct {
-	*rules.PartialPosTagFilter
-}
-
-func NewNoDisambiguationRussianPartialPosTagFilter(tag func(string) []string) *NoDisambiguationRussianPartialPosTagFilter {
-	if tag == nil {
-		tag = russianNoDisambigTagPOS
-	}
-	return &NoDisambiguationRussianPartialPosTagFilter{
-		PartialPosTagFilter: rules.NewPartialPosTagFilter(tag),
-	}
-}
+// Process-wide Russian filter tagger + disambiguator hooks
+// (shared by RussianPartialPosTagFilter and NoDisambiguationRussianPartialPosTagFilter).
+// Java: Languages.getLanguageForShortCode("ru").getTagger() / getDisambiguator().
 
 var (
 	ruPartialTagMu sync.RWMutex
@@ -113,7 +99,7 @@ type filterDisambiguator interface {
 	Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 }
 
-// SetDefaultRussianPartialPosTagger wires Russian tagger POS for NoDisambiguation filters.
+// SetDefaultRussianPartialPosTagger wires Russian tagger POS for PartialPosTagFilter probes.
 // Java: Languages.getLanguageForShortCode("ru").getTagger().
 func SetDefaultRussianPartialPosTagger(tag func(string) []string) {
 	ruPartialTagMu.Lock()
@@ -151,15 +137,10 @@ func getFilterDisambiguator() filterDisambiguator {
 	return ruFilterDisambig
 }
 
-func russianNoDisambigTagPOS(partial string) []string {
-	tag := getDefaultRussianPartialPosTagger()
-	if tag == nil {
-		return nil
-	}
-	return tag(partial)
-}
-
-// WireRussianFilterTaggerFromTagWord installs POS list hook from lt.TagWord.
+// WireRussianFilterTaggerFromTagWord installs POS list hook from lt.TagWord /
+// RussianTagger.Tag (Java: Languages.getLanguageForShortCode("ru").getTagger()).
+// Used by NoDisambiguationRussianPartialPosTagFilter and RussianPartialPosTagFilter.
+// Nil tw clears the hook (fail-closed).
 func WireRussianFilterTaggerFromTagWord(tw func(token string) []languagetool.TokenTag) {
 	if tw == nil {
 		SetDefaultRussianPartialPosTagger(nil)
