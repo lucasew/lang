@@ -1555,7 +1555,7 @@
 - [ ] org/languagetool/rules/uk/SearchHelper.java::SearchHelper.Condition
 - [ ] org/languagetool/rules/uk/SearchHelper.java::SearchHelper.Context
 - [ ] org/languagetool/rules/uk/SimpleReplaceRenamedRule.java::SimpleReplaceRenamedRule
-- [ ] org/languagetool/rules/uk/SimpleReplaceRule.java::SimpleReplaceRule
+- [x] org/languagetool/rules/uk/SimpleReplaceRule.java::SimpleReplaceRule
 - [ ] org/languagetool/rules/uk/SimpleReplaceSoftRule.java::SimpleReplaceSoftRule
 - [ ] org/languagetool/rules/uk/SimpleReplaceSoftRule.java::SimpleReplaceSoftRule.ContextRepl
 - [ ] org/languagetool/rules/uk/TokenAgreementAdjNounExceptionHelper.java::TokenAgreementAdjNounExceptionHelper
