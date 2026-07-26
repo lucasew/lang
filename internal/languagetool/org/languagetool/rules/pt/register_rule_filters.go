@@ -51,7 +51,7 @@ func init() {
 	c.Register("org.languagetool.rules.pt.PortugueseProclisisFilter", func() patterns.RuleFilter {
 		return NewPortugueseProclisisFilter()
 	})
-	// Participle regular/irregular needs PT synthesizer; fail-closed without Synthesize.
+	// Participle regular/irregular: Java PortugueseSynthesizer field; fail-closed without dual forms.
 	c.Register("org.languagetool.rules.pt.RegularIrregularParticipleFilter", func() patterns.RuleFilter {
 		return NewRegularIrregularParticipleFilter()
 	})
