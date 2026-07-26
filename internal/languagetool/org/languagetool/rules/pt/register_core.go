@@ -135,7 +135,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	pe := NewPortugueseWordinessRule(nil, PortugueseWordinessFilePath)
 	lt.AddRuleChecker(pe.GetID(), rules.AsSentenceCheckerSimple(pe.Match))
 
-	wiki := NewPortugueseWikipediaRule(nil)
+	wiki := NewPortugueseWikipediaRule(nil, PortugueseWikipediaFilePath)
 	lt.AddRuleChecker(wiki.GetID(), rules.AsSentenceCheckerSimple(wiki.Match))
 
 	wr := NewPortugueseWordRepeatRule(map[string]string{"repetition": "Repetição de palavra"})

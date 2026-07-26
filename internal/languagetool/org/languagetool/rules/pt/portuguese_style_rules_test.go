@@ -12,7 +12,7 @@ import (
 )
 
 func TestPortugueseWikipediaRule(t *testing.T) {
-	rule := NewPortugueseWikipediaRule(nil)
+	rule := NewPortugueseWikipediaRule(nil, PortugueseWikipediaFilePath)
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("a diversos pedidos."))))
 
 	matches := rule.Match(languagetool.AnalyzePlain("Respondeu à diversos pedidos."))
