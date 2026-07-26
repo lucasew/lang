@@ -211,14 +211,14 @@ func TestPrepNounException_VidDoPlusMinus(t *testing.T) {
 func TestNumrNounException_SurfaceArms(t *testing.T) {
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("багатьох", "numr:p:v_rod"), atr("людей", "noun:anim:p:v_rod"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("дві", "numr:f:v_naz"), atr("ранку", "noun:inanim:m:v_rod"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 	// ordinary pair not covered by these surface arms
 	require.False(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("дві", "numr:f:v_naz"), atr("книги", "noun:inanim:f:v_naz"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 }
 
 func TestNounVerbException_EarlyArms(t *testing.T) {
@@ -382,63 +382,65 @@ func TestNumrNounException_JavaArms(t *testing.T) {
 	// багатьох — soft skip
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("для", "prep"), atr("багатьох", "numr:p:v_rod"), atr("людей", "noun:anim:p:v_rod"),
-	}, 1, 2))
+	}, 1, 2, nil, false))
 
 	// noun surface ранок/ранку
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("п'ять", "numr:p:v_naz"), atr("ранку", "noun:inanim:m:v_rod"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 
 	// lemma soft: весь
 	v := "весь"
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("три", "numr:p:v_naz"), atrLemma("весь", &v, "adj:m:v_naz"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 
-	// 22 червня
+	// 22 червня — state.number
 	ch := "червень"
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("22", "number"), atrLemma("червня", &ch, "noun:inanim:m:v_rod"),
-	}, 0, 1))
+	}, 0, 1, nil, true))
 
 	// 3 / 4 — Java numrPos > 2 (SENT_START pad)
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("SENT_START"), atr("3", "number"), atr("/"), atr("4", "number"), atr("понеділка", "noun"),
-	}, 3, 4))
+	}, 3, 4, nil, true))
 
 	// № before — Java numrPos > 1
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("SENT_START"), atr("№"), atr("5", "number"), atr("розділ", "noun"),
-	}, 2, 3))
+	}, 2, 3, nil, true))
 
 	// adj.*numr
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("двадцять", "numr"), atr("перший", "adj:m:v_naz:numr"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 
 	// обоє + anim p naz
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("обоє", "numr"), atr("режисери", "noun:anim:p:v_naz"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 
 	// сьома вода
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("сьома", "numr"), atr("вода", "noun:inanim:f:v_naz"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 
 	// два + adj p rod at end
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("два", "numr:p:v_naz"), atr("нових", "adj:p:v_rod"),
-	}, 0, 1))
+	}, 0, 1, nil, false))
 
-	// хвилин п'ять — TIME_PLUS before numr; Java requires non-disjoint inflections
+	// хвилин п'ять — TIME_PLUS before numr; Java uses masterInflections (p:v_rod after 5-9 α adjust)
+	// against raw numr tags p:v_naz the intersection would fail.
 	hv := "хвилина"
+	master5 := []Inflection{{Gender: "p", Case: "v_rod"}}
 	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("SENT_START"),
 		atrLemma("хвилин", &hv, "noun:inanim:p:v_rod"),
-		atr("п'ять", "numr:p:v_rod"),
+		atr("п'ять", "numr:p:v_naz"),
 		atr("люди", "noun:anim:p:v_naz"),
-	}, 2, 3))
+	}, 2, 3, master5, false))
 }
 
 func TestPrepNounException_StrongAndNonInfl(t *testing.T) {

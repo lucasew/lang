@@ -98,7 +98,10 @@ func NewTokenAgreementNumrNounRuleWithMessages(messages map[string]string) *Toke
 			}
 			return NumrNounAgree(CollectPOSTags(left), CollectPOSTags(right))
 		},
-		exception: IsNumrNounException,
+		// Match() uses IsNumrNounException with master/isNumber; this is only for meta wiring.
+		exception: func(tokens []*languagetool.AnalyzedTokenReadings, leftIdx, rightIdx int) bool {
+			return IsNumrNounException(tokens, leftIdx, rightIdx, nil, false)
+		},
 	}
 	initTokenAgreementMeta(r.tokenAgreementMatch, messages)
 	return r
@@ -251,11 +254,14 @@ func (r *TokenAgreementNumrNounRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 
 		// півтора/fract + раз → special message
+		// Java: potentialRuleMatch.addSuggestedReplacement(numr + " раза")
 		if numrPivtoraRE.MatchString(numrClean) || numrFractRE.MatchString(numrClean) {
 			if numrRazRE.MatchString(cleanLower) {
 				msg := "Після десяткового дробу або «півтора» треба вживати «раза»"
 				m := rules.NewRuleMatch(r, sentence, numrTok.GetStartPos(), tok.GetEndPos(), msg)
 				m.ShortMessage = r.shortMsg
+				// Java sets URL too; suggestions are the Java-visible outcome asserted by tests.
+				m.SetSuggestedReplacements([]string{numrTok.GetToken() + " раза"})
 				out = append(out, m)
 				numrPos = -1
 				continue
@@ -263,10 +269,12 @@ func (r *TokenAgreementNumrNounRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 
 		// «тон» → «тонн»
+		// Java: match spans the noun only; suggestion is plain "тонн"
 		if cleanLower == "тон" {
 			msg := "Ви мали на увазі: «тонн»?"
 			m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
 			m.ShortMessage = r.shortMsg
+			m.SetSuggestedReplacements([]string{"тонн"})
 			out = append(out, m)
 			numrPos = -1
 			continue
@@ -291,9 +299,10 @@ func (r *TokenAgreementNumrNounRule) Match(sentence *languagetool.AnalyzedSenten
 			}
 		}
 
-		// багато limited to m:v_rod / force nouns
+		// limit багато with m:v_dav -у/-ю (PosTagHelper.hasMaleUA) or force nouns
+		// Java: if !(hasMaleUA(tokenReadings) || NOUN_FORCE) { reset; continue }
 		if strings.HasSuffix(numrClean, "багато") {
-			if !hasMaleUA(tok) && !nounForcePattern.MatchString(cleanLower) {
+			if !taguk.HasMaleUA(tok) && !nounForcePattern.MatchString(cleanLower) {
 				numrPos = -1
 				continue
 			}
@@ -342,7 +351,8 @@ func (r *TokenAgreementNumrNounRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 		disjoint := !InflectionsIntersect(master, slave)
 		if genderPlural != "" || disjoint {
-			if IsNumrNounException(tokens, numrPos, i) {
+			// Java: isException(tokens, state, masterInflections, nounInflections, nounTokenReadings)
+			if IsNumrNounException(tokens, numrPos, i, master, isNumber) {
 				numrPos = -1
 				continue
 			}
@@ -384,11 +394,18 @@ func (r *TokenAgreementNumrNounRule) numrNounSuggestions(
 	for _, numrInf := range master {
 		genderTag := ":" + numrInf.Gender + ":"
 		vidmTag := numrInf.Case
+		// Java iterates nounTokenReadings (noun/adj only; skips _END / non-noun)
 		for _, nr := range nounTok.GetReadings() {
 			if nr == nil || nr.GetPOSTag() == nil {
 				continue
 			}
 			old := *nr.GetPOSTag()
+			if strings.HasSuffix(old, "_END") {
+				continue
+			}
+			if !strings.HasPrefix(old, "noun") && !strings.HasPrefix(old, "adj") {
+				continue
+			}
 			if numrInf.animMatters() {
 				animTag := ":" + numrInf.AnimTag
 				if strings.HasPrefix(old, "noun") {
@@ -821,20 +838,6 @@ func isNynCase(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 			if lem == base {
 				return true
 			}
-		}
-	}
-	return false
-}
-
-// hasMaleUA ports PosTagHelper.hasMaleUA (m + UA noun soft path for багато).
-func hasMaleUA(tok *languagetool.AnalyzedTokenReadings) bool {
-	if tok == nil {
-		return false
-	}
-	for _, p := range CollectPOSTags(tok) {
-		if strings.HasPrefix(p, "noun") && strings.Contains(p, ":m:") &&
-			(strings.Contains(p, "v_rod") || strings.Contains(p, "v_naz")) {
-			return true
 		}
 	}
 	return false
