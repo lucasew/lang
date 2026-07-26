@@ -1561,9 +1561,9 @@
 - [x] org/languagetool/rules/uk/TokenAgreementAdjNounExceptionHelper.java::TokenAgreementAdjNounExceptionHelper
 - [x] org/languagetool/rules/uk/TokenAgreementAdjNounRule.java::TokenAgreementAdjNounRule
 - [x] org/languagetool/rules/uk/TokenAgreementAdjNounRule.java::TokenAgreementAdjNounRule.State
-- [ ] org/languagetool/rules/uk/TokenAgreementNounVerbExceptionHelper.java::TokenAgreementNounVerbExceptionHelper
-- [ ] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule
-- [ ] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule.State
+- [x] org/languagetool/rules/uk/TokenAgreementNounVerbExceptionHelper.java::TokenAgreementNounVerbExceptionHelper
+- [x] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule
+- [x] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule.State
 - [ ] org/languagetool/rules/uk/TokenAgreementNumrNounExceptionHelper.java::TokenAgreementNumrNounExceptionHelper
 - [ ] org/languagetool/rules/uk/TokenAgreementNumrNounRule.java::TokenAgreementNumrNounRule
 - [ ] org/languagetool/rules/uk/TokenAgreementNumrNounRule.java::TokenAgreementNumrNounRule.State
@@ -1577,8 +1577,8 @@
 - [x] org/languagetool/rules/uk/UkrainianCommaWhitespaceRule.java::UkrainianCommaWhitespaceRule
 - [x] org/languagetool/rules/uk/UkrainianUppercaseSentenceStartRule.java::UkrainianUppercaseSentenceStartRule
 - [ ] org/languagetool/rules/uk/UkrainianWordRepeatRule.java::UkrainianWordRepeatRule
-- [ ] org/languagetool/rules/uk/VerbInflectionHelper.java::VerbInflectionHelper
-- [ ] org/languagetool/rules/uk/VerbInflectionHelper.java::VerbInflectionHelper.Inflection
+- [x] org/languagetool/rules/uk/VerbInflectionHelper.java::VerbInflectionHelper
+- [x] org/languagetool/rules/uk/VerbInflectionHelper.java::VerbInflectionHelper.Inflection
 - [x] org/languagetool/synthesis/uk/UkrainianSynthesizer.java::UkrainianSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/uk/SimpleDisambiguator.java::SimpleDisambiguator
 - [ ] org/languagetool/tagging/disambiguation/uk/SimpleDisambiguator.java::SimpleDisambiguator.MatcherEntry
