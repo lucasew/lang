@@ -8,6 +8,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
+// Java PortugueseWrongWordInContextRule.getFilename() → "/pt/wrongWordInContext.txt"
+// Go embeds the same official resource under data/ (path law twin).
+const PortugueseWrongWordInContextFilePath = "/pt/wrongWordInContext.txt"
+
 //go:embed data/wrongWordInContext.txt
 var wrongWordInContextFS embed.FS
 
@@ -48,8 +52,15 @@ func NewPortugueseWrongWordInContextRule(messages map[string]string) *Portuguese
 		LanguageCode:       "pt",
 		Entries:            loadWrongWordInContext(),
 	}
-	// Java: getCategoryString → "Confusão de Palavras: $match"
+	// Java ctor order:
+	// 1) super(messages, lang) → base sets CONFUSED_WORDS + Misspelling via getCategoryString
+	//    getCategoryString → "Confusão de Palavras: $match"
+	// 2) super.setCategory(Categories.SEMANTICS.getCategory(messages));
+	// 3) setLocQualityIssueType(ITSIssueType.Grammar);
+	// Final category is SEMANTICS (not CONFUSED_WORDS); issue type is Grammar.
 	rules.InitWrongWordInContextMeta(base, messages, "Confusão de Palavras: $match")
+	base.Category = rules.CatSemantics.GetCategory(messages)
+	base.IssueType = rules.ITSGrammar
 	// Java: infringiu → infligiu
 	base.AddExamplePair(
 		rules.Wrong("O acidente <marker>infringiu</marker> grandes danos."),
