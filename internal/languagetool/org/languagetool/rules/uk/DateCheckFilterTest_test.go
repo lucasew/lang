@@ -1,6 +1,6 @@
 package uk
 
-// Twin of DateCheckFilterTest
+// Twin of org.languagetool.rules.uk.DateCheckFilterTest
 import (
 	"testing"
 
@@ -16,6 +16,7 @@ func TestDateCheckFilter_GetDayOfWeek(t *testing.T) {
 		require.NoError(t, err, s)
 		require.Equal(t, want, got, s)
 	}
+	// Java DateCheckFilterTest.testGetDayOfWeek
 	assertDay("Нед", 1)
 	assertDay("Пон", 2)
 	assertDay("пон", 2)
@@ -36,9 +37,25 @@ func TestDateCheckFilter_Month(t *testing.T) {
 		require.NoError(t, err, s)
 		require.Equal(t, want, got, s)
 	}
+	// Java DateCheckFilterTest.testMonth
 	assertMonth("січ", 1)
 	assertMonth("гру", 12)
 	assertMonth("грудень", 12)
 	assertMonth("Грудень", 12)
 	assertMonth("ГРУДЕНЬ", 12)
+}
+
+// Java-quirk coverage: second startsWith("ли") for November is dead code —
+// "листопад" (November) matches July first.
+func TestDateCheckFilter_Month_JulyPrefixWins(t *testing.T) {
+	filter := NewDateCheckFilter()
+	m, err := filter.GetMonth("ли")
+	require.NoError(t, err)
+	require.Equal(t, 7, m)
+	m, err = filter.GetMonth("липень")
+	require.NoError(t, err)
+	require.Equal(t, 7, m)
+	m, err = filter.GetMonth("листопад")
+	require.NoError(t, err)
+	require.Equal(t, 7, m, "Java dead-code quirk: ли* is always July")
 }
