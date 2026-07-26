@@ -83,6 +83,13 @@ func sharedPortugueseSpellerSynth() *ptsynthesis.PortugueseSynthesizer {
 	return ptSpellerSynth
 }
 
+// PortugueseSpellerReading is one tagger reading (lemma + POS) for dialectAlternative /
+// isValidCliticVerb same-reading pairing (Java AnalyzedToken).
+type PortugueseSpellerReading struct {
+	Lemma string
+	POS   string
+}
+
 // MorfologikPortugueseSpellerRule ports rules.pt.MorfologikPortugueseSpellerRule.
 // Word lists: pt/ignore.txt, pt/prohibit.txt, pt/spelling.txt, pt/multiwords.txt.
 // getRuleMatches post-filters: _english_ignore_, titlecase-hyphen, diaeresis,
@@ -97,6 +104,9 @@ type MorfologikPortugueseSpellerRule struct {
 	TagPOS func(word string) []string
 	// TagLemma optional lemmas for dialect/clitic dialect invalidation.
 	TagLemma func(word string) []string
+	// TagReadings optional same-reading lemma+POS pairs (Java dialectAlternative / isValidCliticVerb).
+	// Preferred over zipping TagLemma×TagPOS.
+	TagReadings func(word string) []PortugueseSpellerReading
 	// SynthesizeForPosTags ports PortugueseSynthesizer.synthesizeForPosTags (dialectAlternative).
 	// Nil → lemma expansion arm fail-closed (surface map only).
 	SynthesizeForPosTags func(lemma string, acceptTag func(string) bool) []string
@@ -223,16 +233,9 @@ func (r *MorfologikPortugueseSpellerRule) Match(sentence *languagetool.AnalyzedS
 			out = append(out, m)
 			continue
 		}
-		// Fill suggestions from wired CFSA2 dict when map Speller is empty
-		// (Java speller1.getSuggestions always has the binary multi-speller).
-		if len(m.GetSuggestedReplacements()) == 0 {
-			if sugs := r.wordSuggestions(word); len(sugs) > 0 {
-				m.SetSuggestedReplacements(filterDoNotSuggest(sugs))
-			}
-		}
 		// filter do_not_suggest (also via FilterNoSuggestWordsFn on base path).
-		// Abbreviations are prepended via GetAdditionalTopSuggestionsFn (Java getAdditionalTopSuggestions),
-		// not by replacing the full suggestion list.
+		// Do not invent suggestions when base Match left the list empty — Java getRuleMatches
+		// only replaces forms via replaceFormsOfFirstMatch / compound path, not a free fill.
 		if sugs := m.GetSuggestedReplacements(); len(sugs) > 0 {
 			m.SetSuggestedReplacements(filterDoNotSuggest(sugs))
 		}

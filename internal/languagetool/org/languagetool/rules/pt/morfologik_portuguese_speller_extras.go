@@ -124,7 +124,8 @@ func loadDialectAlternationMapping(variantCode string) map[string]string {
 		}
 		parts := strings.Split(line, "=")
 		if len(parts) != 2 {
-			continue
+			// Java RuntimeException on unexpected format
+			panic("Unexpected format in " + p + ": " + line + " - expected two parts delimited by '='")
 		}
 		a, b := tools.JavaStringTrim(parts[0]), tools.JavaStringTrim(parts[1])
 		if col == 1 {
@@ -204,7 +205,7 @@ func matchSurface(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) strin
 }
 
 // dialectAlternative ports MorfologikPortugueseSpellerRule.dialectAlternative:
-// 1) surface lemma map hit; 2) tagger lemma → map → synthesizer form for same POS tag.
+// 1) surface lemma map hit; 2) per reading: lemma in map → synthesize form with that reading's POS tag.
 func (r *MorfologikPortugueseSpellerRule) dialectAlternative(word string) string {
 	if r == nil || r.dialectMap == nil || word == "" {
 		return ""
@@ -214,56 +215,26 @@ func (r *MorfologikPortugueseSpellerRule) dialectAlternative(word string) string
 		return v
 	}
 	// Annoying check: the word's lemma exists on the TXT list → synthesize form
-	if r.TagLemma == nil || r.TagPOS == nil || r.SynthesizeForPosTags == nil {
+	// Java: for (AnalyzedTokenReadings reading : readings) for (AnalyzedToken token : reading.getReadings())
+	// pair lemma+tag from the *same* reading only (no cross-product).
+	if r.TagReadings == nil || r.SynthesizeForPosTags == nil {
 		return ""
 	}
-	lemmas := r.TagLemma(word)
-	tags := r.TagPOS(word)
-	if len(lemmas) == 0 || len(tags) == 0 {
-		return ""
-	}
-	// Java iterates readings; pair lemma+tag from same reading. We approximate with
-	// all combinations (same as expanding each reading independently when tags/lemmas align).
-	// Prefer zip by index when lengths match (typical single-token tag path).
-	n := len(lemmas)
-	if len(tags) < n {
-		n = len(tags)
-	}
-	for i := 0; i < n; i++ {
-		lemma := lemmas[i]
-		tag := tags[i]
-		if tag == "" || lemma == "" {
+	for _, rd := range r.TagReadings(word) {
+		if rd.POS == "" || rd.Lemma == "" {
 			continue
 		}
-		candidate, ok := r.dialectMap[strings.ToLower(lemma)]
+		candidate, ok := r.dialectMap[strings.ToLower(rd.Lemma)]
 		if !ok {
+			// Java: dialectAlternationMapping.containsKey(lemma) — keys lowercased at load
 			continue
 		}
-		want := tag
+		want := rd.POS
 		forms := r.SynthesizeForPosTags(candidate, func(tagStr string) bool {
 			return tagStr == want
 		})
 		if len(forms) > 0 {
 			return forms[0]
-		}
-	}
-	// Fallback: any lemma in map with any tag of the word (Java only uses same reading tag).
-	for _, lemma := range lemmas {
-		candidate, ok := r.dialectMap[strings.ToLower(lemma)]
-		if !ok {
-			continue
-		}
-		for _, tag := range tags {
-			if tag == "" {
-				continue
-			}
-			want := tag
-			forms := r.SynthesizeForPosTags(candidate, func(tagStr string) bool {
-				return tagStr == want
-			})
-			if len(forms) > 0 {
-				return forms[0]
-			}
 		}
 	}
 	return ""
@@ -342,30 +313,42 @@ func (r *MorfologikPortugueseSpellerRule) checkCompoundElements(parts []string) 
 	return joined
 }
 
-// isValidCliticVerb ports isValidCliticVerb when TagPOS is set.
-// Without TagPOS returns false (fail-closed).
+// isValidCliticVerb ports isValidCliticVerb when tagger hooks are set.
+// Without TagReadings/TagPOS returns false (fail-closed).
 func (r *MorfologikPortugueseSpellerRule) isValidCliticVerb(word string) bool {
-	if r == nil || r.TagPOS == nil || word == "" {
+	if r == nil || word == "" {
 		return false
 	}
-	tags := r.TagPOS(word)
-	hasClitic := false
-	for _, tag := range tags {
-		if cliticVerbPOS.MatchString(tag) {
-			hasClitic = true
-			break
-		}
-	}
-	if !hasClitic {
-		return false
-	}
-	// Java: invalid if lemma is in dialectAlternationMapping (map keys are lowercased at load).
-	if r.TagLemma != nil && r.dialectMap != nil {
-		for _, lemma := range r.TagLemma(word) {
-			if _, bad := r.dialectMap[strings.ToLower(lemma)]; bad {
-				return false
+	// Java: for each reading, if POS matches V.+:P.+, return !map.containsKey(lemma).
+	if r.TagReadings != nil {
+		for _, rd := range r.TagReadings(word) {
+			if rd.POS == "" || !cliticVerbPOS.MatchString(rd.POS) {
+				continue
 			}
+			if r.dialectMap != nil {
+				if _, bad := r.dialectMap[strings.ToLower(rd.Lemma)]; bad {
+					return false
+				}
+			}
+			return true
+		}
+		return false
+	}
+	// Legacy path when only TagPOS is set (tests).
+	if r.TagPOS == nil {
+		return false
+	}
+	for _, tag := range r.TagPOS(word) {
+		if cliticVerbPOS.MatchString(tag) {
+			if r.TagLemma != nil && r.dialectMap != nil {
+				for _, lemma := range r.TagLemma(word) {
+					if _, bad := r.dialectMap[strings.ToLower(lemma)]; bad {
+						return false
+					}
+				}
+			}
+			return true
 		}
 	}
-	return true
+	return false
 }

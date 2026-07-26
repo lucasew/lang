@@ -6,14 +6,14 @@ import (
 
 // WirePortugueseSpellerTagger ports Java MorfologikPortugueseSpellerRule's use of
 // PortugueseTagger.INSTANCE for isValidCliticVerb / dialectAlternative lemma path.
-// Sets TagPOS and TagLemma from a single-token Tag() call (fail-closed if tagger nil).
+// Sets TagReadings (same-reading pairs), TagPOS, and TagLemma from Tag() (fail-closed if nil).
 //
-// Java POS for clitics is often "V…:P…" from the dict; TagPOS returns those tags as-is.
+// Java POS for clitics is often "V…:P…" from the dict; tags are returned as-is.
 func WirePortugueseSpellerTagger(r *MorfologikPortugueseSpellerRule, t *taggingpt.PortugueseTagger) {
 	if r == nil || t == nil {
 		return
 	}
-	r.TagPOS = func(word string) []string {
+	r.TagReadings = func(word string) []PortugueseSpellerReading {
 		if word == "" {
 			return nil
 		}
@@ -21,38 +21,54 @@ func WirePortugueseSpellerTagger(r *MorfologikPortugueseSpellerRule, t *taggingp
 		if len(atrs) == 0 || atrs[0] == nil {
 			return nil
 		}
-		var out []string
+		var out []PortugueseSpellerReading
 		for _, rd := range atrs[0].GetReadings() {
-			if rd == nil || rd.GetPOSTag() == nil {
+			if rd == nil {
 				continue
 			}
-			out = append(out, *rd.GetPOSTag())
+			pos, lem := "", ""
+			if rd.GetPOSTag() != nil {
+				pos = *rd.GetPOSTag()
+			}
+			if rd.GetLemma() != nil {
+				lem = *rd.GetLemma()
+			}
+			if pos == "" && lem == "" {
+				continue
+			}
+			out = append(out, PortugueseSpellerReading{Lemma: lem, POS: pos})
+		}
+		return out
+	}
+	r.TagPOS = func(word string) []string {
+		rds := r.TagReadings(word)
+		if len(rds) == 0 {
+			return nil
+		}
+		var out []string
+		for _, rd := range rds {
+			if rd.POS != "" {
+				out = append(out, rd.POS)
+			}
 		}
 		return out
 	}
 	r.TagLemma = func(word string) []string {
-		if word == "" {
-			return nil
-		}
-		atrs := t.Tag([]string{word})
-		if len(atrs) == 0 || atrs[0] == nil {
+		rds := r.TagReadings(word)
+		if len(rds) == 0 {
 			return nil
 		}
 		var out []string
 		seen := map[string]struct{}{}
-		for _, rd := range atrs[0].GetReadings() {
-			if rd == nil || rd.GetLemma() == nil {
+		for _, rd := range rds {
+			if rd.Lemma == "" {
 				continue
 			}
-			l := *rd.GetLemma()
-			if l == "" {
+			if _, ok := seen[rd.Lemma]; ok {
 				continue
 			}
-			if _, ok := seen[l]; ok {
-				continue
-			}
-			seen[l] = struct{}{}
-			out = append(out, l)
+			seen[rd.Lemma] = struct{}{}
+			out = append(out, rd.Lemma)
 		}
 		return out
 	}

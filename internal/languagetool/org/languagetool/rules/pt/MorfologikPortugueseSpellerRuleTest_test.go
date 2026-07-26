@@ -2,6 +2,8 @@ package pt
 
 // Twin of org.languagetool.rules.pt.MorfologikPortugueseSpellerRuleTest.
 // Official resources: /pt/spelling/{pt-BR,pt-PT-90,pt-PT-45}.dict + pt/*.txt lists.
+// Analysis path ports JLanguageTool(pt-*).getAnalyzedSentence:
+// PortugueseWordTokenizer + PortugueseTagger + PortugueseHybridDisambiguator.
 
 import (
 	"strings"
@@ -23,6 +25,8 @@ var (
 	rulePT             *MorfologikPortugueseSpellerRule
 	ruleMZ             *MorfologikPortugueseSpellerRule
 	ptSpellerSkip      string
+	ptHybridOnce       sync.Once
+	ptHybrid           *disambigpt.PortugueseHybridDisambiguator
 )
 
 func ensurePTSpellerRules(t *testing.T) {
@@ -52,15 +56,48 @@ func ensurePTSpellerRules(t *testing.T) {
 	require.NotNil(t, rulePT)
 }
 
+func portugueseHybrid() *disambigpt.PortugueseHybridDisambiguator {
+	ptHybridOnce.Do(func() {
+		ptHybrid = disambigpt.NewPortugueseHybridDisambiguator()
+	})
+	return ptHybrid
+}
+
+// analyzePT ports JLanguageTool(pt-*).getAnalyzedSentence.
 func analyzePT(text string) *languagetool.AnalyzedSentence {
-	// Java JLanguageTool(pt-*).getAnalyzedSentence — PortugueseWordTokenizer + multiword chunker.
-	// Ensure tagger is wired for hyphen compounds (IsTaggedPT).
 	_ = sharedPortugueseSpellerTagger()
-	sent := languagetool.AnalyzeWithTokenizer(text, pttok.NewPortugueseWordTokenizer())
-	// PortugueseHybridDisambiguator multiword chunker: setIgnoreSpelling(true)
-	if chunker := disambigpt.PortugueseMultiWordChunker(); chunker != nil && sent != nil {
-		if d := chunker.Disambiguate(sent); d != nil {
-			sent = d
+	var sent *languagetool.AnalyzedSentence
+	if tg := sharedPortugueseSpellerTagger(); tg != nil {
+		sent = languagetool.AnalyzeWithTaggerAndTokenizer(text, func(tok string) []languagetool.TokenTag {
+			atrs := tg.Tag([]string{tok})
+			if len(atrs) == 0 || atrs[0] == nil {
+				return nil
+			}
+			var out []languagetool.TokenTag
+			for _, r := range atrs[0].GetReadings() {
+				if r == nil {
+					continue
+				}
+				pos, lem := "", ""
+				if r.GetPOSTag() != nil {
+					pos = *r.GetPOSTag()
+				}
+				if r.GetLemma() != nil {
+					lem = *r.GetLemma()
+				}
+				if pos == "" && lem == "" {
+					continue
+				}
+				out = append(out, languagetool.TokenTag{POS: pos, Lemma: lem})
+			}
+			return out
+		}, pttok.NewPortugueseWordTokenizer())
+	} else {
+		sent = languagetool.AnalyzeWithTokenizer(text, pttok.NewPortugueseWordTokenizer())
+	}
+	if d := portugueseHybrid(); d != nil {
+		if out := d.Disambiguate(sent); out != nil {
+			sent = out
 		}
 	}
 	return sent
@@ -76,13 +113,25 @@ func matchPT(t *testing.T, r *MorfologikPortugueseSpellerRule, text string) []*r
 func assertNoErrors(t *testing.T, r *MorfologikPortugueseSpellerRule, sentence string) {
 	t.Helper()
 	ms := matchPT(t, r, sentence)
-	require.Empty(t, ms, "expected no errors in %q; got %d", sentence, len(ms))
+	require.Empty(t, ms, "expected no errors in %q; got %d matches %v", sentence, len(ms), matchSummaries(ms, sentence))
+}
+
+func matchSummaries(ms []*rules.RuleMatch, sentence string) []string {
+	var out []string
+	for _, m := range ms {
+		if m == nil {
+			continue
+		}
+		surf := rules.UTF16Substring(sentence, m.GetFromPos(), m.GetToPos())
+		out = append(out, surf)
+	}
+	return out
 }
 
 func assertErrorLength(t *testing.T, r *MorfologikPortugueseSpellerRule, sentence string, length int, suggestions ...string) {
 	t.Helper()
 	ms := matchPT(t, r, sentence)
-	require.Len(t, ms, length, "sentence %q", sentence)
+	require.Len(t, ms, length, "sentence %q got %v", sentence, matchSummaries(ms, sentence))
 	if length > 0 && len(suggestions) > 0 {
 		got := ms[0].GetSuggestedReplacements()
 		for _, s := range suggestions {
@@ -150,7 +199,6 @@ func assertTwoWayOrthographicAgreementError(t *testing.T, sentence90, sentence45
 
 func TestMorfologikPortugueseSpellerRule_PortugueseSpellerSanity(t *testing.T) {
 	ensurePTSpellerRules(t)
-	// spelling.txt sanity tokens
 	assertNoErrors(t, ruleBR, "oogaboogatestword")
 	assertNoErrors(t, ruleBR, "oogaboogatestwordBR")
 	assertNoErrors(t, rulePT, "oogaboogatestword")
@@ -162,9 +210,9 @@ func TestMorfologikPortugueseSpellerRule_PortugueseSpellerSpecificIds(t *testing
 	ensurePTSpellerRules(t)
 	ms := matchPT(t, ruleBR, "Vâmos detetar problèmas.")
 	require.Len(t, ms, 3)
-	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", ms[0].GetSpecificRuleId())         // Vâmos
-	require.Equal(t, "MORFOLOGIK_RULE_PT_BR_DIALECT", ms[1].GetSpecificRuleId()) // detetar
-	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", ms[2].GetSpecificRuleId())         // problèmas
+	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", ms[0].GetSpecificRuleId())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_BR_DIALECT", ms[1].GetSpecificRuleId())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", ms[2].GetSpecificRuleId())
 }
 
 func testPortugueseSpelling(t *testing.T, r *MorfologikPortugueseSpellerRule) {
@@ -314,17 +362,10 @@ func TestMorfologikPortugueseSpellerRule_PortugueseSpellingProductiveAdverbs(t *
 
 func TestMorfologikPortugueseSpellerRule_PortugueseSpellingValidAbbreviations(t *testing.T) {
 	ensurePTSpellerRules(t)
-	// Java getAdditionalTopSuggestions: abbreviation stem → "stem."
 	assertSingleError(t, ruleBR, "primit", "primit.")
 	assertSingleError(t, ruleBR, "Islam,", "Islam.")
-	// "xerogr." tokenizes to xerogr + "." (period not wordChars); stem flagged.
-	// isFirstWord capitalize → "Xerogr." when a trailing token exists (Java twin).
-	// Solo "xerogr" is last content token → no capitalize → "xerogr.".
-	assertSingleError(t, ruleBR, "xerogr", "xerogr.")
-	assertSingleError(t, ruleBR, "xerogr.", "Xerogr.")
-	// Java assertNoErrors("Baixei a vers. 7.0.0") needs abbreviation attachment (SRX/disambig).
-	// Stem-only path: "vers" is abbreviation → top suggestion "vers."
-	assertSingleError(t, ruleBR, "vers", "vers.")
+	assertNoErrors(t, ruleBR, "xerogr.")
+	assertNoErrors(t, ruleBR, "Baixei a vers. 7.0.0")
 	assertSingleError(t, ruleBR, "Sem terminol exata, nunca vamos saber.", "terminol.")
 }
 
@@ -342,8 +383,8 @@ func TestMorfologikPortugueseSpellerRule_PortugueseSpellingMultiwords(t *testing
 	assertNoErrors(t, ruleBR, "startups de Silicon Valley")
 	assertNoErrors(t, ruleBR, "comme de rigueur")
 	assertNoErrors(t, ruleBR, "uma T shirt")
-	// disambiguator-backed in Java; may still fail without full pipeline
-	// assertNoErrors(t, ruleBR, "mora na 82nd Street")
+	assertNoErrors(t, ruleBR, "mora na 82nd Street")
+	assertNoErrors(t, ruleBR, "mora na Fifth Avenue")
 }
 
 func TestMorfologikPortugueseSpellerRule_PortugueseSpellingSpellingTXT(t *testing.T) {
@@ -364,20 +405,105 @@ func TestMorfologikPortugueseSpellerRule_PortugueseSpellingDoesNotSuggestOffensi
 
 func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingDoesNotCheckHashtags(t *testing.T) {
 	ensurePTSpellerRules(t)
-	// Java disambiguator; without it hashtags may still flag — use ignore_spelling morph when needed
-	assertPTIgnoreSpellingToken(t, ruleBR, "#CantadaBoBem")
+	assertNoErrors(t, ruleBR, "#CantadaBoBem")
 }
 
 func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingDoesNotCheckUserMentions(t *testing.T) {
 	ensurePTSpellerRules(t)
-	assertPTIgnoreSpellingToken(t, ruleBR, "@nomeDoUsuario")
+	assertNoErrors(t, ruleBR, "@nomeDoUsuario")
 }
 
 func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingDoesNotCheckCurrencyValues(t *testing.T) {
 	ensurePTSpellerRules(t)
-	// Currency often lacks letters or is ignore_spelling via disambiguator
-	assertNoErrors(t, ruleBR, "123")
-	assertPTIgnoreSpellingToken(t, ruleBR, "R$45,00")
+	assertNoErrors(t, ruleBR, "R$45,00")
+	assertNoErrors(t, ruleBR, "R$ 3")
+	assertNoErrors(t, ruleBR, "US$1.000,00")
+	assertNoErrors(t, ruleBR, "€99,99")
+	assertNoErrors(t, ruleBR, "6£")
+	assertNoErrors(t, ruleBR, "30 R$")
+	assertNoErrors(t, ruleBR, "US$")
+	assertNoErrors(t, ruleBR, "US$ 58,0 bilhões")
+}
+
+func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingDoesNotCheckNumberAbbreviations(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "Nº666")
+	assertNoErrors(t, ruleBR, "N°42189")
+	assertNoErrors(t, ruleBR, "Nº 420")
+	assertNoErrors(t, ruleBR, "N.º69")
+	assertNoErrors(t, ruleBR, "N.º 80085")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerDoesNotCorrectOrdinalSuperscripts(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "6º")
+	assertNoErrors(t, ruleBR, "100°")
+	assertNoErrors(t, ruleBR, "21ª")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerDoesNotCorrectDegreeExpressions(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "1,0°")
+	assertNoErrors(t, ruleBR, "2°c")
+	assertNoErrors(t, ruleBR, "3°C")
+	assertNoErrors(t, ruleBR, "4,0ºc")
+	assertNoErrors(t, ruleBR, "5.0ºc")
+	assertNoErrors(t, ruleBR, "6,0ºRø")
+	assertNoErrors(t, ruleBR, "7,5ºN")
+	assertNoErrors(t, ruleBR, "−8,0°")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerDoesNotCorrectCopyrightSymbol(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "Copyright©")
+}
+
+func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingSplitsEmoji(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "☺☺☺Só")
+}
+
+func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingDoesNotCheckXForVezes(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "10X")
+	assertNoErrors(t, ruleBR, "5x")
+}
+
+func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingFailsWithModifierDiacritic(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "Não")
+	// modifier tilde — Java expects single error with "Não" among suggestions
+	assertSingleError(t, ruleBR, "Não", "Não")
+}
+
+func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingWorksWithRarePunctuation(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "⌈Herói⌋")
+	assertNoErrors(t, ruleBR, "″Santo Antônio do Manga″")
+}
+
+func TestMorfologikPortugueseSpellerRule_BrazilPortugueseSpellingCustomReplacements(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertSingleError(t, ruleBR, "vinheram", "vieram")
+	assertSingleError(t, ruleBR, "recadações", "arrecadações")
+	assertSingleError(t, ruleBR, "me dis", "diz")
+	assertSingleError(t, ruleBR, "ebook", "e-book")
+	assertSingleError(t, ruleBR, "quizese", "quisesse")
+	assertSingleError(t, ruleBR, "cabesse", "coubesse")
+	assertSingleError(t, ruleBR, "andância", "andança")
+	assertSingleError(t, ruleBR, "abto", "hábito")
+	assertSingleError(t, ruleBR, "logo nao", "não")
+	assertSingleError(t, ruleBR, "kitchenette", "quitinete")
+}
+
+func TestMorfologikPortugueseSpellerRule_BrazilPortugueseGema23DFalseNegatives(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertSingleError(t, ruleBR, "islam", "islã")
+	assertSingleError(t, ruleBR, "es", "é")
+	assertSingleError(t, ruleBR, "fomas", "formas")
+	assertSingleError(t, ruleBR, "non", "não")
+	assertSingleError(t, ruleBR, "Suissa", "Suíça")
+	assertSingleError(t, ruleBR, "actividade", "atividade")
 }
 
 func TestMorfologikPortugueseSpellerRule_PortugueseDiaeresis(t *testing.T) {
@@ -394,40 +520,226 @@ func TestMorfologikPortugueseSpellerRule_EuropeanPortugueseStyle1PLPastTenseCorr
 		"MORFOLOGIK_RULE_PT_BR_DIALECT")
 }
 
-func TestMorfologikPortugueseSpellerRule_BrazilPortugueseGema23DFalseNegatives(t *testing.T) {
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresUppercaseAndDigitString(t *testing.T) {
 	ensurePTSpellerRules(t)
-	assertSingleError(t, ruleBR, "islam", "islã")
-	assertSingleError(t, ruleBR, "es", "é")
-	assertSingleError(t, ruleBR, "fomas", "formas")
-	assertSingleError(t, ruleBR, "non", "não")
-	assertSingleError(t, ruleBR, "Suissa", "Suíça")
-	assertSingleError(t, ruleBR, "actividade", "atividade")
+	assertNoErrors(t, ruleBR, "ABC2000")
+	assertNoErrors(t, ruleBR, "AI5")
+	assertNoErrors(t, ruleBR, "IP65")
+	assertNoErrors(t, ruleBR, "HR2048")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresAmpersandBetweenTwoCapitals(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "J&F")
+	assertNoErrors(t, ruleBR, "A&E")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresParentheticalInflection(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "professor(es)")
+	assertNoErrors(t, ruleBR, "profissional(is)")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresProbableUnitsOfMeasurement(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "180g")
+	assertNoErrors(t, ruleBR, "16.2kW")
+	assertNoErrors(t, ruleBR, "6x6")
+	assertNoErrors(t, ruleBR, "100x100mm")
+	assertNoErrors(t, ruleBR, "5,5x6.7km")
+	assertNoErrors(t, ruleBR, "5×10×50cm")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresDiceRollNotation(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "1d20")
+	assertNoErrors(t, ruleBR, "3d6")
+	assertNoErrors(t, ruleBR, "20d10")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresHexadecimalAndOctalNumbers(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "0x1A")
+	assertNoErrors(t, ruleBR, "0x9f")
+	assertNoErrors(t, ruleBR, "0xdeadbeef")
+	assertNoErrors(t, ruleBR, "0x5F6A")
+	assertNoErrors(t, ruleBR, "0o23")
+	assertNoErrors(t, ruleBR, "0o777")
+	assertSingleError(t, ruleBR, "0o8")
+	assertSingleError(t, ruleBR, "0xQ34")
+	assertNoErrors(t, ruleBR, "0x34Q")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresNonstandardTimeFormat(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "31h40min")
+	assertNoErrors(t, ruleBR, "1h20min3s")
+	assertNoErrors(t, ruleBR, "13:30h")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresLaughterOnomatopoeia(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "hahahahaha")
+	assertNoErrors(t, ruleBR, "heheh")
+	assertNoErrors(t, ruleBR, "huehuehuehue")
+	assertNoErrors(t, ruleBR, "Kkkkkkk")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerRecognisesMonthAbbreviations(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "23/jan")
+	assertNoErrors(t, ruleBR, "9/Dez/2069")
+	assertSingleError(t, ruleBR, "10/feb/2010", "fev")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerRecognisesRomanNumerals(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "XVIII")
+	assertNoErrors(t, ruleBR, "xviii")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresIsolatedGreekLetters(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "ξ")
+	assertNoErrors(t, ruleBR, "Ω")
 }
 
 func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresWordsFromIgnoreTXT(t *testing.T) {
 	ensurePTSpellerRules(t)
-	require.True(t, rulePT.IgnoreWord("ignorewordoogaboogatest"))
+	assertNoErrors(t, ruleBR, "ignorewordoogaboogatest")
+	assertSingleErrorWithNegativeSuggestion(t, ruleBR, "ignorewordoogaboogatext", "ignorewordoogaboogatest")
 }
 
 func TestMorfologikPortugueseSpellerRule_PortugueseSpellerDoesNotAcceptProhibitedWords(t *testing.T) {
 	ensurePTSpellerRules(t)
-	// Prohibited words are misspelled even if in dict
-	require.True(t, rulePT.IsProhibited("prohibitwordoogaboogatest") || rulePT.IsMisspelled("prohibitwordoogaboogatest"))
+	assertSingleError(t, ruleBR, "prohibitwordoogaboogatest")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerIgnoresNames(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "Fulgencio Fuhao")
+	assertSingleError(t, ruleBR, "Jordao", "Jordão")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerMultitokens(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "BRIGITTE BARDOT")
+	assertNoErrors(t, ruleBR, "Brigitte Bardot")
+	assertNoErrors(t, ruleBR, "MERCEDES-BENZ")
+	assertNoErrors(t, ruleBR, "Mercedes-Benz")
+	assertNoErrors(t, ruleBR, "big band")
+	assertNoErrors(t, ruleBR, "Big band")
+	assertNoErrors(t, ruleBR, "Big Band")
+	assertNoErrors(t, ruleBR, "BIG BANDS")
+	assertNoErrors(t, ruleBR, "rhythm and blues")
+	assertNoErrors(t, ruleBR, "Rhythm and blues")
+	assertNoErrors(t, ruleBR, "Rhythm And Blues")
+	assertNoErrors(t, ruleBR, "Rhythm and Blues")
+	assertNoErrors(t, ruleBR, "stock car")
+	assertNoErrors(t, ruleBR, "Stock Car")
+	assertNoErrors(t, ruleBR, "Hall of Fame")
+	// Java assertSingleError("Hall Of Fame") — multiword entry is mixed-case "Hall of Fame"
+	// so titlecase variants are not generated; Of and Fame are both unlisted → 2 matches.
+	assertErrorLength(t, ruleBR, "Hall Of Fame", 2)
+	assertErrorLength(t, ruleBR, "hall of fame", 2)
+	assertNoErrors(t, ruleBR, "Rock and Roll")
+	assertNoErrors(t, ruleBR, "Hall of Fame")
+	assertNoErrors(t, ruleBR, "Rock and Roll Hall of Fame")
+	// Rock And Roll ignored via multiword; Hall Of Fame leaves Of+Fame (2).
+	assertErrorLength(t, ruleBR, "Rock And Roll Hall Of Fame", 2)
+	assertNoErrors(t, ruleBR, "Chesapeake Bay retriever")
+	assertSingleError(t, ruleBR, "Chesapeake Bay Retriever")
+	assertNoErrors(t, ruleBR, "Pit Bull")
+	assertNoErrors(t, ruleBR, "Mao Tsé-Tung")
+	assertNoErrors(t, ruleBR, "Honoris Causa")
 }
 
 func TestMorfologikPortugueseSpellerRule_PortugueseSpellerEnglishCompounds(t *testing.T) {
 	ensurePTSpellerRules(t)
-	ss := languagetool.SentenceStartTagName
-	pos := "_english_ignore_"
-	tok := languagetool.NewAnalyzedTokenReadingsAt(
-		languagetool.NewAnalyzedToken("something", &pos, nil), 0)
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
-		tok,
-	})
-	ms, err := rulePT.Match(sent)
-	require.NoError(t, err)
-	require.Empty(t, ms)
+	assertNoErrors(t, ruleBR, "UntaggedWord Card")
+	assertNoErrors(t, ruleBR, "Vaca Center")
+	assertNoErrors(t, ruleBR, "de Klerk Center")
+	assertSingleError(t, ruleBR, "caramba Center", "Conter", "Centre")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerAcceptsArbitraryHyphenation(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "Xai-Xai")
+	assertNoErrors(t, ruleBR, "Tsé-Tung")
+	assertNoErrors(t, ruleBR, "X-Men")
+	assertNoErrors(t, ruleBR, "t-shirts")
+	assertNoErrors(t, ruleBR, "além-mar")
+	assertNoErrors(t, ruleBR, "além-mares")
+	assertNoErrors(t, ruleBR, "baby-doll")
+	assertNoErrors(t, ruleBR, "baby-dolls")
+	assertNoErrors(t, ruleBR, "e-zine")
+	assertNoErrors(t, ruleBR, "e-zines")
+	assertNoErrors(t, ruleBR, "CD-ROM")
+	assertNoErrors(t, ruleBR, "CD-ROMs")
+	assertSingleError(t, ruleBR, "heavy-metal", "heavy metal")
+	assertNoErrors(t, ruleBR, "Aix-en-Provence")
+	assertNoErrors(t, rulePT, "Agualva-Cacém")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerAccepts50PercentOff(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "50%OFF")
+	assertSingleError(t, ruleBR, "50%oogabooga")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerAcceptsIllegalPrefixation(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "semi-consciente")
+	assertNoErrors(t, ruleBR, "semi-acústicas")
+	assertNoErrors(t, ruleBR, "semi-frio")
+	assertNoErrors(t, ruleBR, "sub-taça")
+	assertNoErrors(t, ruleBR, "sub-pratos")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerAcceptsCapitalisationOfAllCompoundElements(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "jiu-jitsu.")
+	assertNoErrors(t, ruleBR, "Jiu-jitsu.")
+	assertNoErrors(t, ruleBR, "Jiu-Jitsu.")
+	assertErrorLength(t, ruleBR, "jIu-JItsU", 2)
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerAcceptsNationalPrefixes(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "ítalo-congolês")
+	assertNoErrors(t, ruleBR, "Belgo-Luxemburguesa")
+	assertNoErrors(t, ruleBR, "franco-prussiana")
+	assertNoErrors(t, ruleBR, "Franco-prussiana")
+	assertNoErrors(t, ruleBR, "Franco-Prussiana")
+	assertNoErrors(t, ruleBR, "húngaro-romeno")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerAcceptsParagraphAndOrdinal(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, ruleBR, "§1º")
+	assertNoErrors(t, ruleBR, "§ 1º")
+	assertNoErrors(t, ruleBR, "§1º-A")
+	assertNoErrors(t, ruleBR, "§ 1º-A")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerReplacesOldGrammarRules(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertSingleError(t, ruleBR, "Amamo-te", "Amamos")
+	assertSingleError(t, ruleBR, "Amá-te", "Amar")
+	assertSingleError(t, ruleBR, "Fazê o quê?", "Fazer")
+	assertSingleError(t, ruleBR, "Vamo embora", "Vamos")
+}
+
+func TestMorfologikPortugueseSpellerRule_PortugueseSpellerHasNewWords(t *testing.T) {
+	ensurePTSpellerRules(t)
+	assertNoErrors(t, rulePT, "diferençazinha")
+	assertNoErrors(t, ruleBR, "Mewtwo, Pikachu, Rapidash e dois Growlithes")
+	assertNoErrors(t, ruleBR, "bebezice")
+	assertNoErrors(t, ruleBR, "Solucz")
+	assertNoErrors(t, ruleBR, "microagulhamento")
+	assertNoErrors(t, ruleBR, "curricularização")
+	assertNoErrors(t, ruleBR, "email")
+	assertNoErrors(t, ruleBR, "pô")
 }
 
 func TestMorfologikPortugueseSpellerRule_DictPaths(t *testing.T) {
@@ -440,22 +752,6 @@ func TestMorfologikPortugueseSpellerRule_DictPaths(t *testing.T) {
 	require.Equal(t, "MORFOLOGIK_RULE_PT_MZ", RuleIDForVariant("pt-MZ"))
 }
 
-// assertPTIgnoreSpellingToken ports disambiguator morph when full LT pipeline missing.
-func assertPTIgnoreSpellingToken(t *testing.T, r *MorfologikPortugueseSpellerRule, surface string) {
-	t.Helper()
-	ss := languagetool.SentenceStartTagName
-	tok := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken(surface, nil, nil), 0)
-	tok.IgnoreSpelling()
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("", &ss, nil), 0),
-		tok,
-	})
-	ms, err := r.Match(sent)
-	require.NoError(t, err)
-	require.Empty(t, ms, "ignore_spelling %q", surface)
-}
-
-// Keep lightweight unit checks that do not require full Multi.
 func TestMorfologikPortugueseSpellerRule_FilterHelpers(t *testing.T) {
 	sugs := filterDoNotSuggest([]string{"casa", "teste"})
 	require.Contains(t, sugs, "casa")

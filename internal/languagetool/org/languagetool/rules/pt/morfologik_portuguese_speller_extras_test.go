@@ -124,13 +124,13 @@ func TestMatch_DialectSurface(t *testing.T) {
 
 func TestIsValidCliticVerb_FailClosedWithoutTagger(t *testing.T) {
 	r := NewMorfologikPortugalPortugueseSpellerRule()
-	// Real portuguese.dict wires TagPOS (Java PortugueseTagger static).
-	// Fail-closed only when TagPOS is explicitly unset.
-	prev := r.TagPOS
-	r.TagPOS = nil
+	// Real portuguese.dict wires TagReadings/TagPOS (Java PortugueseTagger static).
+	// Fail-closed only when all tagger hooks are unset.
+	prevPOS, prevLem, prevRd := r.TagPOS, r.TagLemma, r.TagReadings
+	r.TagPOS, r.TagLemma, r.TagReadings = nil, nil, nil
 	require.False(t, r.isValidCliticVerb("diz-se"))
-	r.TagPOS = prev
-	if r.TagPOS != nil {
+	r.TagPOS, r.TagLemma, r.TagReadings = prevPOS, prevLem, prevRd
+	if r.TagReadings != nil || r.TagPOS != nil {
 		// Official tagger present: clitic forms with V.+:P.+ are valid
 		require.True(t, r.isValidCliticVerb("diz-se"))
 	} else {
@@ -231,13 +231,19 @@ func TestWordIsMisspelled_UsesRuleHook(t *testing.T) {
 }
 
 func TestWordSuggestions_MapThenFilter(t *testing.T) {
+	// Java wordSuggestions path: Multi (speller1) first, then map Speller.
+	// Clear Multi so the map Speller arm is exercised in isolation.
 	r := NewMorfologikPortugalPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller.AddWord("casa")
 	r.Speller.Suggestions["caza"] = []string{"casa"}
 	require.Equal(t, []string{"casa"}, r.wordSuggestions("caza"))
-	// without map suggestions and without filter dict → nil
-	r2 := NewMorfologikPortugalPortugueseSpellerRule()
-	require.Empty(t, r2.wordSuggestions("caza"))
+	// With Multi still attached, speller1 may also yield suggestions — casa must be among them.
+	rFull := NewMorfologikPortugalPortugueseSpellerRule()
+	if rFull.Multi != nil {
+		sugs := rFull.wordSuggestions("caza")
+		require.Contains(t, sugs, "casa")
+	}
 }
 
 func TestMatch_TitlecaseUsesRuleIsMisspelled(t *testing.T) {
