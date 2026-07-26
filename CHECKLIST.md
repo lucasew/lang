@@ -1455,7 +1455,7 @@
 - [x] org/languagetool/rules/ru/FutureDateFilter.java::FutureDateFilter
 - [ ] org/languagetool/rules/ru/INNNumberFilter.java::INNNumberFilter
 - [x] org/languagetool/rules/ru/MorfologikRussianSpellerRule.java::MorfologikRussianSpellerRule
-- [ ] org/languagetool/rules/ru/MorfologikRussianYOSpellerRule.java::MorfologikRussianYOSpellerRule
+- [x] org/languagetool/rules/ru/MorfologikRussianYOSpellerRule.java::MorfologikRussianYOSpellerRule
 - [ ] org/languagetool/rules/ru/NoDisambiguationRussianPartialPosTagFilter.java::NoDisambiguationRussianPartialPosTagFilter
 - [ ] org/languagetool/rules/ru/RussianCompoundRule.java::RussianCompoundRule
 - [x] org/languagetool/rules/ru/RussianConfusionProbabilityRule.java::RussianConfusionProbabilityRule
