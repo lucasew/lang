@@ -1546,7 +1546,7 @@
 - [ ] org/languagetool/rules/uk/LemmaHelper.java::LemmaHelper.Dir
 - [ ] org/languagetool/rules/uk/MissingHyphenRule.java::MissingHyphenRule
 - [ ] org/languagetool/rules/uk/MixedAlphabetsRule.java::MixedAlphabetsRule
-- [ ] org/languagetool/rules/uk/MorfologikUkrainianSpellerRule.java::MorfologikUkrainianSpellerRule
+- [x] org/languagetool/rules/uk/MorfologikUkrainianSpellerRule.java::MorfologikUkrainianSpellerRule
 - [ ] org/languagetool/rules/uk/PunctuationCheckRule.java::PunctuationCheckRule
 - [x] org/languagetool/rules/uk/RuleException.java::RuleException
 - [x] org/languagetool/rules/uk/RuleException.java::RuleException.Type
