@@ -1,21 +1,28 @@
 package ekavian
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 const (
+	// MorfologikEkavianSpellerRuleID ports MorfologikEkavianSpellerRule.RULE_ID / getId().
+	// Java: "MORFOLOGIK_RULE_SR_EKAVIAN"
 	MorfologikEkavianSpellerRuleID = "MORFOLOGIK_RULE_SR_EKAVIAN"
-	EkavianSpellerDict             = "/sr/dictionary/ekavian/serbian.dict"
-	// Java MorfologikEkavianSpellerRule path overrides (not hunspell/).
+	// EkavianSpellerDict ports getFileName().
+	// Java BASE_DICTIONARY_PATH + "serbian.dict" → "/sr/dictionary/ekavian/serbian.dict"
+	EkavianSpellerDict = "/sr/dictionary/ekavian/serbian.dict"
+	// Java path overrides under BASE_DICTIONARY_PATH (not hunspell/).
 	EkavianIgnoreFile   = "sr/dictionary/ekavian/ignored.txt"
 	EkavianSpellingFile = "sr/dictionary/ekavian/spelling.txt"
 	EkavianProhibitFile = "sr/dictionary/ekavian/prohibit.txt"
 )
 
 // MorfologikEkavianSpellerRule ports rules.sr.ekavian.MorfologikEkavianSpellerRule.
+// Thin super with path overrides + example pair; Java does not override isLatinScript
+// (default true → pure non-Latin tokens ignored via pHasNoLetterLatin).
 type MorfologikEkavianSpellerRule struct {
 	*morfologik.MorfologikSpellerRule
 	// incorrectExamples / correctExamples port Rule.addExamplePair (not on SpellingCheckRule).
@@ -23,7 +30,20 @@ type MorfologikEkavianSpellerRule struct {
 	correctExamples   []rules.CorrectExample
 }
 
+// NewMorfologikEkavianSpellerRule ports ctor with null UserConfig / empty altLanguages.
 func NewMorfologikEkavianSpellerRule() *MorfologikEkavianSpellerRule {
+	return NewMorfologikEkavianSpellerRuleWithUser(nil)
+}
+
+// NewMorfologikEkavianSpellerRuleWithUser ports
+// MorfologikEkavianSpellerRule(messages, language, userConfig, altLanguages).
+func NewMorfologikEkavianSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikEkavianSpellerRule {
+	var userWords []string
+	var accepted []string
+	if userConfig != nil {
+		accepted = userConfig.GetAcceptedWords()
+		userWords = morfologik.UserDictWordsForMulti(accepted, userConfig.GetPremiumUid())
+	}
 	r := &MorfologikEkavianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikEkavianSpellerRuleID, "sr", EkavianSpellerDict, nil),
@@ -33,13 +53,19 @@ func NewMorfologikEkavianSpellerRule() *MorfologikEkavianSpellerRule {
 		r.GetIgnoreFileNameFn = func() string { return "/" + EkavianIgnoreFile }
 		r.GetSpellingFileNameFn = func() string { return "/" + EkavianSpellingFile }
 		r.GetProhibitFileNameFn = func() string { return "/" + EkavianProhibitFile }
-		// clear default additional prohibit/custom that don't apply to SR paths
-		r.GetAdditionalProhibitFileNamesFn = func() []string { return nil }
-		r.GetAdditionalSpellingFileNamesFn = func() []string { return []string{spelling.GlobalSpellingFile} }
+		// Java does not override getAdditional*FileNames — keep SpellingCheckRule defaults
+		// (short+custom + spelling_global / prohibit_custom; missing files fail-closed).
 		spelling.ReapplyDefaultSpellingWordLists(r.SpellingCheckRule)
+		// Java SpellingCheckRule: wordsToBeIgnored.addAll(userConfig.getAcceptedWords()) always.
+		if userConfig != nil {
+			r.ApplyUserAcceptedWords(accepted)
+		}
 	}
-	// Java MorfologikSpellerRule.initSpeller (path getters already set).
-	r.InitSpellersFromGetters(nil, nil)
+	if userConfig != nil {
+		r.SetUserConfig(userConfig)
+	}
+	// Java MorfologikSpellerRule.initSpeller: binary + spelling.txt + custom + global (+ user FSA if premium).
+	r.InitSpellersFromGetters(nil, userWords)
 	// Java: бткие → битке
 	r.AddExamplePair(
 		rules.Wrong("Изгубила све сам <marker>бткие</marker>, ал' још водим рат."),
@@ -83,7 +109,11 @@ func (r *MorfologikEkavianSpellerRule) GetCorrectExamples() []rules.CorrectExamp
 func (r *MorfologikEkavianSpellerRule) GetIgnoreFileName() string { return "/" + EkavianIgnoreFile }
 
 // GetSpellingFileName ports getSpellingFileName.
-func (r *MorfologikEkavianSpellerRule) GetSpellingFileName() string { return "/" + EkavianSpellingFile }
+func (r *MorfologikEkavianSpellerRule) GetSpellingFileName() string {
+	return "/" + EkavianSpellingFile
+}
 
 // GetProhibitFileName ports getProhibitFileName.
-func (r *MorfologikEkavianSpellerRule) GetProhibitFileName() string { return "/" + EkavianProhibitFile }
+func (r *MorfologikEkavianSpellerRule) GetProhibitFileName() string {
+	return "/" + EkavianProhibitFile
+}
