@@ -398,7 +398,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-BrazilianToponymMapLoader | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/BrazilianToponymMapLoader.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/resource/pt/brazilian_municipalities/ | internal/languagetool/org/languagetool/rules/pt/brazilian_toponym_map_loader.go; internal/languagetool/org/languagetool/rules/pt/data/brazilian_municipalities/ | 3b73bfca32c936e86be71c9f47b63338b4ddc8ef | 0 | 0 |  |  | 2026-07-26T03:50:46Z |
 | docs/faithful-port-checklist.md#3.C.3-BrazilianToponymMap | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/BrazilianToponymMap.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/BrazilianToponymMapLoader.java | internal/languagetool/org/languagetool/rules/pt/brazilian_toponym_map.go; internal/languagetool/org/languagetool/rules/pt/brazilian_toponym_map_loader.go | 046913337724c6614eb61d76b20932e19cc85a1d | 0 | 0 |  |  | 2026-07-26T04:00:50Z |
 | docs/faithful-port-checklist.md#3.C.3-ConfusionCheckFilter | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/ConfusionCheckFilter.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/ConfusionPairsDataLoader.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/confusion_pairs.txt; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/confusion_pairs.txt; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/confusion_pairs.txt | internal/languagetool/org/languagetool/rules/pt/confusion_check_filter.go; internal/languagetool/org/languagetool/rules/pt/confusion_check_filter_test.go; internal/languagetool/org/languagetool/rules/pt/data/confusion_pairs.txt; internal/languagetool/org/languagetool/rules/pt/data/pt-BR/confusion_pairs.txt; internal/languagetool/org/languagetool/rules/pt/data/pt-PT/confusion_pairs.txt | 37d71b73aeedb6925fa5d2e86bffb04cad5865bc | 0 | 0 |  |  | 2026-07-26T04:22:43Z |
-| docs/faithful-port-checklist.md#3.C.3-DateFilterHelper | ready | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/DateFilterHelper.java | internal/languagetool/org/languagetool/rules/pt/date_filter_helper.go; internal/languagetool/org/languagetool/rules/pt/date_filter_helper_test.go | 95213429eb8b9be91bf44fcb6fe54895dcc1a959 | 0 | 0 |  |  | 2026-07-26T04:25:45Z |
+| docs/faithful-port-checklist.md#3.C.3-DateFilterHelper | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/DateFilterHelper.java | internal/languagetool/org/languagetool/rules/pt/date_filter_helper.go; internal/languagetool/org/languagetool/rules/pt/date_filter_helper_test.go | 95213429eb8b9be91bf44fcb6fe54895dcc1a959 | 0 | 0 |  |  | 2026-07-26T04:30:16Z |
 
 ## Human inbox
 
@@ -408,7 +408,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ready 3.C.3-DateFilterHelper @ 95213429; next fire: validate |
+| Notes | ACCEPT 3.C.3-DateFilterHelper @ 95213429; next fire: implement next PT leaf |
 
 ---
 
@@ -1838,3 +1838,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T04:22:43Z ACCEPT: 3.C.3-ConfusionCheckFilter @ 37d71b73 (validator + parent green reconfirm; CHECKLIST ConfusionCheckFilter [x])
 - 2026-07-26T04:24:02Z implement: 3.C.3-DateFilterHelper (PT; getDayOfWeek prefixes; getMonth; getDayOfWeek(Calendar) PT names; getCalendar Locale.UK)
 - 2026-07-26T04:25:45Z ready: 3.C.3-DateFilterHelper @ 95213429 (implementer report; parent green reconfirm; GetCalendar+GetDayOfWeekName; full day/month matrix; no sab invent)
+- 2026-07-26T04:28:45Z validating: 3.C.3-DateFilterHelper @ 95213429
+- 2026-07-26T04:30:16Z ACCEPT: 3.C.3-DateFilterHelper @ 95213429 (validator + parent green reconfirm; CHECKLIST DateFilterHelper [x])

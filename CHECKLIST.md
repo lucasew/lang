@@ -1384,7 +1384,7 @@
 - [x] org/languagetool/rules/pt/ConfusionCheckFilter.java::ConfusionCheckFilter
 - [x] org/languagetool/rules/pt/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
 - [x] org/languagetool/rules/pt/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/pt/DateFilterHelper.java::DateFilterHelper
+- [x] org/languagetool/rules/pt/DateFilterHelper.java::DateFilterHelper
 - [x] org/languagetool/rules/pt/EnglishContractionSpellingRule.java::EnglishContractionSpellingRule
 - [x] org/languagetool/rules/pt/FutureDateFilter.java::FutureDateFilter
 - [ ] org/languagetool/rules/pt/MorfologikPortugueseSpellerRule.java::MorfologikPortugueseSpellerRule
