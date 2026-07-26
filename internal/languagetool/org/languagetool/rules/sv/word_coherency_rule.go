@@ -23,6 +23,8 @@ func loadCoherencyData() *rules.WordCoherencyData {
 			panic(err)
 		}
 		defer f.Close()
+		// Java WordCoherencyDataLoader: file pairs only (no invent expand).
+		// Inflected forms match via tagger lemmas in AbstractWordCoherencyRule.
 		d, err := rules.LoadWordCoherencyData(f, "/sv/coherency.txt", false)
 		if err != nil {
 			panic(err)
