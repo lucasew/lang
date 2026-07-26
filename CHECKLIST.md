@@ -1420,7 +1420,7 @@
 - [x] org/languagetool/rules/pt/PostReformPortugueseCompoundRule.java::PostReformPortugueseCompoundRule
 - [x] org/languagetool/rules/pt/PostReformPortugueseDashRule.java::PostReformPortugueseDashRule
 - [x] org/languagetool/rules/pt/PreReformPortugueseCompoundRule.java::PreReformPortugueseCompoundRule
-- [ ] org/languagetool/rules/pt/PreReformPortugueseDashRule.java::PreReformPortugueseDashRule
+- [x] org/languagetool/rules/pt/PreReformPortugueseDashRule.java::PreReformPortugueseDashRule
 - [ ] org/languagetool/rules/pt/RegularIrregularParticipleFilter.java::RegularIrregularParticipleFilter
 - [x] org/languagetool/rules/pt/RomanNumeralFilter.java::RomanNumeralFilter
 - [x] org/languagetool/rules/pt/YMDDateCheckFilter.java::YMDDateCheckFilter
