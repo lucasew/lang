@@ -1391,7 +1391,7 @@
 - [x] org/languagetool/rules/pt/NewYearDateFilter.java::NewYearDateFilter
 - [x] org/languagetool/rules/pt/NoDisambiguationPortuguesePartialPosTagFilter.java::NoDisambiguationPortuguesePartialPosTagFilter
 - [x] org/languagetool/rules/pt/PortugalPortugueseReplaceRule.java::PortugalPortugueseReplaceRule
-- [ ] org/languagetool/rules/pt/PortugueseAccentuationCheckRule.java::PortugueseAccentuationCheckRule
+- [x] org/languagetool/rules/pt/PortugueseAccentuationCheckRule.java::PortugueseAccentuationCheckRule
 - [x] org/languagetool/rules/pt/PortugueseAccentuationDataLoader.java::PortugueseAccentuationDataLoader
 - [x] org/languagetool/rules/pt/PortugueseAgreementReplaceRule.java::PortugueseAgreementReplaceRule
 - [x] org/languagetool/rules/pt/PortugueseArchaismsRule.java::PortugueseArchaismsRule
