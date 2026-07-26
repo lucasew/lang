@@ -77,10 +77,16 @@ func isCyrillicRomanNumeral(s string) bool {
 	if s == "" {
 		return false
 	}
+	// Java LATIN_NUMBER_CYR: [IXІХV]{2,4}(...) | [IXІХV](-[а-яі]{1,4})
+	// bare single-letter І/Х/V are NOT roman numerals (dict/conj may apply, e.g. "і").
+	runes := []rune(s)
+	if len(runes) < 2 {
+		return false
+	}
 	// only roman-like glyphs (latin + cyrillic lookalikes І/Х), not arbitrary cyrillic words
 	ok := false
 	hasCyrLookalike := false
-	for _, r := range s {
+	for _, r := range runes {
 		switch r {
 		case 'I', 'V', 'X', 'L', 'C', 'D', 'M':
 			ok = true
