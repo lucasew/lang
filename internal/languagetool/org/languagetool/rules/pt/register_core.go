@@ -147,7 +147,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	acc := NewPortugueseAccentuationCheckRule()
+	acc := NewPortugueseAccentuationCheckRule(nil)
 	lt.AddRuleChecker(acc.GetID(), rules.AsSentenceCheckerSimple(acc.Match))
 	if acc.DefaultOff {
 		lt.MarkDefaultOff(acc.GetID())
