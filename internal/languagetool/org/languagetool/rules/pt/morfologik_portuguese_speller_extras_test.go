@@ -62,6 +62,7 @@ func TestMatch_TitlecaseHyphenAcceptedWhenLowerOK(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(PortuguesePTDict, 1)
 	sp.AddWord("guarda-chuva")
 	r := NewMorfologikPortugalPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	// Titlecase each part, lower form in dict → no match
@@ -76,6 +77,7 @@ func TestMatch_DiaeresisSuggestion(t *testing.T) {
 	// no words → empty dict fail-closed won't flag; inject misspell path
 	sp.AddWord("casa")
 	r := NewMorfologikPortugalPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	// word with ü not in dict → match with ü→u suggestion
@@ -91,6 +93,7 @@ func TestMatch_BRPastTense(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(PortugueseBRDict, 1)
 	sp.AddWord("casa")
 	r := NewMorfologikBrazilianPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	sent := languagetool.AnalyzePlain("falámos")
@@ -107,6 +110,7 @@ func TestMatch_DialectSurface(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(PortugueseBRDict, 1)
 	sp.AddWord("casa")
 	r := NewMorfologikBrazilianPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	// European form flagged on BR with dialect suggestion
@@ -120,14 +124,25 @@ func TestMatch_DialectSurface(t *testing.T) {
 
 func TestIsValidCliticVerb_FailClosedWithoutTagger(t *testing.T) {
 	r := NewMorfologikPortugalPortugueseSpellerRule()
+	// Real portuguese.dict wires TagPOS (Java PortugueseTagger static).
+	// Fail-closed only when TagPOS is explicitly unset.
+	prev := r.TagPOS
+	r.TagPOS = nil
 	require.False(t, r.isValidCliticVerb("diz-se"))
-	r.TagPOS = func(word string) []string {
-		if word == "diz-se" {
-			return []string{"VMIP3S0:P0"}
+	r.TagPOS = prev
+	if r.TagPOS != nil {
+		// Official tagger present: clitic forms with V.+:P.+ are valid
+		require.True(t, r.isValidCliticVerb("diz-se"))
+	} else {
+		// Inject twin of Java POS match
+		r.TagPOS = func(word string) []string {
+			if word == "diz-se" {
+				return []string{"VMIP3S0:P0"}
+			}
+			return nil
 		}
-		return nil
+		require.True(t, r.isValidCliticVerb("diz-se"))
 	}
-	require.True(t, r.isValidCliticVerb("diz-se"))
 }
 
 func TestGetIdForDialectIssue(t *testing.T) {
@@ -142,6 +157,7 @@ func TestMatch_DialectSetsSpecificRuleId(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(PortugueseBRDict, 1)
 	sp.AddWord("casa")
 	r := NewMorfologikBrazilianPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	sent := languagetool.AnalyzePlain("Abdónio")
@@ -155,6 +171,7 @@ func TestMatch_BRPastTenseSetsSpecificRuleId(t *testing.T) {
 	sp := morfologik.NewMorfologikSpeller(PortugueseBRDict, 1)
 	sp.AddWord("casa")
 	r := NewMorfologikBrazilianPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	sent := languagetool.AnalyzePlain("falámos")
@@ -174,6 +191,7 @@ func TestWirePortugueseSpellerTagger_Clitic(t *testing.T) {
 	// speller does NOT know diz-se → would flag without clitic check
 	sp.AddWord("casa")
 	r := NewMorfologikPortugalPortugueseSpellerRule()
+	r.ClearMultiSpellers()
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 	WirePortugueseSpellerTagger(r, tg)

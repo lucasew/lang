@@ -2,6 +2,7 @@ package morfologik
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 	"unicode/utf16"
 
@@ -272,7 +273,14 @@ func OpenMultiSpellerFromClasspathWithUser(binaryClasspath string, plainTextRels
 	if languageVariantRel != "" {
 		plainWords = append(plainWords, "LanguageTool", "LanguageTooler")
 	}
-	if n := plain.AttachWordsAsBinaryFSA(plainWords, binaryDiskPath); n == 0 {
+	// Java dicPathToDict key: plainTextReaderPaths.toString() + "|" + infoPath
+	// Include prepareLine pointer so language-specific prepareLineForSpeller filters stay distinct.
+	infoPath := strings.TrimSuffix(binaryDiskPath, filepath.Ext(binaryDiskPath)) + ".info"
+	cacheKey := strings.Join(rels, ",") + "|" + infoPath
+	if prepareLine != nil {
+		cacheKey = fmt.Sprintf("%s|prep:%p", cacheKey, prepareLine)
+	}
+	if n := plain.AttachWordsAsBinaryFSACached(plainWords, binaryDiskPath, cacheKey); n == 0 {
 		// fail closed: no plain speller if empty
 		plain = nil
 	}

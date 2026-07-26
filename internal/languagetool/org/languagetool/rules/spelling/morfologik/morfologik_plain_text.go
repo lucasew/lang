@@ -16,6 +16,11 @@ import (
 // plainTextAcceptCache caches loaded accept words by absolute file path.
 var plainTextAcceptCache sync.Map // string -> []string
 
+// plainRuntimeDictCache ports Java MorfologikMultiSpeller.dicPathToDict:
+// FSABuilder + CFSA2Serializer for plain-text spelling lists is expensive (~1s for PT),
+// so reuse Dictionary across speller1/2/3 and rule constructions (not user dicts).
+var plainRuntimeDictCache sync.Map // string -> *atticmorfo.Dictionary
+
 // PrepareLineFn ports Language.prepareLineForSpeller for plain-text multi-speller lines.
 // Nil → treat line as raw surface (strip # comments only).
 type PrepareLineFn func(line string) []string
@@ -46,38 +51,71 @@ func (s *MorfologikSpeller) LoadPlainTextAcceptFile(path string, prepareLine Pre
 // FSABuilder.build(sorted UTF-8 lines) + Dictionary.read with binary .info metadata.
 // Replaces invent map-only SpellerED scan with real SpellerFSA findRepl over the word FSA.
 // Returns number of words encoded (0 if empty).
+//
+// cacheKey non-empty enables dicPathToDict-style reuse (not for user dicts).
+// Java: cacheKey = plainTextPaths + "|" + infoPath.
 func (s *MorfologikSpeller) AttachWordsAsBinaryFSA(words []string, infoBesideDictPath string) int {
+	return s.attachWordsAsBinaryFSA(words, infoBesideDictPath, "")
+}
+
+// AttachWordsAsBinaryFSACached is AttachWordsAsBinaryFSA with Java dicPathToDict key.
+func (s *MorfologikSpeller) AttachWordsAsBinaryFSACached(words []string, infoBesideDictPath, cacheKey string) int {
+	return s.attachWordsAsBinaryFSA(words, infoBesideDictPath, cacheKey)
+}
+
+func (s *MorfologikSpeller) attachWordsAsBinaryFSA(words []string, infoBesideDictPath, cacheKey string) int {
 	if s == nil || len(words) == 0 {
 		return 0
 	}
 	// Load .info flags (Java uses dictPath.replace(.dict, .info) for plain-text runtime dict).
 	var info map[string]string
+	infoPath := ""
 	if infoBesideDictPath != "" {
-		infoPath := strings.TrimSuffix(infoBesideDictPath, filepath.Ext(infoBesideDictPath)) + ".info"
+		infoPath = strings.TrimSuffix(infoBesideDictPath, filepath.Ext(infoBesideDictPath)) + ".info"
 		if m, err := readSpellerInfoFile(infoPath); err == nil {
 			info = m
 			s.ApplyInfoProperties(m)
 		}
 	}
-	// Also keep Words for HasDictionary / any map fallback.
+	// Dedupe empty only — Java FSABuilder gets the line list (may include duplicates).
 	uniq := make([]string, 0, len(words))
 	for _, w := range words {
 		w = tools.JavaStringTrim(w)
 		if w == "" {
 			continue
 		}
-		s.AddWord(w)
 		uniq = append(uniq, w)
 	}
 	if len(uniq) == 0 {
 		return 0
 	}
-	d := atticmorfo.NewDictionaryFromWords(uniq, info)
-	if d == nil {
-		return 0
+
+	var d *atticmorfo.Dictionary
+	if cacheKey != "" {
+		if v, ok := plainRuntimeDictCache.Load(cacheKey); ok {
+			if cached, ok := v.(*atticmorfo.Dictionary); ok && cached != nil {
+				d = cached
+			}
+		}
 	}
+	if d == nil {
+		// Creating the dictionary at runtime can take ~1s for large spelling.txt merges
+		// (Java MorfologikMultiSpeller comment ~50ms for 50KB; PT multiwords is larger).
+		d = atticmorfo.NewDictionaryFromWords(uniq, info)
+		if d == nil {
+			return 0
+		}
+		if cacheKey != "" {
+			actual, _ := plainRuntimeDictCache.LoadOrStore(cacheKey, d)
+			if cached, ok := actual.(*atticmorfo.Dictionary); ok && cached != nil {
+				d = cached
+			}
+		}
+	}
+
 	// Wire like AttachBinaryDictionary: per-instance Speller (sticky containsSeparators).
 	// Plain FSABuilder words are ExactMatch → first isInDictionary clears separators (Java).
+	// Do not populate Words map: Java MorfologikSpeller holds Dictionary only (membership via FSA).
 	s.syncDictSpellerMeta(d)
 	sp := atticmorfo.NewSpeller(d, s.MaxEditDistance)
 	sp.SyncFromDict()

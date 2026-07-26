@@ -203,6 +203,73 @@ func matchSurface(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) strin
 	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
 
+// dialectAlternative ports MorfologikPortugueseSpellerRule.dialectAlternative:
+// 1) surface lemma map hit; 2) tagger lemma → map → synthesizer form for same POS tag.
+func (r *MorfologikPortugueseSpellerRule) dialectAlternative(word string) string {
+	if r == nil || r.dialectMap == nil || word == "" {
+		return ""
+	}
+	// Naive check: word is identical to lemma present on the TXT list
+	if v, ok := r.dialectMap[strings.ToLower(word)]; ok {
+		return v
+	}
+	// Annoying check: the word's lemma exists on the TXT list → synthesize form
+	if r.TagLemma == nil || r.TagPOS == nil || r.SynthesizeForPosTags == nil {
+		return ""
+	}
+	lemmas := r.TagLemma(word)
+	tags := r.TagPOS(word)
+	if len(lemmas) == 0 || len(tags) == 0 {
+		return ""
+	}
+	// Java iterates readings; pair lemma+tag from same reading. We approximate with
+	// all combinations (same as expanding each reading independently when tags/lemmas align).
+	// Prefer zip by index when lengths match (typical single-token tag path).
+	n := len(lemmas)
+	if len(tags) < n {
+		n = len(tags)
+	}
+	for i := 0; i < n; i++ {
+		lemma := lemmas[i]
+		tag := tags[i]
+		if tag == "" || lemma == "" {
+			continue
+		}
+		candidate, ok := r.dialectMap[strings.ToLower(lemma)]
+		if !ok {
+			continue
+		}
+		want := tag
+		forms := r.SynthesizeForPosTags(candidate, func(tagStr string) bool {
+			return tagStr == want
+		})
+		if len(forms) > 0 {
+			return forms[0]
+		}
+	}
+	// Fallback: any lemma in map with any tag of the word (Java only uses same reading tag).
+	for _, lemma := range lemmas {
+		candidate, ok := r.dialectMap[strings.ToLower(lemma)]
+		if !ok {
+			continue
+		}
+		for _, tag := range tags {
+			if tag == "" {
+				continue
+			}
+			want := tag
+			forms := r.SynthesizeForPosTags(candidate, func(tagStr string) bool {
+				return tagStr == want
+			})
+			if len(forms) > 0 {
+				return forms[0]
+			}
+		}
+	}
+	return ""
+}
+
+// dialectAlternativeSurface is the surface-only arm (tests / fail-closed without tagger).
 func (r *MorfologikPortugueseSpellerRule) dialectAlternativeSurface(word string) string {
 	if r == nil || r.dialectMap == nil {
 		return ""
@@ -213,11 +280,13 @@ func (r *MorfologikPortugueseSpellerRule) dialectAlternativeSurface(word string)
 	return ""
 }
 
-// wordIsMisspelled uses SpellingCheckRule.IsMisspelled when set (FilterDict path),
-// else map Speller — same order Java multi-speller uses for isMisspelled.
+// wordIsMisspelled uses Multi/speller1 first (Java speller1.isMisspelled), then IsMisspelled hook.
 func (r *MorfologikPortugueseSpellerRule) wordIsMisspelled(word string) bool {
 	if r == nil || word == "" {
 		return false
+	}
+	if r.Multi != nil && len(r.Multi.Spellers) > 0 {
+		return r.Multi.IsMisspelled(word)
 	}
 	if r.IsMisspelled != nil {
 		return r.IsMisspelled(word)
@@ -228,10 +297,15 @@ func (r *MorfologikPortugueseSpellerRule) wordIsMisspelled(word string) bool {
 	return false
 }
 
-// wordSuggestions ports speller1.getSuggestions: map Speller first, then wired CFSA2 dict.
+// wordSuggestions ports speller1.getSuggestions: Multi first, then map Speller / filter dict.
 func (r *MorfologikPortugueseSpellerRule) wordSuggestions(word string) []string {
 	if r == nil || word == "" {
 		return nil
+	}
+	if r.Multi != nil {
+		if sugs := r.Multi.GetSuggestions(word); len(sugs) > 0 {
+			return sugs
+		}
 	}
 	if r.Speller != nil {
 		if sugs := r.Speller.FindReplacements(word); len(sugs) > 0 {
