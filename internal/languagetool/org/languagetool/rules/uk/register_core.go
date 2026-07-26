@@ -8,6 +8,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 )
 
 // RegisterCoreUkrainianRules ports Ukrainian.getRelevantRules.
@@ -58,8 +60,8 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	}
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 
-	// high priority
-	hyphen := NewMissingHyphenRule(nil)
+	// high priority — Java: new MissingHyphenRule(messages, ((UkrainianTagger)getTagger()).getWordTagger())
+	hyphen := NewMissingHyphenRule(nil, discoverUkrainianWordTagger())
 	lt.AddRuleChecker(hyphen.GetID(), rules.AsSentenceCheckerSimple(hyphen.Match))
 
 	synth := discoverUkrainianSynthesizer()
@@ -92,6 +94,63 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(rn.GetID(), rules.AsSentenceCheckerSimple(rn.Match))
 	sr := NewSimpleReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+}
+
+// discoverUkrainianWordTagger ports ((UkrainianTagger)getTagger()).getWordTagger() when
+// official ukrainian.dict is available; nil fails closed (Java would not lack the dict).
+func discoverUkrainianWordTagger() tagging.WordTagger {
+	p := discoverUkrainianPOSDictPath()
+	if p == "" {
+		return nil
+	}
+	mt := tagging.OpenMorfologikTagger(p)
+	if mt == nil {
+		return nil
+	}
+	return taguk.NewUkrainianTagger(mt).GetWordTagger()
+}
+
+// discoverUkrainianPOSDictPath finds Maven morfologik-ukrainian-lt resource /uk/ukrainian.dict.
+func discoverUkrainianPOSDictPath() string {
+	if p := os.Getenv("LANG_UKRAINIAN_DICT"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	candidates := []string{
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "uk",
+			"src", "main", "resources", "org", "languagetool", "resource", "uk", "ukrainian.dict"),
+		"/tmp/uk-dict-fetch/org/languagetool/resource/uk/ukrainian.dict",
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		for _, p := range candidates {
+			if filepath.IsAbs(p) {
+				if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+					return p
+				}
+			}
+		}
+		return ""
+	}
+	dir := wd
+	for i := 0; i < 14; i++ {
+		for _, rel := range candidates {
+			p := rel
+			if !filepath.IsAbs(rel) {
+				p = filepath.Join(dir, rel)
+			}
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
 }
 
 // discoverUkrainianSynthesizer finds ukrainian_synth.dict (Java RESOURCE_FILENAME).

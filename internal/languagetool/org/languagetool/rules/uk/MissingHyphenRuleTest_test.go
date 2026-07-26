@@ -1,94 +1,105 @@
 package uk
 
-// Twin of MissingHyphenRuleTest — POS noun + WordTagged gate (Java WordTagger).
+// Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/MissingHyphenRuleTest.java
+//
+// Java setup:
+//   MissingHyphenRule rule = new MissingHyphenRule(TestTools.getEnglishMessages(),
+//       new UkrainianTagger().getWordTagger());
+//   JLanguageTool lt = new JLanguageTool(Ukrainian.DEFAULT_VARIANT);
+//   rule.match(lt.getAnalyzedSentence(...));
+//
+// Go: real Ukrainian analysis (UkrainianTagger + official ukrainian.dict WordTagger)
+// via wireUKWordRepeatLT — not invent POS.
+
 import (
-	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 	"github.com/stretchr/testify/require"
 )
 
+// TestMissingHyphenRule_Rule twins MissingHyphenRuleTest.testRule — every Java case.
 func TestMissingHyphenRule_Rule(t *testing.T) {
-	rule := NewMissingHyphenRule(nil)
-	// Accept all suggested compounds (simulates dictionary hits).
-	rule.WordTagged = func(word string) bool { return true }
+	// Java: new UkrainianTagger().getWordTagger() + JLanguageTool(Ukrainian.DEFAULT_VARIANT)
+	wt, lt := wireMissingHyphen(t)
+	// Java: new MissingHyphenRule(TestTools.getEnglishMessages(), wordTagger)
+	rule := NewMissingHyphenRule(nil, wt)
 
-	check := func(text, want string) {
-		t.Helper()
-		matches := rule.Match(analyzeMissingHyphen(text))
-		require.Equal(t, 1, len(matches), "text %q", text)
-		require.Equal(t, want, matches[0].GetSuggestedReplacements()[0], "text %q", text)
-	}
-
-	check("Поїхали у штаб квартиру.", "штаб-квартиру")
-	check("Роблю тайм аут", "тайм-аут")
-	check("Такий компакт диск.", "компакт-диск")
-	// :alt → join without hyphen
-	check("Такий міні автомобіль.", "мініавтомобіль")
-	check("Арт проект вийшов провальним.", "Артпроект")
-	check("Шоу бізнес - не моє.", "Шоубізнес")
-	check("екс віце-президент", "ексвіце-президент")
-
-	// exceptions / correct
-	require.Equal(t, 0, len(rule.Match(analyzeMissingHyphen("всі медіа півострова."))))
-	require.Equal(t, 0, len(rule.Match(analyzeMissingHyphen("на шоу поп-діви"))))
-	require.Equal(t, 0, len(rule.Match(analyzeMissingHyphen("Тут все гаразд."))))
-	// блок removed from prefixes
-	require.Equal(t, 0, len(rule.Match(analyzeMissingHyphen("Такий блок схемі не потрібен."))))
-}
-
-func TestMissingHyphenRule_FailClosedWithoutPOS(t *testing.T) {
-	rule := NewMissingHyphenRule(nil)
-	rule.WordTagged = func(word string) bool { return true }
-	// AnalyzePlain: no noun POS on second token
-	require.Empty(t, rule.Match(languagetool.AnalyzePlain("Поїхали у штаб квартиру.")))
-}
-
-func TestMissingHyphenRule_FailClosedWithoutWordTagged(t *testing.T) {
-	rule := NewMissingHyphenRule(nil)
-	// POS present but no WordTagged and not :alt-with-next-alt
-	require.Empty(t, rule.Match(analyzeMissingHyphen("Поїхали у штаб квартиру.")))
-}
-
-func TestMissingHyphenRule_AltWithNextAltPOS(t *testing.T) {
-	rule := NewMissingHyphenRule(nil)
-	// :alt path without WordTagged when next has :alt
-	sent := languagetool.AnalyzeWithTagger("міні автомобіль", func(tok string) []languagetool.TokenTag {
-		switch strings.ToLower(tok) {
-		case "автомобіль":
-			return []languagetool.TokenTag{{POS: "noun:m:v_naz:alt", Lemma: "автомобіль"}}
-		default:
-			return nil
-		}
-	})
-	matches := rule.Match(sent)
+	// incorrect sentences:
+	matches := rule.Match(lt.GetAnalyzedSentence("Поїхали у штаб квартиру."))
 	require.Equal(t, 1, len(matches))
-	require.Equal(t, "мініавтомобіль", matches[0].GetSuggestedReplacements()[0])
+	require.Equal(t, []string{"штаб-квартиру"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Роблю «тайм аут»"))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"тайм-аут"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Такий компакт диск."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"компакт-диск"}, matches[0].GetSuggestedReplacements())
+
+	// spelling 2019 (:alt → join without hyphen)
+	matches = rule.Match(lt.GetAnalyzedSentence("Такий міні автомобіль."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"мініавтомобіль"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Арт проект вийшов провальним."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"Артпроект"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Шоу бізнес - не моє."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"Шоубізнес"}, matches[0].GetSuggestedReplacements())
+
+	// en-dash U+2013 in Java source
+	matches = rule.Match(lt.GetAnalyzedSentence("на шоу поп–діви"))
+	require.Equal(t, 0, len(matches))
+
+	// TODO in Java: hard - two errors, should be "ексвіцепрезидент"
+	matches = rule.Match(lt.GetAnalyzedSentence("екс віце-президент"))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"ексвіце-президент"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(lt.GetAnalyzedSentence("всі медіа півострова."))
+	require.Equal(t, 0, len(matches))
+
+	// correct sentences:
+	matches = rule.Match(lt.GetAnalyzedSentence("Тут все гаразд."))
+	require.Equal(t, 0, len(matches))
+
+	matches = rule.Match(lt.GetAnalyzedSentence("Такий блок схемі не потрібен."))
+	require.Equal(t, 0, len(matches))
+
+	matches = rule.Match(lt.GetAnalyzedSentence("конгрес Трансваалю."))
+	require.Equal(t, 0, len(matches))
+
+	matches = rule.Match(lt.GetAnalyzedSentence("конгрес профспілок."))
+	require.Equal(t, 0, len(matches))
+
+	matches = rule.Match(lt.GetAnalyzedSentence("рентген п'яти."))
+	require.Equal(t, 0, len(matches))
 }
 
-// analyzeMissingHyphen tags real words as noun (Java FreeLing noun on second token).
-// Does not invent POS for punctuation-only tokens (e.g. "-").
-func analyzeMissingHyphen(text string) *languagetool.AnalyzedSentence {
-	return languagetool.AnalyzeWithTagger(text, func(tok string) []languagetool.TokenTag {
-		low := strings.ToLower(tok)
-		if !allLowerUK.MatchString(low) {
-			return nil
-		}
-		// require at least one letter (exclude "-" alone which matches dash in ALL_LOWER)
-		hasLetter := false
-		for _, r := range low {
-			if r >= 'а' && r <= 'я' || r == 'і' || r == 'ї' || r == 'є' || r == 'ґ' {
-				hasLetter = true
-				break
-			}
-		}
-		if !hasLetter {
-			return nil
-		}
-		if low == "аут" {
-			return []languagetool.TokenTag{{POS: "noun:m:v_naz", Lemma: "аут"}}
-		}
-		return []languagetool.TokenTag{{POS: "noun:m:v_naz", Lemma: low}}
-	})
+// TestMissingHyphenRule_Metadata checks id / description / ITS Misspelling.
+func TestMissingHyphenRule_Metadata(t *testing.T) {
+	r := NewMissingHyphenRule(nil, nil)
+	require.Equal(t, "UK_MISSING_HYPHEN", r.GetID())
+	require.Equal(t, "Пропущений дефіс", r.GetDescription())
+	require.Equal(t, rules.ITSMisspelling, r.GetLocQualityIssueType())
+}
+
+// wireMissingHyphen ports JLanguageTool(Ukrainian.DEFAULT_VARIANT) + UkrainianTagger.getWordTagger().
+func wireMissingHyphen(t *testing.T) (tagging.WordTagger, *languagetool.JLanguageTool) {
+	t.Helper()
+	lt := wireUKWordRepeatLT(t)
+	p := discoverUkrainianPOSDict()
+	mt := tagging.OpenMorfologikTagger(p)
+	require.NotNil(t, mt, "OpenMorfologikTagger")
+	tg := taguk.NewUkrainianTagger(mt)
+	// Ensure analysis uses the same tagger instance as WordTagger source.
+	lt.SentenceTagger = tg.Tag
+	return tg.GetWordTagger(), lt
 }

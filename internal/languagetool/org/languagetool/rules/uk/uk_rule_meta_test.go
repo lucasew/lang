@@ -24,7 +24,7 @@ func TestUK_RuleMetadata(t *testing.T) {
 	require.NotNil(t, hidden.GetCategory())
 	require.Equal(t, rules.NewCategoryId("MISC"), hidden.GetCategory().GetID())
 
-	hyphen := NewMissingHyphenRule(nil)
+	hyphen := NewMissingHyphenRule(nil, nil)
 	require.Equal(t, rules.ITSMisspelling, hyphen.GetLocQualityIssueType())
 
 	mixed := NewMixedAlphabetsRule(nil)
