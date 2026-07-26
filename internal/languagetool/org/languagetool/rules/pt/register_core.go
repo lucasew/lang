@@ -155,6 +155,9 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 
 	di := NewPortugueseDiacriticsRule(nil)
 	lt.AddRuleChecker(di.GetID(), rules.AsSentenceCheckerSimple(di.Match))
+	if di.IsDefaultOff() {
+		lt.MarkDefaultOff(di.GetID())
+	}
 
 	ww := NewPortugueseWrongWordInContextRule(nil)
 	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
