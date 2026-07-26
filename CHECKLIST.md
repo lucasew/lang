@@ -1558,9 +1558,9 @@
 - [x] org/languagetool/rules/uk/SimpleReplaceRule.java::SimpleReplaceRule
 - [ ] org/languagetool/rules/uk/SimpleReplaceSoftRule.java::SimpleReplaceSoftRule
 - [ ] org/languagetool/rules/uk/SimpleReplaceSoftRule.java::SimpleReplaceSoftRule.ContextRepl
-- [ ] org/languagetool/rules/uk/TokenAgreementAdjNounExceptionHelper.java::TokenAgreementAdjNounExceptionHelper
-- [ ] org/languagetool/rules/uk/TokenAgreementAdjNounRule.java::TokenAgreementAdjNounRule
-- [ ] org/languagetool/rules/uk/TokenAgreementAdjNounRule.java::TokenAgreementAdjNounRule.State
+- [x] org/languagetool/rules/uk/TokenAgreementAdjNounExceptionHelper.java::TokenAgreementAdjNounExceptionHelper
+- [x] org/languagetool/rules/uk/TokenAgreementAdjNounRule.java::TokenAgreementAdjNounRule
+- [x] org/languagetool/rules/uk/TokenAgreementAdjNounRule.java::TokenAgreementAdjNounRule.State
 - [ ] org/languagetool/rules/uk/TokenAgreementNounVerbExceptionHelper.java::TokenAgreementNounVerbExceptionHelper
 - [ ] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule
 - [ ] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule.State
