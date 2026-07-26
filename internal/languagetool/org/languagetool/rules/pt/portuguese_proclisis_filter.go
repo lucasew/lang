@@ -5,83 +5,109 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	ptsynthesis "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/pt"
 )
 
 // PortugueseProclisisFilter ports org.languagetool.rules.pt.PortugueseProclisisFilter.
-// Verb form synthesis is provided via SynthesizeVerb (Java: PortugueseSynthesizer).
-// Without SynthesizeVerb, that reading is skipped (fail closed — no hyphen-strip invent).
+//
+// Java getSynthesizer() always returns PortugueseSynthesizer.INSTANCE. Production
+// path uses INSTANCE by default; SetSynthesizer is an injectable override for tests.
+//
+// Edge mappings (documented Go twins of Java throw/NPE):
+//   - empty patternTokens: Java ArrayIndexOutOfBoundsException → panic
+//   - synthesize empty / error: Java [0] AIOOB / IOException → skip that reading (fail-closed)
+//   - token without hyphen: Java oldTokenParts[1] AIOOB → skip that reading (fail-closed)
+//   - nil filter/match: Java NPE → return nil
+// Happy path always match.setSuggestedReplacements(...) and returns match (never null).
 type PortugueseProclisisFilter struct {
-	// SynthesizeVerb returns the non-enclitic verb form for a token/POS
-	// (Java: getSynthesizer().synthesize(at, verbTag)[0]).
-	SynthesizeVerb func(token, verbTag string) string
+	// synth overrides getSynthesizer. Nil → PortugueseSynthesizer.INSTANCE (Java default).
+	synth synthesis.Synthesizer
 }
 
+// NewPortugueseProclisisFilter ports the Java no-arg constructor.
 func NewPortugueseProclisisFilter() *PortugueseProclisisFilter {
 	return &PortugueseProclisisFilter{}
 }
 
+// getSynthesizer ports PortugueseProclisisFilter.getSynthesizer.
+// Java: return PortugueseSynthesizer.INSTANCE;
+func (f *PortugueseProclisisFilter) getSynthesizer() synthesis.Synthesizer {
+	if f != nil && f.synth != nil {
+		return f.synth
+	}
+	return ptsynthesis.INSTANCE
+}
+
+// SetSynthesizer overrides the synthesizer (tests / host injection only).
+func (f *PortugueseProclisisFilter) SetSynthesizer(s synthesis.Synthesizer) {
+	if f != nil {
+		f.synth = s
+	}
+}
+
 // AcceptRuleMatch ports PortugueseProclisisFilter.acceptRuleMatch.
+// Java always setSuggestedReplacements and returns match (never null).
 func (f *PortugueseProclisisFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
-	if f == nil || match == nil || len(patternTokens) == 0 {
+	// Java NPE on null this/match; Go nil-receiver safety for host calls.
+	if f == nil || match == nil {
 		return nil
 	}
-	enclitic := patternTokens[len(patternTokens)-1]
-	if enclitic == nil {
-		return nil
+	// Java: patternTokens[patternTokens.length - 1]
+	if len(patternTokens) == 0 {
+		panic("PortugueseProclisisFilter: empty patternTokens (Java ArrayIndexOutOfBoundsException)")
 	}
-	var readings []struct{ Token, POS string }
-	for _, at := range enclitic.GetReadings() {
+	encliticVerbTokenReadings := patternTokens[len(patternTokens)-1]
+	// Java HashSet — iteration order not stable; tests must use set membership.
+	suggestions := map[string]struct{}{}
+	for _, at := range encliticVerbTokenReadings.GetReadings() {
 		if at == nil {
 			continue
 		}
-		pos := ""
-		if at.GetPOSTag() != nil {
-			pos = *at.GetPOSTag()
+		posTagPtr := at.GetPOSTag()
+		// Java: if (posTag == null || !posTag.startsWith("V") || !posTag.contains(":")) continue;
+		if posTagPtr == nil {
+			continue
 		}
-		readings = append(readings, struct{ Token, POS string }{Token: at.GetToken(), POS: pos})
+		posTag := *posTagPtr
+		if !strings.HasPrefix(posTag, "V") || !strings.Contains(posTag, ":") {
+			continue
+		}
+		oldToken := at.GetToken()
+		tagParts := strings.Split(posTag, ":")
+		verbTag := tagParts[0]
+		// Java: getSynthesizer().synthesize(at, verbTag)[0]
+		// Pass full AnalyzedToken (lemma/token/pos) like Java.
+		forms, err := f.getSynthesizer().Synthesize(at, verbTag)
+		if err != nil || len(forms) == 0 {
+			// Java throws or AIOOB on empty; skip reading (fail-closed mapping of empty synth).
+			continue
+		}
+		newVerb := forms[0]
+		oldTokenParts := strings.Split(oldToken, "-")
+		// Java: oldTokenParts[0]/[1] — Includes only the relevant part of the verb;
+		// for mesoclitics, we ignore the ending.
+		if len(oldTokenParts) < 2 {
+			// Java AIOOB; skip malformed token (fail-closed).
+			continue
+		}
+		oldVerb := oldTokenParts[0]
+		oldPronoun := oldTokenParts[1]
+		for _, newPronoun := range proclisisPronounForms(oldPronoun, oldVerb) {
+			suggestions[newPronoun+" "+newVerb] = struct{}{}
+		}
 	}
-	match.SetSuggestedReplacements(f.Suggest(readings))
+	// Java: match.setSuggestedReplacements(new ArrayList<>(suggestions)); return match;
+	out := make([]string, 0, len(suggestions))
+	for s := range suggestions {
+		out = append(out, s)
+	}
+	match.SetSuggestedReplacements(out)
 	return match
 }
 
-// Suggest builds proclisis suggestions from an enclitic verb token like "dizer-lhe".
-func (f *PortugueseProclisisFilter) Suggest(readings []struct{ Token, POS string }) []string {
-	seen := map[string]struct{}{}
-	var out []string
-	for _, at := range readings {
-		posTag := at.POS
-		if posTag == "" || !strings.HasPrefix(posTag, "V") || !strings.Contains(posTag, ":") {
-			continue
-		}
-		if f.SynthesizeVerb == nil {
-			// Java always has PortugueseSynthesizer; fail closed without it.
-			continue
-		}
-		oldToken := at.Token
-		tagParts := strings.Split(posTag, ":")
-		verbTag := tagParts[0]
-		newVerb := f.SynthesizeVerb(oldToken, verbTag)
-		if newVerb == "" {
-			continue
-		}
-		parts := strings.Split(oldToken, "-")
-		if len(parts) < 2 {
-			continue
-		}
-		oldVerb, oldPronoun := parts[0], parts[1]
-		for _, newPronoun := range proclisisPronounForms(oldPronoun, oldVerb) {
-			s := newPronoun + " " + newVerb
-			if _, ok := seen[s]; ok {
-				continue
-			}
-			seen[s] = struct{}{}
-			out = append(out, s)
-		}
-	}
-	return out
-}
-
+// proclisisPronounForms ports the Java switch on oldPronoun (exact cases).
 func proclisisPronounForms(oldPronoun, oldVerb string) []string {
 	switch oldPronoun {
 	case "lo", "no":
@@ -94,6 +120,7 @@ func proclisisPronounForms(oldPronoun, oldVerb string) []string {
 		return []string{"as"}
 	case "nos":
 		forms := []string{"nos"}
+		// Java: if (oldVerb.endsWith("m") || oldVerb.endsWith("ão") || oldVerb.endsWith("õe"))
 		if strings.HasSuffix(oldVerb, "m") || strings.HasSuffix(oldVerb, "ão") || strings.HasSuffix(oldVerb, "õe") {
 			forms = append(forms, "os")
 		}
