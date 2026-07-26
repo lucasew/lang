@@ -48,6 +48,8 @@ type AbstractCompoundRule struct {
 	Data    *CompoundRuleData
 	// IsMisspelled optional; default treats all as correctly spelled (Java returns false).
 	IsMisspelled func(word string) bool
+	// MergeCompoundFn if set, ports Java subclass mergeCompound override; else default MergeCompound.
+	MergeCompoundFn func(str string, uncapitalizeMidWords bool) string
 }
 
 // InitCompoundRuleMeta applies Java AbstractCompoundRule constructor metadata.
@@ -233,7 +235,7 @@ func (r *AbstractCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []
 			}
 			if isNotAllUppercase(origStringToCheck) && r.Data.ContainsJoined(stringToCheck) {
 				uncap := r.Data.JoinedLowerCaseAnyMatch(stringToCheck)
-				replacement = append(replacement, r.MergeCompound(origStringToCheck, uncap))
+				replacement = append(replacement, r.mergeCompound(origStringToCheck, uncap))
 				msg = r.WithoutHyphenMessage
 			}
 			parts := strings.Split(stringToCheck, " ")
@@ -351,6 +353,15 @@ func isNotAllUppercase(str string) bool {
 		}
 	}
 	return true
+}
+
+// mergeCompound dispatches to MergeCompoundFn when set (Java virtual mergeCompound),
+// otherwise the default MergeCompound algorithm.
+func (r *AbstractCompoundRule) mergeCompound(str string, uncapitalizeMidWords bool) string {
+	if r != nil && r.MergeCompoundFn != nil {
+		return r.MergeCompoundFn(str, uncapitalizeMidWords)
+	}
+	return r.MergeCompound(str, uncapitalizeMidWords)
 }
 
 // MergeCompound ports AbstractCompoundRule.mergeCompound.
