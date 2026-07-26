@@ -204,8 +204,14 @@ func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConv
 
 	r.AddUnit(`mi`, UnitMile, "mi", 1, false)
 	r.AddUnit(`yd`, UnitYard, "yd", 1, false)
-	// RE2 has no lookahead; use simple unit tokens (Java uses negative lookahead).
-	r.AddUnit(`(?:ft|′|')`, UnitFeet, "ft", 1, false)
+	// Java: addUnit("(?:ft|′|')(?!(\\w|\\d))", FEET, "ft", 1, false) + trailing \\b.
+	// RE2 has no lookahead. Bare ' / ′ end with a non-word char, so Java's trailing \\b
+	// never succeeds when the next char is non-word (space/EOS) — only "ft" is live here.
+	// Feet written as 5'6" are handled via specialPatterns (below).
+	r.AddUnit(`ft`, UnitFeet, "ft", 1, false)
+	// Java: addUnit("(?:inch|″)(?!(\\w|\\d))", INCH, "inch", 1, false) + \\b.
+	// Bare ″ is similarly dead under Java \\b; keep "inch" + ″ with RE2 trailing boundary
+	// (″ before a letter already fails trailing; coordinates like 22″N stay quiet).
 	r.AddUnit(`(?:inch|″)`, UnitInch, "inch", 1, false)
 
 	r.AddUnit(`(?:km/h|kmh)`, UnitKmh, "km/h", 1, true)
@@ -648,10 +654,11 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 				unitBodyEnd := fullEnd + cm[5]
 				numInParen := text[numFrom:numTo]
 				unitBody := tools.JavaStringTrim(text[fullEnd+cm[4] : unitBodyEnd])
-				convertedTrimmed := unitParenTrimmed(text[cFrom:cTo])
+				convertedInText := text[cFrom:cTo]
+				convertedTrimmed := unitParenTrimmed(convertedInText)
 				if given, errG := r.parseNumber(numInParen); errG == nil {
 					highlight := text[from:fullEnd]
-					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, numFrom, numTo, unitBodyEnd, val, sp.unit, given, unitBody, convertedTrimmed, highlight); check != nil {
+					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, numFrom, numTo, unitBodyEnd, val, sp.unit, given, unitBody, convertedTrimmed, convertedInText, highlight); check != nil {
 						claim(from, cTo)
 						matches = append(matches, check)
 						continue
@@ -726,10 +733,11 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					unitBodyEnd := loc[1] + cm[5]
 					numInParen := text[numFrom:numTo]
 					unitBody := tools.JavaStringTrim(text[loc[1]+cm[4] : unitBodyEnd])
-					convertedTrimmed := unitParenTrimmed(text[cFrom:cTo])
+					convertedInText := text[cFrom:cTo]
+					convertedTrimmed := unitParenTrimmed(convertedInText)
 					given, errG := r.parseNumber(numInParen)
 					if errG == nil {
-						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, numFrom, numTo, unitBodyEnd, val, up.unit, given, unitBody, convertedTrimmed, full); check != nil {
+						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, numFrom, numTo, unitBodyEnd, val, up.unit, given, unitBody, convertedTrimmed, convertedInText, full); check != nil {
 							claim(loc[0], cTo)
 							matches = append(matches, check)
 							continue
@@ -849,75 +857,40 @@ func unitParenTrimmed(parenSpan string) string {
 //   - unit mismatch: unitMatcher.start … convertedMatcher.end(0)
 //
 // convertedTrimmed is the paren body without outer "()" (may include "ca. " / "aprox. ").
+// convertedInText is the raw convertedPatterns span (Java convertedInText; trimmed form
+// includes outer parentheses and is used for unitPatterns.findFirst unit detection).
 func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	sentence *languagetool.AnalyzedSentence,
 	srcFrom, srcTo, convFrom, convTo, numFrom, numTo, unitBodyEnd int,
 	srcVal float64, srcUnit UnitDef,
-	given float64, unitBody, convertedTrimmed, originalFull string,
+	given float64, unitBody, convertedTrimmed, convertedInText, originalFull string,
 ) *RuleMatch {
 	// Java: if convertedMatcher.group().trim().matches("\\(\\d+ (feet|ft) \\d+ inch\\)") return;
 	// e.g. "(2 ft 6 inch)" would be interpreted as just "2 ft", giving a wrong suggestion.
 	if feetInchParenBodyRE.MatchString(tools.JavaStringTrim(unitBody)) {
 		return nil
 	}
-	// Java: match converted unit against unitPatterns (not only metricUnits).
-	// Include non-metric paren units (e.g. "10 km (6.21 mi)").
+	// Java tryConversion:
+	//   Optional<Pattern> convertedUnitPattern = unitPatterns.keySet().stream()
+	//     .filter(pattern -> pattern.matcher(finalConvertedInText).find())
+	//     .findFirst();
+	// finalConvertedInText = convertedInText.trim() (includes outer parentheses).
+	// Registration order + .find() means shorter units registered earlier win
+	// (e.g. "cm" matches inside "(2,5 cm²)" before "cm²" → same-unit skip).
 	var convertedUnit *UnitDef
-	bodyLow := strings.ToLower(tools.JavaStringTrim(unitBody))
-	// Prefer longer symbol matches: scan all registered unit patterns.
+	finalConvertedInText := tools.JavaStringTrim(convertedInText)
+	if finalConvertedInText == "" && convertedTrimmed != "" {
+		finalConvertedInText = "(" + convertedTrimmed + ")"
+	}
 	for i := range r.unitPatterns {
-		u := r.unitPatterns[i].unit
-		sym := strings.ToLower(u.Symbol)
-		if bodyLow == sym || strings.HasPrefix(bodyLow, sym+" ") || strings.HasPrefix(bodyLow, sym+")") {
-			// keep longest symbol when multiple match
-			if convertedUnit == nil || len(sym) > len(convertedUnit.Symbol) {
-				uu := u
-				convertedUnit = &uu
-			}
+		up := r.unitPatterns[i]
+		if up.re == nil {
 			continue
 		}
-		// common DE/EN/PT long names used in parenthetical CHECK path
-		matched := false
-		switch {
-		case bodyLow == "m" || bodyLow == "meter" || bodyLow == "metre" || bodyLow == "metern" ||
-			strings.HasPrefix(bodyLow, "metro"):
-			matched = u.Kind == UnitLength && math.Abs(u.Factor-1) < 1e-12
-		case bodyLow == "km" || strings.HasPrefix(bodyLow, "kilometer") || strings.HasPrefix(bodyLow, "kilometre") ||
-			strings.HasPrefix(bodyLow, "quilômetro") || strings.HasPrefix(bodyLow, "quilometro"):
-			matched = u.Kind == UnitLength && math.Abs(u.Factor-1e3) < 1e-9
-		case bodyLow == "cm" || strings.HasPrefix(bodyLow, "zentimeter") || strings.HasPrefix(bodyLow, "centimeter") ||
-			strings.HasPrefix(bodyLow, "centímetro") || strings.HasPrefix(bodyLow, "centimetro"):
-			matched = u.Kind == UnitLength && math.Abs(u.Factor-1e-2) < 1e-12
-		case bodyLow == "mm" || strings.HasPrefix(bodyLow, "millimeter") || strings.HasPrefix(bodyLow, "milímetro") ||
-			strings.HasPrefix(bodyLow, "milimetro"):
-			matched = u.Kind == UnitLength && math.Abs(u.Factor-1e-3) < 1e-12
-		case bodyLow == "kg" || strings.HasPrefix(bodyLow, "kilogramm") || strings.HasPrefix(bodyLow, "kilogram") ||
-			strings.HasPrefix(bodyLow, "quilogram"):
-			matched = u.Kind == UnitMass && math.Abs(u.Factor-1) < 1e-12
-		case strings.HasPrefix(bodyLow, "tonelada") || bodyLow == "t" || strings.HasPrefix(bodyLow, "tonne"):
-			matched = u.Kind == UnitMass && math.Abs(u.Factor-1e3) < 1e-9
-		case bodyLow == "mi" || strings.HasPrefix(bodyLow, "mile") ||
-			bodyLow == "meile" || bodyLow == "meilen" || strings.HasPrefix(bodyLow, "meile"):
-			// DE UnitConversionRule addUnit("Meilen?", …, "Meile", …)
-			matched = u.Kind == UnitLength && math.Abs(u.Factor-UnitMile.Factor) < 1e-6
-		case bodyLow == "ft" || bodyLow == "feet" || bodyLow == "foot" || bodyLow == "fuß" || bodyLow == "fuss":
-			matched = u.Kind == UnitLength && math.Abs(u.Factor-UnitFeet.Factor) < 1e-9
-		case bodyLow == "lb" || strings.HasPrefix(bodyLow, "pound") || bodyLow == "pfund" || strings.HasPrefix(bodyLow, "libra"):
-			matched = u.Kind == UnitMass && math.Abs(u.Factor-UnitPound.Factor) < 1e-9
-		}
-		if matched {
-			uu := u
+		if up.re.FindStringIndex(finalConvertedInText) != nil {
+			uu := up.unit
 			convertedUnit = &uu
-			// don't break — prefer exact symbol match above; long-name first hit is ok
-			if bodyLow == sym || bodyLow == "meilen" || bodyLow == "meile" {
-				// Prefer DE long name "Meile" over bare "mi" when body is German.
-				if strings.HasPrefix(bodyLow, "meile") && (sym == "meile" || strings.HasPrefix(sym, "meile")) {
-					break
-				}
-				if bodyLow == sym {
-					break
-				}
-			}
+			break
 		}
 	}
 	if convertedUnit == nil {

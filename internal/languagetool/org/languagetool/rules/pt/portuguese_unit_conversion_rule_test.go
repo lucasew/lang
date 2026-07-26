@@ -4,35 +4,33 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
+// Meta + message twins for PortugueseUnitConversionRule (match matrix lives in
+// PortugueseUnitConversionRuleTest_test.go).
+
 func TestPortugueseUnitConversionRule_ID(t *testing.T) {
 	r := NewPortugueseUnitConversionRule(nil)
-	// Java PortugueseUnitConversionRule.getId
+	// Java PortugueseUnitConversionRule.getId / getDescription
 	require.Equal(t, "UNIDADES_METRICAS", r.GetID())
+	require.Equal(t, "Sugere ou verifica informações equivalentes à métrica de unidades de medida específicas.", r.GetDescription())
 }
 
-func TestPortugueseUnitConversionRule_MatchMiles(t *testing.T) {
+func TestPortugueseUnitConversionRule_Messages(t *testing.T) {
 	r := NewPortugueseUnitConversionRule(nil)
-	// Java assertMatches: "A via tem 100 milhas de comprimento." → suggestion with quilômetros
-	sent := languagetool.AnalyzePlain("A via tem 100 milhas de comprimento.")
-	matches := r.Match(sent)
-	require.NotEmpty(t, matches)
-	require.NotEmpty(t, matches[0].GetSuggestedReplacements())
-	joined := strings.Join(matches[0].GetSuggestedReplacements(), " ")
-	require.Contains(t, joined, "quilômetros")
-}
-
-func TestPortugueseUnitConversionRule_MatchPounds(t *testing.T) {
-	r := NewPortugueseUnitConversionRule(nil)
-	// Java: "A carga é de 10.000 libras." → toneladas (Locale.GERMANY thousands)
-	sent := languagetool.AnalyzePlain("A carga é de 10.000 libras.")
-	matches := r.Match(sent)
-	require.NotEmpty(t, matches)
-	joined := strings.Join(matches[0].GetSuggestedReplacements(), " ")
-	require.Contains(t, joined, "toneladas")
+	// Java getMessage / getShortMessage
+	require.Equal(t, "Esta conversão não parece estar precisa. Gostaria de corrigi-la?", r.GetMessage(rules.UnitMsgCheck))
+	require.Equal(t, "Deseja adicionar automaticamente uma conversão ao sistema métrico?", r.GetMessage(rules.UnitMsgSuggestion))
+	require.Equal(t, "A unidade usada nesta conversão não foi reconhecida.", r.GetMessage(rules.UnitMsgCheckUnknownUnit))
+	require.Equal(t, "Estas unidades de medida não são compatíveis.", r.GetMessage(rules.UnitMsgUnitMismatch))
+	require.Equal(t, "Conversão incorreta. Corrigir?", r.GetShortMessage(rules.UnitMsgCheck))
+	require.Equal(t, "Adicionar conversão ao sistema métrico?", r.GetShortMessage(rules.UnitMsgSuggestion))
+	require.Equal(t, "Unidade desconhecida.", r.GetShortMessage(rules.UnitMsgCheckUnknownUnit))
+	require.Equal(t, "Unidade incompatível.", r.GetShortMessage(rules.UnitMsgUnitMismatch))
+	// Java formatRounded
+	require.Equal(t, "aprox. 1,83 m", r.FormatRounded("1,83 m"))
 }
 
 func TestBrazilianToponymMapLoader_Smoke(t *testing.T) {

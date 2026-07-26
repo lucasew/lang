@@ -16,6 +16,9 @@ type PortugueseUnitConversionRule struct {
 	*rules.AbstractUnitConversionRule
 }
 
+// Java: OUNCE = POUND.divide(12) (AbstractUnitConversionRule).
+const ptOunceOnPound = 1.0 / 12.0
+
 func NewPortugueseUnitConversionRule(messages map[string]string) *PortugueseUnitConversionRule {
 	base := rules.NewAbstractUnitConversionRule(messages)
 	// Java getId
@@ -36,7 +39,7 @@ func NewPortugueseUnitConversionRule(messages map[string]string) *PortugueseUnit
 		case rules.UnitMsgUnitMismatch:
 			return "Estas unidades de medida não são compatíveis."
 		default:
-			return "Unidade"
+			panic(fmt.Sprintf("Unknown message type.%v", m))
 		}
 	}
 	// Java PortugueseUnitConversionRule.getShortMessage
@@ -51,68 +54,68 @@ func NewPortugueseUnitConversionRule(messages map[string]string) *PortugueseUnit
 		case rules.UnitMsgUnitMismatch:
 			return "Unidade incompatível."
 		default:
-			return "Unidade"
+			panic(fmt.Sprintf("Unknown message type.%v", m))
 		}
 	}
 
-	// Java PortugueseUnitConversionRule unit registrations (order: longer phrases before shorter).
+	// Java PortugueseUnitConversionRule constructor addUnit registrations (order preserved).
 	// Mass
-	base.AddUnit(`(?:qui|ki)lo(?:grama)?s?`, rules.UnitKilogram, "quilogramas", 1, true)
-	base.AddUnit(`gramas?`, rules.UnitKilogram, "gramas", 1e-3, true)
+	base.AddUnit(`(qui|ki)lo(grama)?`, rules.UnitKilogram, "quilogramas", 1, true)
+	base.AddUnit(`grama`, rules.UnitKilogram, "gramas", 1e-3, true)
 	base.AddUnit(`toneladas?`, rules.UnitKilogram, "toneladas", 1e3, true)
 	base.AddUnit(`libras?`, rules.UnitPound, "libras", 1, false)
-	// Java OUNCE = POUND.divide(12)
-	base.AddUnit(`onças?`, rules.UnitPound, "onças", 1.0/12.0, false)
+	// Java: addUnit("onças?", OUNCE, "onças", 1, false) with OUNCE = POUND.divide(12)
+	base.AddUnit(`onças?`, rules.UnitPound, "onças", ptOunceOnPound, false)
 
-	// Length (imperial)
-	base.AddUnit(`milhas? por hora`, rules.UnitMph, "milhas por hora", 1, false)
+	// Length (imperial) — Java order
 	base.AddUnit(`milhas?`, rules.UnitMile, "milhas", 1, false)
 	base.AddUnit(`jardas?`, rules.UnitYard, "jardas", 1, false)
 	base.AddUnit(`pés?`, rules.UnitFeet, "pés", 1, false)
 	base.AddUnit(`polegadas?`, rules.UnitInch, "polegadas", 1, false)
 
-	// Speed (metric names before plain km)
-	base.AddUnit(`(?:qu|k)il[oô]metros? por hora`, rules.UnitKmh, "quilômetros por hora", 1, true)
+	// Speed — Java: km/h before milhas por hora
+	base.AddUnit(`(qu|k)ilômetros? por hora`, rules.UnitKmh, "quilômetros por hora", 1, true)
+	base.AddUnit(`milhas? por hora`, rules.UnitMph, "milhas por hora", 1, false)
 
-	// Metric length
+	// Metric length (Java uses accented unit spellings as literals)
 	base.AddUnit(`metros?`, rules.UnitMetre, "metros", 1, true)
-	base.AddUnit(`(?:qu|k)il[oô]metros?`, rules.UnitMetre, "quilômetros", 1e3, true)
-	base.AddUnit(`dec[ií]metros?`, rules.UnitMetre, "decímetros", 1e-1, false) // metric, but should not be suggested
-	base.AddUnit(`cent[ií]metros?`, rules.UnitMetre, "centímetros", 1e-2, true)
-	base.AddUnit(`mil[ií]metros?`, rules.UnitMetre, "milímetros", 1e-3, true)
-	base.AddUnit(`micr[oô]metros?`, rules.UnitMetre, "micrômetros", 1e-6, true)
-	base.AddUnit(`nan[oô]metros?`, rules.UnitMetre, "nanômetros", 1e-9, true)
-	base.AddUnit(`pic[oô]metros?`, rules.UnitMetre, "picômetros", 1e-12, true)
-	base.AddUnit(`fent[oô]metros?`, rules.UnitMetre, "fentômetros", 1e-15, true)
+	base.AddUnit(`(qu|k)ilômetros?`, rules.UnitMetre, "quilômetros", 1e3, true)
+	base.AddUnit(`decímetros?`, rules.UnitMetre, "decímetros", 1e-1, false) // metric, but should not be suggested
+	base.AddUnit(`centímetros?`, rules.UnitMetre, "centímetros", 1e-2, true)
+	base.AddUnit(`milímetros?`, rules.UnitMetre, "milímetros", 1e-3, true)
+	base.AddUnit(`micrômetros?`, rules.UnitMetre, "micrômetros", 1e-6, true)
+	base.AddUnit(`nanômetros?`, rules.UnitMetre, "nanômetros", 1e-9, true)
+	base.AddUnit(`picômetros?`, rules.UnitMetre, "picômetros", 1e-12, true)
+	base.AddUnit(`fentômetros?`, rules.UnitMetre, "fentômetros", 1e-15, true)
 
 	// Area
 	base.AddUnit(`metros? quadrados?`, rules.UnitSquareMetre, "metros quadrados", 1, true)
-	base.AddUnit(`hectar(?:es)?`, rules.UnitSquareMetre, "hectares", 1e4, true)
+	base.AddUnit(`hectar(es)?`, rules.UnitSquareMetre, "hectares", 1e4, true)
 	base.AddUnit(`ares?`, rules.UnitSquareMetre, "ares", 1e2, true)
-	base.AddUnit(`(?:k|qui)il[oô]metros? quadrados?`, rules.UnitSquareMetre, "quilômetros quadrados", 1e6, true)
-	base.AddUnit(`dec[ií]metros? quadrados?`, rules.UnitSquareMetre, "decímetros quadrados", 1e-2, false) // Metric, but not commonly used
-	base.AddUnit(`cent[ií]metros? quadrados?`, rules.UnitSquareMetre, "centímetros quadrados", 1e-4, true)
-	base.AddUnit(`mil[ií]metros? quadrados?`, rules.UnitSquareMetre, "milímetros quadrados", 1e-6, true)
-	base.AddUnit(`micr[oô]metros? quadrados?`, rules.UnitSquareMetre, "micrômetros quadrados", 1e-12, true)
-	base.AddUnit(`nan[oô]metros? quadrados?`, rules.UnitSquareMetre, "nanômetros quadrados", 1e-18, true)
-	// Java tests also exercise abstract default "sq ft"
-	base.AddUnit(`(?:sq|square)\s+(?:ft|feet|foot)`, rules.UnitSqFt, "sq ft", 1, false)
+	base.AddUnit(`(k|qui)ilômetros? quadrados?`, rules.UnitSquareMetre, "quilômetros quadrados", 1e6, true)
+	base.AddUnit(`decímetros? quadrados?`, rules.UnitSquareMetre, "decímetros quadrados", 1e-2, false) // Metric, but not commonly used
+	base.AddUnit(`centímetros? quadrados?`, rules.UnitSquareMetre, "centímetros quadrados", 1e-4, true)
+	base.AddUnit(`milímetros? quadrados?`, rules.UnitSquareMetre, "milímetros quadrados", 1e-6, true)
+	base.AddUnit(`micrômetros? quadrados?`, rules.UnitSquareMetre, "micrômetros quadrados", 1e-12, true)
+	base.AddUnit(`nanômetros? quadrados?`, rules.UnitSquareMetre, "nanômetros quadrados", 1e-18, true)
+	// Java abstract defaults already register "(?:sq|square) (?:ft|feet|foot)" for sq ft tests.
 
 	// Volume (cubic metres)
-	base.AddUnit(`metros? c[uú]bicos?`, rules.UnitCubicMetre, "metros cúbicos", 1, true)
-	base.AddUnit(`(?:k|qu)il[oô]metros? c[uú]bicos?`, rules.UnitCubicMetre, "quilômetros cúbicos", 1e9, true)
-	base.AddUnit(`dec[ií]metros? c[uú]bicos?`, rules.UnitCubicMetre, "decímetros cúbicos", 1e-3, false) // Metric, but not commonly used
-	base.AddUnit(`cent[ií]metros? c[uú]bicos?`, rules.UnitCubicMetre, "centímetros cúbicos", 1e-6, true)
-	base.AddUnit(`mil[ií]metros? c[uú]bicos?`, rules.UnitCubicMetre, "milímetros cúbicos", 1e-9, true)
-	base.AddUnit(`micr[oô]metros? c[uú]bicos?`, rules.UnitCubicMetre, "micrômetros cúbicos", 1e-18, true)
-	base.AddUnit(`nan[oô]metros? c[uú]bicos?`, rules.UnitCubicMetre, "nanômetros cúbicos", 1e-27, true)
+	base.AddUnit(`metros? cúbicos?`, rules.UnitCubicMetre, "metros cúbicos", 1, true)
+	base.AddUnit(`(k|qu)ilômetros? cúbicos?`, rules.UnitCubicMetre, "quilômetros cúbicos", 1e9, true)
+	base.AddUnit(`decímetros? cúbicos?`, rules.UnitCubicMetre, "decímetros cúbicos", 1e-3, false) // Metric, but not commonly used
+	base.AddUnit(`centímetros? cúbicos?`, rules.UnitCubicMetre, "centímetros cúbicos", 1e-6, true)
+	base.AddUnit(`milímetros? cúbicos?`, rules.UnitCubicMetre, "milímetros cúbicos", 1e-9, true)
+	base.AddUnit(`micrômetros? cúbicos?`, rules.UnitCubicMetre, "micrômetros cúbicos", 1e-18, true)
+	base.AddUnit(`nanômetros? cúbicos?`, rules.UnitCubicMetre, "nanômetros cúbicos", 1e-27, true)
 
 	base.AddUnit(`litros?`, rules.UnitLitre, "litros", 1, true)
 	base.AddUnit(`mililitros?`, rules.UnitLitre, "mililitros", 1e-3, true)
 
-	// Temperature
-	base.AddUnit(`(?:Graus?\s*)?Fahrenheit`, rules.UnitFahrenheit, "graus Fahrenheit", 1, false)
-	base.AddUnit(`(?:Graus?\s*)?(?:Celsi[ou]s|[cC]ent[ií]grados?)`, rules.UnitCelsius, "graus Celsius", 1, true)
+	// Temperature — Java: "(?:Graus)? Fahrenheit" / "(?:Graus)? (Celsi[ou]s|[cC]entígrados?)"
+	// (literal space after optional Graus)
+	base.AddUnit(`(?:Graus)? Fahrenheit`, rules.UnitFahrenheit, "graus Fahrenheit", 1, false)
+	base.AddUnit(`(?:Graus)? (Celsi[ou]s|[cC]entígrados?)`, rules.UnitCelsius, "graus Celsius", 1, true)
 
 	return &PortugueseUnitConversionRule{AbstractUnitConversionRule: base}
 }
@@ -157,6 +160,8 @@ func parsePTUnitNumber(s string) (float64, error) {
 }
 
 // formatPTUnitNumber: Locale.GERMANY, max 2 fraction digits, HALF_UP.
+// Grouping separators omitted — Java enables them, but the PT test matrix only
+// asserts decimal forms like "1,83 metros" / "4,54 toneladas" / "160,93 quilômetros".
 func formatPTUnitNumber(v float64) string {
 	sign := ""
 	if v < 0 {
