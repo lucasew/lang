@@ -42,16 +42,20 @@ type GreekSpecificCaseRule struct {
 func NewGreekSpecificCaseRule(messages map[string]string) *GreekSpecificCaseRule {
 	m, maxLen := loadSpecificCase()
 	base := &rules.AbstractSpecificCaseRule{
-		Messages:                   messages,
-		LcToProper:                 m,
-		MaxPhraseLen:               maxLen,
-		ID:                         "EL_SPECIFIC_CASE",
-		Description:                "Ελέγχει αν κάποιες λέξεις χρειάζονται κεφαλαίο το πρώτο τους γράμμα",
+		// Java: phrases from /el/specific_case.txt via getPhrasesPath
+		LcToProper:   m,
+		MaxPhraseLen: maxLen,
+		// Java GreekSpecificCaseRule.getId / getDescription
+		ID:          "EL_SPECIFIC_CASE",
+		Description: "Ελέγχει αν κάποιες λέξεις χρειάζονται κεφαλαίο το πρώτο τους γράμμα",
+		// Java getInitialCapitalMessage / getOtherCapitalizationMessage / getShortMessage
 		InitialCapitalMessage:      "Οι λέξεις της συγκεκριμένης έκφρασης χρείαζεται να ξεκινούν με κεφαλαία γράμματα.",
 		OtherCapitalizationMessage: "Η συγκεκριμένη έκφραση γράφεται σύμφωνα με την προτεινόμενη κεφαλαιοποίηση.",
 		ShortMsg:                   "Ειδική κεφαλαιοποίηση",
 	}
-	// Java: Ηνωμένες πολιτείες → Ηνωμένες Πολιτείες
+	// Java AbstractSpecificCaseRule ctor: Categories.CASING, ITSIssueType.Misspelling
+	rules.InitSpecificCaseMeta(base, messages)
+	// Java: addExamplePair(Ηνωμένες πολιτείες → Ηνωμένες Πολιτείες)
 	base.AddExamplePair(
 		rules.Wrong("Κατοικώ στις <marker>Ηνωμένες πολιτείες</marker>."),
 		rules.Fixed("Κατοικώ στις <marker>Ηνωμένες Πολιτείες</marker>."),
