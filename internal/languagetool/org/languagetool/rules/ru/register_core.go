@@ -89,6 +89,9 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 
 	fw := NewRussianFillerWordsRule(nil)
 	lt.AddRuleChecker(fw.GetID(), rules.AsSentenceCheckerSimple(fw.Match))
+	if fw.IsDefaultOff() {
+		lt.MarkDefaultOff(fw.GetID())
+	}
 
 	// Java PunctuationMarkAtParagraphEnd2 — always setDefaultOff.
 	ppe2 := rules.NewPunctuationMarkAtParagraphEnd2(map[string]string{
