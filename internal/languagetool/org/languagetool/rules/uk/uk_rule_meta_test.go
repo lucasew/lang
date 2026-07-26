@@ -37,7 +37,7 @@ func TestUK_RuleMetadata(t *testing.T) {
 }
 
 func TestUK_SimpleReplaceMeta(t *testing.T) {
-	r := NewSimpleReplaceRule(nil)
+	r := NewSimpleReplaceRule(nil, nil)
 	require.Equal(t, "UK_SIMPLE_REPLACE", r.GetID())
 	require.Equal(t, "Пошук помилкових слів", r.GetDescription())
 	require.NotNil(t, r.GetCategory())

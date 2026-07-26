@@ -89,7 +89,8 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(ss.GetID(), rules.AsSentenceCheckerSimple(ss.Match))
 	rn := NewSimpleReplaceRenamedRule(nil)
 	lt.AddRuleChecker(rn.GetID(), rules.AsSentenceCheckerSimple(rn.Match))
-	sr := NewSimpleReplaceRule(nil)
+	// Java: new SimpleReplaceRule(messages, morfologikSpellerRule, this)
+	sr := NewSimpleReplaceRule(nil, sp)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 }
 

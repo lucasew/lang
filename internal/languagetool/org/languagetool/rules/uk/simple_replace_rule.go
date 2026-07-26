@@ -21,7 +21,8 @@ var (
 	replaceMap  map[string][]string
 
 	derivatsOnce sync.Once
-	derivatsMap  map[string]map[string]struct{}
+	// value slice order mirrors Java LinkedHashSet insertion order from derivats.txt
+	derivatsMap map[string][]string
 
 	// Java: Pattern.compile(".*?adjp:actv.*?:bad.*")
 	adjpActvBadRE = regexp.MustCompile(`.*?adjp:actv.*?:bad.*`)
@@ -43,11 +44,13 @@ func loadReplace() map[string][]string {
 	return replaceMap
 }
 
-// loadDerivats ports CaseGovernmentHelper.DERIVATIVES_MAP from /uk/derivats.txt.
+// loadDerivats ports CaseGovernmentHelper.DERIVATIVES_MAP from resource /uk/derivats.txt.
 // Format: derivative base_verb (space-separated; multiple verbs via ":" like case_government).
-func loadDerivats() map[string]map[string]struct{} {
+// Official file lives under resource/uk; embed is byte-identical rules/uk/data/derivats.txt.
+func loadDerivats() map[string][]string {
 	derivatsOnce.Do(func() {
-		m := map[string]map[string]struct{}{}
+		m := map[string][]string{}
+		seen := map[string]map[string]struct{}{}
 		f, err := replaceFS.Open("data/derivats.txt")
 		if err != nil {
 			panic(err)
@@ -57,8 +60,15 @@ func loadDerivats() map[string]map[string]struct{} {
 		buf := make([]byte, 0, 64*1024)
 		sc.Buffer(buf, 1024*1024)
 		for sc.Scan() {
-			line := tools.JavaStringTrim(sc.Text())
+			// Java CaseGovernmentHelper.loadMap: line.split(" ") without trim/comment skip.
+			// File has no # comments in practice; blank lines would NPE in Java on parts[1].
+			line := sc.Text()
 			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			// Keep JavaStringTrim for trailing whitespace lines present in the official file.
+			line = tools.JavaStringTrim(line)
+			if line == "" {
 				continue
 			}
 			parts := strings.Split(line, " ")
@@ -67,15 +77,20 @@ func loadDerivats() map[string]map[string]struct{} {
 			}
 			key := parts[0]
 			verbs := strings.Split(parts[1], ":")
-			set, ok := m[key]
+			set, ok := seen[key]
 			if !ok {
 				set = map[string]struct{}{}
-				m[key] = set
+				seen[key] = set
 			}
 			for _, v := range verbs {
-				if v != "" {
-					set[v] = struct{}{}
+				if v == "" {
+					continue
 				}
+				if _, has := set[v]; has {
+					continue
+				}
+				set[v] = struct{}{}
+				m[key] = append(m[key], v)
 			}
 		}
 		if err := sc.Err(); err != nil {
@@ -88,16 +103,19 @@ func loadDerivats() map[string]map[string]struct{} {
 
 // SimpleReplaceRule ports org.languagetool.rules.uk.SimpleReplaceRule.
 // setIgnoreTaggedWords + custom isTagged; findMatches adds adjp:actv:bad, derivat,
-// and :bad speller paths. SpellingSuggestions optional (Java Morfologik getSuggestionsFromDefaultDicts).
+// and :bad speller paths (morfologikSpellerRule.getSpeller1().getSuggestionsFromDefaultDicts).
 type SimpleReplaceRule struct {
 	*rules.AbstractSimpleReplaceRule
-	// SpellingSuggestions ports morfologikSpellerRule.getSpeller1().getSuggestionsFromDefaultDicts.
-	// When nil, :bad speller branch fails closed (match with empty suggestions only if we still add — Java always adds match).
-	// Java always creates match even with empty suggestions list.
-	SpellingSuggestions func(word string) []string
+	// morfologikSpellerRule ports the Java field of the same name.
+	morfologikSpellerRule *MorfologikUkrainianSpellerRule
 }
 
-func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
+// NewSimpleReplaceRule ports
+// SimpleReplaceRule(ResourceBundle messages, MorfologikUkrainianSpellerRule morfologikSpellerRule, Language language).
+// messages may be nil (English bundle placeholders unused by UK messages).
+// morfologikSpellerRule may be nil only when the :bad speller path is not exercised
+// (fail closed: match with empty suggestions, same as Java empty list).
+func NewSimpleReplaceRule(messages map[string]string, morfologikSpellerRule *MorfologikUkrainianSpellerRule) *SimpleReplaceRule {
 	// Warm derivats load (same static init as Java CaseGovernmentHelper).
 	_ = loadDerivats()
 	base := &rules.AbstractSimpleReplaceRule{
@@ -116,7 +134,10 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 	}
 	// Java AbstractSimpleReplaceRule: Categories.MISC
 	rules.InitSimpleReplaceMeta(base, messages)
-	return &SimpleReplaceRule{AbstractSimpleReplaceRule: base}
+	return &SimpleReplaceRule{
+		AbstractSimpleReplaceRule: base,
+		morfologikSpellerRule:     morfologikSpellerRule,
+	}
 }
 
 // Match ports AbstractSimpleReplaceRule.match with UK findMatches override.
@@ -206,18 +227,20 @@ func (r *SimpleReplaceRule) findMatchesUK(tokenReadings *languagetool.AnalyzedTo
 		if m.ShortMessage == "" {
 			m.ShortMessage = "Помилка?"
 		}
-		if r.SpellingSuggestions != nil {
-			sugs := r.SpellingSuggestions(tokenReadings.GetToken())
-			// Java: removeIf(s -> s.contains(" "))
-			filtered := sugs[:0]
-			for _, s := range sugs {
-				if !strings.Contains(s, " ") {
-					filtered = append(filtered, s)
+		// Java: morfologikSpellerRule.getSpeller1().getSuggestionsFromDefaultDicts(token)
+		// suggestions.removeIf(s -> s.contains(" "))
+		if r.morfologikSpellerRule != nil {
+			if sp1 := r.morfologikSpellerRule.GetSpeller1(); sp1 != nil {
+				sugs := sp1.GetSuggestionsFromDefaultDicts(tokenReadings.GetToken())
+				filtered := make([]string, 0, len(sugs))
+				for _, s := range sugs {
+					if !strings.Contains(s, " ") {
+						filtered = append(filtered, s)
+					}
 				}
+				m.SetSuggestedReplacements(filtered)
 			}
-			m.SetSuggestedReplacements(filtered)
 		}
-		// Without speller: still emit match (Java always does); empty suggestions.
 		return []*rules.RuleMatch{m}
 	}
 
@@ -227,17 +250,17 @@ func (r *SimpleReplaceRule) findMatchesUK(tokenReadings *languagetool.AnalyzedTo
 // findInDeriv ports SimpleReplaceRule.findInDeriv.
 func findInDeriv(w string) []string {
 	derivats := loadDerivats()
-	verbSet, ok := derivats[w]
-	if !ok || len(verbSet) == 0 {
+	verbList, ok := derivats[w]
+	if !ok || len(verbList) == 0 {
 		return nil
 	}
 	wrong := loadReplace()
-	ending := ""
-	if r := []rune(w); len(r) >= 3 {
-		ending = string(r[len(r)-3:])
-	}
+	// Java StringUtils.right(w, 3)
+	ending := stringRight(w, 3)
+
 	var suggestions []string
-	for verb := range verbSet {
+	// Java: derivats.stream() — LinkedHashSet insertion order
+	for _, verb := range verbList {
 		reps, ok := wrong[verb]
 		if !ok || len(reps) == 0 {
 			continue
@@ -245,11 +268,13 @@ func findInDeriv(w string) []string {
 		for _, t := range reps {
 			chosen := t
 			// Java: first derivative key ending with same 3-char ending whose value contains t
+			// HashMap entrySet order is undefined in Java; scan stable sorted keys for Go twin
+			// would diverge — keep map range (both undefined). Prefer first hit with matching ending.
 			for der, verbs := range derivats {
 				if !strings.HasSuffix(der, ending) {
 					continue
 				}
-				if _, has := verbs[t]; has {
+				if sliceContains(verbs, t) {
 					chosen = der
 					break
 				}
@@ -258,6 +283,26 @@ func findInDeriv(w string) []string {
 		}
 	}
 	return suggestions
+}
+
+func stringRight(w string, n int) string {
+	if n <= 0 {
+		return ""
+	}
+	r := []rune(w)
+	if len(r) <= n {
+		return w
+	}
+	return string(r[len(r)-n:])
+}
+
+func sliceContains(ss []string, want string) bool {
+	for _, s := range ss {
+		if s == want {
+			return true
+		}
+	}
+	return false
 }
 
 // hasPosTagRE ports PosTagHelper.hasPosTag(…, Pattern) for package-local callers.
@@ -300,12 +345,12 @@ func firstLemma(tokenReadings *languagetool.AnalyzedTokenReadings) string {
 	if tokenReadings == nil {
 		return ""
 	}
-	for _, at := range tokenReadings.GetReadings() {
-		if at != nil && at.GetLemma() != nil {
-			return *at.GetLemma()
-		}
+	// Java: tokenReadings.getAnalyzedToken(0).getLemma()
+	rds := tokenReadings.GetReadings()
+	if len(rds) == 0 || rds[0] == nil || rds[0].GetLemma() == nil {
+		return ""
 	}
-	return ""
+	return *rds[0].GetLemma()
 }
 
 // ukSimpleReplaceIsTagged ports SimpleReplaceRule.isTagged + isGoodPosTag.
@@ -317,6 +362,7 @@ func ukSimpleReplaceIsTagged(tokenReadings *languagetool.AnalyzedTokenReadings) 
 		if token == nil {
 			continue
 		}
+		// Java: if (token.hasNoTag()) return false;
 		if token.HasNoTag() {
 			return false
 		}
@@ -336,6 +382,7 @@ func ukIsGoodPosTag(posTag string) bool {
 	if posTag == languagetool.ParagraphEndTagName || posTag == languagetool.SentenceEndTagName {
 		return false
 	}
+	// Java: !posTag.contains(IPOSTag.bad.getText()) — "bad"
 	if strings.Contains(posTag, "bad") {
 		return false
 	}

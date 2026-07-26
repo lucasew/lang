@@ -86,7 +86,7 @@ func LoadCaseGovernmentHelper() *CaseGovernmentHelper {
 					set[c] = struct{}{}
 				}
 			}
-			for v := range verbs {
+			for _, v := range verbs {
 				if rvs, ok := m[v]; ok {
 					for c := range rvs {
 						set[c] = struct{}{}
