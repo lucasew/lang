@@ -3,7 +3,6 @@ package pt
 import (
 	"time"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
@@ -21,7 +20,7 @@ func init() {
 		return NewPortugueseSuppressMisspelledSuggestionsFilter()
 	})
 	c.Register("org.languagetool.rules.pt.ConfusionCheckFilter", func() patterns.RuleFilter {
-		return confusionCheckRuleFilter{inner: NewConfusionCheckFilter().ConfusionCheckFilter}
+		return NewConfusionCheckFilter()
 	})
 	c.Register("org.languagetool.rules.pt.FutureDateFilter", func() patterns.RuleFilter {
 		return NewFutureDateFilter()
@@ -61,20 +60,6 @@ func init() {
 	})
 }
 
-
-
-type confusionCheckRuleFilter struct {
-	inner *rules.ConfusionCheckFilter
-}
-
-func (f confusionCheckRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, pos int,
-	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
-	if f.inner == nil {
-		return nil
-	}
-	return f.inner.AcceptRuleMatch(match, arguments, pos, patternTokens, tokenPositions)
-}
-
 func ptFutureDateCore() *rules.FutureDateFilterCore {
 	h := NewDateFilterHelper()
 	return &rules.FutureDateFilterCore{
@@ -87,7 +72,6 @@ func ptFutureDateCore() *rules.FutureDateFilterCore {
 		},
 	}
 }
-
 
 func ptDateCheckWithSuggestions() *rules.AbstractDateCheckWithSuggestionsFilter {
 	h := NewDateFilterHelper()
@@ -126,4 +110,3 @@ func ptNewYearDateCore() *rules.NewYearDateFilterCore {
 		},
 	}
 }
-
