@@ -11,11 +11,25 @@ import (
 //go:embed data/cliches.txt
 var clichesFS embed.FS
 
+// PortugueseClicheReplaceID ports PortugueseClicheRule.PORTUGUESE_CLICHE_RULE.
+const PortugueseClicheReplaceID = "PT_CLICHE_REPLACE"
+
+// PortugueseClicheFilePath is the official resource path Java loads for base
+// Portuguese (Portuguese.getRelevantRules / PortugueseClicheRuleTest → "/pt/cliches.txt").
+// Variant languages pass "/pt/pt-BR/cliches.txt" or "/pt/pt-PT/cliches.txt".
+const PortugueseClicheFilePath = "/pt/cliches.txt"
+
+// PortugueseClicheURL ports PortugueseClicheRule.getUrl()
+// → Tools.getUrl("https://pt.wikipedia.org/wiki/Clichê").
+const PortugueseClicheURL = "https://pt.wikipedia.org/wiki/Clichê"
+
 var (
 	clicheOnce sync.Once
 	clicheBase *rules.AbstractSimpleReplaceRule2
 )
 
+// loadCliche loads official cliches.txt once (Java AbstractSimpleReplaceRule2 lazyInit).
+// Data is the base Portuguese list used by PortugueseClicheRuleTest and Portuguese.java.
 func loadCliche() *rules.AbstractSimpleReplaceRule2 {
 	clicheOnce.Do(func() {
 		f, err := clichesFS.Open("data/cliches.txt")
@@ -23,8 +37,18 @@ func loadCliche() *rules.AbstractSimpleReplaceRule2 {
 			panic(err)
 		}
 		defer f.Close()
+		// Field twin of PortugueseClicheRule + AbstractSimpleReplaceRule2 defaults:
+		// - id PT_CLICHE_REPLACE
+		// - description / short / message as Java overrides
+		// - suggestions separator " ou "
+		// - CaseSensitivy.CI (base default)
+		// - Locale pt via LanguageCode (getLocale → new Locale("pt"))
+		// - useSubRuleSpecificIds()
+		// - Categories.STYLE, ITSIssueType.Style
+		// - URL pt.wikipedia.org Clichê
+		// - example quente como uma fornalha → quente
 		base := &rules.AbstractSimpleReplaceRule2{
-			ID:                   "PT_CLICHE_REPLACE",
+			ID:                   PortugueseClicheReplaceID,
 			Description:          "Frases-feitas e expressões idiomáticas: $match",
 			ShortMsg:             "Frase-feita",
 			MessageTemplate:      "\"$match\" é uma frase-feita. É preferível dizer $suggestions.",
@@ -32,11 +56,13 @@ func loadCliche() *rules.AbstractSimpleReplaceRule2 {
 			CaseSens:             rules.CaseInsensitive,
 			LanguageCode:         "pt",
 			SubRuleSpecificIDs:   true,
+			Category:             rules.CatStyle.GetCategory(nil),
+			IssueType:            rules.ITSStyle,
+			URL:                  PortugueseClicheURL,
 		}
-		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/cliches.txt"); err != nil {
+		if err := base.LoadSimpleReplaceRule2Data(f, PortugueseClicheFilePath); err != nil {
 			panic(err)
 		}
-		// Java: quente como uma fornalha → quente
 		base.AddExamplePair(
 			rules.Wrong("<marker>quente como uma fornalha</marker>"),
 			rules.Fixed("<marker>quente</marker>"),
@@ -46,18 +72,72 @@ func loadCliche() *rules.AbstractSimpleReplaceRule2 {
 	return clicheBase
 }
 
-// PortugueseClicheRule ports org.languagetool.rules.pt.PortugueseClicheRule.
+// PortugueseClicheRule ports org.languagetool.rules.pt.PortugueseClicheRule
+// (extends AbstractSimpleReplaceRule2).
 type PortugueseClicheRule struct {
 	*rules.AbstractSimpleReplaceRule2
+	// path ports PortugueseClicheRule.path / getFileNames().
+	path string
 }
 
-func NewPortugueseClicheRule(messages map[string]string) *PortugueseClicheRule {
+// NewPortugueseClicheRule ports PortugueseClicheRule(ResourceBundle messages, String path, Language language).
+// Official data is go:embed of the same cliches.txt Java loads from the classpath for base PT.
+// language is represented via LanguageCode "pt" on the base (getLocale → Locale("pt")).
+func NewPortugueseClicheRule(messages map[string]string, path string) *PortugueseClicheRule {
+	if path == "" {
+		// Java: Objects.requireNonNull(path)
+		panic("PortugueseClicheRule: path must not be null")
+	}
 	base := loadCliche()
 	r := *base
 	r.Messages = messages
-	return &PortugueseClicheRule{AbstractSimpleReplaceRule2: &r}
+	r.Category = rules.CatStyle.GetCategory(messages)
+	r.IssueType = rules.ITSStyle
+	r.URL = PortugueseClicheURL
+	return &PortugueseClicheRule{AbstractSimpleReplaceRule2: &r, path: path}
 }
 
+// GetFileNames ports PortugueseClicheRule.getFileNames() → singleton path.
+func (r *PortugueseClicheRule) GetFileNames() []string {
+	if r == nil {
+		return nil
+	}
+	return []string{r.path}
+}
+
+// GetShort ports PortugueseClicheRule.getShort().
+func (r *PortugueseClicheRule) GetShort() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
+	}
+	return r.ShortMsg
+}
+
+// GetMessage ports PortugueseClicheRule.getMessage().
+func (r *PortugueseClicheRule) GetMessage() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
+	}
+	return r.MessageTemplate
+}
+
+// GetSuggestionsSeparator ports PortugueseClicheRule.getSuggestionsSeparator() → " ou ".
+func (r *PortugueseClicheRule) GetSuggestionsSeparator() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
+	}
+	return r.SuggestionsSeparator
+}
+
+// GetLocaleCode ports PortugueseClicheRule.getLocale() → Locale("pt").
+func (r *PortugueseClicheRule) GetLocaleCode() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
+	}
+	return r.LanguageCode
+}
+
+// Match ports AbstractSimpleReplaceRule2.match (surface / multiword keys from cliches.txt).
 func (r *PortugueseClicheRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	return r.AbstractSimpleReplaceRule2.Match(sentence)
 }
