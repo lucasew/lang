@@ -9,6 +9,8 @@ import (
 
 // DateCheckFilter ports org.languagetool.rules.ru.DateCheckFilter
 // (extends AbstractDateCheckFilter).
+// Localization day/month helpers currently share DateFilterHelper (FutureDateFilter path);
+// Java DateCheckFilter still has its own older equals/Roman getMonth — separate sector.
 type DateCheckFilter struct {
 	*rules.AbstractDateCheckFilter
 	helper *DateFilterHelper
@@ -26,9 +28,8 @@ func NewDateCheckFilter() *DateCheckFilter {
 			return wd
 		},
 		FormatDayOfWeek: func(t time.Time) string {
-			// Locale.ru LONG display names (nominative).
-			names := []string{"воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"}
-			return names[int(t.Weekday())]
+			// DateFilterHelper.getDayOfWeek(Calendar) — Locale.ru LONG
+			return h.GetDayOfWeekName(t)
 		},
 		GetMonth: func(localized string) int {
 			m, err := h.GetMonth(localized)
@@ -70,5 +71,5 @@ func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
 // GetDayOfWeekName returns Russian weekday name for a calendar date.
 func (f *DateCheckFilter) GetDayOfWeekName(year, month, day int) string {
 	t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	return f.FormatDayOfWeek(t)
+	return f.helper.GetDayOfWeekName(t)
 }

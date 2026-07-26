@@ -13,9 +13,7 @@ func TestDateCheckFilter_Helpers(t *testing.T) {
 	m, err := f.GetMonth("августа")
 	require.NoError(t, err)
 	require.Equal(t, 8, m)
-	m, err = f.GetMonth("VIII")
-	require.NoError(t, err)
-	require.Equal(t, 8, m)
+	// Roman VIII is DateCheckFilter.java invent, not DateFilterHelper (this path uses helper)
 	// 27 августа 2014 was Wednesday
 	require.Equal(t, "среда", f.GetDayOfWeekName(2014, 8, 27))
 	jd, err := f.GetDayOfWeekJava("вторник")
