@@ -42,15 +42,19 @@ type BelarusianSpecificCaseRule struct {
 func NewBelarusianSpecificCaseRule(messages map[string]string) *BelarusianSpecificCaseRule {
 	m, maxLen := loadSpecificCase()
 	base := &rules.AbstractSpecificCaseRule{
-		Messages:                   messages,
-		LcToProper:                 m,
-		MaxPhraseLen:               maxLen,
-		ID:                         "BE_SPECIFIC_CASE",
-		Description:                "Напісанне спецыяльных найменняў у верхнім або ніжнім рэгістры",
+		// Java: phrases from /be/specific_case.txt via getPhrasesPath
+		LcToProper:   m,
+		MaxPhraseLen: maxLen,
+		// Java BelarusianSpecificCaseRule.getId / getDescription
+		ID:          "BE_SPECIFIC_CASE",
+		Description: "Напісанне спецыяльных найменняў у верхнім або ніжнім рэгістры",
+		// Java getInitialCapitalMessage / getOtherCapitalizationMessage / getShortMessage
 		InitialCapitalMessage:      "Уласныя імёны і назвы пішуцца з вялікай літары.",
 		OtherCapitalizationMessage: "Калі гэта уласнае імя або назва, выкарыстоўвайце прапанаванае напісанне.",
 		ShortMsg:                   "Proper noun",
 	}
+	// Java AbstractSpecificCaseRule + subclass ctor: Categories.CASING, ITSIssueType.Misspelling
+	rules.InitSpecificCaseMeta(base, messages)
 	// Java: Вялікая айчынная Вайна → Вялікая Айчынная вайна
 	base.AddExamplePair(
 		rules.Wrong("<marker>Вялікая айчынная Вайна</marker> — гэта спецыфічны тэрмін савецкай гістарыяграфіі."),
