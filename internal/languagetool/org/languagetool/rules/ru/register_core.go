@@ -29,10 +29,10 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	}))
 
 	sp := NewMorfologikRussianSpellerRule()
+	// Wire filter-only dict for grammar RuleFilters; do not override speller IsMisspelled
+	// (Java uses MorfologikRussianSpellerRule multi-speller path as-is).
 	if p := morfologik.DiscoverLanguageDict(RussianSpellerDict); p != "" {
-		if WireRussianFilterSpeller(p) {
-			sp.IsMisspelled = FilterDictIsMisspelled
-		}
+		_ = WireRussianFilterSpeller(p)
 	}
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 

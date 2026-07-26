@@ -22,6 +22,7 @@ const (
 
 // Java RUSSIAN_LETTERS (with combining acute/grave on vowels, ё, ʼ, hyphen).
 // RE2 has no \u escapes in some builds — use literal combining marks in character class.
+// Java Pattern.matches() = full-string match → anchored ^...$.
 var russianLetters = regexp.MustCompile(`^[-а-яёА-ЯЁʼо́а́е́у́и́ы́э́ю́я́о̀а̀ѐу̀ѝы̀э̀ю̀я̀]*$`)
 
 // Java lcDoNotSuggestWords (NOSUGGEST) for MorfologikRussianSpellerRule.
@@ -44,27 +45,66 @@ type MorfologikRussianSpellerRule struct {
 	correctExamples   []rules.CorrectExample
 }
 
+// NewMorfologikRussianSpellerRule ports ctor with null UserConfig.
 func NewMorfologikRussianSpellerRule() *MorfologikRussianSpellerRule {
+	return NewMorfologikRussianSpellerRuleWithUser(nil)
+}
+
+// NewMorfologikRussianSpellerRuleWithUser ports
+// MorfologikRussianSpellerRule(messages, language, userConfig, altLanguages).
+func NewMorfologikRussianSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikRussianSpellerRule {
+	var userWords []string
+	var accepted []string
+	if userConfig != nil {
+		accepted = userConfig.GetAcceptedWords()
+		userWords = morfologik.UserDictWordsForMulti(accepted, userConfig.GetPremiumUid())
+	}
 	r := &MorfologikRussianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikRussianSpellerRuleID, "ru", RussianSpellerDict, nil),
 		ConfCheckLatin: defaultMinRUValue,
+	}
+	// Java: if (userConfig != null) conf_ru_Value = (int) cf[0]
+	if userConfig != nil {
+		if cf := userConfig.GetConfigValueByID(MorfologikRussianSpellerRuleID); len(cf) > 0 && cf[0] != nil {
+			if n, ok := confRUValueAsInt(cf[0]); ok {
+				r.ConfCheckLatin = n
+			}
+		}
+		r.SetUserConfig(userConfig)
 	}
 	// Java isLatinScript() = false
 	if r.SpellingCheckRule != nil {
 		r.NonLatinScript = true
 		// Java filterNoSuggestWords (lcDoNotSuggestWords) via shared FilterSuggestions path.
 		r.FilterNoSuggestWordsFn = r.filterNoSuggestWords
+		// Java SpellingCheckRule: wordsToBeIgnored.addAll(userConfig.getAcceptedWords()) always.
+		r.ApplyUserAcceptedWords(accepted)
 	}
 	r.IgnoreTokenFn = r.ruIgnoreToken
-	// Java MorfologikSpellerRule.initSpeller: binary + spelling.txt + custom + global.
-	r.InitSpellersFromGetters(nil, nil)
+	// Java MorfologikSpellerRule.initSpeller: binary + spelling.txt + custom + global (+ user FSA if premium).
+	r.InitSpellersFromGetters(nil, userWords)
 	// Java: каждя → каждая
 	r.AddExamplePair(
 		rules.Wrong("Все счастливые семьи похожи друг на друга, <marker>каждя</marker> несчастливая семья несчастлива по-своему."),
 		rules.Fixed("Все счастливые семьи похожи друг на друга, <marker>каждая</marker> несчастливая семья несчастлива по-своему."),
 	)
 	return r
+}
+
+func confRUValueAsInt(v any) (int, bool) {
+	switch n := v.(type) {
+	case int:
+		return n, true
+	case int32:
+		return int(n), true
+	case int64:
+		return int(n), true
+	case float64:
+		return int(n), true
+	default:
+		return 0, false
+	}
 }
 
 // AddExamplePair ports Rule.addExamplePair.
@@ -98,7 +138,27 @@ func (r *MorfologikRussianSpellerRule) GetCorrectExamples() []rules.CorrectExamp
 	return out
 }
 
-// ruIgnoreToken ports ignoreToken: skip non-Russian-letter tokens when conf != 1.
+// GetConfigureText ports MorfologikRussianSpellerRule.getConfigureText.
+func (r *MorfologikRussianSpellerRule) GetConfigureText() string {
+	return "Проверять слова на латинице, только термины (0/1)"
+}
+
+// GetRuleOptions ports MorfologikRussianSpellerRule.getRuleOptions.
+// Java: new RuleOption(DEFAULT_MIN_RU_VALUE, getConfigureText(), 0, 1)
+func (r *MorfologikRussianSpellerRule) GetRuleOptions() []*rules.RuleOption {
+	cfg := "Проверять слова на латинице, только термины (0/1)"
+	if r != nil {
+		cfg = r.GetConfigureText()
+	}
+	return []*rules.RuleOption{
+		rules.NewRuleOption(defaultMinRUValue, cfg, 0, 1),
+	}
+}
+
+// ruIgnoreToken ports ignoreToken:
+//
+//	if (conf_ru_Value != 1) && !RUSSIAN_LETTERS.matcher(word).matches() → true
+//	else build words list → ignoreWord(words, idx)
 func (r *MorfologikRussianSpellerRule) ruIgnoreToken(tokens []*languagetool.AnalyzedTokenReadings, idx int) bool {
 	if idx < 0 || idx >= len(tokens) || tokens[idx] == nil {
 		return false
@@ -112,41 +172,21 @@ func (r *MorfologikRussianSpellerRule) ruIgnoreToken(tokens []*languagetool.Anal
 	if conf != 1 && !russianLetters.MatchString(word) {
 		return true
 	}
+	// Java: List<String> words from tokens; return ignoreWord(words, idx)
+	words := make([]string, len(tokens))
+	for i, tok := range tokens {
+		if tok != nil {
+			words[i] = tok.GetToken()
+		}
+	}
 	if r != nil && r.SpellingCheckRule != nil {
-		return r.IgnoreWord(word)
+		return r.IgnoreWordAt(words, idx)
 	}
 	return false
 }
 
-// Match ports parent Match + filterNoSuggestWords on suggestions.
-func (r *MorfologikRussianSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
-	if r == nil || r.MorfologikSpellerRule == nil {
-		return nil, nil
-	}
-	base, err := r.MorfologikSpellerRule.Match(sentence)
-	if err != nil || len(base) == 0 {
-		return base, err
-	}
-	for _, m := range base {
-		if m == nil {
-			continue
-		}
-		sugs := m.GetSuggestedReplacements()
-		if len(sugs) == 0 {
-			// try filter dict suggestions when map empty
-			if FilterDictAvailable() {
-				word := matchSurfaceRU(m, sentence)
-				sugs = FilterDictSuggest(word)
-			}
-		}
-		if len(sugs) > 0 {
-			m.SetSuggestedReplacements(r.filterNoSuggestWords(sugs))
-		}
-	}
-	return base, nil
-}
-
 // filterNoSuggestWords ports filterNoSuggestWords (case-insensitive NOSUGGEST set).
+// Java: k.getReplacement().toLowerCase() not in lcDoNotSuggestWords.
 func (r *MorfologikRussianSpellerRule) filterNoSuggestWords(suggestions []string) []string {
 	if len(suggestions) == 0 {
 		return suggestions
@@ -166,12 +206,3 @@ func (r *MorfologikRussianSpellerRule) filterNoSuggestWords(suggestions []string
 	}
 	return out
 }
-
-func matchSurfaceRU(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) string {
-	if m == nil || sent == nil {
-		return ""
-	}
-	// Java RuleMatch FromPos/ToPos are UTF-16 code units (String.substring).
-	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
-}
-

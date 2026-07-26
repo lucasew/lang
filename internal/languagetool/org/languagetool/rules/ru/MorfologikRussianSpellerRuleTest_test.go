@@ -1,42 +1,77 @@
 package ru
 
 // Twin of languagetool-language-modules/ru/.../MorfologikRussianSpellerRuleTest.java
-// Full ru_RU.dict deferred — map inject.
+// Official resource: /ru/hunspell/ru_RU.dict (+ spelling.txt via InitSpellersFromGetters).
+// Analysis ports JLanguageTool(Russian).getAnalyzedSentence — RU tokenizer + tagger when present.
+
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	tagru "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ru"
+	rutok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ru"
 	"github.com/stretchr/testify/require"
 )
 
+// requireRussianSpellerDict skips when official ru_RU.dict is not discoverable (no invent).
+func requireRussianSpellerDict(t *testing.T) *MorfologikRussianSpellerRule {
+	t.Helper()
+	if morfologik.DiscoverLanguageDict(RussianSpellerDict) == "" {
+		t.Skip("ru_RU.dict not discoverable (inspiration/.../ru/hunspell)")
+	}
+	r := NewMorfologikRussianSpellerRule()
+	require.NotNil(t, r)
+	require.NotNil(t, r.Speller1, "InitSpellersFromGetters must attach multi when dict present")
+	return r
+}
+
+// analyzeRU ports JLanguageTool(Russian.getInstance()).getAnalyzedSentence.
+// Uses RussianWordTokenizer; wires RussianTagger when russian.dict is available.
+func analyzeRU(text string) *languagetool.AnalyzedSentence {
+	wt := rutok.NewRussianWordTokenizer()
+	if tagru.DiscoverRussianPOSDict() != "" {
+		tagru.EnsureDefaultRussianTagger()
+		if tg := tagru.DefaultRussianTagger; tg != nil {
+			lt := languagetool.NewJLanguageTool("ru")
+			lt.SentenceTagger = tg.Tag
+			if s := lt.GetAnalyzedSentence(text); s != nil {
+				return s
+			}
+		}
+	}
+	return languagetool.AnalyzeWithTokenizer(text, wt)
+}
+
 // Port of MorfologikRussianSpellerRuleTest.testMorfologikSpeller
 func TestMorfologikRussianSpellerRule_MorfologikSpeller(t *testing.T) {
-	r := NewMorfologikRussianSpellerRule()
+	r := requireRussianSpellerDict(t)
 	require.Equal(t, MorfologikRussianSpellerRuleID, r.GetID())
 	require.Equal(t, RussianSpellerDict, r.GetFileName())
+	require.Equal(t, "MORFOLOGIK_RULE_RU_RU", r.GetID())
+	require.Equal(t, "/ru/hunspell/ru_RU.dict", r.GetFileName())
 
-	sp := morfologik.NewMorfologikSpeller(RussianSpellerDict, 1)
-	for _, w := range []string{"привет", "мир", "тест"} {
-		sp.AddWord(w)
+	matchN := func(s string) int {
+		t.Helper()
+		ms, err := r.Match(analyzeRU(s))
+		require.NoError(t, err)
+		return len(ms)
 	}
-	sp.Suggestions["привт"] = []string{"привет"}
-	// Map-inject unit path: clear initSpeller Multis so Speller map is used.
-	r.ClearMultiSpellers()
-	r.Speller = sp
-	r.IsMisspelled = sp.IsMisspelled
 
-	m, err := r.Match(languagetool.AnalyzePlain("привет мир"))
-	require.NoError(t, err)
-	require.Empty(t, m)
+	// correct word
+	require.Equal(t, 0, matchN("русский"))
+	// correct word
+	require.Equal(t, 0, matchN("ёжик"))
+	// correct word
+	require.Equal(t, 0, matchN("ежик"))
 
-	m, err = r.Match(languagetool.AnalyzePlain("привт"))
-	require.NoError(t, err)
-	require.Len(t, m, 1)
-	require.Contains(t, m[0].GetSuggestedReplacements(), "привет")
+	// incorrect word with hyphen
+	require.Equal(t, 1, matchN("юго-зпдный"))
+	// correct word with hyphen
+	require.Equal(t, 0, matchN("северо-восточный"))
 
-	// digits / punctuation not flagged
-	m, err = r.Match(languagetool.AnalyzePlain("123"))
-	require.NoError(t, err)
-	require.Empty(t, m)
+	// correct word with hyphen
+	require.Equal(t, 0, matchN("Ростов-на-Дону"))
+	// incorrect word with hyphen
+	require.Equal(t, 1, matchN("Ростов-на-дону"))
 }
