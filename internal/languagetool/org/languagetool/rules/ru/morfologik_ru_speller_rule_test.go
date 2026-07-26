@@ -43,7 +43,32 @@ func TestMorfologikRussianYOSpellerRule(t *testing.T) {
 	require.Equal(t, "/ru/hunspell/ru_RU_yo.dict", RussianYOSpellerDict)
 	require.Equal(t, MorfologikRussianYOSpellerRuleID, r.GetID())
 	require.Equal(t, RussianYOSpellerDict, r.GetFileName())
-	require.Contains(t, r.GetDescription(), "Ё")
+	require.Equal(t, "Проверка орфографии. Только «Ё» (экспериментальное правило).", r.GetDescription())
+	// Java setDefaultOff()
+	require.True(t, r.IsDefaultOff())
+	require.Equal(t, 0, r.ConfCheckLatin)
+	// Java isLatinScript() = false → NonLatinScript
+	require.True(t, r.NonLatinScript)
+	// Java example pair
+	require.Len(t, r.GetIncorrectExamples(), 1)
+	require.Len(t, r.GetCorrectExamples(), 1)
+	// Java getConfigureText / getRuleOptions
+	require.Equal(t, "Проверять слова на латинице, только термины (0/1)", r.GetConfigureText())
+	opts := r.GetRuleOptions()
+	require.Len(t, opts, 1)
+	require.Equal(t, 0, opts[0].DefaultValue)
+	require.Equal(t, r.GetConfigureText(), opts[0].ConfigureText)
+	require.Equal(t, 0, opts[0].MinConfigurableValue)
+	require.Equal(t, 1, opts[0].MaxConfigurableValue)
+}
+
+func TestMorfologikRussianYOSpellerRule_UserConfigConfValue(t *testing.T) {
+	uc := languagetool.NewUserConfig()
+	uc.SetConfigValueByID(MorfologikRussianYOSpellerRuleID, []any{1})
+	r := NewMorfologikRussianYOSpellerRuleWithUser(uc)
+	require.Equal(t, 1, r.ConfCheckLatin)
+	hello := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("hello", nil, nil), 0)
+	require.False(t, r.ruIgnoreToken([]*languagetool.AnalyzedTokenReadings{hello}, 0))
 }
 
 func TestRussianLettersGate(t *testing.T) {

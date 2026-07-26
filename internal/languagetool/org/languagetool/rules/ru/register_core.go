@@ -97,13 +97,12 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(ppe2.GetID(), rules.AsTextLevelChecker(ppe2.MatchList))
 	lt.MarkDefaultOff(ppe2.GetID())
 
-	// specific to Russian
+	// specific to Russian — Java MorfologikRussianYOSpellerRule (setDefaultOff)
 	yo := NewMorfologikRussianYOSpellerRule()
-	if p := morfologik.DiscoverLanguageDict(RussianYOSpellerDict); p != "" {
-		_ = p
-	}
 	lt.AddRuleChecker(yo.GetID(), rules.AsSentenceChecker(yo.Match))
-	lt.MarkDefaultOff(MorfologikRussianYOSpellerRuleID)
+	if yo.IsDefaultOff() {
+		lt.MarkDefaultOff(yo.GetID())
+	}
 
 	ub := NewRussianUnpairedBracketsRule(nil)
 	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
