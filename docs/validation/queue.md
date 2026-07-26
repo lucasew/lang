@@ -401,7 +401,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-DateFilterHelper | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/DateFilterHelper.java | internal/languagetool/org/languagetool/rules/pt/date_filter_helper.go; internal/languagetool/org/languagetool/rules/pt/date_filter_helper_test.go | 95213429eb8b9be91bf44fcb6fe54895dcc1a959 | 0 | 0 |  |  | 2026-07-26T04:30:16Z |
 | docs/faithful-port-checklist.md#3.C.3-PortugueseProclisisFilter | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseProclisisFilter.java | internal/languagetool/org/languagetool/rules/pt/portuguese_proclisis_filter.go; internal/languagetool/org/languagetool/rules/pt/portuguese_proclisis_filter_test.go | fe15b45a9c870a8df4ad4bca9b17eddf9f69bc53 | 0 | 0 |  |  | 2026-07-26T04:45:10Z |
 | docs/faithful-port-checklist.md#3.C.3-PortugueseEnclisisFilter | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseEnclisisFilter.java | internal/languagetool/org/languagetool/rules/pt/portuguese_enclisis_filter.go; internal/languagetool/org/languagetool/rules/pt/portuguese_enclisis_filter_test.go | 4479dbd5d14ce57d8d2ea68cae8a8c569a6f2e10 | 0 | 0 |  |  | 2026-07-26T04:55:05Z |
-| docs/faithful-port-checklist.md#3.C.3-PortugueseFillerWordsRule | ready | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseFillerWordsRule.java | internal/languagetool/org/languagetool/rules/pt/portuguese_filler_words_rule.go; internal/languagetool/org/languagetool/rules/pt/portuguese_filler_words_rule_test.go | 83826011f2048e277ffb5c96e50bc2ec8e060db0 | 0 | 0 |  |  | 2026-07-26T05:02:01Z |
+| docs/faithful-port-checklist.md#3.C.3-PortugueseFillerWordsRule | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseFillerWordsRule.java | internal/languagetool/org/languagetool/rules/pt/portuguese_filler_words_rule.go; internal/languagetool/org/languagetool/rules/pt/portuguese_filler_words_rule_test.go | 83826011f2048e277ffb5c96e50bc2ec8e060db0 | 0 | 0 |  |  | 2026-07-26T05:08:30Z |
 
 ## Human inbox
 
@@ -411,7 +411,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ready 3.C.3-PortugueseFillerWordsRule @ 83826011; next fire: validate |
+| Notes | ACCEPT 3.C.3-PortugueseFillerWordsRule @ 83826011; next fire: implement next 3.C.3 leaf |
 
 ---
 
@@ -1853,3 +1853,4 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T04:55:05Z ACCEPT: 3.C.3-PortugueseEnclisisFilter @ 4479dbd5 (validator + parent green reconfirm; CHECKLIST PortugueseEnclisisFilter [x])
 - 2026-07-26T04:58:46Z implement: 3.C.3-PortugueseFillerWordsRule (PT; AbstractFillerWordsRule; filler set + isException mas)
 - 2026-07-26T05:02:01Z ready: 3.C.3-PortugueseFillerWordsRule @ 83826011 (implementer report; parent green reconfirm; case-sensitive set; no invent message; FILLER_WORDS_PT)
+- 2026-07-26T05:08:30Z ACCEPT: 3.C.3-PortugueseFillerWordsRule @ 83826011 (validator + parent green reconfirm; CHECKLIST PortugueseFillerWordsRule [x])
