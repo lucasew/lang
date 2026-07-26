@@ -182,14 +182,13 @@ func (r *AbstractSpecificCaseRule) Match(sentence *languagetool.AnalyzedSentence
 			}
 			from := tokens[i].GetStartPos()
 			to := tokens[i+j-1].GetEndPos()
-			short := r.ShortMsg
-			if short == "" {
-				// Java AbstractSpecificCaseRule.getShortMessage default
-				short = "Special capitalization"
-			}
-			// Java: new RuleMatch(this, sentence, from, to, msg, getShortMessage())
+			// Java AbstractSpecificCaseRule: new RuleMatch(..., msg, getShortMessage()).
+			// Subclasses set ShortMsg to the getShortMessage() result (EN "Proper noun",
+			// abstract default "Special capitalization"). RussianSpecificCaseRule extends
+			// Rule (not Abstract) and uses 5-arg RuleMatch(..., msg) with null short —
+			// leave ShortMsg empty; do not invent the Abstract default.
 			rm := NewRuleMatch(r, sentence, from, to, msg)
-			rm.ShortMessage = short
+			rm.ShortMessage = r.ShortMsg
 			rm.SetSuggestedReplacement(properSpelling)
 			matches = append(matches, rm)
 		}

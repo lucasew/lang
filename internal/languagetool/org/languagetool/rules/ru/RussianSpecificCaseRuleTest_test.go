@@ -39,6 +39,13 @@ func TestRussianSpecificCaseRule_Rule(t *testing.T) {
 	require.Equal(t, 17, matches1[0].GetToPos())
 	require.Equal(t, []string{"Air France"}, matches1[0].GetSuggestedReplacements())
 	require.Equal(t, "Для специальных наименований используйте начальную заглавную букву.", matches1[0].GetMessage())
+	// Java: new RuleMatch(this, sentence, from, to, msg) — shortMessage null
+	require.Equal(t, "", matches1[0].GetShortMessage())
+
+	// Russian bad case also has null short (5-arg RuleMatch)
+	matchesRu := assertBad("Рытый банк")
+	require.Equal(t, "", matchesRu[0].GetShortMessage())
+	require.Equal(t, []string{"Рытый Банк"}, matchesRu[0].GetSuggestedReplacements())
 }
 
 // Java RussianSpecificCaseRule ctor metadata: CASING, Misspelling, example pair, resource /ru/specific_case.txt.
