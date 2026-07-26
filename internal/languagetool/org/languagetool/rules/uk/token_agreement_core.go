@@ -1379,8 +1379,9 @@ func GetPrepNounExceptionInfl(tokens []*languagetool.AnalyzedTokenReadings, prep
 		if IsCapitalized(nounClean) && HasPosTagRE(noun, regexp.MustCompile(`noun.*?:.:v_rod.*`)) {
 			return NewRuleException(RuleExceptionException)
 		}
+		// Java: (i>1 && NAMES.contains(tokens[i-2].token)) || (i>2 && NAMES.contains(tokens[i-3].lemma))
 		if HasPosTagRE(noun, regexp.MustCompile(`noun:anim:.:v_naz:prop:[fl]name.*`)) {
-			if prepPos > 1 && (isNameToken(tokens[prepPos-1]) || (prepPos > 2 && isNameLemma(tokens[prepPos-2]))) {
+			if (i > 1 && isNameToken(tokens[i-2])) || (i > 2 && isNameLemma(tokens[i-3])) {
 				return NewRuleException(RuleExceptionException)
 			}
 		}
@@ -1601,7 +1602,13 @@ func isNameToken(tok *languagetool.AnalyzedTokenReadings) bool {
 	if tok == nil {
 		return false
 	}
-	t := tok.GetToken()
+	// Java: tokens[i-2].getAnalyzedToken(0).getToken()
+	rds := tok.GetReadings()
+	if len(rds) == 0 || rds[0] == nil {
+		t := tok.GetToken()
+		return t == "ім'я" || t == "прізвище"
+	}
+	t := rds[0].GetToken()
 	return t == "ім'я" || t == "прізвище"
 }
 
