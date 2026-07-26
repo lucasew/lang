@@ -11,6 +11,14 @@ import (
 //go:embed data/compound_colours.txt
 var colourCompoundFS embed.FS
 
+// PortugueseColourHyphenationFilePath is the official resource path Java loads
+// (CompoundRuleData("/pt/compound_colours.txt")).
+const PortugueseColourHyphenationFilePath = "/pt/compound_colours.txt"
+
+// PortugueseColourHyphenationURL ports PortugueseColourHyphenationRule.getUrl()
+// → Tools.getUrl("https://pt.wikipedia.org/wiki/Lista_das_alterações_previstas_pelo_acordo_ortográfico_de_1990").
+const PortugueseColourHyphenationURL = "https://pt.wikipedia.org/wiki/Lista_das_alterações_previstas_pelo_acordo_ortográfico_de_1990"
+
 var (
 	colourCompoundOnce sync.Once
 	colourCompoundData *rules.CompoundRuleData
@@ -23,7 +31,7 @@ func loadColourCompounds() *rules.CompoundRuleData {
 			panic(err)
 		}
 		defer f.Close()
-		d, err := rules.NewCompoundRuleData(f, "/pt/compound_colours.txt")
+		d, err := rules.NewCompoundRuleData(f, PortugueseColourHyphenationFilePath)
 		if err != nil {
 			panic(err)
 		}
@@ -37,6 +45,9 @@ type PortugueseColourHyphenationRule struct {
 	*rules.AbstractCompoundRule
 }
 
+// NewPortugueseColourHyphenationRule constructs PT_COLOUR_HYPHENATION.
+// Java ctor: four Portuguese messages to AbstractCompoundRule, then
+// setCategory(COMPOUNDING), setLocQualityIssueType(Grammar), useSubRuleSpecificIds().
 func NewPortugueseColourHyphenationRule(messages map[string]string) *PortugueseColourHyphenationRule {
 	base := &rules.AbstractCompoundRule{
 		Messages:                   messages,
@@ -46,8 +57,17 @@ func NewPortugueseColourHyphenationRule(messages map[string]string) *PortugueseC
 		WithoutHyphenMessage:       "Esta palavra é composta por justaposição.",
 		WithOrWithoutHyphenMessage: "Esta palavra pode ser composta por justaposição ou hifenizada.",
 		ShortDesc:                  "Nomes de cores são palavras compostas.",
-		Data:                       loadColourCompounds(),
+		// Java: super.setCategory(Categories.COMPOUNDING.getCategory(messages));
+		Category: rules.CatCompounding.GetCategory(messages),
+		// Java: setLocQualityIssueType(ITSIssueType.Grammar);
+		IssueType: rules.ITSGrammar,
+		// Java: getUrl → Tools.getUrl(...)
+		URL: PortugueseColourHyphenationURL,
+		// Java Language.getShortCode for StringTools.toId (pt-BR → "pt").
+		LanguageCode: "pt",
+		Data:         loadColourCompounds(),
 	}
+	// Java: useSubRuleSpecificIds();
 	base.UseSubRuleSpecificIDs()
 	return &PortugueseColourHyphenationRule{AbstractCompoundRule: base}
 }
