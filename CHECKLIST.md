@@ -1564,9 +1564,9 @@
 - [x] org/languagetool/rules/uk/TokenAgreementNounVerbExceptionHelper.java::TokenAgreementNounVerbExceptionHelper
 - [x] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule
 - [x] org/languagetool/rules/uk/TokenAgreementNounVerbRule.java::TokenAgreementNounVerbRule.State
-- [ ] org/languagetool/rules/uk/TokenAgreementNumrNounExceptionHelper.java::TokenAgreementNumrNounExceptionHelper
-- [ ] org/languagetool/rules/uk/TokenAgreementNumrNounRule.java::TokenAgreementNumrNounRule
-- [ ] org/languagetool/rules/uk/TokenAgreementNumrNounRule.java::TokenAgreementNumrNounRule.State
+- [x] org/languagetool/rules/uk/TokenAgreementNumrNounExceptionHelper.java::TokenAgreementNumrNounExceptionHelper
+- [x] org/languagetool/rules/uk/TokenAgreementNumrNounRule.java::TokenAgreementNumrNounRule
+- [x] org/languagetool/rules/uk/TokenAgreementNumrNounRule.java::TokenAgreementNumrNounRule.State
 - [x] org/languagetool/rules/uk/TokenAgreementPrepNounExceptionHelper.java::TokenAgreementPrepNounExceptionHelper
 - [x] org/languagetool/rules/uk/TokenAgreementPrepNounRule.java::TokenAgreementPrepNounRule
 - [x] org/languagetool/rules/uk/TokenAgreementPrepNounRule.java::TokenAgreementPrepNounRule.State
