@@ -1,127 +1,240 @@
 package pt
 
-// Twin of languagetool-language-modules/pt PortugueseTagger tests (MapWordTagger smokes).
+// Twin of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java
+//
+// Official portuguese.dict + PortugueseWordTokenizer + PortugueseTagger.tag
+// (Java TestTools.myAssert expected strings).
 
 import (
+	"sort"
+	"strings"
 	"testing"
+	"unicode"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	pttok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pt"
 	"github.com/stretchr/testify/require"
 )
 
-func TestPortugueseTagger_Basic(t *testing.T) {
-	wt := tagging.MapWordTagger{"casa": {tagging.NewTaggedWord("casa", "NCFS000")}}
-	got := NewPortugueseTagger(wt).Tag([]string{"Casa", "xyz"})
-	require.Len(t, got, 2)
-	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
-	require.Equal(t, "NCFS000", *got[0].GetReadings()[0].GetPOSTag())
-	// unknown → null POS
-	require.Nil(t, got[1].GetReadings()[0].GetPOSTag())
-}
-
-func TestPortugueseTagger_Ordinals(t *testing.T) {
-	tg := NewPortugueseTagger(tagging.MapWordTagger{})
-	got := tg.Tag([]string{"1.º", "2.ª"})
-	require.True(t, got[0].IsTagged())
-	require.True(t, got[1].IsTagged())
-	// noun + adj readings
-	require.GreaterOrEqual(t, len(got[0].GetReadings()), 2)
-}
-
-func TestPortugueseTagger_PercentDegree(t *testing.T) {
-	tg := NewPortugueseTagger(tagging.MapWordTagger{})
-	got := tg.Tag([]string{"10%", "20°"})
-	require.Equal(t, "NCMP000", *got[0].GetReadings()[0].GetPOSTag())
-	require.Equal(t, "NCMP000", *got[1].GetReadings()[0].GetPOSTag())
-}
-
-func TestPortugueseTagger_Mente(t *testing.T) {
-	// possibleAdj = lowerWord without "mente"; ADJ FS tag → RG
-	wt := tagging.MapWordTagger{
-		"rapida": {tagging.NewTaggedWord("rapido", "AQ0FS0")},
+func requirePortugueseDict(t *testing.T) {
+	t.Helper()
+	if DiscoverPortuguesePOSDict() == "" {
+		t.Skip("portuguese.dict not in tree (third_party/portuguese-pos-dict or LANG_PORTUGUESE_DICT)")
 	}
-	got := NewPortugueseTagger(wt).Tag([]string{"rapidamente"})
-	require.True(t, got[0].IsTagged())
-	require.Equal(t, "RG", *got[0].GetReadings()[0].GetPOSTag())
+	EnsureDefaultPortugueseTagger()
+	require.NotNil(t, DefaultPortugueseTagger)
+	require.NotNil(t, DefaultPortugueseTagger.GetWordTagger())
+	require.NotEmpty(t, PortuguesePOSDictPath(), "real portuguese.dict must load")
 }
 
-func TestPortugueseTagger_SotoPrefix(t *testing.T) {
-	wt := tagging.MapWordTagger{
-		"por": {tagging.NewTaggedWord("por", "VMIP1S0")},
-	}
-	got := NewPortugueseTagger(wt).Tag([]string{"soto-por"})
-	require.True(t, got[0].IsTagged())
-	require.Equal(t, "VMIP1S0", *got[0].GetReadings()[0].GetPOSTag())
-	require.Equal(t, "soto-por", *got[0].GetReadings()[0].GetLemma())
-}
-
-func TestPortugueseTagger_DictionaryPath(t *testing.T) {
-	require.Equal(t, PortugueseDictPath, NewPortugueseTagger(nil).GetDictionaryPath())
-}
-
-// Twin of PortugueseTaggerTest.testDictionary
+// Twin of PortugueseTaggerTest.testDictionary (Java TestTools.testDictionary).
+// Java walks every Morfologik WordData and only warns on empty POS; no assert fail.
+// Full FSA DictionaryLookup iteration is not yet ported; this opens the real
+// portuguese.dict and checks sample surfaces all carry non-empty POS tags.
 func TestPortugueseTagger_Dictionary(t *testing.T) {
-	require.Equal(t, PortugueseDictPath, NewPortugueseTagger(nil).GetDictionaryPath())
+	requirePortugueseDict(t)
+	tagger := DefaultPortugueseTagger
+	require.Equal(t, PortugueseDictPath, tagger.GetDictionaryPath())
+	require.NotNil(t, tagger.GetWordTagger())
+
+	// Sample of surfaces present in Java testTagger / lexicon — each must have POS.
+	samples := []string{
+		"estes", "são", "os", "meus", "amigos", "tentou", "resolver",
+		"deixe-me", "das", "to", "ao", "jiu-jitsu", "trepei",
+	}
+	for _, w := range samples {
+		tw := tagger.TagWordExact(w)
+		require.NotEmpty(t, tw, "dict entry missing for %q", w)
+		for _, tword := range tw {
+			require.NotEmpty(t, tword.PosTag, "**** Warning-equivalent: %s/%s lacks a POS tag", w, tword.Lemma)
+		}
+	}
 }
 
-// Twin of PortugueseTaggerTest.testTagger — map morph of high-frequency forms (full dict myAssert deferred)
+// Twin of path/ctor: Java PortugueseTagger uses /pt/portuguese.dict.
+func TestPortugueseTagger_DictionaryPath(t *testing.T) {
+	tagger := NewPortugueseTagger(nil)
+	require.Equal(t, PortugueseDictPath, tagger.GetDictionaryPath())
+	require.False(t, tagger.OverwriteWithManualTagger())
+}
+
+// Twin of PortugueseTaggerTest.testTagger
 func TestPortugueseTagger_Tagger(t *testing.T) {
-	wt := tagging.MapWordTagger{
-		"estes":  {tagging.NewTaggedWord("este", "DD0MP0"), tagging.NewTaggedWord("este", "NCMP000")},
-		"são":    {tagging.NewTaggedWord("ser", "VMIP3P0"), tagging.NewTaggedWord("são", "NCMS000")},
-		"os":     {tagging.NewTaggedWord("o", "DA0MP0")},
-		"meus":   {tagging.NewTaggedWord("meu", "DP1MPS")},
-		"amigos": {tagging.NewTaggedWord("amigo", "NCMP000")},
+	requirePortugueseDict(t)
+	cases := []struct {
+		input string
+		want  string
+	}{
+		{
+			"Estes são os meus amigos.",
+			"Estes/[este]AQ0CP0|Estes/[este]DD0MP0|Estes/[este]NCMP000|Estes/[este]PD0MP000 -- " +
+				"são/[ser]VMIP3P0|são/[são]AQ0MS0|são/[são]NCMS000 -- " +
+				"os/[ele]PP3MPA00|os/[o]DA0MP0|os/[o]PD0MP000 -- " +
+				"meus/[meu]AP0MP1S|meus/[meu]DP1MPS -- " +
+				"amigos/[amigo]AQ0MP0|amigos/[amigo]NCMP000",
+		},
+		{
+			"tentou resolver",
+			"tentou/[tentar]VMIS3S0 -- resolver/[resolver]VMN0000|resolver/[resolver]VMN01S0|resolver/[resolver]VMN03S0|resolver/[resolver]VMSF1S0|resolver/[resolver]VMSF3S0",
+		},
+		// as of dict v0.13, verbs with enclitics are considered as a single word and tagged as such
+		{
+			"Deixe-me",
+			"Deixe-me/[deixar]VMM03S0:PP1CSO00|Deixe-me/[deixar]VMSP1S0:PP1CSO00|Deixe-me/[deixar]VMSP3S0:PP1CSO00",
+		},
 	}
-	got := NewPortugueseTagger(wt).Tag([]string{"Estes", "são", "os", "meus", "amigos"})
-	require.Len(t, got, 5)
-	require.NotEmpty(t, got[0].GetReadings())
-	require.NotEmpty(t, got[4].GetReadings())
+	for _, tc := range cases {
+		got := myAssertTagger(tc.input)
+		require.Equal(t, tc.want, got, "input=%q", tc.input)
+	}
 }
 
 // Twin of PortugueseTaggerTest.testTaggerTagsOrdinalAbbreviations
 func TestPortugueseTagger_TaggerTagsOrdinalAbbreviations(t *testing.T) {
-	// existing Ordinals covers 1.º / 2.ª
-	TestPortugueseTagger_Ordinals(t)
+	requirePortugueseDict(t)
+	cases := []struct {
+		input string
+		want  string
+	}{
+		// with regular lowercase letters
+		{"1.as", "1.as/[1.º]AO0FP0|1.as/[1.º]NCFP000"},
+		{"2as", "2as/[2º]AO0FP0|2as/[2º]NCFP000"},
+		{"300as", "300as/[300º]AO0FP0|300as/[300º]NCFP000"},
+		// with ordinal indicator
+		{"4.ªˢ", "4.ªˢ/[4.º]AO0FP0|4.ªˢ/[4.º]NCFP000"},
+		{"5ªˢ", "5ªˢ/[5º]AO0FP0|5ªˢ/[5º]NCFP000"},
+		{"600ªˢ", "600ªˢ/[600º]AO0FP0|600ªˢ/[600º]NCFP000"},
+		// with superscript
+		{"7.ᵃˢ", "7.ᵃˢ/[7.º]AO0FP0|7.ᵃˢ/[7.º]NCFP000"},
+		{"8ᵃˢ", "8ᵃˢ/[8º]AO0FP0|8ᵃˢ/[8º]NCFP000"},
+		{"900ᵃˢ", "900ᵃˢ/[900º]AO0FP0|900ᵃˢ/[900º]NCFP000"},
+		// percent sign
+		{"10%", "10%/[10%]NCMP000"},
+		{"−11.000%", "−11.000%/[−11.000%]NCMP000"},
+		// degree sign
+		{"12°", "12°/[12°]NCMP000"},
+	}
+	for _, tc := range cases {
+		got := myAssertTagger(tc.input)
+		require.Equal(t, tc.want, got, "input=%q", tc.input)
+	}
 }
 
 // Twin of PortugueseTaggerTest.testContractionTagging
 func TestPortugueseTagger_ContractionTagging(t *testing.T) {
-	// contractions need dict; MapWordTagger may inject fused lemma form if present
-	wt := tagging.MapWordTagger{
-		"das": {tagging.NewTaggedWord("de:o", "SPS00:DA0FP0")},
-		"ao":  {tagging.NewTaggedWord("a:o", "SPS00:DA0MS0")},
+	requirePortugueseDict(t)
+	cases := []struct {
+		input string
+		want  string
+	}{
+		{"das", "das/[de:o]SPS00:DA0FP0"},
+		{"to", "to/[tu:ele]PP2CSO00:PP3MSA00"},
+		{"ao", "ao/[a:o]SPS00:DA0MS0"},
 	}
-	got := NewPortugueseTagger(wt).Tag([]string{"das", "ao"})
-	require.True(t, got[0].IsTagged())
-	require.Equal(t, "SPS00:DA0FP0", *got[0].GetReadings()[0].GetPOSTag())
-	require.True(t, got[1].IsTagged())
+	for _, tc := range cases {
+		got := myAssertTagger(tc.input)
+		require.Equal(t, tc.want, got, "input=%q", tc.input)
+	}
 }
 
 // Twin of PortugueseTaggerTest.testTaggerTagsCompoundsRegardlessOfLetterCase
 func TestPortugueseTagger_TaggerTagsCompoundsRegardlessOfLetterCase(t *testing.T) {
-	// soto- prefix already in SotoPrefix; case variants
-	wt := tagging.MapWordTagger{"por": {tagging.NewTaggedWord("por", "VMIP1S0")}}
-	tg := NewPortugueseTagger(wt)
-	for _, w := range []string{"soto-por", "Soto-por", "SOTO-POR"} {
-		got := tg.Tag([]string{w})
-		// productive prefix may only fire on lower; assert no panic
-		require.NotEmpty(t, got)
+	requirePortugueseDict(t)
+	cases := []struct {
+		input string
+		want  string
+	}{
+		{"jiu-jitsu", "jiu-jitsu/[jiu-jitsu]NCMS000"},
+		{"Jiu-jitsu", "Jiu-jitsu/[jiu-jitsu]NCMS000"},
+		{"JIU-JITSU", "JIU-JITSU/[jiu-jitsu]NCMS000"},
+		{"Jiu-Jitsu", "Jiu-Jitsu/[jiu-jitsu]NCMS000"},
+	}
+	for _, tc := range cases {
+		got := myAssertTagger(tc.input)
+		require.Equal(t, tc.want, got, "input=%q", tc.input)
 	}
 }
 
 // Twin of PortugueseTaggerTest.testTagProductivePrefixesNotPresentInSpeller
 func TestPortugueseTagger_TagProductivePrefixesNotPresentInSpeller(t *testing.T) {
-	TestPortugueseTagger_SotoPrefix(t)
+	requirePortugueseDict(t)
+	cases := []struct {
+		input string
+		want  string
+	}{
+		// not a real prefix, must be null
+		{"xoxotrepei", "xoxotrepei/[null]null"},
+		// new prefixes, to work with dict v0.13 (soto- requires hyphen)
+		{"soto-trepei", "soto-trepei/[soto-trepar]VMIS1S0"},
+	}
+	for _, tc := range cases {
+		got := myAssertTagger(tc.input)
+		require.Equal(t, tc.want, got, "input=%q", tc.input)
+	}
 }
 
 // Twin of PortugueseTaggerTest.testTaggerTagsVerbsWithEnclitics
 func TestPortugueseTagger_TaggerTagsVerbsWithEnclitics(t *testing.T) {
-	// as of dict v0.13 Java tags enclitic as single token; morph with map
-	wt := tagging.MapWordTagger{
-		"deixe-me": {tagging.NewTaggedWord("deixar", "VMM03S0:PP1CSO00")},
+	requirePortugueseDict(t)
+	// requires dictionary v0.14
+	got := myAssertTagger("distribuí-lo-ei")
+	require.Equal(t, "distribuí-lo-ei/[distribuir]VMIF1S0:PP3MSA00", got)
+}
+
+// myAssertTagger ports Java TestTools.myAssert(input, expected, PortugueseWordTokenizer, tagger):
+// tokenize → drop non-word tokens → tag → sorted readings joined by " -- ".
+func myAssertTagger(input string) string {
+	EnsureDefaultPortugueseTagger()
+	tagger := DefaultPortugueseTagger
+	wt := pttok.NewPortugueseWordTokenizer()
+	tokens := wt.Tokenize(input)
+	var noWS []string
+	for _, tok := range tokens {
+		if testToolsIsWord(tok) {
+			noWS = append(noWS, tok)
+		}
 	}
-	got := NewPortugueseTagger(wt).Tag([]string{"Deixe-me"})
-	require.True(t, got[0].IsTagged())
-	require.Contains(t, *got[0].GetReadings()[0].GetPOSTag(), "VMM")
+	output := tagger.Tag(noWS)
+	var parts []string
+	for _, atr := range output {
+		parts = append(parts, strings.Join(testToolsGetAsStrings(atr), "|"))
+	}
+	return strings.Join(parts, " -- ")
+}
+
+// testToolsIsWord ports TestTools.isWord: any letter or digit → word token.
+func testToolsIsWord(token string) bool {
+	for _, r := range token {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			return true
+		}
+	}
+	return false
+}
+
+// testToolsGetAsStrings ports TestTools.getAsStrings (sorted).
+func testToolsGetAsStrings(atr *languagetool.AnalyzedTokenReadings) []string {
+	if atr == nil {
+		return nil
+	}
+	var readings []string
+	for _, r := range atr.GetReadings() {
+		if r != nil {
+			readings = append(readings, testToolsGetAsString(r))
+		}
+	}
+	sort.Strings(readings)
+	return readings
+}
+
+// testToolsGetAsString ports TestTools.getAsString: token/[lemma]POS with null literals.
+func testToolsGetAsString(tok *languagetool.AnalyzedToken) string {
+	lemma, pos := "null", "null"
+	if tok.GetLemma() != nil {
+		lemma = *tok.GetLemma()
+	}
+	if tok.GetPOSTag() != nil {
+		pos = *tok.GetPOSTag()
+	}
+	return tok.GetToken() + "/[" + lemma + "]" + pos
 }

@@ -20,11 +20,13 @@ const (
 )
 
 var (
-	// ADJ_PART_FS = V.P..SF.|A[QO].[FC][SN].
-	ptAdjPartFS = regexp.MustCompile(`^V.P..SF.|A[QO].[FC][SN].$`)
-	ptVerb      = regexp.MustCompile(`^V.+`)
-	// Java PREFIXES_FOR_VERBS = (soto-)(...+)
+	// Java ADJ_PART_FS / VERB use Matcher.matches() → full-string match.
+	ptAdjPartFS = regexp.MustCompile(`^(?:V.P..SF.|A[QO].[FC][SN].)$`)
+	ptVerb      = regexp.MustCompile(`^V.+$`)
+	// Java PREFIXES_FOR_VERBS = (soto-)(...+) CASE_INSENSITIVE|UNICODE_CASE
 	ptPrefixesForVerbs = regexp.MustCompile(`(?i)^(soto-)(...+)$`)
+	// Java lowerWord.replaceAll("^(.+)mente$", "$1")
+	ptMenteStem = regexp.MustCompile(`^(.+)mente$`)
 
 	ptOrdinalSuffixes = "[" + ordinalSuffixMasc + ordinalSuffixFem + "][" + ordinalSuffixPl + "]?"
 	ptOrdinalPattern  = regexp.MustCompile(`^\d+[\d,.]*\.?` + ptOrdinalSuffixes + `$`)
@@ -33,20 +35,34 @@ var (
 	ptOrdinalMascPl   = regexp.MustCompile("[" + ordinalSuffixMasc + "][" + ordinalSuffixPl + "]$")
 	ptOrdinalFemPl    = regexp.MustCompile("[" + ordinalSuffixFem + "][" + ordinalSuffixPl + "]$")
 	ptOrdinalReplace  = regexp.MustCompile(ptOrdinalSuffixes)
-	ptPercentPattern  = regexp.MustCompile(`^−?\d+[\d,.]*%$`)
-	ptDegreePattern   = regexp.MustCompile(`^−?\d+[\d,.]*°$`)
+	// Java PERCENT_PATTERN / DEGREE_PATTERN (matches on full string)
+	ptPercentPattern = regexp.MustCompile(`^−?\d+[\d,.]*%$`)
+	ptDegreePattern  = regexp.MustCompile(`^−?\d+[\d,.]*°$`)
 )
 
 // PortugueseTagger ports org.languagetool.tagging.pt.PortugueseTagger.
 type PortugueseTagger struct {
 	*tagging.BaseTagger
+	// dictLookup is Java DictionaryLookup(getDictionary()) used by tagMenteAdverbs /
+	// tagPrefixedVerbs. When nil, those paths fall back to WordTagger (injected maps / tests).
+	dictLookup tagging.WordTagger
 }
 
+// NewPortugueseTagger builds a PortugueseTagger over the given WordTagger.
+// Java: super("/pt/portuguese.dict", new Locale("pt")); tagLowercaseWithUppercase default true.
 func NewPortugueseTagger(wt tagging.WordTagger) *PortugueseTagger {
-	// Java BaseTagger default tagLowercaseWithUppercase=true; Tag() reimplements case.
 	return &PortugueseTagger{BaseTagger: tagging.NewBaseTagger(wt, PortugueseDictPath, "pt", true)}
 }
 
+// NewPortugueseTaggerWithDictLookup sets the binary-dict stemmer for -mente / soto-
+// (Java new DictionaryLookup(getDictionary()) inside tag()).
+func NewPortugueseTaggerWithDictLookup(wt, dictLookup tagging.WordTagger) *PortugueseTagger {
+	t := NewPortugueseTagger(wt)
+	t.dictLookup = dictLookup
+	return t
+}
+
+// Tag ports PortugueseTagger.tag.
 func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
 	if t == nil {
 		return nil
@@ -54,31 +70,40 @@ func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.Analyzed
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
-		containsTypewriter := len(word) > 1 && strings.Contains(word, "'")
-		w := strings.ReplaceAll(word, "’", "'")
+		// Java: typewriter apostrophe detect + curly → typewriter when length > 1
+		containsTypewriter := false
+		w := word
+		if tagging.UTF16Len(w) > 1 {
+			if strings.Contains(w, "'") {
+				containsTypewriter = true
+			}
+			w = strings.ReplaceAll(w, "’", "'")
+		}
+		// Java lowerWord = word.toLowerCase(locale) on (possibly) replaced word
 		lower := strings.ToLower(w)
 		isLower := w == lower
 		isMixed := portugueseIsMixedCase(w)
 
 		var readings []*languagetool.AnalyzedToken
-		// Java getWordTagger().tag — exact
+		// normal case: asAnalyzedTokenListForTaggedWords(word, getWordTagger().tag(word))
 		for _, tw := range t.TagWordExact(w) {
-			readings = append(readings, tagged(word, tw))
+			readings = append(readings, tagged(w, tw))
 		}
+		// tag non-lowercase (alluppercase or startuppercase), but not mixedcase
 		if !isLower && !isMixed {
 			for _, tw := range t.TagWordExact(lower) {
-				readings = append(readings, tagged(word, tw))
+				readings = append(readings, tagged(w, tw))
 			}
 		}
-		// ordinals / percent / degree
+		// tag ordinals and percentages / degrees
 		if len(readings) == 0 {
 			readings = append(readings, tagNumberExpressionsPT(w)...)
 		}
-		// -mente adverbs (RG)
+		// additional tagging with adverbs ending in -mente
 		if len(readings) == 0 && !isMixed {
 			readings = append(readings, t.tagMenteAdverbs(w, lower)...)
 		}
-		// soto- verb prefixes
+		// additional tagging with prefixes for verbs
 		ignoreSpelling := false
 		if len(readings) == 0 && !isMixed {
 			pref := t.tagPrefixedVerbs(w)
@@ -88,7 +113,7 @@ func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.Analyzed
 			}
 		}
 		if len(readings) == 0 {
-			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
+			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(w, nil, nil)}
 		}
 		atr := languagetool.NewAnalyzedTokenReadingsList(readings, pos)
 		if ignoreSpelling && atr != nil {
@@ -98,7 +123,8 @@ func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.Analyzed
 			atr.SetChunkTags([]string{"containsTypewriterApostrophe"})
 		}
 		out = append(out, atr)
-		pos += tagging.UTF16Len(word)
+		// Java: pos += word.length() after reassignment (UTF-16 code units)
+		pos += tagging.UTF16Len(w)
 	}
 	return out
 }
@@ -130,20 +156,19 @@ func tagNumberExpressionsPT(word string) []*languagetool.AnalyzedToken {
 func buildOrdinalTokensPT(word string) []*languagetool.AnalyzedToken {
 	// Java: lemma = word.replaceAll(ORDINAL_SUFFIXES, "º")
 	lemma := ptOrdinalReplace.ReplaceAllString(word, "º")
+	// Java sequential ifs overwrite numberGenderTags (later match wins: pl after sg).
 	numberGender := ""
-	// Check pl before sg (pl patterns are longer suffixes)
-	switch {
-	case ptOrdinalMascPl.MatchString(word):
-		numberGender = "MP"
-	case ptOrdinalFemPl.MatchString(word):
-		numberGender = "FP"
-	case ptOrdinalMascSg.MatchString(word):
+	if ptOrdinalMascSg.MatchString(word) {
 		numberGender = "MS"
-	case ptOrdinalFemSg.MatchString(word):
+	}
+	if ptOrdinalFemSg.MatchString(word) {
 		numberGender = "FS"
 	}
-	if numberGender == "" {
-		return nil
+	if ptOrdinalMascPl.MatchString(word) {
+		numberGender = "MP"
+	}
+	if ptOrdinalFemPl.MatchString(word) {
+		numberGender = "FP"
 	}
 	nounTag := "NC" + numberGender + "000"
 	adjTag := "AO0" + numberGender + "0"
@@ -153,12 +178,23 @@ func buildOrdinalTokensPT(word string) []*languagetool.AnalyzedToken {
 	}
 }
 
+// tagMenteAdverbs ports PortugueseTagger.tagMenteAdverbs.
+// Java uses DictionaryLookup(getDictionary()) — not getWordTagger() — for adj stem lookups.
 func (t *PortugueseTagger) tagMenteAdverbs(word, lowerWord string) []*languagetool.AnalyzedToken {
-	if !strings.HasSuffix(strings.ToLower(word), "mente") {
+	// Java: word.endsWith("mente") — case-sensitive on the working surface
+	if !strings.HasSuffix(word, "mente") {
 		return nil
 	}
-	possibleAdj := strings.TrimSuffix(lowerWord, "mente")
-	for _, tw := range t.TagWordExact(possibleAdj) {
+	stemmer := t.stemmer()
+	if stemmer == nil {
+		return nil
+	}
+	// Java: lowerWord.replaceAll("^(.+)mente$", "$1") — at least one char before mente
+	possibleAdj := lowerWord
+	if m := ptMenteStem.FindStringSubmatch(lowerWord); m != nil {
+		possibleAdj = m[1]
+	}
+	for _, tw := range stemmer.Tag(possibleAdj) {
 		if tw.PosTag != "" && ptAdjPartFS.MatchString(tw.PosTag) {
 			p, lemma := "RG", lowerWord
 			return []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &lemma)}
@@ -167,27 +203,42 @@ func (t *PortugueseTagger) tagMenteAdverbs(word, lowerWord string) []*languageto
 	return nil
 }
 
+// tagPrefixedVerbs ports PortugueseTagger.tagPrefixedVerbs (soto- only as of current Java).
 func (t *PortugueseTagger) tagPrefixedVerbs(word string) []*languagetool.AnalyzedToken {
 	m := ptPrefixesForVerbs.FindStringSubmatch(word)
 	if m == nil {
 		return nil
 	}
+	stemmer := t.stemmer()
+	if stemmer == nil {
+		return nil
+	}
 	prefix := strings.ToLower(m[1])
 	possibleVerb := strings.ToLower(m[2])
 	var out []*languagetool.AnalyzedToken
-	for _, tw := range t.TagWordExact(possibleVerb) {
+	for _, tw := range stemmer.Tag(possibleVerb) {
 		if tw.PosTag == "" || !ptVerb.MatchString(tw.PosTag) {
 			continue
 		}
 		lemma := prefix + tw.Lemma
-		// Java: only if combined lemma not in dict
-		if len(t.TagWordExact(lemma)) > 0 {
+		// Java: only if combined lemma not in pure binary dict
+		if len(stemmer.Tag(lemma)) > 0 {
 			continue
 		}
 		p, l := tw.PosTag, lemma
 		out = append(out, languagetool.NewAnalyzedToken(word, &p, &l))
 	}
 	return out
+}
+
+func (t *PortugueseTagger) stemmer() tagging.WordTagger {
+	if t == nil {
+		return nil
+	}
+	if t.dictLookup != nil {
+		return t.dictLookup
+	}
+	return t.WordTagger
 }
 
 func tagged(surface string, tw tagging.TaggedWord) *languagetool.AnalyzedToken {
