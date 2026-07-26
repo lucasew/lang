@@ -1387,7 +1387,7 @@
 - [x] org/languagetool/rules/pt/DateFilterHelper.java::DateFilterHelper
 - [x] org/languagetool/rules/pt/EnglishContractionSpellingRule.java::EnglishContractionSpellingRule
 - [x] org/languagetool/rules/pt/FutureDateFilter.java::FutureDateFilter
-- [ ] org/languagetool/rules/pt/MorfologikPortugueseSpellerRule.java::MorfologikPortugueseSpellerRule
+- [x] org/languagetool/rules/pt/MorfologikPortugueseSpellerRule.java::MorfologikPortugueseSpellerRule
 - [x] org/languagetool/rules/pt/NewYearDateFilter.java::NewYearDateFilter
 - [x] org/languagetool/rules/pt/NoDisambiguationPortuguesePartialPosTagFilter.java::NoDisambiguationPortuguesePartialPosTagFilter
 - [x] org/languagetool/rules/pt/PortugalPortugueseReplaceRule.java::PortugalPortugueseReplaceRule
