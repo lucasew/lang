@@ -2746,18 +2746,14 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 	}
 
 	// V:INF + N + ADV/predic — розібратися людям важко
+	// Java: hasVidmPosTag(cases, state.nounAdjIndirTokenReadings) — indir-only, not full ATR
 	if nounPos < len(tokens)-1 && HasPosTagPart(verb, ":inf") &&
 		!HasLemmaTokenRE(verb, verbNounVchytyRE) {
+		indirTags := nounAdjIndirTags(noun)
 		for v2 := tokenSearchPosRE(tokens, nounPos+1, advPredictPattern, DirForward); v2 >= 0 && v2 <= nounPos+4; v2 = tokenSearchPosRE(tokens, v2+1, advPredictPattern, DirForward) {
 			cases := caseGovPosRESet(tokens[v2], advPredictPattern)
-			if len(cases) > 0 {
-				list := make([]string, 0, len(cases))
-				for c := range cases {
-					list = append(list, c)
-				}
-				if HasVidmPosTag(list, noun) {
-					return true
-				}
+			if hasVidmInTags(cases, indirTags) {
+				return true
 			}
 		}
 	}
@@ -2803,20 +2799,16 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 	}
 
 	// ADV + V:INF + N — важко розібратися багатьом
+	// Java: hasVidmPosTag(cases, state.nounAdjIndirTokenReadings) — indir-only, not full ATR
 	if verbPos > 1 && HasPosTagPart(verb, ":inf") {
+		indirTags := nounAdjIndirTags(noun)
 		for v2 := tokenSearchPosRE(tokens, verbPos-1, advPredictPattern, DirReverse); v2 >= 0 && v2 >= verbPos-3; v2 = tokenSearchPosRE(tokens, v2-1, advPredictPattern, DirReverse) {
 			if HasPosTagRE(tokens[v2], regexp.MustCompile(`noninfl:predic.*`)) && HasPosTagPart(noun, "v_naz") {
 				return true
 			}
 			cases := caseGovPosRESet(tokens[v2], advPredictPattern)
-			if len(cases) > 0 {
-				list := make([]string, 0, len(cases))
-				for c := range cases {
-					list = append(list, c)
-				}
-				if HasVidmPosTag(list, noun) {
-					return true
-				}
+			if hasVidmInTags(cases, indirTags) {
+				return true
 			}
 		}
 	}
@@ -2919,6 +2911,26 @@ var (
 	advPredictPattern = regexp.MustCompile(`^(?:adv|noninfl:predic).*`)
 )
 
+// nounAdjIndirTags ports State.nounAdjIndirTokenReadings collection:
+// noun|adj|numr POS tags that do not contain v_naz.
+func nounAdjIndirTags(noun *languagetool.AnalyzedTokenReadings) []string {
+	if noun == nil {
+		return nil
+	}
+	var indir []string
+	for _, p := range CollectPOSTags(noun) {
+		if p == "" || strings.HasSuffix(p, "_END") {
+			continue
+		}
+		if strings.HasPrefix(p, "noun") || strings.HasPrefix(p, "adj") || strings.HasPrefix(p, "numr") {
+			if !strings.Contains(p, "v_naz") {
+				indir = append(indir, p)
+			}
+		}
+	}
+	return indir
+}
+
 // verbNounAgrees ports TokenAgreementVerbNounExceptionHelper.agrees without State:
 // 1) v_naz readings: VerbInflectionHelper overlap with verb inflections
 // 2) non-v_naz (indir) readings: case government via VERB_ADVP_PATTERN
@@ -2926,17 +2938,16 @@ func verbNounAgrees(verb, noun *languagetool.AnalyzedTokenReadings) bool {
 	if verb == nil || noun == nil {
 		return false
 	}
-	var nazTags, indirTags []string
+	var nazTags []string
 	for _, p := range CollectPOSTags(noun) {
 		if p == "" {
 			continue
 		}
 		if strings.Contains(p, "v_naz") {
 			nazTags = append(nazTags, p)
-		} else if strings.Contains(p, ":v_") {
-			indirTags = append(indirTags, p)
 		}
 	}
+	indirTags := nounAdjIndirTags(noun)
 	// Java: if nounAdjNazInflections non-empty → check verb∩noun/adj naz
 	if len(nazTags) > 0 {
 		vInf := GetVerbInflections(CollectPOSTags(verb))

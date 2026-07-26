@@ -1010,10 +1010,20 @@ func TestVerbNounHardAdjAndVerbSide(t *testing.T) {
 	require.True(t, IsExceptionVerb([]*languagetool.AnalyzedTokenReadings{
 		atr("SENT"), atr("як"), atr("є", "verb"),
 	}, 2))
-	// pluperfect — Java isExceptionVerb requires i > 1 (SENT pad)
-	require.True(t, IsExceptionVerbSkip([]*languagetool.AnalyzedTokenReadings{
+	// pluperfect — Java isExceptionVerb requires i > 1 (SENT pad) and state != null
+	pluperfectToks := []*languagetool.AnalyzedTokenReadings{
 		atr("SENT_START"), atr("розпочав", "verb:perf:past:m"), atr("був", "verb"),
-	}, 2))
+	}
+	require.True(t, IsExceptionVerbSkip(pluperfectToks, 2))
+	require.Equal(t, RuleExceptionSkip, GetExceptionVerb(pluperfectToks, 2, true).Type)
+	// without active verb state, pluperfect skip must not fire (Java state == null)
+	require.Equal(t, RuleExceptionNone, GetExceptionVerb(pluperfectToks, 2, false).Type)
+	// impers + було: state-gated
+	impersToks := []*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("проголошено", "verb:impers"), atr("було", "verb"),
+	}
+	require.Equal(t, RuleExceptionSkip, GetExceptionVerb(impersToks, 2, true).Type)
+	require.Equal(t, RuleExceptionNone, GetExceptionVerb(impersToks, 2, false).Type)
 }
 
 func TestNounVerbException_MorePlural(t *testing.T) {

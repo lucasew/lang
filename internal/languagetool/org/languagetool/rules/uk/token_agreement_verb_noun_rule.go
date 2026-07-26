@@ -114,8 +114,8 @@ func (r *TokenAgreementVerbNounRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 
 		if hasVerbOrAdvpReading(tok) {
-			// Java isExceptionVerb: exception clears; skip keeps + i+=skip; neither installs
-			if ex := GetExceptionVerb(tokens, i); ex.Type != RuleExceptionNone {
+			// Java isExceptionVerb(tokens, i, state): exception clears; skip keeps + i+=skip
+			if ex := GetExceptionVerb(tokens, i, verbPos >= 0); ex.Type != RuleExceptionNone {
 				if ex.Type == RuleExceptionException {
 					verbPos = -1
 				}
@@ -247,7 +247,7 @@ func (r *TokenAgreementVerbNounRule) Match(sentence *languagetool.AnalyzedSenten
 						verbReplace = "сипати"
 					} else if vLem == "сиплячи" {
 						msg += ". Можливо ви мали на увазі «сиплючи»?"
-						verbReplace = "сиплячи"
+						verbReplace = "сиплючи"
 					}
 					m := rules.NewRuleMatch(r, sentence, verbTok.GetStartPos(), tok.GetEndPos(), msg)
 					m.ShortMessage = r.shortMsg

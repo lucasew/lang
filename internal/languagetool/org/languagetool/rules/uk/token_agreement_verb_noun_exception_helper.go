@@ -122,8 +122,10 @@ func hasPosTagAllPartConjAdv(tok *languagetool.AnalyzedTokenReadings) bool {
 	return HasPosTagAll(tok, regexp.MustCompile(`^(?:part|conj|adv).*`))
 }
 
-// GetExceptionVerb ports isExceptionVerb (RuleException: exception clears state; skip keeps).
-func GetExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) RuleException {
+// GetExceptionVerb ports isExceptionVerb(tokens, i, state).
+// hasState is Java state != null (active verb already installed).
+// RuleException: exception clears state; skip keeps prior verb.
+func GetExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int, hasState bool) RuleException {
 	if tokens == nil || i < 0 || i >= len(tokens) || tokens[i] == nil {
 		return NewRuleException(RuleExceptionNone)
 	}
@@ -149,8 +151,8 @@ func GetExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) RuleE
 		HasLemmaTokenRE(tokens[i-1], regexp.MustCompile(`^(?:по|в)?кла(?:сти|вши)$`)) {
 		return NewRuleException(RuleExceptionSkip)
 	}
-	// pluperfect: розпочав був — RuleException(0) skip
-	if i > 1 && tokens[i-1] != nil {
+	// pluperfect: розпочав був — RuleException(0) skip; Java requires state != null
+	if i > 1 && hasState && tokens[i-1] != nil {
 		if regexp.MustCompile(`^(?:був|було)$`).MatchString(clean) &&
 			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:m.*`)) {
 			return NewRuleExceptionSkip(0)
@@ -166,21 +168,24 @@ func GetExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) RuleE
 			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:f.*`)) {
 			return NewRuleExceptionSkip(0)
 		}
-		// чути/проголошено було
-		if regexp.MustCompile(`^(?:було|буде)$`).MatchString(clean) &&
-			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*(?:impers|predic).*`)) {
-			return NewRuleExceptionSkip(0)
-		}
+	}
+
+	// чути/проголошено було — Java: i>1 && було|буде && state != null && impers|predic
+	if i > 1 && hasState && tokens[i-1] != nil &&
+		regexp.MustCompile(`^(?:було|буде)$`).MatchString(clean) &&
+		HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*(?:impers|predic).*`)) {
+		return NewRuleExceptionSkip(0)
 	}
 	return NewRuleException(RuleExceptionNone)
 }
 
 // IsExceptionVerb reports verb-side soft exception (Java isExceptionVerb Type.exception).
 func IsExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
-	return GetExceptionVerb(tokens, i).Type == RuleExceptionException
+	return GetExceptionVerb(tokens, i, false).Type == RuleExceptionException
 }
 
 // IsExceptionVerbSkip reports verb-side skip patterns (спати after класти, pluperfect був).
+// hasState=true matches pair-check context (Java isException always has non-null state).
 func IsExceptionVerbSkip(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
-	return GetExceptionVerb(tokens, i).Type == RuleExceptionSkip
+	return GetExceptionVerb(tokens, i, true).Type == RuleExceptionSkip
 }
