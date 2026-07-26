@@ -232,10 +232,8 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 	if adjPos == nounPos {
 		return true
 	}
-	// Java: LemmaHelper.hasLemma(noun, FAKE_FEM_LIST, "noun:inanim:m:")
-	if HasLemmaWithPartPos(tokens[nounPos], FakeFemList, "noun:inanim:m:") {
-		return true
-	}
+	// Note: FAKE_FEM_LIST is NOT a blanket exception in Java — only used in
+	// "перший" exception (exclude FAKE_FEM) and adj mixed-POS "другий" path.
 
 	adj := tokens[adjPos]
 	noun := tokens[nounPos]
@@ -426,8 +424,9 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		return true
 	}
 
+	// Java Match passes slaveInflections already filtered with Pattern "v_zna:var".
 	masterInfs := GetAdjCaseInflections(CollectPOSTags(adj))
-	slaveInfs := GetNounCaseInflections(CollectPOSTags(noun))
+	slaveInfs := GetNounInflectionsFromTags(CollectPOSTags(noun), nounVZnaVarIgnore)
 
 	// молодшого гвардії сержанта
 	if nounPos < len(tokens)-1 && noun.GetToken() == "гвардії" &&
@@ -1012,6 +1011,41 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		}
 	}
 
+	// на проурядову і, здається, пропрезидентську частини
+	// Java: insert between coordinated adjs sharing plural noun (hasOverlapIgnoreGender)
+	if adjPos > 5 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:.*:p:.*`)) &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj:.*`)) &&
+		tokens[adjPos-1] != nil && tokens[adjPos-1].GetToken() == "," &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+		// arm1: , insert , adj  with conj at adjPos-4
+		arm1 := tokens[adjPos-3] != nil && tokens[adjPos-3].GetToken() == "," &&
+			isConjForPluralWithComma(tokens[adjPos-4]) &&
+			!hasVerbNotInsert(tokens[adjPos-2])
+		// arm2: longer insert spanning adjPos-2 and adjPos-3
+		arm2 := tokens[adjPos-4] != nil && tokens[adjPos-4].GetToken() == "," &&
+			isConjForPluralWithComma(tokens[adjPos-5]) &&
+			!hasVerbNotInsert(tokens[adjPos-2]) &&
+			!hasVerbNotInsert(tokens[adjPos-3])
+		if arm1 || arm2 {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasVerbNotInsert ports PosTagHelper.hasPosTag(..., VERB_NOT_INSERT_PATTERN)
+// where VERB_NOT_INSERT_PATTERN = verb(?!.*insert) — RE2-safe: verb tag without "insert".
+func hasVerbNotInsert(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.HasPrefix(p, "verb") && !strings.Contains(p, "insert") {
+			return true
+		}
+	}
 	return false
 }
 

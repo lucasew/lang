@@ -202,10 +202,29 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, toTok(word, tw))
 			}
 		}
-		// Java getAnalyzedTokens: en-dash U+2013 → hyphen re-tag (+ null reading for surface).
-		if len(readings) == 0 {
-			if alt := AltDashReadings(w, t.TagWord); len(alt) > 0 {
-				readings = alt
+		// Java getAnalyzedTokens: en-dash U+2013 → hyphen, then super.getAnalyzedTokens(hyphen)
+		// (full tag path incl. compounds). TagWord-only misses numr-numr like "два-три".
+		if len(readings) == 0 && strings.Contains(w, "\u2013") && altDashesInWordRE.MatchString(w) {
+			hyphenated := strings.ReplaceAll(w, "\u2013", "-")
+			// Recurse on hyphen form only (no en-dash → no re-entry here).
+			rs := t.Tag([]string{hyphenated})
+			if len(rs) > 0 && rs[0] != nil {
+				var tagged []*languagetool.AnalyzedToken
+				for _, rd := range rs[0].GetReadings() {
+					if rd == nil {
+						continue
+					}
+					if rd.GetPOSTag() == nil {
+						continue
+					}
+					// Keep hyphenated token surfaces like Java super.getAnalyzedTokens result.
+					tagged = append(tagged, rd)
+				}
+				if len(tagged) > 0 {
+					// Java: newTokens.add(new AnalyzedToken(origWord, null, null));
+					tagged = append(tagged, languagetool.NewAnalyzedToken(word, nil, nil))
+					readings = tagged
+				}
 			}
 		}
 		// Java additionalTags / getAnalyzedTokens alt rewrites (CAPS_INSIDE, з→с, ї→і, convertTokens).

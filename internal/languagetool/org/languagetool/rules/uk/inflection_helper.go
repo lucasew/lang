@@ -50,6 +50,17 @@ func (inf Inflection) EqualsIgnoreGender(other Inflection) bool {
 	return inf.AnimTag == other.AnimTag
 }
 
+
+// inflectionListContains ports Java List.contains via Inflection.equals.
+func inflectionListContains(list []Inflection, inf Inflection) bool {
+	for _, x := range list {
+		if x.Equals(inf) {
+			return true
+		}
+	}
+	return false
+}
+
 func genderEquals(g1, g2 string) bool {
 	if g1 == g2 {
 		return true
@@ -116,7 +127,6 @@ func GetAdjInflectionsFromTags(posTags []string, postagStart string) []Inflectio
 		postagStart = "adj"
 	}
 	var out []Inflection
-	seen := map[string]struct{}{}
 	for _, posTag := range posTags {
 		if posTag == "" || !strings.HasPrefix(posTag, postagStart) {
 			continue
@@ -131,11 +141,10 @@ func GetAdjInflectionsFromTags(posTags []string, postagStart string) []Inflectio
 			anim = m[3][2:] // strip :r
 		}
 		inf := Inflection{Gender: gen, Case: vidm, AnimTag: anim}
-		key := inf.String() + "|" + anim
-		if _, ok := seen[key]; ok {
+		// Java: if (!masterInflections.contains(inflection)) — equals ignores anim unless v_zna
+		if inflectionListContains(out, inf) {
 			continue
 		}
-		seen[key] = struct{}{}
 		out = append(out, inf)
 	}
 	return out
@@ -161,7 +170,6 @@ func GetNounCaseInflections(posTags []string) []Inflection {
 // ignoreRE, if non-nil, skips tags that match (Java ignoreTag.matcher.find()).
 func GetNounInflectionsFromTags(posTags []string, ignoreRE *regexp.Regexp) []Inflection {
 	var out []Inflection
-	seen := map[string]struct{}{}
 	for _, posTag := range posTags {
 		if posTag == "" {
 			continue
@@ -176,11 +184,10 @@ func GetNounInflectionsFromTags(posTags []string, ignoreRE *regexp.Regexp) []Inf
 		}
 		anim, gen, vidm := m[1], m[2], m[3]
 		inf := Inflection{Gender: gen, Case: vidm, AnimTag: anim}
-		key := inf.String() + "|" + anim
-		if _, ok := seen[key]; ok {
+		// Java: if (!slaveInflections.contains(inflection)) — equals ignores anim unless v_zna
+		if inflectionListContains(out, inf) {
 			continue
 		}
-		seen[key] = struct{}{}
 		out = append(out, inf)
 	}
 	return out
