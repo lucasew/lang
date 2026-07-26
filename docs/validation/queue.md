@@ -441,6 +441,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-TypographyRule-UK | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/TypographyRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TypographyRuleTest.java | internal/languagetool/org/languagetool/rules/uk/typography_rule.go; internal/languagetool/org/languagetool/rules/uk/TypographyRuleTest_test.go | e55fe6c3069207012b3fe4a88d25d58e77705be3 | 0 | 0 |  |  | 2026-07-26T13:05:45Z |
 | docs/faithful-port-checklist.md#3.C.3-MixedAlphabetsRule-UK | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/MixedAlphabetsRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/MixedAlphabetsRuleTest.java | internal/languagetool/org/languagetool/rules/uk/mixed_alphabets_rule.go; internal/languagetool/org/languagetool/rules/uk/MixedAlphabetsRuleTest_test.go | 3d62fe1f67ab74249b3ce4e5b250836372e0edb1 | 0 | 0 |  |  | 2026-07-26T13:22:00Z |
 | docs/faithful-port-checklist.md#3.C.3-MissingHyphenRule-UK | accepted | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/MissingHyphenRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/MissingHyphenRuleTest.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/resource/uk/dash_prefixes.txt | internal/languagetool/org/languagetool/rules/uk/missing_hyphen_rule.go; internal/languagetool/org/languagetool/rules/uk/MissingHyphenRuleTest_test.go; internal/languagetool/org/languagetool/rules/uk/extra_dictionary_loader.go; internal/languagetool/org/languagetool/rules/uk/mhr_load_probe_test.go; internal/languagetool/org/languagetool/rules/uk/register_core.go | 1b491fc9d38c1b47b8160d0a7940132852feb530 | 0 | 0 |  |  | 2026-07-26T13:36:30Z |
+| docs/faithful-port-checklist.md#3.C.3-SimpleReplaceSoftRule-UK | ready | inspiration/languagetool/languagetool-language-modules/uk/src/main/java/org/languagetool/rules/uk/SimpleReplaceSoftRule.java; inspiration/languagetool/languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/SimpleReplaceSoftRuleTest.java; inspiration/languagetool/languagetool-language-modules/uk/src/main/resources/org/languagetool/rules/uk/replace_soft.txt; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractSimpleReplaceRule.java | internal/languagetool/org/languagetool/rules/uk/simple_replace_soft_rule.go; internal/languagetool/org/languagetool/rules/uk/SimpleReplaceSoftRuleTest_test.go | a386730053c4a4b1bcffee6e9ce0e2905a93d6f8 | 0 | 0 |  |  | 2026-07-26T13:46:00Z |
 
 ## Human inbox
 
@@ -450,7 +451,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ACCEPT 3.C.3-MissingHyphenRule-UK @ 1b491fc9; next fire: implement next UK leaf |
+| Notes | ready 3.C.3-SimpleReplaceSoftRule-UK @ a3867300; next fire: validate |
 
 ---
 
@@ -2052,3 +2053,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T13:31:00Z ready: 3.C.3-MissingHyphenRule-UK @ 1b491fc9 (implementer report; parent green reconfirm; UK_MISSING_HYPHEN; official dash_prefixes; full MissingHyphenRuleTest twin; real UK WordTagger)
 - 2026-07-26T13:33:40Z validating: 3.C.3-MissingHyphenRule-UK @ 1b491fc9
 - 2026-07-26T13:36:30Z ACCEPT: 3.C.3-MissingHyphenRule-UK @ 1b491fc9 (validator ACCEPT + parent green reconfirm; checklist marked)
+- 2026-07-26T13:39:00Z implement: 3.C.3-SimpleReplaceSoftRule-UK (uk.SimpleReplaceSoftRule; official replace_soft.txt; full SimpleReplaceSoftRuleTest twin; leaf after MissingHyphen)
+- 2026-07-26T13:46:00Z ready: 3.C.3-SimpleReplaceSoftRule-UK @ a3867300 (implementer report; parent green reconfirm; UK_SIMPLE_REPLACE_SOFT; official replace_soft.txt; full SimpleReplaceSoftRuleTest twin; real UK analysis+disambig)
