@@ -9,12 +9,13 @@ import (
 )
 
 // TypographyRule ports org.languagetool.rules.uk.TypographyRule.
-// Java: setCategory(Categories.TYPOGRAPHY).
+// Java: setCategory(Categories.TYPOGRAPHY.getCategory(messages)).
 type TypographyRule struct {
 	Messages map[string]string
 	Category *rules.Category
 }
 
+// NewTypographyRule ports TypographyRule(ResourceBundle messages).
 func NewTypographyRule(messages map[string]string) *TypographyRule {
 	return &TypographyRule{
 		Messages: messages,
@@ -22,10 +23,17 @@ func NewTypographyRule(messages map[string]string) *TypographyRule {
 	}
 }
 
+// GetID ports TypographyRule.getId → "DASH".
 func (r *TypographyRule) GetID() string { return "DASH" }
 
+// GetDescription ports TypographyRule.getDescription.
 func (r *TypographyRule) GetDescription() string {
 	return "Коротка риска замість дефісу"
+}
+
+// GetShort ports TypographyRule.getShort.
+func (r *TypographyRule) GetShort() string {
+	return "Коротка риска"
 }
 
 // GetCategory ports Rule.getCategory (Java TYPOGRAPHY).
@@ -36,152 +44,135 @@ func (r *TypographyRule) GetCategory() *rules.Category {
 	return r.Category
 }
 
-var (
-	typoCyrRE     = regexp.MustCompile(`[а-яїієґА-ЯІЇЄҐ]`)
-	shortDashWord = regexp.MustCompile(`(?i)[а-яіїєґ']{2,}([\x{2013}\x{2014}][а-яіїєґ']{2,})+`)
-	badLatinDash  = regexp.MustCompile(`[ХІXIV]+[\x{2013}\x{2014}][ХІXIV]+`)
-	dashChars     = regexp.MustCompile(`[\x{2013}\x{2014}]`)
-)
+// Java TypographyRule.PATTERN = Pattern.compile(".*[а-яїієґА-ЯІЇЄҐ].*")
+var typographyCyrillicPattern = regexp.MustCompile(`.*[а-яїієґА-ЯІЇЄҐ].*`)
 
+// Java SHORT_DASH_WORD: CASE_INSENSITIVE|UNICODE_CASE
+var shortDashWord = regexp.MustCompile(`(?i)[а-яіїєґ']{2,}([\x{2013}\x{2014}][а-яіїєґ']{2,})+`)
+
+// Java BAD_LATIN (case-sensitive)
+var badLatinDash = regexp.MustCompile(`[ХІXIV]+[\x{2013}\x{2014}][ХІXIV]+`)
+
+// Java replaceAll("[\u2013\u2014]", ...)
+var enEmDashChars = regexp.MustCompile(`[\x{2013}\x{2014}]`)
+
+// Match ports TypographyRule.match.
 func (r *TypographyRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	var ruleMatches []*rules.RuleMatch
+	if sentence == nil {
+		return ruleMatches
+	}
 	tokens := sentence.GetTokensWithoutWhitespace()
-	msg := "Риска всередині слова. Всередині слова вживайте дефіс, між словами виокремлюйте риску пробілами."
 
 	for i := 1; i < len(tokens); i++ {
-		// Path A: short dash inside word (Java shortDashToken on last reading surface)
-		if tok := shortDashToken(tokens[i]); tok != "" {
-			rm := rules.NewRuleMatch(r, sentence, tokens[i].GetStartPos(), tokens[i].GetEndPos(), msg)
-			rm.ShortMessage = "Коротка риска"
-			rm.SetSuggestedReplacements([]string{
-				dashChars.ReplaceAllString(tok, "-"),
-				dashChars.ReplaceAllString(tok, " \u2014 "),
-			})
-			ruleMatches = append(ruleMatches, rm)
+		// Java shortDashToken path
+		if shortDashTok := shortDashToken(tokens[i]); shortDashTok != "" {
+			replacements := []string{
+				enEmDashChars.ReplaceAllString(shortDashTok, "-"),
+				enEmDashChars.ReplaceAllString(shortDashTok, " \u2014 "),
+			}
+			// Правопис 2019 § 161. ТИРЕ (—), пп. 12-15
+			msg := "Риска всередині слова. Всередині слова вживайте дефіс, між словами виокремлюйте риску пробілами."
+			ruleMatches = append(ruleMatches, r.createRuleMatch(tokens[i], replacements, msg, sentence))
 			continue
 		}
 
-		// Path B: bare en/em dash with missing spaces (Java)
+		// Java: bare en/em dash token with missing spaces
 		t := tokens[i].GetToken()
 		if t != "\u2014" && t != "\u2013" {
 			continue
 		}
 		noSpaceLeft := i > 1 && !tokens[i].IsWhitespaceBefore() &&
-			tokens[i-1].GetToken() != "," && tokens[i-1].GetToken() != "«"
+			tokens[i-1].GetToken() != "," &&
+			tokens[i-1].GetToken() != "«"
 		noSpaceRight := i < len(tokens)-1 && !tokens[i+1].IsWhitespaceBefore() &&
 			tokens[i+1].GetToken() != ">"
-		if !noSpaceLeft && !noSpaceRight {
+
+		if !(noSpaceLeft || noSpaceRight) {
 			continue
 		}
-		// Java isNumber = hasPosTagStart(..., "number")
+
+		// Java: if both sides isNumber → continue
 		if i > 1 && typographyIsNumber(tokens[i-1]) && i < len(tokens)-1 && typographyIsNumber(tokens[i+1]) {
 			continue
 		}
 
-		// Tokenizer may split a single Java token "word–word" into three tokens.
-		// Only treat fully-glued spans as path A when recombined form passes shortDashWord
-		// (so А–Т / roman ranges stay silent like Java one-token shortDashToken).
-		if noSpaceLeft && noSpaceRight && i > 1 && i < len(tokens)-1 {
-			combined := tokens[i-1].GetToken() + t + tokens[i+1].GetToken()
-			if shortDashWord.MatchString(combined) && !badLatinDash.MatchString(combined) {
-				rm := rules.NewRuleMatch(r, sentence, tokens[i-1].GetStartPos(), tokens[i+1].GetEndPos(), msg)
-				rm.ShortMessage = "Коротка риска"
-				rm.SetSuggestedReplacements([]string{
-					dashChars.ReplaceAllString(combined, "-"),
-					dashChars.ReplaceAllString(combined, " \u2014 "),
-				})
-				ruleMatches = append(ruleMatches, rm)
-				i++
-				continue
-			}
-			// glued but not a short-dash word → no match (Java single-token path would also reject)
-			continue
-		}
-
 		var replacements []string
-		// Java: both sides contain Cyrillic → suggest left-right hyphen compound
+
+		// Java: both sides match PATTERN → left-right hyphen compound
 		if i > 1 && i < len(tokens)-1 &&
-			typoCyrRE.MatchString(tokens[i-1].GetToken()) &&
-			typoCyrRE.MatchString(tokens[i+1].GetToken()) {
+			typographyCyrillicPattern.MatchString(tokens[i-1].GetToken()) &&
+			typographyCyrillicPattern.MatchString(tokens[i+1].GetToken()) {
 			replacements = append(replacements, tokens[i-1].GetToken()+"-"+tokens[i+1].GetToken())
 		}
 
-		// Java: startPos/endPos from prev/next; repl = [prev ]—[ next]
 		startPos := tokens[i].GetStartPos()
 		endPos := tokens[i].GetEndPos()
-		var b strings.Builder
+		repl := ""
 		if i > 1 {
-			b.WriteString(tokens[i-1].GetToken())
-			b.WriteByte(' ')
+			repl = tokens[i-1].GetToken() + " "
 			startPos = tokens[i-1].GetStartPos()
 		}
-		b.WriteString("\u2014")
+		repl += "\u2014"
 		if i < len(tokens)-1 {
-			b.WriteByte(' ')
-			b.WriteString(tokens[i+1].GetToken())
-			// Java uses next startPos as endPos (not full end of next token)
+			repl += " " + tokens[i+1].GetToken()
+			// Java: endPos = tokens[i+1].getStartPos()
 			endPos = tokens[i+1].GetStartPos()
 		} else {
 			endPos = tokens[i].GetEndPos()
 		}
-		replacements = append(replacements, b.String())
-		replacements = uniqueNonEmpty(replacements)
+		replacements = append(replacements, repl)
 
-		rm := rules.NewRuleMatch(r, sentence, startPos, endPos, msg)
-		rm.ShortMessage = "Коротка риска"
-		rm.SetSuggestedReplacements(replacements)
-		ruleMatches = append(ruleMatches, rm)
+		// Правопис 2019 § 161. ТИРЕ (—), пп. 12-15
+		msg := "Риска всередині слова. Всередині слова вживайте дефіс, між словами виокремлюйте риску пробілами."
+		// Java: new RuleMatch(this, sentence, startPos, endPos, msg, getShort())
+		potential := rules.NewRuleMatch(r, sentence, startPos, endPos, msg)
+		potential.SetShortMessage(r.GetShort())
+		potential.SetSuggestedReplacements(replacements)
+		ruleMatches = append(ruleMatches, potential)
 	}
+
 	return ruleMatches
 }
 
-// shortDashToken ports TypographyRule.shortDashToken (last reading token surface).
-func shortDashToken(atr *languagetool.AnalyzedTokenReadings) string {
-	if atr == nil {
+// shortDashToken ports TypographyRule.shortDashToken.
+func shortDashToken(tokenReadings *languagetool.AnalyzedTokenReadings) string {
+	if tokenReadings == nil {
 		return ""
 	}
-	rds := atr.GetReadings()
-	if len(rds) == 0 {
+	readings := tokenReadings.GetReadings()
+	// Java: readings.size() == 0 || tokenReadings.getToken() == null
+	if len(readings) == 0 {
 		return ""
 	}
-	last := rds[len(rds)-1]
+	// Go has no nil string; surface is always set by analysis. Proceed to last reading.
+	last := readings[len(readings)-1]
 	if last == nil {
 		return ""
 	}
-	tok := last.GetToken()
-	if tok == "" {
-		tok = atr.GetToken()
-	}
-	if tok == "" {
+	lastReadingToken := last.GetToken()
+	if lastReadingToken == "" {
 		return ""
 	}
-	if !strings.ContainsRune(tok, '\u2013') && !strings.ContainsRune(tok, '\u2014') {
+	// Java: indexOf('\u2013') > 0 || indexOf('\u2014') > 0
+	if !(strings.IndexRune(lastReadingToken, '\u2013') > 0 || strings.IndexRune(lastReadingToken, '\u2014') > 0) {
 		return ""
 	}
-	// dash not at start (indexOf > 0)
-	if strings.IndexRune(tok, '\u2013') == 0 || strings.IndexRune(tok, '\u2014') == 0 {
-		return ""
-	}
-	if shortDashWord.MatchString(tok) && !badLatinDash.MatchString(tok) {
-		return tok
+	if shortDashWord.MatchString(lastReadingToken) && !badLatinDash.MatchString(lastReadingToken) {
+		return lastReadingToken
 	}
 	return ""
 }
 
-// typographyIsNumber ports TypographyRule.isNumber (POS starts with "number").
-func typographyIsNumber(atr *languagetool.AnalyzedTokenReadings) bool {
-	return HasPosTagStart(atr, "number")
+// typographyIsNumber ports TypographyRule.isNumber (PosTagHelper.hasPosTagStart "number").
+func typographyIsNumber(analyzedTokenReadings *languagetool.AnalyzedTokenReadings) bool {
+	return HasPosTagStart(analyzedTokenReadings, "number")
 }
 
-func uniqueNonEmpty(ss []string) []string {
-	seen := map[string]bool{}
-	var out []string
-	for _, s := range ss {
-		if s == "" || seen[s] {
-			continue
-		}
-		seen[s] = true
-		out = append(out, s)
-	}
-	return out
+// createRuleMatch ports TypographyRule.createRuleMatch.
+func (r *TypographyRule) createRuleMatch(readings *languagetool.AnalyzedTokenReadings, replacements []string, msg string, sentence *languagetool.AnalyzedSentence) *rules.RuleMatch {
+	potential := rules.NewRuleMatch(r, sentence, readings.GetStartPos(), readings.GetEndPos(), msg)
+	potential.SetShortMessage(r.GetShort())
+	potential.SetSuggestedReplacements(replacements)
+	return potential
 }
