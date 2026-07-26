@@ -1381,7 +1381,7 @@
 - [x] org/languagetool/rules/pt/BrazilianToponymFilter.java::BrazilianToponymFilter
 - [x] org/languagetool/rules/pt/BrazilianToponymMap.java::BrazilianToponymMap
 - [x] org/languagetool/rules/pt/BrazilianToponymMapLoader.java::BrazilianToponymMapLoader
-- [ ] org/languagetool/rules/pt/ConfusionCheckFilter.java::ConfusionCheckFilter
+- [x] org/languagetool/rules/pt/ConfusionCheckFilter.java::ConfusionCheckFilter
 - [x] org/languagetool/rules/pt/ConfusionPairsDataLoader.java::ConfusionPairsDataLoader
 - [x] org/languagetool/rules/pt/DateCheckFilter.java::DateCheckFilter
 - [ ] org/languagetool/rules/pt/DateFilterHelper.java::DateFilterHelper
