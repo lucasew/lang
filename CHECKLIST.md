@@ -1409,7 +1409,7 @@
 - [x] org/languagetool/rules/pt/PortugueseRedundancyRule.java::PortugueseRedundancyRule
 - [x] org/languagetool/rules/pt/PortugueseReplaceRule.java::PortugueseReplaceRule
 - [x] org/languagetool/rules/pt/PortugueseSuppressMisspelledSuggestionsFilter.java::PortugueseSuppressMisspelledSuggestionsFilter
-- [ ] org/languagetool/rules/pt/PortugueseUnitConversionRule.java::PortugueseUnitConversionRule
+- [x] org/languagetool/rules/pt/PortugueseUnitConversionRule.java::PortugueseUnitConversionRule
 - [x] org/languagetool/rules/pt/PortugueseWeaselWordsRule.java::PortugueseWeaselWordsRule
 - [x] org/languagetool/rules/pt/PortugueseWikipediaRule.java::PortugueseWikipediaRule
 - [x] org/languagetool/rules/pt/PortugueseWordCoherencyRule.java::PortugueseWordCoherencyRule
