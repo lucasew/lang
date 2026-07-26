@@ -13,6 +13,17 @@ type DateFilterHelper struct{}
 
 func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
+// GetCalendar ports DateFilterHelper.getCalendar → Calendar.getInstance(Locale.UK).
+// Locale.UK selects calendar symbols/first-day; wall clock uses the JVM/OS default TZ
+// (Go: time.Now in Local).
+func (h *DateFilterHelper) GetCalendar() time.Time {
+	return time.Now()
+}
+
+// GetDayOfWeek ports DateFilterHelper.getDayOfWeek(String).
+// Prefix match after trimSpecialCharacters + toLowerCase (Java).
+// Go time.Weekday Sunday=0 maps to Java Calendar.SUNDAY=1 for the same wall day
+// (callers that need Java ints add 1; see DateCheckFilter.GetDayOfWeekJava).
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 	// Java: StringTools.trimSpecialCharacters(dayStr).toLowerCase()
 	day := strings.ToLower(tools.TrimSpecialCharacters(dayStr))
@@ -37,6 +48,34 @@ func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 	}
 }
 
+// GetDayOfWeekName ports DateFilterHelper.getDayOfWeek(Calendar).
+// Java gets LONG English names via Locale.UK, then maps to PT long forms.
+func (h *DateFilterHelper) GetDayOfWeekName(t time.Time) string {
+	// Java: date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.UK)
+	englishNames := []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
+	englishDay := englishNames[int(t.Weekday())]
+	switch englishDay {
+	case "Sunday":
+		return "domingo"
+	case "Monday":
+		return "segunda-feira"
+	case "Tuesday":
+		return "terça-feira"
+	case "Wednesday":
+		return "quarta-feira"
+	case "Thursday":
+		return "quinta-feira"
+	case "Friday":
+		return "sexta-feira"
+	case "Saturday":
+		return "sábado"
+	default:
+		// Java returns "" if englishDay is not in the switch (normal Calendar never hits this).
+		return ""
+	}
+}
+
+// GetMonth ports DateFilterHelper.getMonth(String) → 1..12 (as time.Month).
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 	// Java: StringTools.trimSpecialCharacters(monthStr).toLowerCase()
 	mon := strings.ToLower(tools.TrimSpecialCharacters(monthStr))

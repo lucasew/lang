@@ -41,13 +41,12 @@ func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
 // GetDayOfWeekName returns Portuguese long weekday name (Java DateFilterHelper).
 func (f *DateCheckFilter) GetDayOfWeekName(year, month, day int) string {
 	t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	return formatPTDayOfWeek(t)
+	return f.helper.GetDayOfWeekName(t)
 }
 
+// formatPTDayOfWeek delegates to DateFilterHelper.getDayOfWeek(Calendar).
 func formatPTDayOfWeek(t time.Time) string {
-	// Java DateFilterHelper.getDayOfWeek(Calendar): domingo, segunda-feira, …
-	names := []string{"domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"}
-	return names[int(t.Weekday())]
+	return NewDateFilterHelper().GetDayOfWeekName(t)
 }
 
 // AcceptRuleMatch ports DateCheckFilter.acceptRuleMatch (super).
