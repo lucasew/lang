@@ -6,26 +6,34 @@ import (
 )
 
 // GreekWordRepeatBeginningRule ports org.languagetool.rules.el.GreekWordRepeatBeginningRule.
+// Adds Greek ADD/CONTRAST/EXPLAIN adverb sets, article exceptions, and synonym suggestions
+// on top of core WordRepeatBeginningRule.
 type GreekWordRepeatBeginningRule struct {
 	*rules.WordRepeatBeginningRule
 }
 
-var (
-	elAddAdverbs = map[string]bool{
-		"Επίσης": true, "Επιπρόσθετα": true, "Ακόμη": true, "Επιπλέον": true, "Συμπληρωματικά": true,
-	}
-	elContrastAdverbs = map[string]bool{
-		"Αντίθετα": true, "Ωστόσο": true, "Εντούτοις": true, "Εξάλλου": true,
-	}
-	elExplainAdverbs = map[string]bool{
-		"Δηλαδή": true, "Ειδικότερα": true, "Ειδικά": true, "Συγκεκριμένα": true,
-	}
-)
+// Ports Java private static final Set<String> ADD_ADVERBS (static block order).
+var elAddAdverbs = map[string]bool{
+	"Επίσης": true, "Επιπρόσθετα": true, "Ακόμη": true, "Επιπλέον": true, "Συμπληρωματικά": true,
+}
 
+// Ports Java private static final Set<String> CONTRAST_ADVERBS.
+var elContrastAdverbs = map[string]bool{
+	"Αντίθετα": true, "Ωστόσο": true, "Εντούτοις": true, "Εξάλλου": true,
+}
+
+// Ports Java private static final Set<String> EXPLAIN_ADVERBS.
+var elExplainAdverbs = map[string]bool{
+	"Δηλαδή": true, "Ειδικότερα": true, "Ειδικά": true, "Συγκεκριμένα": true,
+}
+
+// NewGreekWordRepeatBeginningRule ports GreekWordRepeatBeginningRule(messages, language).
+// Language is unused by this type and the core match loop (same as other language WRB ports).
 func NewGreekWordRepeatBeginningRule(messages map[string]string) *GreekWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
+	// Java @Override getId
 	base.IDOverride = "GREEK_WORD_REPEAT_BEGINNING_RULE"
-	// Java: Επίσης → Επιπλέον
+	// Java addExamplePair(Example.wrong(...), Example.fixed(...))
 	base.AddExamplePair(
 		rules.Wrong("Επίσης, παίζω ποδόσφαιρο. <marker>Επίσης</marker>, παίζω μπάσκετ."),
 		rules.Fixed("Επίσης, παίζω ποδόσφαιρο. <marker>Επιπλέον</marker>, παίζω μπάσκετ."),
@@ -37,6 +45,10 @@ func NewGreekWordRepeatBeginningRule(messages map[string]string) *GreekWordRepea
 	return r
 }
 
+// isException ports GreekWordRepeatBeginningRule.isException:
+//   return super.isException(token) || Ο|Η|Το|Οι|Τα|Ένας|Μία|Ένα
+// Base WordRepeatBeginningRule.isException already ORs IsExceptionFn with the core list
+// (: – - ✔️ ➡️ — ⭐️ ⚠️), so only Greek article extras live here (same pattern as EN The/A/An).
 func (r *GreekWordRepeatBeginningRule) isException(token string) bool {
 	switch token {
 	case "Ο", "Η", "Το", "Οι", "Τα", "Ένας", "Μία", "Ένα":
@@ -45,26 +57,38 @@ func (r *GreekWordRepeatBeginningRule) isException(token string) bool {
 	return false
 }
 
+// isAdverb ports GreekWordRepeatBeginningRule.isAdverb (fixed surface sets only, not POS).
 func (r *GreekWordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenReadings) bool {
+	if token == nil {
+		return false
+	}
 	tok := token.GetToken()
 	return elAddAdverbs[tok] || elContrastAdverbs[tok] || elExplainAdverbs[tok]
 }
 
+// getSuggestions ports GreekWordRepeatBeginningRule.getSuggestions:
+// other members of the same ADD/CONTRAST/EXPLAIN set (stream filter !equals(tok)).
 func (r *GreekWordRepeatBeginningRule) getSuggestions(token *languagetool.AnalyzedTokenReadings) []string {
+	if token == nil {
+		return nil
+	}
 	tok := token.GetToken()
 	if elAddAdverbs[tok] {
-		return differentFrom(tok, elAddAdverbs)
+		return otherAdverbsInSet(tok, elAddAdverbs)
 	}
 	if elContrastAdverbs[tok] {
-		return differentFrom(tok, elContrastAdverbs)
+		return otherAdverbsInSet(tok, elContrastAdverbs)
 	}
 	if elExplainAdverbs[tok] {
-		return differentFrom(tok, elExplainAdverbs)
+		return otherAdverbsInSet(tok, elExplainAdverbs)
 	}
+	// Java: return Collections.emptyList();
 	return nil
 }
 
-func differentFrom(adverb string, category map[string]bool) []string {
+// otherAdverbsInSet ports set.stream().filter(adv -> !adv.equals(tok)).collect(toList()).
+// Iteration order is map-undefined (Java HashSet stream is also unordered; tests use anyMatch).
+func otherAdverbsInSet(adverb string, category map[string]bool) []string {
 	var out []string
 	for adv := range category {
 		if adv != adverb {

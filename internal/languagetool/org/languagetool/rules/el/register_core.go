@@ -41,8 +41,12 @@ func RegisterCoreGreekRules(lt *languagetool.JLanguageTool) {
 		return ws.Match([]*languagetool.AnalyzedSentence{s})
 	}))
 
+	// MessagesBundle_el.properties keys used by WordRepeatBeginningRule.
 	wrb := NewGreekWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Τρεις διαδοχικές προτάσεις αρχίζουν με την ίδια λέξη.",
+		"desc_repetition_beginning":           "Συνεχόμενες προτάσεις που ξεκινάνε με την ίδια λέξη",
+		"desc_repetition_beginning_word":      "Τρεις συνεχόμενες προτάσεις ξεκινάνε με την ίδια λέξη.",
+		"desc_repetition_beginning_adv":       "Δύο συνεχόμενες προτάσεις ξεκινάνε με το ίδιο επίρρημα.",
+		"desc_repetition_beginning_thesaurus": "Αλλάξτε την σειρά των λέξεων στην πρόταση ή συμβουλευτείτε έναν θησαυρό για να βρείτε μία συνώνυμη λέξη.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
