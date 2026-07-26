@@ -7,12 +7,19 @@ import (
 	"strings"
 )
 
-const UkrainianDictPath = "/uk/uk.dict"
+// UkrainianDictPath is the Java resource path (UkrainianTagger super).
+// Official bytes: ua.net.nlp morfologik-ukrainian-lt → /uk/ukrainian.dict
+const UkrainianDictPath = "/uk/ukrainian.dict"
 
 type UkrainianTagger struct{ *tagging.BaseTagger }
 
 func NewUkrainianTagger(wt tagging.WordTagger) *UkrainianTagger {
 	return &UkrainianTagger{BaseTagger: tagging.NewBaseTagger(wt, UkrainianDictPath, "uk", false)}
+}
+
+// exactWordTag is CompoundTagger's wordTagger.tag — raw dict, no BaseTagger case-merge.
+func (t *UkrainianTagger) exactWordTag(word string) []tagging.TaggedWord {
+	return t.TagWordExact(word)
 }
 
 func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
@@ -22,7 +29,22 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
+		// Java getAnalyzedTokens: ` → ' when not at index 0; surface mutates with word.
 		w := strings.ReplaceAll(word, "’", "'")
+		surface := word
+		if i := strings.Index(w, "`"); i > 0 {
+			w = strings.ReplaceAll(w, "`", "'")
+			surface = w
+		}
+		// Java additionalTags strips IGNORED_CHARS (soft hyphen + combining acute)
+		// before compound arms; strip early so NAME_SUFFIX / RICCHA see clean forms.
+		if clean := languagetool.UkrainianIgnoredCharactersRegex.ReplaceAllString(w, ""); clean != w {
+			w = clean
+			// Java AnalyzedToken surfaces after strip use cleaned word in additionalTags.
+			surface = clean
+		}
+		// exact lookup for CompoundTagger / additionalTags (Java wordTagger, not case-merge)
+		exact := t.exactWordTag
 		var readings []*languagetool.AnalyzedToken
 		// Java CompoundTagger.generateEntities from official /uk/entities.txt
 		if ents := EntityReadings(w); len(ents) > 0 {
@@ -34,143 +56,138 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if sp := SpecialPOSTag(w); sp != "" {
 			p := sp
 			lemma := w
-			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &lemma)}
+			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(surface, &p, &lemma)}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java X-подібний / X-вмісний: right adj tags from wordTagger (no invent endings).
-		if dyn := DynamicAdjReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicAdjReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java CompoundTagger left "по" + poAdvMatch (по-сибірськи / по-свинячому).
-		if dyn := DynamicPoAdvReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicPoAdvReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java rightPartsWithLeftTagMap (гей-но, стривай-бо, …) — left POS from dict.
-		if dyn := DynamicRightParticleReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicRightParticleReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
-		// Java doGuessMultiHyphens intj redup (а-а, гей-гей-гей) — dict-gated.
-		if dyn := DynamicIntjRedupReadings(w, t.TagWord); len(dyn) > 0 {
-			for _, d := range dyn {
-				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+		// Java doGuessMultiHyphens only when dashIdx != firstDashIdx (2+ hyphens).
+		// intj redup (а-а is single-dash tagMatch; гей-гей-гей is multi).
+		// а-а single dash is handled via FullTagMatch / equal redup paths.
+		if strings.Count(strings.ReplaceAll(strings.ReplaceAll(w, "–", "-"), "—", "-"), "-") >= 2 {
+			if dyn := DynamicIntjRedupReadings(w, exact); len(dyn) > 0 {
+				for _, d := range dyn {
+					p, l := d.POS, d.Lemma
+					readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
+				}
+				out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+				pos += tagging.UTF16Len(word)
+				continue
 			}
-			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += tagging.UTF16Len(word)
-			continue
-		}
-		// Java doGuessMultiHyphens merge/stretch (ва-ре-ни-ки, Та-а-ак) + 3-part entities.
-		if stretch := DynamicMultiHyphenStretchReadings(w, t.TagWord); len(stretch) > 0 {
-			readings = stretch
-			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += tagging.UTF16Len(word)
-			continue
+			// merge/stretch (ва-ре-ни-ки, Та-а-ак) + 3-part entities.
+			if stretch := DynamicMultiHyphenStretchReadings(w, exact); len(stretch) > 0 {
+				readings = stretch
+				out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+				pos += tagging.UTF16Len(word)
+				continue
+			}
 		}
 		// Java equalParts redup for весь/усе (Усе-усе, всього-всього).
-		if dyn := DynamicEqualRedupReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicEqualRedupReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
-		// Java numrAdjMatch (дво-триметровий…) — left numr + right adj from dict.
-		if dyn := DynamicNumrAdjReadings(w, t.TagWord); len(dyn) > 0 {
-			for _, d := range dyn {
-				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
-			}
-			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += tagging.UTF16Len(word)
-			continue
-		}
+		// Java numrAdjMatch runs inside tryOWithAdj after tagMatch (not early).
 		// Java NAME_SUFFIX (Мустафа-ага) — left name POS + fixed suffix list.
-		if dyn := DynamicNameSuffixReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicNameSuffixReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java BAD_SUFFIX (був-би) — left dict + :bad.
-		if dyn := DynamicBadSuffixReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicBadSuffixReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
-		// Java left "аль" → tag Аль-right with :bad.
-		if dyn := DynamicAlPrefixReadings(w, t.TagWord); len(dyn) > 0 {
+		// Java left "аль" → tag Аль-right with :bad (surface becomes Аль-…).
+		if dyn := DynamicAlPrefixReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
-				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				p, l, s := d.POS, d.Lemma, d.Surface
+				readings = append(readings, languagetool.NewAnalyzedToken(s, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java Вибори-2014 / WORDS_WITH_YEAR.
-		if dyn := DynamicYearCompoundReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicYearCompoundReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java Формула-1 / WORDS_WITH_NUM.
-		if dyn := DynamicNumSuffixCompoundReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicNumSuffixCompoundReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java гірко-прегірко / гіркий-прегіркий (right пре+left).
-		if dyn := DynamicPreRedupReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicPreRedupReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		// Java напівX-напівY dual compounds.
-		if dyn := DynamicNapivDualReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicNapivDualReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
@@ -178,28 +195,28 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		}
 		// Java matchDigitCompound: short endings from LetterEndingForNumericHelper;
 		// longer right halves need wordTagger (pass TagWord; fail-closed without hits).
-		if dyn := DynamicNumericReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := DynamicNumericReadings(w, exact); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 			}
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
-		if dyn := FixedPartReadings(w, t.TagWord); len(dyn) > 0 {
+		if dyn := FixedPartReadings(w, exact); len(dyn) > 0 {
 			readings = dyn
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += tagging.UTF16Len(word)
 			continue
 		}
 		for _, tw := range t.TagWord(w) {
-			readings = append(readings, toTok(word, tw))
+			readings = append(readings, toTok(surface, tw))
 		}
 		lower := strings.ToLower(w)
 		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
 			for _, tw := range t.TagWord(lower) {
-				readings = append(readings, toTok(word, tw))
+				readings = append(readings, toTok(surface, tw))
 			}
 		}
 		// Java getAnalyzedTokens: en-dash U+2013 → hyphen, then super.getAnalyzedTokens(hyphen)
@@ -222,6 +239,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				}
 				if len(tagged) > 0 {
 					// Java: newTokens.add(new AnalyzedToken(origWord, null, null));
+					// origWord is pre-backtick surface for en-dash (Java origWord before replace).
 					tagged = append(tagged, languagetool.NewAnalyzedToken(word, nil, nil))
 					readings = tagged
 				}
@@ -245,36 +263,19 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = br
 			}
 		}
-		// Java analyzeAllCapitamizedAdj (Івано-Франківська as adj):
-		// always attempted; merges into existing readings when already tagged.
-		if adj := AnalyzeAllCapitalizedAdj(w, t.TagWord); len(adj) > 0 {
-			if len(readings) == 0 {
-				readings = adj
-			} else {
-				readings = mergeUniqueAnalyzedTokens(readings, adj)
-			}
-		}
-		// Java CompoundTagger.oAdjMatch: only after dict miss; right adj from wordTagger (no invent endings).
-		if len(readings) == 0 {
-			if dyn := DynamicDirectionalAdjReadings(w, t.TagWord); len(dyn) > 0 {
-				for _, d := range dyn {
-					p, l := d.POS, d.Lemma
-					readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
-				}
-			}
-		}
 		// Java additionalTags RICCHA / OTYI (стодвадцятиріччя, …мільйонний).
+		// note: analyzeAllCapitamizedAdj runs after compounds (Java getAnalyzedTokens order).
 		if len(readings) == 0 {
-			if num := NumericLongFormReadings(w, t.TagWord); len(num) > 0 {
+			if num := NumericLongFormReadings(w, exact); len(num) > 0 {
 				readings = num
 			}
 		}
 		// Java dual capitalized prop compounds (Київ-Прага, lname pairs).
 		if len(readings) == 0 {
-			if dyn := DynamicDualPropReadings(w, t.TagWord); len(dyn) > 0 {
+			if dyn := DynamicDualPropReadings(w, exact); len(dyn) > 0 {
 				for _, d := range dyn {
 					p, l := d.POS, d.Lemma
-					readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+					readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 				}
 			}
 		}
@@ -286,7 +287,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		}
 		// Java guessOtherTagsInternal no-dash prefixes (експрес-style solid compounds).
 		if len(readings) == 0 {
-			if nd := DynamicNoDashPrefixReadings(w, t.TagWord); len(nd) > 0 {
+			if nd := DynamicNoDashPrefixReadings(w, exact); len(nd) > 0 {
 				readings = nd
 			}
 		}
@@ -297,23 +298,23 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			}
 		}
 		// Java ALLCAPS → capitalizeProperName + noun.*:prop|noninfl re-tag (needs dict).
-		// Merges when surface already has tags (Java tokens.addAll(newTokens)).
+		// Java tokens.addAll(newTokens) without de-dupe (УКРАЇНА keeps duplicate :alt).
 		if prop := AllCapsPropReadings(w, t.TagWord); len(prop) > 0 {
 			if len(readings) == 0 {
 				readings = prop
 			} else {
-				readings = mergeUniqueAnalyzedTokens(readings, prop)
+				readings = append(readings, prop...)
 			}
 		}
 		if len(readings) == 0 {
 			if pref := TryNoDashPrefixTags(w, func(right string) []*languagetool.AnalyzedToken {
 				var rs []*languagetool.AnalyzedToken
-				for _, tw := range t.TagWord(right) {
+				for _, tw := range exact(right) {
 					rs = append(rs, toTok(right, tw))
 				}
 				low := strings.ToLower(right)
 				if len(rs) == 0 && right != low {
-					for _, tw := range t.TagWord(low) {
+					for _, tw := range exact(low) {
 						rs = append(rs, toTok(right, tw))
 					}
 				}
@@ -325,10 +326,10 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if len(readings) == 0 {
 			for _, cand := range MissingApostropheCandidates(w) {
 				// Java filter2: drop bad|arch|alt|abbr|slang|subst|short|long then add :bad
-				for _, tw := range filterMissingApoTags(t.TagWord(cand)) {
+				for _, tw := range filterMissingApoTags(exact(cand)) {
 					tw2 := tw
 					tw2.PosTag = AddIfNotContains(tw2.PosTag, ":bad")
-					readings = append(readings, toTok(word, tw2))
+					readings = append(readings, toTok(surface, tw2))
 				}
 				if len(readings) > 0 {
 					break
@@ -338,16 +339,16 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if len(readings) == 0 {
 			for _, cand := range MissingHyphenCandidates(w) {
 				// re-tag hyphenated candidate via compound path specials
-				if dyn := DynamicAdjReadings(cand, t.TagWord); len(dyn) > 0 {
+				if dyn := DynamicAdjReadings(cand, exact); len(dyn) > 0 {
 					for _, d := range dyn {
 						p, l := d.POS, d.Lemma
-						readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+						readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
 					}
 					break
 				}
 				if pref := TryNoDashPrefixTags(strings.ReplaceAll(cand, "-", ""), func(right string) []*languagetool.AnalyzedToken {
 					var rs []*languagetool.AnalyzedToken
-					for _, tw := range t.TagWord(right) {
+					for _, tw := range exact(right) {
 						rs = append(rs, toTok(right, tw))
 					}
 					return rs
@@ -357,7 +358,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				}
 				// -небудь indefinite pronouns (Java MISSING_HYPHEN + pronoun POS + :bad)
 				if strings.HasSuffix(strings.ToLower(cand), "-небудь") {
-					if nebud := NebudMissingHyphenReadings(word, cand, t.TagWord); len(nebud) > 0 {
+					if nebud := NebudMissingHyphenReadings(surface, cand, exact); len(nebud) > 0 {
 						readings = nebud
 						break
 					}
@@ -365,12 +366,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				// direct right-of-hyphen dict lookup (мінітест → міні-тест → тест)
 				if i := strings.Index(cand, "-"); i > 0 {
 					right := cand[i+1:]
-					for _, tw := range t.TagWord(right) {
-						readings = append(readings, toTok(word, tw))
+					for _, tw := range exact(right) {
+						readings = append(readings, toTok(surface, tw))
 					}
 					if low := strings.ToLower(right); len(readings) == 0 && right != low {
-						for _, tw := range t.TagWord(low) {
-							readings = append(readings, toTok(word, tw))
+						for _, tw := range exact(low) {
+							readings = append(readings, toTok(surface, tw))
 						}
 					}
 					if len(readings) > 0 {
@@ -382,7 +383,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if len(readings) == 0 {
 			if np := CompoundNumrPOS(w); np != "" {
 				p, l := np, w
-				readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
+				readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(surface, &p, &l)}
 			}
 		}
 		// Java additionalTags COMPOUND_WITH_QUOTES (екс-«депутат») before guessCompoundTag.
@@ -400,52 +401,71 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		}
 		// Java doGuessTwoHyphens (exactly two dashes) before/alongside single-dash tagMatch.
 		if len(readings) == 0 && strings.Count(strings.ReplaceAll(strings.ReplaceAll(w, "–", "-"), "—", "-"), "-") == 2 {
-			if two := DynamicTwoHyphenReadings(w, t.TagWord); len(two) > 0 {
+			if two := DynamicTwoHyphenReadings(w, exact); len(two) > 0 {
 				readings = two
 			}
 		}
-		// Java single-dash: з-за… alt, invalid prefixes, dash_prefixes / LAT / top-numr.
+		// Java single-dash: з-за… alt, invalid prefixes, dash_prefixes / LAT / top-numr
+		// (before tagMatch).
 		if len(readings) == 0 && strings.Contains(w, "-") {
-			if one := DynamicSingleLetterRedupReadings(w, t.TagWord); len(one) > 0 {
+			if one := DynamicSingleLetterRedupReadings(w, exact); len(one) > 0 {
 				readings = one
 			}
 		}
 		if len(readings) == 0 && strings.Contains(w, "-") {
-			if inv := DynamicInvalidDashPrefixReadings(w, t.TagWord); len(inv) > 0 {
+			if inv := DynamicInvalidDashPrefixReadings(w, exact); len(inv) > 0 {
 				readings = inv
 			}
 		}
 		if len(readings) == 0 && strings.Contains(w, "-") {
-			if dp := DynamicDashPrefixReadings(w, t.TagWord); len(dp) > 0 {
+			if dp := DynamicDashPrefixReadings(w, exact); len(dp) > 0 {
 				readings = dp
 			}
 		}
 		// Java півгодини-годину (left p:v_*:nv + right noun:inanim → :p:)
 		if len(readings) == 0 && strings.Contains(w, "-") {
-			if piv := DynamicPivNvDualReadings(w, t.TagWord); len(piv) > 0 {
+			if piv := DynamicPivNvDualReadings(w, exact); len(piv) > 0 {
 				readings = piv
 			}
 		}
 		// Java upper-right arm (adj:bad solid lower, tryOWithAdj)
 		if len(readings) == 0 && strings.Contains(w, "-") {
-			if ur := DynamicUpperRightCompoundReadings(w, t.TagWord); len(ur) > 0 {
+			if ur := DynamicUpperRightCompoundReadings(w, exact); len(ur) > 0 {
 				readings = ur
 			}
 		}
-		// Java tagMatch only after pron/part guards, left len, no-dash solid, upper-right.
-		if len(readings) == 0 && strings.Contains(w, "-") && AllowFullTagMatch(w, t.TagWord) {
-			if ft := FullTagMatchReadings(w, t.TagWord); len(ft) > 0 {
+		// Java tagMatch after dash prefixes / upper-right (before final tryOWithAdj).
+		if len(readings) == 0 && strings.Contains(w, "-") && AllowFullTagMatch(w, exact) {
+			if ft := FullTagMatchReadings(w, exact); len(ft) > 0 {
 				readings = ft
 			}
 		}
-		// Java final tryOWithAdj after failed tagMatch
+		// Java final tryOWithAdj after failed tagMatch (includes numrAdjMatch + oAdjMatch).
 		if len(readings) == 0 && strings.Contains(w, "-") {
-			if oadj := DynamicFinalOAdjReadings(w, t.TagWord); len(oadj) > 0 {
+			if oadj := DynamicFinalOAdjReadings(w, exact); len(oadj) > 0 {
 				readings = oadj
 			}
 		}
+		// Directional oAdj as last resort (same tryOWithAdj family).
 		if len(readings) == 0 {
-			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
+			if dyn := DynamicDirectionalAdjReadings(w, exact); len(dyn) > 0 {
+				for _, d := range dyn {
+					p, l := d.POS, d.Lemma
+					readings = append(readings, languagetool.NewAnalyzedToken(surface, &p, &l))
+				}
+			}
+		}
+		// Java analyzeAllCapitamizedAdj after compounds (getAnalyzedTokens order):
+		// always attempted; merges into existing readings when already tagged.
+		if adj := AnalyzeAllCapitalizedAdj(w, exact); len(adj) > 0 {
+			if len(readings) == 0 {
+				readings = adj
+			} else {
+				readings = mergeUniqueAnalyzedTokens(readings, adj)
+			}
+		}
+		if len(readings) == 0 {
+			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(surface, nil, nil)}
 		}
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 		pos += tagging.UTF16Len(word)

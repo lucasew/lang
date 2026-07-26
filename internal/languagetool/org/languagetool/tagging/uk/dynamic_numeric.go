@@ -42,8 +42,12 @@ func getTryPrefix(rightWord string) string {
 // Short letter endings use official LetterEndingForNumericHelper maps only (no invent cases).
 // Longer right halves require tagWord hits (Java wordTagger) — fail-closed without dict.
 func DynamicNumericReadings(token string, tagWord func(string) []tagging.TaggedWord) []struct{ Lemma, POS string } {
-	t := strings.ReplaceAll(token, "–", "-")
-	t = strings.ReplaceAll(t, "—", "-")
+	// En-dash/em-dash compounds are handled by UkrainianTagger.getAnalyzedTokens
+	// alt-dash path (hyphen re-tag + null original surface) — do not intercept here.
+	if strings.Contains(token, "\u2013") || strings.Contains(token, "\u2014") {
+		return nil
+	}
+	t := token
 
 	dash := strings.LastIndex(t, "-")
 	if dash <= 0 || dash == len(t)-1 {
@@ -138,11 +142,10 @@ func DynamicNumericReadings(token string, tagWord func(string) []tagging.TaggedW
 	return out
 }
 
-// mmDigitAdjParadigm ports matchDigitCompound "мм" branch (PosTagHelper genders × vidminky).
+// mmDigitAdjParadigm ports matchDigitCompound "мм" branch (PosTagHelper.BASE_GENDERS × vidminky).
 func mmDigitAdjParadigm(word string) []struct{ Lemma, POS string } {
-	genders := []string{"m", "f", "n"}
 	var out []struct{ Lemma, POS string }
-	for _, g := range genders {
+	for _, g := range BaseGenders {
 		for _, vid := range nvCases {
 			out = append(out, struct{ Lemma, POS string }{
 				Lemma: word,

@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -57,14 +58,8 @@ func FixedPartReadings(token string, tagWord func(string) []tagging.TaggedWord) 
 	if right == "" || tagWord == nil {
 		return nil
 	}
-	// Java tagEitherCase(rightWord)
-	tws := tagWord(right)
-	if len(tws) == 0 {
-		low := strings.ToLower(right)
-		if low != right {
-			tws = tagWord(low)
-		}
-	}
+	// Java tagEitherCase(rightWord) — as-is, then lower if empty (not BaseTagger case-merge)
+	tws := tagEitherCase(right, tagWord)
 	if len(tws) == 0 {
 		return nil
 	}
@@ -73,38 +68,22 @@ func FixedPartReadings(token string, tagWord func(string) []tagging.TaggedWord) 
 	if unicode.IsUpper([]rune(right)[0]) {
 		addTag = ":alt"
 	}
-	// Java addPluralNvTokens: only noun sing v_rod readings
+	// Java addPluralNvTokens:
+	//   posTag = rightPosTag.replace("v_rod", vid).replaceFirst(":[mfn]:v_", ":p:v_") + ":nv" + addTag
+	// Always appends :nv+addTag (no Contains checks → stable :nv:alt order).
 	var out []*languagetool.AnalyzedToken
 	seen := map[string]struct{}{}
 	for _, tw := range tws {
 		pos := tw.PosTag
-		if pos == "" || !strings.HasPrefix(pos, "noun") {
-			continue
-		}
-		if !strings.Contains(pos, "v_rod") {
-			continue
-		}
-		// must be singular :m: / :f: / :n: before v_rod
-		if strings.Contains(pos, ":p:") {
+		// Java NOUN_SING_V_ROD_REGEX: noun.*?:[mfn]:v_rod.*
+		if pos == "" || !nounSingVRodRE.MatchString(pos) {
 			continue
 		}
 		for _, vid := range nvCases {
-			// replace v_rod with vid and force plural :p:
-			np := pos
-			np = strings.Replace(np, "v_rod", vid, 1)
-			// :m:v_ / :f:v_ / :n:v_ → :p:v_
-			for _, g := range []string{":m:v_", ":f:v_", ":n:v_"} {
-				if strings.Contains(np, g) {
-					np = strings.Replace(np, g, ":p:v_", 1)
-					break
-				}
-			}
-			if !strings.Contains(np, ":nv") {
-				np = np + ":nv"
-			}
-			if addTag != "" && !strings.Contains(np, addTag) {
-				np = np + addTag
-			}
+			np := strings.Replace(pos, "v_rod", vid, 1)
+			// replaceFirst ":[mfn]:v_" → ":p:v_"
+			np = nounSingGenderVRE.ReplaceAllString(np, ":p:v_")
+			np = np + ":nv" + addTag
 			if _, ok := seen[np]; ok {
 				continue
 			}
@@ -115,6 +94,12 @@ func FixedPartReadings(token string, tagWord func(string) []tagging.TaggedWord) 
 	}
 	return out
 }
+
+// nounSingVRodRE ports CompoundTagger.NOUN_SING_V_ROD_REGEX.
+var nounSingVRodRE = regexp.MustCompile(`^noun.*?:[mfn]:v_rod.*$`)
+
+// nounSingGenderVRE ports replaceFirst(":[mfn]:v_", ":p:v_").
+var nounSingGenderVRE = regexp.MustCompile(`:[mfn]:v_`)
 
 // generateTokensForNv delegates to GenerateTokensForNv (PosTagHelper twin).
 func generateTokensForNv(word, genders, extraTags string) []*languagetool.AnalyzedToken {

@@ -125,7 +125,29 @@ func EntityReadings(token string) []*languagetool.AnalyzedToken {
 		return nil
 	}
 	loadEntities()
+	// Java generateEntities uses LinkedHashSet — de-dupe identical (POS, lemma) tokens.
 	var out []*languagetool.AnalyzedToken
+	seen := map[string]struct{}{}
+	add := func(toks []*languagetool.AnalyzedToken) {
+		for _, t := range toks {
+			if t == nil {
+				continue
+			}
+			pos, lem := "", ""
+			if t.GetPOSTag() != nil {
+				pos = *t.GetPOSTag()
+			}
+			if t.GetLemma() != nil {
+				lem = *t.GetLemma()
+			}
+			key := pos + "\x00" + lem
+			if _, ok := seen[key]; ok {
+				continue
+			}
+			seen[key] = struct{}{}
+			out = append(out, t)
+		}
+	}
 	for _, rule := range entityRules {
 		if !rule.re.MatchString(token) {
 			continue
@@ -144,22 +166,18 @@ func EntityReadings(token string) []*languagetool.AnalyzedToken {
 					extra = tag[i+len(":nv"):]
 					extra = strings.ReplaceAll(extra, ":np", "")
 				}
-				out = append(out, generateTokensForNv(token, genders, extra)...)
+				add(generateTokensForNv(token, genders, extra))
 				if !strings.Contains(tag, ":np") && !strings.Contains(tag, ":p") {
-					out = append(out, generateTokensForNv(token, "p", extra)...)
+					add(generateTokensForNv(token, "p", extra))
 				}
 			} else {
 				// e.g. noninfl
 				pos := tag
-				if !strings.Contains(pos, ":") && pos != "" {
-					// bare "noninfl" is full POS
-				}
 				p, l := pos, token
-				out = append(out, languagetool.NewAnalyzedToken(token, &p, &l))
+				add([]*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(token, &p, &l)})
 			}
 		}
-		// first matching pattern only (Java loops all matching keys; may multi-match)
-		// keep all matches like Java generateEntities LinkedHashSet
+		// keep all matching patterns like Java; de-dupe via seen
 	}
 	return out
 }

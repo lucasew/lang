@@ -119,9 +119,16 @@ func DynamicFinalOAdjReadings(token string, tagWord func(string) []tagging.Tagge
 	if IsDashPrefix(left) || IsDashPrefixInvalid(left) {
 		return nil
 	}
+	// same part/conj/pron guards as AllowFullTagMatch / doGuessCompoundTag
+	leftTags := tagAsIsAndWithLowerCase(left, tagWord)
 	rightTags := tagEitherCase(right, tagWord)
 	if len(rightTags) == 0 {
 		return nil
+	}
+	if !strings.EqualFold(left, right) && hasRightPartConjOrPron(rightTags) {
+		if !(hasPosStartInTags(leftTags, "numr") && hasPosStartInTags(rightTags, "numr")) {
+			return nil
+		}
 	}
 	return tryOWithAdjTokens(token, left, taggedWordsToTokens(right, rightTags), tagWord)
 }

@@ -125,6 +125,15 @@ func DynamicDirectionalAdjReadings(token string, tagWord func(string) []tagging.
 	if tagging.UTF16Len(leftWord) < 3 {
 		return nil
 	}
+	// Java doGuessCompoundTag guards before tryOWithAdj: right part|conj|:pron → null
+	// (unless both numr). Blocks лісо-та, відносини-коли, etc.
+	leftTagsG := tagAsIsAndWithLowerCase(leftWord, tagWord)
+	rightTagsG := tagEitherCase(rightWord, tagWord)
+	if !strings.EqualFold(leftWord, rightWord) && hasRightPartConjOrPron(rightTagsG) {
+		if !(hasPosStartInTags(leftTagsG, "numr") && hasPosStartInTags(rightTagsG, "numr")) {
+			return nil
+		}
+	}
 	leftLow := strings.ToLower(leftWord)
 	// Gate shape: known directional left, LEFT_O_ADJ, or ends with о/е like Java O_ADJ_PATTERN.
 	if _, ok := directionalLeft[leftLow]; !ok {

@@ -62,6 +62,9 @@ func DynamicBadSuffixReadings(token string, tagWord func(string) []tagging.Tagge
 		if pos == "" {
 			continue
 		}
+		// Java (CompoundTagger BAD_SUFFIX):
+		//   wordList = adjust(leftWdList, null, "-"+right);  // discarded
+		//   wordList = addIfNotContains(leftWdList, ":bad", null); // left lemmas kept
 		if !strings.Contains(pos, ":bad") {
 			pos = pos + ":bad"
 		}
@@ -69,9 +72,7 @@ func DynamicBadSuffixReadings(token string, tagWord func(string) []tagging.Tagge
 		if lem == "" {
 			lem = leftWord
 		}
-		// Java adjust(left, null, "-"+right) — then addIfNotContains :bad on left list
-		// (second step overwrites lemma suffix in Java; we keep both suffix + :bad)
-		lemma := lem + "-" + rightWord
+		lemma := lem
 		key := lemma + "|" + pos
 		if _, dup := seen[key]; dup {
 			continue
@@ -83,7 +84,10 @@ func DynamicBadSuffixReadings(token string, tagWord func(string) []tagging.Tagge
 }
 
 // DynamicAlPrefixReadings ports left "аль" → tag "Аль-"+right with :bad.
-func DynamicAlPrefixReadings(token string, tagWord func(string) []tagging.TaggedWord) []struct{ Lemma, POS string } {
+// Java uses asAnalyzedTokenListForTaggedWordsInternal(wd, …) so surface is "Аль-…".
+func DynamicAlPrefixReadings(token string, tagWord func(string) []tagging.TaggedWord) []struct {
+	Surface, Lemma, POS string
+} {
 	if tagWord == nil || token == "" || !strings.Contains(token, "-") {
 		return nil
 	}
@@ -96,7 +100,7 @@ func DynamicAlPrefixReadings(token string, tagWord func(string) []tagging.Tagged
 	if leftWord != "аль" {
 		return nil
 	}
-	// Java: wordTagger.tag("Аль-" + rightWord)
+	// Java: wordTagger.tag("Аль-" + rightWord); token surface = that form
 	lookup := "Аль-" + rightWord
 	tws := tagWord(lookup)
 	if len(tws) == 0 {
@@ -105,7 +109,9 @@ func DynamicAlPrefixReadings(token string, tagWord func(string) []tagging.Tagged
 	if len(tws) == 0 {
 		return nil
 	}
-	var out []struct{ Lemma, POS string }
+	var out []struct {
+		Surface, Lemma, POS string
+	}
 	for _, tw := range tws {
 		pos := tw.PosTag
 		if pos == "" {
@@ -118,7 +124,9 @@ func DynamicAlPrefixReadings(token string, tagWord func(string) []tagging.Tagged
 		if lem == "" {
 			lem = lookup
 		}
-		out = append(out, struct{ Lemma, POS string }{Lemma: lem, POS: pos})
+		out = append(out, struct {
+			Surface, Lemma, POS string
+		}{Surface: lookup, Lemma: lem, POS: pos})
 	}
 	return out
 }
@@ -138,7 +146,8 @@ func DynamicYearCompoundReadings(token string, tagWord func(string) []tagging.Ta
 		return nil
 	}
 
-	leftTags := lookupBothCases(leftWord, tagWord)
+	// Java tagAsIsAndWithLowerCase — surface + lower always when capitalized
+	leftTags := tagAsIsAndWithLowerCase(leftWord, tagWord)
 	if len(leftTags) == 0 {
 		return nil
 	}
@@ -155,8 +164,11 @@ func DynamicYearCompoundReadings(token string, tagWord func(string) []tagging.Ta
 		if lem == "" {
 			lem = leftWord
 		}
-		// !:prop && !WORDS_WITH_YEAR → skip
+		// !:prop && !WORDS_WITH_YEAR → skip (lemma lower for WORDS_WITH_YEAR list)
 		_, inYear := wordsWithYear[lem]
+		if !inYear {
+			_, inYear = wordsWithYear[strings.ToLower(lem)]
+		}
 		if !strings.Contains(pos, ":prop") && !inYear {
 			continue
 		}

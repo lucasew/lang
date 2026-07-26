@@ -116,9 +116,24 @@ func DynamicTwoHyphenReadings(token string, tagWord func(string) []tagging.Tagge
 }
 
 // tryOWithAdjTokens ports tryOWithAdj(word, leftWord, rightAnalyzedTokens).
-// Builds synthetic right-side tokens already tagged; left is o-adj stem.
+// Java order: numrAdjMatch (NUMR_ADJ_PATTERN) then oAdjMatch (O_ADJ_PATTERN).
 func tryOWithAdjTokens(word, leftWord string, rightTokens []*languagetool.AnalyzedToken, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
 	if leftWord == "" || len(rightTokens) == 0 {
+		return nil
+	}
+	// Java: if NUMR_ADJ_PATTERN.matcher(leftWord).matches() → numrAdjMatch
+	if reNumrAdjLeft.MatchString(leftWord) {
+		if dyn := DynamicNumrAdjReadings(word, tagWord); len(dyn) > 0 {
+			var out []*languagetool.AnalyzedToken
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				out = append(out, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			return out
+		}
+		// Java returns null from numrAdjMatch when no adj — do not fall through to oAdj
+		// when left matches NUMR_ADJ_PATTERN (Java returns numrAdjMatch result, possibly null).
+		// But Java: `if (NUMR_ADJ) return numrAdjMatch(...);` so null stops oAdj.
 		return nil
 	}
 	// Require left looks like o-adj stem (ends with о/е) — Java O_ADJ_PATTERN .+(о|[чшщ]е)
@@ -144,24 +159,61 @@ func tryOWithAdjTokens(word, leftWord string, rightTokens []*languagetool.Analyz
 		}
 	}
 
+	// Java oAdjMatch extraTag matrix (LEFT_O_ADJ / invalid / noDash / adjp).
 	extraTag := ""
 	leftLow := strings.ToLower(leftWord)
-	if _, inv := leftOAdjInvalid[leftLow]; inv {
-		// capitalized dual prop exception handled elsewhere; here solid invalid → :bad
-		extraTag = ":bad"
+	if _, inLeftO := leftOAdj[leftLow]; !inLeftO {
+		// allCapTokens: analyzeAllCapitamizedAdj — skip :bad when dual-capitalized adj exists
+		allCap := AnalyzeAllCapitalizedAdj(word, tagWord)
+		// adv left + adjp right → :bad
+		leftEvidence := tagAsIsAndWithLowerCase(leftWord, tagWord)
+		hasAdv := false
+		hasBadEvidence := false
+		for _, tw := range leftEvidence {
+			if strings.HasPrefix(tw.PosTag, "adv") {
+				hasAdv = true
+			}
+			if strings.Contains(tw.PosTag, ":bad") {
+				hasBadEvidence = true
+			}
+		}
+		hasAdjpRight := false
+		for _, r := range adjRight {
+			if r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), "adjp") {
+				hasAdjpRight = true
+			}
+		}
+		if hasAdv && hasAdjpRight {
+			extraTag = ":bad"
+		} else if hasBadEvidence {
+			extraTag = ":bad"
+		} else if _, inv := leftOAdjInvalid[leftLow]; inv {
+			// do not mark Центрально-Східної as :bad when allCap non-empty
+			if len(allCap) == 0 {
+				extraTag = ":bad"
+			}
+		} else if len(allCap) == 0 {
+			// solid no-dash form tagged → :bad (високо-продуктивний)
+			noDash := strings.ReplaceAll(word, "-", "")
+			if nd := tagAsIsAndWithLowerCase(noDash, tagWord); len(nd) > 0 {
+				extraTag = ":bad"
+			}
+		}
 	}
 
 	var out []*languagetool.AnalyzedToken
 	for _, r := range adjRight {
 		pos := *r.GetPOSTag()
-		if strings.Contains(pos, "v_kly") {
-			continue
-		}
-		// strip :comp*
+		// Java oAdjMatch keeps v_kly (unlike getNvPrefixNounMatch)
+		// strip :comp* (Java ADJ_COMP_REGEX) and add :bad after
 		pos = AdjCompRegex.ReplaceAllString(pos, "")
 		if strings.Contains(extraTag, ":bad") {
 			pos = strings.ReplaceAll(pos, ":arch", "")
 		}
+		// also strip residual :compb if regex miss
+		pos = strings.ReplaceAll(pos, ":compb", "")
+		pos = strings.ReplaceAll(pos, ":compc", "")
+		pos = strings.ReplaceAll(pos, ":comps", "")
 		if extraTag != "" {
 			pos = AddIfNotContains(pos, extraTag)
 		}

@@ -1,6 +1,7 @@
 package uk
 
-// Twin of UkrainianTaggerTest — MapWordTagger smokes; advanced dynamic tagging deferred.
+// Twin helpers + unit tests for UkrainianTagger / CompoundTagger leaves.
+// Full Java UkrainianTaggerTest myAssert matrix: UkrainianTaggerTest_matrix_test.go
 import (
 	"strings"
 	"testing"
@@ -10,19 +11,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUkrainianTagger_Dictionary(t *testing.T) {
-	wt := tagging.MapWordTagger{"дім": {tagging.NewTaggedWord("дім", "noun:inanim:m:v_naz")}}
-	tagger := NewUkrainianTagger(wt)
-	require.Equal(t, UkrainianDictPath, tagger.GetDictionaryPath())
-	require.Len(t, tagger.TagWord("дім"), 1)
-}
-
-func TestUkrainianTagger_Tagger(t *testing.T) {
+// MapWordTagger smokes for constructors (official matrix in UkrainianTaggerTest_matrix_test.go).
+func TestUkrainianTagger_MapWordTaggerSmoke(t *testing.T) {
 	wt := tagging.MapWordTagger{
+		"дім":  {tagging.NewTaggedWord("дім", "noun:inanim:m:v_naz")},
 		"це":   {tagging.NewTaggedWord("це", "pron")},
 		"тест": {tagging.NewTaggedWord("тест", "noun")},
 	}
-	got := NewUkrainianTagger(wt).Tag([]string{"Це", "тест", "xyz"})
+	tagger := NewUkrainianTagger(wt)
+	require.Equal(t, UkrainianDictPath, tagger.GetDictionaryPath())
+	require.Len(t, tagger.TagWord("дім"), 1)
+	got := tagger.Tag([]string{"Це", "тест", "xyz"})
 	require.Len(t, got, 3)
 	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
@@ -399,8 +398,8 @@ func TestDynamicPoAdvReadings(t *testing.T) {
 func TestDynamicNumeric_MmParadigm(t *testing.T) {
 	rs := DynamicNumericReadings("5-мм", nil)
 	require.NotEmpty(t, rs)
-	// 3 genders × 6 cases (no v_kly)
-	require.Len(t, rs, 18)
+	// Java BASE_GENDERS (m,f,n,p) × 6 cases (no v_kly) = 24
+	require.Len(t, rs, 24)
 	require.Equal(t, "5-мм", rs[0].Lemma)
 	require.Contains(t, rs[0].POS, "adj:")
 	require.Contains(t, rs[0].POS, "v_")
@@ -561,7 +560,8 @@ func TestDynamicBadSuffixReadings(t *testing.T) {
 	rs := DynamicBadSuffixReadings("був-би", tagWord)
 	require.NotEmpty(t, rs)
 	require.Contains(t, rs[0].POS, ":bad")
-	require.Equal(t, "бути-би", rs[0].Lemma)
+	// Java discards adjust lemma-suffix line; lemma stays left lemma
+	require.Equal(t, "бути", rs[0].Lemma)
 	// м-б blocked (left length 1)
 	require.Nil(t, DynamicBadSuffixReadings("м-б", tagWord))
 }

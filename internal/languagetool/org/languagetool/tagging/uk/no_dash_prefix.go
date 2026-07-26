@@ -101,7 +101,7 @@ func DynamicNoDashPrefixReadings(word string, tagWord func(string) []tagging.Tag
 		if len(filtered) == 0 {
 			continue
 		}
-		// adjust(lemmaPrefix=prefix+apo, addTags…)
+		// Java: adjust(rightWdList, prefix+apo, null, addTag…) — apo only if on surface.
 		lemmaPrefix := prefix + apo
 		adj := Adjust(filtered, lemmaPrefix, "", addTags...)
 		return taggedWordsToSurfaceTokens(word, adj)
@@ -140,6 +140,10 @@ func TryNoDashPrefixTags(surface string, tagRight func(string) []*languagetool.A
 		}
 		r, _ := utf8.DecodeRuneInString(right)
 		if !unicode.IsLetter(r) {
+			continue
+		}
+		// Java: right.length() >= 4 && ! isCapitalizedWord(right)
+		if tagging.UTF16Len(right) < 4 || tools.IsCapitalizedWord(right) {
 			continue
 		}
 		// If right starts with ' strip for lookup

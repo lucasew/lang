@@ -138,6 +138,8 @@ func DynamicNapivDualReadings(token string, tagWord func(string) []tagging.Tagge
 				continue
 			}
 			pos := mergePOS(lt.PosTag, rt.PosTag)
+			// Java tagMatch / PosTagHelper.cleanExtraTags strips :comp.
+			pos = extraTagsDropRE.ReplaceAllString(pos, "")
 			llem := lt.Lemma
 			if llem == "" {
 				llem = baseL

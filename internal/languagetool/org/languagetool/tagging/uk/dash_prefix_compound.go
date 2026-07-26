@@ -158,6 +158,22 @@ func DynamicDashPrefixReadings(token string, tagWord func(string) []tagging.Tagg
 		return nil
 	}
 
+	// Java guards before dashPrefixMatch (doGuessCompoundTag):
+	// right part|conj|…:pron → null unless both sides numr (V-типу has part:slang).
+	leftTags := tagAsIsAndWithLowerCase(left, tagWord)
+	rightWd := tagEitherCase(right, tagWord)
+	if len(rightWd) == 0 {
+		return nil
+	}
+	if !strings.EqualFold(left, right) && hasRightPartConjOrPron(rightWd) {
+		if !(hasPosStartInTags(leftTags, "numr") && hasPosStartInTags(rightWd, "numr")) {
+			return nil
+		}
+	}
+	if hasPosPartInTags(leftTags, "pron") && !hasPosPartInTags(leftTags, "numr") {
+		return nil
+	}
+
 	latMatch := dashPrefixLatRE.MatchString(left)
 	dashPrefixMatch := IsDashPrefix(left) || latMatch
 	if !dashPrefixMatch {
@@ -165,10 +181,6 @@ func DynamicDashPrefixReadings(token string, tagWord func(string) []tagging.Tagg
 		return latinLetterAdjCompounds(token, left, right, tagWord)
 	}
 
-	rightWd := tagEitherCase(right, tagWord)
-	if len(rightWd) == 0 {
-		return nil
-	}
 	rightTokens := taggedWordsToTokens(right, rightWd)
 
 	// adj compounds for single letter / Latin left
@@ -218,10 +230,8 @@ func DynamicDashPrefixReadings(token string, tagWord func(string) []tagging.Tagg
 		return GenerateTokensWithRightInflected(token, left, rightTokens, "numr:", ":bad", nil)
 	}
 
+	// Java: only add adjCompounds when noun tokens empty
 	if len(newTokens) == 0 {
-		newTokens = append(newTokens, adjCompounds...)
-	} else if len(adjCompounds) > 0 {
-		// Java may keep both; keep noun first then adj
 		newTokens = append(newTokens, adjCompounds...)
 	}
 

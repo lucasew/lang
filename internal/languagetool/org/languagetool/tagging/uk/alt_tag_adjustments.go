@@ -39,28 +39,75 @@ func AltTagAdjustReadings(word string, tagWord func(string) []tagging.TaggedWord
 	return nil
 }
 
-// capsInsideAltReadings: length>5, mixed-case interior, tag lower + :alt.
+// capsInsideAltReadings: length>5, CAPS_INSIDE_WORD full match, tag lower + :alt.
+// Java CAPS_INSIDE_WORD with Matcher.matches() (full string):
+// [а-яіїєґ'-]*[а-яіїєґ][А-ЯІЇЄҐ][а-яіїєґ][а-яіїєґ'-]*
+// Rejects multi-hump mixed case like вДягнУтися (second upper breaks full match).
 func capsInsideAltReadings(word string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
 	if tagging.UTF16Len(word) <= 5 {
 		return nil
 	}
-	// Java UNICODE_CASE CAPS_INSIDE — require an interior upper after a lower Cyrillic.
-	if !hasCapsInside(word) {
+	// Must use case-sensitive class for the middle upper — rebuild without (?i) on middle.
+	if !capsInsideWordMatch(word) {
 		return nil
 	}
 	lower := strings.ToLower(word)
 	return taggedWithExtra(word, tagWord(lower), ":alt", nil)
 }
 
-func hasCapsInside(word string) bool {
-	// Java CAPS_INSIDE_WORD: … lower-cyrillic, upper-cyrillic, lower-cyrillic …
+func capsInsideWordMatch(word string) bool {
+	// Explicit case-sensitive pattern (Java UNICODE_CASE but upper/lower classes are fixed).
 	rs := []rune(word)
-	for i := 0; i+2 < len(rs); i++ {
-		a, b, c := rs[i], rs[i+1], rs[i+2]
-		if unicode.IsLower(a) && unicode.IsUpper(b) && unicode.IsLower(c) &&
-			isCyrLetter(a) && isCyrLetter(b) && isCyrLetter(c) {
-			return true
+	if len(rs) < 3 {
+		return false
+	}
+	// full match: prefix lower/apos/dash*, then lower+Upper+lower, then lower/apos/dash*
+	i := 0
+	for i < len(rs) && (isCyrLower(rs[i]) || rs[i] == '\'' || rs[i] == '-' || rs[i] == '’') {
+		i++
+	}
+	// need lower Upper lower
+	if i >= len(rs) || !isCyrLower(rs[i]) {
+		// prefix consumed all lower; the [а-яіїєґ] before upper may be last of prefix
+		// back up one if we over-consumed
+		if i > 0 && isCyrLower(rs[i-1]) {
+			i--
+		} else {
+			return false
 		}
+	}
+	if i+2 >= len(rs) {
+		return false
+	}
+	if !isCyrLower(rs[i]) || !isCyrUpper(rs[i+1]) || !isCyrLower(rs[i+2]) {
+		return false
+	}
+	i += 3
+	for i < len(rs) {
+		if !(isCyrLower(rs[i]) || rs[i] == '\'' || rs[i] == '-' || rs[i] == '’') {
+			return false
+		}
+		i++
+	}
+	return true
+}
+
+func isCyrLower(r rune) bool {
+	switch {
+	case r >= 'а' && r <= 'я':
+		return true
+	case r == 'і' || r == 'ї' || r == 'є' || r == 'ґ':
+		return true
+	}
+	return false
+}
+
+func isCyrUpper(r rune) bool {
+	switch {
+	case r >= 'А' && r <= 'Я':
+		return true
+	case r == 'І' || r == 'Ї' || r == 'Є' || r == 'Ґ':
+		return true
 	}
 	return false
 }
