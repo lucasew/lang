@@ -400,7 +400,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 | docs/faithful-port-checklist.md#3.C.3-ConfusionCheckFilter | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/ConfusionCheckFilter.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/ConfusionPairsDataLoader.java; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/confusion_pairs.txt; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/confusion_pairs.txt; inspiration/languagetool/languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/confusion_pairs.txt | internal/languagetool/org/languagetool/rules/pt/confusion_check_filter.go; internal/languagetool/org/languagetool/rules/pt/confusion_check_filter_test.go; internal/languagetool/org/languagetool/rules/pt/data/confusion_pairs.txt; internal/languagetool/org/languagetool/rules/pt/data/pt-BR/confusion_pairs.txt; internal/languagetool/org/languagetool/rules/pt/data/pt-PT/confusion_pairs.txt | 37d71b73aeedb6925fa5d2e86bffb04cad5865bc | 0 | 0 |  |  | 2026-07-26T04:22:43Z |
 | docs/faithful-port-checklist.md#3.C.3-DateFilterHelper | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/DateFilterHelper.java | internal/languagetool/org/languagetool/rules/pt/date_filter_helper.go; internal/languagetool/org/languagetool/rules/pt/date_filter_helper_test.go | 95213429eb8b9be91bf44fcb6fe54895dcc1a959 | 0 | 0 |  |  | 2026-07-26T04:30:16Z |
 | docs/faithful-port-checklist.md#3.C.3-PortugueseProclisisFilter | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseProclisisFilter.java | internal/languagetool/org/languagetool/rules/pt/portuguese_proclisis_filter.go; internal/languagetool/org/languagetool/rules/pt/portuguese_proclisis_filter_test.go | fe15b45a9c870a8df4ad4bca9b17eddf9f69bc53 | 0 | 0 |  |  | 2026-07-26T04:45:10Z |
-| docs/faithful-port-checklist.md#3.C.3-PortugueseEnclisisFilter | ready | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseEnclisisFilter.java | internal/languagetool/org/languagetool/rules/pt/portuguese_enclisis_filter.go; internal/languagetool/org/languagetool/rules/pt/portuguese_enclisis_filter_test.go | 4479dbd5d14ce57d8d2ea68cae8a8c569a6f2e10 | 0 | 0 |  |  | 2026-07-26T04:51:41Z |
+| docs/faithful-port-checklist.md#3.C.3-PortugueseEnclisisFilter | accepted | inspiration/languagetool/languagetool-language-modules/pt/src/main/java/org/languagetool/rules/pt/PortugueseEnclisisFilter.java | internal/languagetool/org/languagetool/rules/pt/portuguese_enclisis_filter.go; internal/languagetool/org/languagetool/rules/pt/portuguese_enclisis_filter_test.go | 4479dbd5d14ce57d8d2ea68cae8a8c569a6f2e10 | 0 | 0 |  |  | 2026-07-26T04:55:05Z |
 
 ## Human inbox
 
@@ -410,7 +410,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | ready 3.C.3-PortugueseEnclisisFilter @ 4479dbd5; next fire: validate |
+| Notes | ACCEPT 3.C.3-PortugueseEnclisisFilter @ 4479dbd5; next fire: implement next PT leaf |
 
 ---
 
@@ -1848,3 +1848,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-26T04:45:10Z ACCEPT: 3.C.3-PortugueseProclisisFilter @ fe15b45a (validator + parent green reconfirm; CHECKLIST PortugueseProclisisFilter [x])
 - 2026-07-26T04:48:43Z implement: 3.C.3-PortugueseEnclisisFilter (PT; AcceptRuleMatch verb+pronoun; PortugueseSynthesizer)
 - 2026-07-26T04:51:41Z ready: 3.C.3-PortugueseEnclisisFilter @ 4479dbd5 (implementer report; parent green reconfirm; INSTANCE synth; nos/accusative matrix)
+- 2026-07-26T04:53:46Z validating: 3.C.3-PortugueseEnclisisFilter @ 4479dbd5
+- 2026-07-26T04:55:05Z ACCEPT: 3.C.3-PortugueseEnclisisFilter @ 4479dbd5 (validator + parent green reconfirm; CHECKLIST PortugueseEnclisisFilter [x])
