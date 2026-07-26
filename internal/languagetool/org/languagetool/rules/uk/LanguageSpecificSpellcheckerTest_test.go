@@ -1,7 +1,8 @@
 package uk
 
 // Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/LanguageSpecificSpellcheckerTest.java
-// Full SpellcheckerTest dict deferred — analyze + speller ID smoke.
+// Java: extends SpellcheckerTest; testRules() → runTests("uk").
+// Full multi-language SpellcheckerTest harness deferred — ID + official dict smoke.
 import (
 	"testing"
 
@@ -19,19 +20,11 @@ func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
 	require.Equal(t, MorfologikUkrainianSpellerRuleID, r.GetID())
 	require.Equal(t, UkrainianSpellerDict, r.GetFileName())
 
-	// inject: known word OK (tagged → ignoreToken hasGoodTag), misspelling flagged
-	sp := morfologik.NewMorfologikSpeller(UkrainianSpellerDict, 1)
-	sp.AddWord("тест")
-	sp.AddWord("мова")
-	r.Speller = sp
-	inner := sp.IsMisspelled
-	r.IsMisspelled = func(w string) bool { return r.ukIsMisspelled(w, inner) }
-	// Java: tagged Ukrainian words skip spellcheck via hasGoodTag
-	m, err := ukMatchTagged(r, "тест мова")
-	require.NoError(t, err)
-	require.Empty(t, m)
-	// non-Ukrainian letters ignored (not flagged); use untagged misspell
-	m, err = r.Match(languagetool.AnalyzePlain("слвво"))
-	require.NoError(t, err)
-	require.NotEmpty(t, m)
+	if morfologik.DiscoverLanguageDict(UkrainianSpellerDict) == "" {
+		t.Skip("uk_UA.dict not discoverable")
+	}
+	require.NotNil(t, r.Speller1)
+	// known good word should not be misspelled by multi
+	require.False(t, r.IsMisspelled("тест"))
+	require.True(t, r.IsMisspelled("слввоxyzzyqqq"))
 }

@@ -49,14 +49,11 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(hidden.GetID(), rules.AsSentenceCheckerSimple(hidden.Match))
 
 	// medium priority — Java createDefaultSpellingRule → MorfologikUkrainianSpellerRule.
+	// NewMorfologikUkrainianSpellerRule runs InitSpellersFromGetters (official uk_UA.dict).
 	sp := NewMorfologikUkrainianSpellerRule()
+	// Also wire filter dict for MissingHyphen / other helpers that use FilterDict* paths.
 	if p := morfologik.DiscoverLanguageDict(UkrainianSpellerDict); p != "" {
-		if WireUkrainianFilterSpeller(p) {
-			inner := FilterDictIsMisspelledUK
-			sp.IsMisspelled = func(word string) bool {
-				return sp.ukIsMisspelled(word, inner)
-			}
-		}
+		_ = WireUkrainianFilterSpeller(p)
 	}
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 

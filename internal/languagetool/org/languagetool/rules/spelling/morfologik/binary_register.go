@@ -23,6 +23,29 @@ func DiscoverLanguageDict(classpath string) string {
 	if !ok || lang == "" || rest == "" {
 		return ""
 	}
+	// Env override: LANG_{LANG}_SPELLER_DICT or LANG_{LANG}_HUNSPELL_DICT (absolute .dict path).
+	for _, envKey := range []string{
+		"LANG_" + strings.ToUpper(lang) + "_SPELLER_DICT",
+		"LANG_" + strings.ToUpper(lang) + "_HUNSPELL_DICT",
+		"LANG_" + strings.ToUpper(lang) + "_UA_DICT", // e.g. LANG_UK_UA_DICT for uk_UA.dict
+	} {
+		if p := os.Getenv(envKey); p != "" {
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+		}
+	}
+	// Parent pre-extract / CI cache: /tmp/{lang}-dict-fetch/org/languagetool/resource/{rel}
+	// (e.g. Maven morfologik-ukrainian-lt → /tmp/uk-dict-fetch/.../uk/hunspell/uk_UA.dict).
+	absCandidates := []string{
+		filepath.Join("/tmp", lang+"-dict-fetch", "org", "languagetool", "resource", rel),
+		filepath.Join("/tmp", lang+"-dict-fetch", "org", "languagetool", "resource", lang, rest),
+	}
+	for _, p := range absCandidates {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
 	wd, err := os.Getwd()
 	if err != nil {
 		return ""
@@ -44,6 +67,8 @@ func DiscoverLanguageDict(classpath string) string {
 			filepath.Join(dir, "third_party", "english-pos-dict", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "french-pos-dict", "org", "languagetool", "resource", rel),
 			filepath.Join(dir, "third_party", "portuguese-pos-dict", "org", "languagetool", "resource", rel),
+			// local extract mirror of Maven dict jars
+			filepath.Join(dir, "tmp", lang+"-dict-fetch", "org", "languagetool", "resource", rel),
 		}
 		for _, p := range candidates {
 			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {

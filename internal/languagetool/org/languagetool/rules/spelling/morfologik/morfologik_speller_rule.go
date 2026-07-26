@@ -44,6 +44,9 @@ type MorfologikSpellerRule struct {
 	// GetAdditionalTopSuggestionsFn ports getAdditionalTopSuggestions language overrides
 	// (e.g. EN curated maps). Prepended before dict suggestions; empty → base LanguageTool tops.
 	GetAdditionalTopSuggestionsFn func(existing []string, word string) []string
+	// GetAdditionalSuggestionsFn ports getAdditionalSuggestions (appended after top, before filter).
+	// e.g. UK dash-prefix compounds: блок + система → блок-система.
+	GetAdditionalSuggestionsFn func(existing []string, word string) []string
 	// AddHyphenSuggestionsFn ports addHyphenSuggestions: when dict sugs empty and word
 	// contains '-', rebuild hyphenated forms by fixing one misspelled part (EN).
 	AddHyphenSuggestionsFn func(parts []string) []string
@@ -764,6 +767,12 @@ func (r *MorfologikSpellerRule) segmentIsMisspelled(word string) bool {
 	if r == nil || word == "" {
 		return false
 	}
+	// Prefer SpellingCheckRule.IsMisspelled so language overrides of isMisspelled
+	// (e.g. UK trailing-hyphen arm) apply inside getRuleMatches — same as Java
+	// isMisspelled(speller1, word) virtual dispatch.
+	if r.SpellingCheckRule != nil && r.IsMisspelled != nil {
+		return r.IsMisspelled(word)
+	}
 	hasMulti := r.Multi != nil && len(r.Multi.Spellers) > 0
 	hasDict := r.Speller != nil && r.Speller.HasDictionary()
 	if hasMulti || hasDict {
@@ -910,6 +919,12 @@ func (r *MorfologikSpellerRule) collectSuggestions(word string) []string {
 	}
 	if len(top) > 0 {
 		defaultSug = append(top, defaultSug...)
+	}
+	// Java: defaultSuggestions.addAll(getAdditionalSuggestions(defaultSuggestions, word));
+	if r.GetAdditionalSuggestionsFn != nil {
+		if more := r.GetAdditionalSuggestionsFn(defaultSug, word); len(more) > 0 {
+			defaultSug = append(defaultSug, more...)
+		}
 	}
 	if len(defaultSug) == 0 && len(userSug) == 0 {
 		return nil
