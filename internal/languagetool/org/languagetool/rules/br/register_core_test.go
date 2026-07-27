@@ -29,7 +29,7 @@ func TestRegisterCoreBretonRules_JavaRelevantOnly(t *testing.T) {
 		"SENTENCE_WHITESPACE",
 		"BR_TOPO",
 	}
-	require.ElementsMatch(t, want, ids)
+	require.Equal(t, want, ids, "Java getRelevantRules registration order")
 	// No invent SharedLayout / word-repeat / compound extras
 	for _, bad := range []string{
 		"UNPAIRED_BRACKETS", "EMPTY_LINE", "TOO_LONG_PARAGRAPH",

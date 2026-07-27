@@ -150,16 +150,16 @@ func AllSmallLangs() []SmallLang {
 // Java default is LookingForNewMaintainer; only languages that override return ActivelyMaintained.
 func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 	switch s.ShortCode {
-	case "sv", "ga", "uk", "eo", "br", "crh":
-		// Swedish, Irish, Ukrainian, Esperanto, Breton, CrimeanTatar
-		// Greek is GreekLang — ActivelyMaintained there
+	case "sv", "ga", "uk", "eo", "crh":
+		// Swedish, Irish, Ukrainian, Esperanto, CrimeanTatar
+		// Greek/Breton are *Lang — ActivelyMaintained there
 		return languagetool.ActivelyMaintained
 	case "gl":
 		// Galician explicitly LookingForNewMaintainer (same as default)
 		return languagetool.LookingForNewMaintainer
 	default:
 		// Japanese, Chinese, Persian, Danish, …: no override → default
-		// (Romanian/Slovak/Slovenian/Tagalog LookingForNewMaintainer on *Lang; Greek is GreekLang ActivelyMaintained)
+		// (Romanian/Slovak/Slovenian/Tagalog LookingForNewMaintainer on *Lang; Greek/Breton ActivelyMaintained on *Lang)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -180,11 +180,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 		}
 	case "eo":
 		return []Contributor{DominiquePelle}
-	case "br":
-		return []Contributor{
-			DominiquePelle,
-			NewContributor("Fulup Jakez"),
-		}
+	// Breton maintainers: BretonLang.GetMaintainers (breton.go)
 	case "ga":
 		return []Contributor{
 			NewContributor("Jim O'Regan"),

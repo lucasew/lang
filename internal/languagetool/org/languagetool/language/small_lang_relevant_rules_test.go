@@ -40,11 +40,11 @@ func TestSmallLangRelevantRuleIDs(t *testing.T) {
 	require.Equal(t, 25, len(ga))
 	require.Equal(t, ga, Irish.GetRelevantRuleIDs())
 
-	// Belarusian / Breton / Esperanto / Danish
+	// Belarusian / Esperanto / Danish
+	// Breton is BretonLang — full twin in breton_test.go
 	// Romanian is RomanianLang — full twin in romanian_test.go
 	// Slovak is SlovakLang — full twin in slovak_test.go
 	require.Contains(t, BelarusianRelevantRuleIDs(), "MORFOLOGIK_RULE_BE_BY")
-	require.Contains(t, BretonRelevantRuleIDs(), "BR_TOPO")
 	require.Contains(t, EsperantoRelevantRuleIDs(), "HUNSPELL_RULE")
 	require.Len(t, DanishRelevantRuleIDs(), 6)
 
