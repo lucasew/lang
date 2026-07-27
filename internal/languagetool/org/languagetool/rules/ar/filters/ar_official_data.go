@@ -1,6 +1,7 @@
 package filters
 
 import (
+	"embed"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -10,7 +11,13 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// Paths under inspiration (Java /ar/*.txt via rules dir).
+// Official /ar/arabic_adjective_exclamation.txt (same bytes as Java rules resource).
+//
+//go:embed data/arabic_adjective_exclamation.txt
+var adjExclFS embed.FS
+
+// Paths under inspiration (Java /ar/*.txt via rules dir) — used for other filter maps
+// that are not yet embed-hardened in this sector.
 const (
 	relARRules = "inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar"
 )
@@ -116,7 +123,9 @@ func loadOfficialVerbMasdarMap() map[string][]string {
 	return copyStringListMap(verbMasdarData)
 }
 
-// loadOfficialAdjExclamationMap: /ar/arabic_adjective_exclamation.txt
+// loadOfficialAdjExclamationMap ports ArabicAdjectiveToExclamationFilter.loadFromPath(FILE_NAME)
+// → SimpleReplaceDataLoader.loadWords("/ar/arabic_adjective_exclamation.txt").
+// Embedded official bytes only — no invent strip/trim of keys (Java loadWords keeps them).
 var (
 	adjExclOnce sync.Once
 	adjExclData map[string][]string
@@ -124,7 +133,21 @@ var (
 
 func loadOfficialAdjExclamationMap() map[string][]string {
 	adjExclOnce.Do(func() {
-		adjExclData = loadARSimpleReplaceMap("arabic_adjective_exclamation.txt")
+		f, err := adjExclFS.Open("data/arabic_adjective_exclamation.txt")
+		if err != nil {
+			// Java getFromRulesDirAsStream fails if resource missing.
+			panic(err)
+		}
+		defer f.Close()
+		m, err := rules.LoadSimpleReplaceWords(f)
+		if err != nil {
+			// Java SimpleReplaceDataLoader throws RuntimeException on bad lines.
+			panic(err)
+		}
+		if m == nil {
+			m = map[string][]string{}
+		}
+		adjExclData = m
 	})
 	return copyStringListMap(adjExclData)
 }

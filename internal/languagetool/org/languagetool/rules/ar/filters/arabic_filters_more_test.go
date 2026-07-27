@@ -80,11 +80,29 @@ func TestArabicMasdarToVerb_FailClosedWithoutTags(t *testing.T) {
 
 func TestAdjectiveExclamation(t *testing.T) {
 	f := NewArabicAdjectiveToExclamationFilter()
-	// Official arabic_adjective_exclamation.txt (not invent طويل→أطول map)
+	// Official arabic_adjective_exclamation.txt via SimpleReplaceDataLoader (not invent طويل→أطول map).
+	// Java loadWords does not trim; official lines are " جميل=…" (leading space on keys).
 	require.NotEmpty(t, f.Adj2Comp)
-	require.Equal(t, []string{"ما أجمل", "أجمِل ب"}, f.ComparativesFor("جميل"))
+	require.Equal(t, ArabicAdjectiveExclamationFileName, GetDataFilePath())
+	require.Equal(t, []string{"ما أجمل", "أجمِل ب"}, f.ComparativesFor(" جميل"))
+	require.Equal(t, []string{"ما أسعد", "أسعِد ب"}, f.ComparativesFor(" سعيد"))
+	require.Equal(t, []string{"ما أشدّ استعجال", "اشدد باستعجال"}, f.ComparativesFor(" مستعجل"))
+	// Exact get only — plain lemma (no leading space) misses, matching Java adj2compList.get
+	require.Nil(t, f.ComparativesFor("جميل"))
+	// No RemoveTashkeel invent fallback
+	require.Nil(t, f.ComparativesFor("جَمِيل"))
+
+	// prepareSuggestions matrix (Java prepareSuggestions(comp, noun))
+	require.Equal(t, []string{"أطول"}, PrepareExclamationSuggestions("أطول", ""))
 	require.Equal(t, []string{"أطول الولد"}, PrepareExclamationSuggestions("أطول", "الولد"))
-	require.Equal(t, []string{"أطولني"}, PrepareExclamationSuggestions("أطول", "أنا"))
+	require.Equal(t, []string{"أطولني"}, PrepareExclamationSuggestions("أطول", "أنا")) // ArabicWordMaps: أنا→ني
+	require.Equal(t, []string{"أطوله"}, PrepareExclamationSuggestions("أطول", "هو"))
+	require.Equal(t, []string{"أطولها"}, PrepareExclamationSuggestions("أطول", "هي"))
+	// Second form ends with " ب" → no extra space before non-pronoun noun
+	require.Equal(t, []string{"أجمِل بالولد"}, PrepareExclamationSuggestions("أجمِل ب", "الولد"))
+	// isPronoun is exact list only: هن/نحن are NOT pronouns here (dead private map only)
+	require.Equal(t, []string{"أطول هن"}, PrepareExclamationSuggestions("أطول", "هن"))
+	require.Equal(t, []string{"أطول نحن"}, PrepareExclamationSuggestions("أطول", "نحن"))
 }
 
 func TestAdvancedSynthFilterConstruct(t *testing.T) {
@@ -127,8 +145,9 @@ func TestArabicNumberPhraseFilter_AcceptRuleMatch(t *testing.T) {
 func TestArabicAdjectiveExclamation_Accept(t *testing.T) {
 	f := NewArabicAdjectiveToExclamationFilter()
 	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
-	// Official map: جميل=ما أجمل|أجمِل ب — inject adj lemma/POS (no surface invent).
-	lem := "جميل"
+	m.ShortMessage = "short"
+	// Official SimpleReplace keys keep leading space (" جميل"); inject that lemma + NA POS.
+	lem := " جميل"
 	pos := "NA------"
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("كم", nil, nil), 0),
@@ -139,14 +158,49 @@ func TestArabicAdjectiveExclamation_Accept(t *testing.T) {
 		"adj": "جميل", "adj_pos": "3", "noun": "هو",
 	}, 0, toks, nil)
 	require.NotNil(t, out)
-	require.NotEmpty(t, out.GetSuggestedReplacements())
-	// PrepareExclamationSuggestions attaches pronoun suffix to comparative forms
-	require.True(t, len(out.GetSuggestedReplacements()) >= 1)
+	require.Equal(t, "msg", out.GetMessage())
+	require.Equal(t, "short", out.ShortMessage)
+	// prepareSuggestions: ما أجمله + أجمِل به (pronoun هو → ه attached, no space)
+	require.ElementsMatch(t, []string{"ما أجمله", "أجمِل به"}, out.GetSuggestedReplacements())
+}
+
+func TestArabicAdjectiveExclamation_AcceptNonPronounNoun(t *testing.T) {
+	f := NewArabicAdjectiveToExclamationFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	lem := " جميل"
+	pos := "NA------"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("كم", nil, nil), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("الولد", nil, nil), 3),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("جميل", &pos, &lem), 9),
+	}
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"adj": "جميل", "adj_pos": "3", "noun": "الولد",
+	}, 0, toks, nil)
+	require.NotNil(t, out)
+	// space after "ما أجمل"; no extra space after "أجمِل ب"
+	require.ElementsMatch(t, []string{"ما أجمل الولد", "أجمِل بالولد"}, out.GetSuggestedReplacements())
+}
+
+func TestArabicAdjectiveExclamation_AcceptEmptyNoun(t *testing.T) {
+	f := NewArabicAdjectiveToExclamationFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	lem := " جميل"
+	pos := "NA------"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("جميل", &pos, &lem), 0),
+	}
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"adj": "جميل", "adj_pos": "1", "noun": "",
+	}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.ElementsMatch(t, []string{"ما أجمل", "أجمِل ب"}, out.GetSuggestedReplacements())
 }
 
 func TestArabicAdjectiveExclamation_FailClosedWithoutLemma(t *testing.T) {
 	f := NewArabicAdjectiveToExclamationFilter()
 	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	// Surface only — Java getLemmas empty → no invent from surface / args adj.
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("كم", nil, nil), 0),
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("هو", nil, nil), 3),
@@ -157,6 +211,35 @@ func TestArabicAdjectiveExclamation_FailClosedWithoutLemma(t *testing.T) {
 	}, 0, toks, nil)
 	require.NotNil(t, out)
 	require.Empty(t, out.GetSuggestedReplacements())
+}
+
+func TestArabicAdjectiveExclamation_FailClosedPlainLemmaMissesSpacedKey(t *testing.T) {
+	// Java exact get: lemma "جميل" does not hit key " جميل" from official file.
+	f := NewArabicAdjectiveToExclamationFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	lem := "جميل"
+	pos := "NA------"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("جميل", &pos, &lem), 0),
+	}
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"adj": "جميل", "adj_pos": "1", "noun": "هو",
+	}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.Empty(t, out.GetSuggestedReplacements())
+}
+
+func TestArabicAdjectiveExclamation_AdjPosParsePanic(t *testing.T) {
+	f := NewArabicAdjectiveToExclamationFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("x", nil, nil), 0),
+	}
+	require.PanicsWithValue(t, "Error parsing adj_pos from : not-a-number", func() {
+		f.AcceptRuleMatch(m, map[string]string{
+			"adj": "x", "adj_pos": "not-a-number", "noun": "هو",
+		}, 0, toks, nil)
+	})
 }
 
 func TestArabicVerbToMafoul_Accept(t *testing.T) {
