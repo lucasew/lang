@@ -1,36 +1,27 @@
 package languagetool
 
-// Twin of PL JLanguageToolTest — Check inject + correct path.
+// Twin stub colocated with other JLanguageToolTest__lang_* files.
+// Full testPolish outcomes (RegisterCorePolishRules + enableRule) live in
+// rules/pl/JLanguageToolTest_test.go to avoid languagetool↔rules/pl import cycles
+// in same-package tests. Here: Analyze + WordRepeat smoke with no invent soft path.
+
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-// Port of JLanguageToolTest.testPolish
+// Port of JLanguageToolTest.testPolish (package-local subset without rules/pl import).
 func TestJLanguageTool_lang_pl_Polish(t *testing.T) {
 	lt := NewJLanguageTool("pl")
-	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
 	require.Equal(t, "pl", lt.GetLanguageCode())
-	require.Empty(t, lt.Check("To jest zdanie. A to drugie."))
-	src := "To jest jest problem."
-	m := lt.Check(src)
-	require.NotEmpty(t, m)
-	// empty suggestion for repeat → delete second "jest " via custom suggestions
-	// map match to delete second token: inject checker with suggestions
-	lt2 := NewJLanguageTool("pl")
-	lt2.AddChecker(func(s *AnalyzedSentence) []LocalMatch {
-		// reuse SimpleWordRepeat but add empty replacement for second token only
-		base := SimpleWordRepeatChecker("WORD_REPEAT_RULE")(s)
-		for i := range base {
-			// replace duplicate span with single word: suggestion empty string for second half soft
-			// simpler: suggest single "jest" covering both — not accurate
-			// Use CorrectTextFromLocalMatches with empty replacement on second "jest "
-			base[i].Suggestions = []string{""}
-			// shrink to second token only: already from first to second end — too wide
-		}
-		return base
-	})
-	// just assert check finds the error
-	require.NotEmpty(t, lt2.Check(src))
+	// Correct sentence analyzes
+	require.NotEmpty(t, lt.Analyze("To jest całkowicie prawidłowe zdanie."))
+	// Word repeat via real WordRepeatRule checker (SimpleWordRepeatChecker is the
+	// package-local twin of rules.WordRepeatRule used when rules/pl cannot be imported).
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	require.Empty(t, lt.Check("To jest całkowicie prawidłowe zdanie."))
+	matches := lt.Check("To jest jest problem.")
+	require.Len(t, matches, 1)
+	require.Equal(t, "WORD_REPEAT_RULE", matches[0].RuleID)
 }

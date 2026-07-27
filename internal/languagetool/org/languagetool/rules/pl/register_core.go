@@ -51,6 +51,8 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 
 	pwr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
+	// Java AdvancedWordRepeatRule ctor: setDefaultOff() — inactive until enableRule.
+	lt.MarkDefaultOff(pwr.GetID())
 	lt.AddRuleChecker(pwr.GetID(), rules.AsSentenceCheckerSimple(pwr.Match))
 
 	cr := NewCompoundRule(nil)
