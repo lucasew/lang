@@ -72,6 +72,10 @@ type SpellingCheckRule struct {
 	FilterSuggestionsExtraFn func(suggestions []string) []string
 	// IgnoreTokenFn optional language override for ignoreToken(tokens, idx).
 	IgnoreTokenFn func(tokens []*languagetool.AnalyzedTokenReadings, idx int) bool
+	// IgnoreWordFn optional language override for ignoreWord(String).
+	// When set, replaces the default body (call IgnoreWordDefault for super).
+	// Used by ArabicHunspellSpellerRule (strip tashkeel then super.ignoreWord).
+	IgnoreWordFn func(word string) bool
 	// IgnorePotentiallyMisspelledWordFn ports ignorePotentiallyMisspelledWord.
 	// Called only after the dictionary already considers the word incorrect
 	// (Java SpellingCheckRule default returns false; NL/DE override).

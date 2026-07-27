@@ -16,7 +16,20 @@ import (
 // Tokens with no letters, oversize tokens, ignore set (optional case-fold),
 // and ignoreWordsWithLength are accepted without dictionary lookup.
 // All length checks use Java String.length() (UTF-16 code units).
+// Language subclasses that override ignoreWord (e.g. Arabic tashkeel strip) set IgnoreWordFn.
 func (r *SpellingCheckRule) IgnoreWord(word string) bool {
+	if r == nil {
+		return false
+	}
+	if r.IgnoreWordFn != nil {
+		return r.IgnoreWordFn(word)
+	}
+	return r.IgnoreWordDefault(word)
+}
+
+// IgnoreWordDefault is the SpellingCheckRule.ignoreWord body (Java super.ignoreWord).
+// Language IgnoreWordFn hooks call this after pre-processing the word.
+func (r *SpellingCheckRule) IgnoreWordDefault(word string) bool {
 	if r == nil {
 		return false
 	}

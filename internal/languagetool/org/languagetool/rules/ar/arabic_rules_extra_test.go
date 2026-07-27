@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Method-level tashkeel / id / path checks (not full Java match twin).
 func TestArabicHunspellTashkeel(t *testing.T) {
 	dict := hunspell.NewMapHunspellDictionary([]string{"كتب", "كتاب"})
 	r := NewArabicHunspellSpellerRule(dict)
@@ -22,7 +23,7 @@ func TestArabicHunspellTashkeel(t *testing.T) {
 	require.Contains(t, toks, "مرحبا")
 	require.Contains(t, toks, "عالم")
 
-	// sentence match
+	// sentence match with diacritics
 	pos := "N"
 	readings := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
 		languagetool.NewAnalyzedToken("كَتب", &pos, nil),
