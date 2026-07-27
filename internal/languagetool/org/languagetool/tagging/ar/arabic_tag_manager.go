@@ -477,3 +477,44 @@ func (m *ArabicTagManager) addTagTyped(postag, flagType, flag string) string {
 func endsWithX(s string) bool {
 	return len(s) > 0 && s[len(s)-1] == 'X'
 }
+
+// SetSingle ports ArabicTagManager.setSingle.
+func (m *ArabicTagManager) SetSingle(postag string) string {
+	return m.SetFlag(postag, "NUMBER", '1')
+}
+
+// SetDual ports ArabicTagManager.setDual.
+func (m *ArabicTagManager) SetDual(postag string) string {
+	return m.SetFlag(postag, "NUMBER", '2')
+}
+
+// SetPlural ports ArabicTagManager.setPlural.
+func (m *ArabicTagManager) SetPlural(postag string) string {
+	return m.SetFlag(postag, "NUMBER", '3')
+}
+
+// SetMajrour ports ArabicTagManager.setMajrour.
+func (m *ArabicTagManager) SetMajrour(postag string) string {
+	if m.IsNoun(postag) {
+		if m.IsDual(postag) {
+			return m.SetFlag(postag, "CASE", 'A')
+		}
+		return m.SetFlag(postag, "CASE", 'I')
+	}
+	return postag
+}
+
+// SetMarfou3 ports ArabicTagManager.setMarfou3.
+func (m *ArabicTagManager) SetMarfou3(postag string) string {
+	return m.SetFlag(postag, "CASE", 'U')
+}
+
+// SetMansoub ports ArabicTagManager.setMansoub.
+func (m *ArabicTagManager) SetMansoub(postag string) string {
+	return m.SetFlag(postag, "CASE", 'A')
+}
+
+// SetTanwin ports ArabicTagManager.setTanwin.
+func (m *ArabicTagManager) SetTanwin(postag string) string {
+	return m.SetFlag(postag, "PRONOUN", 'n')
+}

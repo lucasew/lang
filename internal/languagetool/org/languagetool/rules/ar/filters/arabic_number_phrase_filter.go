@@ -3,19 +3,29 @@ package filters
 import (
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	ar_synth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ar"
+	ar_tag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // ArabicNumberPhraseFilter ports org.languagetool.rules.ar.filters.ArabicNumberPhraseFilter.
-// Full unit inflection via ArabicSynthesizer is incomplete; unit forms use tools helpers.
-type ArabicNumberPhraseFilter struct{}
+// Filter that maps suggestion for numeric phrases.
+type ArabicNumberPhraseFilter struct {
+	// synthesizer ports private final ArabicSynthesizer synthesizer = new ArabicSynthesizer(new Arabic()).
+	synthesizer *ar_synth.ArabicSynthesizer
+	// tagmanager ports private static final ArabicTagManager tagmanager.
+	tagmanager *ar_tag.ArabicTagManager
+}
 
+// NewArabicNumberPhraseFilter ports the Java ctor.
 func NewArabicNumberPhraseFilter() *ArabicNumberPhraseFilter {
-	return &ArabicNumberPhraseFilter{}
+	return &ArabicNumberPhraseFilter{
+		synthesizer: ar_synth.Instance(),
+		tagmanager:  ar_tag.NewArabicTagManager(),
+	}
 }
 
 // AcceptRuleMatch ports ArabicNumberPhraseFilter.acceptRuleMatch.
@@ -24,223 +34,262 @@ func (f *ArabicNumberPhraseFilter) AcceptRuleMatch(match *rules.RuleMatch, argum
 	if f == nil || match == nil {
 		return nil
 	}
+	// get the previous word
 	previousWord := arguments["previous"]
-	inflectArg := arguments["inflect"]
-	nextWordArg := arguments["next"]
-	previousWordPos := previousPosFromArgs(arguments)
-	nextWordPos := nextPosFromArgs(arguments, len(patternTokens))
+	if previousWord == "" {
+		// Java getOrDefault("previous", "")
+		previousWord = ""
+	}
+	// previous word index in token list
+	previousWordPos := getPreviousPos(arguments)
 
+	// get the inflect mark
+	inflectArg := arguments["inflect"]
+	// get the next word as units
+	nextWord := arguments["next"]
+
+	nextWordPos := getNextPos(arguments, len(patternTokens))
+
+	// get all numeric tokens
 	// Java: startPos = (previousWordPos > 0) ? previousWordPos + 1 : 0
 	startPos := 0
 	if previousWordPos > 0 {
 		startPos = previousWordPos + 1
 	}
-	// Java: endPos = (nextWordPos > 0) ? min(nextWordPos, length) : length + nextWordPos
-	// Note: getNextPos already converts negative to size+n, so nextWordPos is absolute.
-	endPos := len(patternTokens)
+	// Java: endPos = (nextWordPos > 0) ? Integer.min(nextWordPos, length) : length + nextWordPos
+	// Note getNextPos already maps negative → size+n (non-negative absolute).
+	endPos := len(patternTokens) + nextWordPos
 	if nextWordPos > 0 {
-		if nextWordPos < endPos {
-			endPos = nextWordPos
+		endPos = nextWordPos
+		if endPos > len(patternTokens) {
+			endPos = len(patternTokens)
 		}
 	}
 
-	var numWordTokens []string
+	numWordTokens := make([]string, 0, endPos-startPos)
 	for i := startPos; i < endPos && i < len(patternTokens); i++ {
 		if patternTokens[i] == nil {
+			// Java would NPE; skip soft — fail-closed empty token
+			numWordTokens = append(numWordTokens, "")
 			continue
 		}
-		// Java: patternTokens[i].getToken().trim() — String.trim.
+		// Java: patternTokens[i].getToken().trim()
 		numWordTokens = append(numWordTokens, tools.JavaStringTrim(patternTokens[i].GetToken()))
 	}
+
 	numPhrase := strings.Join(numWordTokens, " ")
+	// extract features from previous
 	feminine := false
-	inflection := inflectedCase(patternTokens, previousWordPos, inflectArg)
-
-	// Java: if nextWord.isEmpty() use prepareSuggestion; else prepareSuggestionWithUnits.
-	// nextWord arg may be empty while nextPos still points at a unit token (grammar: nextPos:-1).
+	attached := false
+	inflection := getInflectedCase(patternTokens, previousWordPos, inflectArg)
 	var suggestionList []string
-	useUnits := nextWordArg != ""
-	unitSurface := nextWordArg
-	if !useUnits && nextWordPos > 0 && nextWordPos < len(patternTokens) && patternTokens[nextWordPos] != nil {
-		// Token after numeric span is the unit (Java nextWordToken = patternTokens[endPos]).
-		useUnits = true
-		unitSurface = patternTokens[nextWordPos].GetToken()
-	}
-	if useUnits {
-		suggestionList = PrepareSuggestionWithUnit(numPhrase, previousWord, unitSurface, inflection, feminine)
+	if nextWord == "" {
+		suggestionList = PrepareSuggestion(numPhrase, previousWord, nil, feminine, attached, inflection)
 	} else {
-		suggestionList = PrepareSuggestion(numPhrase, previousWord, feminine)
+		var nextWordToken *languagetool.AnalyzedTokenReadings
+		if endPos > 0 && endPos < len(patternTokens) {
+			nextWordToken = patternTokens[endPos]
+		}
+		suggestionList = f.PrepareSuggestionWithUnits(numPhrase, previousWord, nextWordToken, feminine, attached, inflection)
 	}
 
-	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
-	out.ShortMessage = match.ShortMessage
+	newMatch := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
+	newMatch.ShortMessage = match.ShortMessage
 	if len(suggestionList) > 0 {
-		out.SetSuggestedReplacements(suggestionList)
+		// Java: for (String sug : suggestionList) newMatch.addSuggestedReplacement(sug);
+		newMatch.SetSuggestedReplacements(suggestionList)
 	}
-	return out
+	return newMatch
 }
 
-// PrepareSuggestion builds suggestions for a numeric phrase (digit or known).
-// previousWord is optionally prefixed.
-func PrepareSuggestion(numPhrase, previousWord string, feminine bool) []string {
-	sug := SuggestionsForNumericPhrase(numPhrase, feminine)
-	if len(sug) == 0 {
-		return nil
-	}
-	out := make([]string, 0, len(sug))
-	for _, s := range sug {
-		if previousWord != "" {
-			out = append(out, previousWord+" "+s)
-		} else {
-			out = append(out, s)
-		}
-	}
-	return out
-}
-
-// PrepareSuggestionWithUnit appends a unit form after the numeric phrase.
-func PrepareSuggestionWithUnit(numPhrase, previousWord, unit, inflection string, feminine bool) []string {
-	base := PrepareSuggestion(numPhrase, previousWord, feminine)
-	if unit == "" {
-		return base
-	}
-	unitForm := tools.GetArabicUnitOneForm(unit, orDefault(inflection, "raf3"))
-	if n, err := parseLeadingInt(numPhrase); err == nil {
-		if n == 2 {
-			unitForm = tools.GetArabicUnitTwoForm(unit, orDefault(inflection, "raf3"))
-		} else if n >= 3 && n <= 10 {
-			unitForm = tools.GetArabicUnitPluralForm(unit, orDefault(inflection, "raf3"))
-		}
-	}
-	out := make([]string, 0, len(base))
-	for _, s := range base {
-		out = append(out, s+" "+unitForm)
-	}
-	return out
-}
-
-// SuggestionsForNumericPhrase converts a phrase of digits to Arabic words.
-// numPhrase is Java String.join(" ", tokens) — split on single ASCII spaces only.
-func SuggestionsForNumericPhrase(numPhrase string, feminine bool) []string {
-	numPhrase = tools.JavaStringTrim(numPhrase)
-	if numPhrase == "" {
-		return nil
-	}
-	if isAllDigits(numPhrase) {
-		w := tools.NumberToArabicWordsGender(numPhrase, feminine)
-		if w == "" {
-			return nil
-		}
-		return []string{w}
-	}
-	for _, tok := range strings.Split(numPhrase, " ") {
-		if tok == "" {
-			continue
-		}
-		if isAllDigits(tok) {
-			w := tools.NumberToArabicWordsGender(tok, feminine)
-			if w != "" {
-				return []string{w}
-			}
-		}
-	}
-	return nil
-}
-
-// InflectionFromPrevious returns "jar" when previous token starts with ب/ل/ك.
-func InflectionFromPrevious(previousWord string) string {
-	if previousWord == "" {
-		return ""
-	}
-	r := []rune(previousWord)
-	if len(r) == 0 {
-		return ""
-	}
-	switch r[0] {
-	case 'ب', 'ل', 'ك':
-		return "jar"
-	}
-	return ""
-}
-
-func previousPosFromArgs(args map[string]string) int {
-	s := args["previousPos"]
-	if s == "" {
-		return 0
-	}
-	n, err := strconv.Atoi(s)
-	if err != nil {
-		return -1
-	}
-	return n - 1
-}
-
-func nextPosFromArgs(args map[string]string, size int) int {
-	s := args["nextPos"]
-	if s == "" {
-		return 0
-	}
-	n, err := strconv.Atoi(s)
-	if err != nil {
-		return 0
-	}
-	if n < 0 {
-		return size + n
-	}
-	return n
-}
-
-func inflectedCase(patternTokens []*languagetool.AnalyzedTokenReadings, previousPos int, inflect string) string {
+// getInflectedCase ports getInflectedCase.
+func getInflectedCase(patternTokens []*languagetool.AnalyzedTokenReadings, previousPos int, inflect string) string {
+	// Java: if (!Objects.equals(inflect, "")) return inflect;
 	if inflect != "" {
 		return inflect
 	}
+	// if the previous is Jar
 	if previousPos >= 0 && previousPos < len(patternTokens) && patternTokens[previousPos] != nil {
 		for _, tk := range patternTokens[previousPos].GetReadings() {
-			if tk == nil || tk.GetPOSTag() == nil {
+			if tk == nil {
 				continue
 			}
-			if strings.HasPrefix(*tk.GetPOSTag(), "PR") {
+			pos := tk.GetPOSTag()
+			if pos != nil && strings.HasPrefix(*pos, "PR") {
 				return "jar"
 			}
 		}
 	}
+	// Java: String firstWord = patternTokens[previousPos + 1].getToken();
+	// No bounds check in Java — only when previousPos+1 in range in Go to avoid panic.
 	if previousPos+1 >= 0 && previousPos+1 < len(patternTokens) && patternTokens[previousPos+1] != nil {
-		first := patternTokens[previousPos+1].GetToken()
-		if strings.HasPrefix(first, "ب") || strings.HasPrefix(first, "ل") || strings.HasPrefix(first, "ك") {
+		firstWord := patternTokens[previousPos+1].GetToken()
+		if strings.HasPrefix(firstWord, "ب") || strings.HasPrefix(firstWord, "ل") || strings.HasPrefix(firstWord, "ك") {
 			return "jar"
 		}
 	}
 	return ""
 }
 
-func isAllDigits(s string) bool {
-	if s == "" {
+// getFemininCase ports getFemininCase (unused on accept path; kept as twin).
+func (f *ArabicNumberPhraseFilter) getFemininCase(patternTokens []*languagetool.AnalyzedTokenReadings, nextPos int) bool {
+	if f == nil || f.tagmanager == nil || nextPos < 0 || nextPos >= len(patternTokens) || patternTokens[nextPos] == nil {
 		return false
 	}
-	for _, r := range s {
-		if !unicode.IsDigit(r) {
-			return false
+	for _, tk := range patternTokens[nextPos].GetReadings() {
+		if tk == nil || tk.GetPOSTag() == nil {
+			continue
+		}
+		if f.tagmanager.IsFeminin(*tk.GetPOSTag()) {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
-func parseLeadingInt(s string) (int, error) {
-	s = tools.JavaStringTrim(s)
-	var b strings.Builder
-	for _, r := range s {
-		if unicode.IsDigit(r) {
-			b.WriteRune(r)
-		} else if b.Len() > 0 {
-			break
+// PrepareSuggestion ports static prepareSuggestion.
+// Java quirk: only adds previousWord+" "+sug when previousWord non-empty;
+// if previous empty returns empty list even when tmp has items.
+func PrepareSuggestion(numPhrase, previousWord string, nextWord *languagetool.AnalyzedTokenReadings, feminin, attached bool, inflection string) []string {
+	_ = nextWord // Java param unused in body
+	tmpsuggestionList := tools.GetSuggestionsNumericPhrase(numPhrase, feminin, attached, inflection)
+	var suggestionList []string
+	if len(tmpsuggestionList) > 0 {
+		for _, sug := range tmpsuggestionList {
+			if previousWord != "" {
+				suggestionList = append(suggestionList, previousWord+" "+sug)
+			}
 		}
 	}
-	return strconv.Atoi(b.String())
+	return suggestionList
 }
 
-func orDefault(s, d string) string {
+// PrepareSuggestionWithUnits ports prepareSuggestionWithUnits.
+func (f *ArabicNumberPhraseFilter) PrepareSuggestionWithUnits(numPhrase, previousWord string, nextWord *languagetool.AnalyzedTokenReadings, feminin, attached bool, inflection string) []string {
+	defaultUnit := "دينار"
+
+	tmpsuggestionList := tools.GetSuggestionsNumericPhraseWithUnits(numPhrase, defaultUnit, feminin, attached, inflection)
+	var suggestionList []string
+	if len(tmpsuggestionList) > 0 {
+		for _, sugMap := range tmpsuggestionList {
+			sug := sugMap["phrase"]
+			inflectedUnitList := f.inflectUnit(nextWord, sugMap)
+			// Java: for (String unit : inflectedUnitList) — NPE if null; treat nil as empty.
+			for _, unit := range inflectedUnitList {
+				var tmp strings.Builder
+				if previousWord != "" {
+					tmp.WriteString(previousWord + " ")
+				}
+				tmp.WriteString(sug)
+				if unit != "" {
+					tmp.WriteString(" " + unit)
+				}
+				suggestionList = append(suggestionList, tmp.String())
+			}
+		}
+	}
+	return suggestionList
+}
+
+// inflectUnit ports inflectUnit — synthesizer-backed unit inflection.
+func (f *ArabicNumberPhraseFilter) inflectUnit(unit *languagetool.AnalyzedTokenReadings, sugMap map[string]string) []string {
+	if unit == nil {
+		return nil
+	}
+	if f == nil || f.tagmanager == nil {
+		return nil
+	}
+	inflection := sugMap["unitInflection"]
+	number := sugMap["unitNumber"]
+	_ = unit.GetToken() + "{" + inflection + "+" + number + "}" // Java dead local `inflected`
+
+	var tmpList []string
+	var inflectedList []string
+	for _, tk := range unit.GetReadings() {
+		if tk == nil || tk.GetPOSTag() == nil {
+			continue
+		}
+		postag := *tk.GetPOSTag()
+		if f.tagmanager.IsNoun(postag) && !f.tagmanager.IsDefinite(postag) && !f.tagmanager.HasPronoun(postag) {
+			// add inflection flag
+			switch inflection {
+			case "jar":
+				postag = f.tagmanager.SetMajrour(postag)
+			case "raf3":
+				postag = f.tagmanager.SetMarfou3(postag)
+			case "nasb":
+				postag = f.tagmanager.SetMansoub(postag)
+			default:
+				postag = f.tagmanager.SetMarfou3(postag)
+			}
+			// add number flag
+			switch number {
+			case "one":
+				postag = f.tagmanager.SetSingle(postag)
+			case "two":
+				postag = f.tagmanager.SetDual(postag)
+			case "plural":
+				postag = f.tagmanager.SetPlural(postag)
+			default:
+				postag = f.tagmanager.SetSingle(postag)
+			}
+			// add Tanwin
+			if number == "one" && inflection == "nasb" {
+				postag = f.tagmanager.SetTanwin(postag)
+			}
+			// for each postag generate a new token
+			if !containsString(tmpList, postag) {
+				tmpList = append(tmpList, postag)
+				if f.synthesizer != nil {
+					syhthesizedList, _ := f.synthesizer.Synthesize(tk, postag)
+					if len(syhthesizedList) > 0 {
+						inflectedList = append(inflectedList, syhthesizedList...)
+					}
+				}
+			}
+		}
+	}
+	return inflectedList
+}
+
+func containsString(list []string, s string) bool {
+	for _, x := range list {
+		if x == s {
+			return true
+		}
+	}
+	return false
+}
+
+// getPreviousPos ports getPreviousPos (1-based previousPos → 0-based).
+func getPreviousPos(args map[string]string) int {
+	previousWordPos := 0
+	if args["previousPos"] != "" {
+		// Java: try { previousWordPos = Integer.valueOf(args.get("previousPos")) - 1; } catch → -1
+		n, err := strconv.Atoi(args["previousPos"])
+		if err != nil {
+			return -1
+		}
+		previousWordPos = n - 1
+	}
+	return previousWordPos
+}
+
+// getNextPos ports getNextPos (negative = size+n).
+func getNextPos(args map[string]string, size int) int {
+	nextPos := 0
+	s := args["nextPos"]
 	if s == "" {
-		return d
+		s = "0"
 	}
-	return s
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+	nextPos = n
+	// the next token is index with a negative offset
+	if nextPos < 0 {
+		nextPos = size + nextPos
+	}
+	return nextPos
 }

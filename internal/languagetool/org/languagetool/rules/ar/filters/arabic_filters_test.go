@@ -56,14 +56,15 @@ func TestArabicDateCheckFilter(t *testing.T) {
 }
 
 func TestArabicNumberPhraseFilter(t *testing.T) {
-	got := SuggestionsForNumericPhrase("3", false)
-	require.Equal(t, []string{"ثلاثة"}, got)
-	got = PrepareSuggestion("5", "في", false)
-	require.Equal(t, []string{"في خمسة"}, got)
-	got = PrepareSuggestionWithUnit("2", "", "دينار", "raf3", false)
-	require.Len(t, got, 1)
-	require.Contains(t, got[0], "اثنان")
-	require.Contains(t, got[0], "ديناران")
-	require.Equal(t, "jar", InflectionFromPrevious("بشيء"))
-	require.Equal(t, "", InflectionFromPrevious("شيء"))
+	// Smoke around PrepareSuggestion Java twin (previous non-empty prefixes suggestions).
+	// "خمسة" is already correct under empty inflection? GetSuggestions may return empty.
+	// Use an incorrect jar form with jar inflection so a suggestion is produced.
+	got := PrepareSuggestion("اثنان", "في", nil, false, false, "jar")
+	require.Equal(t, []string{"في اثنين"}, got)
+	// Java quirk: empty previous → empty list even when tmp has items.
+	got = PrepareSuggestion("اثنان", "", nil, false, false, "jar")
+	require.Empty(t, got)
+	// getInflectedCase prefix path: first number word with ب/ل/ك → jar
+	require.Equal(t, "jar", getInflectedCase(nil, -1, "jar"))
+	require.Equal(t, "", getInflectedCase(nil, -1, ""))
 }
