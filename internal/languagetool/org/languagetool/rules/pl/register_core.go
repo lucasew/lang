@@ -4,7 +4,6 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCorePolishRules ports Polish.getRelevantRules / createDefaultSpellingRule.
@@ -42,19 +41,13 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	ub := NewPolishUnpairedBracketsRule(nil)
 	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
 
+	// Java createDefaultSpellingRule / MorfologikPolishSpellerRule — InitSpellersFromGetters
+	// loads official pl_PL.dict; TagPOS from PolishTagger when present.
 	sp := NewMorfologikPolishSpellerRule()
-	if p := morfologik.DiscoverLanguageDict(PolishSpellerDict); p != "" {
-		if WirePolishFilterSpeller(p) {
-			sp.IsMisspelled = FilterDictIsMisspelled
-		}
+	// Prefer lt.TagWord when the host already wired POS (RegisterBinaryPOSTagger).
+	if lt.TagWord != nil {
+		WirePolishSpellerTagPOS(sp, lt.TagWord)
 	}
-	ltRef := lt
-	WirePolishSpellerTagPOS(sp, func(token string) []languagetool.TokenTag {
-		if ltRef.TagWord == nil {
-			return nil
-		}
-		return ltRef.TagWord(token)
-	})
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 
 	pwr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})

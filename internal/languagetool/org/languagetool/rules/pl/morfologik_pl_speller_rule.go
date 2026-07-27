@@ -1,13 +1,14 @@
 package pl
 
 import (
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	tagpl "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/pl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 const (
@@ -39,11 +40,11 @@ var polishBannedSuffixes = map[string]struct{}{
 
 // MorfologikPolishSpellerRule ports rules.pl.MorfologikPolishSpellerRule.
 // getRuleMatches: isNotCompound, lower-only suggestion, pruneSuggestions;
-// tokenizingPattern for niby-/quasi- (checked as remainder only).
+// tokenizingPattern for niby-/quasi- (parent Match splits segments).
 type MorfologikPolishSpellerRule struct {
 	*morfologik.MorfologikSpellerRule
-	// TagPOS optional Polish tagger for isNotCompound adj compounds (adja / num:comp / adj:).
-	// Fail-closed when nil: only prefix-based compounds accepted without inventing POS.
+	// TagPOS ports language.getTagger().tag for isNotCompound adj/num compounds
+	// (adja / num:comp / adj:). Fail-closed when nil: only prefix compounds accepted.
 	TagPOS func(word string) []string
 	// incorrectExamples / correctExamples port Rule.addExamplePair (not on SpellingCheckRule:
 	// import cycle with rules package — same pattern as AbstractEnglishSpellerRule / RU).
@@ -60,12 +61,50 @@ func NewMorfologikPolishSpellerRule() *MorfologikPolishSpellerRule {
 	r.TokenizingPattern = polishTokenizingPattern
 	// Java MorfologikSpellerRule.initSpeller: binary + getSpellingFileName + additional (custom, global).
 	r.InitSpellersFromGetters(nil, nil)
+	// Java isNotCompound uses language.getTagger() (PolishTagger) — wire when polish.dict present.
+	wireDefaultPolishTagPOS(r)
 	// Java: bledem → błędem (wrong example omits trailing period, same as upstream)
 	r.AddExamplePair(
 		rules.Wrong("To jest zdanie z <marker>bledem</marker>"),
 		rules.Fixed("To jest zdanie z <marker>błędem</marker>."),
 	)
 	return r
+}
+
+// wireDefaultPolishTagPOS ports language.getTagger().tag for isNotCompound.
+// Uses official polish.dict via PolishTagger; no-op when dict missing (fail-closed).
+func wireDefaultPolishTagPOS(r *MorfologikPolishSpellerRule) {
+	if r == nil {
+		return
+	}
+	tagpl.EnsureDefaultPolishTagger()
+	tg := tagpl.DefaultPolishTagger
+	if tg == nil {
+		return
+	}
+	WirePolishSpellerTagPOS(r, func(token string) []languagetool.TokenTag {
+		readings := tg.Tag([]string{token})
+		if len(readings) == 0 || readings[0] == nil {
+			return nil
+		}
+		out := make([]languagetool.TokenTag, 0, 4)
+		for _, at := range readings[0].GetReadings() {
+			if at == nil {
+				continue
+			}
+			pos, lemma := "", ""
+			if p := at.GetPOSTag(); p != nil {
+				pos = *p
+			}
+			if l := at.GetLemma(); l != nil {
+				lemma = *l
+			}
+			if pos != "" || lemma != "" {
+				out = append(out, languagetool.TokenTag{POS: pos, Lemma: lemma})
+			}
+		}
+		return out
+	})
 }
 
 // AddExamplePair ports Rule.addExamplePair.
@@ -100,7 +139,9 @@ func (r *MorfologikPolishSpellerRule) GetCorrectExamples() []rules.CorrectExampl
 }
 
 // Match ports parent Match with Polish getRuleMatches arms:
-// tokenizingPattern split, isNotCompound drop, lower-only sug, pruneSuggestions.
+// isNotCompound drop, lower-only sug, pruneSuggestions.
+// TokenizingPattern is handled by parent Match (Java match loop); post-filter still
+// drops whole-token false positives when remainder after niby-/quasi- is accepted.
 func (r *MorfologikPolishSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if r == nil || r.MorfologikSpellerRule == nil {
 		return nil, nil
@@ -119,14 +160,15 @@ func (r *MorfologikPolishSpellerRule) Match(sentence *languagetool.AnalyzedSente
 			out = append(out, m)
 			continue
 		}
-		// tokenizingPattern: if niby-/quasi- present, only remainder is spell-checked in Java.
-		// Parent already flagged whole word; drop if remainder is accepted (or empty remainder after prefix).
+		// tokenizingPattern: parent already spell-checks segments; if whole token still
+		// flagged (e.g. single-segment miss), drop when remainder after niby-/quasi- is OK.
 		if polishTokenizingPattern.MatchString(word) {
 			if r.acceptTokenizedRemainder(word) {
 				continue
 			}
 		}
 		// isNotCompound: false → compound accepted → suppress match
+		// Java getRuleMatches: isMisspelled && isNotCompound
 		if !r.isNotCompound(word) {
 			continue
 		}
@@ -138,9 +180,6 @@ func (r *MorfologikPolishSpellerRule) Match(sentence *languagetool.AnalyzedSente
 			continue
 		}
 		sugs := m.GetSuggestedReplacements()
-		if len(sugs) == 0 && FilterDictAvailable() {
-			sugs = FilterDictSuggest(word)
-		}
 		if len(sugs) > 0 {
 			m.SetSuggestedReplacements(prunePolishSuggestions(sugs))
 		}
@@ -149,15 +188,12 @@ func (r *MorfologikPolishSpellerRule) Match(sentence *languagetool.AnalyzedSente
 	return out, nil
 }
 
-// acceptTokenizedRemainder ports tokenizingPattern loop: if pattern matches,
-// trailing segment after last match is the part checked (prefix segment often empty).
+// acceptTokenizedRemainder ports tokenizingPattern loop remainder checks.
 func (r *MorfologikPolishSpellerRule) acceptTokenizedRemainder(word string) bool {
 	idxs := polishTokenizingPattern.FindAllStringIndex(word, -1)
 	if len(idxs) == 0 {
 		return false
 	}
-	// Java: after last find, check word[index:end]; also checks between matches.
-	// For typical "Niby-artysta" single match at start: only "artysta" is checked.
 	index := 0
 	allOK := true
 	anyPart := false
@@ -180,7 +216,6 @@ func (r *MorfologikPolishSpellerRule) acceptTokenizedRemainder(word string) bool
 			}
 		}
 	}
-	// If we only saw the tokenizing match and no remainder, do not auto-accept whole word.
 	return anyPart && allOK
 }
 
@@ -191,27 +226,38 @@ func (r *MorfologikPolishSpellerRule) isNotCompound(word string) bool {
 	if r == nil || word == "" {
 		return true
 	}
+	// Java iterates by String.length() (UTF-16). Polish dictionary text is BMP → runes ≡ code units.
 	runes := []rune(word)
 	n := len(runes)
+	probablyCorrect := false
 	for i := 2; i < n; i++ {
 		first := string(runes[:i])
 		second := string(runes[i:])
 		// prefix path: prefix in set, second not misspelled, second longer than first
 		if _, ok := polishPrefixes[strings.ToLower(first)]; ok {
 			if !r.wordIsMisspelled(second) && tokenizers.UTF16Len(second) > tokenizers.UTF16Len(first) {
-				return false
+				// Java: probablyCorrectWords.add(word); continue scanning (does not early-return)
+				probablyCorrect = true
+				continue
 			}
 		}
-		// adj compound path needs TagPOS
+		// adj compound path needs TagPOS (Java language.getTagger().tag)
 		if r.TagPOS != nil {
 			t0 := r.TagPOS(first)
 			t1 := r.TagPOS(second)
 			if hasExactTagPL(t0, "adja") || (hasExactTagPL(t0, "num:comp") && !hasExactTagPL(t0, "adv")) {
 				if hasPartialTagPL(t1, "adj:") {
-					return false
+					probablyCorrect = true
 				}
 			}
 		}
+	}
+	if probablyCorrect {
+		// Java: addIgnoreTokens(probablyCorrectWords); return false
+		if r.SpellingCheckRule != nil {
+			r.AddIgnoreTokens([]string{word})
+		}
+		return false
 	}
 	return true
 }
@@ -276,4 +322,3 @@ func matchSurfacePL(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) str
 	// Java RuleMatch FromPos/ToPos are UTF-16 code units (String.substring).
 	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
-
