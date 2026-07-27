@@ -17,10 +17,13 @@ func TestMasdarToVerbAndMafoul(t *testing.T) {
 	// Java authorizeLemma is exact "قَامَ" only
 	require.Equal(t, []string{"قَامَ"}, f.filterLemmas([]string{"قَامَ", "ذهب", "قام"}))
 
+	// Verb→masdar map is official file (exact keys); full Accept path covered by ArabicVerbToMafoulMutlaqFilterTest_test.go.
 	v := NewArabicVerbToMafoulMutlaqFilter()
-	sug := v.SuggestMafoulMutlaq("عَمِلَ")
-	// Java inflectMafoulMutlq: عمل + fathatan + alef
-	require.Contains(t, sug, ar_synth.InflectMafoulMutlq("عمل"))
+	// Last-wins for duplicate عَمِلَ lines in arabic_verb_masdar.txt
+	require.Equal(t, []string{"عملة", "عمل"}, v.Verb2MasdarList["عَمِلَ"])
+	require.Equal(t, []string{"إعمال"}, v.Verb2MasdarList["أَعْمَلَ"])
+	// No tashkeel-stripped invent key
+	require.Nil(t, v.Verb2MasdarList["عمل"])
 }
 
 func TestArabicMasdarToVerb_AcceptInjectedTags(t *testing.T) {
@@ -223,9 +226,11 @@ func TestArabicAdjectiveExclamation_AdjPosParsePanic(t *testing.T) {
 
 func TestArabicVerbToMafoul_Accept(t *testing.T) {
 	f := NewArabicVerbToMafoulMutlaqFilter()
+	require.NotNil(t, f.synthesizer)
 	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
 	lem := "عَمِلَ"
-	pos := "V"
+	// POS must pass tagger.GetLemmas IsVerb (starts with V).
+	pos := "V-1------"
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("يعمل", &pos, &lem), 0),
 	}
@@ -233,8 +238,11 @@ func TestArabicVerbToMafoul_Accept(t *testing.T) {
 	require.NotNil(t, out)
 	require.NotEmpty(t, out.GetSuggestedReplacements())
 	// Java: verb + inflectMafoulMutlq(masdar) + inflectAdjectiveTanwinNasb(adj)
-	want := "يعمل " + ar_synth.InflectMafoulMutlq("عمل") + " " + ar_synth.InflectAdjectiveTanwinNasb("قوي", false)
-	require.Contains(t, out.GetSuggestedReplacements(), want)
+	// Last-wins map: عَمِلَ → عملة|عمل
+	wantFem := "يعمل " + ar_synth.InflectMafoulMutlq("عملة") + " " + ar_synth.InflectAdjectiveTanwinNasb("قوي", true)
+	wantMasc := "يعمل " + ar_synth.InflectMafoulMutlq("عمل") + " " + ar_synth.InflectAdjectiveTanwinNasb("قوي", false)
+	require.Contains(t, out.GetSuggestedReplacements(), wantFem)
+	require.Contains(t, out.GetSuggestedReplacements(), wantMasc)
 }
 
 func TestArabicVerbToMafoul_FailClosedWithoutLemma(t *testing.T) {
@@ -243,6 +251,20 @@ func TestArabicVerbToMafoul_FailClosedWithoutLemma(t *testing.T) {
 	// Surface token only — Java tagger.getLemmas empty → no invent from surface.
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("يعمل", nil, nil), 0),
+	}
+	out := f.AcceptRuleMatch(m, map[string]string{"verb": "يعمل", "adj": "قوي"}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.Empty(t, out.GetSuggestedReplacements())
+}
+
+func TestArabicVerbToMafoul_FailClosedPlainLemmaMissesTashkeelKey(t *testing.T) {
+	// Java exact get: lemma without diacritics does not hit keyed "عَمِلَ".
+	f := NewArabicVerbToMafoulMutlaqFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	lem := "عمل"
+	pos := "V-1------"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("يعمل", &pos, &lem), 0),
 	}
 	out := f.AcceptRuleMatch(m, map[string]string{"verb": "يعمل", "adj": "قوي"}, 0, toks, nil)
 	require.NotNil(t, out)

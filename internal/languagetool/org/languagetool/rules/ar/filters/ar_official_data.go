@@ -15,6 +15,7 @@ import (
 //
 //go:embed data/arabic_adjective_exclamation.txt
 //go:embed data/arabic_masdar_verb.txt
+//go:embed data/arabic_verb_masdar.txt
 var arRulesDataFS embed.FS
 
 // Paths under inspiration (Java /ar/*.txt via rules dir) — used for other filter maps
@@ -118,7 +119,9 @@ func loadOfficialMasdarVerbMap() map[string][]string {
 	return copyStringListMap(masdarMapData)
 }
 
-// loadOfficialVerbMasdarMap: /ar/arabic_verb_masdar.txt (+ tashkeel-stripped keys)
+// loadOfficialVerbMasdarMap ports ArabicVerbToMafoulMutlaqFilter.loadFromPath(FILE_NAME)
+// → SimpleReplaceDataLoader.loadWords("/ar/arabic_verb_masdar.txt").
+// Embedded official bytes only — exact keys (no tashkeel-stripped dual map invent).
 var (
 	verbMasdarOnce sync.Once
 	verbMasdarData map[string][]string
@@ -126,16 +129,21 @@ var (
 
 func loadOfficialVerbMasdarMap() map[string][]string {
 	verbMasdarOnce.Do(func() {
-		raw := loadARSimpleReplaceMap("arabic_verb_masdar.txt")
-		out := map[string][]string{}
-		for verb, masdars := range raw {
-			out[verb] = append([]string(nil), masdars...)
-			plain := tools.RemoveTashkeel(verb)
-			if plain != verb {
-				out[plain] = append(out[plain], masdars...)
-			}
+		f, err := arRulesDataFS.Open("data/arabic_verb_masdar.txt")
+		if err != nil {
+			// Java getFromRulesDirAsStream fails if resource missing.
+			panic(err)
 		}
-		verbMasdarData = out
+		defer f.Close()
+		m, err := rules.LoadSimpleReplaceWords(f)
+		if err != nil {
+			// Java SimpleReplaceDataLoader throws RuntimeException on bad lines.
+			panic(err)
+		}
+		if m == nil {
+			m = map[string][]string{}
+		}
+		verbMasdarData = m
 	})
 	return copyStringListMap(verbMasdarData)
 }
