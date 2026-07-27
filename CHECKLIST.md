@@ -786,7 +786,7 @@
 - [x] org/languagetool/rules/ar/ArabicWordRepeatRule.java::ArabicWordRepeatRule
 - [ ] org/languagetool/rules/ar/ArabicWordinessRule.java::ArabicWordinessRule
 - [x] org/languagetool/rules/ar/ArabicWrongWordInContextRule.java::ArabicWrongWordInContextRule
-- [ ] org/languagetool/rules/ar/filters/ArabicAdjectiveToExclamationFilter.java::ArabicAdjectiveToExclamationFilter
+- [x] org/languagetool/rules/ar/filters/ArabicAdjectiveToExclamationFilter.java::ArabicAdjectiveToExclamationFilter
 - [x] org/languagetool/rules/ar/filters/ArabicAdvancedSynthesizerFilter.java::ArabicAdvancedSynthesizerFilter
 - [ ] org/languagetool/rules/ar/filters/ArabicDMYDateCheckFilter.java::ArabicDMYDateCheckFilter
 - [x] org/languagetool/rules/ar/filters/ArabicDateCheckFilter.java::ArabicDateCheckFilter
