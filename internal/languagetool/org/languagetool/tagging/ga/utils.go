@@ -483,3 +483,83 @@ var (
 	// \p{InCYRILLIC} ≈ Cyrillic blocks
 	reHasCyrillic = regexp.MustCompile(`(?s).*\p{Cyrillic}.*`)
 )
+
+// StartsWithUppercase ports Utils.startsWithUppercase — StringTools.startsWithUppercase
+// adapted for Irish mutations (eclipsis / prothesis prefixes stay lowercase).
+func StartsWithUppercase(s string) bool {
+	if startsWithMutatedUppercase(s) {
+		return true
+	}
+	// Java: Character.isUpperCase(s.charAt(0)); empty → IndexOutOfBounds
+	r := []rune(s)
+	if len(r) == 0 {
+		return false
+	}
+	return unicode.IsUpper(r[0])
+}
+
+// IsAllUppercase ports Utils.isAllUppercase (mutation prefix skipped, then all letters upper).
+func IsAllUppercase(s string) bool {
+	r := []rune(s)
+	startFrom := 0
+	if startsWithMutatedUppercase(s) {
+		if strings.HasPrefix(s, "bhF") {
+			startFrom = 2
+		} else {
+			startFrom = 1
+		}
+	}
+	if startFrom > len(r) {
+		return true
+	}
+	for _, c := range r[startFrom:] {
+		if unicode.IsLetter(c) && unicode.IsLower(c) {
+			return false
+		}
+	}
+	return true
+}
+
+// startsWithMutatedUppercase ports Utils.startsWithMutatedUppercase (private).
+func startsWithMutatedUppercase(s string) bool {
+	// Consonant eclipsis
+	if strings.HasPrefix(s, "mB") {
+		return true
+	}
+	if strings.HasPrefix(s, "gC") {
+		return true
+	}
+	if strings.HasPrefix(s, "nD") {
+		return true
+	}
+	if strings.HasPrefix(s, "bhF") {
+		return true
+	}
+	if strings.HasPrefix(s, "nG") {
+		return true
+	}
+	if strings.HasPrefix(s, "bP") {
+		return true
+	}
+	if strings.HasPrefix(s, "dT") {
+		return true
+	}
+	r := []rune(s)
+	// Vowel eclipsis / t-prothesis / h-prothesis
+	if len(r) > 1 {
+		if r[0] == 'n' && isUpperVowel(r[1]) {
+			return true
+		}
+		if r[0] == 't' && isUpperVowel(r[1]) {
+			return true
+		}
+		if r[0] == 'h' && isUpperVowel(r[1]) {
+			return true
+		}
+	}
+	// definite s lenition
+	if strings.HasPrefix(s, "tS") {
+		return true
+	}
+	return false
+}

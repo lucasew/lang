@@ -108,3 +108,23 @@ func TestHalfwidthLatin(t *testing.T) {
 	require.Equal(t, "torrach", HalfwidthLatinToLatin("ｔｏｒｒａｃｈ"))
 	require.Equal(t, "ABC", HalfwidthLatinToLatin("ＡＢＣ"))
 }
+
+func TestStartsWithUppercaseIrish(t *testing.T) {
+	// Mutation prefixes count as uppercase start
+	require.True(t, StartsWithUppercase("mBéal"))
+	require.True(t, StartsWithUppercase("dTúr"))
+	require.True(t, StartsWithUppercase("tAigéan"))
+	require.True(t, StartsWithUppercase("hAigéan"))
+	require.True(t, StartsWithUppercase("nÁise"))
+	require.True(t, StartsWithUppercase("tSeomra"))
+	require.True(t, StartsWithUppercase("Béal"))
+	require.False(t, StartsWithUppercase("mbéal"))
+	require.False(t, StartsWithUppercase("béal"))
+}
+
+func TestIsAllUppercaseIrish(t *testing.T) {
+	require.True(t, IsAllUppercase("BÉAL"))
+	require.True(t, IsAllUppercase("MBÉAL")) // m + BÉAL after mutation skip
+	require.False(t, IsAllUppercase("mBéal"))
+	require.False(t, IsAllUppercase("Béal"))
+}
