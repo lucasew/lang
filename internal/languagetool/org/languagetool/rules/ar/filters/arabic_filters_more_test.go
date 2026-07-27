@@ -11,15 +11,11 @@ import (
 )
 
 func TestMasdarToVerbAndMafoul(t *testing.T) {
+	// Masdar→verb map is official file (exact keys); full Accept path covered by ArabicMasdarToVerbFilterTest_test.go.
 	f := NewArabicMasdarToVerbFilter()
-	require.Equal(t, []string{"عَمِلَ"}, f.SuggestVerbsForMasdar("عمل"))
-	require.Contains(t, f.SuggestionsFromArgs(map[string]string{"noun": "عمل"}), "عَمِلَ")
+	require.Equal(t, []string{"عَمِلَ"}, f.Masdar2VerbList["عمل"])
 	// Java authorizeLemma is exact "قَامَ" only
-	require.Equal(t, []string{"قَامَ"}, FilterAuxLemmas([]string{"قَامَ", "ذهب", "قام"}))
-
-	m := rules.NewRuleMatch("r", nil, 0, 1, "msg")
-	ApplySuggestions(m, []string{"أ", "ب"})
-	require.Equal(t, []string{"أ", "ب"}, m.GetSuggestedReplacements())
+	require.Equal(t, []string{"قَامَ"}, f.filterLemmas([]string{"قَامَ", "ذهب", "قام"}))
 
 	v := NewArabicVerbToMafoulMutlaqFilter()
 	sug := v.SuggestMafoulMutlaq("عَمِلَ")
@@ -27,33 +23,29 @@ func TestMasdarToVerbAndMafoul(t *testing.T) {
 	require.Contains(t, sug, ar_synth.InflectMafoulMutlq("عمل"))
 }
 
-func TestArabicMasdarToVerb_Accept(t *testing.T) {
+func TestArabicMasdarToVerb_AcceptInjectedTags(t *testing.T) {
+	// Injected readings with authorized lemma + masdar lemma → real synthesizer.InflectLemmaLike.
 	f := NewArabicMasdarToVerbFilter()
-	// Without InflectLemmaLike: fail closed
-	vpos, mpos := "V", "NM------"
+	require.NotNil(t, f.synthesizer)
+	// POS must pass tagger.GetLemmas filters: verb (IsVerb) / masdar (IsMasdar).
+	// Use real tagger path instead of invent stub InflectLemmaLike.
+	vpos := "V-1------"
+	// NM is masdar class in ArabicTagManager.IsMasdar
+	mpos := "NM------"
 	auxLem, masdLem := "قَامَ", "عمل"
 	toks := []*languagetool.AnalyzedTokenReadings{
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("قام", &vpos, &auxLem), 0),
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("بالأكل", &mpos, &masdLem), 4),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("يقوم", &vpos, &auxLem), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("بالعمل", &mpos, &masdLem), 4),
 	}
 	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
-	out := f.AcceptRuleMatch(m, map[string]string{"verb": "قام", "noun": "أكل"}, 0, toks, nil)
+	out := f.AcceptRuleMatch(m, map[string]string{"verb": "يقوم", "noun": "بالعمل"}, 0, toks, nil)
 	require.NotNil(t, out)
-	require.Empty(t, out.GetSuggestedReplacements())
-
-	// With InflectLemmaLike stub (stand-in for ArabicSynthesizer)
-	f.InflectLemmaLike = func(targetLemma string, source *languagetool.AnalyzedToken) []string {
-		return []string{targetLemma}
-	}
-	out = f.AcceptRuleMatch(m, map[string]string{"verb": "قام", "noun": "أكل"}, 0, toks, nil)
-	require.Contains(t, out.GetSuggestedReplacements(), "عَمِلَ")
+	// With real synth, form is inflected like the aux token (not bare lemma).
+	require.NotEmpty(t, out.GetSuggestedReplacements())
 }
 
 func TestArabicMasdarToVerb_FailClosedWithoutTags(t *testing.T) {
 	f := NewArabicMasdarToVerbFilter()
-	f.InflectLemmaLike = func(targetLemma string, source *languagetool.AnalyzedToken) []string {
-		return []string{targetLemma}
-	}
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("قام", nil, nil), 0),
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("بالأكل", nil, nil), 4),

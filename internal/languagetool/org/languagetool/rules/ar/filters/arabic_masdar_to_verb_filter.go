@@ -1,206 +1,160 @@
 package filters
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	ar_synth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ar"
 	ar_tag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// Authorized auxiliary lemmas for قام-style constructions (Java authorizeLemma).
-var authorizeAuxLemma = map[string]struct{}{
-	"قَامَ": {},
-}
-
-var masdarTagMgr = ar_tag.NewArabicTagManager()
+// ArabicMasdarVerbFileName ports ArabicMasdarToVerbFilter.FILE_NAME.
+const ArabicMasdarVerbFileName = "/ar/arabic_masdar_verb.txt"
 
 // ArabicMasdarToVerbFilter ports org.languagetool.rules.ar.filters.ArabicMasdarToVerbFilter.
-// Accept uses patternTokens[0] verb lemmas + patternTokens[1] masdar lemmas (Java tagger),
-// then synthesizer.inflectLemmaLike — no surface invent of verb forms.
+//
+// Accept path (Java king):
+//  1. masdar2verbList = loadFromPath("/ar/arabic_masdar_verb.txt")
+//  2. tagger.getLemmas(patternTokens[0], "verb") → filterLemmas (authorizeLemma only "قَامَ")
+//  3. tagger.getLemmas(patternTokens[1], "masdar")
+//  4. for each aux reading with authorized lemma × masdar lemmas × map: synthesizer.inflectLemmaLike
+//  5. HashSet dedupe → suggested replacements
+//
+// Note: Java field masdar2verb (inline HashMap) is dead unused on the accept path — omitted.
 type ArabicMasdarToVerbFilter struct {
-	Masdar2Verb map[string][]string
-	// InflectLemmaLike ports ArabicSynthesizer.inflectLemmaLike.
-	// Nil → fail closed (empty suggestions; Java always has synth).
-	InflectLemmaLike func(targetLemma string, source *languagetool.AnalyzedToken) []string
+	// Masdar2VerbList ports masdar2verbList (file-backed SimpleReplaceDataLoader).
+	Masdar2VerbList map[string][]string
+	// tagger ports private final ArabicTagger tagger = new ArabicTagger().
+	tagger *ar_tag.ArabicTagger
+	// synthesizer ports private final ArabicSynthesizer synthesizer = new ArabicSynthesizer(new Arabic()).
+	synthesizer *ar_synth.ArabicSynthesizer
+	// authorizeLemma ports final List authorizeLemma = { "قَامَ" }.
+	authorizeLemma []string
 }
 
-// NewArabicMasdarToVerbFilter loads official arabic_masdar_verb.txt (Java loadFromPath).
-// Empty map if the resource is missing (fail closed — no invent subset).
+// NewArabicMasdarToVerbFilter ports the Java ctor: masdar2verbList = loadFromPath(FILE_NAME).
+// Wires real ArabicTagger + ArabicSynthesizer (Java always constructs both).
 func NewArabicMasdarToVerbFilter() *ArabicMasdarToVerbFilter {
-	return &ArabicMasdarToVerbFilter{Masdar2Verb: loadOfficialMasdarVerbMap()}
-}
-
-// LoadMasdarMap merges path-style replace data (lemma → replacements).
-func (f *ArabicMasdarToVerbFilter) LoadMasdarMap(data map[string][]string) {
-	if f.Masdar2Verb == nil {
-		f.Masdar2Verb = map[string][]string{}
-	}
-	for k, v := range data {
-		f.Masdar2Verb[k] = append([]string{}, v...)
+	ar_tag.EnsureDefaultArabicTagger()
+	return &ArabicMasdarToVerbFilter{
+		Masdar2VerbList: loadOfficialMasdarVerbMap(),
+		tagger:          ar_tag.DefaultArabicTagger,
+		synthesizer:     ar_synth.Instance(),
+		authorizeLemma:  []string{"قَامَ"},
 	}
 }
 
-// FilterAuxLemmas keeps only authorized auxiliary lemmas (Java filterLemmas).
-func FilterAuxLemmas(lemmas []string) []string {
-	seen := map[string]struct{}{}
-	var out []string
-	for _, lem := range lemmas {
-		if _, hit := authorizeAuxLemma[lem]; !hit {
-			// Java authorizeLemma is exact diacritic match only (قَامَ).
-			continue
+// LoadFromPath ports ArabicMasdarToVerbFilter.loadFromPath (static).
+// Prefer the ctor path (embedded official bytes); this loads via SimpleReplaceDataLoader from a reader path name for test twins.
+func LoadFromPath(path string) map[string][]string {
+	// Java: new SimpleReplaceDataLoader().loadWords(path) from rules classpath.
+	// Go twin of FILE_NAME only — same embed as ctor.
+	if path == ArabicMasdarVerbFileName || path == "arabic_masdar_verb.txt" {
+		return loadOfficialMasdarVerbMap()
+	}
+	// Other paths: discover under inspiration rules/ar (same layout as Java module resources).
+	return loadARSimpleReplaceMap(pathBase(path))
+}
+
+func pathBase(path string) string {
+	// strip leading /ar/ or directory so discoverARRulesFile can find basename
+	for i := len(path) - 1; i >= 0; i-- {
+		if path[i] == '/' {
+			return path[i+1:]
 		}
-		if _, dup := seen[lem]; dup {
-			continue
-		}
-		seen[lem] = struct{}{}
-		out = append(out, lem)
 	}
-	return out
+	return path
 }
 
-// SuggestVerbsForMasdar returns verb lemmas for a masdar lemma (map lookup helper).
-func (f *ArabicMasdarToVerbFilter) SuggestVerbsForMasdar(masdarLemma string) []string {
+// filterLemmas ports ArabicMasdarToVerbFilter.filterLemmas — keep only authorizeLemma entries present in lemmas.
+func (f *ArabicMasdarToVerbFilter) filterLemmas(lemmas []string) []string {
 	if f == nil {
 		return nil
 	}
-	if v, ok := f.Masdar2Verb[masdarLemma]; ok {
-		return append([]string{}, v...)
+	in := map[string]struct{}{}
+	for _, l := range lemmas {
+		in[l] = struct{}{}
 	}
-	if v, ok := f.Masdar2Verb[tools.RemoveTashkeel(masdarLemma)]; ok {
-		return append([]string{}, v...)
-	}
-	return nil
-}
-
-// SuggestionsFromArgs is a map-lookup helper for tests (not the full Java Accept path).
-// Prefer AcceptRuleMatch with tagged tokens + InflectLemmaLike.
-func (f *ArabicMasdarToVerbFilter) SuggestionsFromArgs(args map[string]string) []string {
-	masdar := args["noun"]
-	if masdar == "" {
-		masdar = args["masdar"]
-	}
-	if masdar == "" {
-		return nil
-	}
-	key := strings.TrimPrefix(tools.RemoveTashkeel(masdar), "ال")
-	verbs := f.SuggestVerbsForMasdar(key)
-	if len(verbs) == 0 {
-		verbs = f.SuggestVerbsForMasdar(masdar)
-	}
-	seen := map[string]struct{}{}
-	var out []string
-	for _, v := range verbs {
-		if _, ok := seen[v]; ok {
-			continue
+	var filtered []string
+	for _, lem := range f.authorizeLemma {
+		if _, ok := in[lem]; ok {
+			filtered = append(filtered, lem)
 		}
-		seen[v] = struct{}{}
-		out = append(out, v)
 	}
-	return out
-}
-
-// ApplySuggestions appends suggestions onto the match (nil-safe).
-func ApplySuggestions(match *rules.RuleMatch, suggestions []string) *rules.RuleMatch {
-	if match == nil {
-		return nil
-	}
-	if len(suggestions) == 0 {
-		return match
-	}
-	cur := match.GetSuggestedReplacements()
-	match.SetSuggestedReplacements(append(append([]string{}, cur...), suggestions...))
-	return match
-}
-
-// lemmasOfType ports ArabicTagger.getLemmas(..., type) for verb/masdar.
-func lemmasOfType(tok *languagetool.AnalyzedTokenReadings, kind string) []string {
-	if tok == nil {
-		return nil
-	}
-	seen := map[string]struct{}{}
-	var out []string
-	for _, r := range tok.GetReadings() {
-		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
-			continue
-		}
-		pos, lem := *r.GetPOSTag(), *r.GetLemma()
-		ok := false
-		switch kind {
-		case "verb":
-			ok = masdarTagMgr.IsVerb(pos)
-		case "masdar":
-			ok = masdarTagMgr.IsMasdar(pos)
-		}
-		if !ok || lem == "" {
-			continue
-		}
-		if _, dup := seen[lem]; dup {
-			continue
-		}
-		seen[lem] = struct{}{}
-		out = append(out, lem)
-	}
-	return out
+	return filtered
 }
 
 // AcceptRuleMatch ports ArabicMasdarToVerbFilter.acceptRuleMatch.
-// patternTokens[0]=aux verb, [1]=masdar noun. Requires InflectLemmaLike for forms.
+// patternTokens[0]=auxiliary verb, [1]=masdar noun.
 func (f *ArabicMasdarToVerbFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
 	if f == nil || match == nil {
 		return nil
 	}
+	// Java extracts then leaves unused for suggestion generation once tokens are tagged.
+	_ = arguments["verb"] // الفعل قام أو ما شابهه
+	_ = arguments["noun"] // masdar
+
+	// Java: no bounds check (NPE if short). Go fail-closed empty match for nil slices only.
 	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
 	out.ShortMessage = match.ShortMessage
 	if len(patternTokens) < 2 || patternTokens[0] == nil || patternTokens[1] == nil {
 		return out
 	}
-	if f.InflectLemmaLike == nil {
-		// Java always has ArabicSynthesizer; fail closed without inflectLemmaLike.
-		return out
-	}
 
-	auxVerbLemmas := FilterAuxLemmas(lemmasOfType(patternTokens[0], "verb"))
-	if len(auxVerbLemmas) == 0 {
-		return out
-	}
+	// filter tokens which have a lemma; only auxiliary lemmas authorized
+	auxVerbLemmasAll := f.tagger.GetLemmas(patternTokens[0], "verb")
+	auxVerbLemmas := f.filterLemmas(auxVerbLemmasAll)
+	masdarLemmas := f.tagger.GetLemmas(patternTokens[1], "masdar")
+
+	// generate multiple verb from masdar lemmas list
+	var verbList []string
+
+	// if the auxiliary verb has many lemmas, filter authorized lemma only
+	// the first token: auxiliary verb
 	auxSet := map[string]struct{}{}
 	for _, l := range auxVerbLemmas {
 		auxSet[l] = struct{}{}
 	}
-	masdarLemmas := lemmasOfType(patternTokens[1], "masdar")
-
-	seen := map[string]struct{}{}
-	var verbList []string
-	// Java: for each aux reading with authorized lemma × masdar lemmas × mapped verbs
-	for _, auxTok := range patternTokens[0].GetReadings() {
-		if auxTok == nil || auxTok.GetLemma() == nil {
+	for _, auxVerbToken := range patternTokens[0].GetReadings() {
+		if auxVerbToken == nil {
 			continue
 		}
-		if _, ok := auxSet[*auxTok.GetLemma()]; !ok {
+		lem := ""
+		if auxVerbToken.GetLemma() != nil {
+			lem = *auxVerbToken.GetLemma()
+		}
+		// if the token has an authorized lemma
+		if _, ok := auxSet[lem]; !ok {
+			// Java: auxVerbLemmas.contains(auxVerbToken.getLemma()) — null lemma only if list has null
 			continue
 		}
-		for _, masdarLemma := range masdarLemmas {
-			for _, vrbLem := range f.SuggestVerbsForMasdar(masdarLemma) {
-				for _, form := range f.InflectLemmaLike(vrbLem, auxTok) {
-					if form == "" {
-						continue
-					}
-					if _, dup := seen[form]; dup {
-						continue
-					}
-					seen[form] = struct{}{}
-					verbList = append(verbList, form)
-				}
+		// for all masdar lemmas
+		for _, lemma := range masdarLemmas {
+			verbLemmaList := f.Masdar2VerbList[lemma] // exact get — no RemoveTashkeel invent
+			if verbLemmaList == nil {
+				continue
+			}
+			// if verb, inflect verd according to auxiliary verb inflection
+			for _, vrbLem := range verbLemmaList {
+				inflected := f.synthesizer.InflectLemmaLike(vrbLem, auxVerbToken)
+				verbList = append(verbList, inflected...)
 			}
 		}
 	}
-	if len(verbList) > 0 {
-		out.SetSuggestedReplacements(verbList)
+
+	// remove duplicates (Java: new ArrayList<>(new HashSet<>(verbList)); order not guaranteed)
+	seen := map[string]struct{}{}
+	var deduped []string
+	for _, verb := range verbList {
+		if _, ok := seen[verb]; ok {
+			continue
+		}
+		seen[verb] = struct{}{}
+		deduped = append(deduped, verb)
 	}
-	// arguments verb/noun are Java extract only; unused for suggestions once tokens are tagged.
-	_ = arguments
+	// generate suggestion
+	if len(deduped) > 0 {
+		out.SetSuggestedReplacements(deduped)
+	}
 	return out
 }

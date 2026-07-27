@@ -11,10 +11,11 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// Official /ar/arabic_adjective_exclamation.txt (same bytes as Java rules resource).
+// Official /ar/*.txt under rules/ar (same bytes as Java rules resources).
 //
 //go:embed data/arabic_adjective_exclamation.txt
-var adjExclFS embed.FS
+//go:embed data/arabic_masdar_verb.txt
+var arRulesDataFS embed.FS
 
 // Paths under inspiration (Java /ar/*.txt via rules dir) — used for other filter maps
 // that are not yet embed-hardened in this sector.
@@ -88,7 +89,9 @@ func loadARSimpleReplaceMap(name string) map[string][]string {
 	return out
 }
 
-// loadOfficialMasdarVerbMap: /ar/arabic_masdar_verb.txt
+// loadOfficialMasdarVerbMap ports ArabicMasdarToVerbFilter.loadFromPath(FILE_NAME)
+// → SimpleReplaceDataLoader.loadWords("/ar/arabic_masdar_verb.txt").
+// Embedded official bytes only — no invent trim of keys (Java loadWords keeps them).
 var (
 	masdarMapOnce sync.Once
 	masdarMapData map[string][]string
@@ -96,7 +99,21 @@ var (
 
 func loadOfficialMasdarVerbMap() map[string][]string {
 	masdarMapOnce.Do(func() {
-		masdarMapData = loadARSimpleReplaceMap("arabic_masdar_verb.txt")
+		f, err := arRulesDataFS.Open("data/arabic_masdar_verb.txt")
+		if err != nil {
+			// Java getFromRulesDirAsStream fails if resource missing.
+			panic(err)
+		}
+		defer f.Close()
+		m, err := rules.LoadSimpleReplaceWords(f)
+		if err != nil {
+			// Java SimpleReplaceDataLoader throws RuntimeException on bad lines.
+			panic(err)
+		}
+		if m == nil {
+			m = map[string][]string{}
+		}
+		masdarMapData = m
 	})
 	return copyStringListMap(masdarMapData)
 }
@@ -133,7 +150,7 @@ var (
 
 func loadOfficialAdjExclamationMap() map[string][]string {
 	adjExclOnce.Do(func() {
-		f, err := adjExclFS.Open("data/arabic_adjective_exclamation.txt")
+		f, err := arRulesDataFS.Open("data/arabic_adjective_exclamation.txt")
 		if err != nil {
 			// Java getFromRulesDirAsStream fails if resource missing.
 			panic(err)
