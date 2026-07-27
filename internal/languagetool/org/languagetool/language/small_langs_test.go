@@ -7,16 +7,15 @@ import (
 )
 
 func TestSmallLangs(t *testing.T) {
-	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton/Asturian/Belarusian promoted to dedicated Lang types (not SmallLang); remaining set ≥ 9.
-	require.GreaterOrEqual(t, len(AllSmallLangs()), 9)
+	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton/Asturian/Belarusian/Danish promoted to dedicated Lang types (not SmallLang); remaining set ≥ 8.
+	require.GreaterOrEqual(t, len(AllSmallLangs()), 8)
 	require.Equal(t, "Ukrainian", Ukrainian.GetName())
-	require.Equal(t, "da", Danish.GetShortCode())
 }
 
 func TestSmallLang_DefaultSpellingRuleIDs_MatchJava(t *testing.T) {
 	// Faithful createDefaultSpellingRule / registered speller getId only.
 	// Slovak speller id: SlovakLang.GetDefaultSpellingRuleID (slovak_test.go)
-	require.Equal(t, "HUNSPELL_RULE", Danish.GetDefaultSpellingRuleID())
+	// Danish speller id: DanishLang.GetDefaultSpellingRuleID (danish_test.go)
 	require.Equal(t, "HUNSPELL_RULE", Swedish.GetDefaultSpellingRuleID())
 	require.Equal(t, "HUNSPELL_RULE", Esperanto.GetDefaultSpellingRuleID())
 	require.Equal(t, "HUNSPELL_RULE", Galician.GetDefaultSpellingRuleID())

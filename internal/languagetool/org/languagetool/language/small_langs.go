@@ -127,8 +127,8 @@ func (s SmallLang) ToAdvancedTypography(input string) string {
 // Languages without a Java default speller use "" (do not invent Morfologik IDs).
 var (
 	// Slovak promoted to SlovakLang (see slovak.go) — not SmallLang.
-	// Danish/Swedish/Esperanto/Galician: plain HunspellRule → HUNSPELL_RULE
-	Danish  = SmallLang{"da", "Danish", "HUNSPELL_RULE", []string{"DK"}}
+	// Danish promoted to DanishLang (see danish.go) — not SmallLang.
+	// Swedish/Esperanto/Galician: plain HunspellRule → HUNSPELL_RULE
 	Swedish = SmallLang{"sv", "Swedish", "HUNSPELL_RULE", []string{"SE"}}
 	// Romanian promoted to RomanianLang (see romanian.go) — not SmallLang.
 	// Greek promoted to GreekLang (see greek.go) — not SmallLang.
@@ -145,7 +145,7 @@ var (
 
 func AllSmallLangs() []SmallLang {
 	return []SmallLang{
-		Danish, Swedish, Galician,
+		Swedish, Galician,
 		Japanese, Chinese, Persian, Esperanto, Irish, Ukrainian,
 	}
 }
@@ -162,8 +162,8 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 		// Galician explicitly LookingForNewMaintainer (same as default)
 		return languagetool.LookingForNewMaintainer
 	default:
-		// Japanese, Chinese, Persian, Danish, …: no override → default
-		// (Romanian/Slovak/Slovenian/Tagalog/Asturian/Belarusian LookingForNewMaintainer on *Lang; Greek/Breton/CrimeanTatar ActivelyMaintained on *Lang)
+		// Japanese, Chinese, Persian, …: no override → default
+		// (Danish/Romanian/Slovak/Slovenian/Tagalog/Asturian/Belarusian LookingForNewMaintainer on *Lang; Greek/Breton/CrimeanTatar ActivelyMaintained on *Lang)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -176,11 +176,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 	case "sv":
 		return []Contributor{NewContributor("Leif-Jöran Olsson")}
 	// Greek maintainers: GreekLang.GetMaintainers (greek.go)
-	case "da":
-		return []Contributor{
-			NewContributor("Esben Aaberg"),
-			NewContributor("Henrik Bendt"),
-		}
+	// Danish maintainers: DanishLang.GetMaintainers (danish.go)
 	case "eo":
 		return []Contributor{DominiquePelle}
 	// Breton maintainers: BretonLang.GetMaintainers (breton.go)
