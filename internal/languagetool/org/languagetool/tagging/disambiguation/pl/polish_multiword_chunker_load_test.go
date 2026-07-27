@@ -22,9 +22,8 @@ func TestOpenPolishMultiWordChunker_SettingsDefaults(t *testing.T) {
 }
 
 func TestPolishMultiWordChunker_ProcessCachedOfficial(t *testing.T) {
-	if DiscoverPolishMultiwords() == "" {
-		t.Skip("official pl/multiwords.txt not discoverable")
-	}
+	require.NotEmpty(t, DiscoverPolishMultiwords(),
+		"official pl/multiwords.txt must be discoverable (inspiration pl module)")
 	a := PolishMultiWordChunker()
 	b := PolishMultiWordChunker()
 	require.NotNil(t, a)
@@ -109,9 +108,8 @@ func hasAnyAnglePOS(tags []string) bool {
 }
 
 func TestPolishMultiWordChunker_DisambiguateOfficialPhrases(t *testing.T) {
-	if DiscoverPolishMultiwords() == "" {
-		t.Skip("official pl/multiwords.txt not discoverable")
-	}
+	require.NotEmpty(t, DiscoverPolishMultiwords(),
+		"official pl/multiwords.txt must be discoverable (inspiration pl module)")
 	// Isolate Chunker stage.
 	c := PolishMultiWordChunker()
 	require.NotNil(t, c)

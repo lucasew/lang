@@ -12,6 +12,7 @@ package pl
 // (same helpers as ACCEPTed multiword/XML stage leaves).
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -20,12 +21,12 @@ import (
 
 func requirePLHybridResources(t *testing.T) {
 	t.Helper()
-	if DiscoverPolishMultiwords() == "" {
-		t.Skip("official pl/multiwords.txt not discoverable")
-	}
-	if DiscoverPolishDisambiguationXML() == "" {
-		t.Skip("official pl/disambiguation.xml not discoverable")
-	}
+	// Official resources exist under inspiration pl module (same as Java).
+	// Fail hard — no invent Skip when assets are in-tree (PolishWordTokenizer pattern).
+	require.NotEmpty(t, DiscoverPolishMultiwords(),
+		"official pl/multiwords.txt must be discoverable (inspiration pl module)")
+	require.NotEmpty(t, DiscoverPolishDisambiguationXML(),
+		"official pl/disambiguation.xml must be discoverable (inspiration pl module)")
 }
 
 // tokenSentence builds SENT_START + tokens with spaces between word tokens.
@@ -75,10 +76,19 @@ func requireNotIgnored(t *testing.T, sent *languagetool.AnalyzedSentence, surfac
 func TestNewPolishHybridDisambiguator_WiresBothStages(t *testing.T) {
 	requirePLHybridResources(t)
 
+	mwPath := DiscoverPolishMultiwords()
+	xmlPath := DiscoverPolishDisambiguationXML()
+	require.Contains(t, mwPath, "multiwords.txt", "Java resource /pl/multiwords.txt")
+	require.Contains(t, xmlPath, "disambiguation.xml", "Java resource /pl/disambiguation.xml")
+	// Path under inspiration pl module (same layout Java ships).
+	require.Contains(t, mwPath, "languagetool-language-modules")
+	require.Contains(t, mwPath, filepath.Join("resource", "pl"))
+	require.Contains(t, xmlPath, filepath.Join("resource", "pl"))
+
 	mw := PolishMultiWordChunker()
 	xml := PolishXmlRuleDisambiguator()
-	require.NotNil(t, mw)
-	require.NotNil(t, xml)
+	require.NotNil(t, mw, "MultiWordChunker.getInstance(/pl/multiwords.txt) must load")
+	require.NotNil(t, xml, "XmlRuleDisambiguator(Polish) must load pl/disambiguation.xml")
 
 	d := NewPolishHybridDisambiguator()
 	require.NotNil(t, d.Chunker,
@@ -98,6 +108,9 @@ func TestNewPolishHybridDisambiguator_WiresBothStages(t *testing.T) {
 	// Official PL pack is large; smoke that it loaded as a real rule set.
 	require.GreaterOrEqual(t, len(xml.Rules), 200,
 		"Polish XmlRuleDisambiguator must load official pl/disambiguation.xml rules")
+	// Process-cached like Java static MultiWordChunker.getInstance + field finals.
+	require.Same(t, PolishMultiWordChunker(), mw)
+	require.Same(t, PolishXmlRuleDisambiguator(), xml)
 }
 
 // TestPolishHybridDisambiguator_OrderXMLThenMultiword proves stage isolation vs

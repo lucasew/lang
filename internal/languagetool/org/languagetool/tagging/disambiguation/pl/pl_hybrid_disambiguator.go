@@ -6,9 +6,16 @@ import (
 )
 
 // PolishHybridDisambiguator ports org.languagetool.tagging.disambiguation.pl.PolishHybridDisambiguator:
-// MultiWordChunker.getInstance("/pl/multiwords.txt") defaults, then XmlRuleDisambiguator(Polish) no global.
-// Java order: chunker.disambiguate(disambiguator.disambiguate(input)) — XML first, then multiwords.
-// Both stages are eagerly wired from official resources when present (Java final fields).
+//
+//	chunker = MultiWordChunker.getInstance("/pl/multiwords.txt"); // defaults F,F,F
+//	disambiguator = new XmlRuleDisambiguator(new Polish()); // useGlobalDisambiguation=false
+//
+// Java disambiguate order (nested call):
+//
+//	return chunker.disambiguate(disambiguator.disambiguate(input));
+//
+// i.e. XmlRuleDisambiguator FIRST, MultiWordChunker SECOND (inverted vs Romance hybrids).
+// Both stages are eagerly wired from the same official resources Java loads.
 type PolishHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
 	// Chunker is Java MultiWordChunker.getInstance("/pl/multiwords.txt") defaults.
