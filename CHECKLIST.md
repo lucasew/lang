@@ -1443,36 +1443,36 @@
 
 ## languagetool-language-modules/ru
 
-- [ ] org/languagetool/chunking/RussianChunker.java::RussianChunker
-- [ ] org/languagetool/chunking/RussianChunker.java::RussianChunker.PhraseType
-- [ ] org/languagetool/chunking/RussianChunker.java::RussianChunker.Span
-- [ ] org/languagetool/chunking/RussianChunker.java::RussianChunker.AffectedSpans
-- [ ] org/languagetool/chunking/RussianChunker.java::RussianChunker.RegularExpressionWithPhraseType
-- [ ] org/languagetool/language/Russian.java::Russian
+- [x] org/languagetool/chunking/RussianChunker.java::RussianChunker
+- [x] org/languagetool/chunking/RussianChunker.java::RussianChunker.PhraseType
+- [x] org/languagetool/chunking/RussianChunker.java::RussianChunker.Span
+- [x] org/languagetool/chunking/RussianChunker.java::RussianChunker.AffectedSpans
+- [x] org/languagetool/chunking/RussianChunker.java::RussianChunker.RegularExpressionWithPhraseType
+- [x] org/languagetool/language/Russian.java::Russian
 - [x] org/languagetool/rules/ru/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [x] org/languagetool/rules/ru/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/ru/DateFilterHelper.java::DateFilterHelper
+- [x] org/languagetool/rules/ru/DateFilterHelper.java::DateFilterHelper
 - [x] org/languagetool/rules/ru/FutureDateFilter.java::FutureDateFilter
-- [ ] org/languagetool/rules/ru/INNNumberFilter.java::INNNumberFilter
+- [x] org/languagetool/rules/ru/INNNumberFilter.java::INNNumberFilter
 - [x] org/languagetool/rules/ru/MorfologikRussianSpellerRule.java::MorfologikRussianSpellerRule
 - [x] org/languagetool/rules/ru/MorfologikRussianYOSpellerRule.java::MorfologikRussianYOSpellerRule
 - [x] org/languagetool/rules/ru/NoDisambiguationRussianPartialPosTagFilter.java::NoDisambiguationRussianPartialPosTagFilter
-- [ ] org/languagetool/rules/ru/RussianCompoundRule.java::RussianCompoundRule
+- [x] org/languagetool/rules/ru/RussianCompoundRule.java::RussianCompoundRule
 - [x] org/languagetool/rules/ru/RussianConfusionProbabilityRule.java::RussianConfusionProbabilityRule
-- [ ] org/languagetool/rules/ru/RussianDashRule.java::RussianDashRule
+- [x] org/languagetool/rules/ru/RussianDashRule.java::RussianDashRule
 - [x] org/languagetool/rules/ru/RussianFillerWordsRule.java::RussianFillerWordsRule
 - [x] org/languagetool/rules/ru/RussianPartialPosTagFilter.java::RussianPartialPosTagFilter
-- [ ] org/languagetool/rules/ru/RussianSimpleReplaceRule.java::RussianSimpleReplaceRule
-- [ ] org/languagetool/rules/ru/RussianSimpleWordRepeatRule.java::RussianSimpleWordRepeatRule
-- [ ] org/languagetool/rules/ru/RussianSpecificCaseRule.java::RussianSpecificCaseRule
+- [x] org/languagetool/rules/ru/RussianSimpleReplaceRule.java::RussianSimpleReplaceRule
+- [x] org/languagetool/rules/ru/RussianSimpleWordRepeatRule.java::RussianSimpleWordRepeatRule
+- [x] org/languagetool/rules/ru/RussianSpecificCaseRule.java::RussianSpecificCaseRule
 - [x] org/languagetool/rules/ru/RussianSuppressMisspelledSuggestionsFilter.java::RussianSuppressMisspelledSuggestionsFilter
 - [x] org/languagetool/rules/ru/RussianUnpairedBracketsRule.java::RussianUnpairedBracketsRule
-- [ ] org/languagetool/rules/ru/RussianVerbConjugationRule.java::RussianVerbConjugationRule
+- [x] org/languagetool/rules/ru/RussianVerbConjugationRule.java::RussianVerbConjugationRule
 - [x] org/languagetool/rules/ru/RussianWordCoherencyRule.java::RussianWordCoherencyRule
-- [ ] org/languagetool/rules/ru/RussianWordRepeatRule.java::RussianWordRepeatRule
-- [ ] org/languagetool/rules/ru/RussianWordRootRepeatRule.java::RussianWordRootRepeatRule
+- [x] org/languagetool/rules/ru/RussianWordRepeatRule.java::RussianWordRepeatRule
+- [x] org/languagetool/rules/ru/RussianWordRootRepeatRule.java::RussianWordRootRepeatRule
 - [x] org/languagetool/synthesis/ru/RussianSynthesizer.java::RussianSynthesizer
-- [ ] org/languagetool/tagging/disambiguation/ru/RussianHybridDisambiguator.java::RussianHybridDisambiguator
+- [x] org/languagetool/tagging/disambiguation/ru/RussianHybridDisambiguator.java::RussianHybridDisambiguator
 - [x] org/languagetool/tagging/ru/RussianTagger.java::RussianTagger
 - [x] org/languagetool/tokenizers/ru/RussianWordTokenizer.java::RussianWordTokenizer
 
