@@ -127,7 +127,7 @@ var (
 	Danish  = SmallLang{"da", "Danish", "HUNSPELL_RULE", []string{"DK"}}
 	Swedish = SmallLang{"sv", "Swedish", "HUNSPELL_RULE", []string{"SE"}}
 	// Romanian promoted to RomanianLang (see romanian.go) — not SmallLang.
-	Greek    = SmallLang{"el", "Greek", "MORFOLOGIK_RULE_EL_GR", []string{"GR"}}
+	// Greek promoted to GreekLang (see greek.go) — not SmallLang.
 	Galician = SmallLang{"gl", "Galician", "HUNSPELL_RULE", []string{"ES"}}
 	// Japanese/Chinese/Persian: no createDefaultSpellingRule / no speller in getRelevantRules
 	Japanese  = SmallLang{"ja", "Japanese", "", []string{"JP"}}
@@ -141,7 +141,7 @@ var (
 
 func AllSmallLangs() []SmallLang {
 	return []SmallLang{
-		Danish, Swedish, Greek, Galician,
+		Danish, Swedish, Galician,
 		Japanese, Chinese, Persian, Esperanto, Irish, Ukrainian,
 	}
 }
@@ -150,15 +150,16 @@ func AllSmallLangs() []SmallLang {
 // Java default is LookingForNewMaintainer; only languages that override return ActivelyMaintained.
 func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 	switch s.ShortCode {
-	case "sv", "el", "ga", "uk", "eo", "br", "crh":
-		// Swedish, Greek, Irish, Ukrainian, Esperanto, Breton, CrimeanTatar
+	case "sv", "ga", "uk", "eo", "br", "crh":
+		// Swedish, Irish, Ukrainian, Esperanto, Breton, CrimeanTatar
+		// Greek is GreekLang — ActivelyMaintained there
 		return languagetool.ActivelyMaintained
 	case "gl":
 		// Galician explicitly LookingForNewMaintainer (same as default)
 		return languagetool.LookingForNewMaintainer
 	default:
 		// Japanese, Chinese, Persian, Danish, …: no override → default
-		// (Romanian is RomanianLang; Slovak is SlovakLang; Slovenian is SlovenianLang — LookingForNewMaintainer there)
+		// (Romanian/Slovak/Slovenian LookingForNewMaintainer on *Lang; Greek is GreekLang ActivelyMaintained)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -171,8 +172,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 	// Slovak maintainers: SlovakLang.GetMaintainers (slovak.go)
 	case "sv":
 		return []Contributor{NewContributor("Leif-Jöran Olsson")}
-	case "el":
-		return []Contributor{NewContributor("Panagiotis Minos")}
+	// Greek maintainers: GreekLang.GetMaintainers (greek.go)
 	case "da":
 		return []Contributor{
 			NewContributor("Esben Aaberg"),

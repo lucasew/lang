@@ -15,7 +15,7 @@ func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
 	require.NotContains(t, ids, "EL_ΚΑΙ_ΚΑΙ")
 }
 
-// Java Greek.getRelevantRules exact ID set.
+// Java Greek.getRelevantRules exact ID set and order.
 func TestRegisterCoreGreekRules_JavaRelevantOnly(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("el")
 	RegisterCoreGreekRules(lt)
@@ -35,7 +35,8 @@ func TestRegisterCoreGreekRules_JavaRelevantOnly(t *testing.T) {
 		"GREEK_ORTHOGRAPHY_NUMERAL_STRESS",
 		"EL_REDUNDANCY_REPLACE",
 	}
-	require.ElementsMatch(t, want, ids)
+	// Order matches Java Arrays.asList / GreekRelevantRuleIDs.
+	require.Equal(t, want, ids)
 	for _, bad := range []string{
 		"EMPTY_LINE", "TOO_LONG_PARAGRAPH", "SENTENCE_WHITESPACE",
 		"WHITESPACE_PUNCTUATION", "TOO_LONG_SENTENCE_EL", "UNPAIRED_BRACKETS",

@@ -2,21 +2,31 @@ package el
 
 import (
 	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-const GreekDictPath = "/el/el.dict"
+// GreekDictPath ports Java GreekTagger resource: super("/el/greek.dict", Locale("el")).
+const GreekDictPath = "/el/greek.dict"
 
-type GreekTagger struct { *tagging.BaseTagger }
+// GreekTagger ports org.languagetool.tagging.el.GreekTagger
+// (BaseTagger + additionalTags via GreekAnalyzer — analyzer twin is a leaf gap).
+type GreekTagger struct {
+	*tagging.BaseTagger
+}
 
+// NewGreekTagger builds a GreekTagger over the given WordTagger.
+// Java: super("/el/greek.dict", new Locale("el")) → tagLowercaseWithUppercase true.
 func NewGreekTagger(wt tagging.WordTagger) *GreekTagger {
-	return &GreekTagger{BaseTagger: tagging.NewBaseTagger(wt, GreekDictPath, "el", false)}
+	return &GreekTagger{BaseTagger: tagging.NewBaseTagger(wt, GreekDictPath, "el", true)}
 }
 
 func (t *GreekTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
-	if t == nil { return nil }
+	if t == nil {
+		return nil
+	}
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
@@ -42,7 +52,13 @@ func (t *GreekTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToken
 
 func toTok(surface string, tw tagging.TaggedWord) *languagetool.AnalyzedToken {
 	var pos, lemma *string
-	if tw.PosTag != "" { p := tw.PosTag; pos = &p }
-	if tw.Lemma != "" { l := tw.Lemma; lemma = &l }
+	if tw.PosTag != "" {
+		p := tw.PosTag
+		pos = &p
+	}
+	if tw.Lemma != "" {
+		l := tw.Lemma
+		lemma = &l
+	}
 	return languagetool.NewAnalyzedToken(surface, pos, lemma)
 }

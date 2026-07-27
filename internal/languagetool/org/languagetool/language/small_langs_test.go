@@ -7,8 +7,8 @@ import (
 )
 
 func TestSmallLangs(t *testing.T) {
-	// Romanian/Slovak/Slovenian promoted to dedicated Lang types (not SmallLang); remaining set ≥ 10.
-	require.GreaterOrEqual(t, len(AllSmallLangs()), 10)
+	// Romanian/Slovak/Slovenian/Greek promoted to dedicated Lang types (not SmallLang); remaining set ≥ 9.
+	require.GreaterOrEqual(t, len(AllSmallLangs()), 9)
 	require.Equal(t, "Ukrainian", Ukrainian.GetName())
 	require.Equal(t, "da", Danish.GetShortCode())
 }
@@ -49,7 +49,7 @@ func TestBelarusian_IgnoredCharactersAndSpellerID(t *testing.T) {
 func TestSmallLang_GetMaintainers(t *testing.T) {
 	// Sample of Java getMaintainers ports
 	require.Equal(t, "Leif-Jöran Olsson", Swedish.GetMaintainers()[0].Name)
-	require.Equal(t, "Panagiotis Minos", Greek.GetMaintainers()[0].Name)
+	// Greek maintainers: TestGreekMetadata in greek_test.go
 	require.Equal(t, DominiquePelle.Name, Esperanto.GetMaintainers()[0].Name)
 	require.Equal(t, DominiquePelle.Name, Breton.GetMaintainers()[0].Name)
 	require.Equal(t, "Fulup Jakez", Breton.GetMaintainers()[1].Name)

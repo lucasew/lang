@@ -24,13 +24,7 @@ func TestSmallLangRelevantRuleIDs(t *testing.T) {
 	require.Contains(t, SwedishRelevantRuleIDs(), "SV_COMPOUNDS")
 	require.Equal(t, SwedishRelevantRuleIDs(), Swedish.GetRelevantRuleIDs())
 
-	// Greek — custom unpaired id EL_UNPAIRED_BRACKETS (not UNPAIRED_BRACKETS)
-	el := GreekRelevantRuleIDs()
-	require.Contains(t, el, "MORFOLOGIK_RULE_EL_GR")
-	require.Contains(t, el, "GREEK_HOMONYMS_REPLACE")
-	require.Contains(t, el, "EL_UNPAIRED_BRACKETS")
-	require.NotContains(t, el, "UNPAIRED_BRACKETS")
-	require.Equal(t, el, Greek.GetRelevantRuleIDs())
+	// Greek is GreekLang — full twin in greek_test.go
 
 	// Irish: Java Arrays.asList registers UppercaseSentenceStartRule twice
 	ga := IrishRelevantRuleIDs()

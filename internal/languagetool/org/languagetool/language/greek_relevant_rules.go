@@ -4,11 +4,11 @@ package language
 // Order matches Java Arrays.asList in Greek.java.
 func GreekRelevantRuleIDs() []string {
 	return []string{
-		"COMMA_PARENTHESIS_WHITESPACE",
-		"DOUBLE_PUNCTUATION",
+		"COMMA_PARENTHESIS_WHITESPACE", // CommaWhitespaceRule
+		"DOUBLE_PUNCTUATION",           // DoublePunctuationRule
 		// Custom unpaired id (not default UNPAIRED_BRACKETS)
-		"EL_UNPAIRED_BRACKETS",
-		"TOO_LONG_SENTENCE",
+		"EL_UNPAIRED_BRACKETS", // GenericUnpairedBracketsRule("EL_UNPAIRED_BRACKETS", …)
+		"TOO_LONG_SENTENCE",    // LongSentenceRule(messages, userConfig, 50)
 		"MORFOLOGIK_RULE_EL_GR",
 		"UPPERCASE_SENTENCE_START",
 		"WHITESPACE_RULE",
@@ -19,4 +19,9 @@ func GreekRelevantRuleIDs() []string {
 		"GREEK_ORTHOGRAPHY_NUMERAL_STRESS",
 		"EL_REDUNDANCY_REPLACE",
 	}
+}
+
+// GetRelevantRuleIDs ports Greek.getRelevantRules on GreekLang.
+func (v GreekLang) GetRelevantRuleIDs() []string {
+	return append([]string(nil), GreekRelevantRuleIDs()...)
 }
