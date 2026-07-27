@@ -776,7 +776,7 @@
 - [x] org/languagetool/rules/ar/ArabicDoublePunctuationRule.java::ArabicDoublePunctuationRule
 - [ ] org/languagetool/rules/ar/ArabicHomophonesRule.java::ArabicHomophonesRule
 - [ ] org/languagetool/rules/ar/ArabicHunspellSpellerRule.java::ArabicHunspellSpellerRule
-- [ ] org/languagetool/rules/ar/ArabicInflectedOneWordReplaceRule.java::ArabicInflectedOneWordReplaceRule
+- [x] org/languagetool/rules/ar/ArabicInflectedOneWordReplaceRule.java::ArabicInflectedOneWordReplaceRule
 - [x] org/languagetool/rules/ar/ArabicQuestionMarkWhitespaceRule.java::ArabicQuestionMarkWhitespaceRule
 - [ ] org/languagetool/rules/ar/ArabicRedundancyRule.java::ArabicRedundancyRule
 - [ ] org/languagetool/rules/ar/ArabicSemiColonWhitespaceRule.java::ArabicSemiColonWhitespaceRule
