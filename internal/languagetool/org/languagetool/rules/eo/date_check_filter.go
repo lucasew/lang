@@ -22,41 +22,91 @@ func NewDateCheckFilter() *DateCheckFilter {
 		GetDayOfWeekName: func(localized string) time.Weekday {
 			wd, err := h.GetDayOfWeek(localized)
 			if err != nil {
+				// Java throws RuntimeException on unknown weekday → AbstractDateCheckFilter
+				// catches RuntimeException (not IllegalArgumentException) and returns null.
 				panic(err)
 			}
 			return wd
 		},
+		// Java DateCheckFilter.getDayOfWeek(Calendar):
+		// englishDay = date.getDisplayName(DAY_OF_WEEK, LONG, Locale.UK) then map to EO.
 		FormatDayOfWeek: func(t time.Time) string {
-			// Java maps Locale.UK LONG → Esperanto.
-			switch t.Weekday() {
-			case time.Sunday:
-				return "dimanĉo"
-			case time.Monday:
-				return "lundo"
-			case time.Tuesday:
-				return "mardo"
-			case time.Wednesday:
-				return "merkredo"
-			case time.Thursday:
-				return "jaŭdo"
-			case time.Friday:
-				return "vendredo"
-			case time.Saturday:
-				return "sabato"
-			default:
-				return ""
-			}
+			return eoDayOfWeekFromUKLong(t)
 		},
 		GetMonth: func(localized string) int {
 			m, err := h.GetMonth(localized)
 			if err != nil {
-				return 0
+				// Java throws RuntimeException on unknown month.
+				panic(err)
 			}
 			return int(m)
 		},
 		GetDayOfMonthOptional: h.GetDayOfMonth,
 	}
 	return &DateCheckFilter{AbstractDateCheckFilter: abs, helper: h}
+}
+
+// eoDayOfWeekFromUKLong ports DateCheckFilter.getDayOfWeek(Calendar):
+// Locale.UK LONG English → Esperanto names.
+func eoDayOfWeekFromUKLong(t time.Time) string {
+	switch t.Weekday() {
+	case time.Sunday:
+		return "dimanĉo"
+	case time.Monday:
+		return "lundo"
+	case time.Tuesday:
+		return "mardo"
+	case time.Wednesday:
+		return "merkredo"
+	case time.Thursday:
+		return "jaŭdo"
+	case time.Friday:
+		return "vendredo"
+	case time.Saturday:
+		return "sabato"
+	default:
+		return ""
+	}
+}
+
+// GetDayOfWeekJava returns Java Calendar day-of-week (Sunday=1 … Saturday=7).
+// Ports DateCheckFilter.getDayOfWeek(String).
+func (f *DateCheckFilter) GetDayOfWeekJava(dayStr string) (int, error) {
+	if f == nil || f.helper == nil {
+		return 0, fmt.Errorf("nil DateCheckFilter")
+	}
+	wd, err := f.helper.GetDayOfWeek(dayStr)
+	if err != nil {
+		return 0, err
+	}
+	// Go Sunday=0 … Saturday=6 → Java Sunday=1 … Saturday=7
+	return int(wd) + 1, nil
+}
+
+// GetMonth ports DateCheckFilter.getMonth(String) → 1..12 for tests.
+func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
+	if f == nil || f.helper == nil {
+		return 0, fmt.Errorf("nil DateCheckFilter")
+	}
+	m, err := f.helper.GetMonth(monthStr)
+	if err != nil {
+		return 0, err
+	}
+	return int(m), nil
+}
+
+// GetDayOfWeekName ports DateCheckFilter.getDayOfWeek(Calendar) for a civil date.
+func (f *DateCheckFilter) GetDayOfWeekName(year, month, day int) string {
+	t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	return eoDayOfWeekFromUKLong(t)
+}
+
+// GetDayOfMonth ports DateCheckFilter.getDayOfMonth(String) for tests.
+func (f *DateCheckFilter) GetDayOfMonth(dayStr string) int {
+	if f == nil || f.helper == nil {
+		return 0
+	}
+	return f.helper.GetDayOfMonth(dayStr)
 }
 
 // AcceptRuleMatch ports DateCheckFilter.acceptRuleMatch via AbstractDateCheckFilter.
@@ -74,6 +124,7 @@ type DateFilterHelper struct{}
 func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
 // GetDayOfWeek ports DateCheckFilter.getDayOfWeek(String).
+// Prefix order matches Java sequential startsWith checks.
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 	day := strings.ToLower(dayStr)
 	switch {
@@ -85,19 +136,26 @@ func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
 		return time.Tuesday, nil
 	case strings.HasPrefix(day, "mer"):
 		return time.Wednesday, nil
-	case strings.HasPrefix(day, "ĵaŭ"), strings.HasPrefix(day, "jau"),
-		strings.HasPrefix(day, "jhau"), strings.HasPrefix(day, "jxau"):
+	case strings.HasPrefix(day, "ĵaŭ"):
+		return time.Thursday, nil
+	case strings.HasPrefix(day, "jau"):
+		return time.Thursday, nil
+	case strings.HasPrefix(day, "jhau"):
+		return time.Thursday, nil
+	case strings.HasPrefix(day, "jxau"):
 		return time.Thursday, nil
 	case strings.HasPrefix(day, "ven"):
 		return time.Friday, nil
 	case strings.HasPrefix(day, "sab"):
 		return time.Saturday, nil
 	default:
-		return 0, fmt.Errorf("could not find day of week for %q", dayStr)
+		// Java: throw new RuntimeException("Could not find day of week for '" + dayStr + "'")
+		return 0, fmt.Errorf("could not find day of week for '%s'", dayStr)
 	}
 }
 
-// GetMonth ports DateCheckFilter.getMonth.
+// GetMonth ports DateCheckFilter.getMonth(String) → time.Month (January=1).
+// Java only accepts August via startsWith("aŭg") — not Latin "aug".
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 	mon := strings.ToLower(monthStr)
 	switch {
@@ -115,7 +173,7 @@ func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 		return time.June, nil
 	case strings.HasPrefix(mon, "jul"):
 		return time.July, nil
-	case strings.HasPrefix(mon, "aŭg"), strings.HasPrefix(mon, "aug"):
+	case strings.HasPrefix(mon, "aŭg"):
 		return time.August, nil
 	case strings.HasPrefix(mon, "sep"):
 		return time.September, nil
@@ -126,11 +184,14 @@ func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
 	case strings.HasPrefix(mon, "dec"):
 		return time.December, nil
 	default:
-		return 0, fmt.Errorf("could not find month %q", monthStr)
+		// Java: throw new RuntimeException("Could not find month '" + monthStr + "'")
+		return 0, fmt.Errorf("could not find month '%s'", monthStr)
 	}
 }
 
 // GetDayOfMonth ports DateCheckFilter.getDayOfMonth (spelled Esperanto ordinals).
+// Control flow is bug-for-bug with Java: final -n strip; dek / else dudek / else tridek;
+// optional hyphen; equals unua…oka / naŭa / nauxa / naua (separate ifs in Java).
 func (h *DateFilterHelper) GetDayOfMonth(dayStr string) int {
 	day := strings.ToLower(dayStr)
 	if strings.HasSuffix(day, "n") {
@@ -138,7 +199,7 @@ func (h *DateFilterHelper) GetDayOfMonth(dayStr string) int {
 		day = day[:len(day)-1]
 	}
 	n := 0
-	// Java order: dek, then dudek, then tridek.
+	// Java order: if dek else if dudek else if tridek (dudek/tridek do not start with "dek").
 	if strings.HasPrefix(day, "dek") {
 		n = 10
 		day = day[3:]
@@ -153,24 +214,38 @@ func (h *DateFilterHelper) GetDayOfMonth(dayStr string) int {
 		// Remove hyphen as in "dudek-trian".
 		day = day[1:]
 	}
-	switch day {
-	case "unua":
+	// Java uses separate if equals (not if-else); mutually exclusive for these literals.
+	if day == "unua" {
 		n += 1
-	case "dua":
+	}
+	if day == "dua" {
 		n += 2
-	case "tria":
+	}
+	if day == "tria" {
 		n += 3
-	case "kvara":
+	}
+	if day == "kvara" {
 		n += 4
-	case "kvina":
+	}
+	if day == "kvina" {
 		n += 5
-	case "sesa":
+	}
+	if day == "sesa" {
 		n += 6
-	case "sepa":
+	}
+	if day == "sepa" {
 		n += 7
-	case "oka":
+	}
+	if day == "oka" {
 		n += 8
-	case "naŭa", "nauxa", "naua":
+	}
+	if day == "naŭa" {
+		n += 9
+	}
+	if day == "nauxa" {
+		n += 9
+	}
+	if day == "naua" {
 		n += 9
 	}
 	return n
