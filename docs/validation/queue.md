@@ -54,6 +54,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | checklist_id | status | java_paths | go_paths | ready_commit | round | attempt | findings | blocked_reason | updated_at |
 |--------------|--------|------------|----------|--------------|-------|---------|----------|----------------|------------|
+| docs/faithful-port-checklist.md#3.C.3-ArabicCommaWhitespaceRule | ready | inspiration/languagetool/languagetool-language-modules/ar/src/main/java/org/languagetool/rules/ar/ArabicCommaWhitespaceRule.java; inspiration/languagetool/languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicCommaWhitespaceRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/CommaWhitespaceRule.java | internal/languagetool/org/languagetool/rules/ar/arabic_comma_whitespace_rule.go; internal/languagetool/org/languagetool/rules/ar/ArabicCommaWhitespaceRuleTest_test.go | e0f4e521551d0ec55acebcb3f2afdd486ab1ce2d | 0 | 0 |  |  | 2026-07-27T01:17:23Z |
 | docs/faithful-port-checklist.md#3.C.3-ItalianWordRepeatRule | accepted | inspiration/languagetool/languagetool-language-modules/it/src/main/java/org/languagetool/rules/it/ItalianWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/it/src/test/java/org/languagetool/rules/it/ItalianWordRepeatRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/it/italian_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/it/ItalianWordRepeatRuleTest_test.go | bdbd8c254ded5e95070e437c1d7f0ec94fe34f53 | 0 | 0 |  |  | 2026-07-27T01:09:53Z |
 | docs/faithful-port-checklist.md#3.C.3-KhmerUnpairedBracketsRule | accepted | inspiration/languagetool/languagetool-language-modules/km/src/main/java/org/languagetool/rules/km/KhmerUnpairedBracketsRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/GenericUnpairedBracketsRule.java | internal/languagetool/org/languagetool/rules/km/khmer_unpaired_brackets_rule.go; internal/languagetool/org/languagetool/rules/km/khmer_unpaired_brackets_rule_test.go | a24628d01180c9fd53dee4059bda8c37069118e8 | 0 | 0 |  |  | 2026-07-27T01:00:12Z |
 | docs/faithful-port-checklist.md#3.C.3-KhmerWordRepeatRule | accepted | inspiration/languagetool/languagetool-language-modules/km/src/main/java/org/languagetool/rules/km/KhmerWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/km/src/test/java/org/languagetool/rules/km/KhmerWordRepeatRuleTest.java | internal/languagetool/org/languagetool/rules/km/khmer_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/km/KhmerWordRepeatRuleTest_test.go | 9e04cd159334b5a6c199ae46260d482167fa02d1 | 0 | 0 |  |  | 2026-07-27T00:50:51Z |
@@ -499,7 +500,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | accepted 3.C.3-ItalianWordRepeatRule @ bdbd8c25; next fire: implement next 3.C.3 leaf (e.g. AR comma/simple-replace or other lang thin rules) |
+| Notes | ready 3.C.3-ArabicCommaWhitespaceRule @ e0f4e521; next fire: validate (FIFO) |
 
 ---
 
@@ -2312,3 +2313,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-27T01:07:27Z ready: 3.C.3-ItalianWordRepeatRule @ bdbd8c25 (implementer report; parent green reconfirm; full ItalianWordRepeatRuleTest twin; IT analysis; ITALIAN_WORD_REPEAT_RULE)
 - 2026-07-27T01:08:43Z validating: 3.C.3-ItalianWordRepeatRule @ bdbd8c25
 - 2026-07-27T01:09:53Z ACCEPT: 3.C.3-ItalianWordRepeatRule @ bdbd8c25 (validator ACCEPT + parent green reconfirm; full ItalianWordRepeatRuleTest twin; IT analysis; ITALIAN_WORD_REPEAT_RULE)
+- 2026-07-27T01:14:20Z implement: 3.C.3-ArabicCommaWhitespaceRule (ar.ArabicCommaWhitespaceRule; Arabic comma U+060C; full ArabicCommaWhitespaceRuleTest twin; leaf after ItalianWordRepeat ACCEPT)
+- 2026-07-27T01:17:23Z ready: 3.C.3-ArabicCommaWhitespaceRule @ e0f4e521 (implementer report; parent green reconfirm; full ArabicCommaWhitespaceRuleTest twin; Arabic comma U+060C; example pair)
