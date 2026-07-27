@@ -1372,7 +1372,7 @@
 ## languagetool-language-modules/pt
 
 - [ ] org/languagetool/language/AngolaPortuguese.java::AngolaPortuguese
-- [ ] org/languagetool/language/BrazilianPortuguese.java::BrazilianPortuguese
+- [x] org/languagetool/language/BrazilianPortuguese.java::BrazilianPortuguese
 - [ ] org/languagetool/language/MozambiquePortuguese.java::MozambiquePortuguese
 - [x] org/languagetool/language/PortugalPortuguese.java::PortugalPortuguese
 - [x] org/languagetool/language/Portuguese.java::Portuguese
