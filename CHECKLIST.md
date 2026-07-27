@@ -1358,7 +1358,7 @@
 - [ ] org/languagetool/rules/pl/CompoundRule.java::CompoundRule
 - [x] org/languagetool/rules/pl/DashRule.java::DashRule
 - [x] org/languagetool/rules/pl/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/rules/pl/DecadeSpellingFilter.java::DecadeSpellingFilter
+- [x] org/languagetool/rules/pl/DecadeSpellingFilter.java::DecadeSpellingFilter
 - [ ] org/languagetool/rules/pl/MorfologikPolishSpellerRule.java::MorfologikPolishSpellerRule
 - [x] org/languagetool/rules/pl/PolishUnpairedBracketsRule.java::PolishUnpairedBracketsRule
 - [x] org/languagetool/rules/pl/PolishWordRepeatRule.java::PolishWordRepeatRule
