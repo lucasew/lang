@@ -53,7 +53,7 @@ type MorfologikSpeller struct {
 	FrequencyIncluded bool
 	// SupportRunOnWords ports fsa.dict.speller.runon-words (default true).
 	SupportRunOnWords bool
-	// IgnoreDiacritics ports fsa.dict.speller.ignore-diacritics (EN true).
+	// IgnoreDiacritics ports fsa.dict.speller.ignore-diacritics (DEFAULT true; .info may override).
 	IgnoreDiacritics bool
 	// EquivalentChars ports fsa.dict.speller.equivalent-chars (from → alternatives).
 	EquivalentChars map[rune][]rune
@@ -88,6 +88,7 @@ func NewMorfologikSpeller(fileInClassPath string, maxEditDistance int) *Morfolog
 		IgnorePunctuation:  true,
 		IgnoreCamelCase:    true,
 		IgnoreAllUppercase: true,
+		IgnoreDiacritics:   true,
 		ConvertCase:        true,
 		SupportRunOnWords:  true,
 	}

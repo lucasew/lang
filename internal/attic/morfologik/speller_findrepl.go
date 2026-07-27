@@ -216,7 +216,7 @@ func FinalizeCandidates(candidates []CandidateData, originalWord string) []Candi
 }
 
 // findRepl ports Speller.findRepl (anyToTwo, anyToOne, general).
-// Multi-byte labels: accumulate prevBytes until a complete UTF-8 rune decodes.
+// Labels decoded with dictionary Charset (Java CharsetDecoder); incomplete multi-byte accumulate.
 func (s *SpellerFSA) findRepl(
 	candidates *[]CandidateData,
 	depth, node int,
@@ -238,7 +238,7 @@ func (s *SpellerFSA) findRepl(
 		buf := make([]byte, 0, len(prevBytes)+1)
 		buf = append(buf, prevBytes...)
 		buf = append(buf, label)
-		complete, ch := tryDecodeRune(buf)
+		complete, ch := s.tryDecodeChar(buf)
 		if !complete {
 			// incomplete multi-byte sequence: descend without advancing depth/wordIndex
 			if !fsa.isArcTerminal(arc) {
@@ -433,6 +433,29 @@ func (s *SpellerFSA) makeCandidate(word string, origDist int) CandidateData {
 	// CandidateData: distance = orig*FREQ_RANGES + FREQ_RANGES - freq - 1
 	dist := origDist*FreqRanges + FreqRanges - freq - 1
 	return CandidateData{Word: word, OrigDistance: origDist, Distance: dist}
+}
+
+// tryDecodeChar ports Speller.findRepl CharsetDecoder.decode for one candidate character.
+// When fsa.dict.encoding is a single-byte charset (ISO-8859-15, …), each FSA label byte is
+// one character — UTF-8-only decode wrongly treats 0xF2 as an incomplete multi-byte lead
+// and never surfaces dictionary forms like Italian "espiò".
+// UTF-8 dicts (charset nil): accumulate incomplete multi-byte sequences like Java.
+func (s *SpellerFSA) tryDecodeChar(buf []byte) (complete bool, ch rune) {
+	if len(buf) == 0 {
+		return false, 0
+	}
+	if s != nil && s.Dict != nil {
+		if enc := s.Dict.charset(); enc != nil {
+			out, err := enc.NewDecoder().Bytes(buf)
+			if err != nil || len(out) == 0 {
+				// incomplete multi-byte sequence (or unmappable): accumulate / skip like Java
+				return false, 0
+			}
+			r, _ := utf8.DecodeRune(out)
+			return true, r
+		}
+	}
+	return tryDecodeRune(buf)
 }
 
 // tryDecodeRune attempts UTF-8 decode of buf. complete=false if need more bytes.

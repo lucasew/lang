@@ -79,10 +79,16 @@ func OpenDictionary(dictPath string) (*Dictionary, error) {
 		Encoder:           strings.ToUpper(enc),
 		Encoding:          meta["fsa.dict.encoding"],
 		frequencyIncluded: freqInc,
-		// Java DictionaryMetadata defaults (common LT .info override)
-		ConvertCase:       true,
-		IgnoreNumbers:     true,
-		SupportRunOnWords: true,
+		// Java DictionaryMetadata.DEFAULT_ATTRIBUTES (DictionaryMetadata static block):
+		// frequencyIncluded(false), ignorePunctuation, ignoreNumbers, ignoreCamelCase,
+		// ignoreAllUppercase, ignoreDiacritics, convertCase, supportRunOnWords.
+		IgnorePunctuation:  true,
+		IgnoreNumbers:      true,
+		IgnoreCamelCase:    true,
+		IgnoreAllUppercase: true,
+		IgnoreDiacritics:   true,
+		ConvertCase:        true,
+		SupportRunOnWords:  true,
 	}
 	d.applySpellerInfo(meta)
 	return d, nil

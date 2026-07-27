@@ -19,21 +19,44 @@ const (
 )
 
 // MorfologikItalianSpellerRule ports rules.it.MorfologikItalianSpellerRule.
+// Thin super + orderSuggestions (drop capitalized when lower twin present).
 type MorfologikItalianSpellerRule struct {
 	*morfologik.MorfologikSpellerRule
 }
 
+// NewMorfologikItalianSpellerRule ports ctor with null UserConfig / altLanguages.
 func NewMorfologikItalianSpellerRule() *MorfologikItalianSpellerRule {
+	return NewMorfologikItalianSpellerRuleWithUser(nil)
+}
+
+// NewMorfologikItalianSpellerRuleWithUser ports
+// MorfologikItalianSpellerRule(messages, language, userConfig, altLanguages).
+func NewMorfologikItalianSpellerRuleWithUser(userConfig *languagetool.UserConfig) *MorfologikItalianSpellerRule {
+	var userWords []string
+	var accepted []string
+	if userConfig != nil {
+		accepted = userConfig.GetAcceptedWords()
+		userWords = morfologik.UserDictWordsForMulti(accepted, userConfig.GetPremiumUid())
+	}
 	r := &MorfologikItalianSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikItalianSpellerRuleID, "it", ItalianSpellerDict, nil),
 	}
-	// Java MorfologikSpellerRule.initSpeller: binary + spelling.txt + custom + global.
-	r.InitSpellersFromGetters(nil, nil)
+	if userConfig != nil {
+		r.SetUserConfig(userConfig)
+		// Java SpellingCheckRule: wordsToBeIgnored.addAll(userConfig.getAcceptedWords()) always.
+		if r.SpellingCheckRule != nil {
+			r.ApplyUserAcceptedWords(accepted)
+		}
+	}
+	// Java MorfologikSpellerRule.initSpeller: binary + spelling.txt + custom + global (+ user FSA if premium).
+	r.InitSpellersFromGetters(nil, userWords)
 	return r
 }
 
 // Match ports parent Match + orderSuggestions (capitalized-dup drop).
+// Java: calcSpellerSuggestions → orderSuggestions(SuggestedReplacement list, word).
+// Go applies the same filter on final match suggestions (string form of SuggestedReplacement).
 func (r *MorfologikItalianSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
 	if r == nil || r.MorfologikSpellerRule == nil {
 		return nil, nil
@@ -59,11 +82,15 @@ func (r *MorfologikItalianSpellerRule) Match(sentence *languagetool.AnalyzedSent
 // orderItalianSuggestions ports MorfologikItalianSpellerRule.orderSuggestions:
 // drop capitalized suggestion when original word is not capitalized and the
 // lowercase form is also present in the suggestion list.
+//
+// Java walks SuggestedReplacement.getReplacement(); Go uses the string list that
+// RuleMatch stores (same surface semantics as base Match).
 func orderItalianSuggestions(suggestions []string, word string) []string {
 	if len(suggestions) == 0 {
 		return suggestions
 	}
-	// originalSuggestionsStr for membership checks
+	// originalSuggestionsStr for membership checks (list contains, not set-only —
+	// but set is fine for contains of full replacement strings).
 	set := make(map[string]struct{}, len(suggestions))
 	for _, s := range suggestions {
 		set[s] = struct{}{}
@@ -71,6 +98,7 @@ func orderItalianSuggestions(suggestions []string, word string) []string {
 	out := make([]string, 0, len(suggestions))
 	for _, sug := range suggestions {
 		// !isCapitalizedWord(word) && isCapitalizedWord(sug) && list contains sug.toLowerCase()
+		// Java: String.toLowerCase() default locale; Italian Latin → strings.ToLower.
 		if !tools.IsCapitalizedWord(word) && tools.IsCapitalizedWord(sug) {
 			if _, ok := set[strings.ToLower(sug)]; ok {
 				continue
@@ -88,4 +116,3 @@ func matchSurfaceIT(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) str
 	// Java RuleMatch FromPos/ToPos are UTF-16 code units (String.substring).
 	return rules.UTF16Substring(sent.GetText(), m.GetFromPos(), m.GetToPos())
 }
-
