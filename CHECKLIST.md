@@ -823,13 +823,13 @@
 
 ## languagetool-language-modules/br
 
-- [ ] org/languagetool/language/Breton.java::Breton
-- [ ] org/languagetool/rules/br/BretonCompoundRule.java::BretonCompoundRule
-- [ ] org/languagetool/rules/br/DateCheckFilter.java::DateCheckFilter
+- [x] org/languagetool/language/Breton.java::Breton
+- [x] org/languagetool/rules/br/BretonCompoundRule.java::BretonCompoundRule
+- [x] org/languagetool/rules/br/DateCheckFilter.java::DateCheckFilter
 - [x] org/languagetool/rules/br/MorfologikBretonSpellerRule.java::MorfologikBretonSpellerRule
-- [ ] org/languagetool/rules/br/TopoReplaceRule.java::TopoReplaceRule
-- [ ] org/languagetool/tagging/br/BretonTagger.java::BretonTagger
-- [ ] org/languagetool/tokenizers/br/BretonWordTokenizer.java::BretonWordTokenizer
+- [x] org/languagetool/rules/br/TopoReplaceRule.java::TopoReplaceRule
+- [x] org/languagetool/tagging/br/BretonTagger.java::BretonTagger
+- [x] org/languagetool/tokenizers/br/BretonWordTokenizer.java::BretonWordTokenizer
 
 ## languagetool-language-modules/ca
 
