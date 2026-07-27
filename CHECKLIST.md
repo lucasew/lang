@@ -911,7 +911,7 @@
 
 ## languagetool-language-modules/crh
 
-- [ ] org/languagetool/language/CrimeanTatar.java::CrimeanTatar
+- [x] org/languagetool/language/CrimeanTatar.java::CrimeanTatar
 - [x] org/languagetool/rules/crh/MorfologikCrimeanTatarSpellerRule.java::MorfologikCrimeanTatarSpellerRule
 - [x] org/languagetool/synthesis/crh/CrimeanTatarSynthesizer.java::CrimeanTatarSynthesizer
 - [ ] org/languagetool/tagging/crh/CrimeanTatarTagger.java::CrimeanTatarTagger
