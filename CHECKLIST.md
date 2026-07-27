@@ -1428,7 +1428,7 @@
 - [x] org/languagetool/synthesis/pt/PortugueseSynthesizer.java::PortugueseSynthesizer
 - [x] org/languagetool/tagging/disambiguation/pt/PortugueseHybridDisambiguator.java::PortugueseHybridDisambiguator
 - [x] org/languagetool/tagging/pt/PortugueseTagger.java::PortugueseTagger
-- [ ] org/languagetool/tokenizers/pt/PortugueseWordTokenizer.java::PortugueseWordTokenizer
+- [x] org/languagetool/tokenizers/pt/PortugueseWordTokenizer.java::PortugueseWordTokenizer
 
 ## languagetool-language-modules/ro
 
