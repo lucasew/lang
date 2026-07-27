@@ -1373,7 +1373,7 @@
 
 - [x] org/languagetool/language/AngolaPortuguese.java::AngolaPortuguese
 - [x] org/languagetool/language/BrazilianPortuguese.java::BrazilianPortuguese
-- [ ] org/languagetool/language/MozambiquePortuguese.java::MozambiquePortuguese
+- [x] org/languagetool/language/MozambiquePortuguese.java::MozambiquePortuguese
 - [x] org/languagetool/language/PortugalPortuguese.java::PortugalPortuguese
 - [x] org/languagetool/language/Portuguese.java::Portuguese
 - [x] org/languagetool/rules/pt/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
