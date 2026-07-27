@@ -1056,17 +1056,17 @@
 
 ## languagetool-language-modules/el
 
-- [ ] org/languagetool/language/Greek.java::Greek
-- [ ] org/languagetool/rules/el/GreekRedundancyRule.java::GreekRedundancyRule
-- [ ] org/languagetool/rules/el/GreekSpecificCaseRule.java::GreekSpecificCaseRule
-- [ ] org/languagetool/rules/el/GreekWordRepeatBeginningRule.java::GreekWordRepeatBeginningRule
-- [ ] org/languagetool/rules/el/MorfologikGreekSpellerRule.java::MorfologikGreekSpellerRule
-- [ ] org/languagetool/rules/el/NumeralStressRule.java::NumeralStressRule
-- [ ] org/languagetool/rules/el/ReplaceHomonymsRule.java::ReplaceHomonymsRule
+- [x] org/languagetool/language/Greek.java::Greek
+- [x] org/languagetool/rules/el/GreekRedundancyRule.java::GreekRedundancyRule
+- [x] org/languagetool/rules/el/GreekSpecificCaseRule.java::GreekSpecificCaseRule
+- [x] org/languagetool/rules/el/GreekWordRepeatBeginningRule.java::GreekWordRepeatBeginningRule
+- [x] org/languagetool/rules/el/MorfologikGreekSpellerRule.java::MorfologikGreekSpellerRule
+- [x] org/languagetool/rules/el/NumeralStressRule.java::NumeralStressRule
+- [x] org/languagetool/rules/el/ReplaceHomonymsRule.java::ReplaceHomonymsRule
 - [x] org/languagetool/synthesis/el/GreekSynthesizer.java::GreekSynthesizer
 - [ ] org/languagetool/tagging/el/GreekTagger.java::GreekTagger
-- [ ] org/languagetool/tokenizers/el/GreekWordTokenizer.java::GreekWordTokenizer
-- [ ] org/languagetool/tokenizers/el/GreekWordTokenizerImpl.java::GreekWordTokenizerImpl
+- [x] org/languagetool/tokenizers/el/GreekWordTokenizer.java::GreekWordTokenizer
+- [x] org/languagetool/tokenizers/el/GreekWordTokenizerImpl.java::GreekWordTokenizerImpl
 
 ## languagetool-language-modules/en
 
