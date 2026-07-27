@@ -1486,7 +1486,7 @@
 
 ## languagetool-language-modules/sl
 
-- [ ] org/languagetool/language/Slovenian.java::Slovenian
+- [x] org/languagetool/language/Slovenian.java::Slovenian
 - [x] org/languagetool/rules/sl/MorfologikSlovenianSpellerRule.java::MorfologikSlovenianSpellerRule
 
 ## languagetool-language-modules/sr
