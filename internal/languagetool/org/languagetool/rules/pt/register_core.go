@@ -11,7 +11,7 @@ import (
 
 // RegisterCorePortugueseRules ports Portuguese.getRelevantRules / createDefaultSpellingRule
 // plus locale extras (PortugalPortuguese when pt-PT / bare pt; BrazilianPortuguese when pt-BR;
-// AngolaPortuguese when pt-AO).
+// AngolaPortuguese when pt-AO; MozambiquePortuguese when pt-MZ).
 // Java list only — no invent SharedLayout extras.
 func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
@@ -33,6 +33,8 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 		sp = NewMorfologikBrazilianPortugueseSpellerRule()
 	case languageIsAngolaPortuguese(lt.GetLanguageCode()):
 		sp = NewMorfologikAngolaPortugueseSpellerRule()
+	case languageIsMozambiquePortuguese(lt.GetLanguageCode()):
+		sp = NewMorfologikMozambiquePortugueseSpellerRule()
 	default:
 		sp = NewMorfologikPortugalPortugueseSpellerRule()
 	}
@@ -200,6 +202,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	RegisterPortugalPortugueseExtraRules(lt)
 	RegisterBrazilianPortugueseExtraRules(lt)
 	RegisterAngolaPortugueseExtraRules(lt)
+	RegisterMozambiquePortugueseExtraRules(lt)
 }
 
 // RegisterPortugalPortugueseExtraRules ports PortugalPortuguese.getRelevantRules
@@ -360,4 +363,36 @@ func languageIsAngolaPortuguese(code string) bool {
 		return true
 	}
 	return strings.HasPrefix(c, "pt-ao")
+}
+
+// RegisterMozambiquePortugueseExtraRules ports MozambiquePortuguese.getRelevantRules
+// rules added after super.getRelevantRules. Only for MozambiquePortuguese codes (pt-MZ).
+// Java: PreReformPortugueseCompoundRule + PreReformPortugueseDashRule only —
+// no PT/BR path packs, no agreement, no PostReform dash/compound second instance.
+// Same extras pattern as AngolaPortuguese.
+func RegisterMozambiquePortugueseExtraRules(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	code := lt.GetLanguageCode()
+	if !languageIsMozambiquePortuguese(code) {
+		return
+	}
+
+	// Java: new PreReformPortugueseCompoundRule(messages, this, userConfig)
+	preC := NewPreReformPortugueseCompoundRule(nil)
+	lt.AddRuleChecker(preC.GetID(), rules.AsSentenceCheckerSimple(preC.Match))
+
+	// Java: new PreReformPortugueseDashRule(messages)
+	preDash := NewPreReformPortugueseDashRule(nil)
+	lt.AddRuleChecker(preDash.GetID(), rules.AsSentenceCheckerSimple(preDash.Match))
+}
+
+func languageIsMozambiquePortuguese(code string) bool {
+	c := strings.ToLower(strings.ReplaceAll(code, "_", "-"))
+	switch c {
+	case "pt-mz":
+		return true
+	}
+	return strings.HasPrefix(c, "pt-mz")
 }

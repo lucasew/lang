@@ -127,10 +127,28 @@ func AngolaPortugueseRelevantRuleIDs() []string {
 	return append(out, AngolaPortugueseRelevantExtraRuleIDs()...)
 }
 
+// MozambiquePortugueseRelevantExtraRuleIDs ports the rules MozambiquePortuguese adds
+// after super.getRelevantRules (Java MozambiquePortuguese.java order).
+// Pre-reform only: PreReformPortugueseCompoundRule + PreReformPortugueseDashRule.
+// Same extras pattern as AngolaPortuguese; not Portugal/BR packs; no agreement; no PostReform extras.
+func MozambiquePortugueseRelevantExtraRuleIDs() []string {
+	return []string{
+		"PT_COMPOUNDS_PRE_REFORM", // PreReformPortugueseCompoundRule
+		"PT_PREAO_DASH_RULE",      // PreReformPortugueseDashRule
+	}
+}
+
+// MozambiquePortugueseRelevantRuleIDs ports MozambiquePortuguese.getRelevantRules
+// = super + extras in Java ArrayList order (speller MORFOLOGIK_RULE_PT_MZ).
+func MozambiquePortugueseRelevantRuleIDs() []string {
+	out := PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_MZ")
+	return append(out, MozambiquePortugueseRelevantExtraRuleIDs()...)
+}
+
 // GetRelevantRuleIDs ports Portuguese / PortugalPortuguese / BrazilianPortuguese /
-// AngolaPortuguese getRelevantRules.
+// AngolaPortuguese / MozambiquePortuguese getRelevantRules.
 // PortugalPortuguese (pt-PT, bare pt product surface), BrazilianPortuguese (pt-BR),
-// and AngolaPortuguese (pt-AO) append their variant extras after base.
+// AngolaPortuguese (pt-AO), and MozambiquePortuguese (pt-MZ) append their variant extras after base.
 func (v PortugueseVariant) GetRelevantRuleIDs() []string {
 	out := PortugueseRelevantRuleIDsBase(v.SpellerRuleID)
 	if isPortugalPortugueseCode(v.ShortCode) {
@@ -139,6 +157,8 @@ func (v PortugueseVariant) GetRelevantRuleIDs() []string {
 		out = append(out, BrazilianPortugueseRelevantExtraRuleIDs()...)
 	} else if isAngolaPortugueseCode(v.ShortCode) {
 		out = append(out, AngolaPortugueseRelevantExtraRuleIDs()...)
+	} else if isMozambiquePortugueseCode(v.ShortCode) {
+		out = append(out, MozambiquePortugueseRelevantExtraRuleIDs()...)
 	}
 	return out
 }

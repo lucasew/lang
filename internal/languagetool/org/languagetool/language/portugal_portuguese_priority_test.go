@@ -39,4 +39,11 @@ func TestPortuguesePriorityForIdForCode(t *testing.T) {
 	require.False(t, isAngolaPortugueseCode("pt-PT"))
 	require.False(t, isAngolaPortugueseCode("pt-BR"))
 	require.False(t, isAngolaPortugueseCode("pt"))
+	require.False(t, isAngolaPortugueseCode("pt-MZ"))
+	require.True(t, isMozambiquePortugueseCode("pt-MZ"))
+	require.True(t, isMozambiquePortugueseCode("pt_mz"))
+	require.False(t, isMozambiquePortugueseCode("pt-PT"))
+	require.False(t, isMozambiquePortugueseCode("pt-BR"))
+	require.False(t, isMozambiquePortugueseCode("pt-AO"))
+	require.False(t, isMozambiquePortugueseCode("pt"))
 }

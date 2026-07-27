@@ -56,6 +56,15 @@ func TestPortugueseMetadata(t *testing.T) {
 	require.Equal(t, "“", ao.GetOpeningDoubleQuote())
 	require.Equal(t, "”", ao.GetClosingDoubleQuote())
 	require.Equal(t, "MORFOLOGIK_RULE_PT_AO", ao.GetDefaultSpellingRuleID())
+
+	// MozambiquePortuguese surface (Java getName / getCountries / speller id).
+	mz := NewMozambiquePortuguese()
+	require.Equal(t, "Portuguese (Moçambique preAO)", mz.GetName())
+	require.Equal(t, []string{"MZ"}, mz.GetCountries())
+	require.Equal(t, "pt-MZ", mz.GetShortCodeWithCountryAndVariant())
+	require.Equal(t, "“", mz.GetOpeningDoubleQuote())
+	require.Equal(t, "”", mz.GetClosingDoubleQuote())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_MZ", mz.GetDefaultSpellingRuleID())
 }
 
 // Twin of Portuguese.getRelevantRules — class getId order exactly as Java Arrays.asList.
@@ -181,6 +190,32 @@ func TestPortugueseRelevantRuleIDs_MatchJavaGetId(t *testing.T) {
 	require.Equal(t, "PT_ENGLISH_CONTRACTION_ORTHOGRAPHY", ao[len(baseAO)-1])
 	require.Equal(t, "PT_COMPOUNDS_PRE_REFORM", ao[len(baseAO)])
 	require.Equal(t, "PT_PREAO_DASH_RULE", ao[len(ao)-1])
+
+	// MozambiquePortuguese = base (MZ speller) + PreReform extras only
+	mz := NewMozambiquePortuguese().GetRelevantRuleIDs()
+	require.Equal(t, MozambiquePortugueseRelevantRuleIDs(), mz)
+	require.Equal(t, append(append([]string(nil), PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_MZ")...), MozambiquePortugueseRelevantExtraRuleIDs()...), mz)
+	require.Contains(t, mz, "MORFOLOGIK_RULE_PT_MZ")
+	require.NotContains(t, mz, "MORFOLOGIK_RULE_PT_PT")
+	require.NotContains(t, mz, "MORFOLOGIK_RULE_PT_BR")
+	require.NotContains(t, mz, "MORFOLOGIK_RULE_PT_AO")
+	// No PT/BR path packs, agreement, or PostReform dash extras
+	require.NotContains(t, mz, "PT_PT_SIMPLE_REPLACE")
+	require.NotContains(t, mz, "PT_BR_SIMPLE_REPLACE")
+	require.NotContains(t, mz, "PT_AGREEMENT_REPLACE")
+	require.NotContains(t, mz, "PT_POSAO_DASH_RULE")
+	require.NotContains(t, mz, "PT_ARCHAISMS_REPLACE")
+	// Base still has PostReform compound from Portuguese.getRelevantRules
+	require.Contains(t, mz, "PT_COMPOUNDS_POST_REFORM")
+	// PreReform extras after super (Java MozambiquePortuguese.getRelevantRules)
+	require.Equal(t, []string{
+		"PT_COMPOUNDS_PRE_REFORM",
+		"PT_PREAO_DASH_RULE",
+	}, MozambiquePortugueseRelevantExtraRuleIDs())
+	baseMZ := PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_MZ")
+	require.Equal(t, "PT_ENGLISH_CONTRACTION_ORTHOGRAPHY", mz[len(baseMZ)-1])
+	require.Equal(t, "PT_COMPOUNDS_PRE_REFORM", mz[len(baseMZ)])
+	require.Equal(t, "PT_PREAO_DASH_RULE", mz[len(mz)-1])
 }
 
 // Twin of Portuguese.getPriorityForId / PortugalPortuguese override.
@@ -208,6 +243,11 @@ func TestPortuguesePriorityForId_OnLang(t *testing.T) {
 	ao := NewAngolaPortuguese()
 	require.Equal(t, -45, ao.GetPriorityForId("PT_COMPOUNDS_POST_REFORM"))
 	require.Equal(t, -50, ao.GetPriorityForId("MORFOLOGIK_RULE_PT_AO"))
+
+	// pt-MZ uses base Portuguese only (Java MozambiquePortuguese has no id2prio)
+	mz := NewMozambiquePortuguese()
+	require.Equal(t, -45, mz.GetPriorityForId("PT_COMPOUNDS_POST_REFORM"))
+	require.Equal(t, -50, mz.GetPriorityForId("MORFOLOGIK_RULE_PT_MZ"))
 }
 
 // Twin of Portuguese createDefault* factory wiring → real accepted PT twins.

@@ -85,3 +85,21 @@ func isAngolaPortugueseCode(langCode string) bool {
 	}
 	return false
 }
+
+// isMozambiquePortugueseCode reports pt-MZ / pt_MZ locale codes (MozambiquePortuguese).
+// Used for getRelevantRules extras gating; priority remains base Portuguese only
+// (Java MozambiquePortuguese has no id2prio override).
+func isMozambiquePortugueseCode(langCode string) bool {
+	switch langCode {
+	case "pt-MZ", "pt_MZ", "pt-mz", "pt_mz":
+		return true
+	}
+	if len(langCode) >= 5 {
+		if (langCode[2] == '-' || langCode[2] == '_') &&
+			(langCode[3] == 'M' || langCode[3] == 'm') &&
+			(langCode[4] == 'Z' || langCode[4] == 'z') {
+			return true
+		}
+	}
+	return false
+}

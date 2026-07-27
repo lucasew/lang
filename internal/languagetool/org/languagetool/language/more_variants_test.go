@@ -35,6 +35,7 @@ func TestDefaultSpellingRuleIDs_MatchJavaGetId(t *testing.T) {
 	require.Equal(t, "MORFOLOGIK_RULE_PT_PT", PortugalPortuguese.GetDefaultSpellingRuleID())
 	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", BrazilianPortuguese.GetDefaultSpellingRuleID())
 	require.Equal(t, "MORFOLOGIK_RULE_PT_AO", AngolaPortuguese.GetDefaultSpellingRuleID())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_MZ", MozambiquePortuguese.GetDefaultSpellingRuleID())
 }
 
 func TestDutch_GetRuleFileNames(t *testing.T) {
@@ -183,6 +184,21 @@ func TestPortuguesePolishCatalanRussianRelevantRuleIDs(t *testing.T) {
 	require.NotContains(t, ao, "PT_BR_SIMPLE_REPLACE")
 	require.NotContains(t, ao, "PT_ARCHAISMS_REPLACE")
 	require.Equal(t, AngolaPortugueseRelevantRuleIDs(), ao)
+
+	mz := MozambiquePortuguese.GetRelevantRuleIDs()
+	require.Contains(t, mz, "MORFOLOGIK_RULE_PT_MZ")
+	require.NotContains(t, mz, "MORFOLOGIK_RULE_PT_PT")
+	require.NotContains(t, mz, "MORFOLOGIK_RULE_PT_BR")
+	require.NotContains(t, mz, "MORFOLOGIK_RULE_PT_AO")
+	// MozambiquePortuguese extras after super (pre-reform only; same pattern as Angola)
+	require.Contains(t, mz, "PT_COMPOUNDS_PRE_REFORM")
+	require.Contains(t, mz, "PT_PREAO_DASH_RULE")
+	require.NotContains(t, mz, "PT_POSAO_DASH_RULE")
+	require.NotContains(t, mz, "PT_AGREEMENT_REPLACE")
+	require.NotContains(t, mz, "PT_PT_SIMPLE_REPLACE")
+	require.NotContains(t, mz, "PT_BR_SIMPLE_REPLACE")
+	require.NotContains(t, mz, "PT_ARCHAISMS_REPLACE")
+	require.Equal(t, MozambiquePortugueseRelevantRuleIDs(), mz)
 
 	pl := PolishRelevantRuleIDs()
 	require.Contains(t, pl, "MORFOLOGIK_RULE_PL_PL")

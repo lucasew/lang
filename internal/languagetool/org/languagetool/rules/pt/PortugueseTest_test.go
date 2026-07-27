@@ -88,6 +88,20 @@ func TestPortuguese_Language(t *testing.T) {
 	require.Equal(t, "“", aoLang.GetOpeningDoubleQuote())
 	require.Equal(t, "”", aoLang.GetClosingDoubleQuote())
 
+	mzLang := language.NewMozambiquePortuguese()
+	require.Equal(t, "Portuguese (Moçambique preAO)", mzLang.GetName())
+	require.Equal(t, []string{"MZ"}, mzLang.GetCountries())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_MZ", mzLang.GetDefaultSpellingRuleID())
+	require.Equal(t, language.MozambiquePortugueseRelevantRuleIDs(), mzLang.GetRelevantRuleIDs())
+	require.Contains(t, mzLang.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_PT_MZ")
+	require.Contains(t, mzLang.GetRelevantRuleIDs(), "PT_COMPOUNDS_PRE_REFORM")
+	require.Contains(t, mzLang.GetRelevantRuleIDs(), "PT_PREAO_DASH_RULE")
+	require.NotContains(t, mzLang.GetRelevantRuleIDs(), "PT_POSAO_DASH_RULE")
+	require.NotContains(t, mzLang.GetRelevantRuleIDs(), "PT_AGREEMENT_REPLACE")
+	// Base Portuguese curly doubles (not Portugal guillemets)
+	require.Equal(t, "“", mzLang.GetOpeningDoubleQuote())
+	require.Equal(t, "”", mzLang.GetClosingDoubleQuote())
+
 	// Wire Java getRelevantRules into JLanguageTool (no invent extras).
 	lt := languagetool.NewJLanguageTool("pt-PT")
 	RegisterCorePortugueseRules(lt)
@@ -235,4 +249,45 @@ func TestPortuguese_Language_AngolaCoreDemo(t *testing.T) {
 	}
 	require.GreaterOrEqual(t, spellerHits, 1,
 		"demo typos must hit MORFOLOGIK_RULE_PT_AO when pt-AO dict loads")
+}
+
+// pt-MZ core demo surface: PreReform extras + MZ speller id; no PT/BR packs.
+func TestPortuguese_Language_MozambiqueCoreDemo(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("pt-MZ")
+	RegisterCorePortugueseRules(lt)
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_MZ")
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PT_COMPOUNDS_PRE_REFORM")
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PT_PREAO_DASH_RULE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_POSAO_DASH_RULE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_BR_SIMPLE_REPLACE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_PT_SIMPLE_REPLACE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_AGREEMENT_REPLACE")
+	uniq := func(ids []string) []string {
+		seen := map[string]struct{}{}
+		out := make([]string, 0, len(ids))
+		for _, id := range ids {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			out = append(out, id)
+		}
+		return out
+	}
+	require.ElementsMatch(t, uniq(language.MozambiquePortugueseRelevantRuleIDs()), uniq(lt.GetAllRegisteredRuleIDs()))
+
+	matches := lt.Check(portugueseDemoText)
+	ids := make([]string, 0, len(matches))
+	for _, m := range matches {
+		ids = append(ids, m.RuleID)
+	}
+	require.Contains(t, ids, "PORTUGUESE_WORD_REPEAT_RULE")
+	spellerHits := 0
+	for _, id := range ids {
+		if id == "MORFOLOGIK_RULE_PT_MZ" {
+			spellerHits++
+		}
+	}
+	require.GreaterOrEqual(t, spellerHits, 1,
+		"demo typos must hit MORFOLOGIK_RULE_PT_MZ when pt-MZ dict loads")
 }
