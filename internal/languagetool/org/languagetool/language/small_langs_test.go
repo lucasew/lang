@@ -7,8 +7,8 @@ import (
 )
 
 func TestSmallLangs(t *testing.T) {
-	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton/Asturian/Belarusian/Danish promoted to dedicated Lang types (not SmallLang); remaining set ≥ 8.
-	require.GreaterOrEqual(t, len(AllSmallLangs()), 8)
+	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton/Asturian/Belarusian/Danish/Esperanto promoted to dedicated Lang types (not SmallLang); remaining set ≥ 7.
+	require.GreaterOrEqual(t, len(AllSmallLangs()), 7)
 	require.Equal(t, "Ukrainian", Ukrainian.GetName())
 }
 
@@ -17,7 +17,7 @@ func TestSmallLang_DefaultSpellingRuleIDs_MatchJava(t *testing.T) {
 	// Slovak speller id: SlovakLang.GetDefaultSpellingRuleID (slovak_test.go)
 	// Danish speller id: DanishLang.GetDefaultSpellingRuleID (danish_test.go)
 	require.Equal(t, "HUNSPELL_RULE", Swedish.GetDefaultSpellingRuleID())
-	require.Equal(t, "HUNSPELL_RULE", Esperanto.GetDefaultSpellingRuleID())
+	// Esperanto speller id: EsperantoLang.GetDefaultSpellingRuleID (esperanto_test.go)
 	require.Equal(t, "HUNSPELL_RULE", Galician.GetDefaultSpellingRuleID())
 	require.Equal(t, "HUNSPELL_RULE", Khmer.GetDefaultSpellingRuleID())
 	require.Equal(t, "HUNSPELL_NO_SUGGEST_RULE", Icelandic.GetDefaultSpellingRuleID())
@@ -40,7 +40,7 @@ func TestSmallLang_GetMaintainers(t *testing.T) {
 	// Sample of Java getMaintainers ports
 	require.Equal(t, "Leif-Jöran Olsson", Swedish.GetMaintainers()[0].Name)
 	// Greek maintainers: TestGreekMetadata in greek_test.go
-	require.Equal(t, DominiquePelle.Name, Esperanto.GetMaintainers()[0].Name)
+	// Esperanto maintainers: TestEsperantoMetadata in esperanto_test.go
 	// Breton maintainers: TestBretonMetadata in breton_test.go
 	require.Equal(t, "Jim O'Regan", Irish.GetMaintainers()[0].Name)
 	require.Len(t, Irish.GetMaintainers(), 4)

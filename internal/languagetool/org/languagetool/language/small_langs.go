@@ -128,16 +128,16 @@ func (s SmallLang) ToAdvancedTypography(input string) string {
 var (
 	// Slovak promoted to SlovakLang (see slovak.go) — not SmallLang.
 	// Danish promoted to DanishLang (see danish.go) — not SmallLang.
-	// Swedish/Esperanto/Galician: plain HunspellRule → HUNSPELL_RULE
+	// Swedish/Galician: plain HunspellRule → HUNSPELL_RULE
+	// Esperanto promoted to EsperantoLang (see esperanto.go) — not SmallLang.
 	Swedish = SmallLang{"sv", "Swedish", "HUNSPELL_RULE", []string{"SE"}}
 	// Romanian promoted to RomanianLang (see romanian.go) — not SmallLang.
 	// Greek promoted to GreekLang (see greek.go) — not SmallLang.
 	Galician = SmallLang{"gl", "Galician", "HUNSPELL_RULE", []string{"ES"}}
 	// Japanese/Chinese/Persian: no createDefaultSpellingRule / no speller in getRelevantRules
-	Japanese  = SmallLang{"ja", "Japanese", "", []string{"JP"}}
-	Chinese   = SmallLang{"zh", "Chinese", "", []string{"CN"}}
-	Persian   = SmallLang{"fa", "Persian", "", []string{"IR"}}
-	Esperanto = SmallLang{"eo", "Esperanto", "HUNSPELL_RULE", nil}
+	Japanese = SmallLang{"ja", "Japanese", "", []string{"JP"}}
+	Chinese  = SmallLang{"zh", "Chinese", "", []string{"CN"}}
+	Persian  = SmallLang{"fa", "Persian", "", []string{"IR"}}
 	// MorfologikIrishSpellerRule.getId
 	Irish     = SmallLang{"ga", "Irish", "MORFOLOGIK_RULE_GA_IE", []string{"IE"}}
 	Ukrainian = SmallLang{"uk", "Ukrainian", "MORFOLOGIK_RULE_UK_UA", []string{"UA"}}
@@ -146,7 +146,7 @@ var (
 func AllSmallLangs() []SmallLang {
 	return []SmallLang{
 		Swedish, Galician,
-		Japanese, Chinese, Persian, Esperanto, Irish, Ukrainian,
+		Japanese, Chinese, Persian, Irish, Ukrainian,
 	}
 }
 
@@ -154,9 +154,9 @@ func AllSmallLangs() []SmallLang {
 // Java default is LookingForNewMaintainer; only languages that override return ActivelyMaintained.
 func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 	switch s.ShortCode {
-	case "sv", "ga", "uk", "eo":
-		// Swedish, Irish, Ukrainian, Esperanto
-		// Greek/Breton/CrimeanTatar are *Lang — ActivelyMaintained there
+	case "sv", "ga", "uk":
+		// Swedish, Irish, Ukrainian
+		// Greek/Breton/CrimeanTatar/Esperanto are *Lang — ActivelyMaintained there
 		return languagetool.ActivelyMaintained
 	case "gl":
 		// Galician explicitly LookingForNewMaintainer (same as default)
@@ -177,8 +177,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 		return []Contributor{NewContributor("Leif-Jöran Olsson")}
 	// Greek maintainers: GreekLang.GetMaintainers (greek.go)
 	// Danish maintainers: DanishLang.GetMaintainers (danish.go)
-	case "eo":
-		return []Contributor{DominiquePelle}
+	// Esperanto maintainers: EsperantoLang.GetMaintainers (esperanto.go)
 	// Breton maintainers: BretonLang.GetMaintainers (breton.go)
 	case "ga":
 		return []Contributor{
