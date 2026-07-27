@@ -189,7 +189,8 @@ func (v PortugueseVariant) ToAdvancedTypography(input string) string {
 var (
 	PortugalPortuguese   = PortugueseVariant{ShortCode: "pt-PT", Name: "Portuguese (Portugal)", Countries: []string{"PT"}, SpellerRuleID: "MORFOLOGIK_RULE_PT_PT"}
 	BrazilianPortuguese  = PortugueseVariant{ShortCode: "pt-BR", Name: "Portuguese (Brazil)", Countries: []string{"BR"}, SpellerRuleID: "MORFOLOGIK_RULE_PT_BR"}
-	AngolaPortuguese     = PortugueseVariant{ShortCode: "pt-AO", Name: "Portuguese (Angola)", Countries: []string{"AO"}, SpellerRuleID: "MORFOLOGIK_RULE_PT_AO"}
+	// Name is Java AngolaPortuguese.getName() exactly ("Portuguese (Angola preAO)").
+	AngolaPortuguese     = PortugueseVariant{ShortCode: "pt-AO", Name: "Portuguese (Angola preAO)", Countries: []string{"AO"}, SpellerRuleID: "MORFOLOGIK_RULE_PT_AO"}
 	MozambiquePortuguese = PortugueseVariant{ShortCode: "pt-MZ", Name: "Portuguese (Mozambique)", Countries: []string{"MZ"}, SpellerRuleID: "MORFOLOGIK_RULE_PT_MZ"}
 )
 

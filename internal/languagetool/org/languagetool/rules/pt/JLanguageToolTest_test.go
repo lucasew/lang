@@ -90,6 +90,8 @@ func TestJLanguageTool_PortugueseLanguageRootSurface(t *testing.T) {
 	require.Equal(t, []string{"PT"}, language.PortugalPortuguese.GetCountries())
 	require.Equal(t, []string{"BR"}, language.BrazilianPortuguese.GetCountries())
 	require.Equal(t, []string{"AO"}, language.AngolaPortuguese.GetCountries())
+	require.Equal(t, "Portuguese (Angola preAO)", language.AngolaPortuguese.GetName())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_AO", language.AngolaPortuguese.GetDefaultSpellingRuleID())
 	require.Equal(t, []string{"MZ"}, language.MozambiquePortuguese.GetCountries())
 	require.Equal(t, []string{"", "CV", "GW", "MO", "ST", "TL"}, language.PortugueseBaseCountries())
 }

@@ -10,7 +10,8 @@ import (
 )
 
 // RegisterCorePortugueseRules ports Portuguese.getRelevantRules / createDefaultSpellingRule
-// plus locale extras (PortugalPortuguese when pt-PT / bare pt; BrazilianPortuguese when pt-BR).
+// plus locale extras (PortugalPortuguese when pt-PT / bare pt; BrazilianPortuguese when pt-BR;
+// AngolaPortuguese when pt-AO).
 // Java list only — no invent SharedLayout extras.
 func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
@@ -25,10 +26,14 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
 
 	// Speller early (Java order: after unpaired, before long-sentence).
+	// MorfologikPortugueseSpellerRule getId = "MORFOLOGIK_RULE_" + shortCodeWithCountryAndVariant.
 	var sp *MorfologikPortugueseSpellerRule
-	if strings.Contains(strings.ToLower(lt.GetLanguageCode()), "br") {
+	switch {
+	case languageIsBrazilianPortuguese(lt.GetLanguageCode()):
 		sp = NewMorfologikBrazilianPortugueseSpellerRule()
-	} else {
+	case languageIsAngolaPortuguese(lt.GetLanguageCode()):
+		sp = NewMorfologikAngolaPortugueseSpellerRule()
+	default:
 		sp = NewMorfologikPortugalPortugueseSpellerRule()
 	}
 	if p := morfologik.DiscoverLanguageDict(sp.GetFileName()); p != "" {
@@ -194,6 +199,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	// Locale extras after base (Java *Portuguese.getRelevantRules after super).
 	RegisterPortugalPortugueseExtraRules(lt)
 	RegisterBrazilianPortugueseExtraRules(lt)
+	RegisterAngolaPortugueseExtraRules(lt)
 }
 
 // RegisterPortugalPortugueseExtraRules ports PortugalPortuguese.getRelevantRules
@@ -323,4 +329,35 @@ func languageIsBrazilianPortuguese(code string) bool {
 		return true
 	}
 	return strings.HasPrefix(c, "pt-br")
+}
+
+// RegisterAngolaPortugueseExtraRules ports AngolaPortuguese.getRelevantRules
+// rules added after super.getRelevantRules. Only for AngolaPortuguese codes (pt-AO).
+// Java: PreReformPortugueseCompoundRule + PreReformPortugueseDashRule only —
+// no PT/BR path packs, no agreement, no PostReform dash/compound second instance.
+func RegisterAngolaPortugueseExtraRules(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	code := lt.GetLanguageCode()
+	if !languageIsAngolaPortuguese(code) {
+		return
+	}
+
+	// Java: new PreReformPortugueseCompoundRule(messages, this, userConfig)
+	preC := NewPreReformPortugueseCompoundRule(nil)
+	lt.AddRuleChecker(preC.GetID(), rules.AsSentenceCheckerSimple(preC.Match))
+
+	// Java: new PreReformPortugueseDashRule(messages)
+	preDash := NewPreReformPortugueseDashRule(nil)
+	lt.AddRuleChecker(preDash.GetID(), rules.AsSentenceCheckerSimple(preDash.Match))
+}
+
+func languageIsAngolaPortuguese(code string) bool {
+	c := strings.ToLower(strings.ReplaceAll(code, "_", "-"))
+	switch c {
+	case "pt-ao":
+		return true
+	}
+	return strings.HasPrefix(c, "pt-ao")
 }

@@ -13,3 +13,11 @@ func TestRegisterCore_BrazilianSpellerID(t *testing.T) {
 	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_BR")
 	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_PT")
 }
+
+func TestRegisterCore_AngolaSpellerID(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("pt-AO")
+	RegisterCorePortugueseRules(lt)
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_AO")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_PT")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_BR")
+}

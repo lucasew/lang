@@ -109,15 +109,36 @@ func BrazilianPortugueseRelevantRuleIDs() []string {
 	return append(out, BrazilianPortugueseRelevantExtraRuleIDs()...)
 }
 
-// GetRelevantRuleIDs ports Portuguese / PortugalPortuguese / BrazilianPortuguese getRelevantRules.
-// PortugalPortuguese (pt-PT, bare pt product surface) and BrazilianPortuguese (pt-BR)
-// append their variant extras after base; other locales expose base IDs only.
+// AngolaPortugueseRelevantExtraRuleIDs ports the rules AngolaPortuguese adds
+// after super.getRelevantRules (Java AngolaPortuguese.java order).
+// Pre-reform only: PreReformPortugueseCompoundRule + PreReformPortugueseDashRule.
+// No Portugal/BR path packs, no agreement, no PostReform extras, no priority override.
+func AngolaPortugueseRelevantExtraRuleIDs() []string {
+	return []string{
+		"PT_COMPOUNDS_PRE_REFORM", // PreReformPortugueseCompoundRule
+		"PT_PREAO_DASH_RULE",      // PreReformPortugueseDashRule
+	}
+}
+
+// AngolaPortugueseRelevantRuleIDs ports AngolaPortuguese.getRelevantRules
+// = super + extras in Java ArrayList order (speller MORFOLOGIK_RULE_PT_AO).
+func AngolaPortugueseRelevantRuleIDs() []string {
+	out := PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_AO")
+	return append(out, AngolaPortugueseRelevantExtraRuleIDs()...)
+}
+
+// GetRelevantRuleIDs ports Portuguese / PortugalPortuguese / BrazilianPortuguese /
+// AngolaPortuguese getRelevantRules.
+// PortugalPortuguese (pt-PT, bare pt product surface), BrazilianPortuguese (pt-BR),
+// and AngolaPortuguese (pt-AO) append their variant extras after base.
 func (v PortugueseVariant) GetRelevantRuleIDs() []string {
 	out := PortugueseRelevantRuleIDsBase(v.SpellerRuleID)
 	if isPortugalPortugueseCode(v.ShortCode) {
 		out = append(out, PortugalPortugueseRelevantExtraRuleIDs()...)
 	} else if isBrazilianPortugueseCode(v.ShortCode) {
 		out = append(out, BrazilianPortugueseRelevantExtraRuleIDs()...)
+	} else if isAngolaPortugueseCode(v.ShortCode) {
+		out = append(out, AngolaPortugueseRelevantExtraRuleIDs()...)
 	}
 	return out
 }

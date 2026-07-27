@@ -74,6 +74,20 @@ func TestPortuguese_Language(t *testing.T) {
 	require.Equal(t, "“", brLang.GetOpeningDoubleQuote())
 	require.Equal(t, "”", brLang.GetClosingDoubleQuote())
 
+	aoLang := language.NewAngolaPortuguese()
+	require.Equal(t, "Portuguese (Angola preAO)", aoLang.GetName())
+	require.Equal(t, []string{"AO"}, aoLang.GetCountries())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_AO", aoLang.GetDefaultSpellingRuleID())
+	require.Equal(t, language.AngolaPortugueseRelevantRuleIDs(), aoLang.GetRelevantRuleIDs())
+	require.Contains(t, aoLang.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_PT_AO")
+	require.Contains(t, aoLang.GetRelevantRuleIDs(), "PT_COMPOUNDS_PRE_REFORM")
+	require.Contains(t, aoLang.GetRelevantRuleIDs(), "PT_PREAO_DASH_RULE")
+	require.NotContains(t, aoLang.GetRelevantRuleIDs(), "PT_POSAO_DASH_RULE")
+	require.NotContains(t, aoLang.GetRelevantRuleIDs(), "PT_AGREEMENT_REPLACE")
+	// Base Portuguese curly doubles (not Portugal guillemets)
+	require.Equal(t, "“", aoLang.GetOpeningDoubleQuote())
+	require.Equal(t, "”", aoLang.GetClosingDoubleQuote())
+
 	// Wire Java getRelevantRules into JLanguageTool (no invent extras).
 	lt := languagetool.NewJLanguageTool("pt-PT")
 	RegisterCorePortugueseRules(lt)
@@ -180,4 +194,45 @@ func TestPortuguese_Language_BrazilianCoreDemo(t *testing.T) {
 	}
 	require.GreaterOrEqual(t, spellerHits, 1,
 		"demo typos must hit MORFOLOGIK_RULE_PT_BR when pt-BR dict loads")
+}
+
+// pt-AO core demo surface: PreReform extras + AO speller id; no PT/BR packs.
+func TestPortuguese_Language_AngolaCoreDemo(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("pt-AO")
+	RegisterCorePortugueseRules(lt)
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_AO")
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PT_COMPOUNDS_PRE_REFORM")
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PT_PREAO_DASH_RULE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_POSAO_DASH_RULE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_BR_SIMPLE_REPLACE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_PT_SIMPLE_REPLACE")
+	require.NotContains(t, lt.GetAllRegisteredRuleIDs(), "PT_AGREEMENT_REPLACE")
+	uniq := func(ids []string) []string {
+		seen := map[string]struct{}{}
+		out := make([]string, 0, len(ids))
+		for _, id := range ids {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			out = append(out, id)
+		}
+		return out
+	}
+	require.ElementsMatch(t, uniq(language.AngolaPortugueseRelevantRuleIDs()), uniq(lt.GetAllRegisteredRuleIDs()))
+
+	matches := lt.Check(portugueseDemoText)
+	ids := make([]string, 0, len(matches))
+	for _, m := range matches {
+		ids = append(ids, m.RuleID)
+	}
+	require.Contains(t, ids, "PORTUGUESE_WORD_REPEAT_RULE")
+	spellerHits := 0
+	for _, id := range ids {
+		if id == "MORFOLOGIK_RULE_PT_AO" {
+			spellerHits++
+		}
+	}
+	require.GreaterOrEqual(t, spellerHits, 1,
+		"demo typos must hit MORFOLOGIK_RULE_PT_AO when pt-AO dict loads")
 }

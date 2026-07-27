@@ -67,3 +67,21 @@ func isBrazilianPortugueseCode(langCode string) bool {
 	}
 	return false
 }
+
+// isAngolaPortugueseCode reports pt-AO / pt_AO locale codes (AngolaPortuguese).
+// Used for getRelevantRules extras gating; priority remains base Portuguese only
+// (Java AngolaPortuguese has no id2prio override).
+func isAngolaPortugueseCode(langCode string) bool {
+	switch langCode {
+	case "pt-AO", "pt_AO", "pt-ao", "pt_ao":
+		return true
+	}
+	if len(langCode) >= 5 {
+		if (langCode[2] == '-' || langCode[2] == '_') &&
+			(langCode[3] == 'A' || langCode[3] == 'a') &&
+			(langCode[4] == 'O' || langCode[4] == 'o') {
+			return true
+		}
+	}
+	return false
+}

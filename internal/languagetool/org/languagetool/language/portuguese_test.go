@@ -47,6 +47,15 @@ func TestPortugueseMetadata(t *testing.T) {
 	require.Equal(t, "“", br.GetOpeningDoubleQuote())
 	require.Equal(t, "”", br.GetClosingDoubleQuote())
 	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", br.GetDefaultSpellingRuleID())
+
+	// AngolaPortuguese surface (Java getName / getCountries / speller id).
+	ao := NewAngolaPortuguese()
+	require.Equal(t, "Portuguese (Angola preAO)", ao.GetName())
+	require.Equal(t, []string{"AO"}, ao.GetCountries())
+	require.Equal(t, "pt-AO", ao.GetShortCodeWithCountryAndVariant())
+	require.Equal(t, "“", ao.GetOpeningDoubleQuote())
+	require.Equal(t, "”", ao.GetClosingDoubleQuote())
+	require.Equal(t, "MORFOLOGIK_RULE_PT_AO", ao.GetDefaultSpellingRuleID())
 }
 
 // Twin of Portuguese.getRelevantRules — class getId order exactly as Java Arrays.asList.
@@ -147,6 +156,31 @@ func TestPortugueseRelevantRuleIDs_MatchJavaGetId(t *testing.T) {
 	}, BrazilianPortugueseRelevantExtraRuleIDs())
 	require.Equal(t, "PT_BR_SIMPLE_REPLACE", br[len(PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_BR"))+2])
 	require.Equal(t, "PT_WIKIPEDIA_COMMON_ERRORS", br[len(br)-1])
+
+	// AngolaPortuguese = base (AO speller) + PreReform extras only
+	ao := NewAngolaPortuguese().GetRelevantRuleIDs()
+	require.Equal(t, AngolaPortugueseRelevantRuleIDs(), ao)
+	require.Equal(t, append(append([]string(nil), PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_AO")...), AngolaPortugueseRelevantExtraRuleIDs()...), ao)
+	require.Contains(t, ao, "MORFOLOGIK_RULE_PT_AO")
+	require.NotContains(t, ao, "MORFOLOGIK_RULE_PT_PT")
+	require.NotContains(t, ao, "MORFOLOGIK_RULE_PT_BR")
+	// No PT/BR path packs, agreement, or PostReform dash extras
+	require.NotContains(t, ao, "PT_PT_SIMPLE_REPLACE")
+	require.NotContains(t, ao, "PT_BR_SIMPLE_REPLACE")
+	require.NotContains(t, ao, "PT_AGREEMENT_REPLACE")
+	require.NotContains(t, ao, "PT_POSAO_DASH_RULE")
+	require.NotContains(t, ao, "PT_ARCHAISMS_REPLACE")
+	// Base still has PostReform compound from Portuguese.getRelevantRules
+	require.Contains(t, ao, "PT_COMPOUNDS_POST_REFORM")
+	// PreReform extras after super (Java AngolaPortuguese.getRelevantRules)
+	require.Equal(t, []string{
+		"PT_COMPOUNDS_PRE_REFORM",
+		"PT_PREAO_DASH_RULE",
+	}, AngolaPortugueseRelevantExtraRuleIDs())
+	baseAO := PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_AO")
+	require.Equal(t, "PT_ENGLISH_CONTRACTION_ORTHOGRAPHY", ao[len(baseAO)-1])
+	require.Equal(t, "PT_COMPOUNDS_PRE_REFORM", ao[len(baseAO)])
+	require.Equal(t, "PT_PREAO_DASH_RULE", ao[len(ao)-1])
 }
 
 // Twin of Portuguese.getPriorityForId / PortugalPortuguese override.
@@ -169,6 +203,11 @@ func TestPortuguesePriorityForId_OnLang(t *testing.T) {
 	br := NewBrazilianPortuguese()
 	require.Equal(t, -45, br.GetPriorityForId("PT_COMPOUNDS_POST_REFORM"))
 	require.Equal(t, -50, br.GetPriorityForId("MORFOLOGIK_RULE_PT_BR"))
+
+	// pt-AO uses base Portuguese only (Java AngolaPortuguese has no id2prio)
+	ao := NewAngolaPortuguese()
+	require.Equal(t, -45, ao.GetPriorityForId("PT_COMPOUNDS_POST_REFORM"))
+	require.Equal(t, -50, ao.GetPriorityForId("MORFOLOGIK_RULE_PT_AO"))
 }
 
 // Twin of Portuguese createDefault* factory wiring → real accepted PT twins.
