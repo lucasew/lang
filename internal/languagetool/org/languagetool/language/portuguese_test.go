@@ -51,7 +51,7 @@ func TestPortugueseMetadata(t *testing.T) {
 
 // Twin of Portuguese.getRelevantRules — class getId order exactly as Java Arrays.asList.
 func TestPortugueseRelevantRuleIDs_MatchJavaGetId(t *testing.T) {
-	ids := PortugueseRelevantRuleIDs()
+	base := PortugueseRelevantRuleIDs()
 	require.Equal(t, []string{
 		"COMMA_PARENTHESIS_WHITESPACE",
 		"UNPAIRED_BRACKETS",
@@ -71,7 +71,7 @@ func TestPortugueseRelevantRuleIDs_MatchJavaGetId(t *testing.T) {
 		"PT_SIMPLE_REPLACE_ORTHOGRAPHY",
 		"PT_SIMPLE_REPLACE",
 		"PT_BARBARISMS_REPLACE",
-		// PortugueseArchaismsRule commented out in Java (#3095)
+		// PortugueseArchaismsRule commented out in Java base (#3095)
 		"PT_CLICHE_REPLACE",
 		"FILLER_WORDS_PT",
 		"PT_REDUNDANCY_REPLACE",
@@ -89,23 +89,47 @@ func TestPortugueseRelevantRuleIDs_MatchJavaGetId(t *testing.T) {
 		"READABILITY_RULE_DIFFICULT_PT",
 		"DOUBLE_PUNCTUATION",
 		"PT_ENGLISH_CONTRACTION_ORTHOGRAPHY",
-	}, ids)
-	require.Equal(t, ids, Portuguese.GetRelevantRuleIDs())
-	require.Equal(t, ids, NewPortuguese().GetRelevantRuleIDs())
-	require.Equal(t, ids, NewPortugalPortuguese().GetRelevantRuleIDs())
+	}, base)
 
-	br := NewBrazilianPortuguese().GetRelevantRuleIDs()
-	require.Contains(t, br, "MORFOLOGIK_RULE_PT_BR")
-	require.NotContains(t, br, "MORFOLOGIK_RULE_PT_PT")
-
-	// invent / wrong IDs must not reappear
+	// invent / wrong IDs must not reappear on base list
 	for _, bad := range []string{
 		"MULTIPLE_WHITESPACE", "COMMA_WHITESPACE", "PT_UNPAIRED_BRACKETS",
 		"PT_ARCHAISMS_REPLACE", "PT_WEASELWORD_REPLACE",
 		"WHITESPACE_PUNCTUATION", "MORFOLOGIK_RULE_PT",
+		"PT_POSAO_DASH_RULE", "PT_AGREEMENT_REPLACE", "PT_PT_SIMPLE_REPLACE",
 	} {
-		require.NotContains(t, ids, bad)
+		require.NotContains(t, base, bad)
 	}
+
+	// PortugalPortuguese = base + extras (Java ArrayList after super)
+	ids := PortugalPortugueseRelevantRuleIDs()
+	require.Equal(t, append(append([]string(nil), base...), PortugalPortugueseRelevantExtraRuleIDs()...), ids)
+	require.Equal(t, []string{
+		"PT_COMPOUNDS_POST_REFORM",
+		"PT_POSAO_DASH_RULE",
+		"PT_AGREEMENT_REPLACE",
+		"PT_PT_SIMPLE_REPLACE",
+		"PT_BARBARISMS_REPLACE",
+		"PT_ARCHAISMS_REPLACE",
+		"PT_CLICHE_REPLACE",
+		"PT_REDUNDANCY_REPLACE",
+		"PT_WORDINESS_REPLACE",
+		"PT_WIKIPEDIA_COMMON_ERRORS",
+	}, PortugalPortugueseRelevantExtraRuleIDs())
+	require.Equal(t, ids, Portuguese.GetRelevantRuleIDs())
+	require.Equal(t, ids, NewPortuguese().GetRelevantRuleIDs())
+	require.Equal(t, ids, NewPortugalPortuguese().GetRelevantRuleIDs())
+	// Extras appear after base tail
+	require.Equal(t, "PT_ENGLISH_CONTRACTION_ORTHOGRAPHY", ids[len(base)-1])
+	require.Equal(t, "PT_COMPOUNDS_POST_REFORM", ids[len(base)])
+	require.Equal(t, "PT_WIKIPEDIA_COMMON_ERRORS", ids[len(ids)-1])
+
+	br := NewBrazilianPortuguese().GetRelevantRuleIDs()
+	require.Contains(t, br, "MORFOLOGIK_RULE_PT_BR")
+	require.NotContains(t, br, "MORFOLOGIK_RULE_PT_PT")
+	// BR sector not yet wiring its extras — base only
+	require.NotContains(t, br, "PT_PT_SIMPLE_REPLACE")
+	require.NotContains(t, br, "PT_AGREEMENT_REPLACE")
 }
 
 // Twin of Portuguese.getPriorityForId / PortugalPortuguese override.

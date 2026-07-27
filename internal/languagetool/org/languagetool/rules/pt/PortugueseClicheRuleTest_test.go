@@ -114,3 +114,18 @@ func TestPortugueseClicheRule_Metadata(t *testing.T) {
 	require.Len(t, corr, 1)
 	require.Equal(t, "<marker>quente</marker>", corr[0].GetExample())
 }
+
+// Variant path loads official PT list only (PortugalPortuguese.getRelevantRules path).
+func TestPortugueseClicheRule_PTVariant(t *testing.T) {
+	rule := NewPortugueseClicheRule(nil, PortugueseClichePTFilePath)
+	require.Equal(t, []string{PortugueseClichePTFilePath}, rule.GetFileNames())
+	require.Equal(t, []string{"/pt/pt-PT/cliches.txt"}, rule.GetFileNames())
+	require.Equal(t, PortugueseClicheReplaceID, rule.GetID())
+}
+
+// Variant path loads official BR list only (BrazilianPortuguese.getRelevantRules path).
+func TestPortugueseClicheRule_BRVariant(t *testing.T) {
+	rule := NewPortugueseClicheRule(nil, PortugueseClicheBRFilePath)
+	require.Equal(t, []string{PortugueseClicheBRFilePath}, rule.GetFileNames())
+	require.Equal(t, []string{"/pt/pt-BR/cliches.txt"}, rule.GetFileNames())
+}

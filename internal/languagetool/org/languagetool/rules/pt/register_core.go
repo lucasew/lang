@@ -9,9 +9,9 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
-// RegisterCorePortugueseRules ports Portuguese.getRelevantRules / createDefaultSpellingRule.
-// Java list only — no invent SharedLayout extras; no invent agreement/pre-reform/
-// regional replace always-on (those are variant or separate packages).
+// RegisterCorePortugueseRules ports Portuguese.getRelevantRules / createDefaultSpellingRule
+// plus locale extras (PortugalPortuguese.getRelevantRules when code is pt-PT / bare pt).
+// Java list only — no invent SharedLayout extras.
 func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -107,7 +107,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	ppe.DefaultOff = false
 	lt.AddTextLevelRuleChecker(ppe.GetID(), rules.AsTextLevelChecker(ppe.MatchList))
 
-	// Specific to Portuguese (Java order)
+	// Specific to Portuguese (Java Portuguese.getRelevantRules order)
 	postC := NewPostReformPortugueseCompoundRule(nil)
 	lt.AddRuleChecker(postC.GetID(), rules.AsSentenceCheckerSimple(postC.Match))
 
@@ -120,6 +120,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	sr := NewPortugueseReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 
+	// Base barbarisms: Java Portuguese → "/pt/barbarisms.txt" (do not use pt-BR pack here).
 	bar := NewPortugueseBarbarismsRule(nil, PortugueseBarbarismsFilePath)
 	lt.AddRuleChecker(bar.GetID(), rules.AsSentenceCheckerSimple(bar.Match))
 
@@ -189,4 +190,75 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 
 	ec := NewEnglishContractionSpellingRule(nil)
 	lt.AddRuleChecker(ec.GetID(), rules.AsSentenceCheckerSimple(ec.Match))
+
+	// Locale extras after base (Java *Portuguese.getRelevantRules after super).
+	RegisterPortugalPortugueseExtraRules(lt)
+}
+
+// RegisterPortugalPortugueseExtraRules ports PortugalPortuguese.getRelevantRules
+// rules added after super.getRelevantRules. Only for PortugalPortuguese codes
+// (pt-PT / bare pt product surface). Same getId as base is registered again when
+// Java constructs a second instance with a different resource path (or a second
+// PostReformPortugueseCompoundRule). Irish precedent for identical second
+// compound instance: still one compound registration; path packs re-register so
+// both lists run under the shared getId.
+func RegisterPortugalPortugueseExtraRules(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	code := lt.GetLanguageCode()
+	if !languageIsPortugalPortuguese(code) {
+		return
+	}
+
+	// Java: rules.add(new PostReformPortugueseCompoundRule(...)) — second instance,
+	// same getId. Irish twin: same id → one registration (already in base).
+
+	// Java: new PostReformPortugueseDashRule(messages)
+	dash := NewPostReformPortugueseDashRule(nil)
+	lt.AddRuleChecker(dash.GetID(), rules.AsSentenceCheckerSimple(dash.Match))
+
+	// Java: new PortugueseAgreementReplaceRule(messages, this)
+	agr := NewPortugueseAgreementReplaceRule(nil)
+	lt.AddRuleChecker(agr.GetID(), rules.AsSentenceCheckerSimple(agr.Match))
+
+	// Java: new PortugalPortugueseReplaceRule(messages, "/pt/pt-PT/replace.txt", this)
+	ptRepl := NewPortugalPortugueseReplaceRule(nil, PortugalPortugueseReplaceFilePath)
+	lt.AddRuleChecker(ptRepl.GetID(), rules.AsSentenceCheckerSimple(ptRepl.Match))
+
+	// Java: new PortugueseBarbarismsRule(messages, "/pt/pt-PT/barbarisms.txt", this)
+	// Same getId as base /pt/barbarisms.txt — second instance with pt-PT pack.
+	barPT := NewPortugueseBarbarismsRule(nil, PortugueseBarbarismsPTFilePath)
+	lt.AddRuleChecker(barPT.GetID(), rules.AsSentenceCheckerSimple(barPT.Match))
+
+	// Java: new PortugueseArchaismsRule(messages, "/pt/pt-PT/archaisms.txt", this)
+	arch := NewPortugueseArchaismsRule(nil, PortugueseArchaismsPTFilePath)
+	lt.AddRuleChecker(arch.GetID(), rules.AsSentenceCheckerSimple(arch.Match))
+
+	// Java: new PortugueseClicheRule(messages, "/pt/pt-PT/cliches.txt", this)
+	clPT := NewPortugueseClicheRule(nil, PortugueseClichePTFilePath)
+	lt.AddRuleChecker(clPT.GetID(), rules.AsSentenceCheckerSimple(clPT.Match))
+
+	// Java: new PortugueseRedundancyRule(messages, "/pt/pt-PT/redundancies.txt", this)
+	rdPT := NewPortugueseRedundancyRule(nil, PortugueseRedundancyPTFilePath)
+	lt.AddRuleChecker(rdPT.GetID(), rules.AsSentenceCheckerSimple(rdPT.Match))
+
+	// Java: new PortugueseWordinessRule(messages, "/pt/pt-PT/wordiness.txt", this)
+	wiPT := NewPortugueseWordinessRule(nil, PortugueseWordinessPTFilePath)
+	lt.AddRuleChecker(wiPT.GetID(), rules.AsSentenceCheckerSimple(wiPT.Match))
+
+	// Java: new PortugueseWikipediaRule(messages, "/pt/pt-PT/wikipedia.txt", this)
+	wikiPT := NewPortugueseWikipediaRule(nil, PortugueseWikipediaPTFilePath)
+	lt.AddRuleChecker(wikiPT.GetID(), rules.AsSentenceCheckerSimple(wikiPT.Match))
+}
+
+func languageIsPortugalPortuguese(code string) bool {
+	// Mirror language.isPortugalPortugueseCode without importing cycle helpers on short forms.
+	// language package already exposes PortuguesePriorityForIdForCode; use same cases.
+	c := strings.ToLower(strings.ReplaceAll(code, "_", "-"))
+	switch c {
+	case "pt", "pt-pt":
+		return true
+	}
+	return strings.HasPrefix(c, "pt-pt")
 }

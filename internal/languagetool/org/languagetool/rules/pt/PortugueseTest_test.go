@@ -60,8 +60,8 @@ func TestPortuguese_Language(t *testing.T) {
 	require.Equal(t, languagetool.ActivelyMaintained, lang.GetMaintainedState())
 	require.Equal(t, "Marco A.G. Pinto", lang.GetMaintainers()[0].Name)
 
-	// getRelevantRules IDs in Java Arrays.asList order (base Portuguese list)
-	require.Equal(t, language.PortugueseRelevantRuleIDs(), lang.GetRelevantRuleIDs())
+	// getRelevantRules IDs: PortugalPortuguese = base + extras (Java order)
+	require.Equal(t, language.PortugalPortugueseRelevantRuleIDs(), lang.GetRelevantRuleIDs())
 
 	brLang := language.NewBrazilianPortuguese()
 	require.Equal(t, "Portuguese (Brazil)", brLang.GetName())
@@ -71,7 +71,22 @@ func TestPortuguese_Language(t *testing.T) {
 	// Wire Java getRelevantRules into JLanguageTool (no invent extras).
 	lt := languagetool.NewJLanguageTool("pt-PT")
 	RegisterCorePortugueseRules(lt)
-	require.ElementsMatch(t, language.PortugueseRelevantRuleIDs(), lt.GetAllRegisteredRuleIDs())
+	// unique set: second instances share getId with base packs
+	want := language.PortugalPortugueseRelevantRuleIDs()
+	got := lt.GetAllRegisteredRuleIDs()
+	uniq := func(ids []string) []string {
+		seen := map[string]struct{}{}
+		out := make([]string, 0, len(ids))
+		for _, id := range ids {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			out = append(out, id)
+		}
+		return out
+	}
+	require.ElementsMatch(t, uniq(want), uniq(got))
 
 	// Core-rule slice of the demo (without grammar.xml pattern rules):
 	// "dos dos" → PORTUGUESE_WORD_REPEAT_RULE

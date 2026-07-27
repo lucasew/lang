@@ -8,68 +8,91 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-//go:embed data/cliches.txt
+// Official cliches lists Java loads via PortugueseClicheRule(path):
+//
+//	Portuguese → /pt/cliches.txt
+//	BrazilianPortuguese → /pt/pt-BR/cliches.txt
+//	PortugalPortuguese → /pt/pt-PT/cliches.txt
+//
+//go:embed data/cliches.txt data/pt-BR/cliches.txt data/pt-PT/cliches.txt
 var clichesFS embed.FS
 
 // PortugueseClicheReplaceID ports PortugueseClicheRule.PORTUGUESE_CLICHE_RULE.
 const PortugueseClicheReplaceID = "PT_CLICHE_REPLACE"
 
-// PortugueseClicheFilePath is the official resource path Java loads for base
-// Portuguese (Portuguese.getRelevantRules / PortugueseClicheRuleTest → "/pt/cliches.txt").
-// Variant languages pass "/pt/pt-BR/cliches.txt" or "/pt/pt-PT/cliches.txt".
-const PortugueseClicheFilePath = "/pt/cliches.txt"
+// Path constants port the classpath resource strings language modules pass to the ctor.
+const (
+	PortugueseClicheFilePath   = "/pt/cliches.txt"
+	PortugueseClicheBRFilePath = "/pt/pt-BR/cliches.txt"
+	PortugueseClichePTFilePath = "/pt/pt-PT/cliches.txt"
+)
 
 // PortugueseClicheURL ports PortugueseClicheRule.getUrl()
 // → Tools.getUrl("https://pt.wikipedia.org/wiki/Clichê").
 const PortugueseClicheURL = "https://pt.wikipedia.org/wiki/Clichê"
 
+// embed path for each Java classpath path (relative to this package's data/).
+var clicheEmbedByPath = map[string]string{
+	PortugueseClicheFilePath:   "data/cliches.txt",
+	PortugueseClicheBRFilePath: "data/pt-BR/cliches.txt",
+	PortugueseClichePTFilePath: "data/pt-PT/cliches.txt",
+}
+
 var (
-	clicheOnce sync.Once
-	clicheBase *rules.AbstractSimpleReplaceRule2
+	clicheMu    sync.Mutex
+	clicheBases = map[string]*rules.AbstractSimpleReplaceRule2{}
 )
 
-// loadCliche loads official cliches.txt once (Java AbstractSimpleReplaceRule2 lazyInit).
-// Data is the base Portuguese list used by PortugueseClicheRuleTest and Portuguese.java.
-func loadCliche() *rules.AbstractSimpleReplaceRule2 {
-	clicheOnce.Do(func() {
-		f, err := clichesFS.Open("data/cliches.txt")
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-		// Field twin of PortugueseClicheRule + AbstractSimpleReplaceRule2 defaults:
-		// - id PT_CLICHE_REPLACE
-		// - description / short / message as Java overrides
-		// - suggestions separator " ou "
-		// - CaseSensitivy.CI (base default)
-		// - Locale pt via LanguageCode (getLocale → new Locale("pt"))
-		// - useSubRuleSpecificIds()
-		// - Categories.STYLE, ITSIssueType.Style
-		// - URL pt.wikipedia.org Clichê
-		// - example quente como uma fornalha → quente
-		base := &rules.AbstractSimpleReplaceRule2{
-			ID:                   PortugueseClicheReplaceID,
-			Description:          "Frases-feitas e expressões idiomáticas: $match",
-			ShortMsg:             "Frase-feita",
-			MessageTemplate:      "\"$match\" é uma frase-feita. É preferível dizer $suggestions.",
-			SuggestionsSeparator: " ou ",
-			CaseSens:             rules.CaseInsensitive,
-			LanguageCode:         "pt",
-			SubRuleSpecificIDs:   true,
-			Category:             rules.CatStyle.GetCategory(nil),
-			IssueType:            rules.ITSStyle,
-			URL:                  PortugueseClicheURL,
-		}
-		if err := base.LoadSimpleReplaceRule2Data(f, PortugueseClicheFilePath); err != nil {
-			panic(err)
-		}
-		base.AddExamplePair(
-			rules.Wrong("<marker>quente como uma fornalha</marker>"),
-			rules.Fixed("<marker>quente</marker>"),
-		)
-		clicheBase = base
-	})
-	return clicheBase
+// loadCliche loads the official cliches list for path once
+// (Java AbstractSimpleReplaceRule2.lazyInit → fillMaps over getFileNames()).
+func loadCliche(path string) *rules.AbstractSimpleReplaceRule2 {
+	clicheMu.Lock()
+	defer clicheMu.Unlock()
+	if base, ok := clicheBases[path]; ok {
+		return base
+	}
+	embedPath, ok := clicheEmbedByPath[path]
+	if !ok {
+		// Java would fail to open unknown classpath path — fail closed.
+		panic("PortugueseClicheRule: unknown cliches path: " + path)
+	}
+	f, err := clichesFS.Open(embedPath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	// Field twin of PortugueseClicheRule + AbstractSimpleReplaceRule2 defaults:
+	// - id PT_CLICHE_REPLACE
+	// - description / short / message as Java overrides
+	// - suggestions separator " ou "
+	// - CaseSensitivy.CI (base default)
+	// - Locale pt via LanguageCode (getLocale → new Locale("pt"))
+	// - useSubRuleSpecificIds()
+	// - Categories.STYLE, ITSIssueType.Style
+	// - URL pt.wikipedia.org Clichê
+	// - example quente como uma fornalha → quente
+	base := &rules.AbstractSimpleReplaceRule2{
+		ID:                   PortugueseClicheReplaceID,
+		Description:          "Frases-feitas e expressões idiomáticas: $match",
+		ShortMsg:             "Frase-feita",
+		MessageTemplate:      "\"$match\" é uma frase-feita. É preferível dizer $suggestions.",
+		SuggestionsSeparator: " ou ",
+		CaseSens:             rules.CaseInsensitive,
+		LanguageCode:         "pt",
+		SubRuleSpecificIDs:   true,
+		Category:             rules.CatStyle.GetCategory(nil),
+		IssueType:            rules.ITSStyle,
+		URL:                  PortugueseClicheURL,
+	}
+	if err := base.LoadSimpleReplaceRule2Data(f, path); err != nil {
+		panic(err)
+	}
+	base.AddExamplePair(
+		rules.Wrong("<marker>quente como uma fornalha</marker>"),
+		rules.Fixed("<marker>quente</marker>"),
+	)
+	clicheBases[path] = base
+	return base
 }
 
 // PortugueseClicheRule ports org.languagetool.rules.pt.PortugueseClicheRule
@@ -81,14 +104,14 @@ type PortugueseClicheRule struct {
 }
 
 // NewPortugueseClicheRule ports PortugueseClicheRule(ResourceBundle messages, String path, Language language).
-// Official data is go:embed of the same cliches.txt Java loads from the classpath for base PT.
-// language is represented via LanguageCode "pt" on the base (getLocale → Locale("pt")).
+// path is Objects.requireNonNull; language is represented via LanguageCode "pt"
+// on the base (getLocale → Locale("pt")).
 func NewPortugueseClicheRule(messages map[string]string, path string) *PortugueseClicheRule {
 	if path == "" {
 		// Java: Objects.requireNonNull(path)
 		panic("PortugueseClicheRule: path must not be null")
 	}
-	base := loadCliche()
+	base := loadCliche(path)
 	r := *base
 	r.Messages = messages
 	r.Category = rules.CatStyle.GetCategory(messages)

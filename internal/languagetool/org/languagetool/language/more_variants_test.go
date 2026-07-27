@@ -144,15 +144,19 @@ func TestItalianRelevantRuleIDs(t *testing.T) {
 }
 
 func TestPortuguesePolishCatalanRussianRelevantRuleIDs(t *testing.T) {
-	// Portuguese variant speller IDs
+	// Portuguese variant speller IDs + PortugalPortuguese extras
 	pt := PortugalPortuguese.GetRelevantRuleIDs()
 	require.Contains(t, pt, "MORFOLOGIK_RULE_PT_PT")
 	require.Contains(t, pt, "PT_COMPOUNDS_POST_REFORM")
 	require.Contains(t, pt, "FILLER_WORDS_PT")
 	require.Contains(t, pt, "READABILITY_RULE_SIMPLE_PT")
 	require.Contains(t, pt, "READABILITY_RULE_DIFFICULT_PT")
-	// Java comments out archaisms (#3095) and weasel-words in getRelevantRules
-	require.NotContains(t, pt, "PT_ARCHAISMS_REPLACE")
+	// PortugalPortuguese extras after super (Java PortugalPortuguese.getRelevantRules)
+	require.Contains(t, pt, "PT_POSAO_DASH_RULE")
+	require.Contains(t, pt, "PT_AGREEMENT_REPLACE")
+	require.Contains(t, pt, "PT_PT_SIMPLE_REPLACE")
+	require.Contains(t, pt, "PT_ARCHAISMS_REPLACE") // pt-PT pack; base list still omits (#3095)
+	// Weasel-words remain commented out in Java base and variant
 	require.NotContains(t, pt, "PT_WEASELWORD_REPLACE")
 	br := BrazilianPortuguese.GetRelevantRuleIDs()
 	require.Contains(t, br, "MORFOLOGIK_RULE_PT_BR")

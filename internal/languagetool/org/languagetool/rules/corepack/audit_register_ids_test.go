@@ -103,7 +103,9 @@ func TestRegisterCore_MatchesRelevantRuleIDs(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			lt := languagetool.NewJLanguageTool(c.code)
 			c.reg(lt)
-			require.ElementsMatch(t, uniqueIDs(c.want), lt.GetAllRegisteredRuleIDs())
+			// uniqueIDs on both sides: Java getRelevantRules may list the same getId twice
+			// (second instance / path pack); RegisterCore may register both matchers under one id.
+			require.ElementsMatch(t, uniqueIDs(c.want), uniqueIDs(lt.GetAllRegisteredRuleIDs()))
 		})
 	}
 

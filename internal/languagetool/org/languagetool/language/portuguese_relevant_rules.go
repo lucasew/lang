@@ -50,12 +50,45 @@ func PortugueseRelevantRuleIDsBase(spellerRuleID string) []string {
 	}
 }
 
-// PortugueseRelevantRuleIDs is the Portugal (pt-PT) surface of the base list.
+// PortugueseRelevantRuleIDs ports base Portuguese.getRelevantRules with pt-PT speller.
+// Does not include PortugalPortuguese extras (see PortugalPortugueseRelevantRuleIDs).
 func PortugueseRelevantRuleIDs() []string {
 	return PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_PT")
 }
 
-// GetRelevantRuleIDs ports Portuguese.getRelevantRules for Portuguese variants.
+// PortugalPortugueseRelevantExtraRuleIDs ports the rules PortugalPortuguese adds
+// after super.getRelevantRules (Java PortugalPortuguese.java order).
+// Same getId as a base rule appears again when Java constructs a second instance
+// (PostReformPortugueseCompoundRule; path packs for barbarisms/cliche/…).
+func PortugalPortugueseRelevantExtraRuleIDs() []string {
+	return []string{
+		"PT_COMPOUNDS_POST_REFORM",   // second PostReformPortugueseCompoundRule
+		"PT_POSAO_DASH_RULE",         // PostReformPortugueseDashRule
+		"PT_AGREEMENT_REPLACE",       // PortugueseAgreementReplaceRule
+		"PT_PT_SIMPLE_REPLACE",       // PortugalPortugueseReplaceRule("/pt/pt-PT/replace.txt")
+		"PT_BARBARISMS_REPLACE",      // PortugueseBarbarismsRule("/pt/pt-PT/barbarisms.txt")
+		"PT_ARCHAISMS_REPLACE",       // PortugueseArchaismsRule("/pt/pt-PT/archaisms.txt")
+		"PT_CLICHE_REPLACE",          // PortugueseClicheRule("/pt/pt-PT/cliches.txt")
+		"PT_REDUNDANCY_REPLACE",      // PortugueseRedundancyRule("/pt/pt-PT/redundancies.txt")
+		"PT_WORDINESS_REPLACE",       // PortugueseWordinessRule("/pt/pt-PT/wordiness.txt")
+		"PT_WIKIPEDIA_COMMON_ERRORS", // PortugueseWikipediaRule("/pt/pt-PT/wikipedia.txt")
+	}
+}
+
+// PortugalPortugueseRelevantRuleIDs ports PortugalPortuguese.getRelevantRules
+// = super + extras in Java ArrayList order.
+func PortugalPortugueseRelevantRuleIDs() []string {
+	out := PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_PT")
+	return append(out, PortugalPortugueseRelevantExtraRuleIDs()...)
+}
+
+// GetRelevantRuleIDs ports Portuguese / PortugalPortuguese / other locale getRelevantRules.
+// PortugalPortuguese (pt-PT, bare pt product surface) appends variant extras after base.
+// Other locales currently expose base IDs only (Brazilian extras land in 3.B-BrazilianPortuguese).
 func (v PortugueseVariant) GetRelevantRuleIDs() []string {
-	return PortugueseRelevantRuleIDsBase(v.SpellerRuleID)
+	out := PortugueseRelevantRuleIDsBase(v.SpellerRuleID)
+	if isPortugalPortugueseCode(v.ShortCode) {
+		out = append(out, PortugalPortugueseRelevantExtraRuleIDs()...)
+	}
+	return out
 }
