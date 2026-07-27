@@ -1478,11 +1478,11 @@
 
 ## languagetool-language-modules/sk
 
-- [ ] org/languagetool/language/Slovak.java::Slovak
-- [ ] org/languagetool/rules/sk/CompoundRule.java::CompoundRule
+- [x] org/languagetool/language/Slovak.java::Slovak
+- [x] org/languagetool/rules/sk/CompoundRule.java::CompoundRule
 - [x] org/languagetool/rules/sk/MorfologikSlovakSpellerRule.java::MorfologikSlovakSpellerRule
 - [x] org/languagetool/synthesis/sk/SlovakSynthesizer.java::SlovakSynthesizer
-- [ ] org/languagetool/tagging/sk/SlovakTagger.java::SlovakTagger
+- [x] org/languagetool/tagging/sk/SlovakTagger.java::SlovakTagger
 
 ## languagetool-language-modules/sl
 
