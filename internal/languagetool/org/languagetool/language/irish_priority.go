@@ -8,3 +8,8 @@ func IrishPriorityForId(id string) int {
 	}
 	return languagePriorityForId(id)
 }
+
+// GetPriorityForId ports Irish.getPriorityForId on IrishLang.
+func (v IrishLang) GetPriorityForId(id string) int {
+	return IrishPriorityForId(id)
+}

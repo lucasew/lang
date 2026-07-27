@@ -32,3 +32,8 @@ func IrishRelevantRuleIDs() []string {
 		"GA_SPECIFIC_CASE",
 	}
 }
+
+// GetRelevantRuleIDs ports Irish.getRelevantRules on IrishLang.
+func (v IrishLang) GetRelevantRuleIDs() []string {
+	return append([]string(nil), IrishRelevantRuleIDs()...)
+}

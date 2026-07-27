@@ -26,19 +26,7 @@ func TestSmallLangRelevantRuleIDs(t *testing.T) {
 
 	// Greek is GreekLang — full twin in greek_test.go
 
-	// Irish: Java Arrays.asList registers UppercaseSentenceStartRule twice
-	ga := IrishRelevantRuleIDs()
-	require.Contains(t, ga, "MORFOLOGIK_RULE_GA_IE")
-	require.Contains(t, ga, "GA_DHA_NO_BEIRT")
-	nUpper := 0
-	for _, id := range ga {
-		if id == "UPPERCASE_SENTENCE_START" {
-			nUpper++
-		}
-	}
-	require.Equal(t, 2, nUpper)
-	require.Equal(t, 25, len(ga))
-	require.Equal(t, ga, Irish.GetRelevantRuleIDs())
+	// Irish is IrishLang — full twin in irish_test.go
 
 	// Esperanto is EsperantoLang — full twin in esperanto_test.go
 	// Danish is DanishLang — full twin in danish_test.go
