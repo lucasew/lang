@@ -128,6 +128,10 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 
 	fw := NewPortugueseFillerWordsRule(nil)
 	lt.AddRuleChecker(fw.GetID(), rules.AsSentenceCheckerSimple(fw.Match))
+	// Java AbstractStatisticStyleRule / AbstractFillerWordsRule → setDefaultOff().
+	if fw.IsDefaultOff() {
+		lt.MarkDefaultOff(fw.GetID())
+	}
 
 	rd := NewPortugueseRedundancyRule(nil, PortugueseRedundancyFilePath)
 	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))

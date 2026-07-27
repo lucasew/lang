@@ -8,7 +8,7 @@ import (
 
 func TestPortuguesePriorityMap_Size(t *testing.T) {
 	m := PortuguesePriorityMap()
-	require.Equal(t, 62, len(m))
+	require.Equal(t, 64, len(m))
 	// defensive copy
 	if _, ok := m["HOMOPHONE"]; ok {
 		m["HOMOPHONE"] = 999
@@ -36,6 +36,8 @@ func TestPortuguesePriorityForId_MapSpotChecks(t *testing.T) {
 	require.Equal(t, 30, PortuguesePriorityForId("DEGREE_MINUTES_SECONDS"))
 	require.Equal(t, -26, PortuguesePriorityForId("ARCHAISMS"))
 	require.Equal(t, -90, PortuguesePriorityForId("COLOCAÇÃO_ADVÉRBIO"))
+	require.Equal(t, -997, PortuguesePriorityForId("TOO_LONG_SENTENCE"))
+	require.Equal(t, -998, PortuguesePriorityForId("TOO_LONG_PARAGRAPH"))
 	require.Equal(t, -50, PortuguesePriorityForId("SOME_STYLE_RULE"))
 	require.Equal(t, 0, PortuguesePriorityForId("COMPLETELY_UNKNOWN_PT_XYZ"))
 }
