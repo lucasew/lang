@@ -1374,7 +1374,7 @@
 - [ ] org/languagetool/language/AngolaPortuguese.java::AngolaPortuguese
 - [ ] org/languagetool/language/BrazilianPortuguese.java::BrazilianPortuguese
 - [ ] org/languagetool/language/MozambiquePortuguese.java::MozambiquePortuguese
-- [ ] org/languagetool/language/PortugalPortuguese.java::PortugalPortuguese
+- [x] org/languagetool/language/PortugalPortuguese.java::PortugalPortuguese
 - [x] org/languagetool/language/Portuguese.java::Portuguese
 - [x] org/languagetool/rules/pt/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [x] org/languagetool/rules/pt/BrazilianPortugueseReplaceRule.java::BrazilianPortugueseReplaceRule
