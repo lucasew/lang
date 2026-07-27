@@ -1194,13 +1194,13 @@
 
 ## languagetool-language-modules/fa
 
-- [ ] org/languagetool/language/Persian.java::Persian
+- [x] org/languagetool/language/Persian.java::Persian
 - [x] org/languagetool/rules/fa/PersianCommaWhitespaceRule.java::PersianCommaWhitespaceRule
 - [x] org/languagetool/rules/fa/PersianDoublePunctuationRule.java::PersianDoublePunctuationRule
 - [x] org/languagetool/rules/fa/PersianSpaceBeforeRule.java::PersianSpaceBeforeRule
-- [ ] org/languagetool/rules/fa/PersianWordRepeatBeginningRule.java::PersianWordRepeatBeginningRule
-- [ ] org/languagetool/rules/fa/PersianWordRepeatRule.java::PersianWordRepeatRule
-- [ ] org/languagetool/rules/fa/SimpleReplaceRule.java::SimpleReplaceRule
+- [x] org/languagetool/rules/fa/PersianWordRepeatBeginningRule.java::PersianWordRepeatBeginningRule
+- [x] org/languagetool/rules/fa/PersianWordRepeatRule.java::PersianWordRepeatRule
+- [x] org/languagetool/rules/fa/SimpleReplaceRule.java::SimpleReplaceRule
 - [x] org/languagetool/rules/fa/WordCoherencyRule.java::WordCoherencyRule
 - [x] org/languagetool/tokenizers/PersianWordTokenizer.java::PersianWordTokenizer
 
