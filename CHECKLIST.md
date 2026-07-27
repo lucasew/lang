@@ -781,7 +781,7 @@
 - [ ] org/languagetool/rules/ar/ArabicRedundancyRule.java::ArabicRedundancyRule
 - [ ] org/languagetool/rules/ar/ArabicSemiColonWhitespaceRule.java::ArabicSemiColonWhitespaceRule
 - [ ] org/languagetool/rules/ar/ArabicSimpleReplaceRule.java::ArabicSimpleReplaceRule
-- [ ] org/languagetool/rules/ar/ArabicTransVerbRule.java::ArabicTransVerbRule
+- [x] org/languagetool/rules/ar/ArabicTransVerbRule.java::ArabicTransVerbRule
 - [x] org/languagetool/rules/ar/ArabicWordCoherencyRule.java::ArabicWordCoherencyRule
 - [x] org/languagetool/rules/ar/ArabicWordRepeatRule.java::ArabicWordRepeatRule
 - [ ] org/languagetool/rules/ar/ArabicWordinessRule.java::ArabicWordinessRule
