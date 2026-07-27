@@ -41,12 +41,11 @@ func (s SmallLang) GetDefaultSpellingRuleID() string {
 	return s.SpellerRuleID
 }
 
-// GetIgnoredCharactersRegex ports Language.getIgnoredCharactersRegex (+ be/uk overrides).
-// Java Language default is soft hyphen [\u00AD]; Belarusian/Ukrainian override.
+// GetIgnoredCharactersRegex ports Language.getIgnoredCharactersRegex (+ uk override).
+// Java Language default is soft hyphen [\u00AD]; Ukrainian overrides.
+// Belarusian override: BelarusianLang.GetIgnoredCharactersRegex (belarusian.go).
 func (s SmallLang) GetIgnoredCharactersRegex() *regexp.Regexp {
 	switch s.ShortCode {
-	case "be":
-		return languagetool.BelarusianIgnoredCharactersRegex
 	case "uk":
 		return languagetool.UkrainianIgnoredCharactersRegex
 	default:
@@ -54,10 +53,11 @@ func (s SmallLang) GetIgnoredCharactersRegex() *regexp.Regexp {
 	}
 }
 
-// GetOpeningDoubleQuote ports Language defaults + Belarusian/Ukrainian overrides.
+// GetOpeningDoubleQuote ports Language defaults + Ukrainian overrides.
+// Belarusian quotes: BelarusianLang (belarusian.go).
 func (s SmallLang) GetOpeningDoubleQuote() string {
 	switch s.ShortCode {
-	case "be", "uk":
+	case "uk":
 		return "«"
 	default:
 		// Language.java default "
@@ -65,46 +65,50 @@ func (s SmallLang) GetOpeningDoubleQuote() string {
 	}
 }
 
-// GetClosingDoubleQuote ports Language defaults + Belarusian/Ukrainian overrides.
+// GetClosingDoubleQuote ports Language defaults + Ukrainian overrides.
+// Belarusian quotes: BelarusianLang (belarusian.go).
 func (s SmallLang) GetClosingDoubleQuote() string {
 	switch s.ShortCode {
-	case "be", "uk":
+	case "uk":
 		return "»"
 	default:
 		return "\""
 	}
 }
 
-// GetOpeningSingleQuote ports Language defaults + Belarusian/Ukrainian overrides.
+// GetOpeningSingleQuote ports Language defaults + Ukrainian overrides.
+// Belarusian quotes: BelarusianLang (belarusian.go).
 func (s SmallLang) GetOpeningSingleQuote() string {
 	switch s.ShortCode {
-	case "be", "uk":
+	case "uk":
 		return "‘"
 	default:
 		return "'"
 	}
 }
 
-// GetClosingSingleQuote ports Language defaults + Belarusian/Ukrainian overrides.
+// GetClosingSingleQuote ports Language defaults + Ukrainian overrides.
+// Belarusian quotes: BelarusianLang (belarusian.go).
 func (s SmallLang) GetClosingSingleQuote() string {
 	switch s.ShortCode {
-	case "be", "uk":
+	case "uk":
 		return "’"
 	default:
 		return "'"
 	}
 }
 
-// IsAdvancedTypographyEnabled ports Language default (false) + be true / uk false.
+// IsAdvancedTypographyEnabled ports Language default (false).
+// Belarusian true: BelarusianLang.IsAdvancedTypographyEnabled (belarusian.go).
+// Ukrainian explicitly false (quotes set but advanced typography disabled).
 func (s SmallLang) IsAdvancedTypographyEnabled() bool {
-	return s.ShortCode == "be" // Belarusian true; Ukrainian false; others default false
+	return false
 }
 
-// ToAdvancedTypography for SmallLang: Belarusian enabled; Ukrainian disabled; others base disabled.
+// ToAdvancedTypography for SmallLang: Ukrainian disabled; others base disabled.
+// Belarusian: BelarusianLang.ToAdvancedTypography (belarusian.go).
 func (s SmallLang) ToAdvancedTypography(input string) string {
 	switch s.ShortCode {
-	case "be":
-		return BelarusianAdvancedTypography(input)
 	case "uk":
 		return UkrainianAdvancedTypography(input)
 	default:
@@ -159,7 +163,7 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 		return languagetool.LookingForNewMaintainer
 	default:
 		// Japanese, Chinese, Persian, Danish, …: no override → default
-		// (Romanian/Slovak/Slovenian/Tagalog/Asturian LookingForNewMaintainer on *Lang; Greek/Breton ActivelyMaintained on *Lang)
+		// (Romanian/Slovak/Slovenian/Tagalog/Asturian/Belarusian LookingForNewMaintainer on *Lang; Greek/Breton ActivelyMaintained on *Lang)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -167,8 +171,7 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 // GetMaintainers ports Language.getMaintainers for small-language modules (Java names exact).
 func (s SmallLang) GetMaintainers() []Contributor {
 	switch s.ShortCode {
-	case "be":
-		return []Contributor{NewContributor("Alex Buloichik")}
+	// Belarusian maintainers: BelarusianLang.GetMaintainers (belarusian.go)
 	// Slovak maintainers: SlovakLang.GetMaintainers (slovak.go)
 	case "sv":
 		return []Contributor{NewContributor("Leif-Jöran Olsson")}

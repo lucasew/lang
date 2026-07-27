@@ -13,8 +13,7 @@ func (s SmallLang) GetRelevantRuleIDs() []string {
 	// Greek: GreekLang.GetRelevantRuleIDs (greek_relevant_rules.go)
 	case "ga":
 		return IrishRelevantRuleIDs()
-	case "be":
-		return BelarusianRelevantRuleIDs()
+	// Belarusian: BelarusianLang.GetRelevantRuleIDs (belarusian_relevant_rules.go)
 	// Breton: BretonLang.GetRelevantRuleIDs (breton_relevant_rules.go)
 	case "eo":
 		return EsperantoRelevantRuleIDs()

@@ -13,8 +13,7 @@ var (
 	Lithuanian = SmallLang{"lt", "Lithuanian", "MORFOLOGIK_RULE_LT_LT", []string{"LT"}}
 	// HunspellNoSuggestionRule.RULE_ID
 	Icelandic = SmallLang{"is", "Icelandic", "HUNSPELL_NO_SUGGEST_RULE", []string{"IS"}}
-	// MorfologikBelarusianSpellerRule.getId
-	Belarusian = SmallLang{"be", "Belarusian", "MORFOLOGIK_RULE_BE_BY", []string{"BY"}}
+	// Belarusian promoted to BelarusianLang (see belarusian.go) — not SmallLang.
 	// Breton promoted to BretonLang (see breton.go) — not SmallLang.
 	// MorfologikCrimeanTatarSpellerRule.getId
 	CrimeanTatar = SmallLang{"crh", "Crimean Tatar", "MORFOLOGIK_RULE_CRH_UA", []string{"UA"}}
@@ -27,7 +26,7 @@ func AllExtendedSmallLangs() []SmallLang {
 	base := AllSmallLangs()
 	extra := []SmallLang{
 		Khmer, Malayalam, Tamil, Lithuanian, Icelandic,
-		Belarusian, CrimeanTatar,
+		CrimeanTatar,
 	}
 	return append(base, extra...)
 }

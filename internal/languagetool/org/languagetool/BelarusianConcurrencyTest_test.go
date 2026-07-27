@@ -1,9 +1,16 @@
 package languagetool
 
-// Twin of BelarusianConcurrencyTest — concurrent Analyze smoke (full spell race deferred).
+// Twin of languagetool-language-modules/be/src/test/java/org/languagetool/BelarusianConcurrencyTest.java
+// extends AbstractLanguageConcurrencyTest — concurrent Analyze with Java sample text.
+// Full spell-checker race is @Ignore-class slow in practice; Analyze concurrency
+// matches the Go AbstractLanguageConcurrencyTest twin pattern.
+
 import "testing"
 
-// Port of BelarusianConcurrencyTest (Java @Ignore slow spell race)
+// Port of BelarusianConcurrencyTest (createLanguage=Belarusian, createSampleText=…).
 func TestBelarusianConcurrency_NoTests(t *testing.T) {
-	ConcurrencyAnalyzeSmoke(t, "be", "Тэст.")
+	// Java createSampleText:
+	// "Гэта старонка была сцёрта. Ніжэй паказаны журнал сціранняў і пераносаў для гэтай старонкі."
+	ConcurrencyAnalyzeSmoke(t, "be",
+		"Гэта старонка была сцёрта. Ніжэй паказаны журнал сціранняў і пераносаў для гэтай старонкі.")
 }

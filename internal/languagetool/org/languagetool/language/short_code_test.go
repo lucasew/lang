@@ -61,7 +61,7 @@ func TestShortCodeWithCountryAndVariant_Languages(t *testing.T) {
 	require.Equal(t, "sr", DefaultSerbian.GetShortCodeWithCountryAndVariant())
 	require.Equal(t, "sr-RS", SerbianSerbia.GetShortCodeWithCountryAndVariant())
 
-	// SmallLang
+	// Promoted *Lang + remaining SmallLang
 	require.Equal(t, "sk-SK", Slovak.GetShortCodeWithCountryAndVariant())
 	require.Equal(t, "be-BY", Belarusian.GetShortCodeWithCountryAndVariant())
 	require.Equal(t, "eo", Esperanto.GetShortCodeWithCountryAndVariant())

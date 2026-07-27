@@ -48,6 +48,7 @@ func TestSmallLang_GetMaintainedState(t *testing.T) {
 	require.Equal(t, languagetool.LookingForNewMaintainer, Danish.GetMaintainedState())
 	require.Equal(t, languagetool.LookingForNewMaintainer, Japanese.GetMaintainedState())
 	require.Equal(t, languagetool.LookingForNewMaintainer, Romanian.GetMaintainedState())
+	require.Equal(t, languagetool.LookingForNewMaintainer, Belarusian.GetMaintainedState())
 }
 
 func TestMoreVariants_GetMaintainedState(t *testing.T) {

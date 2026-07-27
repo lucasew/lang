@@ -7,7 +7,7 @@ import (
 )
 
 func TestSmallLangs(t *testing.T) {
-	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton/Asturian promoted to dedicated Lang types (not SmallLang); remaining set ≥ 9.
+	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton/Asturian/Belarusian promoted to dedicated Lang types (not SmallLang); remaining set ≥ 9.
 	require.GreaterOrEqual(t, len(AllSmallLangs()), 9)
 	require.Equal(t, "Ukrainian", Ukrainian.GetName())
 	require.Equal(t, "da", Danish.GetShortCode())
@@ -35,16 +35,7 @@ func TestSmallLang_DefaultSpellingRuleIDs_MatchJava(t *testing.T) {
 	require.Empty(t, Tamil.GetDefaultSpellingRuleID())
 }
 
-func TestBelarusian_IgnoredCharactersAndSpellerID(t *testing.T) {
-	// Java MorfologikBelarusianSpellerRule.getId / createDefaultSpellingRule
-	require.Equal(t, "MORFOLOGIK_RULE_BE_BY", Belarusian.GetDefaultSpellingRuleID())
-	// Java Belarusian.getIgnoredCharactersRegex: soft hyphen + combining acute/grave
-	re := Belarusian.GetIgnoredCharactersRegex()
-	require.NotNil(t, re)
-	require.True(t, re.MatchString("\u00AD"))
-	require.True(t, re.MatchString("\u0301"))
-	require.True(t, re.MatchString("\u0300"))
-}
+// Belarusian ignored chars / speller id: TestBelarusianMetadata in belarusian_test.go
 
 func TestSmallLang_GetMaintainers(t *testing.T) {
 	// Sample of Java getMaintainers ports
