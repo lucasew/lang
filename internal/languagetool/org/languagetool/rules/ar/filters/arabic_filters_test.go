@@ -14,6 +14,15 @@ func TestArabicDateFilterHelper(t *testing.T) {
 	require.Equal(t, time.Friday, wd)
 	_, err = h.GetDayOfWeek("notaday")
 	require.Error(t, err)
+	require.Equal(t, "No day name found for notaday'", err.Error())
+
+	// both Monday spellings
+	wd, err = h.GetDayOfWeek("الإثنين")
+	require.NoError(t, err)
+	require.Equal(t, time.Monday, wd)
+	wd, err = h.GetDayOfWeek("الاثنين")
+	require.NoError(t, err)
+	require.Equal(t, time.Monday, wd)
 
 	m, err := h.GetMonth("يناير")
 	require.NoError(t, err)
@@ -24,7 +33,11 @@ func TestArabicDateFilterHelper(t *testing.T) {
 	m, err = h.GetMonth("جويلية")
 	require.NoError(t, err)
 	require.Equal(t, time.July, m)
+	_, err = h.GetMonth("notamonth")
+	require.Error(t, err)
+	require.Equal(t, "No month name for 'notamonth'", err.Error())
 
+	// helper name path (int overload): Monday with hamza
 	require.Equal(t, "الإثنين", h.GetDayOfWeekName(time.Monday))
 }
 
@@ -36,11 +49,11 @@ func TestArabicDateCheckFilter(t *testing.T) {
 	mi, err := f.GetMonth("ديسمبر")
 	require.NoError(t, err)
 	require.Equal(t, 12, mi)
-	// 2024-01-01 was Monday
-	require.Equal(t, "الإثنين", f.GetDayOfWeekName(2024, 1, 1))
-	require.NoError(t, ValidateDateFilterArgs(map[string]string{"weekDay": "x"}))
-	require.Error(t, ValidateDateFilterArgs(map[string]string{}))
-	_ = NewArabicDMYDateCheckFilter()
+	// getDayOfWeek(Calendar) → ar Locale LONG: Monday = "الاثنين" (no hamza)
+	require.Equal(t, "الاثنين", f.GetDayOfWeekName(2024, 1, 1))
+	// getDayOfWeek(int) → helper: Monday = "الإثنين" (with hamza)
+	require.Equal(t, "الإثنين", f.GetDayOfWeekNameFromJavaDay(2))
+	_ = NewArabicDMYDateCheckFilter() // DMY not claimed ready in this sector
 }
 
 func TestArabicNumberPhraseFilter(t *testing.T) {

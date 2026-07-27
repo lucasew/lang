@@ -35,7 +35,7 @@ func TestArabicDateCheckFilter_AcceptIncompleteArgs(t *testing.T) {
 
 func TestArabicDateCheckFilter_GetDayOfWeek1(t *testing.T) {
 	f := NewArabicDateCheckFilter()
-	// Java Calendar: SUNDAY=1 … SATURDAY=7
+	// Java Calendar: SUNDAY=1 … SATURDAY=7 via getDayOfWeek(String)
 	cases := []struct {
 		name string
 		java int
@@ -53,7 +53,22 @@ func TestArabicDateCheckFilter_GetDayOfWeek1(t *testing.T) {
 		require.NoError(t, err, c.name)
 		require.Equal(t, c.java, j, c.name)
 	}
-	// inverse: Java getDayOfWeek(Calendar.X) via helper names
+	// Java also accepts الاثنين (without hamza) → MONDAY
+	j, err := f.GetDayOfWeekJava("الاثنين")
+	require.NoError(t, err)
+	require.Equal(t, 2, j)
+
+	// inverse: Java filter.getDayOfWeek(Calendar.X) is the int overload → helper names
+	// (Monday = "الإثنين" with hamza — NOT ar Locale displayName)
+	require.Equal(t, "الأحد", f.GetDayOfWeekNameFromJavaDay(1))   // Calendar.SUNDAY
+	require.Equal(t, "الإثنين", f.GetDayOfWeekNameFromJavaDay(2)) // Calendar.MONDAY
+	require.Equal(t, "الثلاثاء", f.GetDayOfWeekNameFromJavaDay(3))
+	require.Equal(t, "الأربعاء", f.GetDayOfWeekNameFromJavaDay(4))
+	require.Equal(t, "الخميس", f.GetDayOfWeekNameFromJavaDay(5))
+	require.Equal(t, "الجمعة", f.GetDayOfWeekNameFromJavaDay(6))
+	require.Equal(t, "السبت", f.GetDayOfWeekNameFromJavaDay(7))
+
+	// helper twin of getDayOfWeekName
 	h := NewArabicDateFilterHelper()
 	require.Equal(t, "الأحد", h.GetDayOfWeekName(time.Sunday))
 	require.Equal(t, "الإثنين", h.GetDayOfWeekName(time.Monday))
@@ -66,10 +81,13 @@ func TestArabicDateCheckFilter_GetDayOfWeek1(t *testing.T) {
 
 func TestArabicDateCheckFilter_GetDayOfWeek2(t *testing.T) {
 	f := NewArabicDateCheckFilter()
-	// Java Calendar.MARCH is month index 2 → calendar date March 25/26 2022
+	// Java: Calendar.set(2022, MARCH, 25/26); getDayOfWeek(calendar)
+	// → date.getDisplayName(DAY_OF_WEEK, LONG, Locale.forLanguageTag("ar"))
 	// 2022-03-25 Friday, 2022-03-26 Saturday
 	require.Equal(t, "الجمعة", f.GetDayOfWeekName(2022, 3, 25))
 	require.Equal(t, "السبت", f.GetDayOfWeekName(2022, 3, 26))
+	// Monday via ar Locale LONG is "الاثنين" (no hamza) — not helper "الإثنين"
+	require.Equal(t, "الاثنين", f.GetDayOfWeekName(2024, 1, 1))
 }
 
 func TestArabicDateCheckFilter_GetMonth(t *testing.T) {
