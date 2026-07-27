@@ -53,7 +53,8 @@ func DiscoverPortuguesePOSDict() string {
 }
 
 // EnsureDefaultPortugueseTagger loads portuguese.dict into DefaultPortugueseTagger
-// and wires PortugueseWordTokenizer.IsTaggedPT (Java PortugueseTagger in tokenizer).
+// and wires PortugueseWordTokenizer construction to real PortugueseTagger
+// (Java: new PortugueseWordTokenizer() → tagger = new PortugueseTagger()).
 // Idempotent; no-op if dict missing (fail closed).
 // Java BaseTagger: overwriteWithManualTagger() → false → CombiningTagger(overwrite=false).
 func EnsureDefaultPortugueseTagger() {
@@ -77,7 +78,26 @@ func EnsureDefaultPortugueseTagger() {
 		DefaultPortugueseTagger = NewPortugueseTaggerWithDictLookup(wt, mt)
 		// Java PortugueseWordTokenizer.wordsToAdd →
 		// tagger.tag(Arrays.asList(...)).get(0).isTagged()
+		// Instance field path (preferred): NewPortugueseWordTokenizer uses loader.
+		pttok.RegisterPortugueseTaggerLoader(portugueseWordTokenizerTagger)
+		// Package hook kept for older inject sites (speller / binary POS).
 		pttok.IsTaggedPT = portugueseTaggerIsTagged
+	})
+}
+
+// portugueseWordTokenizerTagger is Java "new PortugueseTagger()" for tokenizer ctor.
+func portugueseWordTokenizerTagger() pttok.PortugueseHyphenTagger {
+	tg := DefaultPortugueseTagger
+	if tg == nil {
+		return nil
+	}
+	return pttok.ATRTagFunc(func(tokens []string) []pttok.PortugueseHyphenReadings {
+		atrs := tg.Tag(tokens)
+		out := make([]pttok.PortugueseHyphenReadings, len(atrs))
+		for i, a := range atrs {
+			out[i] = a
+		}
+		return out
 	})
 }
 
@@ -139,4 +159,14 @@ func walkUpPTResourceDir() string {
 		dir = parent
 	}
 	return ""
+}
+
+func init() {
+	// Java PortugueseWordTokenizer() always constructs PortugueseTagger.
+	// Register a loader that loads official portuguese.dict on first tokenizer construction
+	// (avoids import cycle: tokenizers/pt does not import tagging/pt).
+	pttok.RegisterPortugueseTaggerLoader(func() pttok.PortugueseHyphenTagger {
+		EnsureDefaultPortugueseTagger()
+		return portugueseWordTokenizerTagger()
+	})
 }

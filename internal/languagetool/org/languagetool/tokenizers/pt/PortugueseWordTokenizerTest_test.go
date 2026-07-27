@@ -1,34 +1,50 @@
-package pt
+package pt_test
 
 // Twin of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java
+//
+// Java: final PortugueseWordTokenizer wordTokenizer = new PortugueseWordTokenizer();
+// which constructs PortugueseTagger over official portuguese.dict.
+// Prefer real tagger for hyphen compounds — same as PolishWordTokenizer close-out
+// (no invent IsTaggedPT whitelist inject).
+
 import (
-	"strings"
+	"sync"
 	"testing"
 
+	taggingpt "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/pt"
+	pt "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pt"
 	"github.com/stretchr/testify/require"
 )
 
+var (
+	ptTokenizerOnce sync.Once
+	ptWordTokenizer *pt.PortugueseWordTokenizer
+)
+
+// javaWordTokenizer returns a PortugueseWordTokenizer wired like Java
+// new PortugueseWordTokenizer() (real PortugueseTagger + portuguese.dict).
+func javaWordTokenizer(t *testing.T) *pt.PortugueseWordTokenizer {
+	t.Helper()
+	ptTokenizerOnce.Do(func() {
+		require.NotEmpty(t, taggingpt.DiscoverPortuguesePOSDict(),
+			"official portuguese.dict must be discoverable (third_party/portuguese-pos-dict or inspiration)")
+		taggingpt.EnsureDefaultPortugueseTagger()
+		require.NotNil(t, taggingpt.DefaultPortugueseTagger,
+			"PortugueseTagger must load from official portuguese.dict")
+		require.NotNil(t, taggingpt.DefaultPortugueseTagger.GetWordTagger())
+		// NewPortugueseWordTokenizer uses registered loader → real PortugueseTagger.
+		// Blank import of tagging/pt is not enough — Ensure registers loader and loads dict.
+		// After Ensure, NewPortugueseWordTokenizer() matches Java ctor.
+		ptWordTokenizer = pt.NewPortugueseWordTokenizer()
+		// Prove production path uses real tagger: hyphen compound stays whole only if tagged.
+		// (field is unexported; behavioral check is sex-appeal keep + Sem-Peixe split)
+	})
+	return ptWordTokenizer
+}
+
 func testTokenise(t *testing.T, sentence string, tokens ...string) {
 	t.Helper()
-	// Java keeps dictionary-tagged hyphen compounds via PortugueseTagger.
-	// Inject IsTaggedPT for those surfaces — no soft invent doNotSplit lexicon.
-	prev := IsTaggedPT
-	IsTaggedPT = func(s string) bool {
-		switch strings.ToLower(s) {
-		// Java PortugueseWordTokenizerTest hyphen compounds kept whole by tagger
-		case "sex-appeal", "aix-en-provence", "montemor-o-novo", "andorra-a-velha", "tsé-tung",
-			"jiu-jitsu", "franco-prussiano",
-			"diz-se", "amamo-lo", "fi-lo", "pusé-lo", "canta-lo", "dar-no-lo",
-			"fá-lo-á", "dir-lhe-ia", "banhar-nos-emos",
-			"soto-pôr", "soto-trepar":
-			return true
-		default:
-			return false
-		}
-	}
-	t.Cleanup(func() { IsTaggedPT = prev })
-
-	w := NewPortugueseWordTokenizer()
+	w := javaWordTokenizer(t)
 	got := w.Tokenize(sentence)
 	require.Equal(t, tokens, got, "tokenize(%q)", sentence)
 }
@@ -73,27 +89,33 @@ func TestPortugueseWordTokenizer_TokeniseHyphenatedSplitRegardlessOfLetterCase(t
 
 func TestPortugueseWordTokenizer_TokeniseHyphenatedSplit(t *testing.T) {
 	testTokenise(t, "Paris-São Paulo", "Paris", "-", "São", " ", "Paulo")
+	// this word exists in the speller but not the tagger dict; this may become a problem
 	testTokenise(t, "Sem-Peixe", "Sem", "-", "Peixe")
 	testTokenise(t, "húngaro-americano", "húngaro", "-", "americano")
 }
 
 func TestPortugueseWordTokenizer_TokeniseHyphenatedClitics(t *testing.T) {
+	// As of dict v0.13!
 	testTokenise(t, "diz-se", "diz-se")
 	testTokenise(t, "amamo-lo", "amamo-lo")
 	testTokenise(t, "fi-lo", "fi-lo")
 	testTokenise(t, "pusé-lo", "pusé-lo")
 	testTokenise(t, "canta-lo", "canta-lo")
 	testTokenise(t, "dar-no-lo", "dar-no-lo")
+	// rare contractions like these are NOT generated
 	testTokenise(t, "dê-mo", "dê", "-", "mo")
 }
 
 func TestPortugueseWordTokenizer_TokeniseMesoclisis(t *testing.T) {
+	// As of dict v0.13!
 	testTokenise(t, "fá-lo-á", "fá-lo-á")
 	testTokenise(t, "dir-lhe-ia", "dir-lhe-ia")
 	testTokenise(t, "banhar-nos-emos", "banhar-nos-emos")
 }
 
 func TestPortugueseWordTokenizer_TokeniseProductivePrefixes(t *testing.T) {
+	// These are specifically forms that are NOT in the tagger dict (though they might be in the speller).
+	// The idea is that our word tagger should be able to tag them by identifying the prefix.
 	testTokenise(t, "soto-pôr", "soto-pôr")
 	testTokenise(t, "soto-trepar", "soto-trepar")
 }
@@ -225,11 +247,31 @@ func TestPortugueseWordTokenizer_TokeniseParagraphSymbol(t *testing.T) {
 }
 
 func TestPortugueseWordTokenizer_TokeniseComplexEmoji(t *testing.T) {
-	testTokenise(t, "🧝🏽‍♀️", "🧝", "🏽", "‍", "♀️")
+	// Java: elf + medium skin tone + ZWJ + female sign + variation selector → FE0F merges into previous
+	testTokenise(t, "\U0001F9DD\U0001F3FD\u200D\u2640\uFE0F", "\U0001F9DD", "\U0001F3FD", "\u200D", "\u2640\uFE0F")
 }
 
 func TestPortugueseWordTokenizer_TokeniseUnitsOfMeasure(t *testing.T) {
 	testTokenise(t, "100mm", "100mm")
 	testTokenise(t, "10x10mm", "10x10mm")
 	testTokenise(t, "10×10mm", "10", "×", "10mm")
+}
+
+// TestPortugueseWordTokenizer_UsesRealTaggerNotWhitelist proves production path
+// uses PortugueseTagger.tag(...).isTagged() rather than a test inject table.
+func TestPortugueseWordTokenizer_UsesRealTaggerNotWhitelist(t *testing.T) {
+	// Clear package hook so only instance field path can keep compounds whole.
+	prev := pt.IsTaggedPT
+	pt.IsTaggedPT = nil
+	t.Cleanup(func() { pt.IsTaggedPT = prev })
+
+	taggingpt.EnsureDefaultPortugueseTagger()
+	require.NotNil(t, taggingpt.DefaultPortugueseTagger)
+	w := pt.NewPortugueseWordTokenizer()
+	// Dict-tagged compound kept whole
+	require.Equal(t, []string{"sex-appeal"}, w.Tokenize("sex-appeal"))
+	// Not in tagger dict → split
+	require.Equal(t, []string{"Sem", "-", "Peixe"}, w.Tokenize("Sem-Peixe"))
+	// Productive soto- prefix via real PortugueseTagger.tagPrefixedVerbs
+	require.Equal(t, []string{"soto-trepar"}, w.Tokenize("soto-trepar"))
 }

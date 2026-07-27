@@ -9,10 +9,77 @@ import (
 )
 
 // PortugueseWordTokenizer ports org.languagetool.tokenizers.pt.PortugueseWordTokenizer.
-type PortugueseWordTokenizer struct{}
+// Java field: private final PortugueseTagger tagger = new PortugueseTagger().
+type PortugueseWordTokenizer struct {
+	// tagger is Java PortugueseTagger used in wordsToAdd for hyphen compounds.
+	// Nil → fail closed (split hyphens) unless IsTaggedPT package hook is set.
+	tagger PortugueseHyphenTagger
+}
 
+// PortugueseHyphenTagger is the subset of PortugueseTagger used by wordsToAdd
+// (Java: tagger.tag(...).get(0).isTagged()).
+// Implementations typically wrap *tagging/pt.PortugueseTagger.Tag.
+type PortugueseHyphenTagger interface {
+	Tag(tokens []string) []PortugueseHyphenReadings
+}
+
+// PortugueseHyphenReadings is the subset of AnalyzedTokenReadings consulted
+// for hyphen compound keep/split. *languagetool.AnalyzedTokenReadings implements this.
+type PortugueseHyphenReadings interface {
+	IsTagged() bool
+}
+
+// ATRTagFunc adapts a batch-tag function to PortugueseHyphenTagger.
+type ATRTagFunc func(tokens []string) []PortugueseHyphenReadings
+
+// Tag implements PortugueseHyphenTagger.
+func (f ATRTagFunc) Tag(tokens []string) []PortugueseHyphenReadings {
+	if f == nil {
+		return nil
+	}
+	return f(tokens)
+}
+
+// portugueseTaggerLoader is registered by tagging/pt (import-cycle fence) so
+// NewPortugueseWordTokenizer can construct like Java new PortugueseTagger().
+var portugueseTaggerLoader func() PortugueseHyphenTagger
+
+// RegisterPortugueseTaggerLoader registers the Java-equivalent of
+// "new PortugueseTagger()" for PortugueseWordTokenizer construction.
+// Called from tagging/pt when official portuguese.dict loading is available.
+func RegisterPortugueseTaggerLoader(f func() PortugueseHyphenTagger) {
+	portugueseTaggerLoader = f
+}
+
+// IsTaggedPT optional package-level PortugueseTagger.tag(...).isTagged() hook.
+// Prefer the instance field set by NewPortugueseWordTokenizer (Java).
+// Kept as nil-safe fallback for older inject sites (speller / binary POS wire).
+// Without tagger field and without this hook, hyphen compounds are split.
+var IsTaggedPT func(s string) bool
+
+// NewPortugueseWordTokenizer ports Java PortugueseWordTokenizer() which does
+// tagger = new PortugueseTagger(). When tagging/pt has registered a loader and
+// official portuguese.dict is available, the real tagger is wired automatically.
 func NewPortugueseWordTokenizer() *PortugueseWordTokenizer {
-	return &PortugueseWordTokenizer{}
+	w := &PortugueseWordTokenizer{}
+	if portugueseTaggerLoader != nil {
+		w.tagger = portugueseTaggerLoader()
+	}
+	return w
+}
+
+// NewPortugueseWordTokenizerWithTagger builds a tokenizer with an explicit tagger
+// (tests / callers that already hold a PortugueseTagger).
+func NewPortugueseWordTokenizerWithTagger(t PortugueseHyphenTagger) *PortugueseWordTokenizer {
+	return &PortugueseWordTokenizer{tagger: t}
+}
+
+// SetTagger sets the hyphen-compound tagger (optional; Java has final field set in ctor).
+func (w *PortugueseWordTokenizer) SetTagger(t PortugueseHyphenTagger) {
+	if w == nil {
+		return
+	}
+	w.tagger = t
 }
 
 const (
@@ -49,11 +116,6 @@ var (
 		"anti-vih": true, "al-qaïda": true,
 	}
 )
-
-// IsTaggedPT optional PortugueseTagger.tag(...).isTagged() hook.
-// Java PortugueseWordTokenizer uses PortugueseTagger for hyphen compounds.
-// Without a tagger, miss (split hyphens) — do not invent a soft compound lexicon.
-var IsTaggedPT func(s string) bool
 
 func (w *PortugueseWordTokenizer) Tokenize(text string) []string {
 	tokenisedText := text
@@ -94,7 +156,7 @@ func (w *PortugueseWordTokenizer) Tokenize(text string) []string {
 		// outside of if as we also replace back sentence-ending abbreviations
 		token = strings.ReplaceAll(token, string(nonBreakingDotSubst), ".")
 		token = strings.ReplaceAll(token, hyphenSubstText, "-")
-		tokenList = append(tokenList, wordsToAddPT(token)...)
+		tokenList = append(tokenList, w.wordsToAdd(token)...)
 	}
 	return tokenizers.JoinEMailsAndUrls(tokenList)
 }
@@ -151,8 +213,8 @@ func protectPTSpacedNumbers(text string) string {
 	return b.String()
 }
 
-// wordsToAddPT ports PortugueseWordTokenizer.wordsToAdd.
-func wordsToAddPT(s string) []string {
+// wordsToAdd ports PortugueseWordTokenizer.wordsToAdd.
+func (w *PortugueseWordTokenizer) wordsToAdd(s string) []string {
 	var l []string
 	if s == "" {
 		return l
@@ -164,13 +226,20 @@ func wordsToAddPT(s string) []string {
 		l = append(l, s)
 		return l
 	}
+	// Java: tagger.tag(Arrays.asList(s.replace("’", "'"))).get(0).isTagged()
+	// In the current POS tag, most apostrophes are curly: to be fixed
 	normalized := strings.ReplaceAll(s, "’", "'")
-	// Java: tagger.tag(...).isTagged() OR equalsIgnoreCase exception list.
-	if isTaggedPT(normalized) || javaHyphenException(s) {
+	if w.isTagged(normalized) {
+		l = append(l, s)
+		return l
+	}
+	// some camel-case words containing hyphen (is there any better fix?)
+	if javaHyphenException(s) {
 		l = append(l, s)
 		return l
 	}
 	// if not found, the word is split on hyphens (keep separators)
+	// Java: StringTokenizer(s, "-", true)
 	var cur strings.Builder
 	for _, r := range s {
 		if r == '-' {
@@ -193,9 +262,16 @@ func javaHyphenException(s string) bool {
 	return javaHyphenExceptions[strings.ToLower(s)]
 }
 
-func isTaggedPT(s string) bool {
-	// Java: PortugueseTagger.tag(...).isTagged(). Without a tagger, miss
-	// (split hyphens) — do not invent a soft compound lexicon.
+// isTagged ports Java tagger.tag(...).get(0).isTagged().
+// Prefer instance tagger (Java field); package IsTaggedPT is nil-safe fallback only.
+func (w *PortugueseWordTokenizer) isTagged(s string) bool {
+	if w != nil && w.tagger != nil {
+		atrs := w.tagger.Tag([]string{s})
+		if len(atrs) == 0 || atrs[0] == nil {
+			return false
+		}
+		return atrs[0].IsTagged()
+	}
 	if IsTaggedPT != nil {
 		return IsTaggedPT(s)
 	}
