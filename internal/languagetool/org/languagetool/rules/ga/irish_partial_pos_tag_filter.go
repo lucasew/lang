@@ -1,10 +1,13 @@
 package ga
 
 import (
+	"os"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	taggingga "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ga"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // IrishPartialPosTagFilter ports org.languagetool.rules.ga.IrishPartialPosTagFilter
@@ -81,11 +84,19 @@ func collectPOSTagsGA(atr *languagetool.AnalyzedTokenReadings) []string {
 
 // NoDisambiguationIrishPartialPosTagFilter ports
 // org.languagetool.rules.ga.NoDisambiguationIrishPartialPosTagFilter
-// (tagger only). When tag is nil, uses process-wide SetDefaultIrishPartialPosTagger.
+// (PartialPosTagFilter + IrishTagger only, no disambiguator).
+//
+// Java: Irish.getInstance().getTagger().tag(Collections.singletonList(token))
+// — no getDisambiguator(). When tag is nil:
+//  1. process-wide SetDefaultIrishPartialPosTagger / WireIrishFilterTagger*, else
+//  2. official IrishTagger via EnsureDefaultIrishTagger (irish.dict).
+// Without dict, Accept fails closed (no invent POS).
 type NoDisambiguationIrishPartialPosTagFilter struct {
 	*rules.PartialPosTagFilter
 }
 
+// NewNoDisambiguationIrishPartialPosTagFilter constructs the filter.
+// tag maps a partial token to POS tags (injected for tests); nil → irishNoDisambigTagPOS.
 func NewNoDisambiguationIrishPartialPosTagFilter(tag func(string) []string) *NoDisambiguationIrishPartialPosTagFilter {
 	if tag == nil {
 		tag = irishNoDisambigTagPOS
@@ -115,6 +126,7 @@ func SetDefaultIrishPartialPosTagger(tag func(string) []string) {
 }
 
 // ClearDefaultIrishPartialPosTagger clears the process-wide tagger (tests).
+// After clear, NoDisambiguation falls back to IrishTagger when irish.dict is discoverable.
 func ClearDefaultIrishPartialPosTagger() {
 	SetDefaultIrishPartialPosTagger(nil)
 }
@@ -143,15 +155,68 @@ func getFilterDisambiguator() filterDisambiguator {
 	return gaFilterDisambig
 }
 
+// irishNoDisambigTagPOS ports NoDisambiguationIrishPartialPosTagFilter.tag
+// (Java: Irish.getInstance().getTagger().tag(singletonList(token)) — no disambiguator).
 func irishNoDisambigTagPOS(partial string) []string {
-	tag := getDefaultIrishPartialPosTagger()
-	if tag == nil {
+	if tag := getDefaultIrishPartialPosTagger(); tag != nil {
+		return tag(partial)
+	}
+	return tagPOSFromDefaultIrishTagger(partial)
+}
+
+// tagPOSFromDefaultIrishTagger collects POS strings from IrishTagger.Tag on one token.
+// Fail-closed when official irish.dict is not loaded (no invent POS).
+func tagPOSFromDefaultIrishTagger(partial string) []string {
+	taggingga.EnsureDefaultIrishTagger()
+	if taggingga.IrishPOSDictPath() == "" {
 		return nil
 	}
-	return tag(partial)
+	tagger := taggingga.DefaultIrishTagger
+	if tagger == nil {
+		return nil
+	}
+	// Java: tagger.tag(Collections.singletonList(token))
+	trs := tagger.Tag([]string{partial})
+	if len(trs) == 0 {
+		return nil
+	}
+	var out []string
+	for _, atr := range trs {
+		out = append(out, collectPOSTagsGA(atr)...)
+	}
+	return out
+}
+
+// WireIrishFilterTagger wires process-wide POS from official IrishTagger (irish.dict).
+// Empty dictPath discovers via tagging/ga (LANG_IRISH_DICT / LANG_GA_DICT / /tmp / third_party).
+// Non-empty dictPath must be a readable file; discovery still loads via EnsureDefaultIrishTagger.
+// Returns false when irish.dict cannot be loaded (fail-closed).
+// Mirrors EN WireEnglishFilterTagger for process-wide default.
+func WireIrishFilterTagger(dictPath string) bool {
+	if tools.JavaStringTrim(dictPath) != "" {
+		st, err := os.Stat(dictPath)
+		if err != nil || !st.Mode().IsRegular() {
+			return false
+		}
+	}
+	taggingga.EnsureDefaultIrishTagger()
+	if taggingga.IrishPOSDictPath() == "" {
+		return false
+	}
+	SetDefaultIrishPartialPosTagger(func(token string) []string {
+		return tagPOSFromDefaultIrishTagger(token)
+	})
+	return true
+}
+
+// TryWireIrishFilterTagger discovers irish.dict and wires IrishTagger when present.
+func TryWireIrishFilterTagger() bool {
+	return WireIrishFilterTagger("")
 }
 
 // WireIrishFilterTaggerFromTagWord installs POS list hook from lt.TagWord.
+// Prefer WireIrishFilterTagger / IrishTagger.Tag for faithful cascade (filterMorph).
+// Nil tw clears the process-wide hook (NoDisambiguation then falls back to IrishTagger).
 func WireIrishFilterTaggerFromTagWord(tw func(token string) []languagetool.TokenTag) {
 	if tw == nil {
 		SetDefaultIrishPartialPosTagger(nil)
