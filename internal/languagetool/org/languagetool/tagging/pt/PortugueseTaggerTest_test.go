@@ -18,11 +18,12 @@ import (
 
 func requirePortugueseDict(t *testing.T) {
 	t.Helper()
-	if DiscoverPortuguesePOSDict() == "" {
-		t.Skip("portuguese.dict not in tree (third_party/portuguese-pos-dict or LANG_PORTUGUESE_DICT)")
-	}
+	// Official portuguese.dict under third_party/portuguese-pos-dict (Java /pt/portuguese.dict).
+	// No invent Skip — same bar as PolishWordTokenizer close-out with real dict.
+	require.NotEmpty(t, DiscoverPortuguesePOSDict(),
+		"official portuguese.dict must be discoverable (third_party/portuguese-pos-dict or LANG_PORTUGUESE_DICT)")
 	EnsureDefaultPortugueseTagger()
-	require.NotNil(t, DefaultPortugueseTagger)
+	require.NotNil(t, DefaultPortugueseTagger, "PortugueseTagger must load from official portuguese.dict")
 	require.NotNil(t, DefaultPortugueseTagger.GetWordTagger())
 	require.NotEmpty(t, PortuguesePOSDictPath(), "real portuguese.dict must load")
 }

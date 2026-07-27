@@ -13,11 +13,10 @@ import (
 var (
 	ptTaggerOnce  sync.Once
 	ptPOSDictPath string
+	// DefaultPortugueseTagger is the process-wide PortugueseTagger backed by
+	// portuguese.dict (Java: new PortugueseTagger()). Nil if dict is missing.
+	DefaultPortugueseTagger *PortugueseTagger
 )
-
-// DefaultPortugueseTagger is the process singleton (Java new PortugueseTagger()).
-// Backed by MapWordTagger until EnsureDefaultPortugueseTagger loads portuguese.dict.
-var DefaultPortugueseTagger = NewPortugueseTagger(tagging.MapWordTagger{})
 
 // DiscoverPortuguesePOSDict finds portuguese.dict (Java resource /pt/portuguese.dict).
 // Order: LANG_PORTUGUESE_DICT, third_party/portuguese-pos-dict, inspiration module path.
