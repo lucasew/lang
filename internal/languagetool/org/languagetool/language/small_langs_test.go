@@ -7,7 +7,7 @@ import (
 )
 
 func TestSmallLangs(t *testing.T) {
-	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton promoted to dedicated Lang types (not SmallLang); remaining set ≥ 9.
+	// Romanian/Slovak/Slovenian/Greek/Tagalog/Breton/Asturian promoted to dedicated Lang types (not SmallLang); remaining set ≥ 9.
 	require.GreaterOrEqual(t, len(AllSmallLangs()), 9)
 	require.Equal(t, "Ukrainian", Ukrainian.GetName())
 	require.Equal(t, "da", Danish.GetShortCode())

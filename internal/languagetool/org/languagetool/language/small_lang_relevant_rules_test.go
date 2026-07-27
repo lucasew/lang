@@ -61,7 +61,7 @@ func TestSmallLangRelevantRuleIDs(t *testing.T) {
 	require.Contains(t, Persian.GetRelevantRuleIDs(), "FA_WORD_COHERENCY")
 	require.Contains(t, Lithuanian.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_LT_LT")
 	require.Contains(t, CrimeanTatar.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_CRH_UA")
-	require.Contains(t, Asturian.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_AST")
+	// Asturian is AsturianLang — full twin in asturian_test.go
 	// Slovenian is SlovenianLang — full twin in slovenian_test.go
 
 	// Simple German is not SmallLang — package helper only

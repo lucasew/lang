@@ -10,5 +10,5 @@ type AsturianTagger struct {
 }
 
 func NewAsturianTagger(wt tagging.WordTagger) *AsturianTagger {
-	return &AsturianTagger{BaseTagger: tagging.NewBaseTagger(wt, AsturianTaggerDictPath, "ast", false)}
+	return &AsturianTagger{BaseTagger: tagging.NewBaseTagger(wt, AsturianTaggerDictPath, "ast", true)}
 }

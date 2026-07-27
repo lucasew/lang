@@ -19,15 +19,15 @@ var (
 	// MorfologikCrimeanTatarSpellerRule.getId
 	CrimeanTatar = SmallLang{"crh", "Crimean Tatar", "MORFOLOGIK_RULE_CRH_UA", []string{"UA"}}
 	// Slovenian promoted to SlovenianLang (see slovenian.go) — not SmallLang.
-	Asturian = SmallLang{"ast", "Asturian", "MORFOLOGIK_RULE_AST", []string{"ES"}}
+	// Asturian promoted to AsturianLang (see asturian.go) — not SmallLang.
 )
 
 // AllExtendedSmallLangs returns the original set plus additional modules.
 func AllExtendedSmallLangs() []SmallLang {
-base := AllSmallLangs()
-extra := []SmallLang{
-	Khmer, Malayalam, Tamil, Lithuanian, Icelandic,
-	Belarusian, CrimeanTatar, Asturian,
-}
-return append(base, extra...)
+	base := AllSmallLangs()
+	extra := []SmallLang{
+		Khmer, Malayalam, Tamil, Lithuanian, Icelandic,
+		Belarusian, CrimeanTatar,
+	}
+	return append(base, extra...)
 }
