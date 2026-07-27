@@ -1,87 +1,71 @@
 package ga
 
 import (
-	"bufio"
-	"embed"
 	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-//go:embed data/dative-plurals.txt
-var dativePluralsFS embed.FS
+// DativePluralStandardReplaceRuleID ports DativePluralStandardReplaceRule.getId()
+// → "GA_DATIVE_PLURALS_STD".
+const DativePluralStandardReplaceRuleID = "GA_DATIVE_PLURALS_STD"
 
 var (
-	dativeOnce sync.Once
-	dativeMap  map[string][]string
+	dativeWrongOnce sync.Once
+	dativeWrongMap  map[string][]string
 )
 
-// loadDativeSimple ports DativePluralsData.getSimpleReplacements without mutation variants
-// (lenition/eclipse/h-prothesis). Base and modernised dative forms map to standard nominative.
-func loadDativeSimple() map[string][]string {
-	dativeOnce.Do(func() {
-		f, err := dativePluralsFS.Open("data/dative-plurals.txt")
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-		m := map[string][]string{}
-		sc := bufio.NewScanner(f)
-		for sc.Scan() {
-			line := tools.JavaStringTrim(sc.Text())
-			if line == "" || line[0] == '#' {
-				continue
-			}
-			parts := strings.Split(line, ";")
-			if len(parts) != 4 {
-				continue
-			}
-			form, formModern := splitColon2(parts[0])
-			repl, replModern := splitColon2(parts[3])
-			standard := repl
-			if replModern != "" {
-				standard = replModern
-			}
-			m[form] = []string{standard}
-			if formModern != "" {
-				m[formModern] = []string{standard}
-			}
-		}
-		if err := sc.Err(); err != nil {
-			panic(err)
-		}
-		dativeMap = m
+// loadDativeWrongWords ports static:
+//   replacements = DativePluralsData.getSimpleReplacements();
+//   wrongWords = listify(replacements);
+func loadDativeWrongWords() map[string][]string {
+	dativeWrongOnce.Do(func() {
+		dativeWrongMap = listifyDative(GetSimpleReplacements())
 	})
-	return dativeMap
+	return dativeWrongMap
 }
 
-func splitColon2(s string) (a, b string) {
-	if i := strings.IndexByte(s, ':'); i >= 0 {
-		return s[:i], s[i+1:]
-	}
-	return s, ""
-}
-
-// DativePluralStandardReplaceRule ports org.languagetool.rules.ga.DativePluralStandardReplaceRule.
+// DativePluralStandardReplaceRule ports org.languagetool.rules.ga.DativePluralStandardReplaceRule
+// (extends AbstractSimpleReplaceRule).
+//
+// Java field twin summary:
+//   - id GA_DATIVE_PLURALS_STD
+//   - static wrongWords from listify(DativePluralsData.getSimpleReplacements())
+//   - Categories.TYPOS (overrides ASR ctor MISC)
+//   - ITSIssueType.Grammar (not Misspelling)
+//   - isCaseSensitive() not overridden → ASR default true
+//   - setCheckLemmas(false)
+//   - GA_LOCALE field exists (Locale("GA")) but getLocale() is not overridden
+//     (ASR default Locale.getDefault()); stored as LanguageCode for field twin
+//   - description / short / message hardcoded Irish strings
+//   - example: mnáibh → mná
+//   - no setIgnoreTaggedWords, no useSubRuleSpecificIds, no setUrl
 type DativePluralStandardReplaceRule struct {
 	*rules.AbstractSimpleReplaceRule
 }
 
+// NewDativePluralStandardReplaceRule ports
+// DativePluralStandardReplaceRule(ResourceBundle messages, Language language).
 func NewDativePluralStandardReplaceRule(messages map[string]string) *DativePluralStandardReplaceRule {
 	base := &rules.AbstractSimpleReplaceRule{
 		Messages:      messages,
-		WrongWords:    loadDativeSimple(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
-		ID:            "GA_DATIVE_PLURALS_STD",
+		WrongWords:    loadDativeWrongWords(),
+		CaseSensitive: true,  // Java: isCaseSensitive not overridden → ASR default true
+		CheckLemmas:   false, // Java setCheckLemmas(false)
+		ID:            DativePluralStandardReplaceRuleID,
+		LanguageCode:  "GA", // Java field GA_LOCALE = new Locale("GA") (unused by getLocale)
 		Description:   "Tuiseal tabharthach iolra",
 		ShortMsg:      "Tabharthach iolra",
+		Category:      rules.CatTypos.GetCategory(messages),
+		IssueType:     rules.ITSGrammar, // Java: ITSIssueType.Grammar
 		MessageFn: func(tokenStr string, replacements []string) string {
+			// Java getMessage:
+			// return "Is litriú réamhchaighdeánach (tabharthach iolra) é \"" + tokenStr
+			//   + "\"; an \"" + String.join(", ", replacements) + "\" a bhí i gceist agat?";
 			return "Is litriú réamhchaighdeánach (tabharthach iolra) é \"" + tokenStr + "\"; an \"" +
-				joinCommaGA(replacements) + "\" a bhí i gceist agat?"
+				strings.Join(replacements, ", ") + "\" a bhí i gceist agat?"
 		},
 	}
 	// Java: mnáibh → mná
@@ -92,6 +76,47 @@ func NewDativePluralStandardReplaceRule(messages map[string]string) *DativePlura
 	return &DativePluralStandardReplaceRule{AbstractSimpleReplaceRule: base}
 }
 
+// GetShort ports DativePluralStandardReplaceRule.getShort() → "Tabharthach iolra".
+func (r *DativePluralStandardReplaceRule) GetShort() string {
+	if r == nil || r.AbstractSimpleReplaceRule == nil {
+		return ""
+	}
+	return r.ShortMsg
+}
+
+// GetMessage ports getMessage with empty token/replacements for metadata probes.
+// Match-time messages go through MessageFn with real suggestions.
+func (r *DativePluralStandardReplaceRule) GetMessage() string {
+	if r == nil || r.AbstractSimpleReplaceRule == nil {
+		return ""
+	}
+	if r.MessageFn != nil {
+		return r.MessageFn("", nil)
+	}
+	return ""
+}
+
+// GetLocaleCode returns the Java GA_LOCALE field value (Locale("GA")).
+// Note: Java does not override getLocale(); ASR default remains Locale.getDefault().
+func (r *DativePluralStandardReplaceRule) GetLocaleCode() string {
+	if r == nil || r.AbstractSimpleReplaceRule == nil {
+		return ""
+	}
+	return r.LanguageCode
+}
+
+// GetWrongWords ports getWrongWords() → static map.
+func (r *DativePluralStandardReplaceRule) GetWrongWords() map[string][]string {
+	if r == nil || r.AbstractSimpleReplaceRule == nil {
+		return nil
+	}
+	return r.WrongWords
+}
+
+// Match ports AbstractSimpleReplaceRule.match.
 func (r *DativePluralStandardReplaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || r.AbstractSimpleReplaceRule == nil {
+		return nil
+	}
 	return r.AbstractSimpleReplaceRule.Match(sentence)
 }
