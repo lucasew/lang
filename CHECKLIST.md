@@ -1367,7 +1367,7 @@
 - [x] org/languagetool/synthesis/pl/PolishSynthesizer.java::PolishSynthesizer
 - [ ] org/languagetool/tagging/disambiguation/pl/PolishHybridDisambiguator.java::PolishHybridDisambiguator
 - [x] org/languagetool/tagging/pl/PolishTagger.java::PolishTagger
-- [ ] org/languagetool/tokenizers/pl/PolishWordTokenizer.java::PolishWordTokenizer
+- [x] org/languagetool/tokenizers/pl/PolishWordTokenizer.java::PolishWordTokenizer
 
 ## languagetool-language-modules/pt
 
