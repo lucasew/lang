@@ -1371,7 +1371,7 @@
 
 ## languagetool-language-modules/pt
 
-- [ ] org/languagetool/language/AngolaPortuguese.java::AngolaPortuguese
+- [x] org/languagetool/language/AngolaPortuguese.java::AngolaPortuguese
 - [x] org/languagetool/language/BrazilianPortuguese.java::BrazilianPortuguese
 - [ ] org/languagetool/language/MozambiquePortuguese.java::MozambiquePortuguese
 - [x] org/languagetool/language/PortugalPortuguese.java::PortugalPortuguese
