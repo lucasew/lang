@@ -1,8 +1,6 @@
 package filters
 
 import (
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
@@ -15,8 +13,9 @@ func init() {
 	c.Register("org.languagetool.rules.ar.filters.ArabicDMYDateCheckFilter", func() patterns.RuleFilter {
 		return NewArabicDMYDateCheckFilter()
 	})
+	// ArabicAdvancedSynthesizer: empty subclass; wires Arabic synthesizer via ensureSynth.
 	c.Register("org.languagetool.rules.ar.filters.ArabicAdvancedSynthesizerFilter", func() patterns.RuleFilter {
-		return arabicAdvancedSynthRuleFilter{}
+		return NewArabicAdvancedSynthesizerFilter()
 	})
 	c.Register("org.languagetool.rules.ar.filters.ArabicNumberPhraseFilter", func() patterns.RuleFilter {
 		return NewArabicNumberPhraseFilter()
@@ -30,11 +29,4 @@ func init() {
 	c.Register("org.languagetool.rules.ar.filters.ArabicVerbToMafoulMutlaqFilter", func() patterns.RuleFilter {
 		return NewArabicVerbToMafoulMutlaqFilter()
 	})
-}
-
-type arabicAdvancedSynthRuleFilter struct{}
-
-func (arabicAdvancedSynthRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
-	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
-	return (&rules.AbstractAdvancedSynthesizerFilter{}).AcceptRuleMatch(match, arguments, patternTokens, tokenPositions)
 }

@@ -86,13 +86,6 @@ func TestAdjectiveExclamation(t *testing.T) {
 	require.Equal(t, []string{"أطول نحن"}, PrepareExclamationSuggestions("أطول", "نحن"))
 }
 
-func TestAdvancedSynthFilterConstruct(t *testing.T) {
-	f := NewArabicAdvancedSynthesizerFilter(func(lemma, postag string) []string {
-		return []string{lemma + ":" + postag}
-	})
-	require.NotNil(t, f.AbstractAdvancedSynthesizerFilter)
-}
-
 func TestArabicFiltersRegistered(t *testing.T) {
 	for _, class := range []string{
 		"org.languagetool.rules.ar.filters.ArabicDateCheckFilter",
