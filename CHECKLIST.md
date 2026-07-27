@@ -809,7 +809,7 @@
 
 ## languagetool-language-modules/ast
 
-- [ ] org/languagetool/language/Asturian.java::Asturian
+- [x] org/languagetool/language/Asturian.java::Asturian
 - [x] org/languagetool/language/rules/ast/MorfologikAsturianSpellerRule.java::MorfologikAsturianSpellerRule
 - [ ] org/languagetool/tagging/ast/AsturianTagger.java::AsturianTagger
 
