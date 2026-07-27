@@ -1528,10 +1528,10 @@
 
 ## languagetool-language-modules/tl
 
-- [ ] org/languagetool/language/Tagalog.java::Tagalog
+- [x] org/languagetool/language/Tagalog.java::Tagalog
 - [x] org/languagetool/language/tl/MorfologikTagalogSpellerRule.java::MorfologikTagalogSpellerRule
 - [x] org/languagetool/language/tokenizers/TagalogWordTokenizer.java::TagalogWordTokenizer
-- [ ] org/languagetool/tagging/tl/TagalogTagger.java::TagalogTagger
+- [x] org/languagetool/tagging/tl/TagalogTagger.java::TagalogTagger
 
 ## languagetool-language-modules/uk
 
