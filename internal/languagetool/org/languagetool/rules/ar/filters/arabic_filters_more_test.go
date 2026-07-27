@@ -10,20 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestArabicDMYParse(t *testing.T) {
-	d, m, y, err := ParseDMYDateArg("15-03-2024")
-	require.NoError(t, err)
-	require.Equal(t, "15", d)
-	require.Equal(t, "03", m)
-	require.Equal(t, "2024", y)
-	_, _, _, err = ParseDMYDateArg("bad")
-	require.Error(t, err)
-
-	f := NewArabicDMYDateCheckFilter()
-	_, err = f.AcceptDMYRuleMatch(nil, map[string]string{"date": "01-01-2024", "day": "1"})
-	require.Error(t, err)
-}
-
 func TestMasdarToVerbAndMafoul(t *testing.T) {
 	f := NewArabicMasdarToVerbFilter()
 	require.Equal(t, []string{"عَمِلَ"}, f.SuggestVerbsForMasdar("عمل"))
@@ -115,6 +101,7 @@ func TestAdvancedSynthFilterConstruct(t *testing.T) {
 func TestArabicFiltersRegistered(t *testing.T) {
 	for _, class := range []string{
 		"org.languagetool.rules.ar.filters.ArabicDateCheckFilter",
+		"org.languagetool.rules.ar.filters.ArabicDMYDateCheckFilter",
 		"org.languagetool.rules.ar.filters.ArabicAdvancedSynthesizerFilter",
 		"org.languagetool.rules.ar.filters.ArabicNumberPhraseFilter",
 		"org.languagetool.rules.ar.filters.ArabicMasdarToVerbFilter",

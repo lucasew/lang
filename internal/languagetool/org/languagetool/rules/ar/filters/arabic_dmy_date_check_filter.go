@@ -1,18 +1,15 @@
 package filters
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // ArabicDMYDateCheckFilter ports org.languagetool.rules.ar.filters.ArabicDMYDateCheckFilter.
-//
-// NOT claimed ready under sector docs/faithful-port-checklist.md#3.C.3-ArabicDateCheckFilter.
-// That sector covers ArabicDateCheckFilter + ArabicDateFilterHelper only. DMY needs its own
-// sector for the Java acceptRuleMatch that expands args key "date" (dd-mm-yyyy).
+// Date filter that expects a 'date' argument in the format 'dd-mm-yyyy'.
 type ArabicDMYDateCheckFilter struct {
 	*ArabicDateCheckFilter
 }
@@ -21,24 +18,23 @@ func NewArabicDMYDateCheckFilter() *ArabicDMYDateCheckFilter {
 	return &ArabicDMYDateCheckFilter{ArabicDateCheckFilter: NewArabicDateCheckFilter()}
 }
 
-// ParseDMYDateArg splits 'dd-mm-yyyy' the way Java dateString.split("-") does when length==3.
-// DMY sector ownership — not asserted faithful here.
-func ParseDMYDateArg(dateString string) (day, month, year string, err error) {
-	parts := strings.Split(dateString, "-")
-	if len(parts) != 3 {
-		return "", "", "", fmt.Errorf("Expected date in format 'dd-mm-yyyy': '%s'", dateString)
-	}
-	return parts[0], parts[1], parts[2], nil
-}
-
-// AcceptRuleMatch ports ArabicDMYDateCheckFilter.acceptRuleMatch:
-// expand date → day/month/year then super.acceptRuleMatch.
-// Kept for compile/use wiring; DMY sector must still validate full parity separately.
+// AcceptRuleMatch ports ArabicDMYDateCheckFilter.acceptRuleMatch.
+//
+//	if (args.containsKey("year") || args.containsKey("month") || args.containsKey("day")) {
+//	  throw new RuntimeException("Set only 'weekDay' and 'date' for " + ArabicDMYDateCheckFilter.class.getSimpleName());
+//	}
+//	String dateString = getRequired("date", args);
+//	String[] parts = dateString.split("-");
+//	if (parts.length != 3) {
+//	  throw new RuntimeException("Expected date in format 'dd-mm-yyyy': '" + dateString + "'");
+//	}
+//	args.put("day", parts[0]);
+//	args.put("month", parts[1]);
+//	args.put("year", parts[2]);
+//	return super.acceptRuleMatch(...);
 func (f *ArabicDMYDateCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, args map[string]string, patternTokenPos int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
-	if f == nil {
-		return nil
-	}
+	// Java: args.containsKey — key present even if value is empty.
 	if _, ok := args["year"]; ok {
 		panic("Set only 'weekDay' and 'date' for ArabicDMYDateCheckFilter")
 	}
@@ -48,50 +44,30 @@ func (f *ArabicDMYDateCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, args 
 	if _, ok := args["day"]; ok {
 		panic("Set only 'weekDay' and 'date' for ArabicDMYDateCheckFilter")
 	}
-	dateString, ok := args["date"]
-	if !ok {
-		panic("Missing key 'date'")
+	// Java RuleFilter.getRequired → IllegalArgumentException "Missing key '…'"
+	dateString := patterns.GetRequired("date", args)
+	// Java String.split("-") default limit 0: trailing empty segments discarded.
+	// No delimiter match (e.g. "") → one-element array of the input (Java early return).
+	parts := javaSplitDashLimit0(dateString)
+	if len(parts) != 3 {
+		panic("Expected date in format 'dd-mm-yyyy': '" + dateString + "'")
 	}
-	d, m, y, err := ParseDMYDateArg(dateString)
-	if err != nil {
-		panic(err.Error())
-	}
-	// Java mutates args map in place
-	args["day"] = d
-	args["month"] = m
-	args["year"] = y
+	// Java mutates args map in place then super.acceptRuleMatch.
+	args["day"] = parts[0]
+	args["month"] = parts[1]
+	args["year"] = parts[2]
 	return f.ArabicDateCheckFilter.AcceptRuleMatch(match, args, patternTokenPos, patternTokens, tokenPositions)
 }
 
-// AcceptDMYRuleMatch is a legacy test entrypoint (returns error instead of panic).
-// Prefer AcceptRuleMatch for Java-shaped call sites. Not part of the DateCheck sector claim.
-func (f *ArabicDMYDateCheckFilter) AcceptDMYRuleMatch(match *rules.RuleMatch, args map[string]string) (*rules.RuleMatch, error) {
-	if f == nil {
-		return nil, nil
+// javaSplitDashLimit0 ports Java String.split("-") with default limit 0
+// (trailing empty strings discarded; if the delimiter never matches, returns {input}).
+func javaSplitDashLimit0(s string) []string {
+	if !strings.Contains(s, "-") {
+		return []string{s}
 	}
-	if _, ok := args["year"]; ok {
-		return nil, fmt.Errorf("Set only 'weekDay' and 'date' for ArabicDMYDateCheckFilter")
+	parts := strings.Split(s, "-")
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
 	}
-	if _, ok := args["month"]; ok {
-		return nil, fmt.Errorf("Set only 'weekDay' and 'date' for ArabicDMYDateCheckFilter")
-	}
-	if _, ok := args["day"]; ok {
-		return nil, fmt.Errorf("Set only 'weekDay' and 'date' for ArabicDMYDateCheckFilter")
-	}
-	dateString, ok := args["date"]
-	if !ok || dateString == "" {
-		return nil, fmt.Errorf("Missing key 'date'")
-	}
-	d, m, y, err := ParseDMYDateArg(dateString)
-	if err != nil {
-		return nil, err
-	}
-	expanded := map[string]string{}
-	for k, v := range args {
-		expanded[k] = v
-	}
-	expanded["day"] = d
-	expanded["month"] = m
-	expanded["year"] = y
-	return f.ArabicDateCheckFilter.AcceptRuleMatch(match, expanded, 0, nil, nil), nil
+	return parts
 }

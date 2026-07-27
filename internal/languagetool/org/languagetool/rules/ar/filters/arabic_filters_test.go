@@ -53,7 +53,6 @@ func TestArabicDateCheckFilter(t *testing.T) {
 	require.Equal(t, "الاثنين", f.GetDayOfWeekName(2024, 1, 1))
 	// getDayOfWeek(int) → helper: Monday = "الإثنين" (with hamza)
 	require.Equal(t, "الإثنين", f.GetDayOfWeekNameFromJavaDay(2))
-	_ = NewArabicDMYDateCheckFilter() // DMY not claimed ready in this sector
 }
 
 func TestArabicNumberPhraseFilter(t *testing.T) {

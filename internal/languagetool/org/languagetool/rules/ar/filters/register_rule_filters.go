@@ -12,6 +12,9 @@ func init() {
 	c.Register("org.languagetool.rules.ar.filters.ArabicDateCheckFilter", func() patterns.RuleFilter {
 		return NewArabicDateCheckFilter()
 	})
+	c.Register("org.languagetool.rules.ar.filters.ArabicDMYDateCheckFilter", func() patterns.RuleFilter {
+		return NewArabicDMYDateCheckFilter()
+	})
 	c.Register("org.languagetool.rules.ar.filters.ArabicAdvancedSynthesizerFilter", func() patterns.RuleFilter {
 		return arabicAdvancedSynthRuleFilter{}
 	})
