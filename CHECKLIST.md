@@ -1375,7 +1375,7 @@
 - [ ] org/languagetool/language/BrazilianPortuguese.java::BrazilianPortuguese
 - [ ] org/languagetool/language/MozambiquePortuguese.java::MozambiquePortuguese
 - [ ] org/languagetool/language/PortugalPortuguese.java::PortugalPortuguese
-- [ ] org/languagetool/language/Portuguese.java::Portuguese
+- [x] org/languagetool/language/Portuguese.java::Portuguese
 - [x] org/languagetool/rules/pt/AdvancedSynthesizerFilter.java::AdvancedSynthesizerFilter
 - [x] org/languagetool/rules/pt/BrazilianPortugueseReplaceRule.java::BrazilianPortugueseReplaceRule
 - [x] org/languagetool/rules/pt/BrazilianToponymFilter.java::BrazilianToponymFilter
