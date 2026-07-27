@@ -124,11 +124,11 @@ func (s SmallLang) ToAdvancedTypography(input string) string {
 var (
 	Slovak = SmallLang{"sk", "Slovak", "MORFOLOGIK_RULE_SK_SK", []string{"SK"}}
 	// Danish/Swedish/Esperanto/Galician: plain HunspellRule → HUNSPELL_RULE
-	Danish    = SmallLang{"da", "Danish", "HUNSPELL_RULE", []string{"DK"}}
-	Swedish   = SmallLang{"sv", "Swedish", "HUNSPELL_RULE", []string{"SE"}}
-	Romanian  = SmallLang{"ro", "Romanian", "MORFOLOGIK_RULE_RO_RO", []string{"RO"}}
-	Greek     = SmallLang{"el", "Greek", "MORFOLOGIK_RULE_EL_GR", []string{"GR"}}
-	Galician  = SmallLang{"gl", "Galician", "HUNSPELL_RULE", []string{"ES"}}
+	Danish  = SmallLang{"da", "Danish", "HUNSPELL_RULE", []string{"DK"}}
+	Swedish = SmallLang{"sv", "Swedish", "HUNSPELL_RULE", []string{"SE"}}
+	// Romanian promoted to RomanianLang (see romanian.go) — not SmallLang.
+	Greek    = SmallLang{"el", "Greek", "MORFOLOGIK_RULE_EL_GR", []string{"GR"}}
+	Galician = SmallLang{"gl", "Galician", "HUNSPELL_RULE", []string{"ES"}}
 	// Japanese/Chinese/Persian: no createDefaultSpellingRule / no speller in getRelevantRules
 	Japanese  = SmallLang{"ja", "Japanese", "", []string{"JP"}}
 	Chinese   = SmallLang{"zh", "Chinese", "", []string{"CN"}}
@@ -141,7 +141,7 @@ var (
 
 func AllSmallLangs() []SmallLang {
 	return []SmallLang{
-		Slovak, Danish, Swedish, Romanian, Greek, Galician,
+		Slovak, Danish, Swedish, Greek, Galician,
 		Japanese, Chinese, Persian, Esperanto, Irish, Ukrainian,
 	}
 }
@@ -157,7 +157,8 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 		// Galician explicitly LookingForNewMaintainer (same as default)
 		return languagetool.LookingForNewMaintainer
 	default:
-		// Japanese, Chinese, Persian, Slovak, Danish, Romanian, …: no override → default
+		// Japanese, Chinese, Persian, Slovak, Danish, …: no override → default
+		// (Romanian is RomanianLang — LookingForNewMaintainer there)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -205,8 +206,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 		return []Contributor{NewContributor("Xesús González Rato")}
 	case "sl":
 		return []Contributor{NewContributor("Martin Srebotnjak")}
-	case "ro":
-		return []Contributor{NewContributorWithURL("Ionuț Păduraru", "http://www.archeus.ro")}
+	// Romanian maintainers: RomanianLang.GetMaintainers (romanian.go)
 	case "fa":
 		return []Contributor{
 			NewContributor("Reza1615"),

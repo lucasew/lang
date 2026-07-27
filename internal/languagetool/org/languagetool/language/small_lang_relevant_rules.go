@@ -24,8 +24,7 @@ func (s SmallLang) GetRelevantRuleIDs() []string {
 		return SlovakRelevantRuleIDs()
 	case "da":
 		return DanishRelevantRuleIDs()
-	case "ro":
-		return RomanianRelevantRuleIDs()
+	// Romanian: RomanianLang.GetRelevantRuleIDs (romanian_relevant_rules.go)
 	case "ja":
 		return JapaneseRelevantRuleIDs()
 	case "zh":

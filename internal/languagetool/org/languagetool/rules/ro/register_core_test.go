@@ -15,11 +15,12 @@ func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
 	require.NotContains(t, ids, "RO_DE_DE")
 }
 
-// Java Romanian.getRelevantRules exact ID set.
+// Java Romanian.getRelevantRules exact ID set and registration order.
 func TestRegisterCoreRomanianRules_JavaRelevantOnly(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("ro")
 	RegisterCoreRomanianRules(lt)
 	ids := lt.GetAllRegisteredRuleIDs()
+	// Exact order matches Java Arrays.asList in Romanian.getRelevantRules.
 	want := []string{
 		"COMMA_PARENTHESIS_WHITESPACE",
 		"DOUBLE_PUNCTUATION",
@@ -32,6 +33,7 @@ func TestRegisterCoreRomanianRules_JavaRelevantOnly(t *testing.T) {
 		"RO_SIMPLE_REPLACE",
 		"RO_COMPOUND",
 	}
+	require.Equal(t, want, ids)
 	require.ElementsMatch(t, want, ids)
 	for _, bad := range []string{
 		"EMPTY_LINE", "TOO_LONG_PARAGRAPH", "PARAGRAPH_REPEAT_BEGINNING_RULE",
@@ -39,4 +41,12 @@ func TestRegisterCoreRomanianRules_JavaRelevantOnly(t *testing.T) {
 	} {
 		require.NotContains(t, ids, bad)
 	}
+}
+
+// Java GenericUnpairedBracketsRule symbols for Romanian.
+func TestRegisterCoreRomanianRules_UnpairedBracketSymbols(t *testing.T) {
+	ub := NewRomanianUnpairedBracketsRule(nil)
+	require.Equal(t, []string{"[", "(", "{", "„", "«", "»"}, ub.StartSymbols)
+	require.Equal(t, []string{"]", ")", "}", "”", "»", "«"}, ub.EndSymbols)
+	require.Equal(t, "UNPAIRED_BRACKETS", ub.GetID())
 }
