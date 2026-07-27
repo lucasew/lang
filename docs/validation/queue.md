@@ -54,6 +54,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | checklist_id | status | java_paths | go_paths | ready_commit | round | attempt | findings | blocked_reason | updated_at |
 |--------------|--------|------------|----------|--------------|-------|---------|----------|----------------|------------|
+| docs/faithful-port-checklist.md#3.C.3-PersianDoublePunctuationRule | accepted | inspiration/languagetool/languagetool-language-modules/fa/src/main/java/org/languagetool/rules/fa/PersianDoublePunctuationRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/DoublePunctuationRule.java | internal/languagetool/org/languagetool/rules/fa/persian_double_punctuation_rule.go; internal/languagetool/org/languagetool/rules/fa/PersianDoublePunctuationRuleTest_test.go; internal/languagetool/org/languagetool/rules/double_punctuation_rule.go | 99a30ce85dfc5a62f0583a8a890bb818b91bd149 | 0 | 0 |  |  | 2026-07-27T00:20:41Z |
 | docs/faithful-port-checklist.md#3.C.3-PersianCommaWhitespaceRule | accepted | inspiration/languagetool/languagetool-language-modules/fa/src/main/java/org/languagetool/rules/fa/PersianCommaWhitespaceRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/CommaWhitespaceRule.java | internal/languagetool/org/languagetool/rules/fa/persian_comma_whitespace_rule.go; internal/languagetool/org/languagetool/rules/fa/PersianCommaWhitespaceRuleTest_test.go; internal/languagetool/org/languagetool/rules/comma_whitespace_rule.go | 1a6413de33db9375c0236366f09073a25db72390 | 0 | 0 |  |  | 2026-07-27T00:10:25Z |
 | docs/faithful-port-checklist.md#3.C.3-PersianWordRepeatBeginningRule | accepted | inspiration/languagetool/languagetool-language-modules/fa/src/main/java/org/languagetool/rules/fa/PersianWordRepeatBeginningRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatBeginningRule.java | internal/languagetool/org/languagetool/rules/fa/persian_word_repeat_beginning_rule.go; internal/languagetool/org/languagetool/rules/fa/PersianWordRepeatBeginningRuleTest_test.go; internal/languagetool/org/languagetool/rules/word_repeat_beginning_rule.go | 1574329b56ce6b99b1d13df1288e75decac5b2dd | 0 | 0 |  |  | 2026-07-26T23:59:46Z |
 | docs/faithful-port-checklist.md#3.C.3-PersianWordRepeatRule | accepted | inspiration/languagetool/languagetool-language-modules/fa/src/main/java/org/languagetool/rules/fa/PersianWordRepeatRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/fa/persian_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/fa/PersianWordRepeatRuleTest_test.go; internal/languagetool/org/languagetool/rules/word_repeat_rule.go | c98adecf92fbaa695353d4b224c4e7e5e0d02c9b | 0 | 0 |  |  | 2026-07-26T23:50:06Z |
@@ -493,7 +494,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | accepted 3.C.3-PersianCommaWhitespaceRule @ 1a6413de; next fire: implement FA PersianDoublePunctuationRule |
+| Notes | accepted 3.C.3-PersianDoublePunctuationRule @ 99a30ce8; FA rules/* leaves done — next fire pick next 3.C.3 leaf outside fa |
 
 ---
 
@@ -2282,3 +2283,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-27T00:07:01Z ready: 3.C.3-PersianCommaWhitespaceRule @ 1a6413de (implementer report; parent green reconfirm; Arabic comma U+060C; DefaultOff; PERSIAN_COMMA_PARENTHESIS_WHITESPACE)
 - 2026-07-27T00:08:42Z validating: 3.C.3-PersianCommaWhitespaceRule @ 1a6413de
 - 2026-07-27T00:10:25Z ACCEPT: 3.C.3-PersianCommaWhitespaceRule @ 1a6413de (validator ACCEPT + parent green reconfirm; Arabic comma U+060C; DefaultOff; PERSIAN_COMMA_PARENTHESIS_WHITESPACE)
+- 2026-07-27T00:13:51Z implement: 3.C.3-PersianDoublePunctuationRule (fa.PersianDoublePunctuationRule; Arabic comma U+060C; DoublePunctuationRule base ACCEPTed; leaf after PersianCommaWhitespaceRule ACCEPT)
+- 2026-07-27T00:16:08Z ready: 3.C.3-PersianDoublePunctuationRule @ 99a30ce8 (implementer report; parent green reconfirm; Arabic comma U+060C; PERSIAN_DOUBLE_PUNCTUATION; no DefaultOff)
+- 2026-07-27T00:18:45Z validating: 3.C.3-PersianDoublePunctuationRule @ 99a30ce8
+- 2026-07-27T00:20:41Z ACCEPT: 3.C.3-PersianDoublePunctuationRule @ 99a30ce8 (validator ACCEPT + parent green reconfirm; Arabic comma U+060C; PERSIAN_DOUBLE_PUNCTUATION; no DefaultOff; queue repair after partial write)
