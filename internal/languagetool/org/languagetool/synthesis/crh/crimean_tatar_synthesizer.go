@@ -13,6 +13,14 @@ type CrimeanTatarSynthesizer struct {
 	*synthesis.BaseSynthesizer
 }
 
+// INSTANCE ports CrimeanTatarSynthesizer.INSTANCE (Java private ctor + public static field).
+// Official binary dict is a built artifact (not in inspiration source tree); surface carries
+// Java resource paths. Full open-from-dict load is the synthesis/crh leaf when dict is present.
+var INSTANCE = NewCrimeanTatarSynthesizer(nil)
+
+// Instance returns CrimeanTatarSynthesizer.INSTANCE.
+func Instance() *CrimeanTatarSynthesizer { return INSTANCE }
+
 func NewCrimeanTatarSynthesizer(manual *synthesis.ManualSynthesizer) *CrimeanTatarSynthesizer {
 	base := synthesis.NewBaseSynthesizer("crh", manual)
 	base.ResourceFileName = CrimeanTatarSynthDict
