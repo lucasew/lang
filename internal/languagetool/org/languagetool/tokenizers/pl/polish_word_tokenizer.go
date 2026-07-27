@@ -3,6 +3,7 @@ package pl
 import (
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
@@ -45,16 +46,15 @@ func (f ATRTagFunc) Tag(tokens []string) []PolishHyphenReadings {
 	return f(tokens)
 }
 
-// WrapATRSlice converts a slice of PolishHyphenReadings-capable values (e.g.
-// []*AnalyzedTokenReadings) for SetTagger. Callers with concrete ATR slices
-// should map elements to the interface.
+// WrapATRTagger converts a batch-tag function for SetTagger.
 func WrapATRTagger(tag func(tokens []string) []PolishHyphenReadings) PolishHyphenTagger {
 	return ATRTagFunc(tag)
 }
 
 func NewPolishWordTokenizer() *PolishWordTokenizer {
 	return &PolishWordTokenizer{
-		plTokenizing: tokenizers.TokenizingCharacters() + "–‚", // n-dash (Java)
+		// Java: super.getTokenizingCharacters() + "–‚" (n-dash + low-9 quote)
+		plTokenizing: tokenizers.TokenizingCharacters() + "–‚",
 	}
 }
 
@@ -74,24 +74,30 @@ var polishPrefixes = map[string]bool{
 	"wice": true, "wokół": true, "wokoło": true,
 }
 
+// Tokenize ports PolishWordTokenizer.tokenize.
 func (w *PolishWordTokenizer) Tokenize(text string) []string {
+	// Java: StringTokenizer(text, plTokenizing, true)
 	raw := splitKeepDelims(text, w.plTokenizing)
 	var l []string
 	for _, token := range raw {
+		// Java: token.length() > 1 (UTF-16 code units)
 		if tokenizers.UTF16Len(token) > 1 {
 			if strings.HasSuffix(token, "-") {
+				// hyphen at end of word → detach
 				l = append(l, token[:len(token)-1], "-")
-			} else if token[0] == '-' {
+			} else if strings.HasPrefix(token, "-") {
+				// Java: token.charAt(0) == '-'
 				l = append(l, "-")
 				l = append(l, w.Tokenize(token[1:])...)
 			} else if strings.Contains(token, "-") {
+				// Java: token.split("-")
 				tokenParts := strings.Split(token, "-")
 				// Java: prefixes.contains(tokenParts[0]) || tagger == null → keep whole
 				if polishPrefixes[tokenParts[0]] || w.tagger == nil {
 					l = append(l, token)
-				} else if len(tokenParts[len(tokenParts)-1]) > 0 &&
-					unicode.IsDigit(rune(tokenParts[len(tokenParts)-1][0])) {
+				} else if lastPartStartsWithDigit(tokenParts) {
 					// split numbers at dash or minus sign, 1-10
+					// Java: Character.isDigit(tokenParts[tokenParts.length - 1].charAt(0))
 					for i, p := range tokenParts {
 						l = append(l, p)
 						if i != len(tokenParts)-1 {
@@ -111,13 +117,31 @@ func (w *PolishWordTokenizer) Tokenize(text string) []string {
 	return tokenizers.JoinEMailsAndUrls(l)
 }
 
+// lastPartStartsWithDigit ports Java's digit-range guard:
+// Character.isDigit(tokenParts[tokenParts.length - 1].charAt(0)).
+// Empty last part cannot reach here when endsWith("-") is handled first;
+// still guard to avoid panics on pathological splits.
+func lastPartStartsWithDigit(tokenParts []string) bool {
+	if len(tokenParts) == 0 {
+		return false
+	}
+	last := tokenParts[len(tokenParts)-1]
+	if last == "" {
+		return false
+	}
+	r, _ := utf8.DecodeRuneInString(last)
+	return unicode.IsDigit(r)
+}
+
 func (w *PolishWordTokenizer) splitCompoundWithTagger(token string, tokenParts []string) []string {
 	if w.tagger == nil {
 		return []string{token}
 	}
+	// Java: testedTokens = tokenParts + whole token; tagger.tag(testedTokens)
 	tested := append(append([]string{}, tokenParts...), token)
 	taggedToks := w.tagger.Tag(tested)
-	// Java: taggedToks.size() == tokenParts.length + 1 && !taggedToks.get(tokenParts.length).isTagged()
+	// Java: taggedToks.size() == tokenParts.length + 1
+	//       && !taggedToks.get(tokenParts.length).isTagged()
 	if len(taggedToks) == len(tokenParts)+1 &&
 		taggedToks[len(tokenParts)] != nil &&
 		!taggedToks[len(tokenParts)].IsTagged() {

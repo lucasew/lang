@@ -30,6 +30,8 @@ func polishTaggerAsHyphen(t *pltag.PolishTagger) pl.PolishHyphenTagger {
 }
 
 // Twin of org.languagetool.tokenizers.pl.PolishWordTokenizerTest.testTokenize.
+// Java wires Language pl = new Polish(); wordTokenizer.setTagger(pl.getTagger())
+// over official polish.dict — Go uses the same dict via PolishTagger.
 func TestPolishWordTokenizer_Tokenize(t *testing.T) {
 	wordTokenizer := pl.NewPolishWordTokenizer()
 	tokens := wordTokenizer.Tokenize("To jest\u00A0 test")
@@ -67,10 +69,13 @@ func TestPolishWordTokenizer_Tokenize(t *testing.T) {
 	require.Equal(t, "[To,  , jest,  , kobieta-wojownik,  , w,  , polsko-czeskim,  , ubraniu, ,,  , która,  , wysłała,  , dwa,  , SMS-y, .]", tokStr(compoundTokens))
 
 	// now setup the tagger... Java: Language pl = new Polish(); wordTokenizer.setTagger(pl.getTagger())
+	// Official polish.dict under inspiration/.../resource/pl/polish.dict (same as Java).
+	require.NotEmpty(t, pltag.DiscoverPolishPOSDict(),
+		"official polish.dict must be discoverable (inspiration pl module)")
 	pltag.EnsureDefaultPolishTagger()
-	if pltag.DefaultPolishTagger == nil {
-		t.Skip("polish.dict not available; cannot twin setTagger section")
-	}
+	require.NotNil(t, pltag.DefaultPolishTagger, "PolishTagger must load from official polish.dict")
+	require.NotNil(t, pltag.DefaultPolishTagger.GetWordTagger())
+	require.NotEmpty(t, pltag.PolishPOSDictPath(), "real polish.dict must load")
 	wordTokenizer.SetTagger(polishTaggerAsHyphen(pltag.DefaultPolishTagger))
 	compoundTokens = wordTokenizer.Tokenize(compoundSentence)
 	// we should get 4 more tokens: two hyphen tokens and two for the split words
