@@ -1432,13 +1432,13 @@
 
 ## languagetool-language-modules/ro
 
-- [ ] org/languagetool/language/Romanian.java::Romanian
-- [ ] org/languagetool/rules/ro/CompoundRule.java::CompoundRule
-- [ ] org/languagetool/rules/ro/MorfologikRomanianSpellerRule.java::MorfologikRomanianSpellerRule
-- [ ] org/languagetool/rules/ro/RomanianWordRepeatBeginningRule.java::RomanianWordRepeatBeginningRule
-- [ ] org/languagetool/rules/ro/SimpleReplaceRule.java::SimpleReplaceRule
+- [x] org/languagetool/language/Romanian.java::Romanian
+- [x] org/languagetool/rules/ro/CompoundRule.java::CompoundRule
+- [x] org/languagetool/rules/ro/MorfologikRomanianSpellerRule.java::MorfologikRomanianSpellerRule
+- [x] org/languagetool/rules/ro/RomanianWordRepeatBeginningRule.java::RomanianWordRepeatBeginningRule
+- [x] org/languagetool/rules/ro/SimpleReplaceRule.java::SimpleReplaceRule
 - [x] org/languagetool/synthesis/ro/RomanianSynthesizer.java::RomanianSynthesizer
-- [ ] org/languagetool/tagging/ro/RomanianTagger.java::RomanianTagger
+- [x] org/languagetool/tagging/ro/RomanianTagger.java::RomanianTagger
 - [x] org/languagetool/tokenizers/ro/RomanianWordTokenizer.java::RomanianWordTokenizer
 
 ## languagetool-language-modules/ru
