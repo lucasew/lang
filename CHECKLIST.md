@@ -1354,7 +1354,7 @@
 
 ## languagetool-language-modules/pl
 
-- [ ] org/languagetool/language/Polish.java::Polish
+- [x] org/languagetool/language/Polish.java::Polish
 - [x] org/languagetool/rules/pl/CompoundRule.java::CompoundRule
 - [x] org/languagetool/rules/pl/DashRule.java::DashRule
 - [x] org/languagetool/rules/pl/DateCheckFilter.java::DateCheckFilter
