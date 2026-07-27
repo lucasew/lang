@@ -1426,7 +1426,7 @@
 - [x] org/languagetool/rules/pt/YMDDateCheckFilter.java::YMDDateCheckFilter
 - [x] org/languagetool/rules/pt/YMDNewYearDateFilter.java::YMDNewYearDateFilter
 - [x] org/languagetool/synthesis/pt/PortugueseSynthesizer.java::PortugueseSynthesizer
-- [ ] org/languagetool/tagging/disambiguation/pt/PortugueseHybridDisambiguator.java::PortugueseHybridDisambiguator
+- [x] org/languagetool/tagging/disambiguation/pt/PortugueseHybridDisambiguator.java::PortugueseHybridDisambiguator
 - [ ] org/languagetool/tagging/pt/PortugueseTagger.java::PortugueseTagger
 - [ ] org/languagetool/tokenizers/pt/PortugueseWordTokenizer.java::PortugueseWordTokenizer
 
