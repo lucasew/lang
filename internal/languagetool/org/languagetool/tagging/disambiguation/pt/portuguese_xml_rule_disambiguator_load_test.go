@@ -16,12 +16,12 @@ import (
 
 func requirePTXmlResources(t *testing.T) {
 	t.Helper()
-	if DiscoverPortugueseDisambiguationXML() == "" {
-		t.Skip("official pt/disambiguation.xml not discoverable")
-	}
-	if DiscoverGlobalDisambiguationXML() == "" {
-		t.Skip("official disambiguation-global.xml not discoverable")
-	}
+	// Official resources exist under inspiration pt module + core (same as Java).
+	// Fail hard — no invent Skip when assets are in-tree (PL Hybrid pattern).
+	require.NotEmpty(t, DiscoverPortugueseDisambiguationXML(),
+		"official pt/disambiguation.xml must be discoverable (inspiration pt module)")
+	require.NotEmpty(t, DiscoverGlobalDisambiguationXML(),
+		"official disambiguation-global.xml must be discoverable (inspiration core)")
 }
 
 // tokenSentence builds SENT_START + tokens with spaces between word tokens.
@@ -84,9 +84,7 @@ func countRulesFromXML(t *testing.T, path, langCode string) int {
 
 func TestDiscoverPortugueseDisambiguationXML(t *testing.T) {
 	p := DiscoverPortugueseDisambiguationXML()
-	if p == "" {
-		t.Skip("official pt/disambiguation.xml not discoverable")
-	}
+	require.NotEmpty(t, p, "official pt/disambiguation.xml must be discoverable (inspiration pt module)")
 	require.Contains(t, p, "disambiguation.xml")
 	require.Contains(t, p, "pt")
 	st, err := os.Stat(p)
@@ -96,9 +94,7 @@ func TestDiscoverPortugueseDisambiguationXML(t *testing.T) {
 
 func TestDiscoverGlobalDisambiguationXML(t *testing.T) {
 	p := DiscoverGlobalDisambiguationXML()
-	if p == "" {
-		t.Skip("official disambiguation-global.xml not discoverable")
-	}
+	require.NotEmpty(t, p, "official disambiguation-global.xml must be discoverable (inspiration core)")
 	require.Contains(t, p, "disambiguation-global.xml")
 	st, err := os.Stat(p)
 	require.NoError(t, err)

@@ -32,9 +32,8 @@ func TestOpenPortugueseGlobalChunker_SettingsAndIgnore(t *testing.T) {
 }
 
 func TestPortugueseGlobalChunker_ProcessCachedOfficial(t *testing.T) {
-	if DiscoverPortugueseGlobalChunker() == "" {
-		t.Skip("official spelling_global.txt not discoverable")
-	}
+	require.NotEmpty(t, DiscoverPortugueseGlobalChunker(),
+		"official spelling_global.txt must be discoverable (inspiration core)")
 	a := PortugueseGlobalChunker()
 	b := PortugueseGlobalChunker()
 	require.NotNil(t, a)
@@ -49,26 +48,19 @@ func TestPortugueseGlobalChunker_ProcessCachedOfficial(t *testing.T) {
 	require.True(t, a.AddIgnoreSpelling)
 	require.False(t, a.RemovePreviousTags)
 
-	// Wired on NewPortugueseHybridDisambiguator
+	// Wired on NewPortugueseHybridDisambiguator (Java final fields)
 	d := NewPortugueseHybridDisambiguator()
 	require.NotNil(t, d.GlobalChunker)
 	require.Same(t, a, d.GlobalChunker)
-	// Rules wired when official pt + global disambiguation XML load
-	if PortugueseXmlRuleDisambiguator() != nil {
-		require.NotNil(t, d.Rules)
-		require.Same(t, PortugueseXmlRuleDisambiguator(), d.Rules)
-	}
-	// Chunker still wired from multiwords when discoverable
-	if PortugueseMultiWordChunker() != nil {
-		require.NotNil(t, d.Chunker)
-		require.Same(t, PortugueseMultiWordChunker(), d.Chunker)
-	}
+	require.NotNil(t, d.Chunker, "chunker from /pt/multiwords.txt")
+	require.Same(t, PortugueseMultiWordChunker(), d.Chunker)
+	require.NotNil(t, d.Rules, "XmlRuleDisambiguator(lang, true)")
+	require.Same(t, PortugueseXmlRuleDisambiguator(), d.Rules)
 }
 
 func TestPortugueseGlobalChunker_DisambiguateOfficialPhrases(t *testing.T) {
-	if DiscoverPortugueseGlobalChunker() == "" {
-		t.Skip("official spelling_global.txt not discoverable")
-	}
+	require.NotEmpty(t, DiscoverPortugueseGlobalChunker(),
+		"official spelling_global.txt must be discoverable (inspiration core)")
 	// Isolate GlobalChunker stage (do not re-claim multiwords Chunker / Rules).
 	g := PortugueseGlobalChunker()
 	require.NotNil(t, g)
@@ -133,17 +125,13 @@ func TestPortugueseGlobalChunker_DisambiguateOfficialPhrases(t *testing.T) {
 	// (Google Maps is also in multiwords and would be re-tagged there).
 	full := NewPortugueseHybridDisambiguator()
 	require.NotNil(t, full.GlobalChunker)
+	require.NotNil(t, full.Chunker, "multiwords chunker required for removePreviousTags flatten")
 	out := full.Disambiguate(languagetool.NewAnalyzedSentence(multiwordTokens("Microsoft", "Entra")))
 	got := contentPOSTags(out)
 	require.Len(t, got, 2)
-	if full.Chunker != nil {
-		require.True(t, hasExactPOS(got[0], "NPCN000"), "wired hybrid Microsoft (flattened): %v", got[0])
-		require.True(t, hasExactPOS(got[1], "NPCN000"), "wired hybrid Entra (flattened): %v", got[1])
-		require.False(t, hasAnyAnglePOS(got[0]) || hasAnyAnglePOS(got[1]),
-			"removePreviousTags should flatten angle tags: %v %v", got[0], got[1])
-	} else {
-		require.True(t, hasExactPOS(got[0], "<NPCN000>"), "wired hybrid Microsoft: %v", got[0])
-		require.True(t, hasExactPOS(got[1], "</NPCN000>"), "wired hybrid Entra: %v", got[1])
-	}
+	require.True(t, hasExactPOS(got[0], "NPCN000"), "wired hybrid Microsoft (flattened): %v", got[0])
+	require.True(t, hasExactPOS(got[1], "NPCN000"), "wired hybrid Entra (flattened): %v", got[1])
+	require.False(t, hasAnyAnglePOS(got[0]) || hasAnyAnglePOS(got[1]),
+		"removePreviousTags should flatten angle tags: %v %v", got[0], got[1])
 	requireAllContentIgnored(t, out, true, "wired hybrid Microsoft Entra ignore")
 }

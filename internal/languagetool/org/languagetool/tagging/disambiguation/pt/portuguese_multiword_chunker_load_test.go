@@ -22,9 +22,8 @@ func TestOpenPortugueseMultiWordChunker_Settings(t *testing.T) {
 }
 
 func TestPortugueseMultiWordChunker_ProcessCachedOfficial(t *testing.T) {
-	if DiscoverPortugueseMultiwords() == "" {
-		t.Skip("official pt/multiwords.txt not discoverable")
-	}
+	require.NotEmpty(t, DiscoverPortugueseMultiwords(),
+		"official pt/multiwords.txt must be discoverable (inspiration pt module)")
 	a := PortugueseMultiWordChunker()
 	b := PortugueseMultiWordChunker()
 	require.NotNil(t, a)
@@ -38,20 +37,14 @@ func TestPortugueseMultiWordChunker_ProcessCachedOfficial(t *testing.T) {
 	require.True(t, a.RemovePreviousTags)
 	require.True(t, a.AddIgnoreSpelling)
 
-	// Wired on NewPortugueseHybridDisambiguator
+	// Wired on NewPortugueseHybridDisambiguator (Java final fields)
 	d := NewPortugueseHybridDisambiguator()
 	require.NotNil(t, d.Chunker)
 	require.Same(t, a, d.Chunker)
-	// GlobalChunker wired when spelling_global.txt is discoverable
-	if PortugueseGlobalChunker() != nil {
-		require.NotNil(t, d.GlobalChunker)
-		require.Same(t, PortugueseGlobalChunker(), d.GlobalChunker)
-	}
-	// Rules wired when official pt + global disambiguation XML load
-	if PortugueseXmlRuleDisambiguator() != nil {
-		require.NotNil(t, d.Rules)
-		require.Same(t, PortugueseXmlRuleDisambiguator(), d.Rules)
-	}
+	require.NotNil(t, d.GlobalChunker, "chunkerGlobal from spelling_global.txt")
+	require.Same(t, PortugueseGlobalChunker(), d.GlobalChunker)
+	require.NotNil(t, d.Rules, "XmlRuleDisambiguator(lang, true)")
+	require.Same(t, PortugueseXmlRuleDisambiguator(), d.Rules)
 }
 
 // multiwordTokens builds SENT_START + alternating content/space tokens for MultiWordChunker.
@@ -120,9 +113,8 @@ func requireAllContentIgnored(t *testing.T, out *languagetool.AnalyzedSentence, 
 }
 
 func TestPortugueseMultiWordChunker_DisambiguateOfficialPhrases(t *testing.T) {
-	if DiscoverPortugueseMultiwords() == "" {
-		t.Skip("official pt/multiwords.txt not discoverable")
-	}
+	require.NotEmpty(t, DiscoverPortugueseMultiwords(),
+		"official pt/multiwords.txt must be discoverable (inspiration pt module)")
 	// Isolate Chunker stage (do not re-claim GlobalChunker / Rules).
 	c := PortugueseMultiWordChunker()
 	require.NotNil(t, c)
