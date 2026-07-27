@@ -17,7 +17,8 @@ func TestSmallLangConstructors(t *testing.T) {
 	require.GreaterOrEqual(t, len(all), 10)
 	seen := map[string]bool{}
 	// Java modules without createDefaultSpellingRule / no speller in getRelevantRules
-	noDefaultSpeller := map[string]bool{"ja": true, "zh": true, "fa": true, "ta": true}
+	// Persian is PersianLang (empty speller) — not SmallLang
+	noDefaultSpeller := map[string]bool{"ja": true, "zh": true, "ta": true}
 	for _, l := range all {
 		require.False(t, seen[l.ShortCode], l.ShortCode)
 		seen[l.ShortCode] = true

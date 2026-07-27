@@ -57,7 +57,7 @@ func TestSmallLangRelevantRuleIDs(t *testing.T) {
 	// Tagalog is TagalogLang — full twin in tagalog_test.go
 	require.Contains(t, Icelandic.GetRelevantRuleIDs(), "HUNSPELL_NO_SUGGEST_RULE")
 	require.Contains(t, Malayalam.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_ML_IN")
-	require.Contains(t, Persian.GetRelevantRuleIDs(), "FA_WORD_COHERENCY")
+	// Persian is PersianLang — full twin in persian_test.go
 	require.Contains(t, Lithuanian.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_LT_LT")
 	require.Contains(t, CrimeanTatar.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_CRH_UA")
 	// Asturian is AsturianLang — full twin in asturian_test.go

@@ -32,8 +32,7 @@ func (s SmallLang) GetRelevantRuleIDs() []string {
 		return IcelandicRelevantRuleIDs()
 	case "ml":
 		return MalayalamRelevantRuleIDs()
-	case "fa":
-		return PersianRelevantRuleIDs()
+	// Persian: PersianLang.GetRelevantRuleIDs (persian_relevant_rules.go)
 	case "lt":
 		return LithuanianRelevantRuleIDs()
 	// CrimeanTatar: CrimeanTatarLang.GetRelevantRuleIDs (crimean_tatar_relevant_rules.go)

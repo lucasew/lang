@@ -134,10 +134,10 @@ var (
 	// Romanian promoted to RomanianLang (see romanian.go) — not SmallLang.
 	// Greek promoted to GreekLang (see greek.go) — not SmallLang.
 	Galician = SmallLang{"gl", "Galician", "HUNSPELL_RULE", []string{"ES"}}
-	// Japanese/Chinese/Persian: no createDefaultSpellingRule / no speller in getRelevantRules
+	// Japanese/Chinese: no createDefaultSpellingRule / no speller in getRelevantRules
+	// Persian promoted to PersianLang (see persian.go) — not SmallLang.
 	Japanese = SmallLang{"ja", "Japanese", "", []string{"JP"}}
 	Chinese  = SmallLang{"zh", "Chinese", "", []string{"CN"}}
-	Persian  = SmallLang{"fa", "Persian", "", []string{"IR"}}
 	// MorfologikIrishSpellerRule.getId
 	Irish     = SmallLang{"ga", "Irish", "MORFOLOGIK_RULE_GA_IE", []string{"IE"}}
 	Ukrainian = SmallLang{"uk", "Ukrainian", "MORFOLOGIK_RULE_UK_UA", []string{"UA"}}
@@ -146,7 +146,7 @@ var (
 func AllSmallLangs() []SmallLang {
 	return []SmallLang{
 		Swedish, Galician,
-		Japanese, Chinese, Persian, Irish, Ukrainian,
+		Japanese, Chinese, Irish, Ukrainian,
 	}
 }
 
@@ -162,8 +162,8 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 		// Galician explicitly LookingForNewMaintainer (same as default)
 		return languagetool.LookingForNewMaintainer
 	default:
-		// Japanese, Chinese, Persian, …: no override → default
-		// (Danish/Romanian/Slovak/Slovenian/Tagalog/Asturian/Belarusian LookingForNewMaintainer on *Lang; Greek/Breton/CrimeanTatar ActivelyMaintained on *Lang)
+		// Japanese, Chinese, …: no override → default
+		// (Danish/Romanian/Slovak/Slovenian/Tagalog/Asturian/Belarusian/Persian LookingForNewMaintainer on *Lang; Greek/Breton/CrimeanTatar ActivelyMaintained on *Lang)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -198,12 +198,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 	// Asturian maintainers: AsturianLang.GetMaintainers (asturian.go)
 	// Slovenian maintainers: SlovenianLang.GetMaintainers (slovenian.go)
 	// Romanian maintainers: RomanianLang.GetMaintainers (romanian.go)
-	case "fa":
-		return []Contributor{
-			NewContributor("Reza1615"),
-			NewContributor("Alireza Eskandarpour Shoferi"),
-			NewContributor("Ebrahim Byagowi"),
-		}
+	// Persian maintainers: PersianLang.GetMaintainers (persian.go)
 	case "zh":
 		return []Contributor{NewContributor("Tao Lin")}
 	case "ja":
