@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	artag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
 )
 
 // arSynthResourceRel is the official LT resource/ar directory layout (Java classpath /ar/...).
@@ -92,9 +93,17 @@ func OpenArabicSynthesizerFromDir(resourceDir string) *ArabicSynthesizer {
 	}
 	// Java BaseSynthesizer also loads /ar/added.txt + /ar/removed.txt from the module tree.
 	supplementManualFromInspiration(base, resourceDir)
+	// Java: private final ArabicTagger tagger = new ArabicTagger();
+	// Prefer dict-backed DefaultArabicTagger when available (same dict path as Java).
+	artag.EnsureDefaultArabicTagger()
+	tg := artag.DefaultArabicTagger
+	if tg == nil {
+		tg = artag.NewArabicTagger(nil)
+	}
 	return &ArabicSynthesizer{
 		BaseSynthesizer: base,
 		tagmanager:      nil, // lazy via tm()
+		tagger:          tg,
 	}
 }
 

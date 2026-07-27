@@ -7,188 +7,271 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	arsynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ar"
+	artag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
 )
 
 //go:embed data/inflected_one_word.txt
 var inflectedOneWordFS embed.FS
 
+// ArabicInflectedOneWordReplaceRuleID ports
+// ArabicInflectedOneWordReplaceRule.AR_INFLECTED_ONE_WORD_REPLACE → "AR_INFLECTED_ONE_WORD".
+const ArabicInflectedOneWordReplaceRuleID = "AR_INFLECTED_ONE_WORD"
+
+// ArabicInflectedOneWordFilePath ports ArabicInflectedOneWordReplaceRule.FILE_NAME
+// → "/ar/inflected_one_word.txt".
+const ArabicInflectedOneWordFilePath = "/ar/inflected_one_word.txt"
+
+// ArabicInflectedOneWordFileNames ports getFileNames().
+var ArabicInflectedOneWordFileNames = []string{ArabicInflectedOneWordFilePath}
+
 var (
 	inflectedOnce sync.Once
-	inflectedMap  map[string]rules.SuggestionWithMessage
+	inflectedBase *rules.AbstractSimpleReplaceRule2
 )
 
-func loadInflectedOneWord() map[string]rules.SuggestionWithMessage {
+// loadInflectedOneWordBase loads official /ar/inflected_one_word.txt once
+// (Java AbstractSimpleReplaceRule2.lazyInit via getWrongWords()).
+func loadInflectedOneWordBase() *rules.AbstractSimpleReplaceRule2 {
 	inflectedOnce.Do(func() {
-		inflectedMap = parseARInflectedMap()
+		f, err := inflectedOneWordFS.Open("data/inflected_one_word.txt")
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		// Field twin of ArabicInflectedOneWordReplaceRule + ASR2 defaults:
+		// - id AR_INFLECTED_ONE_WORD
+		// - description / short / message as Java overrides
+		// - suggestions separator " أو "
+		// - CaseSensitivy.CI (base default)
+		// - Locale "ar"
+		// - Categories.MISC (super + super.setCategory(MISC) in ctor)
+		// - ITSIssueType.Inconsistency
+		base := &rules.AbstractSimpleReplaceRule2{
+			ID:                   ArabicInflectedOneWordReplaceRuleID,
+			Description:          "قاعدة تطابق الكلمات التي يجب تجنبها وتقترح تصويبا لها",
+			// Java getShort(): double space after أن
+			ShortMsg:             "خطأ، يفضل أن  يقال:",
+			// Java getMessage() (ASR2 API; Match builds a different msg)
+			MessageTemplate:      " لا تقل '$match' بل قل: $suggestions",
+			SuggestionsSeparator: " أو ",
+			CaseSens:             rules.CaseInsensitive,
+			LanguageCode:         "ar",
+			SubRuleSpecificIDs:   false,
+			Category:             rules.CatMisc.GetCategory(nil),
+			IssueType:            rules.ITSInconsistency,
+		}
+		if err := base.LoadSimpleReplaceRule2Data(f, ArabicInflectedOneWordFilePath); err != nil {
+			panic(err)
+		}
+		// Java:
+		// addExamplePair(Example.wrong("أجريت <marker>أبحاثا</marker> في المخبر"),
+		//                Example.fixed("أجريت <marker>بحوثا</marker> في المخبر."));
+		base.AddExamplePair(
+			rules.Wrong("أجريت <marker>أبحاثا</marker> في المخبر"),
+			rules.Fixed("أجريت <marker>بحوثا</marker> في المخبر."),
+		)
+		inflectedBase = base
 	})
-	return inflectedMap
-}
-
-func parseARInflectedMap() map[string]rules.SuggestionWithMessage {
-	b, err := inflectedOneWordFS.ReadFile("data/inflected_one_word.txt")
-	if err != nil {
-		panic(err)
-	}
-	out := map[string]rules.SuggestionWithMessage{}
-	for _, line := range strings.Split(string(b), "\n") {
-		line = tools.JavaStringTrim(line)
-		if line == "" || strings.HasPrefix(line, "#") {
-			continue
-		}
-		if i := strings.IndexByte(line, '#'); i >= 0 {
-			line = tools.JavaStringTrim(line[:i])
-		}
-		if line == "" {
-			continue
-		}
-		parts := strings.SplitN(line, "\t", 2)
-		msg := ""
-		if len(parts) == 2 {
-			msg = parts[1]
-		}
-		kv := strings.SplitN(parts[0], "=", 2)
-		if len(kv) < 2 {
-			continue
-		}
-		wrong := tools.JavaStringTrim(kv[0])
-		sug := tools.JavaStringTrim(kv[1])
-		out[wrong] = rules.SuggestionWithMessage{Suggestion: sug, Message: msg}
-	}
-	return out
+	return inflectedBase
 }
 
 // ArabicInflectedOneWordReplaceRule ports
-// org.languagetool.rules.ar.ArabicInflectedOneWordReplaceRule.
-// Match is lemma + POS only (Java getSuggestedWords); without POS/lemma fail closed.
-// InflectLemmaLike optional synthesizer for suggestions (Java ArabicSynthesizer).
+// org.languagetool.rules.ar.ArabicInflectedOneWordReplaceRule
+// (extends AbstractSimpleReplaceRule2; Match fully overridden).
 type ArabicInflectedOneWordReplaceRule struct {
-	Messages map[string]string
-	words    map[string]rules.SuggestionWithMessage
-	// InflectLemmaLike ports synthesizer.inflectLemmaLike(targetLemma, sourceToken).
-	// When nil, Java tag-miss path is used: "["+lemma+"]" — not bare lemma as surface invent.
-	// Full clitic merge needs tagger (incomplete until wired).
-	InflectLemmaLike func(targetLemma string, source *languagetool.AnalyzedToken) []string
-	// incorrectExamples / correctExamples port Rule.addExamplePair.
-	incorrectExamples []rules.IncorrectExample
-	correctExamples   []rules.CorrectExample
+	*rules.AbstractSimpleReplaceRule2
+	// tagger ports ArabicInflectedOneWordReplaceRule.tagger
+	// (constructed with enableNewStylePronounTag; unused by Match — Java stores it).
+	tagger *artag.ArabicTagger
+	// synthesizer ports ArabicInflectedOneWordReplaceRule.synthesizer.
+	synthesizer *arsynth.ArabicSynthesizer
+	// wrongWords ports ArabicInflectedOneWordReplaceRule.wrongWords
+	// (getWrongWords() list: last map is mFullNoSpace).
+	wrongWords []map[string]rules.SuggestionWithMessage
 }
 
+// NewArabicInflectedOneWordReplaceRule ports
+// ArabicInflectedOneWordReplaceRule(ResourceBundle messages).
 func NewArabicInflectedOneWordReplaceRule(messages map[string]string) *ArabicInflectedOneWordReplaceRule {
-	r := &ArabicInflectedOneWordReplaceRule{
-		Messages: messages,
-		words:    loadInflectedOneWord(),
+	base := loadInflectedOneWordBase()
+	r := *base
+	r.Messages = messages
+	// Java: super.setCategory(Categories.MISC.getCategory(messages));
+	r.Category = rules.CatMisc.GetCategory(messages)
+	// Java: setLocQualityIssueType(ITSIssueType.Inconsistency);
+	r.IssueType = rules.ITSInconsistency
+
+	// Java: tagger = new ArabicTagger(); tagger.enableNewStylePronounTag();
+	// Field is unused by Match (lemma/POS come from the sentence analysis path);
+	// keep a private instance so we do not mutate DefaultArabicTagger.
+	artag.EnsureDefaultArabicTagger()
+	var tagger *artag.ArabicTagger
+	if artag.DefaultArabicTagger != nil && artag.DefaultArabicTagger.GetWordTagger() != nil {
+		tagger = artag.NewArabicTagger(artag.DefaultArabicTagger.GetWordTagger())
+	} else {
+		tagger = artag.NewArabicTagger(nil)
 	}
-	// Java: أبحاثا → بحوثا (fixed adds trailing period, same as upstream)
-	r.AddExamplePair(
-		rules.Wrong("أجريت <marker>أبحاثا</marker> في المخبر"),
-		rules.Fixed("أجريت <marker>بحوثا</marker> في المخبر."),
-	)
-	return r
+	tagger.EnableNewStylePronounTag()
+
+	// Java: synthesizer = new ArabicSynthesizer(new Arabic());
+	synth := arsynth.Instance()
+	if synth == nil {
+		// Fail-soft for environments without arabic_synth.dict: still construct
+		// like Java would after loading — empty Instance means no forms.
+		synth = arsynth.NewArabicSynthesizer(nil)
+	}
+
+	return &ArabicInflectedOneWordReplaceRule{
+		AbstractSimpleReplaceRule2: &r,
+		tagger:                     tagger,
+		synthesizer:                synth,
+		// Java: wrongWords = getWrongWords();
+		wrongWords: r.GetWrongWords(),
+	}
 }
 
-func (r *ArabicInflectedOneWordReplaceRule) GetID() string { return "AR_INFLECTED_ONE_WORD" }
-
-func (r *ArabicInflectedOneWordReplaceRule) GetDescription() string {
-	return "قاعدة تطابق الكلمات التي يجب تجنبها وتقترح تصويبا لها"
-}
-
-// AddExamplePair ports Rule.addExamplePair.
-func (r *ArabicInflectedOneWordReplaceRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+// GetFileNames ports ArabicInflectedOneWordReplaceRule.getFileNames().
+func (r *ArabicInflectedOneWordReplaceRule) GetFileNames() []string {
 	if r == nil {
-		return
-	}
-	var br rules.BaseRule
-	br.AddExamplePair(incorrect, correct)
-	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
-	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
-}
-
-// GetIncorrectExamples ports Rule.getIncorrectExamples.
-func (r *ArabicInflectedOneWordReplaceRule) GetIncorrectExamples() []rules.IncorrectExample {
-	if r == nil || len(r.incorrectExamples) == 0 {
 		return nil
 	}
-	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
-	copy(out, r.incorrectExamples)
-	return out
+	return []string{ArabicInflectedOneWordFilePath}
 }
 
-// GetCorrectExamples ports Rule.getCorrectExamples.
-func (r *ArabicInflectedOneWordReplaceRule) GetCorrectExamples() []rules.CorrectExample {
-	if r == nil || len(r.correctExamples) == 0 {
-		return nil
+// GetShort ports ArabicInflectedOneWordReplaceRule.getShort().
+func (r *ArabicInflectedOneWordReplaceRule) GetShort() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
 	}
-	out := make([]rules.CorrectExample, len(r.correctExamples))
-	copy(out, r.correctExamples)
-	return out
+	return r.ShortMsg
 }
 
-// Match ports ArabicInflectedOneWordReplaceRule.match.
+// GetMessage ports ArabicInflectedOneWordReplaceRule.getMessage() (ASR2 API).
+func (r *ArabicInflectedOneWordReplaceRule) GetMessage() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
+	}
+	return r.MessageTemplate
+}
+
+// GetSuggestionsSeparator ports getSuggestionsSeparator() → " أو ".
+func (r *ArabicInflectedOneWordReplaceRule) GetSuggestionsSeparator() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
+	}
+	if r.SuggestionsSeparator == "" {
+		return ", "
+	}
+	return r.SuggestionsSeparator
+}
+
+// GetLocaleCode ports getLocale() → Locale("ar").
+func (r *ArabicInflectedOneWordReplaceRule) GetLocaleCode() string {
+	if r == nil || r.AbstractSimpleReplaceRule2 == nil {
+		return ""
+	}
+	return r.LanguageCode
+}
+
+// Match ports ArabicInflectedOneWordReplaceRule.match (fully overridden vs ASR2).
 func (r *ArabicInflectedOneWordReplaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	if r == nil || sentence == nil || len(r.words) == 0 {
+	if r == nil || sentence == nil {
+		return nil
+	}
+	// Java: if (wrongWords.size() == 0)
+	if len(r.wrongWords) == 0 {
 		return nil
 	}
 	tokens := sentence.GetTokensWithoutWhitespace()
-	var matches []*rules.RuleMatch
-	for i := 1; i < len(tokens); i++ {
-		tok := tokens[i]
-		if tok == nil {
+	var ruleMatches []*rules.RuleMatch
+	// Java iterates all tokens including SENT_START (comment says "ignoring" but loop does not skip).
+	for _, token := range tokens {
+		if token == nil {
 			continue
 		}
-		for _, wordTok := range tok.GetReadings() {
+		for _, wordTok := range token.GetReadings() {
 			if wordTok == nil {
 				continue
 			}
-			swm := r.getSuggestedWords(wordTok)
-			if swm == nil {
+			if !r.isCandidateWord(wordTok) {
 				continue
 			}
-			propositions := strings.Split(swm.Suggestion, "|")
-			sugMsg := swm.Message
+			// get suggestions
+			var propositions []string
+			sugMsg := ""
+			propositionsWithMessage := r.getSuggestedWords(wordTok)
+			if propositionsWithMessage != nil {
+				propositions = strings.Split(propositionsWithMessage.Suggestion, "|")
+				sugMsg = propositionsWithMessage.Message
+				// Java: sugMsg = sugMsg != null ? sugMsg : "";
+			}
+
+			// generate suggestion according to suggested word
+			var replacement strings.Builder
 			var forms []string
-			for _, prop := range propositions {
-				prop = tools.JavaStringTrim(prop)
-				if prop == "" {
-					continue
-				}
-				if r.InflectLemmaLike != nil {
-					forms = append(forms, r.InflectLemmaLike(prop, wordTok)...)
-				} else {
-					// Java always has ArabicSynthesizer; without it, mirror tag-miss path
-					// (inflectLemmaLike returns "["+lemma+"]"), not bare prop invent.
-					forms = append(forms, "["+prop+"]")
+			for _, proposition := range propositions {
+				// Java does not trim propositions before inflect
+				inflectedWordList := r.inflectSuggestedWords(proposition, wordTok)
+				for _, w := range inflectedWordList {
+					replacement.WriteString("<suggestion>")
+					replacement.WriteString(w)
+					replacement.WriteString("</suggestion>&nbsp;")
+					forms = append(forms, w)
 				}
 			}
-			if len(forms) == 0 {
-				continue
+			// Java message (exact spacing):
+			// "' الكلمة خاطئة " + token.getToken() + " ' ،" + sugMsg + ". استعمل  " + replacement
+			msg := "' الكلمة خاطئة " + token.GetToken() + " ' ،" + sugMsg + ". استعمل  " + replacement.String()
+			// Java short: "خطأ في استعمال كلمة:" + sugMsg
+			shortMsg := "خطأ في استعمال كلمة:" + sugMsg
+			rm := rules.NewRuleMatch(r, sentence, token.GetStartPos(), token.GetEndPos(), msg)
+			rm.ShortMessage = shortMsg
+			// Java RuleMatch ctor extracts <suggestion>…</suggestion> into replacements
+			if len(forms) > 0 {
+				rm.SetSuggestedReplacements(forms)
 			}
-			// Message template simplified to short form used in tests
-			msg := " لا تقل '" + tok.GetToken() + "' بل قل: " + strings.Join(forms, " أو ")
-			if sugMsg != "" {
-				msg = sugMsg + " " + strings.Join(forms, " أو ")
-			}
-			rm := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-			rm.ShortMessage = "خطأ، يفضل أن  يقال:"
-			rm.SetSuggestedReplacements(forms)
-			matches = append(matches, rm)
-			break // one match per token surface (Java can add multiple per reading)
+			ruleMatches = append(ruleMatches, rm)
 		}
 	}
-	return matches
+	return ruleMatches
 }
 
-// getSuggestedWords ports getSuggestedWords: requires POS + lemma in dictionary.
+// isCandidateWord ports isCandidateWord.
+func (r *ArabicInflectedOneWordReplaceRule) isCandidateWord(mytoken *languagetool.AnalyzedToken) bool {
+	return r.getSuggestedWords(mytoken) != nil
+}
+
+// getSuggestedWords ports getSuggestedWords: requires non-null POSTag; lemma in last wrongWords map.
 func (r *ArabicInflectedOneWordReplaceRule) getSuggestedWords(mytoken *languagetool.AnalyzedToken) *rules.SuggestionWithMessage {
-	if mytoken == nil || mytoken.GetPOSTag() == nil {
+	if mytoken == nil || r == nil || len(r.wrongWords) == 0 {
 		return nil
 	}
-	if mytoken.GetLemma() == nil || *mytoken.GetLemma() == "" {
+	wordPostag := mytoken.GetPOSTag()
+	// Java: if (wordPostag != null)
+	if wordPostag == nil {
 		return nil
 	}
-	if swm, ok := r.words[*mytoken.GetLemma()]; ok {
+	wordLemma := ""
+	if mytoken.GetLemma() != nil {
+		wordLemma = *mytoken.GetLemma()
+	}
+	// lookup in WrongWords (last map = mFullNoSpace)
+	// Java: wrongWords.get(wrongWords.size() - 1).get(wordLemma) — lemma as-is
+	// (CI lowercased keys on load; Arabic letters are case-invariant).
+	last := r.wrongWords[len(r.wrongWords)-1]
+	if swm, ok := last[wordLemma]; ok {
 		cp := swm
 		return &cp
 	}
 	return nil
+}
+
+// inflectSuggestedWords ports inflectSuggestedWords → synthesizer.inflectLemmaLike.
+func (r *ArabicInflectedOneWordReplaceRule) inflectSuggestedWords(targetLemma string, sourcetoken *languagetool.AnalyzedToken) []string {
+	if r == nil || r.synthesizer == nil {
+		// Java always has synthesizer; without resources mirror tag-miss path.
+		return []string{"[" + targetLemma + "]"}
+	}
+	return r.synthesizer.InflectLemmaLike(targetLemma, sourcetoken)
 }

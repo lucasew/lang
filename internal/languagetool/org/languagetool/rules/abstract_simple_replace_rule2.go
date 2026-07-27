@@ -74,6 +74,22 @@ type AbstractSimpleReplaceRule2 struct {
 	mFullNoSpace  map[string]SuggestionWithMessage
 }
 
+// GetWrongWords ports AbstractSimpleReplaceRule2.getWrongWords():
+// [0]=mFullSpace, [1]=mFullNoSpace (last map used by single-word lemma rules).
+func (r *AbstractSimpleReplaceRule2) GetWrongWords() []map[string]SuggestionWithMessage {
+	if r == nil {
+		return nil
+	}
+	// Ensure non-nil maps so callers can index size-1 safely after Load.
+	if r.mFullSpace == nil {
+		r.mFullSpace = make(map[string]SuggestionWithMessage)
+	}
+	if r.mFullNoSpace == nil {
+		r.mFullNoSpace = make(map[string]SuggestionWithMessage)
+	}
+	return []map[string]SuggestionWithMessage{r.mFullSpace, r.mFullNoSpace}
+}
+
 // LoadSimpleReplaceRule2Data fills maps from a replace.txt reader.
 func (r *AbstractSimpleReplaceRule2) LoadSimpleReplaceRule2Data(reader io.Reader, path string) error {
 	if r.mStartSpace == nil {

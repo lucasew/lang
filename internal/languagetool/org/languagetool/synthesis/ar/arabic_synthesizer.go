@@ -19,6 +19,8 @@ const (
 type ArabicSynthesizer struct {
 	*synthesis.BaseSynthesizer
 	tagmanager *artag.ArabicTagManager
+	// tagger ports ArabicSynthesizer.tagger (used by setEnclitic*/inflectLemmaLike).
+	tagger *artag.ArabicTagger
 }
 
 func NewArabicSynthesizer(manual *synthesis.ManualSynthesizer) *ArabicSynthesizer {
@@ -28,6 +30,9 @@ func NewArabicSynthesizer(manual *synthesis.ManualSynthesizer) *ArabicSynthesize
 	return &ArabicSynthesizer{
 		BaseSynthesizer: base,
 		tagmanager:      artag.NewArabicTagManager(),
+		// Java: private final ArabicTagger tagger = new ArabicTagger();
+		// Dict-backed DefaultArabicTagger is preferred; set lazily in getTagger().
+		tagger: nil,
 	}
 }
 
@@ -252,6 +257,156 @@ func (s *ArabicSynthesizer) InflectMafoulMutlq(word string) string {
 
 func (s *ArabicSynthesizer) InflectAdjectiveTanwinNasb(word string, feminin bool) string {
 	return InflectAdjectiveTanwinNasb(word, feminin)
+}
+
+func (s *ArabicSynthesizer) getTagger() *artag.ArabicTagger {
+	if s != nil && s.tagger != nil {
+		return s.tagger
+	}
+	// Prefer official dict-backed DefaultArabicTagger when available.
+	artag.EnsureDefaultArabicTagger()
+	if artag.DefaultArabicTagger != nil {
+		return artag.DefaultArabicTagger
+	}
+	return artag.NewArabicTagger(nil)
+}
+
+// SetEnclitic ports ArabicSynthesizer.setEnclitic — first form of setEncliticMultiple.
+func (s *ArabicSynthesizer) SetEnclitic(token *languagetool.AnalyzedToken, suffix string) string {
+	list := s.SetEncliticMultiple(token, suffix)
+	if len(list) == 0 {
+		return ""
+	}
+	return list[0]
+}
+
+// SetEncliticMultiple ports ArabicSynthesizer.setEncliticMultiple.
+func (s *ArabicSynthesizer) SetEncliticMultiple(token *languagetool.AnalyzedToken, suffix string) []string {
+	if token == nil {
+		return nil
+	}
+	postagPtr := token.GetPOSTag()
+	postag := ""
+	if postagPtr != nil {
+		postag = *postagPtr
+	}
+	word := token.GetToken()
+	defaultWordlist := []string{"(" + word + ")"}
+	// Java: if (postag.isEmpty()) — null would NPE; Go treats nil as empty
+	if postag == "" {
+		return defaultWordlist
+	}
+	// flag is by default '-', if suffix non-empty => 'H'
+	flag := rune('-')
+	if suffix != "" {
+		flag = 'H'
+	}
+	tagger := s.getTagger()
+	tm := s.tm()
+	// save procletic
+	procletic := tagger.GetProclitic(token)
+	// set enclitic flag
+	newposTag := tm.SetFlag(postag, "PRONOUN", flag)
+	// adjust procletics
+	newposTag = tm.SetProcleticFlags(newposTag)
+	// synthesis => lookup for stems with similar postag and has enclitic flag
+	lemma := lemmaOf(token)
+	lemPtr := lemma
+	newToken := languagetool.NewAnalyzedToken(lemma, &newposTag, &lemPtr)
+	newwordList, _ := s.Synthesize(newToken, newposTag)
+
+	var wordlist []string
+	if len(newwordList) != 0 {
+		for _, stem := range newwordList {
+			newWord := ""
+			// We replace the Heh, because the Tag dictionary represent only Heh Pronouns
+			if tm.HasPronoun(newposTag) && flag == 'H' {
+				if strings.HasSuffix(stem, "ي") {
+					// if the stem is ended by Yeh for 1st person pronoun
+					if suffix == "ي" {
+						newWord = procletic + stem
+					} else {
+						newWord = ""
+					}
+				} else if strings.HasSuffix(stem, "ه") {
+					stem = strings.TrimSuffix(stem, "ه")
+					newWord = procletic + stem + suffix
+				} else {
+					newWord = procletic + stem + suffix
+				}
+			} else {
+				newWord = procletic + stem
+			}
+			if newWord != "" {
+				wordlist = append(wordlist, newWord)
+			}
+		}
+	} else {
+		// no word generated
+		wordlist = append(wordlist, "("+word+")")
+	}
+	if len(wordlist) == 0 {
+		return defaultWordlist
+	}
+	return wordlist
+}
+
+// InflectLemmaLike ports ArabicSynthesizer.inflectLemmaLike — generate forms of
+// targetLemma matching source token's morphology (proclitic/enclitic + merged POS).
+func (s *ArabicSynthesizer) InflectLemmaLike(targetLemma string, sourcetoken *languagetool.AnalyzedToken) []string {
+	if s == nil {
+		return []string{"[" + targetLemma + "]"}
+	}
+	tagger := s.getTagger()
+	// Java: tagger.tag(targetLemma) — single-token Tag
+	tokenReadList := tagger.TagSingle(targetLemma)
+	if tokenReadList == nil || !tokenReadList.HasLemma(targetLemma) {
+		return []string{"[" + targetLemma + "]"}
+	}
+	sourcePostag := ""
+	if sourcetoken != nil && sourcetoken.GetPOSTag() != nil {
+		sourcePostag = *sourcetoken.GetPOSTag()
+	}
+	// get affixes
+	prefix := tagger.GetProclitic(sourcetoken)
+	suffix := tagger.GetEnclitic(sourcetoken)
+
+	tm := s.tm()
+	var wordlist []string
+	for _, currentToken := range tokenReadList.GetReadings() {
+		if currentToken == nil {
+			continue
+		}
+		// if the lemma is not equals to given one, continue
+		curLemma := ""
+		if currentToken.GetLemma() != nil {
+			curLemma = *currentToken.GetLemma()
+		}
+		if targetLemma != curLemma {
+			continue
+		}
+		postagLemma := ""
+		if currentToken.GetPOSTag() != nil {
+			postagLemma = *currentToken.GetPOSTag()
+		}
+		mergedPostag := tm.MergePosTag(sourcePostag, postagLemma)
+		// construct word = prefix + targetLemma
+		word := prefix + targetLemma
+		lem := targetLemma
+		token := languagetool.NewAnalyzedToken(word, &mergedPostag, &lem)
+		wordlist = append(wordlist, s.SetEncliticMultiple(token, suffix)...)
+	}
+	// remove duplicates (Java: new ArrayList<>(new HashSet<>(wordlist)))
+	seen := make(map[string]struct{}, len(wordlist))
+	out := make([]string, 0, len(wordlist))
+	for _, w := range wordlist {
+		if _, ok := seen[w]; ok {
+			continue
+		}
+		seen[w] = struct{}{}
+		out = append(out, w)
+	}
+	return out
 }
 
 var _ synthesis.Synthesizer = (*ArabicSynthesizer)(nil)

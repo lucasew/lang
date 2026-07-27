@@ -336,6 +336,65 @@ func (m *ArabicTagManager) SetProcleticFlags(postag string) string {
 	return postag
 }
 
+// MergePosTag ports ArabicTagManager.mergePosTag — merge conjugation/affix flags
+// from source into target's word-class features (used by ArabicSynthesizer.inflectLemmaLike).
+func (m *ArabicTagManager) MergePosTag(sourcePosTag, targetPosTag string) string {
+	if m == nil {
+		return targetPosTag
+	}
+	// Java: null/empty source → target; null/empty target → source
+	if sourcePosTag == "" {
+		return targetPosTag
+	}
+	if targetPosTag == "" {
+		return sourcePosTag
+	}
+	tmp := sourcePosTag
+	if m.IsNoun(sourcePosTag) && m.IsNoun(targetPosTag) {
+		if len(sourcePosTag) != len(targetPosTag) {
+			return sourcePosTag
+		}
+		// copy target category into source
+		return m.SetFlag(sourcePosTag, "CATEGORY", m.GetFlag(targetPosTag, "CATEGORY"))
+	}
+	if m.IsVerb(sourcePosTag) && m.IsVerb(targetPosTag) {
+		if len(sourcePosTag) != len(targetPosTag) {
+			return sourcePosTag
+		}
+		tmp = m.SetFlag(tmp, "CATEGORY", m.GetFlag(targetPosTag, "CATEGORY"))
+		tmp = m.SetFlag(tmp, "TRANS", m.GetFlag(targetPosTag, "TRANS"))
+		return tmp
+	}
+	if m.IsStopWord(sourcePosTag) && m.IsStopWord(targetPosTag) {
+		if len(sourcePosTag) != len(targetPosTag) {
+			return sourcePosTag
+		}
+		tmp = m.SetFlag(tmp, "CATEGORY", m.GetFlag(targetPosTag, "CATEGORY"))
+		tmp = m.SetFlag(tmp, "OPTION", m.GetFlag(targetPosTag, "OPTION"))
+		return tmp
+	}
+	// different word classes
+	tmp = targetPosTag
+	// Stopword ↔ verb/noun: pronoun only
+	if (m.IsStopWord(sourcePosTag) && (m.IsVerb(targetPosTag) || m.IsNoun(targetPosTag))) ||
+		((m.IsVerb(sourcePosTag) || m.IsNoun(sourcePosTag)) && m.IsStopWord(targetPosTag)) {
+		if m.HasPronoun(sourcePosTag) {
+			tmp = m.SetFlag(tmp, "PRONOUN", m.GetFlag(sourcePosTag, "PRONOUN"))
+		}
+		return tmp
+	}
+	// Verb ↔ noun: pronoun + conj
+	if (m.IsVerb(sourcePosTag) && m.IsNoun(targetPosTag)) ||
+		(m.IsNoun(sourcePosTag) && m.IsVerb(targetPosTag)) {
+		if m.HasPronoun(sourcePosTag) {
+			tmp = m.SetFlag(tmp, "PRONOUN", m.GetFlag(sourcePosTag, "PRONOUN"))
+		}
+		tmp = m.SetFlag(tmp, "CONJ", m.GetFlag(sourcePosTag, "CONJ"))
+		return tmp
+	}
+	return targetPosTag
+}
+
 // ModifyPosTag ports ArabicTagManager.modifyPosTag — applies "TYPE;FLAG" tags
 // (e.g. CONJ;W, JAR;B, PRONOUN;D). Returns "" if any tag is incompatible (Java null).
 func (m *ArabicTagManager) ModifyPosTag(postag string, tags []string) string {
