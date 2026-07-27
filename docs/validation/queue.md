@@ -54,6 +54,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 
 | checklist_id | status | java_paths | go_paths | ready_commit | round | attempt | findings | blocked_reason | updated_at |
 |--------------|--------|------------|----------|--------------|-------|---------|----------|----------------|------------|
+| docs/faithful-port-checklist.md#3.C.3-ItalianWordRepeatRule | ready | inspiration/languagetool/languagetool-language-modules/it/src/main/java/org/languagetool/rules/it/ItalianWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/it/src/test/java/org/languagetool/rules/it/ItalianWordRepeatRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/WordRepeatRule.java | internal/languagetool/org/languagetool/rules/it/italian_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/it/ItalianWordRepeatRuleTest_test.go | bdbd8c254ded5e95070e437c1d7f0ec94fe34f53 | 0 | 0 |  |  | 2026-07-27T01:07:27Z |
 | docs/faithful-port-checklist.md#3.C.3-KhmerUnpairedBracketsRule | accepted | inspiration/languagetool/languagetool-language-modules/km/src/main/java/org/languagetool/rules/km/KhmerUnpairedBracketsRule.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/GenericUnpairedBracketsRule.java | internal/languagetool/org/languagetool/rules/km/khmer_unpaired_brackets_rule.go; internal/languagetool/org/languagetool/rules/km/khmer_unpaired_brackets_rule_test.go | a24628d01180c9fd53dee4059bda8c37069118e8 | 0 | 0 |  |  | 2026-07-27T01:00:12Z |
 | docs/faithful-port-checklist.md#3.C.3-KhmerWordRepeatRule | accepted | inspiration/languagetool/languagetool-language-modules/km/src/main/java/org/languagetool/rules/km/KhmerWordRepeatRule.java; inspiration/languagetool/languagetool-language-modules/km/src/test/java/org/languagetool/rules/km/KhmerWordRepeatRuleTest.java | internal/languagetool/org/languagetool/rules/km/khmer_word_repeat_rule.go; internal/languagetool/org/languagetool/rules/km/KhmerWordRepeatRuleTest_test.go | 9e04cd159334b5a6c199ae46260d482167fa02d1 | 0 | 0 |  |  | 2026-07-27T00:50:51Z |
 | docs/faithful-port-checklist.md#3.C.3-KhmerSpaceBeforeRule | accepted | inspiration/languagetool/languagetool-language-modules/km/src/main/java/org/languagetool/rules/km/KhmerSpaceBeforeRule.java; inspiration/languagetool/languagetool-language-modules/km/src/test/java/org/languagetool/rules/km/KhmerSpaceBeforeRuleTest.java; inspiration/languagetool/languagetool-core/src/main/java/org/languagetool/rules/AbstractSpaceBeforeRule.java | internal/languagetool/org/languagetool/rules/km/khmer_space_before_rule.go; internal/languagetool/org/languagetool/rules/km/KhmerSpaceBeforeRuleTest_test.go | 44a6045f5f53400b153a9b6d583f318883f7961a | 0 | 0 |  |  | 2026-07-27T00:40:29Z |
@@ -498,7 +499,7 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 |-----------|---------|
 | Last idle at | _(never)_ |
 | Blocked lines | `3.A.5-fr-hybrid-disambig-testChunker` (missing french.dict); `3.A.1-ChineseWordTokenizer` (HanLP); `3.C.2-VagueSpellChecker` (pure-Hunspell affix dict missing; invent removed @ 9b184b7c); `3.C.3-GermanSpellerRule` (affix HunspellDictionary missing; partial @ 693a9d3e)
-| Notes | accepted 3.C.3-KhmerUnpairedBracketsRule @ a24628d0; km thin rules done except Hunspell (affix-blocked class); next fire: pick next implementable 3.C.3 leaf outside km/Hunspell freeze |
+| Notes | ready 3.C.3-ItalianWordRepeatRule @ bdbd8c25; next fire: validate (FIFO) |
 
 ---
 
@@ -2307,3 +2308,5 @@ At most **one** `implementing` and at most **one** batch of `validating` owned b
 - 2026-07-27T00:56:31Z ready: 3.C.3-KhmerUnpairedBracketsRule @ a24628d0 (implementer report; parent green reconfirm; KM symbols; MatchList rebind; outcome matrix)
 - 2026-07-27T00:58:47Z validating: 3.C.3-KhmerUnpairedBracketsRule @ a24628d0
 - 2026-07-27T01:00:12Z ACCEPT: 3.C.3-KhmerUnpairedBracketsRule @ a24628d0 (validator ACCEPT + parent green reconfirm; KM symbols; MatchList rebind; outcome matrix)
+- 2026-07-27T01:04:55Z implement: 3.C.3-ItalianWordRepeatRule (it.ItalianWordRepeatRule; ignore così/passo/piano/via + super; full ItalianWordRepeatRuleTest twin; leaf after km Unpaired ACCEPT)
+- 2026-07-27T01:07:27Z ready: 3.C.3-ItalianWordRepeatRule @ bdbd8c25 (implementer report; parent green reconfirm; full ItalianWordRepeatRuleTest twin; IT analysis; ITALIAN_WORD_REPEAT_RULE)
