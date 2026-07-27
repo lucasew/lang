@@ -15,7 +15,7 @@ func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
 	require.NotContains(t, ids, "SK_V_V")
 }
 
-// Java Slovak.getRelevantRules exact ID set.
+// Java Slovak.getRelevantRules exact ID set and order.
 func TestRegisterCoreSlovakRules_JavaRelevantOnly(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("sk")
 	RegisterCoreSlovakRules(lt)
@@ -30,10 +30,12 @@ func TestRegisterCoreSlovakRules_JavaRelevantOnly(t *testing.T) {
 		"SK_COMPOUNDS",
 		"MORFOLOGIK_RULE_SK_SK",
 	}
-	require.ElementsMatch(t, want, ids)
+	// Order matches Java Arrays.asList / SlovakRelevantRuleIDs.
+	require.Equal(t, want, ids)
 	for _, bad := range []string{
 		"EMPTY_LINE", "TOO_LONG_PARAGRAPH", "PARAGRAPH_REPEAT_BEGINNING_RULE",
 		"WHITESPACE_PUNCTUATION", "SENTENCE_WHITESPACE", "SK_UNPAIRED_BRACKETS",
+		"SK_VES_RULE", "SK_VES",
 	} {
 		require.NotContains(t, ids, bad)
 	}

@@ -7,15 +7,15 @@ import (
 )
 
 func TestSmallLangs(t *testing.T) {
-	// Romanian promoted to RomanianLang (not SmallLang); remaining set ≥ 11.
-	require.GreaterOrEqual(t, len(AllSmallLangs()), 11)
+	// Romanian/Slovak promoted to dedicated Lang types (not SmallLang); remaining set ≥ 10.
+	require.GreaterOrEqual(t, len(AllSmallLangs()), 10)
 	require.Equal(t, "Ukrainian", Ukrainian.GetName())
-	require.Equal(t, "sk", Slovak.GetShortCode())
+	require.Equal(t, "da", Danish.GetShortCode())
 }
 
 func TestSmallLang_DefaultSpellingRuleIDs_MatchJava(t *testing.T) {
 	// Faithful createDefaultSpellingRule / registered speller getId only.
-	require.Equal(t, "MORFOLOGIK_RULE_SK_SK", Slovak.GetDefaultSpellingRuleID())
+	// Slovak speller id: SlovakLang.GetDefaultSpellingRuleID (slovak_test.go)
 	require.Equal(t, "HUNSPELL_RULE", Danish.GetDefaultSpellingRuleID())
 	require.Equal(t, "HUNSPELL_RULE", Swedish.GetDefaultSpellingRuleID())
 	require.Equal(t, "HUNSPELL_RULE", Esperanto.GetDefaultSpellingRuleID())
@@ -86,15 +86,7 @@ func TestUkrainianRelevantRuleIDs_Order(t *testing.T) {
 	require.Equal(t, "Maksym Davydov", ms[1].Name)
 }
 
-func TestSlovak_GetRuleFileNames(t *testing.T) {
-	// Java Slovak.RULE_FILES → grammar-typography.xml after base grammar
-	exists := func(string) bool { return false }
-	files := Slovak.GetRuleFileNamesWithExists(exists)
-	require.Equal(t, []string{
-		"/org/languagetool/rules/sk/grammar.xml",
-		"/org/languagetool/rules/sk/grammar-typography.xml",
-	}, files)
-}
+// Slovak GetRuleFileNames: TestSlovak_GetRuleFileNames in slovak_test.go
 
 func TestUkrainianSmallLang_GetRuleFileNames(t *testing.T) {
 	exists := func(string) bool { return false }

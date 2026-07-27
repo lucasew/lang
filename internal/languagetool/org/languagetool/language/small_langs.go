@@ -122,7 +122,7 @@ func (s SmallLang) ToAdvancedTypography(input string) string {
 // SpellerRuleID is createDefaultSpellingRule / registered speller getId only.
 // Languages without a Java default speller use "" (do not invent Morfologik IDs).
 var (
-	Slovak = SmallLang{"sk", "Slovak", "MORFOLOGIK_RULE_SK_SK", []string{"SK"}}
+	// Slovak promoted to SlovakLang (see slovak.go) — not SmallLang.
 	// Danish/Swedish/Esperanto/Galician: plain HunspellRule → HUNSPELL_RULE
 	Danish  = SmallLang{"da", "Danish", "HUNSPELL_RULE", []string{"DK"}}
 	Swedish = SmallLang{"sv", "Swedish", "HUNSPELL_RULE", []string{"SE"}}
@@ -141,7 +141,7 @@ var (
 
 func AllSmallLangs() []SmallLang {
 	return []SmallLang{
-		Slovak, Danish, Swedish, Greek, Galician,
+		Danish, Swedish, Greek, Galician,
 		Japanese, Chinese, Persian, Esperanto, Irish, Ukrainian,
 	}
 }
@@ -157,8 +157,8 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 		// Galician explicitly LookingForNewMaintainer (same as default)
 		return languagetool.LookingForNewMaintainer
 	default:
-		// Japanese, Chinese, Persian, Slovak, Danish, …: no override → default
-		// (Romanian is RomanianLang — LookingForNewMaintainer there)
+		// Japanese, Chinese, Persian, Danish, …: no override → default
+		// (Romanian is RomanianLang; Slovak is SlovakLang — LookingForNewMaintainer there)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -168,8 +168,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 	switch s.ShortCode {
 	case "be":
 		return []Contributor{NewContributor("Alex Buloichik")}
-	case "sk":
-		return []Contributor{NewContributorWithURL("Zdenko Podobný", "http://sk-spell.sk.cx")}
+	// Slovak maintainers: SlovakLang.GetMaintainers (slovak.go)
 	case "sv":
 		return []Contributor{NewContributor("Leif-Jöran Olsson")}
 	case "el":
@@ -240,8 +239,9 @@ func (s SmallLang) GetMaintainers() []Contributor {
 	}
 }
 
-// GetRuleFileNames ports Language.getRuleFileNames + Slovak/Ukrainian extras.
-// Slovak adds grammar-typography.xml; Ukrainian adds RULE_FILES list.
+// GetRuleFileNames ports Language.getRuleFileNames + Ukrainian extras.
+// Slovak RULE_FILES: SlovakLang.GetRuleFileNames (slovak.go).
+// Ukrainian adds RULE_FILES list.
 func (s SmallLang) GetRuleFileNames() []string {
 	return s.GetRuleFileNamesWithExists(nil)
 }
@@ -252,9 +252,6 @@ func (s SmallLang) GetRuleFileNamesWithExists(exists languagetool.RuleFileExists
 	out := languagetool.GetRuleFileNames(code, code, "/org/languagetool/rules", exists)
 	dirBase := "/org/languagetool/rules/" + code + "/"
 	switch code {
-	case "sk":
-		// Slovak.RULE_FILES → grammar-typography.xml
-		out = append(out, dirBase+"grammar-typography.xml")
 	case "uk":
 		// Ukrainian.RULE_FILES (same order as Java)
 		for _, f := range UkrainianLanguageDefault.RuleFiles {
