@@ -6,9 +6,11 @@ import (
 	"sync"
 
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
-	// Register RU RuleFilters used by resource/ru/disambiguation.xml (VERB-KA etc.).
-	_ "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 )
+
+// RU RuleFilters used by resource/ru/disambiguation.xml (VERB-KA etc.) register via
+// rules/ru init() when that package is imported (RegisterCoreRussianRules, rule tests).
+// Do not blank-import rules/ru here: language → disambiguation/ru → rules/ru → language cycle.
 
 var (
 	ruXmlOnce sync.Once

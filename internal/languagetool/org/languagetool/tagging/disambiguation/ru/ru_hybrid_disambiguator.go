@@ -1,6 +1,8 @@
 package ru
 
 import (
+	"sync"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
@@ -21,12 +23,28 @@ type RussianHybridDisambiguator struct {
 	}
 }
 
-// NewRussianHybridDisambiguator ports Java field init:
+// hybridOnce / hybridInstance port Java private static volatile INSTANCE + getInstance().
+var (
+	hybridOnce     sync.Once
+	hybridInstance *RussianHybridDisambiguator
+)
+
+// GetInstance ports RussianHybridDisambiguator.getInstance() (double-check via sync.Once).
+// Java createDefaultDisambiguator returns getInstance().
+func GetInstance() *RussianHybridDisambiguator {
+	hybridOnce.Do(func() {
+		hybridInstance = NewRussianHybridDisambiguator()
+	})
+	return hybridInstance
+}
+
+// NewRussianHybridDisambiguator ports Java field init (private ctor path):
 //
 //	chunker = MultiWordChunker.getInstance("/ru/multiwords.txt"); // F,F,F defaults
 //	disambiguator = new XmlRuleDisambiguator(Russian.getInstance()); // useGlobalDisambiguation=false
 //
 // Stages are wired when the same official resources Java loads are discoverable.
+// Prefer GetInstance() for the process singleton (Java public API).
 func NewRussianHybridDisambiguator() *RussianHybridDisambiguator {
 	d := &RussianHybridDisambiguator{}
 	if mw := RussianMultiWordChunker(); mw != nil {
