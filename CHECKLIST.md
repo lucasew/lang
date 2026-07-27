@@ -919,8 +919,8 @@
 
 ## languagetool-language-modules/da
 
-- [ ] org/languagetool/language/Danish.java::Danish
-- [ ] org/languagetool/tagging/da/DanishTagger.java::DanishTagger
+- [x] org/languagetool/language/Danish.java::Danish
+- [x] org/languagetool/tagging/da/DanishTagger.java::DanishTagger
 
 ## languagetool-language-modules/de
 
