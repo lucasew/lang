@@ -158,7 +158,7 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 		return languagetool.LookingForNewMaintainer
 	default:
 		// Japanese, Chinese, Persian, Danish, …: no override → default
-		// (Romanian is RomanianLang; Slovak is SlovakLang — LookingForNewMaintainer there)
+		// (Romanian is RomanianLang; Slovak is SlovakLang; Slovenian is SlovenianLang — LookingForNewMaintainer there)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -203,8 +203,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 		return []Contributor{NewContributor("Anton Karl Ingason")}
 	case "ast":
 		return []Contributor{NewContributor("Xesús González Rato")}
-	case "sl":
-		return []Contributor{NewContributor("Martin Srebotnjak")}
+	// Slovenian maintainers: SlovenianLang.GetMaintainers (slovenian.go)
 	// Romanian maintainers: RomanianLang.GetMaintainers (romanian.go)
 	case "fa":
 		return []Contributor{

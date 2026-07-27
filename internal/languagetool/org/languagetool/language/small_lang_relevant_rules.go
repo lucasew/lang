@@ -46,8 +46,7 @@ func (s SmallLang) GetRelevantRuleIDs() []string {
 		return CrimeanTatarRelevantRuleIDs()
 	case "ast":
 		return AsturianRelevantRuleIDs()
-	case "sl":
-		return SlovenianRelevantRuleIDs()
+	// Slovenian: SlovenianLang.GetRelevantRuleIDs (slovenian_relevant_rules.go)
 	default:
 		return nil
 	}

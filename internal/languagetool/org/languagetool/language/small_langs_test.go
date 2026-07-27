@@ -7,7 +7,7 @@ import (
 )
 
 func TestSmallLangs(t *testing.T) {
-	// Romanian/Slovak promoted to dedicated Lang types (not SmallLang); remaining set ≥ 10.
+	// Romanian/Slovak/Slovenian promoted to dedicated Lang types (not SmallLang); remaining set ≥ 10.
 	require.GreaterOrEqual(t, len(AllSmallLangs()), 10)
 	require.Equal(t, "Ukrainian", Ukrainian.GetName())
 	require.Equal(t, "da", Danish.GetShortCode())
@@ -25,7 +25,7 @@ func TestSmallLang_DefaultSpellingRuleIDs_MatchJava(t *testing.T) {
 	require.Equal(t, "MORFOLOGIK_RULE_GA_IE", Irish.GetDefaultSpellingRuleID())
 	require.Equal(t, "MORFOLOGIK_RULE_BR_FR", Breton.GetDefaultSpellingRuleID())
 	require.Equal(t, "MORFOLOGIK_RULE_CRH_UA", CrimeanTatar.GetDefaultSpellingRuleID())
-	require.Equal(t, "MORFOLOGIK_RULE_SL_SI", Slovenian.GetDefaultSpellingRuleID())
+	// Slovenian speller id: SlovenianLang.GetDefaultSpellingRuleID (slovenian_test.go)
 	require.Equal(t, "MORFOLOGIK_RULE_LT_LT", Lithuanian.GetDefaultSpellingRuleID())
 	require.Equal(t, "MORFOLOGIK_RULE_ML_IN", Malayalam.GetDefaultSpellingRuleID())
 	// No invent: languages without a Java default speller

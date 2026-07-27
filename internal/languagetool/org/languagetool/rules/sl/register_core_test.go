@@ -15,7 +15,7 @@ func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
 	require.NotContains(t, ids, "SL_V_V")
 }
 
-// Java Slovenian.getRelevantRules exact ID set.
+// Java Slovenian.getRelevantRules exact ID set and order.
 func TestRegisterCoreSlovenianRules_JavaRelevantOnly(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("sl")
 	RegisterCoreSlovenianRules(lt)
@@ -29,7 +29,8 @@ func TestRegisterCoreSlovenianRules_JavaRelevantOnly(t *testing.T) {
 		"WORD_REPEAT_RULE",
 		"WHITESPACE_RULE",
 	}
-	require.ElementsMatch(t, want, ids)
+	// Order matches Java Arrays.asList / SlovenianRelevantRuleIDs.
+	require.Equal(t, want, ids)
 	for _, bad := range []string{
 		"EMPTY_LINE", "TOO_LONG_PARAGRAPH", "PARAGRAPH_REPEAT_BEGINNING_RULE",
 		"WHITESPACE_PUNCTUATION", "SENTENCE_WHITESPACE", "SL_UNPAIRED_BRACKETS",
