@@ -13,9 +13,4 @@ func TestPersianDoublePunctuationRule(t *testing.T) {
 	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("بله ، ،"))))
 }
 
-func TestPersianCommaWhitespaceRule(t *testing.T) {
-	rule := NewPersianCommaWhitespaceRule(nil)
-	require.Equal(t, "PERSIAN_COMMA_PARENTHESIS_WHITESPACE", rule.GetID())
-	// space before Arabic comma
-	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("بله ،"))))
-}
+// PersianCommaWhitespaceRule outcome twins live in PersianCommaWhitespaceRuleTest_test.go.

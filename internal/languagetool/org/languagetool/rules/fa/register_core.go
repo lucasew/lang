@@ -32,8 +32,12 @@ func RegisterCorePersianRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 
 	// Persian-specific punctuation / repeat / replace.
+	// Java PersianCommaWhitespaceRule ctor calls setDefaultOff().
 	pcw := NewPersianCommaWhitespaceRule(nil)
 	lt.AddRuleChecker(pcw.GetID(), rules.AsSentenceCheckerSimple(pcw.Match))
+	if pcw.IsDefaultOff() {
+		lt.MarkDefaultOff(pcw.GetID())
+	}
 
 	pdp := NewPersianDoublePunctuationRule(nil)
 	lt.AddRuleChecker(pdp.GetID(), rules.AsSentenceCheckerSimple(pdp.Match))
