@@ -815,10 +815,10 @@
 
 ## languagetool-language-modules/be
 
-- [ ] org/languagetool/language/Belarusian.java::Belarusian
-- [ ] org/languagetool/rules/be/BelarusianSpecificCaseRule.java::BelarusianSpecificCaseRule
+- [x] org/languagetool/language/Belarusian.java::Belarusian
+- [x] org/languagetool/rules/be/BelarusianSpecificCaseRule.java::BelarusianSpecificCaseRule
 - [x] org/languagetool/rules/be/MorfologikBelarusianSpellerRule.java::MorfologikBelarusianSpellerRule
-- [ ] org/languagetool/rules/be/SimpleReplaceRule.java::SimpleReplaceRule
+- [x] org/languagetool/rules/be/SimpleReplaceRule.java::SimpleReplaceRule
 - [x] org/languagetool/tokenizers/be/BelarusianWordTokenizer.java::BelarusianWordTokenizer
 
 ## languagetool-language-modules/br
