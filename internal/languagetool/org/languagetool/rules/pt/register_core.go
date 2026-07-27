@@ -10,7 +10,7 @@ import (
 )
 
 // RegisterCorePortugueseRules ports Portuguese.getRelevantRules / createDefaultSpellingRule
-// plus locale extras (PortugalPortuguese.getRelevantRules when code is pt-PT / bare pt).
+// plus locale extras (PortugalPortuguese when pt-PT / bare pt; BrazilianPortuguese when pt-BR).
 // Java list only — no invent SharedLayout extras.
 func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
@@ -193,6 +193,7 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 
 	// Locale extras after base (Java *Portuguese.getRelevantRules after super).
 	RegisterPortugalPortugueseExtraRules(lt)
+	RegisterBrazilianPortugueseExtraRules(lt)
 }
 
 // RegisterPortugalPortugueseExtraRules ports PortugalPortuguese.getRelevantRules
@@ -261,4 +262,65 @@ func languageIsPortugalPortuguese(code string) bool {
 		return true
 	}
 	return strings.HasPrefix(c, "pt-pt")
+}
+
+// RegisterBrazilianPortugueseExtraRules ports BrazilianPortuguese.getRelevantRules
+// rules added after super.getRelevantRules. Only for BrazilianPortuguese codes (pt-BR).
+// Differs from PortugalPortuguese: BrazilianPortugueseReplaceRule + pt-BR packs;
+// no PortugueseAgreementReplaceRule / PortugalPortugueseReplaceRule.
+// Same getId as base is registered again when Java constructs a second instance with
+// a different resource path (or a second PostReformPortugueseCompoundRule).
+func RegisterBrazilianPortugueseExtraRules(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	code := lt.GetLanguageCode()
+	if !languageIsBrazilianPortuguese(code) {
+		return
+	}
+
+	// Java: rules.add(new PostReformPortugueseCompoundRule(...)) — second instance,
+	// same getId. Irish twin: same id → one registration (already in base).
+
+	// Java: new PostReformPortugueseDashRule(messages)
+	dash := NewPostReformPortugueseDashRule(nil)
+	lt.AddRuleChecker(dash.GetID(), rules.AsSentenceCheckerSimple(dash.Match))
+
+	// Java: new BrazilianPortugueseReplaceRule(messages, "/pt/pt-BR/replace.txt", this)
+	brRepl := NewBrazilianPortugueseReplaceRule(nil, BrazilianPortugueseReplaceFilePath)
+	lt.AddRuleChecker(brRepl.GetID(), rules.AsSentenceCheckerSimple(brRepl.Match))
+
+	// Java: new PortugueseBarbarismsRule(messages, "/pt/pt-BR/barbarisms.txt", this)
+	// Same getId as base /pt/barbarisms.txt — second instance with pt-BR pack.
+	barBR := NewPortugueseBarbarismsRule(nil, PortugueseBarbarismsBRFilePath)
+	lt.AddRuleChecker(barBR.GetID(), rules.AsSentenceCheckerSimple(barBR.Match))
+
+	// Java: new PortugueseArchaismsRule(messages, "/pt/pt-BR/archaisms.txt", this)
+	arch := NewPortugueseArchaismsRule(nil, PortugueseArchaismsBRFilePath)
+	lt.AddRuleChecker(arch.GetID(), rules.AsSentenceCheckerSimple(arch.Match))
+
+	// Java: new PortugueseClicheRule(messages, "/pt/pt-BR/cliches.txt", this)
+	clBR := NewPortugueseClicheRule(nil, PortugueseClicheBRFilePath)
+	lt.AddRuleChecker(clBR.GetID(), rules.AsSentenceCheckerSimple(clBR.Match))
+
+	// Java: new PortugueseRedundancyRule(messages, "/pt/pt-BR/redundancies.txt", this)
+	rdBR := NewPortugueseRedundancyRule(nil, PortugueseRedundancyBRFilePath)
+	lt.AddRuleChecker(rdBR.GetID(), rules.AsSentenceCheckerSimple(rdBR.Match))
+
+	// Java: new PortugueseWordinessRule(messages, "/pt/pt-BR/wordiness.txt", this)
+	wiBR := NewPortugueseWordinessRule(nil, PortugueseWordinessBRFilePath)
+	lt.AddRuleChecker(wiBR.GetID(), rules.AsSentenceCheckerSimple(wiBR.Match))
+
+	// Java: new PortugueseWikipediaRule(messages, "/pt/pt-BR/wikipedia.txt", this)
+	wikiBR := NewPortugueseWikipediaRule(nil, PortugueseWikipediaBRFilePath)
+	lt.AddRuleChecker(wikiBR.GetID(), rules.AsSentenceCheckerSimple(wikiBR.Match))
+}
+
+func languageIsBrazilianPortuguese(code string) bool {
+	c := strings.ToLower(strings.ReplaceAll(code, "_", "-"))
+	switch c {
+	case "pt-br":
+		return true
+	}
+	return strings.HasPrefix(c, "pt-br")
 }

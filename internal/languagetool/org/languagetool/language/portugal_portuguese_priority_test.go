@@ -29,4 +29,7 @@ func TestPortuguesePriorityForIdForCode(t *testing.T) {
 	require.Equal(t, -50, br("MORFOLOGIK_RULE_PT_BR"))
 	require.True(t, isPortugalPortugueseCode("pt-PT"))
 	require.False(t, isPortugalPortugueseCode("pt-BR"))
+	require.True(t, isBrazilianPortugueseCode("pt-BR"))
+	require.False(t, isBrazilianPortugueseCode("pt-PT"))
+	require.False(t, isBrazilianPortugueseCode("pt"))
 }

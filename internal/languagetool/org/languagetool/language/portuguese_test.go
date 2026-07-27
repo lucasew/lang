@@ -124,12 +124,29 @@ func TestPortugueseRelevantRuleIDs_MatchJavaGetId(t *testing.T) {
 	require.Equal(t, "PT_COMPOUNDS_POST_REFORM", ids[len(base)])
 	require.Equal(t, "PT_WIKIPEDIA_COMMON_ERRORS", ids[len(ids)-1])
 
+	// BrazilianPortuguese = base (BR speller) + extras (Java ArrayList after super)
 	br := NewBrazilianPortuguese().GetRelevantRuleIDs()
+	require.Equal(t, BrazilianPortugueseRelevantRuleIDs(), br)
+	require.Equal(t, append(append([]string(nil), PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_BR")...), BrazilianPortugueseRelevantExtraRuleIDs()...), br)
 	require.Contains(t, br, "MORFOLOGIK_RULE_PT_BR")
 	require.NotContains(t, br, "MORFOLOGIK_RULE_PT_PT")
-	// BR sector not yet wiring its extras — base only
+	// Portugal-only extras must not appear on pt-BR
 	require.NotContains(t, br, "PT_PT_SIMPLE_REPLACE")
 	require.NotContains(t, br, "PT_AGREEMENT_REPLACE")
+	// BR extras after super (Java BrazilianPortuguese.getRelevantRules)
+	require.Equal(t, []string{
+		"PT_COMPOUNDS_POST_REFORM",
+		"PT_POSAO_DASH_RULE",
+		"PT_BR_SIMPLE_REPLACE",
+		"PT_BARBARISMS_REPLACE",
+		"PT_ARCHAISMS_REPLACE",
+		"PT_CLICHE_REPLACE",
+		"PT_REDUNDANCY_REPLACE",
+		"PT_WORDINESS_REPLACE",
+		"PT_WIKIPEDIA_COMMON_ERRORS",
+	}, BrazilianPortugueseRelevantExtraRuleIDs())
+	require.Equal(t, "PT_BR_SIMPLE_REPLACE", br[len(PortugueseRelevantRuleIDsBase("MORFOLOGIK_RULE_PT_BR"))+2])
+	require.Equal(t, "PT_WIKIPEDIA_COMMON_ERRORS", br[len(br)-1])
 }
 
 // Twin of Portuguese.getPriorityForId / PortugalPortuguese override.

@@ -96,6 +96,7 @@ func TestRegisterCore_MatchesRelevantRuleIDs(t *testing.T) {
 		{"tl", "tl", tl.RegisterCoreTagalogRules, language.TagalogRelevantRuleIDs()},
 		{"uk", "uk", uk.RegisterCoreUkrainianRules, language.UkrainianRelevantRuleIDs()},
 		{"pt-PT", "pt-PT", pt.RegisterCorePortugueseRules, language.PortugalPortuguese.GetRelevantRuleIDs()},
+		{"pt-BR", "pt-BR", pt.RegisterCorePortugueseRules, language.BrazilianPortuguese.GetRelevantRuleIDs()},
 		{"sr", "sr", sr.RegisterCoreSerbianRules, language.DefaultSerbian.GetRelevantRuleIDs()},
 	}
 	for _, c := range exact {

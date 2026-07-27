@@ -50,3 +50,20 @@ func isPortugalPortugueseCode(langCode string) bool {
 	}
 	return false
 }
+
+// isBrazilianPortugueseCode reports pt-BR / pt_BR locale codes (BrazilianPortuguese).
+// Used for getRelevantRules extras gating; priority remains base Portuguese only.
+func isBrazilianPortugueseCode(langCode string) bool {
+	switch langCode {
+	case "pt-BR", "pt_BR", "pt-br", "pt_br":
+		return true
+	}
+	if len(langCode) >= 5 {
+		if (langCode[2] == '-' || langCode[2] == '_') &&
+			(langCode[3] == 'B' || langCode[3] == 'b') &&
+			(langCode[4] == 'R' || langCode[4] == 'r') {
+			return true
+		}
+	}
+	return false
+}

@@ -65,8 +65,14 @@ func TestPortuguese_Language(t *testing.T) {
 
 	brLang := language.NewBrazilianPortuguese()
 	require.Equal(t, "Portuguese (Brazil)", brLang.GetName())
+	require.Equal(t, []string{"BR"}, brLang.GetCountries())
 	require.Equal(t, "MORFOLOGIK_RULE_PT_BR", brLang.GetDefaultSpellingRuleID())
+	require.Equal(t, language.BrazilianPortugueseRelevantRuleIDs(), brLang.GetRelevantRuleIDs())
 	require.Contains(t, brLang.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_PT_BR")
+	require.Contains(t, brLang.GetRelevantRuleIDs(), "PT_BR_SIMPLE_REPLACE")
+	// Base Portuguese curly doubles (not Portugal guillemets)
+	require.Equal(t, "“", brLang.GetOpeningDoubleQuote())
+	require.Equal(t, "”", brLang.GetClosingDoubleQuote())
 
 	// Wire Java getRelevantRules into JLanguageTool (no invent extras).
 	lt := languagetool.NewJLanguageTool("pt-PT")
@@ -138,11 +144,27 @@ func TestPortuguese_AnalyzeDemoText(t *testing.T) {
 	require.GreaterOrEqual(t, len(sents), 2)
 }
 
-// pt-BR core demo surface: same core hits, BR speller id.
+// pt-BR core demo surface: same core hits, BR speller id + Brazilian extras wired.
 func TestPortuguese_Language_BrazilianCoreDemo(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("pt-BR")
 	RegisterCorePortugueseRules(lt)
 	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "MORFOLOGIK_RULE_PT_BR")
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PT_BR_SIMPLE_REPLACE")
+	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PT_POSAO_DASH_RULE")
+	// unique set: second instances share getId with base packs
+	uniq := func(ids []string) []string {
+		seen := map[string]struct{}{}
+		out := make([]string, 0, len(ids))
+		for _, id := range ids {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			out = append(out, id)
+		}
+		return out
+	}
+	require.ElementsMatch(t, uniq(language.BrazilianPortugueseRelevantRuleIDs()), uniq(lt.GetAllRegisteredRuleIDs()))
 
 	matches := lt.Check(portugueseDemoText)
 	ids := make([]string, 0, len(matches))

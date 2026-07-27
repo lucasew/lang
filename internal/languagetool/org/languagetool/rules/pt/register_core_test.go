@@ -64,17 +64,31 @@ func TestRegisterCorePortugueseRules_ptPT(t *testing.T) {
 	require.Contains(t, lt.GetAllRegisteredRuleIDs(), "PT_AGREEMENT_REPLACE")
 }
 
-// Brazilian variant uses MORFOLOGIK_RULE_PT_BR and does not get Portugal extras yet
-// (BrazilianPortuguese.getRelevantRules is a separate sector).
+// Java BrazilianPortuguese.getRelevantRules for pt-BR.
+func TestRegisterCorePortugueseRules_BrazilianPortugueseSurface(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("pt-BR")
+	RegisterCorePortugueseRules(lt)
+	ids := lt.GetAllRegisteredRuleIDs()
+	want := language.BrazilianPortuguese.GetRelevantRuleIDs()
+	require.ElementsMatch(t, uniqueRuleIDs(want), uniqueRuleIDs(ids))
+	require.Contains(t, ids, "MORFOLOGIK_RULE_PT_BR")
+	require.NotContains(t, ids, "MORFOLOGIK_RULE_PT_PT")
+	// Unique extras after super (BrazilianPortuguese.java)
+	for _, id := range []string{
+		"PT_POSAO_DASH_RULE", "PT_BR_SIMPLE_REPLACE", "PT_ARCHAISMS_REPLACE",
+	} {
+		require.Contains(t, ids, id)
+	}
+	// Portugal-only extras must not leak onto pt-BR.
+	require.NotContains(t, ids, "PT_PT_SIMPLE_REPLACE")
+	require.NotContains(t, ids, "PT_AGREEMENT_REPLACE")
+}
+
+// Brazilian speller ID still selected for pt-BR (also covered above).
 func TestRegisterCorePortugueseRules_BrazilianSpellerID(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("pt-BR")
 	RegisterCorePortugueseRules(lt)
 	ids := lt.GetAllRegisteredRuleIDs()
 	require.Contains(t, ids, "MORFOLOGIK_RULE_PT_BR")
 	require.NotContains(t, ids, "MORFOLOGIK_RULE_PT_PT")
-	// Portugal-only extras must not leak onto pt-BR until BR sector wires its own list.
-	require.NotContains(t, ids, "PT_PT_SIMPLE_REPLACE")
-	require.NotContains(t, ids, "PT_AGREEMENT_REPLACE")
-	require.NotContains(t, ids, "PT_POSAO_DASH_RULE")
-	require.NotContains(t, ids, "PT_ARCHAISMS_REPLACE")
 }

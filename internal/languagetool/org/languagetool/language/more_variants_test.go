@@ -161,6 +161,13 @@ func TestPortuguesePolishCatalanRussianRelevantRuleIDs(t *testing.T) {
 	br := BrazilianPortuguese.GetRelevantRuleIDs()
 	require.Contains(t, br, "MORFOLOGIK_RULE_PT_BR")
 	require.NotContains(t, br, "MORFOLOGIK_RULE_PT_PT")
+	// BrazilianPortuguese extras after super (no agreement / no PT-PT replace)
+	require.Contains(t, br, "PT_POSAO_DASH_RULE")
+	require.Contains(t, br, "PT_BR_SIMPLE_REPLACE")
+	require.Contains(t, br, "PT_ARCHAISMS_REPLACE")
+	require.NotContains(t, br, "PT_AGREEMENT_REPLACE")
+	require.NotContains(t, br, "PT_PT_SIMPLE_REPLACE")
+	require.Equal(t, BrazilianPortugueseRelevantRuleIDs(), br)
 
 	pl := PolishRelevantRuleIDs()
 	require.Contains(t, pl, "MORFOLOGIK_RULE_PL_PL")
