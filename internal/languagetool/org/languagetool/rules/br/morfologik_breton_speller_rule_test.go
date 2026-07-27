@@ -1,55 +1,28 @@
 package br
 
+// Metadata surface for MorfologikBretonSpellerRule (Java twin outcomes live in
+// MorfologikBretonSpellerRuleTest_test.go with real br_FR.dict — no map-inject invent).
+
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
 )
 
-func TestMorfologikBretonSpellerRule(t *testing.T) {
+func TestMorfologikBretonSpellerRule_Metadata(t *testing.T) {
 	r := NewMorfologikBretonSpellerRule()
 	require.Equal(t, MorfologikBretonSpellerRuleID, r.GetID())
 	require.Equal(t, MorfologikBretonSpellerRuleDict, r.GetFileName())
-	// Java setIgnoreTaggedWords()
+	require.Equal(t, "MORFOLOGIK_RULE_BR_FR", r.GetID())
+	require.Equal(t, "/br/hunspell/br_FR.dict", r.GetFileName())
+	// Java MorfologikBretonSpellerRule ctor: setIgnoreTaggedWords().
 	require.True(t, r.IgnoreTaggedWords)
-}
-
-func TestBretonIgnoreTagged(t *testing.T) {
-	sp := morfologik.NewMorfologikSpeller(MorfologikBretonSpellerRuleDict, 1)
-	sp.AddWord("test")
-	r := NewMorfologikBretonSpellerRule()
-	r.Speller = sp
-	r.IsMisspelled = sp.IsMisspelled
-	sent := languagetool.AnalyzePlain("xyzzy")
-	for _, tok := range sent.GetTokensWithoutWhitespace() {
-		if tok == nil || tok.IsSentenceStart() {
-			continue
-		}
-		pos := "N"
-		tok.AddReading(languagetool.NewAnalyzedToken(tok.GetToken(), &pos, nil), "test")
+	// Java tokenizingPattern(): Pattern.compile("-")
+	require.NotNil(t, r.TokenizingPattern)
+	require.True(t, r.TokenizingPattern.MatchString("foo-bar"))
+	require.False(t, r.TokenizingPattern.MatchString("foobar"))
+	if morfologik.DiscoverLanguageDict(MorfologikBretonSpellerRuleDict) != "" {
+		require.NotNil(t, r.Speller1, "InitSpellersFromGetters must attach multi when dict present")
 	}
-	m, err := r.Match(sent)
-	require.NoError(t, err)
-	require.Empty(t, m)
-}
-
-func TestBretonHyphenTokenizing(t *testing.T) {
-	sp := morfologik.NewMorfologikSpeller(MorfologikBretonSpellerRuleDict, 1)
-	sp.AddWord("a")
-	sp.AddWord("b")
-	r := NewMorfologikBretonSpellerRule()
-	r.Speller = sp
-	r.IsMisspelled = sp.IsMisspelled
-	// whole "a-b" not in dict → parent flags; parts a,b accepted → drop
-	sent := languagetool.AnalyzePlain("a-b")
-	m, err := r.Match(sent)
-	require.NoError(t, err)
-	require.Empty(t, m)
-	// part misspelled → keep
-	sent = languagetool.AnalyzePlain("a-zz")
-	m, err = r.Match(sent)
-	require.NoError(t, err)
-	require.NotEmpty(t, m)
 }

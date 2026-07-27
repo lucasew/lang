@@ -1,12 +1,85 @@
 package br
 
+// Twin of org.languagetool.rules.br.LanguageSpecificSpellcheckerTest
+//   → SpellcheckerTest.runLanguageSpecificTest()
+//
+// Java (SpellcheckerTest.runLanguageSpecificTest) for each Language on classpath:
+//   prohibitedWords = CachingWordListLoader.loadWords(shortCode + "/hunspell/prohibit.txt")
+//   spellingWords   = CachingWordListLoader.loadWords(shortCode + "/hunspell/spelling.txt")
+//   intersection(prohibited distinct ∩ spelling) must be empty
+//
+// BR module test only invokes runLanguageSpecificTest(). BR-visible paths:
+//   br/hunspell/spelling.txt (present; extends spell checker — "Record")
+//   br/hunspell/prohibit.txt (absent → empty list, Java resourceExists false)
+// Missing resources → empty (no invent). Intersection for BR must be empty.
+
 import (
+	"os"
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
 )
 
+// Port of LanguageSpecificSpellcheckerTest.testRules → runLanguageSpecificTest (BR sector).
 func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
-	require.NotEmpty(t, languagetool.NewJLanguageTool("br").Analyze("test"))
+	// Official BR spelling list path (Java DataBroker br/hunspell/spelling.txt).
+	brSpellingPath := spelling.DiscoverSpellingResource("br/hunspell/spelling.txt")
+	if brSpellingPath == "" {
+		t.Skip("official br/hunspell/spelling.txt not discoverable — honest skip, no invent")
+	}
+
+	// BR-visible outcomes of SpellcheckerTest for short code "br".
+	// Java CachingWordListLoader: missing prohibit.txt → empty list (not invent).
+	prohibitedWords := loadHunspellWordList(t, "br", "prohibit.txt")
+	spellingWords := loadHunspellWordList(t, "br", "spelling.txt")
+	t.Logf("Testing br: %d words from prohibit.txt and %d words from spelling.txt",
+		len(prohibitedWords), len(spellingWords))
+	require.Empty(t, wordListIntersection(prohibitedWords, spellingWords),
+		"br prohibit.txt ∩ spelling.txt must be empty")
+
+	// Speller rule surface still loads (LanguageSpecificSpellcheckerTest lives next to the rule).
+	r := NewMorfologikBretonSpellerRule()
+	require.Equal(t, MorfologikBretonSpellerRuleID, r.GetID())
+	require.Equal(t, MorfologikBretonSpellerRuleDict, r.GetFileName())
+	if morfologik.DiscoverLanguageDict(MorfologikBretonSpellerRuleDict) != "" {
+		require.NotNil(t, r.Speller1)
+	}
+}
+
+// loadHunspellWordList ports CachingWordListLoader.loadWords(short + "/hunspell/" + name):
+// exact classpath path only (missing → empty); parse with CachingWordListLoader line rules.
+func loadHunspellWordList(t *testing.T, shortCode, name string) []string {
+	t.Helper()
+	path := spelling.DiscoverSpellingResource(shortCode + "/hunspell/" + name)
+	if path == "" {
+		return []string{}
+	}
+	f, err := os.Open(path)
+	require.NoError(t, err, "open %s", path)
+	defer f.Close()
+	words, err := spelling.ParseWordListLines(f)
+	require.NoError(t, err, "parse %s", path)
+	return words
+}
+
+// wordListIntersection mirrors Java distinct(prohibit).filter(spelling.contains).
+func wordListIntersection(prohibited, spellingWords []string) []string {
+	spellingSet := make(map[string]struct{}, len(spellingWords))
+	for _, w := range spellingWords {
+		spellingSet[w] = struct{}{}
+	}
+	seen := make(map[string]struct{})
+	var out []string
+	for _, w := range prohibited {
+		if _, dup := seen[w]; dup {
+			continue
+		}
+		seen[w] = struct{}{}
+		if _, ok := spellingSet[w]; ok {
+			out = append(out, w)
+		}
+	}
+	return out
 }
