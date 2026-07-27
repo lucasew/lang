@@ -1153,10 +1153,10 @@
 
 ## languagetool-language-modules/eo
 
-- [ ] org/languagetool/language/Esperanto.java::Esperanto
+- [x] org/languagetool/language/Esperanto.java::Esperanto
 - [ ] org/languagetool/rules/eo/DateCheckFilter.java::DateCheckFilter
-- [ ] org/languagetool/tagging/eo/EsperantoTagger.java::EsperantoTagger
-- [ ] org/languagetool/tokenizers/eo/EsperantoWordTokenizer.java::EsperantoWordTokenizer
+- [x] org/languagetool/tagging/eo/EsperantoTagger.java::EsperantoTagger
+- [x] org/languagetool/tokenizers/eo/EsperantoWordTokenizer.java::EsperantoWordTokenizer
 
 ## languagetool-language-modules/es
 
