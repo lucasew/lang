@@ -1,9 +1,16 @@
 package languagetool
 
-// Twin of TagalogConcurrencyTest — concurrent Analyze smoke (full spell race deferred).
+// Twin of languagetool-language-modules/tl/src/test/java/org/languagetool/TagalogConcurrencyTest.java
+// extends AbstractLanguageConcurrencyTest — concurrent Analyze with Java sample text.
+// Full spell-checker race is @Ignore-class slow in practice; Analyze concurrency
+// matches the Go AbstractLanguageConcurrencyTest twin pattern.
+
 import "testing"
 
-// Port of TagalogConcurrencyTest (Java @Ignore slow spell race)
+// Port of TagalogConcurrencyTest (createLanguage=Tagalog, createSampleText=…).
 func TestTagalogConcurrency_NoTests(t *testing.T) {
-	ConcurrencyAnalyzeSmoke(t, "tl", "Isang pagsusulit.")
+	// Java createSampleText:
+	// "Mula sa Wikipediang Tagalog, ang malayang ensiklopedya"
+	ConcurrencyAnalyzeSmoke(t, "tl",
+		"Mula sa Wikipediang Tagalog, ang malayang ensiklopedya")
 }

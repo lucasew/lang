@@ -159,7 +159,7 @@ func (s SmallLang) GetMaintainedState() languagetool.LanguageMaintainedState {
 		return languagetool.LookingForNewMaintainer
 	default:
 		// Japanese, Chinese, Persian, Danish, …: no override → default
-		// (Romanian/Slovak/Slovenian LookingForNewMaintainer on *Lang; Greek is GreekLang ActivelyMaintained)
+		// (Romanian/Slovak/Slovenian/Tagalog LookingForNewMaintainer on *Lang; Greek is GreekLang ActivelyMaintained)
 		return languagetool.LookingForNewMaintainer
 	}
 }
@@ -221,11 +221,7 @@ func (s SmallLang) GetMaintainers() []Contributor {
 		return []Contributor{NewContributor("Elanjelian Venugopal")}
 	case "ml":
 		return []Contributor{NewContributor("Jithesh.V.S")}
-	case "tl":
-		return []Contributor{
-			NewContributor("Nathaniel Oco"),
-			NewContributor("Allan Borra"),
-		}
+	// Tagalog maintainers: TagalogLang.GetMaintainers (tagalog.go)
 	case "crh":
 		return []Contributor{NewContributor("Andriy Rysin")}
 	case "uk":

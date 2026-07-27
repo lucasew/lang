@@ -7,7 +7,7 @@ var (
 	Khmer = SmallLang{"km", "Khmer", "HUNSPELL_RULE", []string{"KH"}}
 	// MorfologikMalayalamSpellerRule.getId
 	Malayalam = SmallLang{"ml", "Malayalam", "MORFOLOGIK_RULE_ML_IN", []string{"IN"}}
-	Tagalog   = SmallLang{"tl", "Tagalog", "MORFOLOGIK_RULE_TL", []string{"PH"}}
+	// Tagalog promoted to TagalogLang (see tagalog.go) — not SmallLang.
 	// Tamil: no default speller in Java Language module
 	Tamil      = SmallLang{"ta", "Tamil", "", []string{"IN", "LK"}}
 	Lithuanian = SmallLang{"lt", "Lithuanian", "MORFOLOGIK_RULE_LT_LT", []string{"LT"}}
@@ -27,7 +27,7 @@ var (
 func AllExtendedSmallLangs() []SmallLang {
 base := AllSmallLangs()
 extra := []SmallLang{
-	Khmer, Malayalam, Tagalog, Tamil, Lithuanian, Icelandic,
+	Khmer, Malayalam, Tamil, Lithuanian, Icelandic,
 	Belarusian, Breton, CrimeanTatar, Asturian,
 }
 return append(base, extra...)

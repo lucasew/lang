@@ -31,8 +31,7 @@ func (s SmallLang) GetRelevantRuleIDs() []string {
 		return KhmerRelevantRuleIDs()
 	case "ta":
 		return TamilRelevantRuleIDs()
-	case "tl":
-		return TagalogRelevantRuleIDs()
+	// Tagalog: TagalogLang.GetRelevantRuleIDs (tagalog_relevant_rules.go)
 	case "is":
 		return IcelandicRelevantRuleIDs()
 	case "ml":

@@ -55,7 +55,7 @@ func TestSmallLangRelevantRuleIDs(t *testing.T) {
 	// Extended small modules
 	require.Contains(t, Khmer.GetRelevantRuleIDs(), "KM_SIMPLE_REPLACE")
 	require.Contains(t, Tamil.GetRelevantRuleIDs(), "TOO_LONG_SENTENCE")
-	require.Contains(t, Tagalog.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_TL")
+	// Tagalog is TagalogLang — full twin in tagalog_test.go
 	require.Contains(t, Icelandic.GetRelevantRuleIDs(), "HUNSPELL_NO_SUGGEST_RULE")
 	require.Contains(t, Malayalam.GetRelevantRuleIDs(), "MORFOLOGIK_RULE_ML_IN")
 	require.Contains(t, Persian.GetRelevantRuleIDs(), "FA_WORD_COHERENCY")
