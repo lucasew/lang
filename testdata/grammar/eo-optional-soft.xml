@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EO optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="eo">
+  <category id="STYLE" name="Style">
+    <rule id="EO_SOFT_OPT_RILATE_AL" name="rilate al soft optional" default="off">
+      <pattern>
+        <token>rilate</token>
+        <token>al</token>
+      </pattern>
+      <message>Konsideru "pri" aŭ "koncerne".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EO_SOFT_OPT_CELE_DE" name="cele de soft optional" default="off">
+      <pattern>
+        <token>cele</token>
+        <token>de</token>
+      </pattern>
+      <message>Konsideru "por" aŭ "por ke".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EO_SOFT_OPT_EN_LA_KADRO" name="en la kadro de soft optional" default="off">
+      <pattern>
+        <token>en</token>
+        <token>la</token>
+        <token>kadro</token>
+        <token>de</token>
+      </pattern>
+      <message>Konsideru "dum" aŭ "en".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

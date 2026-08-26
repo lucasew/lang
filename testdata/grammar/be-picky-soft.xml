@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft BE pack loaded only when level is picky. -->
+<rules lang="be">
+  <category id="STYLE" name="Style">
+    <rule id="BE_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Лепш "сустрэча" або "нарада".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BE_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Лепш "водгук" або "каментары".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BE_SOFT_PICKY_VELMI_VELMI" name="вельмі вельмі soft picky">
+      <pattern>
+        <token>вельмі</token>
+        <token>вельмі</token>
+      </pattern>
+      <message>Слабое ўзмацненне; разгледзьце мацнейшы прыметнік.</message>
+      <short>style</short>
+    </rule>
+    <rule id="BE_SOFT_PICKY_RECHY" name="шмат рэчаў soft picky">
+      <pattern>
+        <token>шмат</token>
+        <token>рэчаў</token>
+      </pattern>
+      <message>Разгледзьце больш канкрэтны назоўнік, чым "рэчаў".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BE_SOFT_PICKY_U_KANCY_KANCOU" name="у канцы канцоў soft picky">
+      <pattern>
+        <token>у</token>
+        <token>канцы</token>
+        <token>канцоў</token>
+      </pattern>
+      <message>Разгледзьце "нарэшце" або "у рэшце рэшт".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

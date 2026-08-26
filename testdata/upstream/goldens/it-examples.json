@@ -1,0 +1,43 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "it",
+  "cases": [
+    {
+      "rule": "ER_01_001a",
+      "text": "Piero a un cane.",
+      "suggestion": "ha",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "ER_01_002a",
+      "text": "Piero, tu ai un cane?",
+      "suggestion": "hai",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "ANNO20011_2011",
+      "text": "Del corso 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "ANNO20011_2011",
+      "text": "È dal 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "ER_01_004",
+      "text": "Non o fatto i compiti.",
+      "suggestion": "ho fatto",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "GIRONI_GIORNI",
+      "text": "7 gironi dopo.",
+      "suggestion": "giorni",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    }
+  ]
+}

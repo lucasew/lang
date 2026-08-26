@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft ES pack loaded only when level is picky. -->
+<rules lang="es">
+  <category id="STYLE" name="Style">
+    <rule id="ES_SOFT_PICKY_A_NIVEL_DE" name="a nivel de soft picky">
+      <pattern>
+        <token>a</token>
+        <token>nivel</token>
+        <token>de</token>
+      </pattern>
+      <message>Giro vago; prefiera "en", "sobre" o "en cuanto a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_PICKY_DE_CARA_A" name="de cara a soft picky">
+      <pattern>
+        <token>de</token>
+        <token>cara</token>
+        <token>a</token>
+      </pattern>
+      <message>Prefiera "para" o "con vistas a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_PICKY_EN_BASE_A" name="en base a soft picky">
+      <pattern>
+        <token>en</token>
+        <token>base</token>
+        <token>a</token>
+      </pattern>
+      <message>Prefiera "sobre la base de" o "según".</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_PICKY_CHALLENGE" name="challenge soft picky">
+      <pattern>
+        <token>challenge</token>
+      </pattern>
+      <message>Prefiera "reto" o "desafío".</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Prefiera "comentarios" o "opinión".</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_PICKY_MUY_MUY" name="muy muy soft picky">
+      <pattern>
+        <token>muy</token>
+        <token>muy</token>
+      </pattern>
+      <message>Intensificación débil; prefiera un adjetivo más fuerte.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_PICKY_COSAS" name="cosas soft picky">
+      <pattern>
+        <token>muchas</token>
+        <token>cosas</token>
+      </pattern>
+      <message>Prefiera un sustantivo más concreto que "cosas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_PICKY_AL_FINAL_DEL_DIA" name="al final del día soft picky">
+      <pattern>
+        <token>al</token>
+        <token>final</token>
+        <token>del</token>
+        <token>día</token>
+      </pattern>
+      <message>Prefiera "en definitiva" o "finalmente".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

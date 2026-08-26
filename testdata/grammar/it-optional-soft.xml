@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft IT optional rules: default off until -e. -->
+<rules lang="it">
+  <category id="STYLE" name="Style">
+    <rule id="IT_SOFT_OPT_AL_FINE_DI" name="al fine di soft optional" default="off">
+      <pattern>
+        <token>al</token>
+        <token>fine</token>
+        <token>di</token>
+      </pattern>
+      <message>Preferisca "per" + infinito.</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_OPT_IN_RELAZIONE_A" name="in relazione a soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>relazione</token>
+        <token>a</token>
+      </pattern>
+      <message>Preferisca "su" o "riguardo a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_OPT_PER_MEZZO_DI" name="per mezzo di soft optional" default="off">
+      <pattern>
+        <token>per</token>
+        <token>mezzo</token>
+        <token>di</token>
+      </pattern>
+      <message>Preferisca "con" o "tramite".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IT_SOFT_OPT_PRIMA_DI_CHE" name="prima di che soft optional" default="off">
+      <pattern>
+        <token>prima</token>
+        <token>di</token>
+        <token>che</token>
+      </pattern>
+      <message>Preferisca "prima che" o "prima di" + infinito.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

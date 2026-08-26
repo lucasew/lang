@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft NL optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="nl">
+  <category id="STYLE" name="Style">
+    <rule id="NL_SOFT_OPT_TEN_EINDE" name="ten einde soft optional" default="off">
+      <pattern>
+        <token>ten</token>
+        <token>einde</token>
+      </pattern>
+      <message>Overweeg "om" + te-infinitief.</message>
+      <short>style</short>
+    </rule>
+    <rule id="NL_SOFT_OPT_MET_BETREKKING" name="met betrekking tot soft optional" default="off">
+      <pattern>
+        <token>met</token>
+        <token>betrekking</token>
+        <token>tot</token>
+      </pattern>
+      <message>Overweeg "over" of "betreffende".</message>
+      <short>style</short>
+    </rule>
+    <rule id="NL_SOFT_OPT_IN_HET_KADER" name="in het kader van soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>het</token>
+        <token>kader</token>
+        <token>van</token>
+      </pattern>
+      <message>Overweeg "bij" of "tijdens".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

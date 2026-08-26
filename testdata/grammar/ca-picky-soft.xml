@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft CA pack loaded only when level is picky. -->
+<rules lang="ca">
+  <category id="STYLE" name="Style">
+    <rule id="CA_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Preferiu "reunió".</message>
+      <short>style</short>
+    </rule>
+    <rule id="CA_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Preferiu "comentaris" o "retorn".</message>
+      <short>style</short>
+    </rule>
+    <rule id="CA_SOFT_PICKY_MOLT_MOLT" name="molt molt soft picky">
+      <pattern>
+        <token>molt</token>
+        <token>molt</token>
+      </pattern>
+      <message>Intensificació feble; preferiu un adjectiu més fort.</message>
+      <short>style</short>
+    </rule>
+    <rule id="CA_SOFT_PICKY_COSES" name="coses soft picky">
+      <pattern>
+        <token>moltes</token>
+        <token>coses</token>
+      </pattern>
+      <message>Preferiu un nom més concret que "coses".</message>
+      <short>style</short>
+    </rule>
+    <rule id="CA_SOFT_PICKY_AL_FINAL_DEL_DIA" name="al final del dia soft picky">
+      <pattern>
+        <token>al</token>
+        <token>final</token>
+        <token>del</token>
+        <token>dia</token>
+      </pattern>
+      <message>Preferiu "finalment" o "en definitiva".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

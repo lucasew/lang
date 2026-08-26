@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+  <rulegroup id="ABILITY">
+    <rule>
+      <pattern lang="en">
+        <token>ability</token>
+      </pattern>
+      <translation lang="fr">aptitude</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>habileté</token>
+      </pattern>
+      <translation lang="en">skill</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="GIFT">
+    <rule>
+      <pattern lang="en">
+        <token>gift</token>
+      </pattern>
+      <translation lang="de">Geschenk</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Gift</token>
+      </pattern>
+      <translation lang="en">poison</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="ACTUAL">
+    <rule>
+      <pattern lang="en">
+        <token>actual</token>
+      </pattern>
+      <translation lang="es">real</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>actual</token>
+      </pattern>
+      <translation lang="en">current</translation>
+    </rule>
+  </rulegroup>
+
+  <rulegroup id="LIBRARY">
+    <rule>
+      <pattern lang="en">
+        <token>library</token>
+      </pattern>
+      <translation lang="es">biblioteca</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>librería</token>
+      </pattern>
+      <translation lang="en">bookshop</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="EVENTUAL">
+    <rule>
+      <pattern lang="en">
+        <token>eventual</token>
+      </pattern>
+      <translation lang="es">final</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>eventual</token>
+      </pattern>
+      <translation lang="en">temporary</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="BECOME">
+    <rule>
+      <pattern lang="en">
+        <token>become</token>
+      </pattern>
+      <translation lang="de">werden</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>bekommen</token>
+      </pattern>
+      <translation lang="en">get</translation>
+    </rule>
+  </rulegroup>
+
+  <rulegroup id="EMBARRASSED">
+    <rule>
+      <pattern lang="en">
+        <token>embarrassed</token>
+      </pattern>
+      <translation lang="es">avergonzado</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>embarazada</token>
+      </pattern>
+      <translation lang="en">pregnant</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="PARENTS">
+    <rule>
+      <pattern lang="en">
+        <token>parents</token>
+      </pattern>
+      <translation lang="fr">parents (père et mère)</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>parents</token>
+      </pattern>
+      <translation lang="en">relatives</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SYMPATHIC">
+    <rule>
+      <pattern lang="en">
+        <token>sympathetic</token>
+      </pattern>
+      <translation lang="de">mitfühlend</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>sympathisch</token>
+      </pattern>
+      <translation lang="en">likeable</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="FABRIC">
+    <rule>
+      <pattern lang="en">
+        <token>fabric</token>
+      </pattern>
+      <translation lang="fr">tissu</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>fabrique</token>
+      </pattern>
+      <translation lang="en">factory</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="ARGUMENT">
+    <rule>
+      <pattern lang="en">
+        <token>argument</token>
+      </pattern>
+      <translation lang="fr">dispute</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>argument</token>
+      </pattern>
+      <translation lang="en">point / reason</translation>
+    </rule>
+  </rulegroup>
+
+  <rulegroup id="SENSIBLE">
+    <rule>
+      <pattern lang="en">
+        <token>sensible</token>
+      </pattern>
+      <translation lang="es">prudente / razonable</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>sensible</token>
+      </pattern>
+      <translation lang="en">sensitive</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CONSTIPATED">
+    <rule>
+      <pattern lang="en">
+        <token>constipated</token>
+      </pattern>
+      <translation lang="fr">ayant une constipation</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>constipé</token>
+      </pattern>
+      <translation lang="en">constipated (medical) / also "blocked"</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="PRESERVATIVE">
+    <rule>
+      <pattern lang="en">
+        <token>preservative</token>
+      </pattern>
+      <translation lang="fr">conservateur (alimentaire)</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>préservatif</token>
+      </pattern>
+      <translation lang="en">condom</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="EVENTUALLY">
+    <rule>
+      <pattern lang="en">
+        <token>eventually</token>
+      </pattern>
+      <translation lang="es">finalmente</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>eventualmente</token>
+      </pattern>
+      <translation lang="en">possibly / if necessary</translation>
+    </rule>
+  </rulegroup>
+
+  <rulegroup id="ROMAN">
+    <rule>
+      <pattern lang="en">
+        <token>novel</token>
+      </pattern>
+      <translation lang="es">novela</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>novela</token>
+      </pattern>
+      <translation lang="en">novel (book)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CARPET">
+    <rule>
+      <pattern lang="en">
+        <token>carpet</token>
+      </pattern>
+      <translation lang="es">alfombra</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>carpeta</token>
+      </pattern>
+      <translation lang="en">folder / binder</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="ASSIST">
+    <rule>
+      <pattern lang="en">
+        <token>assist</token>
+      </pattern>
+      <translation lang="fr">aider</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>assister</token>
+      </pattern>
+      <translation lang="en">attend / be present at</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="DECEPTION">
+    <rule>
+      <pattern lang="en">
+        <token>deception</token>
+      </pattern>
+      <translation lang="fr">tromperie</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>déception</token>
+      </pattern>
+      <translation lang="en">disappointment</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="BRAVE">
+    <rule>
+      <pattern lang="en">
+        <token>brave</token>
+      </pattern>
+      <translation lang="fr">courageux</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>brave</token>
+      </pattern>
+      <translation lang="en">good / decent (person)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MIST">
+    <rule>
+      <pattern lang="en">
+        <token>mist</token>
+      </pattern>
+      <translation lang="de">Nebel</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Mist</token>
+      </pattern>
+      <translation lang="en">manure / nonsense</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CHEMIST">
+    <rule>
+      <pattern lang="en">
+        <token>chemist</token>
+      </pattern>
+      <translation lang="de">Chemiker</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Chemiker</token>
+      </pattern>
+      <translation lang="en">chemist (scientist)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="PREFIX">
+    <rule>
+      <pattern lang="en">
+        <token>prejudice</token>
+      </pattern>
+      <translation lang="pt">preconceito</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>prejuízo</token>
+      </pattern>
+      <translation lang="en">loss / damage</translation>
+    </rule>
+  </rulegroup>
+
+  <rulegroup id="COLLEGE">
+    <rule>
+      <pattern lang="en">
+        <token>college</token>
+      </pattern>
+      <translation lang="fr">université / faculté</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>collège</token>
+      </pattern>
+      <translation lang="en">middle school / secondary school</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="LOCATION">
+    <rule>
+      <pattern lang="en">
+        <token>location</token>
+      </pattern>
+      <translation lang="fr">emplacement / lieu</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>location</token>
+      </pattern>
+      <translation lang="en">rental / hire</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="LECTURE">
+    <rule>
+      <pattern lang="en">
+        <token>lecture</token>
+      </pattern>
+      <translation lang="fr">cours magistral</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>lecture</token>
+      </pattern>
+      <translation lang="en">reading</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="FIGURE">
+    <rule>
+      <pattern lang="en">
+        <token>figure</token>
+      </pattern>
+      <translation lang="fr">chiffre / personnage</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>figure</token>
+      </pattern>
+      <translation lang="en">face</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="EXIT">
+    <rule>
+      <pattern lang="en">
+        <token>exit</token>
+      </pattern>
+      <translation lang="es">salida</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>éxito</token>
+      </pattern>
+      <translation lang="en">success</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CONSTIPATION">
+    <rule>
+      <pattern lang="en">
+        <token>constipated</token>
+      </pattern>
+      <translation lang="pt">com prisão de ventre</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>constipado</token>
+      </pattern>
+      <translation lang="en">having a cold</translation>
+    </rule>
+  </rulegroup>
+
+  <rulegroup id="ACTUALITY">
+    <rule>
+      <pattern lang="en">
+        <token>actually</token>
+      </pattern>
+      <translation lang="es">en realidad</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>actualmente</token>
+      </pattern>
+      <translation lang="en">currently / at present</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="REALIZE">
+    <rule>
+      <pattern lang="en">
+        <token>realize</token>
+      </pattern>
+      <translation lang="pt">perceber / dar-se conta</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>realizar</token>
+      </pattern>
+      <translation lang="en">carry out / accomplish</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="RECORD">
+    <rule>
+      <pattern lang="en">
+        <token>record</token>
+      </pattern>
+      <translation lang="fr">enregistrement / dossier</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>record</token>
+      </pattern>
+      <translation lang="en">record (sports / achievement)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="BALCONY">
+    <rule>
+      <pattern lang="en">
+        <token>balcony</token>
+      </pattern>
+      <translation lang="de">Balkon</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Balkon</token>
+      </pattern>
+      <translation lang="en">balcony</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MAP">
+    <rule>
+      <pattern lang="en">
+        <token>map</token>
+      </pattern>
+      <translation lang="de">Karte / Landkarte</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Mappe</token>
+      </pattern>
+      <translation lang="en">folder / briefcase</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MENU">
+    <rule>
+      <pattern lang="en">
+        <token>menu</token>
+      </pattern>
+      <translation lang="fr">carte (restaurant)</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>menu</token>
+      </pattern>
+      <translation lang="en">set meal / fixed-price meal</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CORDIAL">
+    <rule>
+      <pattern lang="en">
+        <token>cordial</token>
+      </pattern>
+      <translation lang="es">cálido / amistoso</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>cordial</token>
+      </pattern>
+      <translation lang="en">heartfelt / warm (not a drink)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MOLEST">
+    <rule>
+      <pattern lang="en">
+        <token>molest</token>
+      </pattern>
+      <translation lang="es">acosar / abusar</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>molestar</token>
+      </pattern>
+      <translation lang="en">bother / annoy</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SYMPATHY">
+    <rule>
+      <pattern lang="en">
+        <token>sympathy</token>
+      </pattern>
+      <translation lang="de">Mitgefühl / Beileid</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Sympathie</token>
+      </pattern>
+      <translation lang="en">liking / affinity</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="GENIAL">
+    <rule>
+      <pattern lang="en">
+        <token>genial</token>
+      </pattern>
+      <translation lang="de">freundlich / angenehm</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>genial</token>
+      </pattern>
+      <translation lang="en">brilliant / ingenious</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="OVERTAKE">
+    <rule>
+      <pattern lang="en">
+        <token>overtake</token>
+      </pattern>
+      <translation lang="de">überholen</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>übernehmen</token>
+      </pattern>
+      <translation lang="en">take over / assume</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="FABRICATE">
+    <rule>
+      <pattern lang="en">
+        <token>fabricate</token>
+      </pattern>
+      <translation lang="pt">fabricar / inventar</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>fabricar</token>
+      </pattern>
+      <translation lang="en">manufacture / make</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="GENEROUS">
+    <rule>
+      <pattern lang="en">
+        <token>generous</token>
+      </pattern>
+      <translation lang="es">generoso</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>generoso</token>
+      </pattern>
+      <translation lang="en">generous / plentiful</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="NORMAL">
+    <rule>
+      <pattern lang="en">
+        <token>normal</token>
+      </pattern>
+      <translation lang="es">normal / usual</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>normal</token>
+      </pattern>
+      <translation lang="en">usual / ordinary (not "OK")</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CASUAL">
+    <rule>
+      <pattern lang="en">
+        <token>casual</token>
+      </pattern>
+      <translation lang="es">informal / ocasional</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>casual</token>
+      </pattern>
+      <translation lang="en">informal / chance</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="PRETEND">
+    <rule>
+      <pattern lang="en">
+        <token>pretend</token>
+      </pattern>
+      <translation lang="es">fingir / simular</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>pretender</token>
+      </pattern>
+      <translation lang="en">intend / aim / claim</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SUPPORT">
+    <rule>
+      <pattern lang="en">
+        <token>support</token>
+      </pattern>
+      <translation lang="es">apoyar / soporte</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>soportar</token>
+      </pattern>
+      <translation lang="en">endure / put up with</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="ATTEND">
+    <rule>
+      <pattern lang="en">
+        <token>attend</token>
+      </pattern>
+      <translation lang="es">asistir / ir a</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>atender</token>
+      </pattern>
+      <translation lang="en">serve / take care of / answer</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SUCCESS">
+    <rule>
+      <pattern lang="en">
+        <token>success</token>
+      </pattern>
+      <translation lang="es">éxito</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>suceso</token>
+      </pattern>
+      <translation lang="en">event / occurrence</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="LARGE">
+    <rule>
+      <pattern lang="en">
+        <token>large</token>
+      </pattern>
+      <translation lang="es">grande</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>largo</token>
+      </pattern>
+      <translation lang="en">long (not large)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SANE">
+    <rule>
+      <pattern lang="en">
+        <token>sane</token>
+      </pattern>
+      <translation lang="fr">sain d'esprit</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>sain</token>
+      </pattern>
+      <translation lang="en">healthy / sound</translation>
+    </rule>
+  </rulegroup>
+</rules>

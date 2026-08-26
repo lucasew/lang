@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft DA optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="da">
+  <category id="STYLE" name="Style">
+    <rule id="DA_SOFT_OPT_I_FORBINDELSE" name="i forbindelse med soft optional" default="off">
+      <pattern>
+        <token>i</token>
+        <token>forbindelse</token>
+        <token>med</token>
+      </pattern>
+      <message>Overvej "ved" eller "under".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DA_SOFT_OPT_MED_HENBLIK" name="med henblik på soft optional" default="off">
+      <pattern>
+        <token>med</token>
+        <token>henblik</token>
+        <token>på</token>
+      </pattern>
+      <message>Overvej "for at" eller "for".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DA_SOFT_OPT_I_HENHOLD" name="i henhold til soft optional" default="off">
+      <pattern>
+        <token>i</token>
+        <token>henhold</token>
+        <token>til</token>
+      </pattern>
+      <message>Overvej "ifølge" eller "efter".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

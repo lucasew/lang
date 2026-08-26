@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="pt">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="PT_SOFT_A_O" name="a o">
+      <pattern>
+        <token>a</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "ao"?</message>
+      <short>a/ao</short>
+    </rule>
+    <rule id="PT_SOFT_EM_O" name="em o">
+      <pattern>
+        <token>em</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "no"?</message>
+      <short>em/no</short>
+    </rule>
+    <rule id="PT_SOFT_DE_O" name="de o">
+      <pattern>
+        <token>de</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "do"?</message>
+      <short>de/do</short>
+    </rule>
+    <rule id="PT_SOFT_POR_O" name="por o">
+      <pattern>
+        <token>por</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "pelo"?</message>
+      <short>por/pelo</short>
+    </rule>
+    <rule id="PT_SOFT_EM_A" name="em a">
+      <pattern>
+        <token>em</token>
+        <token>a</token>
+      </pattern>
+      <message>Talvez "na"?</message>
+      <short>em/na</short>
+    </rule>
+    <rule id="PT_SOFT_DE_A" name="de a">
+      <pattern>
+        <token>de</token>
+        <token>a</token>
+      </pattern>
+      <message>Talvez "da"?</message>
+      <short>de/da</short>
+    </rule>
+    <rule id="PT_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Possível repetição de "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="PT_SOFT_POR_A" name="por a">
+      <pattern>
+        <token>por</token>
+        <token>a</token>
+      </pattern>
+      <message>Talvez "pela"?</message>
+      <short>por/pela</short>
+    </rule>
+    <rule id="PT_SOFT_COM_O" name="com o">
+      <pattern>
+        <token>com</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "com o" esteja correto; verifique contração se aplicável.</message>
+      <short>com o</short>
+    </rule>
+    <rule id="PT_SOFT_MAS_MAS" name="mas mas">
+      <pattern>
+        <token>mas</token>
+        <token>mas</token>
+      </pattern>
+      <message>Possível repetição de "mas".</message>
+      <short>mas mas</short>
+    </rule>
+    <rule id="PT_SOFT_NAO_NAO" name="não não">
+      <pattern>
+        <token>não</token>
+        <token>não</token>
+      </pattern>
+      <message>Possível repetição de "não".</message>
+      <short>não não</short>
+    </rule>
+    <rule id="PT_SOFT_HA_A" name="há/a">
+      <pattern>
+        <token>a</token>
+        <token>muito</token>
+        <token>tempo</token>
+      </pattern>
+      <message>Talvez "há muito tempo"?</message>
+      <short>há/a</short>
+    </rule>
+    <rule id="PT_SOFT_MAIS_MAS" name="mais/mas">
+      <pattern>
+        <token>mais</token>
+        <token>eu</token>
+        <token>não</token>
+      </pattern>
+      <message>Talvez "mas eu não"?</message>
+      <short>mais/mas</short>
+    </rule>
+    <rule id="PT_SOFT_ONDE_AONDE" name="onde/aonde">
+      <pattern>
+        <token>aonde</token>
+        <token>você</token>
+        <token>está</token>
+      </pattern>
+      <message>Com "estar", prefira "onde você está".</message>
+      <short>onde/aonde</short>
+    </rule>
+    <rule id="PT_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possível repetição de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="PT_SOFT_EM_EM" name="em em">
+      <pattern>
+        <token>em</token>
+        <token>em</token>
+      </pattern>
+      <message>Possível repetição de "em".</message>
+      <short>em em</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Tipografia">
+    <rule id="PT_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Considere um único ponto de interrogação: "?"</message>
+      <short>pontuação</short>
+    </rule>
+    <rule id="PT_SOFT_DOUBLE_BANG" name="dupla exclamação">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Considere um único ponto de exclamação: "!"</message>
+      <short>pontuação</short>
+    </rule>
+  </category>
+</rules>

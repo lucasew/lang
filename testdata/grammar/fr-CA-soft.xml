@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="fr-CA">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="FR_SOFT_WEEKEND_CA" name="week-end soft CA">
+      <pattern>
+        <token>week-end</token>
+      </pattern>
+      <message>Au Canada, "fin de semaine" est fréquent.</message>
+      <short>week-end</short>
+    </rule>
+    <rule id="FR_SOFT_EMAIL_CA" name="e-mail soft CA">
+      <pattern>
+        <token>e-mail</token>
+      </pattern>
+      <message>Au Canada, "courriel" est fréquent.</message>
+      <short>e-mail</short>
+    </rule>
+    <rule id="FR_SOFT_PORTABLE_CA" name="portable soft CA">
+      <pattern>
+        <token>portable</token>
+      </pattern>
+      <message>Au Canada, "cellulaire" est fréquent (téléphone).</message>
+      <short>portable</short>
+    </rule>
+    <rule id="FR_SOFT_VOITURE_CA" name="voiture soft CA">
+      <pattern>
+        <token>voiture</token>
+      </pattern>
+      <message>Au Canada, "char" est fréquent en langage familier.</message>
+      <short>voiture</short>
+    </rule>
+    <rule id="FR_SOFT_COURSES_CA" name="courses soft CA">
+      <pattern>
+        <token>faire</token>
+        <token>des</token>
+        <token>courses</token>
+      </pattern>
+      <message>Au Canada, "magasiner" est fréquent.</message>
+      <short>courses</short>
+    </rule>
+    <rule id="FR_SOFT_PETIT_DEJ_CA" name="petit-déjeuner soft CA">
+      <pattern>
+        <token>petit-déjeuner</token>
+      </pattern>
+      <message>Au Canada, "déjeuner" désigne souvent le repas du matin.</message>
+      <short>petit-déjeuner</short>
+    </rule>
+    <rule id="FR_SOFT_DEJEUNER_CA" name="déjeuner noon soft CA">
+      <pattern>
+        <token>déjeuner</token>
+        <token>à</token>
+        <token>midi</token>
+      </pattern>
+      <message>Au Canada, le repas de midi s'appelle souvent "dîner".</message>
+      <short>déjeuner</short>
+    </rule>
+    <rule id="FR_SOFT_PARKING_CA" name="parking soft CA">
+      <pattern>
+        <token>parking</token>
+      </pattern>
+      <message>Au Canada, "stationnement" est fréquent.</message>
+      <short>parking</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ja">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="JA_SOFT_TO_TO" name="to to">
+      <pattern>
+        <token>to</token>
+        <token>to</token>
+      </pattern>
+      <message>Possible repeated "to".</message>
+      <short>to to</short>
+    </rule>
+    <rule id="JA_SOFT_NO_NO" name="no no">
+      <pattern>
+        <token>no</token>
+        <token>no</token>
+      </pattern>
+      <message>Possible repeated "no".</message>
+      <short>no no</short>
+    </rule>
+    <rule id="JA_SOFT_WA_WA" name="wa wa">
+      <pattern>
+        <token>wa</token>
+        <token>wa</token>
+      </pattern>
+      <message>Possible repeated "wa".</message>
+      <short>wa wa</short>
+    </rule>
+    <rule id="JA_SOFT_GA_GA" name="ga ga">
+      <pattern>
+        <token>ga</token>
+        <token>ga</token>
+      </pattern>
+      <message>Possible repeated "ga".</message>
+      <short>ga ga</short>
+    </rule>
+    <rule id="JA_SOFT_NI_NI" name="ni ni">
+      <pattern>
+        <token>ni</token>
+        <token>ni</token>
+      </pattern>
+      <message>Possible repeated "ni".</message>
+      <short>ni ni</short>
+    </rule>
+    <rule id="JA_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possible repeated "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="JA_SOFT_WO_WO" name="wo wo">
+      <pattern>
+        <token>wo</token>
+        <token>wo</token>
+      </pattern>
+      <message>Possible repeated "wo".</message>
+      <short>wo wo</short>
+    </rule>
+    <rule id="JA_SOFT_MO_MO" name="mo mo">
+      <pattern>
+        <token>mo</token>
+        <token>mo</token>
+      </pattern>
+      <message>Possible repeated "mo".</message>
+      <short>mo mo</short>
+    </rule>
+    <rule id="JA_SOFT_KA_KA" name="ka ka">
+      <pattern>
+        <token>ka</token>
+        <token>ka</token>
+      </pattern>
+      <message>Possible repeated "ka".</message>
+      <short>ka ka</short>
+    </rule>
+    <rule id="JA_SOFT_YO_YO" name="yo yo">
+      <pattern>
+        <token>yo</token>
+        <token>yo</token>
+      </pattern>
+      <message>Possible repeated "yo".</message>
+      <short>yo yo</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="JA_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="JA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Often one exclamation mark is enough: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

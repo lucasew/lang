@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="tl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="TL_SOFT_AT_AT" name="at at">
+      <pattern>
+        <token>at</token>
+        <token>at</token>
+      </pattern>
+      <message>Posibleng ulit ng "at".</message>
+      <short>at at</short>
+    </rule>
+    <rule id="TL_SOFT_NG_NG" name="ng ng">
+      <pattern>
+        <token>ng</token>
+        <token>ng</token>
+      </pattern>
+      <message>Posibleng ulit ng "ng".</message>
+      <short>ng ng</short>
+    </rule>
+    <rule id="TL_SOFT_SA_SA" name="sa sa">
+      <pattern>
+        <token>sa</token>
+        <token>sa</token>
+      </pattern>
+      <message>Posibleng ulit ng "sa".</message>
+      <short>sa sa</short>
+    </rule>
+    <rule id="TL_SOFT_ANG_ANG" name="ang ang">
+      <pattern>
+        <token>ang</token>
+        <token>ang</token>
+      </pattern>
+      <message>Posibleng ulit ng "ang".</message>
+      <short>ang ang</short>
+    </rule>
+    <rule id="TL_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Posibleng ulit ng "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="TL_SOFT_AY_AY" name="ay ay">
+      <pattern>
+        <token>ay</token>
+        <token>ay</token>
+      </pattern>
+      <message>Posibleng ulit ng "ay".</message>
+      <short>ay ay</short>
+    </rule>
+    <rule id="TL_SOFT_MGA_MGA" name="mga mga">
+      <pattern>
+        <token>mga</token>
+        <token>mga</token>
+      </pattern>
+      <message>Posibleng ulit ng "mga".</message>
+      <short>mga mga</short>
+    </rule>
+    <rule id="TL_SOFT_HINDI_HINDI" name="hindi hindi">
+      <pattern>
+        <token>hindi</token>
+        <token>hindi</token>
+      </pattern>
+      <message>Posibleng ulit ng "hindi".</message>
+      <short>hindi hindi</short>
+    </rule>
+    <rule id="TL_SOFT_PARA_PARA" name="para para">
+      <pattern>
+        <token>para</token>
+        <token>para</token>
+      </pattern>
+      <message>Posibleng ulit ng "para".</message>
+      <short>para para</short>
+    </rule>
+    <rule id="TL_SOFT_KUNG_KUNG" name="kung kung">
+      <pattern>
+        <token>kung</token>
+        <token>kung</token>
+      </pattern>
+      <message>Posibleng ulit ng "kung".</message>
+      <short>kung kung</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="TL_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="TL_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Madalas sapat ang isang tandang padamdam: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

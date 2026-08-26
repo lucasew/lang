@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft KM pack loaded only when level is picky. Space-tokenized. -->
+<rules lang="km">
+  <category id="STYLE" name="Style">
+    <rule id="KM_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>ពិចារណា «ការប្រជុំ» ឬ «ការជួប»។</message>
+      <short>style</short>
+    </rule>
+    <rule id="KM_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>ពិចារណា «មតិត្រឡប់» ឬ «យោបល់»។</message>
+      <short>style</short>
+    </rule>
+    <rule id="KM_SOFT_PICKY_NAS_NAS" name="ណាស់ណាស់ soft picky">
+      <pattern>
+        <token>ណាស់</token>
+        <token>ណាស់</token>
+      </pattern>
+      <message>ការបន្ថែមខ្សោយ សូមពិចារណាពាក្យខ្លាំងជាង។</message>
+      <short>style</short>
+    </rule>
+    <rule id="KM_SOFT_PICKY_RBOV" name="របស់ soft picky style">
+      <pattern>
+        <token>របស់</token>
+        <token>ជាច្រើន</token>
+      </pattern>
+      <message>ពិចារណានាមឱ្យជាក់លាក់ជាង។</message>
+      <short>style</short>
+    </rule>
+    <rule id="KM_SOFT_PICKY_CHHNGAY" name="នៅទីបំផុត soft picky">
+      <pattern>
+        <token>នៅ</token>
+        <token>ទីបំផុត</token>
+      </pattern>
+      <message>ពិចារណា «ទីបំផុត» ឬ «ចុងក្រោយ»។</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

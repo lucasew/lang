@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft DE pack loaded only when level is picky. -->
+<rules lang="de">
+  <category id="STYLE" name="Style">
+    <rule id="DE_SOFT_PICKY_NUTZEN_VON" name="Nutzen von soft picky">
+      <pattern>
+        <token>im</token>
+        <token>Hinblick</token>
+        <token>auf</token>
+      </pattern>
+      <message>Erwägen Sie knapperes "wegen" oder "bezüglich".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_IN_DER_LAGE" name="in der Lage soft picky">
+      <pattern>
+        <token>in</token>
+        <token>der</token>
+        <token>Lage</token>
+        <token>sein</token>
+      </pattern>
+      <message>Erwägen Sie einfach "können".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_DURCHFUEHREN" name="durchführen soft picky">
+      <pattern>
+        <token>durchführen</token>
+      </pattern>
+      <message>Oft genügt "machen" oder "ausführen".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_BEZUEGLICH" name="bezüglich soft picky">
+      <pattern>
+        <token>bezüglich</token>
+        <token>des</token>
+        <token>Themas</token>
+      </pattern>
+      <message>Erwägen Sie "zum Thema" oder "über".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_LAST_BUT_NOT" name="last but not least soft picky">
+      <pattern>
+        <token>last</token>
+        <token>but</token>
+        <token>not</token>
+        <token>least</token>
+      </pattern>
+      <message>Anglizismus; erwägen Sie "nicht zuletzt".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_HANDY" name="Handy soft picky">
+      <pattern>
+        <token>Smartphone</token>
+        <token>Handy</token>
+      </pattern>
+      <message>Mögliche Doppelung: "Smartphone" oder "Handy".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_SEHR_SEHR" name="sehr sehr soft picky">
+      <pattern>
+        <token>sehr</token>
+        <token>sehr</token>
+      </pattern>
+      <message>Mögliche schwache Verstärkung; erwägen Sie ein stärkeres Adjektiv.</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_DINGE" name="Dinge soft picky">
+      <pattern>
+        <token>viele</token>
+        <token>Dinge</token>
+      </pattern>
+      <message>Erwägen Sie ein konkreteres Substantiv als "Dinge".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_ETC" name="etc etc soft picky">
+      <pattern>
+        <token>etc</token>
+        <token>etc</token>
+      </pattern>
+      <message>Mögliche Wiederholung von "etc".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_PICKY_AM_ENDE_DES_TAGES" name="am Ende des Tages soft picky">
+      <pattern>
+        <token>am</token>
+        <token>Ende</token>
+        <token>des</token>
+        <token>Tages</token>
+      </pattern>
+      <message>Erwägen Sie "letztlich" oder "schließlich".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

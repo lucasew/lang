@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft TL pack loaded only when level is picky. -->
+<rules lang="tl">
+  <category id="STYLE" name="Style">
+    <rule id="TL_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Mas mainam ang "pulong" o "pagpupulong".</message>
+      <short>style</short>
+    </rule>
+    <rule id="TL_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Mas mainam ang "puna" o "komento".</message>
+      <short>style</short>
+    </rule>
+    <rule id="TL_SOFT_PICKY_SOBRANG_SOBRANG" name="sobrang sobrang soft picky">
+      <pattern>
+        <token>sobrang</token>
+        <token>sobrang</token>
+      </pattern>
+      <message>Mahina ang pagbibigay-diin; gumamit ng mas malakas na salita.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TL_SOFT_PICKY_MGA_BAGAY" name="mga bagay soft picky">
+      <pattern>
+        <token>mga</token>
+        <token>bagay</token>
+      </pattern>
+      <message>Mas mainam ang mas tiyak na pangngalan kaysa "bagay".</message>
+      <short>style</short>
+    </rule>
+    <rule id="TL_SOFT_PICKY_SA_HULI" name="sa huli soft picky">
+      <pattern>
+        <token>sa</token>
+        <token>huli</token>
+      </pattern>
+      <message>Isaalang-alang ang "sa wakas" o "sa dulo".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

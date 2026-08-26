@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft LT pack loaded only when level is picky. -->
+<rules lang="lt">
+  <category id="STYLE" name="Style">
+    <rule id="LT_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Geriau "susitikimas" arba "posėdis".</message>
+      <short>style</short>
+    </rule>
+    <rule id="LT_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Geriau "atsiliepimas" arba "komentarai".</message>
+      <short>style</short>
+    </rule>
+    <rule id="LT_SOFT_PICKY_LABAI_LABAI" name="labai labai soft picky">
+      <pattern>
+        <token>labai</token>
+        <token>labai</token>
+      </pattern>
+      <message>Silpnas sustiprinimas; rinkitės stipresnį būdvardį.</message>
+      <short>style</short>
+    </rule>
+    <rule id="LT_SOFT_PICKY_DALYKAI" name="daug dalykų soft picky">
+      <pattern>
+        <token>daug</token>
+        <token>dalykų</token>
+      </pattern>
+      <message>Rinkitės konkretesnį daiktavardį nei "dalykų".</message>
+      <short>style</short>
+    </rule>
+    <rule id="LT_SOFT_PICKY_DIENOS_PABAIGOJE" name="dienos pabaigoje soft picky">
+      <pattern>
+        <token>dienos</token>
+        <token>pabaigoje</token>
+      </pattern>
+      <message>Rinkitės "galiausiai" arba "pagaliau".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

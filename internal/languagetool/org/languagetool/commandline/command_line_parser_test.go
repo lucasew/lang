@@ -1,0 +1,51 @@
+package commandline
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
+func TestCommandLineParser(t *testing.T) {
+	p := &CommandLineParser{}
+	opts, err := p.ParseOptions([]string{"--version", "-l", "en-US", "-v", "file.txt"})
+	require.NoError(t, err)
+	require.True(t, opts.PrintVersion)
+	require.Equal(t, "en-US", opts.Language)
+	require.True(t, opts.Verbose)
+	require.Equal(t, "file.txt", opts.Filename)
+
+	opts, err = p.ParseOptions([]string{"-d", "A,B", "-e", "C"})
+	require.NoError(t, err)
+	require.Equal(t, []string{"A", "B"}, opts.DisabledRules)
+	require.Equal(t, []string{"C"}, opts.EnabledRules)
+
+	_, err = p.ParseOptions([]string{"--enabledonly", "-d", "X"})
+	require.Error(t, err)
+
+	_, err = p.ParseOptions([]string{"--unknown-flag"})
+	require.Error(t, err)
+
+	opts, err = p.ParseOptions(nil)
+	require.NoError(t, err)
+	require.True(t, opts.PrintUsage)
+}
+
+func TestParseApplyFlag(t *testing.T) {
+	p := &CommandLineParser{}
+	opts, err := p.ParseOptions([]string{"-l", "en", "-a", "-"})
+	require.NoError(t, err)
+	require.True(t, opts.IsApplySuggestions())
+}
+
+func TestCommandLineParser_TooManyArgs(t *testing.T) {
+	p := &CommandLineParser{}
+	args := make([]string, 15)
+	for i := range args {
+		args[i] = "x"
+	}
+	_, err := p.ParseOptions(args)
+	require.Error(t, err)
+	var w WrongParameterNumberException
+	require.ErrorAs(t, err, &w)
+}

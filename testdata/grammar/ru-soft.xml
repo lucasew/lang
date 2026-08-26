@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ru">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="RU_SOFT_V_V" name="в в">
+      <pattern>
+        <token>в</token>
+        <token>в</token>
+      </pattern>
+      <message>Возможный повтор "в".</message>
+      <short>в в</short>
+    </rule>
+    <rule id="RU_SOFT_I_I" name="и и">
+      <pattern>
+        <token>и</token>
+        <token>и</token>
+      </pattern>
+      <message>Возможный повтор "и".</message>
+      <short>и и</short>
+    </rule>
+    <rule id="RU_SOFT_NA_NA" name="на на">
+      <pattern>
+        <token>на</token>
+        <token>на</token>
+      </pattern>
+      <message>Возможный повтор "на".</message>
+      <short>на на</short>
+    </rule>
+    <rule id="RU_SOFT_NE_NE" name="не не">
+      <pattern>
+        <token>не</token>
+        <token>не</token>
+      </pattern>
+      <message>Возможный повтор "не".</message>
+      <short>не не</short>
+    </rule>
+    <rule id="RU_SOFT_S_S" name="с с">
+      <pattern>
+        <token>с</token>
+        <token>с</token>
+      </pattern>
+      <message>Возможный повтор "с".</message>
+      <short>с с</short>
+    </rule>
+    <rule id="RU_SOFT_PO_PO" name="по по">
+      <pattern>
+        <token>по</token>
+        <token>по</token>
+      </pattern>
+      <message>Возможный повтор "по".</message>
+      <short>по по</short>
+    </rule>
+    <rule id="RU_SOFT_ETO_ETO" name="это это">
+      <pattern>
+        <token>это</token>
+        <token>это</token>
+      </pattern>
+      <message>Возможный повтор "это".</message>
+      <short>это это</short>
+    </rule>
+    <rule id="RU_SOFT_CHTO_CHTO" name="что что">
+      <pattern>
+        <token>что</token>
+        <token>что</token>
+      </pattern>
+      <message>Возможный повтор "что".</message>
+      <short>что что</short>
+    </rule>
+    <rule id="RU_SOFT_KAK_KAK" name="как как">
+      <pattern>
+        <token>как</token>
+        <token>как</token>
+      </pattern>
+      <message>Возможный повтор "как".</message>
+      <short>как как</short>
+    </rule>
+    <rule id="RU_SOFT_IZA_IZ" name="из за">
+      <pattern>
+        <token>из</token>
+        <token>за</token>
+      </pattern>
+      <message>Возможно "из-за" (через дефис).</message>
+      <short>из-за</short>
+    </rule>
+    <rule id="RU_SOFT_TAK_JE" name="так же vs также">
+      <pattern>
+        <token>так</token>
+        <token>же</token>
+        <token>как</token>
+      </pattern>
+      <message>Проверьте "так же" (сравнение) vs "также" (тоже).</message>
+      <short>также</short>
+    </rule>
+    <rule id="RU_SOFT_VOOBSHE" name="вообще">
+      <pattern>
+        <token>вообщем</token>
+      </pattern>
+      <message>Возможно "в общем" или "вообще"?</message>
+      <short>вообщем</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Типографика">
+    <rule id="RU_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Часто достаточно одного знака: "?"</message>
+      <short>пунктуация</short>
+    </rule>
+    <rule id="RU_SOFT_DOUBLE_BANG" name="двойной восклицательный">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Часто достаточно одного знака: "!"</message>
+      <short>пунктуация</short>
+    </rule>
+  </category>
+</rules>

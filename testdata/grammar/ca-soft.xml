@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ca">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="CA_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Possible repetició de "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="CA_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possible repetició de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="CA_SOFT_I_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Possible repetició de "i".</message>
+      <short>i i</short>
+    </rule>
+    <rule id="CA_SOFT_A_EL" name="a/al">
+      <pattern>
+        <token>a</token>
+        <token>el</token>
+      </pattern>
+      <message>Potser "al"?</message>
+      <short>a/al</short>
+    </rule>
+    <rule id="CA_SOFT_DE_EL" name="de/del">
+      <pattern>
+        <token>de</token>
+        <token>el</token>
+      </pattern>
+      <message>Potser "del"?</message>
+      <short>de/del</short>
+    </rule>
+    <rule id="CA_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Possible repetició de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="CA_SOFT_PER_PER" name="per per">
+      <pattern>
+        <token>per</token>
+        <token>per</token>
+      </pattern>
+      <message>Possible repetició de "per".</message>
+      <short>per per</short>
+    </rule>
+    <rule id="CA_SOFT_A_LA" name="a la ok">
+      <pattern>
+        <token>a</token>
+        <token>la</token>
+        <token>la</token>
+      </pattern>
+      <message>Possible repetició de "la".</message>
+      <short>la la</short>
+    </rule>
+    <rule id="CA_SOFT_PERQUE" name="perque">
+      <pattern>
+        <token>perque</token>
+      </pattern>
+      <message>Potser "perquè"?</message>
+      <short>perquè</short>
+    </rule>
+    <rule id="CA_SOFT_TAMBE" name="tambe">
+      <pattern>
+        <token>tambe</token>
+      </pattern>
+      <message>Potser "també"?</message>
+      <short>també</short>
+    </rule>
+    <rule id="CA_SOFT_MES_MES" name="més més">
+      <pattern>
+        <token>més</token>
+        <token>més</token>
+      </pattern>
+      <message>Possible repetició de "més".</message>
+      <short>més més</short>
+    </rule>
+    <rule id="CA_SOFT_NO_NO" name="no no">
+      <pattern>
+        <token>no</token>
+        <token>no</token>
+      </pattern>
+      <message>Possible repetició de "no".</message>
+      <short>no no</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="CA_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Sovint n'hi ha prou amb un signe d'interrogació: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="CA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Sovint n'hi ha prou amb un signe d'exclamació: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

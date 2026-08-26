@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="nl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="NL_SOFT_ALS_OF" name="als of">
+      <pattern>
+        <token>als</token>
+        <token>of</token>
+      </pattern>
+      <message>Bedoelde u "alsof"?</message>
+      <short>als of</short>
+    </rule>
+    <rule id="NL_SOFT_TE_TE" name="te te">
+      <pattern>
+        <token>te</token>
+        <token>te</token>
+      </pattern>
+      <message>Mogelijke herhaling van "te".</message>
+      <short>te te</short>
+    </rule>
+    <rule id="NL_SOFT_MEERDERE_ALS" name="meerder als">
+      <pattern>
+        <token>meer</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "meer dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_HUN_HEBBEN" name="hun hebben">
+      <pattern>
+        <token>hun</token>
+        <token>hebben</token>
+      </pattern>
+      <message>Bedoelde u "zij hebben" of "hun" als bezittelijk?</message>
+      <short>hun/zij</short>
+    </rule>
+    <rule id="NL_SOFT_GROTER_ALS" name="groter als">
+      <pattern>
+        <token>groter</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "groter dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Mogelijke herhaling van "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="NL_SOFT_KLEINER_ALS" name="kleiner als">
+      <pattern>
+        <token>kleiner</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "kleiner dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_ANDERS_ALS" name="anders als">
+      <pattern>
+        <token>anders</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "anders dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_DAT_DAT" name="dat dat">
+      <pattern>
+        <token>dat</token>
+        <token>dat</token>
+      </pattern>
+      <message>Mogelijke herhaling van "dat".</message>
+      <short>dat dat</short>
+    </rule>
+    <rule id="NL_SOFT_OF_OF" name="of of">
+      <pattern>
+        <token>of</token>
+        <token>of</token>
+      </pattern>
+      <message>Mogelijke herhaling van "of".</message>
+      <short>of of</short>
+    </rule>
+    <rule id="NL_SOFT_ZOU_VAN" name="zou van">
+      <pattern>
+        <token>zou</token>
+        <token>van</token>
+      </pattern>
+      <message>Bedoelde u "zou hebben" of "zou" + infinitief?</message>
+      <short>zou van</short>
+    </rule>
+    <rule id="NL_SOFT_MEERDERE_DAN" name="meerdere dan soft">
+      <pattern>
+        <token>meerdere</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "meer dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_HUN_ZIJN" name="hun zijn">
+      <pattern>
+        <token>hun</token>
+        <token>zijn</token>
+      </pattern>
+      <message>Bedoelde u "zij zijn" (onderwerp) of "hun" als bezittelijk?</message>
+      <short>hun/zij</short>
+    </rule>
+    <rule id="NL_SOFT_ALS_DAT" name="als dat">
+      <pattern>
+        <token>groter</token>
+        <token>als</token>
+        <token>dat</token>
+      </pattern>
+      <message>Bedoelde u "groter dan dat"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_WORD_WORDT" name="word/wordt">
+      <pattern>
+        <token>hij</token>
+        <token>word</token>
+      </pattern>
+      <message>Bedoelde u "hij wordt"?</message>
+      <short>word/wordt</short>
+    </rule>
+    <rule id="NL_SOFT_NIET_NIET" name="niet niet">
+      <pattern>
+        <token>niet</token>
+        <token>niet</token>
+      </pattern>
+      <message>Mogelijke herhaling van "niet".</message>
+      <short>niet niet</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografie">
+    <rule id="NL_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Eén vraagteken volstaat vaak: "?"</message>
+      <short>interpunctie</short>
+    </rule>
+    <rule id="NL_SOFT_DOUBLE_BANG" name="dubbel uitroepteken">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Eén uitroepteken volstaat vaak: "!"</message>
+      <short>interpunctie</short>
+    </rule>
+  </category>
+</rules>

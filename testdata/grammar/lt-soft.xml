@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="lt">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="LT_SOFT_IR_IR" name="ir ir">
+      <pattern>
+        <token>ir</token>
+        <token>ir</token>
+      </pattern>
+      <message>Galimas "ir" pakartojimas.</message>
+      <short>ir ir</short>
+    </rule>
+    <rule id="LT_SOFT_IR_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Galimas "i" pakartojimas.</message>
+      <short>i i</short>
+    </rule>
+    <rule id="LT_SOFT_IR_O" name="o o">
+      <pattern>
+        <token>o</token>
+        <token>o</token>
+      </pattern>
+      <message>Galimas "o" pakartojimas.</message>
+      <short>o o</short>
+    </rule>
+    <rule id="LT_SOFT_IR_SU" name="su su">
+      <pattern>
+        <token>su</token>
+        <token>su</token>
+      </pattern>
+      <message>Galimas "su" pakartojimas.</message>
+      <short>su su</short>
+    </rule>
+    <rule id="LT_SOFT_IR_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Galimas "ne" pakartojimas.</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="LT_SOFT_IR_ANT" name="ant ant">
+      <pattern>
+        <token>ant</token>
+        <token>ant</token>
+      </pattern>
+      <message>Galimas "ant" pakartojimas.</message>
+      <short>ant ant</short>
+    </rule>
+    <rule id="LT_SOFT_IR_KAD" name="kad kad">
+      <pattern>
+        <token>kad</token>
+        <token>kad</token>
+      </pattern>
+      <message>Galimas "kad" pakartojimas.</message>
+      <short>kad kad</short>
+    </rule>
+    <rule id="LT_SOFT_IR_AR" name="ar ar">
+      <pattern>
+        <token>ar</token>
+        <token>ar</token>
+      </pattern>
+      <message>Galimas "ar" pakartojimas.</message>
+      <short>ar ar</short>
+    </rule>
+    <rule id="LT_SOFT_IR_BET" name="bet bet">
+      <pattern>
+        <token>bet</token>
+        <token>bet</token>
+      </pattern>
+      <message>Galimas "bet" pakartojimas.</message>
+      <short>bet bet</short>
+    </rule>
+    <rule id="LT_SOFT_IR_TAI" name="tai tai">
+      <pattern>
+        <token>tai</token>
+        <token>tai</token>
+      </pattern>
+      <message>Galimas "tai" pakartojimas.</message>
+      <short>tai tai</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="LT_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="LT_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Dažnai pakanka vieno šauktuko: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

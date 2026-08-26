@@ -1,0 +1,265 @@
+package tools
+
+import (
+	"encoding/json"
+	"strings"
+)
+
+const (
+	jsonAPIVersion = 1
+	jsonStatus     = ""
+	premiumHint    = "You might be missing errors only the Premium version can find. Contact us at support<at>languagetoolplus.com."
+)
+
+// MatchForJSON is the minimal match surface used by RuleMatchesAsJsonSerializer
+// (avoids importing the rules package and creating an import cycle).
+type MatchForJSON struct {
+	Message               string
+	ShortMessage          string
+	FromPos               int
+	ToPos                 int
+	SuggestedReplacements []string
+	RuleID                string
+	RuleDescription       string
+	IssueType             string
+	CategoryID            string
+	CategoryName          string
+	// Severity is SARIF level (error|warning|note); optional.
+	Severity string
+	// RuleURL is a soft community documentation link (serialized as rule.urls).
+	RuleURL string
+	// Tags ports Rule.getTags() → JSON rule.tags (e.g. "picky"); empty omits the field.
+	Tags []string
+	// TempOff ports Rule.isDefaultTempOff() → JSON rule.tempOff (only when true).
+	TempOff bool
+	// IsPremium ports Rule.isPremium → JSON rule.isPremium (only when serializer Premium and true).
+	IsPremium bool
+	// SubID ports Rule.getSubId() → JSON rule.subId (omit when empty).
+	SubID string
+	// SourceFile ports Rule.getSourceFile() basename → JSON rule.sourceFile (omit when empty / compact).
+	SourceFile string
+}
+
+// RuleMatchesAsJsonSerializer ports org.languagetool.tools.RuleMatchesAsJsonSerializer
+// as a compact JSON encoder for match lists.
+type RuleMatchesAsJsonSerializer struct {
+	CompactMode         int
+	LanguageCode        string
+	LanguageName        string
+	DetectedCode        string
+	DetectedName        string
+	DetectionConfidence float64
+	DetectionSource     string
+	Premium             bool
+}
+
+func NewRuleMatchesAsJsonSerializer() *RuleMatchesAsJsonSerializer {
+	return &RuleMatchesAsJsonSerializer{
+		LanguageCode: "en",
+		LanguageName: "English",
+	}
+}
+
+// MatchJSON is the per-match JSON shape (subset of LT API).
+type MatchJSON struct {
+	Message      string            `json:"message"`
+	ShortMessage string            `json:"shortMessage,omitempty"`
+	Offset       int               `json:"offset"`
+	Length       int               `json:"length"`
+	Replacements []ReplacementJSON `json:"replacements"`
+	Rule         RuleJSON          `json:"rule"`
+	Context      *ContextJSON      `json:"context,omitempty"`
+	// Severity is a soft SARIF-style level for CLI consumers (SPEC §2.2).
+	Severity string `json:"severity,omitempty"`
+}
+
+type ReplacementJSON struct {
+	Value string `json:"value"`
+}
+
+type RuleJSON struct {
+	ID string `json:"id"`
+	// SubID ports Rule.getSubId (Java writeRule when non-null).
+	SubID string `json:"subId,omitempty"`
+	// SourceFile ports Rule.getSourceFile basename (Java writeRule when non-null and not compact).
+	SourceFile  string        `json:"sourceFile,omitempty"`
+	Description string        `json:"description,omitempty"`
+	IssueType   string        `json:"issueType,omitempty"`
+	Category    *CategoryJSON `json:"category,omitempty"`
+	// Urls soft documentation links (community rule pages).
+	Urls []URLJSON `json:"urls,omitempty"`
+	// Tags ports Rule.getTags() (Java writeRule: only when non-empty).
+	Tags []string `json:"tags,omitempty"`
+	// TempOff ports Rule.isDefaultTempOff (Java writeRule: only when true).
+	TempOff bool `json:"tempOff,omitempty"`
+	// IsPremium ports Rule.isPremium (Java writeRule only when Premium.isPremiumVersion()).
+	IsPremium bool `json:"isPremium,omitempty"`
+}
+
+// URLJSON is a rule documentation link object (LT API shape).
+type URLJSON struct {
+	Value string `json:"value"`
+}
+
+// CategoryJSON is the rule category surface in JSON.
+type CategoryJSON struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type ContextJSON struct {
+	Text   string `json:"text"`
+	Offset int    `json:"offset"`
+	Length int    `json:"length"`
+}
+
+// ResponseJSON is the top-level object.
+type ResponseJSON struct {
+	Software map[string]any `json:"software,omitempty"`
+	Warnings map[string]any `json:"warnings,omitempty"`
+	Language map[string]any `json:"language,omitempty"`
+	Matches  []MatchJSON    `json:"matches"`
+}
+
+// RuleMatchesToJSON serializes matches for plain text.
+func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSON(matches []MatchForJSON, text string, contextSize int) (string, error) {
+	return s.RuleMatchesToJSONWithReason(matches, text, contextSize, "", true)
+}
+
+// RuleMatchesToJSONWithReason adds incompleteResults warning when reason is set.
+func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSONWithReason(matches []MatchForJSON, text string, contextSize int, incompleteReason string, showPremiumHint bool) (string, error) {
+	resp := ResponseJSON{Matches: make([]MatchJSON, 0, len(matches))}
+	if s.CompactMode != 1 {
+		soft := map[string]any{
+			"name":       "LanguageTool",
+			"apiVersion": jsonAPIVersion,
+			"premium":    s.Premium,
+			"status":     jsonStatus,
+		}
+		if showPremiumHint {
+			soft["premiumHint"] = premiumHint
+		}
+		resp.Software = soft
+	}
+	if s.CompactMode != 1 || incompleteReason != "" {
+		w := map[string]any{"incompleteResults": incompleteReason != ""}
+		if incompleteReason != "" {
+			w["incompleteResultsReason"] = incompleteReason
+		}
+		resp.Warnings = w
+	}
+	lang := map[string]any{
+		"name": s.LanguageName,
+		"code": s.LanguageCode,
+	}
+	detCode, detName := s.DetectedCode, s.DetectedName
+	if detCode == "" {
+		detCode = s.LanguageCode
+	}
+	if detName == "" {
+		detName = s.LanguageName
+	}
+	lang["detectedLanguage"] = map[string]any{
+		"name":       detName,
+		"code":       detCode,
+		"confidence": s.DetectionConfidence,
+		"source":     s.DetectionSource,
+	}
+	resp.Language = lang
+
+	for _, m := range matches {
+		mj := MatchJSON{
+			Message:      cleanSuggestion(m.Message),
+			ShortMessage: cleanSuggestion(m.ShortMessage),
+			Offset:       m.FromPos,
+			Length:       m.ToPos - m.FromPos,
+			Rule: RuleJSON{
+				ID:          m.RuleID,
+				Description: m.RuleDescription,
+				IssueType:   m.IssueType,
+			},
+			Severity: m.Severity,
+		}
+		if m.SubID != "" {
+			mj.Rule.SubID = m.SubID
+		}
+		// Java: sourceFile only when compactMode != 1 and rule.getSourceFile() != null.
+		if s.CompactMode != 1 && m.SourceFile != "" {
+			mj.Rule.SourceFile = sourceFileBasename(m.SourceFile)
+		}
+		if m.CategoryID != "" || m.CategoryName != "" {
+			mj.Rule.Category = &CategoryJSON{ID: m.CategoryID, Name: m.CategoryName}
+		}
+		if m.RuleURL != "" {
+			mj.Rule.Urls = []URLJSON{{Value: m.RuleURL}}
+		}
+		// Java writeRule: if (rule.getTags().size() > 0) write tags array of tag.name().
+		if len(m.Tags) > 0 {
+			mj.Rule.Tags = append([]string(nil), m.Tags...)
+		}
+		// Java writeRule: if (rule.isDefaultTempOff()) writeBooleanField("tempOff", true).
+		if m.TempOff {
+			mj.Rule.TempOff = true
+		}
+		// Java: if (Premium.isPremiumVersion()) writeBooleanField("isPremium", …).
+		if s.Premium && m.IsPremium {
+			mj.Rule.IsPremium = true
+		}
+		for _, r := range m.SuggestedReplacements {
+			mj.Replacements = append(mj.Replacements, ReplacementJSON{Value: r})
+		}
+		if mj.Replacements == nil {
+			mj.Replacements = []ReplacementJSON{}
+		}
+		if contextSize > 0 && text != "" {
+			mj.Context = buildContext(text, m.FromPos, m.ToPos, contextSize)
+		}
+		resp.Matches = append(resp.Matches, mj)
+	}
+	b, err := json.Marshal(resp)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+func cleanSuggestion(s string) string {
+	s = strings.ReplaceAll(s, "<suggestion>", "")
+	s = strings.ReplaceAll(s, "</suggestion>", "")
+	return s
+}
+
+// sourceFileBasename ports Java ANYTHING_SLASH_PATTERN.matcher(path).replaceFirst("")
+// (strip directories; keep last path segment).
+func sourceFileBasename(path string) string {
+	path = JavaStringTrim(path)
+	if path == "" {
+		return ""
+	}
+	if i := strings.LastIndexAny(path, `/\`); i >= 0 && i+1 < len(path) {
+		return path[i+1:]
+	}
+	return path
+}
+
+func buildContext(text string, from, to, size int) *ContextJSON {
+	if from < 0 {
+		from = 0
+	}
+	if to > len(text) {
+		to = len(text)
+	}
+	start := from - size
+	if start < 0 {
+		start = 0
+	}
+	end := to + size
+	if end > len(text) {
+		end = len(text)
+	}
+	return &ContextJSON{
+		Text:   text[start:end],
+		Offset: from - start,
+		Length: to - from,
+	}
+}

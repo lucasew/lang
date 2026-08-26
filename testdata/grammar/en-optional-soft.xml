@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EN optional rules: registered by soft dir load but default off until -e. -->
+<rules lang="en">
+  <category id="STYLE" name="Style">
+    <rule id="EN_SOFT_OPT_GET_GO" name="get-go soft optional" default="off">
+      <pattern>
+        <token>from</token>
+        <token>the</token>
+        <token>get</token>
+        <token>go</token>
+      </pattern>
+      <message>Consider "from the start" or "from the beginning".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AT_THIS_JUNCTURE" name="at this juncture soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>this</token>
+        <token>juncture</token>
+      </pattern>
+      <message>Consider "now" or "at this point".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_WITH_REGARD_TO" name="with regard to soft optional" default="off">
+      <pattern>
+        <token>with</token>
+        <token>regard</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "about" or "regarding".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_THE_EVENT" name="in the event of soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>event</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "if" when shorter is clearer.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_PRIOR_TO" name="prior to soft optional" default="off">
+      <pattern>
+        <token>prior</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "before".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_SUBSEQUENT_TO" name="subsequent to soft optional" default="off">
+      <pattern>
+        <token>subsequent</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "after".</message>
+      <short>style</short>
+    </rule>
+
+    <rule id="EN_SOFT_OPT_DUE_TO_THE_FACT_OF" name="due to the fact of soft optional" default="off">
+      <pattern>
+        <token>due</token>
+        <token>to</token>
+        <token>the</token>
+        <token>fact</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "because of".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_ORDER_FOR" name="in order for soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>order</token>
+        <token>for</token>
+      </pattern>
+      <message>Consider "so that" or "for".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_FOR_THE_PURPOSE_OF" name="for the purpose of soft optional" default="off">
+      <pattern>
+        <token>for</token>
+        <token>the</token>
+        <token>purpose</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "to" + verb.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AT_THE_PRESENT_TIME" name="at the present time soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>the</token>
+        <token>present</token>
+        <token>time</token>
+      </pattern>
+      <message>Consider "now" or "currently".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_LIGHT_OF_THE_FACT" name="in light of the fact soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>light</token>
+        <token>of</token>
+        <token>the</token>
+        <token>fact</token>
+      </pattern>
+      <message>Consider "because" or "since".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_BY_MEANS_OF" name="by means of soft optional" default="off">
+      <pattern>
+        <token>by</token>
+        <token>means</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "by" or "using".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_THE_NEAR_FUTURE" name="in the near future soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>near</token>
+        <token>future</token>
+      </pattern>
+      <message>Consider "soon".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AT_THIS_POINT_IN_TIME" name="at this point in time soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>this</token>
+        <token>point</token>
+        <token>in</token>
+        <token>time</token>
+      </pattern>
+      <message>Consider "now" or "at this point".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_HAS_THE_ABILITY_TO" name="has the ability to soft optional" default="off">
+      <pattern>
+        <token>has</token>
+        <token>the</token>
+        <token>ability</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "can".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_A_TIMELY_MANNER" name="in a timely manner soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>a</token>
+        <token>timely</token>
+        <token>manner</token>
+      </pattern>
+      <message>Consider "promptly" or "on time".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IT_IS_IMPORTANT_TO_NOTE" name="it is important to note soft optional" default="off">
+      <pattern>
+        <token>it</token>
+        <token>is</token>
+        <token>important</token>
+        <token>to</token>
+        <token>note</token>
+      </pattern>
+      <message>Consider stating the point directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_PLEASE_BE_ADVISED" name="please be advised soft optional" default="off">
+      <pattern>
+        <token>please</token>
+        <token>be</token>
+        <token>advised</token>
+      </pattern>
+      <message>Consider "note that" or state the fact directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_WITH_THE_EXCEPTION_OF" name="with the exception of soft optional" default="off">
+      <pattern>
+        <token>with</token>
+        <token>the</token>
+        <token>exception</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "except" or "except for".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_THE_EVENT_THAT" name="in the event that soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>event</token>
+        <token>that</token>
+      </pattern>
+      <message>Consider "if".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_DUE_TO_THE_FACT_THAT" name="due to the fact that soft optional" default="off">
+      <pattern>
+        <token>due</token>
+        <token>to</token>
+        <token>the</token>
+        <token>fact</token>
+        <token>that</token>
+      </pattern>
+      <message>Consider "because".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AT_THE_END_OF_THE_DAY_OPT" name="at the end of the day soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>the</token>
+        <token>end</token>
+        <token>of</token>
+        <token>the</token>
+        <token>day</token>
+      </pattern>
+      <message>Consider "ultimately" or "in the end".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_NEEDLESS_TO_SAY" name="needless to say soft optional" default="off">
+      <pattern>
+        <token>needless</token>
+        <token>to</token>
+        <token>say</token>
+      </pattern>
+      <message>Often filler; omit or state the point directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_THE_FACT_OF_THE_MATTER" name="the fact of the matter soft optional" default="off">
+      <pattern>
+        <token>the</token>
+        <token>fact</token>
+        <token>of</token>
+        <token>the</token>
+        <token>matter</token>
+      </pattern>
+      <message>Consider stating the point directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IT_SHOULD_BE_NOTED" name="it should be noted soft optional" default="off">
+      <pattern>
+        <token>it</token>
+        <token>should</token>
+        <token>be</token>
+        <token>noted</token>
+      </pattern>
+      <message>Consider stating the note directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_FOR_ALL_INTENTS" name="for all intents soft optional" default="off">
+      <pattern>
+        <token>for</token>
+        <token>all</token>
+        <token>intents</token>
+        <token>and</token>
+        <token>purposes</token>
+      </pattern>
+      <message>Consider "essentially" or "in practice".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AS_A_MATTER_OF_FACT" name="as a matter of fact soft optional" default="off">
+      <pattern>
+        <token>as</token>
+        <token>a</token>
+        <token>matter</token>
+        <token>of</token>
+        <token>fact</token>
+      </pattern>
+      <message>Consider "actually" or omit.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

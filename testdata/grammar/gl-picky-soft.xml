@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft GL pack loaded only when level is picky. -->
+<rules lang="gl">
+  <category id="STYLE" name="Style">
+    <rule id="GL_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Prefira "reunión" ou "xuntanza".</message>
+      <short>style</short>
+    </rule>
+    <rule id="GL_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Prefira "comentarios" ou "retorno".</message>
+      <short>style</short>
+    </rule>
+    <rule id="GL_SOFT_PICKY_MOI_MOI" name="moi moi soft picky">
+      <pattern>
+        <token>moi</token>
+        <token>moi</token>
+      </pattern>
+      <message>Intensificación débil; prefira un adxectivo máis forte.</message>
+      <short>style</short>
+    </rule>
+    <rule id="GL_SOFT_PICKY_COUSAS" name="moitas cousas soft picky">
+      <pattern>
+        <token>moitas</token>
+        <token>cousas</token>
+      </pattern>
+      <message>Prefira un substantivo máis concreto que "cousas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="GL_SOFT_PICKY_AO_FINAL_DO_DIA" name="ao final do día soft picky">
+      <pattern>
+        <token>ao</token>
+        <token>final</token>
+        <token>do</token>
+        <token>día</token>
+      </pattern>
+      <message>Prefira "finalmente" ou "en definitiva".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

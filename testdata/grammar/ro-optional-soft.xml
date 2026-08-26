@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft RO optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="ro">
+  <category id="STYLE" name="Style">
+    <rule id="RO_SOFT_OPT_IN_CADRUL" name="în cadrul soft optional" default="off">
+      <pattern>
+        <token>în</token>
+        <token>cadrul</token>
+      </pattern>
+      <message>Consideră "în" sau "pe parcursul".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RO_SOFT_OPT_IN_VEDEREA" name="în vederea soft optional" default="off">
+      <pattern>
+        <token>în</token>
+        <token>vederea</token>
+      </pattern>
+      <message>Consideră "pentru" sau "ca să".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RO_SOFT_OPT_CU_PRIVIRE" name="cu privire la soft optional" default="off">
+      <pattern>
+        <token>cu</token>
+        <token>privire</token>
+        <token>la</token>
+      </pattern>
+      <message>Consideră "despre" sau "referitor la".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft DE optional rules: default off until -e. -->
+<rules lang="de">
+  <category id="STYLE" name="Style">
+    <rule id="DE_SOFT_OPT_IM_RAHMEN" name="im Rahmen soft optional" default="off">
+      <pattern>
+        <token>im</token>
+        <token>Rahmen</token>
+        <token>von</token>
+      </pattern>
+      <message>Erwägen Sie knapperes "bei" oder "während".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_OPT_VOR_DEM_HINTERGRUND" name="vor dem Hintergrund soft optional" default="off">
+      <pattern>
+        <token>vor</token>
+        <token>dem</token>
+        <token>Hintergrund</token>
+      </pattern>
+      <message>Erwägen Sie "angesichts" oder "wegen".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_OPT_IN_DIESEM_ZUSAMMENHANG" name="in diesem Zusammenhang soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>diesem</token>
+        <token>Zusammenhang</token>
+      </pattern>
+      <message>Erwägen Sie "dabei" oder "hierzu".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DE_SOFT_OPT_DURCHFUEHRUNG" name="Durchführung soft optional" default="off">
+      <pattern>
+        <token>Durchführung</token>
+        <token>der</token>
+      </pattern>
+      <message>Nominalstil; erwägen Sie ein Verb.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

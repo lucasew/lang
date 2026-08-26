@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft AST optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="ast">
+  <category id="STYLE" name="Style">
+    <rule id="AST_SOFT_OPT_EN_RELACION" name="en relación con soft optional" default="off">
+      <pattern>
+        <token>en</token>
+        <token>relación</token>
+        <token>con</token>
+      </pattern>
+      <message>Considerá "sobre" o "tocante a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="AST_SOFT_OPT_COL_FIN" name="col fin de soft optional" default="off">
+      <pattern>
+        <token>col</token>
+        <token>fin</token>
+        <token>de</token>
+      </pattern>
+      <message>Considerá "pa" o "pa que".</message>
+      <short>style</short>
+    </rule>
+    <rule id="AST_SOFT_OPT_NEL_MARCU" name="nel marcu de soft optional" default="off">
+      <pattern>
+        <token>nel</token>
+        <token>marcu</token>
+        <token>de</token>
+      </pattern>
+      <message>Considerá "en" o "mientres".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

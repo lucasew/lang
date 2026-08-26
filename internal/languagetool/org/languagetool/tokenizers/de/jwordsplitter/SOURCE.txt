@@ -1,0 +1,16 @@
+Official jWordSplitter 4.7 embedded data (same as LanguageTool dependency
+de.danielnaber:jwordsplitter:4.7 — inspiration/languagetool pom.xml property
+de.danielnaber.jwordsplitter.version).
+
+wordsGerman.txt
+  - Source: de/danielnaber/jwordsplitter/wordsGerman.txt inside jwordsplitter-4.7.jar
+  - Byte-identical copy from Maven Central jar
+  - 58557 entries; includes e.g. "schwarz" (absent in 4.5 ser export)
+
+exceptionsGerman.txt
+  - Byte-identical copy of
+    de/danielnaber/jwordsplitter/exceptionsGerman.txt from the same jar.
+
+Jar used:
+  https://repo1.maven.org/maven2/de/danielnaber/jwordsplitter/4.7/jwordsplitter-4.7.jar
+Upstream: https://github.com/danielnaber/jwordsplitter

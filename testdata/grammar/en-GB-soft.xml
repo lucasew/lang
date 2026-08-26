@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="en-GB">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="EN_SOFT_TOWARD_GB" name="toward soft">
+      <pattern>
+        <token>toward</token>
+      </pattern>
+      <message>In British English, "towards" is often preferred.</message>
+      <short>toward</short>
+    </rule>
+    <rule id="EN_SOFT_GRAY_GB" name="gray soft">
+      <pattern>
+        <token>gray</token>
+      </pattern>
+      <message>In British English, "grey" is preferred.</message>
+      <short>gray</short>
+    </rule>
+    <rule id="EN_SOFT_COLOR_GB" name="color soft">
+      <pattern>
+        <token>color</token>
+      </pattern>
+      <message>In British English, "colour" is preferred.</message>
+      <short>color</short>
+    </rule>
+    <rule id="EN_SOFT_FAVORITE_GB" name="favorite soft">
+      <pattern>
+        <token>favorite</token>
+      </pattern>
+      <message>In British English, "favourite" is preferred.</message>
+      <short>favorite</short>
+    </rule>
+    <rule id="EN_SOFT_CENTER_GB" name="center soft">
+      <pattern>
+        <token>center</token>
+      </pattern>
+      <message>In British English, "centre" is preferred.</message>
+      <short>center</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZE_GB" name="organize soft">
+      <pattern>
+        <token>organize</token>
+      </pattern>
+      <message>In British English, "organise" is often preferred.</message>
+      <short>organize</short>
+    </rule>
+    <rule id="EN_SOFT_REALIZE_GB" name="realize soft">
+      <pattern>
+        <token>realize</token>
+      </pattern>
+      <message>In British English, "realise" is often preferred.</message>
+      <short>realize</short>
+    </rule>
+    <rule id="EN_SOFT_BEHAVIOR_GB" name="behavior soft">
+      <pattern>
+        <token>behavior</token>
+      </pattern>
+      <message>In British English, "behaviour" is preferred.</message>
+      <short>behavior</short>
+    </rule>
+    <rule id="EN_SOFT_TRAVELED_GB" name="traveled soft">
+      <pattern>
+        <token>traveled</token>
+      </pattern>
+      <message>In British English, "travelled" is preferred.</message>
+      <short>traveled</short>
+    </rule>
+    <rule id="EN_SOFT_CANCELED_GB" name="canceled soft">
+      <pattern>
+        <token>canceled</token>
+      </pattern>
+      <message>In British English, "cancelled" is preferred.</message>
+      <short>canceled</short>
+    </rule>
+    <rule id="EN_SOFT_MODELED_GB" name="modeled soft">
+      <pattern>
+        <token>modeled</token>
+      </pattern>
+      <message>In British English, "modelled" is preferred.</message>
+      <short>modeled</short>
+    </rule>
+    <rule id="EN_SOFT_HUMOR_GB" name="humor soft">
+      <pattern>
+        <token>humor</token>
+      </pattern>
+      <message>In British English, "humour" is preferred.</message>
+      <short>humor</short>
+    </rule>
+    <rule id="EN_SOFT_LABOR_GB" name="labor soft">
+      <pattern>
+        <token>labor</token>
+      </pattern>
+      <message>In British English, "labour" is preferred.</message>
+      <short>labor</short>
+    </rule>
+    <rule id="EN_SOFT_DEFENSE_GB" name="defense soft">
+      <pattern>
+        <token>defense</token>
+      </pattern>
+      <message>In British English, "defence" is preferred.</message>
+      <short>defense</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSE_GB" name="license soft">
+      <pattern>
+        <token>license</token>
+      </pattern>
+      <message>In British English, "licence" is preferred.</message>
+      <short>license</short>
+    </rule>
+    <rule id="EN_SOFT_ANALYZE_GB" name="analyze soft">
+      <pattern>
+        <token>analyze</token>
+      </pattern>
+      <message>In British English, "analyse" is preferred.</message>
+      <short>analyze</short>
+    </rule>
+    <rule id="EN_SOFT_THEATER_GB" name="theater soft">
+      <pattern>
+        <token>theater</token>
+      </pattern>
+      <message>In British English, "theatre" is preferred.</message>
+      <short>theater</short>
+    </rule>
+    <rule id="EN_SOFT_CATALOG_GB" name="catalog soft">
+      <pattern>
+        <token>catalog</token>
+      </pattern>
+      <message>In British English, "catalogue" is preferred.</message>
+      <short>catalog</short>
+    </rule>
+    <rule id="EN_SOFT_DIALOG_GB" name="dialog soft">
+      <pattern>
+        <token>dialog</token>
+      </pattern>
+      <message>In British English, "dialogue" is preferred.</message>
+      <short>dialog</short>
+    </rule>
+    <rule id="EN_SOFT_PROGRAM_GB" name="program soft">
+      <pattern>
+        <token>program</token>
+      </pattern>
+      <message>In British English, "programme" is preferred (except computer programs).</message>
+      <short>program</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOR_GB" name="neighbor soft">
+      <pattern>
+        <token>neighbor</token>
+      </pattern>
+      <message>In British English, "neighbour" is preferred.</message>
+      <short>neighbor</short>
+    </rule>
+    <rule id="EN_SOFT_CHECK_GB" name="check soft GB bank">
+      <pattern>
+        <token>check</token>
+        <token>book</token>
+      </pattern>
+      <message>In British English, "cheque book" is often preferred.</message>
+      <short>check book</short>
+    </rule>
+    <rule id="EN_SOFT_TIRE_GB" name="tire soft GB">
+      <pattern>
+        <token>tire</token>
+      </pattern>
+      <message>In British English, "tyre" is preferred for vehicle wheels.</message>
+      <short>tire</short>
+    </rule>
+    <rule id="EN_SOFT_ALUMINUM_GB" name="aluminum soft GB">
+      <pattern>
+        <token>aluminum</token>
+      </pattern>
+      <message>In British English, "aluminium" is preferred.</message>
+      <short>aluminum</short>
+    </rule>
+    <rule id="EN_SOFT_STORY_FLOOR_GB" name="story floor soft GB">
+      <pattern>
+        <token>story</token>
+        <token>building</token>
+      </pattern>
+      <message>In British English, "storey" is often preferred for floors of a building.</message>
+      <short>story</short>
+    </rule>
+    <rule id="EN_SOFT_FAVOR_GB" name="favor soft GB">
+      <pattern>
+        <token>favor</token>
+      </pattern>
+      <message>In British English, "favour" is preferred.</message>
+      <short>favor</short>
+    </rule>
+    <rule id="EN_SOFT_HONOR_GB" name="honor soft GB">
+      <pattern>
+        <token>honor</token>
+      </pattern>
+      <message>In British English, "honour" is preferred.</message>
+      <short>honor</short>
+    </rule>
+    <rule id="EN_SOFT_LABOR_VERB_GB" name="labor verb soft GB">
+      <pattern>
+        <token>labored</token>
+      </pattern>
+      <message>In British English, "laboured" is preferred.</message>
+      <short>labored</short>
+    </rule>
+  </category>
+</rules>

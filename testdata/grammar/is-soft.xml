@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="is">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="IS_SOFT_OG_OG" name="og og">
+      <pattern>
+        <token>og</token>
+        <token>og</token>
+      </pattern>
+      <message>Möguleg endurtekning á "og".</message>
+      <short>og og</short>
+    </rule>
+    <rule id="IS_SOFT_A_A" name="á á">
+      <pattern>
+        <token>á</token>
+        <token>á</token>
+      </pattern>
+      <message>Möguleg endurtekning á "á".</message>
+      <short>á á</short>
+    </rule>
+    <rule id="IS_SOFT_I_I" name="í í">
+      <pattern>
+        <token>í</token>
+        <token>í</token>
+      </pattern>
+      <message>Möguleg endurtekning á "í".</message>
+      <short>í í</short>
+    </rule>
+    <rule id="IS_SOFT_A_AD" name="að að">
+      <pattern>
+        <token>að</token>
+        <token>að</token>
+      </pattern>
+      <message>Möguleg endurtekning á "að".</message>
+      <short>að að</short>
+    </rule>
+    <rule id="IS_SOFT_EKKI" name="ekki ekki">
+      <pattern>
+        <token>ekki</token>
+        <token>ekki</token>
+      </pattern>
+      <message>Möguleg endurtekning á "ekki".</message>
+      <short>ekki ekki</short>
+    </rule>
+    <rule id="IS_SOFT_MED" name="með með">
+      <pattern>
+        <token>með</token>
+        <token>með</token>
+      </pattern>
+      <message>Möguleg endurtekning á "með".</message>
+      <short>með með</short>
+    </rule>
+    <rule id="IS_SOFT_EG_EG" name="ég ég">
+      <pattern>
+        <token>ég</token>
+        <token>ég</token>
+      </pattern>
+      <message>Möguleg endurtekning á "ég".</message>
+      <short>ég ég</short>
+    </rule>
+    <rule id="IS_SOFT_THAD_THAD" name="það það">
+      <pattern>
+        <token>það</token>
+        <token>það</token>
+      </pattern>
+      <message>Möguleg endurtekning á "það".</message>
+      <short>það það</short>
+    </rule>
+    <rule id="IS_SOFT_SEM_SEM" name="sem sem">
+      <pattern>
+        <token>sem</token>
+        <token>sem</token>
+      </pattern>
+      <message>Möguleg endurtekning á "sem".</message>
+      <short>sem sem</short>
+    </rule>
+    <rule id="IS_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Möguleg endurtekning á "en".</message>
+      <short>en en</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="IS_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="IS_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Eitt upphrópunarmerki nægir oft: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

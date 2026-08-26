@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EO pack loaded only when level is picky. -->
+<rules lang="eo">
+  <category id="STYLE" name="Style">
+    <rule id="EO_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Preferu "kunveno" aŭ "kunsido".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EO_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Preferu "respondon" aŭ "komentojn".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EO_SOFT_PICKY_TRE_TRE" name="tre tre soft picky">
+      <pattern>
+        <token>tre</token>
+        <token>tre</token>
+      </pattern>
+      <message>Malforta intensigo; preferu pli fortan adjektivon.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EO_SOFT_PICKY_AJOJ" name="multaj aĵoj soft picky">
+      <pattern>
+        <token>multaj</token>
+        <token>aĵoj</token>
+      </pattern>
+      <message>Preferu pli konkretan substantivon ol "aĵoj".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EO_SOFT_PICKY_FINE_DE_LA_TAGO" name="fine de la tago soft picky">
+      <pattern>
+        <token>fine</token>
+        <token>de</token>
+        <token>la</token>
+        <token>tago</token>
+      </pattern>
+      <message>Preferu "fine" aŭ "entute".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

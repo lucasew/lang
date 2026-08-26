@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft CRH optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="crh">
+  <category id="STYLE" name="Style">
+    <rule id="CRH_SOFT_OPT_MUNASEBETNEN" name="munasebetnen soft optional" default="off">
+      <pattern>
+        <token>munasebetnen</token>
+      </pattern>
+      <message>«aqqında» ya da «aşağıda» da qullanıla bilir.</message>
+      <short>style</short>
+    </rule>
+    <rule id="CRH_SOFT_OPT_MAQSADINEN" name="maqsadınen soft optional" default="off">
+      <pattern>
+        <token>maqsadınen</token>
+      </pattern>
+      <message>«içün» ya da «deyip» de qullanıla bilir.</message>
+      <short>style</short>
+    </rule>
+    <rule id="CRH_SOFT_OPT_ÇERÇIVESİNDE" name="çerçevesinde soft optional" default="off">
+      <pattern>
+        <token>çerçevesinde</token>
+      </pattern>
+      <message>«içinde» ya da «sıra» da qullanıla bilir.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

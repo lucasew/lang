@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EL optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="el">
+  <category id="STYLE" name="Style">
+    <rule id="EL_SOFT_OPT_STO_PLAISIO" name="στο πλαίσιο soft optional" default="off">
+      <pattern>
+        <token>στο</token>
+        <token>πλαίσιο</token>
+      </pattern>
+      <message>Εξετάστε "σε" ή "κατά".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EL_SOFT_OPT_ME_SKOPO" name="με σκοπό soft optional" default="off">
+      <pattern>
+        <token>με</token>
+        <token>σκοπό</token>
+      </pattern>
+      <message>Εξετάστε "για να".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EL_SOFT_OPT_SE_SXESH" name="σε σχέση με soft optional" default="off">
+      <pattern>
+        <token>σε</token>
+        <token>σχέση</token>
+        <token>με</token>
+      </pattern>
+      <message>Εξετάστε "για" ή "σχετικά με".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

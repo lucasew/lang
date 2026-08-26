@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft JA optional rules: default off until -e or SOFT_OPTIONAL. Space-tokenized. -->
+<rules lang="ja">
+  <category id="STYLE" name="Style">
+    <rule id="JA_SOFT_OPT_NI_TSUITE" name="について soft optional" default="off">
+      <pattern>
+        <token>について</token>
+      </pattern>
+      <message>より簡潔な表現も検討してください。</message>
+      <short>style</short>
+    </rule>
+    <rule id="JA_SOFT_OPT_NI_KANSHITE" name="に関して soft optional" default="off">
+      <pattern>
+        <token>に関して</token>
+      </pattern>
+      <message>「について」やより簡潔な言い回しも検討してください。</message>
+      <short>style</short>
+    </rule>
+    <rule id="JA_SOFT_OPT_NO_TAME_NI" name="のために soft optional" default="off">
+      <pattern>
+        <token>の</token>
+        <token>ため</token>
+        <token>に</token>
+      </pattern>
+      <message>文脈によってはより簡潔な目的表現を検討してください。</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

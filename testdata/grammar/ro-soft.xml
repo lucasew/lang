@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ro">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="RO_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Posibilă repetare a "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="RO_SOFT_SI_SI" name="și și">
+      <pattern>
+        <token>și</token>
+        <token>și</token>
+      </pattern>
+      <message>Posibilă repetare a "și".</message>
+      <short>și și</short>
+    </rule>
+    <rule id="RO_SOFT_IN_IN" name="în în">
+      <pattern>
+        <token>în</token>
+        <token>în</token>
+      </pattern>
+      <message>Posibilă repetare a "în".</message>
+      <short>în în</short>
+    </rule>
+    <rule id="RO_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Posibilă repetare a "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="RO_SOFT_PE_PE" name="pe pe">
+      <pattern>
+        <token>pe</token>
+        <token>pe</token>
+      </pattern>
+      <message>Posibilă repetare a "pe".</message>
+      <short>pe pe</short>
+    </rule>
+    <rule id="RO_SOFT_CU_CU" name="cu cu">
+      <pattern>
+        <token>cu</token>
+        <token>cu</token>
+      </pattern>
+      <message>Posibilă repetare a "cu".</message>
+      <short>cu cu</short>
+    </rule>
+    <rule id="RO_SOFT_LA_LA" name="la la">
+      <pattern>
+        <token>la</token>
+        <token>la</token>
+      </pattern>
+      <message>Posibilă repetare a "la".</message>
+      <short>la la</short>
+    </rule>
+    <rule id="RO_SOFT_NU_NU" name="nu nu">
+      <pattern>
+        <token>nu</token>
+        <token>nu</token>
+      </pattern>
+      <message>Posibilă repetare a "nu".</message>
+      <short>nu nu</short>
+    </rule>
+    <rule id="RO_SOFT_CA_CA" name="că că">
+      <pattern>
+        <token>că</token>
+        <token>că</token>
+      </pattern>
+      <message>Posibilă repetare a "că".</message>
+      <short>că că</short>
+    </rule>
+    <rule id="RO_SOFT_SAU_SAU" name="sau sau">
+      <pattern>
+        <token>sau</token>
+        <token>sau</token>
+      </pattern>
+      <message>Posibilă repetare a "sau".</message>
+      <short>sau sau</short>
+    </rule>
+    <rule id="RO_SOFT_DINTR_O" name="dintr o">
+      <pattern>
+        <token>dintr</token>
+        <token>o</token>
+      </pattern>
+      <message>Poate "dintr-o" (cu cratimă)?</message>
+      <short>dintr-o</short>
+    </rule>
+    <rule id="RO_SOFT_INTR_UN" name="într un">
+      <pattern>
+        <token>într</token>
+        <token>un</token>
+      </pattern>
+      <message>Poate "într-un" (cu cratimă)?</message>
+      <short>într-un</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="RO_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Adesea este suficient un semn de întrebare: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="RO_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Adesea este suficient un semn de exclamare: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,25 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "sk",
+  "cases": [
+    {
+      "rule": "den_slobody_softveru",
+      "text": "Pred dňom slobody softvéru pršalo.",
+      "suggestion": "Dňom slobody softvéru",
+      "source": "languagetool-language-modules/sk/src/main/resources/org/languagetool/rules/sk/grammar.xml"
+    },
+    {
+      "rule": "vzniku_Slovenskej_republiky",
+      "text": "Pri príležitosti dňa vzniku Slovenskej republiky.",
+      "suggestion": "Dňa vzniku Slovenskej republiky",
+      "source": "languagetool-language-modules/sk/src/main/resources/org/languagetool/rules/sk/grammar.xml"
+    },
+    {
+      "rule": "víťazstva_nad_fašizmom",
+      "text": "Pri príležitosti dňa víťazstva nad fašizmom.",
+      "suggestion": "Dňa víťazstva nad fašizmom",
+      "source": "languagetool-language-modules/sk/src/main/resources/org/languagetool/rules/sk/grammar.xml"
+    }
+  ]
+}

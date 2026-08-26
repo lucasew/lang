@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="pt-PT">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="PT_SOFT_ONIBUS_PT" name="ônibus soft PT">
+      <pattern>
+        <token>ônibus</token>
+      </pattern>
+      <message>No português europeu, "autocarro" é frequentemente preferido.</message>
+      <short>ônibus</short>
+    </rule>
+    <rule id="PT_SOFT_CELULAR_PT" name="celular soft PT">
+      <pattern>
+        <token>celular</token>
+      </pattern>
+      <message>No português europeu, "telemóvel" é frequentemente preferido.</message>
+      <short>celular</short>
+    </rule>
+    <rule id="PT_SOFT_TELA_PT" name="tela soft PT">
+      <pattern>
+        <token>tela</token>
+      </pattern>
+      <message>No português europeu, "ecrã" é frequentemente preferido (ecrã de dispositivo).</message>
+      <short>tela</short>
+    </rule>
+    <rule id="PT_SOFT_FATO_PT" name="fato soft PT">
+      <pattern>
+        <token>fato</token>
+      </pattern>
+      <message>No português europeu, "facto" é frequentemente preferido (sentido de "fact").</message>
+      <short>fato</short>
+    </rule>
+    <rule id="PT_SOFT_CONTATO_PT" name="contato soft PT">
+      <pattern>
+        <token>contato</token>
+      </pattern>
+      <message>No português europeu, "contacto" é frequentemente preferido.</message>
+      <short>contato</short>
+    </rule>
+    <rule id="PT_SOFT_OBJETO_PT" name="objeto soft PT">
+      <pattern>
+        <token>objeto</token>
+      </pattern>
+      <message>No português europeu, "objecto" é frequentemente preferido.</message>
+      <short>objeto</short>
+    </rule>
+    <rule id="PT_SOFT_OTIMO_PT" name="ótimo soft PT">
+      <pattern>
+        <token>ótimo</token>
+      </pattern>
+      <message>No português europeu, "óptimo" é frequentemente preferido.</message>
+      <short>ótimo</short>
+    </rule>
+    <rule id="PT_SOFT_TREM_PT" name="trem soft PT">
+      <pattern>
+        <token>trem</token>
+      </pattern>
+      <message>No português europeu, "comboio" é frequentemente preferido.</message>
+      <short>trem</short>
+    </rule>
+    <rule id="PT_SOFT_EQUIPE_PT" name="equipe soft PT">
+      <pattern>
+        <token>equipe</token>
+      </pattern>
+      <message>No português europeu, "equipa" é frequentemente preferido.</message>
+      <short>equipe</short>
+    </rule>
+    <rule id="PT_SOFT_CAFE_MANHA_PT" name="café da manhã soft PT">
+      <pattern>
+        <token>café</token>
+        <token>da</token>
+        <token>manhã</token>
+      </pattern>
+      <message>No português europeu, "pequeno-almoço" é frequentemente preferido.</message>
+      <short>café da manhã</short>
+    </rule>
+    <rule id="PT_SOFT_LEGAL_PT" name="legal soft PT">
+      <pattern>
+        <token>legal</token>
+        <token>demais</token>
+      </pattern>
+      <message>No português europeu, "fixe" ou "porreiro" podem ser mais naturais que "legal demais".</message>
+      <short>legal</short>
+    </rule>
+  </category>
+</rules>

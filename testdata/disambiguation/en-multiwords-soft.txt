@@ -1,0 +1,653 @@
+# Soft EN multiwords (tab-separated phrase	POS) for MultiWordChunker
+San Francisco	NNP
+New Jersey	NNP
+South Korea	NNP
+Hong Kong	NNP
+Las Vegas	NNP
+Los Angeles	NNP
+New York	NNP
+United Kingdom	NNP
+United States	NNP
+in order	RB
+of course	RB
+at least	RB
+as well	RB
+for example	RB
+in fact	RB
+Rio de Janeiro	NNP
+Buenos Aires	NNP
+Cape Town	NNP
+Costa Rica	NNP
+New Zealand	NNP
+South Africa	NNP
+by the way	RB
+at all	RB
+in general	RB
+on the other hand	RB
+Silicon Valley	NNP
+Wall Street	NNP
+Middle East	NNP
+Far East	NNP
+as soon as	RB
+in addition	RB
+Bay Area	NNP
+East Coast	NNP
+West Coast	NNP
+in particular	RB
+for instance	RB
+as a result	RB
+in the meantime	RB
+at the same time	RB
+for the most part	RB
+North America	NNP
+South America	NNP
+Latin America	NNP
+Asia Pacific	NNP
+New Delhi	NNP
+Tel Aviv	NNP
+Sao Paulo	NNP
+Mexico City	NNP
+San Diego	NNP
+Salt Lake City	NNP
+by and large	RB
+in any case	RB
+at any rate	RB
+from time to time	RB
+as a matter of fact	RB
+in other words	RB
+on the contrary	RB
+for the time being	RB
+in the long run	RB
+all of a sudden	RB
+once in a while	RB
+out of the blue	RB
+Puerto Rico	NNP
+Sri Lanka	NNP
+Saudi Arabia	NNP
+North Korea	NNP
+New Orleans	NNP
+San Antonio	NNP
+by means of	RB
+in spite of	RB
+in light of	RB
+in terms of	RB
+with regard to	RB
+with respect to	RB
+as far as	RB
+in accordance with	RB
+on behalf of	RB
+in favor of	RB
+in favour of	RB
+by virtue of	RB
+for the sake of	RB
+Great Britain	NNP
+Northern Ireland	NNP
+Czech Republic	NNP
+United Arab Emirates	NNP
+Saint Petersburg	NNP
+in lieu of	RB
+by way of	RB
+in the long term	RB
+in the short term	RB
+as opposed to	RB
+with a view to	RB
+for better or worse	RB
+once and for all	RB
+New South Wales	NNP
+Western Australia	NNP
+British Columbia	NNP
+Quebec City	NNP
+beyond a shadow of a doubt	RB
+for better or for worse	RB
+in no uncertain terms	RB
+as a last resort	RB
+in the nick of time	RB
+by no means	RB
+to some extent	RB
+Porto Alegre	NNP
+São Paulo	NNP
+Abu Dhabi	NNP
+Kuala Lumpur	NNP
+on top of	RB
+so far as	RB
+to a large extent	RB
+in the first place	RB
+at face value	RB
+Cape Cod	NNP
+Long Island	NNP
+Rhode Island	NNP
+Hong Kong Island	NNP
+in due course	RB
+in the short run	RB
+to a certain extent	RB
+more or less	RB
+Nova Scotia	NNP
+Prince Edward Island	NNP
+Newfoundland and Labrador	NNP
+for good measure	RB
+on second thought	RB
+at a glance	RB
+in a nutshell	RB
+for what it is worth	RB
+to make a long story short	RB
+as luck would have it	RB
+in a sense	RB
+in any event	RB
+for that matter	RB
+as it were	RB
+to say the least	RB
+without a doubt	RB
+beyond doubt	RB
+Kansas City	NNP
+Oklahoma City	NNP
+for all intents and purposes	RB
+in the final analysis	RB
+at the present time	RB
+Las Cruces	NNP
+El Paso	NNP
+Baton Rouge	NNP
+as a whole	RB
+in the aggregate	RB
+on the whole	RB
+Corpus Christi	NNP
+Santa Fe	NNP
+in due time	RB
+at long last	RB
+San Jose	NNP
+San Juan	NNP
+as of yet	RB
+at present	RB
+in short	RB
+to date	RB
+over the long haul	RB
+Austin Texas	NNP
+Portland Oregon	NNP
+Virginia Beach	NNP
+Colorado Springs	NNP
+in the near term	RB
+Phoenix Arizona	NNP
+Seattle Washington	NNP
+at this juncture	RB
+Denver Colorado	NNP
+Miami Florida	NNP
+in the interim	RB
+Chicago Illinois	NNP
+Boston Massachusetts	NNP
+for the foreseeable future	RB
+Atlanta Georgia	NNP
+Detroit Michigan	NNP
+in large part	RB
+Nashville Tennessee	NNP
+Minneapolis Minnesota	NNP
+all things considered	RB
+Cleveland Ohio	NNP
+Pittsburgh Pennsylvania	NNP
+in due season	RB
+Baltimore Maryland	NNP
+Louisville Kentucky	NNP
+as a rule	RB
+Memphis Tennessee	NNP
+Milwaukee Wisconsin	NNP
+in short order	RB
+Portland Maine	NNP
+Anchorage Alaska	NNP
+more often than not	RB
+Honolulu Hawaii	NNP
+Boise Idaho	NNP
+in no time	RB
+Tucson Arizona	NNP
+Raleigh North Carolina	NNP
+time and again	RB
+Providence Rhode Island	NNP
+Richmond Virginia	NNP
+sooner or later	RB
+Hartford Connecticut	NNP
+Albany New York	NNP
+day after day	RB
+Trenton New Jersey	NNP
+Harrisburg Pennsylvania	NNP
+little by little	RB
+Dover Delaware	NNP
+Annapolis Maryland	NNP
+step by step	RB
+Charleston West Virginia	NNP
+Olympia Washington	NNP
+bit by bit	RB
+Salem Oregon	NNP
+Juneau Alaska	NNP
+one by one	RB
+Helena Montana	NNP
+Cheyenne Wyoming	NNP
+over and over	RB
+Pierre South Dakota	NNP
+Bismarck North Dakota	NNP
+again and again	RB
+Topeka Kansas	NNP
+Lincoln Nebraska	NNP
+now and then	RB
+Des Moines Iowa	NNP
+Jefferson City Missouri	NNP
+here and there	RB
+Little Rock Arkansas	NNP
+Baton Rouge Louisiana	NNP
+up and down	RB
+Jackson Mississippi	NNP
+Montgomery Alabama	NNP
+back and forth	RB
+Tallahassee Florida	NNP
+Columbia South Carolina	NNP
+side by side	RB
+Frankfort Kentucky	NNP
+Indianapolis Indiana	NNP
+hand in hand	RB
+Charleston South Carolina	NNP
+Columbia Missouri	NNP
+face to face	RB
+Springfield Illinois	NNP
+Madison Wisconsin	NNP
+neck and neck	RB
+Saint Paul Minnesota	NNP
+Lansing Michigan	NNP
+head to head	RB
+Columbus Ohio	NNP
+Augusta Maine	NNP
+eye to eye	RB
+Concord New Hampshire	NNP
+Montpelier Vermont	NNP
+toe to toe	RB
+Carson City Nevada	NNP
+Santa Fe New Mexico	NNP
+arm in arm	RB
+Salt Lake City Utah	NNP
+back to back	RB
+hand over hand	RB
+end to end	RB
+side to side	RB
+Carson City	NNP
+Sacramento California	NNP
+peer to peer	RB
+point to point	RB
+Las Vegas Nevada	NNP
+Charlotte North Carolina	NNP
+end to end testing	NN
+Tampa Florida	NNP
+Orlando Florida	NNP
+client server	NN
+Jacksonville Florida	NNP
+server to server	RB
+north to south	RB
+Kansas City Missouri	NNP
+east to west	RB
+out of band	RB
+San Antonio Texas	NNP
+New Orleans Louisiana	NNP
+up to date	JJ
+Oklahoma City Oklahoma	NNP
+day to day	RB
+month to month	RB
+Virginia Beach Virginia	NNP
+year to year	RB
+week to week	RB
+Fort Worth Texas	NNP
+hour to hour	RB
+minute to minute	RB
+El Paso Texas	NNP
+San Diego California	NNP
+second to second	RB
+Dallas Texas	NNP
+Houston Texas	NNP
+in band	RB
+San Jose California	NNP
+Dallas Fort Worth	NNP
+hour by hour	RB
+San Francisco California	NNP
+Los Angeles California	NNP
+day by day	RB
+San Jose California Metro	NNP
+night by night	RB
+week by week	RB
+San Francisco Bay	NNP
+month by month	RB
+year by year	RB
+Los Angeles County	NNP
+San Francisco Bay Area	NNP
+quarter by quarter	RB
+New York Metro	NNP
+Los Angeles Basin	NNP
+decade by decade	RB
+Chicago Metro	NNP
+New York City Metro	NNP
+century by century	RB
+Bay Area Metro	NNP
+Silicon Valley Region	NNP
+Pacific Northwest Region	NNP
+Mid Atlantic Region	NNP
+Great Lakes Region	NNP
+Sun Belt Region	NNP
+Rust Belt Region	NNP
+Bible Belt Region	NNP
+Corn Belt Region	NNP
+Snow Belt Region	NNP
+Cotton Belt Region	NNP
+Black Belt Region	NNP
+Fruit Belt Region	NNP
+Grain Belt Region	NNP
+Wheat Belt Region	NNP
+Dairy Belt Region	NNP
+Tobacco Belt Region	NNP
+Rice Belt Region	NNP
+Oil Belt Region	NNP
+Coal Belt Region	NNP
+Iron Belt Region	NNP
+Copper Belt RegionNNP
+Mining Belt RegionNNP
+Steel Belt RegionNNP
+Frost Belt RegionNNP
+Central Valley RegionNNP
+Hudson Valley RegionNNP
+Imperial Valley RegionNNP
+Ohio Valley RegionNNP
+Death Valley RegionNNP
+Tennessee Valley RegionNNP
+Shenandoah Valley RegionNNP
+Willamette Valley RegionNNP
+Napa Valley RegionNNP
+Yakima Valley RegionNNP
+Coachella Valley RegionNNP
+Salinas Valley RegionNNP
+Antelope Valley RegionNNP
+Pajaro Valley RegionNNP
+Silicon Forest RegionNNP
+Research Triangle RegionNNP
+Medical Alley RegionNNP
+Technology Corridor RegionNNP
+Aerospace Valley RegionNNP
+Energy Corridor RegionNNP
+Bio Corridor RegionNNP
+Cyber Corridor RegionNNP
+Optics Valley RegionNNP
+Finance Corridor RegionNNP
+Media Corridor RegionNNP
+Defense Corridor RegionNNP
+Health Corridor RegionNNP
+Education Corridor RegionNNP
+Logistics Corridor RegionNNP
+Trade Corridor RegionNNP
+Transit Corridor RegionNNP
+Innovation Corridor RegionNNP
+Data Corridor RegionNNP
+Port Corridor RegionNNP
+Culture Corridor RegionNNP
+Green Corridor RegionNNP
+Blue Corridor RegionNNP
+Coastal Corridor RegionNNP
+Silver Corridor RegionNNP
+Industrial Corridor RegionNNP
+River Corridor RegionNNP
+Maritime Corridor RegionNNP
+Mining Corridor RegionNNP
+Gold Corridor RegionNNP
+Timber Corridor RegionNNP
+Grain Corridor RegionNNP
+Silk Corridor RegionNNP
+Wine Corridor RegionNNP
+Tea Corridor RegionNNP
+Spice Corridor RegionNNP
+Coffee Corridor RegionNNP
+Cotton Corridor RegionNNP
+Copper Corridor RegionNNP
+Salt Corridor RegionNNP
+Amber Corridor RegionNNP
+Ivory Corridor RegionNNP
+Jade Corridor RegionNNP
+Pearl Corridor RegionNNP
+Ruby Corridor RegionNNP
+Diamond Corridor RegionNNP
+Emerald Corridor RegionNNP
+Opal Corridor RegionNNP
+Sapphire Corridor RegionNNP
+Topaz Corridor RegionNNP
+Quartz Corridor RegionNNP
+Garnet Corridor RegionNNP
+Onyx Corridor RegionNNP
+Obsidian Corridor RegionNNP
+Basalt Corridor RegionNNP
+Granite Corridor RegionNNP
+Marble Corridor RegionNNP
+Limestone Corridor RegionNNP
+Sandstone Corridor RegionNNP
+Slate Corridor RegionNNP
+Chalk Corridor RegionNNP
+Clay Corridor RegionNNP
+Flint Corridor RegionNNP
+Shale Corridor RegionNNP
+Gneiss Corridor RegionNNP
+Schist Corridor RegionNNP
+Quartzite Corridor RegionNNP
+Dolomite Corridor RegionNNP
+Travertine Corridor RegionNNP
+Pumice Corridor RegionNNP
+Tuff Corridor RegionNNP
+Obsidian Ridge RegionNNP
+Andesite Corridor RegionNNP
+Rhyolite Corridor RegionNNP
+Basalt Ridge RegionNNP
+Pumice Ridge RegionNNP
+Scoria Corridor RegionNNP
+Tephra Corridor RegionNNP
+Lava Corridor RegionNNP
+Ash Corridor RegionNNP
+Cinder Corridor RegionNNP
+Magma Corridor RegionNNP
+Crater Corridor RegionNNP
+Vent Corridor RegionNNP
+Caldera Corridor RegionNNP
+Fumarole Corridor RegionNNP
+Lahar Corridor RegionNNP
+Tuff Ridge RegionNNP
+Ash Ridge RegionNNP
+Scoria Ridge RegionNNP
+Cinder Ridge RegionNNP
+Pumice Peak RegionNNP
+Ash Peak RegionNNP
+Scoria Peak RegionNNP
+Tuff Peak RegionNNP
+Basalt Peak RegionNNP
+Andesite Peak RegionNNP
+Rhyolite Peak RegionNNP
+Obsidian Peak RegionNNP
+Granite Peak RegionNNP
+Marble Peak RegionNNP
+Slate Peak RegionNNP
+Limestone Peak RegionNNP
+Sandstone Peak RegionNNP
+Chalk Peak RegionNNP
+Clay Peak RegionNNP
+Flint Peak RegionNNP
+Shale Peak RegionNNP
+Gneiss Peak RegionNNP
+Schist Peak RegionNNP
+Quartzite Peak RegionNNP
+Dolomite Peak RegionNNP
+Travertine Peak RegionNNP
+Pumice Summit RegionNNP
+Ash Summit RegionNNP
+Scoria Summit RegionNNP
+Tuff Summit RegionNNP
+Basalt Summit RegionNNP
+Andesite Summit RegionNNP
+Rhyolite Summit RegionNNP
+Obsidian Summit RegionNNP
+Granite Summit RegionNNP
+Marble Summit RegionNNP
+Slate Summit RegionNNP
+Limestone Summit RegionNNP
+Sandstone Summit RegionNNP
+Chalk Summit RegionNNP
+Clay Summit RegionNNP
+Flint Summit RegionNNP
+Shale Summit RegionNNP
+Gneiss Summit RegionNNP
+Schist Summit RegionNNP
+Quartzite Summit RegionNNP
+Dolomite Summit RegionNNP
+Travertine Summit RegionNNP
+Conglomerate Summit RegionNNP
+Breccia Summit RegionNNP
+Phyllite Summit RegionNNP
+Gypsum Summit RegionNNP
+Anhydrite Summit RegionNNP
+Halite Summit RegionNNP
+Chert Summit RegionNNP
+Hornfels Summit RegionNNP
+Amphibolite Summit RegionNNP
+Eclogite Summit RegionNNP
+Serpentinite Summit RegionNNP
+Soapstone Summit RegionNNP
+Feldspar Summit RegionNNP
+Quartz Summit RegionNNP
+Pegmatite Summit RegionNNP
+Syenite Summit RegionNNP
+Diorite Summit RegionNNP
+Gabbro Summit RegionNNP
+Tonalite Summit RegionNNP
+Anorthosite Summit RegionNNP
+Peridotite Summit RegionNNP
+Kimberlite Summit RegionNNP
+Lamprophyre Summit RegionNNP
+Carbonatite Summit RegionNNP
+Komatiite Summit RegionNNP
+Harzburgite Summit RegionNNP
+Lherzolite Summit RegionNNP
+Dunite Summit RegionNNP
+Websterite Summit RegionNNP
+Pyroxenite Summit RegionNNP
+Norite Summit RegionNNP
+Troctolite Summit RegionNNP
+Anorthosite Ridge RegionNNP
+Dacite Summit RegionNNP
+Phonolite Summit RegionNNP
+Latite Summit RegionNNP
+Phonolite Ridge RegionNNP
+Trachyte Summit RegionNNP
+Andesite Ridge RegionNNP
+Ignimbrite Summit RegionNNP
+Felsite Summit RegionNNP
+Tephra Summit RegionNNP
+Lapilli Summit RegionNNP
+Breccia Ridge RegionNNP
+Conglomerate Ridge RegionNNP
+Sandstone Ridge RegionNNP
+Limestone Ridge RegionNNP
+Marble Ridge RegionNNP
+Slate Ridge RegionNNP
+Granite Ridge RegionNNP
+Chalk Ridge RegionNNP
+Flint Ridge RegionNNP
+Clay Ridge RegionNNP
+Shale Ridge RegionNNP
+Gneiss Ridge RegionNNP
+Schist Ridge RegionNNP
+Quartzite Ridge RegionNNP
+Dolomite Ridge RegionNNP
+Travertine Ridge RegionNNP
+Phyllite Ridge RegionNNP
+Gypsum Ridge RegionNNP
+Anhydrite Ridge RegionNNP
+Halite Ridge RegionNNP
+Chert Ridge RegionNNP
+Hornfels Ridge RegionNNP
+Amphibolite Ridge RegionNNP
+Eclogite Ridge RegionNNP
+Serpentinite Ridge RegionNNP
+Soapstone Ridge RegionNNP
+Feldspar Ridge RegionNNP
+Pegmatite Ridge RegionNNP
+Syenite Ridge RegionNNP
+Diorite Ridge RegionNNP
+Gabbro Ridge RegionNNP
+Norite Ridge RegionNNP
+Troctolite Ridge RegionNNP
+Dunite Ridge RegionNNP
+Websterite Ridge RegionNNP
+Pyroxenite Ridge RegionNNP
+Kimberlite Ridge RegionNNP
+Ignimbrite Ridge RegionNNP
+Felsite Ridge RegionNNP
+Tephra Ridge RegionNNP
+Lapilli Ridge RegionNNP
+Lamprophyre Ridge RegionNNP
+Carbonatite Ridge RegionNNP
+Komatiite Ridge RegionNNP
+Harzburgite Ridge RegionNNP
+Lherzolite Ridge RegionNNP
+Dunite Peak RegionNNP
+Norite Peak RegionNNP
+Troctolite Peak RegionNNP
+Anorthosite Peak RegionNNP
+Gabbro Peak RegionNNP
+Diorite Peak RegionNNP
+Syenite Peak RegionNNP
+Pegmatite Peak RegionNNP
+Feldspar Peak RegionNNP
+Quartz Peak RegionNNP
+Conglomerate Peak RegionNNP
+Breccia Peak RegionNNP
+Phyllite Peak RegionNNP
+Gypsum Peak RegionNNP
+Anhydrite Peak RegionNNP
+Halite Peak RegionNNP
+Chert Peak RegionNNP
+Hornfels Peak RegionNNP
+Amphibolite Peak RegionNNP
+Eclogite Peak RegionNNP
+Serpentinite Peak RegionNNP
+Soapstone Peak RegionNNP
+Feldspar Mesa RegionNNP
+Gypsum Mesa RegionNNP
+Shale Mesa RegionNNP
+Chalk Mesa RegionNNP
+Limestone Mesa RegionNNP
+Sandstone Mesa RegionNNP
+Dolomite Mesa RegionNNP
+Marble Mesa RegionNNP
+Slate Mesa RegionNNP
+Gneiss Mesa RegionNNP
+Schist Mesa RegionNNP
+Basalt Mesa RegionNNP
+Granite Mesa RegionNNP
+Andesite Mesa RegionNNP
+Rhyolite Mesa RegionNNP
+Obsidian Mesa RegionNNP
+Pumice Mesa RegionNNP
+Tuff Mesa RegionNNP
+Dacite Mesa RegionNNP
+Trachyte Mesa RegionNNP
+Phonolite Mesa RegionNNP
+Komatiite Mesa RegionNNP
+Latite Mesa RegionNNP
+Tephrite Mesa RegionNNP
+Basanite Mesa RegionNNP
+Nephelinite Mesa RegionNNP
+Foidite Mesa RegionNNP
+Picrite Mesa RegionNNP
+Harzburgite Mesa RegionNNP
+Lherzolite Mesa RegionNNP
+Dunite Mesa RegionNNP
+Wehrlite Mesa RegionNNP
+Pyroxenite Mesa RegionNNP
+Peridotite Mesa RegionNNP
+Kimberlite Mesa RegionNNP
+Lamproite Mesa RegionNNP
+Carbonatite Mesa RegionNNP
+Anorthosite Mesa RegionNNP
+Troctolite Mesa RegionNNP
+Norite Mesa RegionNNP
+Gabbro Mesa RegionNNP
+Diabase Mesa RegionNNP
+Dolerite Mesa RegionNNP
+Basanite Ridge RegionNNP
+Picrite Ridge RegionNNP
+Diabase Ridge RegionNNP
+Dolerite Ridge RegionNNP
+Lamproite Ridge RegionNNP

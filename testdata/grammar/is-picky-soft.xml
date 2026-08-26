@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft IS pack loaded only when level is picky. -->
+<rules lang="is">
+  <category id="STYLE" name="Style">
+    <rule id="IS_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Notið frekar "fund" eða "ráðstefnu".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IS_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Notið frekar "umsögn" eða "viðbrögð".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IS_SOFT_PICKY_MJÖG_MJÖG" name="mjög mjög soft picky">
+      <pattern>
+        <token>mjög</token>
+        <token>mjög</token>
+      </pattern>
+      <message>Veik áhersla; notið sterkara lýsingarorð.</message>
+      <short>style</short>
+    </rule>
+    <rule id="IS_SOFT_PICKY_HLUTIR" name="margir hlutir soft picky">
+      <pattern>
+        <token>margir</token>
+        <token>hlutir</token>
+      </pattern>
+      <message>Notið nákvæmara nafnorð en "hlutir".</message>
+      <short>style</short>
+    </rule>
+    <rule id="IS_SOFT_PICKY_I_LOK_DAGA" name="í lok dags soft picky">
+      <pattern>
+        <token>í</token>
+        <token>lok</token>
+        <token>dags</token>
+      </pattern>
+      <message>Notið frekar "að lokum" eða "loksins".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

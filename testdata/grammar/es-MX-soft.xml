@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="es-MX">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="ES_SOFT_ORDENADOR_MX" name="ordenador soft MX">
+      <pattern>
+        <token>ordenador</token>
+      </pattern>
+      <message>En el español de México, "computadora" es frecuente.</message>
+      <short>ordenador</short>
+    </rule>
+    <rule id="ES_SOFT_MOVIL_MX" name="móvil soft MX">
+      <pattern>
+        <token>móvil</token>
+      </pattern>
+      <message>En el español de México, "celular" es frecuente.</message>
+      <short>móvil</short>
+    </rule>
+    <rule id="ES_SOFT_ZUMO_MX" name="zumo soft MX">
+      <pattern>
+        <token>zumo</token>
+      </pattern>
+      <message>En el español de México, "jugo" es frecuente.</message>
+      <short>zumo</short>
+    </rule>
+    <rule id="ES_SOFT_COCHE_MX" name="coche soft MX">
+      <pattern>
+        <token>coche</token>
+      </pattern>
+      <message>En el español de México, "carro" o "auto" son frecuentes.</message>
+      <short>coche</short>
+    </rule>
+    <rule id="ES_SOFT_CONDUCIR_MX" name="conducir soft MX">
+      <pattern>
+        <token>conducir</token>
+      </pattern>
+      <message>En el español de México, "manejar" es frecuente para conducir un auto.</message>
+      <short>conducir</short>
+    </rule>
+    <rule id="ES_SOFT_PISO_MX" name="piso soft MX">
+      <pattern>
+        <token>piso</token>
+      </pattern>
+      <message>En el español de México, "departamento" o "apartamento" son frecuentes (vivienda).</message>
+      <short>piso</short>
+    </rule>
+    <rule id="ES_SOFT_BOLIGRAFO_MX" name="bolígrafo soft MX">
+      <pattern>
+        <token>bolígrafo</token>
+      </pattern>
+      <message>En el español de México, "pluma" es frecuente.</message>
+      <short>bolígrafo</short>
+    </rule>
+    <rule id="ES_SOFT_ORDENADOR_PORTATIL_MX" name="portátil soft MX">
+      <pattern>
+        <token>portátil</token>
+      </pattern>
+      <message>En el español de México, "laptop" es frecuente.</message>
+      <short>portátil</short>
+    </rule>
+    <rule id="ES_SOFT_FREGAR_MX" name="fregar soft MX">
+      <pattern>
+        <token>fregar</token>
+        <token>los</token>
+        <token>platos</token>
+      </pattern>
+      <message>En el español de México, "lavar los trastes" es frecuente.</message>
+      <short>fregar</short>
+    </rule>
+    <rule id="ES_SOFT_MELON_MX" name="melocotón soft MX">
+      <pattern>
+        <token>melocotón</token>
+      </pattern>
+      <message>En el español de México, "durazno" es frecuente.</message>
+      <short>melocotón</short>
+    </rule>
+  </category>
+</rules>

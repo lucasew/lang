@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft FA pack loaded only when level is picky. -->
+<rules lang="fa">
+  <category id="STYLE" name="Style">
+    <rule id="FA_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>ترجیح دهید «جلسه» یا «نشست».</message>
+      <short>style</short>
+    </rule>
+    <rule id="FA_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>ترجیح دهید «بازخورد» یا «نظر».</message>
+      <short>style</short>
+    </rule>
+    <rule id="FA_SOFT_PICKY_KHEILI_KHEILI" name="خیلی خیلی soft picky">
+      <pattern>
+        <token>خیلی</token>
+        <token>خیلی</token>
+      </pattern>
+      <message>تأکید ضعیف؛ صفت قوی‌تری در نظر بگیرید.</message>
+      <short>style</short>
+    </rule>
+    <rule id="FA_SOFT_PICKY_CHIZHA" name="چیزهای زیاد soft picky">
+      <pattern>
+        <token>چیزهای</token>
+        <token>زیاد</token>
+      </pattern>
+      <message>اسم مشخص‌تری از «چیزها» ترجیح دهید.</message>
+      <short>style</short>
+    </rule>
+    <rule id="FA_SOFT_PICKY_DAR_NAHAYAT" name="در نهایت soft picky">
+      <pattern>
+        <token>در</token>
+        <token>نهایت</token>
+      </pattern>
+      <message>در صورت امکان «بالاخره» را در نظر بگیرید.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

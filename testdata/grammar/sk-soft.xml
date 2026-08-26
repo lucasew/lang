@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="sk">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="SK_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Možné opakovanie "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="SK_SOFT_I_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Možné opakovanie "i".</message>
+      <short>i i</short>
+    </rule>
+    <rule id="SK_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Možné opakovanie "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="SK_SOFT_ZE_ZE" name="že že">
+      <pattern>
+        <token>že</token>
+        <token>že</token>
+      </pattern>
+      <message>Možné opakovanie "že".</message>
+      <short>že že</short>
+    </rule>
+    <rule id="SK_SOFT_V_V" name="v v">
+      <pattern>
+        <token>v</token>
+        <token>v</token>
+      </pattern>
+      <message>Možné opakovanie "v".</message>
+      <short>v v</short>
+    </rule>
+    <rule id="SK_SOFT_S_S" name="s s">
+      <pattern>
+        <token>s</token>
+        <token>s</token>
+      </pattern>
+      <message>Možné opakovanie "s".</message>
+      <short>s s</short>
+    </rule>
+    <rule id="SK_SOFT_NIE_NIE" name="nie nie">
+      <pattern>
+        <token>nie</token>
+        <token>nie</token>
+      </pattern>
+      <message>Možné opakovanie "nie".</message>
+      <short>nie nie</short>
+    </rule>
+    <rule id="SK_SOFT_ABY_ABY" name="aby aby">
+      <pattern>
+        <token>aby</token>
+        <token>aby</token>
+      </pattern>
+      <message>Možné opakovanie "aby".</message>
+      <short>aby aby</short>
+    </rule>
+    <rule id="SK_SOFT_UZ_UZ" name="už už">
+      <pattern>
+        <token>už</token>
+        <token>už</token>
+      </pattern>
+      <message>Možné opakovanie "už".</message>
+      <short>už už</short>
+    </rule>
+    <rule id="SK_SOFT_SA_SA" name="sa sa">
+      <pattern>
+        <token>sa</token>
+        <token>sa</token>
+      </pattern>
+      <message>Možné opakovanie "sa".</message>
+      <short>sa sa</short>
+    </rule>
+    <rule id="SK_SOFT_AJ_AJ" name="aj aj">
+      <pattern>
+        <token>aj</token>
+        <token>aj</token>
+      </pattern>
+      <message>Možné opakovanie "aj".</message>
+      <short>aj aj</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="SK_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Často stačí jeden otáznik: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="SK_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Často stačí jeden výkričník: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft PL pack loaded only when level is picky. -->
+<rules lang="pl">
+  <category id="STYLE" name="Style">
+    <rule id="PL_SOFT_PICKY_W_RAMACH" name="w ramach soft picky">
+      <pattern>
+        <token>w</token>
+        <token>ramach</token>
+      </pattern>
+      <message>Rozważ "w" lub "podczas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PL_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Rozważ "spotkanie".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PL_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Rozważ "opinię" lub "informację zwrotną".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PL_SOFT_PICKY_BARDZO_BARDZO" name="bardzo bardzo soft picky">
+      <pattern>
+        <token>bardzo</token>
+        <token>bardzo</token>
+      </pattern>
+      <message>Słabe wzmocnienie; rozważ mocniejszy przymiotnik.</message>
+      <short>style</short>
+    </rule>
+    <rule id="PL_SOFT_PICKY_RZECZY" name="rzeczy soft picky">
+      <pattern>
+        <token>wiele</token>
+        <token>rzeczy</token>
+      </pattern>
+      <message>Rozważ bardziej konkretny rzeczownik niż "rzeczy".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

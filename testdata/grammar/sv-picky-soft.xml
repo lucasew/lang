@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft SV pack loaded only when level is picky. -->
+<rules lang="sv">
+  <category id="STYLE" name="Style">
+    <rule id="SV_SOFT_PICKY_GALLANDE" name="gällande soft picky">
+      <pattern>
+        <token>gällande</token>
+      </pattern>
+      <message>Överväg "om" eller "angående".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SV_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Överväg "möte".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SV_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Överväg "återkoppling" eller "synpunkter".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SV_SOFT_PICKY_VALDIGT_VALDIGT" name="väldigt väldigt soft picky">
+      <pattern>
+        <token>väldigt</token>
+        <token>väldigt</token>
+      </pattern>
+      <message>Svag förstärkning; överväg ett starkare adjektiv.</message>
+      <short>style</short>
+    </rule>
+    <rule id="SV_SOFT_PICKY_SAKER" name="saker soft picky">
+      <pattern>
+        <token>många</token>
+        <token>saker</token>
+      </pattern>
+      <message>Överväg ett mer konkret substantiv än "saker".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SV_SOFT_PICKY_I_SLUTANDAN" name="i slutändan soft picky">
+      <pattern>
+        <token>i</token>
+        <token>slutändan</token>
+      </pattern>
+      <message>Överväg "till sist" eller "slutligen".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

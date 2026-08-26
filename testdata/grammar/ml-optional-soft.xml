@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft ML optional rules: default off until -e or SOFT_OPTIONAL. Space-tokenized. -->
+<rules lang="ml">
+  <category id="STYLE" name="Style">
+    <rule id="ML_SOFT_OPT_SAMBANDHICHU" name="സംബന്ധിച്ച് soft optional" default="off">
+      <pattern>
+        <token>സംബന്ധിച്ച്</token>
+      </pattern>
+      <message>«കുറിച്ച്» പോലുള്ള ചുരുക്കം പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ML_SOFT_OPT_VENDI" name="വേണ്ടി soft optional" default="off">
+      <pattern>
+        <token>വേണ്ടി</token>
+      </pattern>
+      <message>ആവശ്യമെങ്കിൽ ലളിതമായ ഉദ്ദേശ്യപദം പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ML_SOFT_OPT_KURICHU" name="കുറിച്ച് soft optional" default="off">
+      <pattern>
+        <token>കുറിച്ച്</token>
+      </pattern>
+      <message>ആവശ്യമെങ്കിൽ കൂടുതൽ ചുരുക്കം പരിഗണിക്കുക.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

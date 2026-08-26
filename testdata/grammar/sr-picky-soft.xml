@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft SR pack loaded only when level is picky. -->
+<rules lang="sr">
+  <category id="STYLE" name="Style">
+    <rule id="SR_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Bolje "sastanak" ili "sednica".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SR_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Bolje "povratna informacija" ili "komentari".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SR_SOFT_PICKY_VEOMA_VEOMA" name="veoma veoma soft picky">
+      <pattern>
+        <token>veoma</token>
+        <token>veoma</token>
+      </pattern>
+      <message>Slabo pojačanje; razmotrite jači pridev.</message>
+      <short>style</short>
+    </rule>
+    <rule id="SR_SOFT_PICKY_STVARI" name="mnogo stvari soft picky">
+      <pattern>
+        <token>mnogo</token>
+        <token>stvari</token>
+      </pattern>
+      <message>Razmotrite konkretniju imenicu od "stvari".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SR_SOFT_PICKY_NA_KRAJU_KRAJEVA" name="na kraju krajeva soft picky">
+      <pattern>
+        <token>na</token>
+        <token>kraju</token>
+        <token>krajeva</token>
+      </pattern>
+      <message>Razmotrite "naposletku" ili "konačno".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

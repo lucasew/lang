@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ml">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="ML_SOFT_UM_UM" name="um um">
+      <pattern>
+        <token>um</token>
+        <token>um</token>
+      </pattern>
+      <message>Possible repeated "um".</message>
+      <short>um um</short>
+    </rule>
+    <rule id="ML_SOFT_OR_OR" name="or or">
+      <pattern>
+        <token>or</token>
+        <token>or</token>
+      </pattern>
+      <message>Possible repeated "or".</message>
+      <short>or or</short>
+    </rule>
+    <rule id="ML_SOFT_AND_AND" name="and and">
+      <pattern>
+        <token>and</token>
+        <token>and</token>
+      </pattern>
+      <message>Possible repeated "and".</message>
+      <short>and and</short>
+    </rule>
+    <rule id="ML_SOFT_THE_THE" name="the the">
+      <pattern>
+        <token>the</token>
+        <token>the</token>
+      </pattern>
+      <message>Possible repeated "the".</message>
+      <short>the the</short>
+    </rule>
+    <rule id="ML_SOFT_TO_TO" name="to to">
+      <pattern>
+        <token>to</token>
+        <token>to</token>
+      </pattern>
+      <message>Possible repeated "to".</message>
+      <short>to to</short>
+    </rule>
+    <rule id="ML_SOFT_OF_OF" name="of of">
+      <pattern>
+        <token>of</token>
+        <token>of</token>
+      </pattern>
+      <message>Possible repeated "of".</message>
+      <short>of of</short>
+    </rule>
+    <rule id="ML_SOFT_IS_IS" name="is is">
+      <pattern>
+        <token>is</token>
+        <token>is</token>
+      </pattern>
+      <message>Possible repeated "is".</message>
+      <short>is is</short>
+    </rule>
+    <rule id="ML_SOFT_FOR_FOR" name="for for">
+      <pattern>
+        <token>for</token>
+        <token>for</token>
+      </pattern>
+      <message>Possible repeated "for".</message>
+      <short>for for</short>
+    </rule>
+    <rule id="ML_SOFT_ON_ON" name="on on">
+      <pattern>
+        <token>on</token>
+        <token>on</token>
+      </pattern>
+      <message>Possible repeated "on".</message>
+      <short>on on</short>
+    </rule>
+    <rule id="ML_SOFT_IT_IT" name="it it">
+      <pattern>
+        <token>it</token>
+        <token>it</token>
+      </pattern>
+      <message>Possible repeated "it".</message>
+      <short>it it</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="ML_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Often one question mark is enough: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="ML_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Often one exclamation mark is enough: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

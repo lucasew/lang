@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft AR pack loaded only when level is picky. -->
+<rules lang="ar">
+  <category id="STYLE" name="Style">
+    <rule id="AR_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>فضّل «اجتماع» أو «لقاء».</message>
+      <short>style</short>
+    </rule>
+    <rule id="AR_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>فضّل «ملاحظات» أو «تغذية راجعة».</message>
+      <short>style</short>
+    </rule>
+    <rule id="AR_SOFT_PICKY_JIDDAN_JIDDAN" name="جدا جدا soft picky">
+      <pattern>
+        <token>جدا</token>
+        <token>جدا</token>
+      </pattern>
+      <message>تأكيد ضعيف؛ فضّل صفة أقوى.</message>
+      <short>style</short>
+    </rule>
+    <rule id="AR_SOFT_PICKY_ASHYAA" name="أشياء كثيرة soft picky">
+      <pattern>
+        <token>أشياء</token>
+        <token>كثيرة</token>
+      </pattern>
+      <message>فضّل اسماً أدق من «أشياء».</message>
+      <short>style</short>
+    </rule>
+    <rule id="AR_SOFT_PICKY_FI_NIHAYAT" name="في نهاية المطاف soft picky">
+      <pattern>
+        <token>في</token>
+        <token>نهاية</token>
+        <token>المطاف</token>
+      </pattern>
+      <message>فضّل «أخيراً» أو «في النهاية».</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft SV optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="sv">
+  <category id="STYLE" name="Style">
+    <rule id="SV_SOFT_OPT_I_SYFTE" name="i syfte soft optional" default="off">
+      <pattern>
+        <token>i</token>
+        <token>syfte</token>
+        <token>att</token>
+      </pattern>
+      <message>Överväg "för att".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SV_SOFT_OPT_MED_AVSEENDE" name="med avseende på soft optional" default="off">
+      <pattern>
+        <token>med</token>
+        <token>avseende</token>
+        <token>på</token>
+      </pattern>
+      <message>Överväg "om" eller "angående".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SV_SOFT_OPT_I_SAMBAND" name="i samband med soft optional" default="off">
+      <pattern>
+        <token>i</token>
+        <token>samband</token>
+        <token>med</token>
+      </pattern>
+      <message>Överväg "vid" eller "under".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

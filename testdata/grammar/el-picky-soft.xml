@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EL pack loaded only when level is picky. -->
+<rules lang="el">
+  <category id="STYLE" name="Style">
+    <rule id="EL_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Προτιμήστε "συνάντηση" ή "σύσκεψη".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EL_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Προτιμήστε "ανατροφοδότηση" ή "σχόλια".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EL_SOFT_PICKY_POLY_POLY" name="πολύ πολύ soft picky">
+      <pattern>
+        <token>πολύ</token>
+        <token>πολύ</token>
+      </pattern>
+      <message>Αδύναμη ενίσχυση· προτιμήστε ισχυρότερο επίθετο.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EL_SOFT_PICKY_PRAGMATA" name="πολλά πράγματα soft picky">
+      <pattern>
+        <token>πολλά</token>
+        <token>πράγματα</token>
+      </pattern>
+      <message>Προτιμήστε πιο συγκεκριμένο ουσιαστικό από "πράγματα".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EL_SOFT_PICKY_STO_TELOS_TIS_IMERAS" name="στο τέλος της ημέρας soft picky">
+      <pattern>
+        <token>στο</token>
+        <token>τέλος</token>
+        <token>της</token>
+        <token>ημέρας</token>
+      </pattern>
+      <message>Προτιμήστε "τελικά" ή "εν τέλει".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

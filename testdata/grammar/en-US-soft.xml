@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="en-US">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="EN_SOFT_TOWARDS_US" name="towards soft">
+      <pattern>
+        <token>towards</token>
+      </pattern>
+      <message>In American English, "toward" is often preferred.</message>
+      <short>towards</short>
+    </rule>
+    <rule id="EN_SOFT_AMONGST_US" name="amongst soft">
+      <pattern>
+        <token>amongst</token>
+      </pattern>
+      <message>In American English, "among" is often preferred.</message>
+      <short>amongst</short>
+    </rule>
+    <rule id="EN_SOFT_WHILST_US" name="whilst soft">
+      <pattern>
+        <token>whilst</token>
+      </pattern>
+      <message>In American English, "while" is often preferred.</message>
+      <short>whilst</short>
+    </rule>
+    <rule id="EN_SOFT_GREY_US" name="grey soft">
+      <pattern>
+        <token>grey</token>
+      </pattern>
+      <message>In American English, "gray" is often preferred.</message>
+      <short>grey</short>
+    </rule>
+    <rule id="EN_SOFT_COLOUR_US" name="colour soft">
+      <pattern>
+        <token>colour</token>
+      </pattern>
+      <message>In American English, "color" is often preferred.</message>
+      <short>colour</short>
+    </rule>
+    <rule id="EN_SOFT_FAVOURITE_US" name="favourite soft">
+      <pattern>
+        <token>favourite</token>
+      </pattern>
+      <message>In American English, "favorite" is often preferred.</message>
+      <short>favourite</short>
+    </rule>
+    <rule id="EN_SOFT_CENTRE_US" name="centre soft">
+      <pattern>
+        <token>centre</token>
+      </pattern>
+      <message>In American English, "center" is often preferred.</message>
+      <short>centre</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANISE_US" name="organise soft">
+      <pattern>
+        <token>organise</token>
+      </pattern>
+      <message>In American English, "organize" is often preferred.</message>
+      <short>organise</short>
+    </rule>
+    <rule id="EN_SOFT_REALISE_US" name="realise soft">
+      <pattern>
+        <token>realise</token>
+      </pattern>
+      <message>In American English, "realize" is often preferred.</message>
+      <short>realise</short>
+    </rule>
+    <rule id="EN_SOFT_BEHAVIOUR_US" name="behaviour soft">
+      <pattern>
+        <token>behaviour</token>
+      </pattern>
+      <message>In American English, "behavior" is often preferred.</message>
+      <short>behaviour</short>
+    </rule>
+    <rule id="EN_SOFT_TRAVELLED_US" name="travelled soft">
+      <pattern>
+        <token>travelled</token>
+      </pattern>
+      <message>In American English, "traveled" is often preferred.</message>
+      <short>travelled</short>
+    </rule>
+    <rule id="EN_SOFT_CANCELLED_US" name="cancelled soft">
+      <pattern>
+        <token>cancelled</token>
+      </pattern>
+      <message>In American English, "canceled" is often preferred.</message>
+      <short>cancelled</short>
+    </rule>
+    <rule id="EN_SOFT_MODELLED_US" name="modelled soft">
+      <pattern>
+        <token>modelled</token>
+      </pattern>
+      <message>In American English, "modeled" is often preferred.</message>
+      <short>modelled</short>
+    </rule>
+    <rule id="EN_SOFT_HUMOUR_US" name="humour soft">
+      <pattern>
+        <token>humour</token>
+      </pattern>
+      <message>In American English, "humor" is often preferred.</message>
+      <short>humour</short>
+    </rule>
+    <rule id="EN_SOFT_LABOUR_US" name="labour soft">
+      <pattern>
+        <token>labour</token>
+      </pattern>
+      <message>In American English, "labor" is often preferred.</message>
+      <short>labour</short>
+    </rule>
+    <rule id="EN_SOFT_DEFENCE_US" name="defence soft">
+      <pattern>
+        <token>defence</token>
+      </pattern>
+      <message>In American English, "defense" is often preferred.</message>
+      <short>defence</short>
+    </rule>
+    <rule id="EN_SOFT_LICENCE_US" name="licence soft">
+      <pattern>
+        <token>licence</token>
+      </pattern>
+      <message>In American English, "license" is often preferred for the noun.</message>
+      <short>licence</short>
+    </rule>
+    <rule id="EN_SOFT_ANALYSE_US" name="analyse soft">
+      <pattern>
+        <token>analyse</token>
+      </pattern>
+      <message>In American English, "analyze" is often preferred.</message>
+      <short>analyse</short>
+    </rule>
+    <rule id="EN_SOFT_THEATRE_US" name="theatre soft">
+      <pattern>
+        <token>theatre</token>
+      </pattern>
+      <message>In American English, "theater" is often preferred.</message>
+      <short>theatre</short>
+    </rule>
+    <rule id="EN_SOFT_CATALOGUE_US" name="catalogue soft">
+      <pattern>
+        <token>catalogue</token>
+      </pattern>
+      <message>In American English, "catalog" is often preferred.</message>
+      <short>catalogue</short>
+    </rule>
+    <rule id="EN_SOFT_DIALOGUE_US" name="dialogue soft">
+      <pattern>
+        <token>dialogue</token>
+      </pattern>
+      <message>In American English, "dialog" is often preferred (UI/software contexts).</message>
+      <short>dialogue</short>
+    </rule>
+    <rule id="EN_SOFT_PROGRAMME_US" name="programme soft">
+      <pattern>
+        <token>programme</token>
+      </pattern>
+      <message>In American English, "program" is often preferred.</message>
+      <short>programme</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOUR_US" name="neighbour soft">
+      <pattern>
+        <token>neighbour</token>
+      </pattern>
+      <message>In American English, "neighbor" is often preferred.</message>
+      <short>neighbour</short>
+    </rule>
+    <rule id="EN_SOFT_CHEQUE_US" name="cheque soft">
+      <pattern>
+        <token>cheque</token>
+      </pattern>
+      <message>In American English, "check" is often preferred for bank drafts.</message>
+      <short>cheque</short>
+    </rule>
+    <rule id="EN_SOFT_TYRE_US" name="tyre soft">
+      <pattern>
+        <token>tyre</token>
+      </pattern>
+      <message>In American English, "tire" is often preferred.</message>
+      <short>tyre</short>
+    </rule>
+    <rule id="EN_SOFT_ALUMINIUM_US" name="aluminium soft">
+      <pattern>
+        <token>aluminium</token>
+      </pattern>
+      <message>In American English, "aluminum" is preferred.</message>
+      <short>aluminium</short>
+    </rule>
+    <rule id="EN_SOFT_STOREY_US" name="storey soft">
+      <pattern>
+        <token>storey</token>
+      </pattern>
+      <message>In American English, "story" is often preferred for building floors.</message>
+      <short>storey</short>
+    </rule>
+    <rule id="EN_SOFT_HONOUR_US" name="honour soft">
+      <pattern>
+        <token>honour</token>
+      </pattern>
+      <message>In American English, "honor" is often preferred.</message>
+      <short>honour</short>
+    </rule>
+    <rule id="EN_SOFT_FAVOUR_US" name="favour soft">
+      <pattern>
+        <token>favour</token>
+      </pattern>
+      <message>In American English, "favor" is often preferred.</message>
+      <short>favour</short>
+    </rule>
+    <rule id="EN_SOFT_LABOURED_US" name="laboured soft">
+      <pattern>
+        <token>laboured</token>
+      </pattern>
+      <message>In American English, "labored" is often preferred.</message>
+      <short>laboured</short>
+    </rule>
+  </category>
+</rules>

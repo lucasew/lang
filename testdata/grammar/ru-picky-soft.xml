@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft RU pack loaded only when level is picky. -->
+<rules lang="ru">
+  <category id="STYLE" name="Style">
+    <rule id="RU_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Предпочтительнее "встреча" или "совещание".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RU_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Предпочтительнее "отзыв" или "обратная связь".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RU_SOFT_PICKY_OCHEN_OCHEN" name="очень очень soft picky">
+      <pattern>
+        <token>очень</token>
+        <token>очень</token>
+      </pattern>
+      <message>Слабое усиление; рассмотрите более сильное прилагательное.</message>
+      <short>style</short>
+    </rule>
+    <rule id="RU_SOFT_PICKY_VESCHI" name="вещи soft picky">
+      <pattern>
+        <token>много</token>
+        <token>вещей</token>
+      </pattern>
+      <message>Рассмотрите более конкретное существительное, чем "вещей".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RU_SOFT_PICKY_V_KONCE_KONCOV" name="в конце концов soft picky">
+      <pattern>
+        <token>в</token>
+        <token>конце</token>
+        <token>концов</token>
+      </pattern>
+      <message>Рассмотрите "наконец" или "в итоге".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

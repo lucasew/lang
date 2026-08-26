@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft ES optional rules: default off until -e. -->
+<rules lang="es">
+  <category id="STYLE" name="Style">
+    <rule id="ES_SOFT_OPT_EN_RELACION_CON" name="en relación con soft optional" default="off">
+      <pattern>
+        <token>en</token>
+        <token>relación</token>
+        <token>con</token>
+      </pattern>
+      <message>Prefiera "sobre" o "respecto a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_OPT_A_TRAVES_DE" name="a través de soft optional" default="off">
+      <pattern>
+        <token>a</token>
+        <token>través</token>
+        <token>de</token>
+      </pattern>
+      <message>Prefiera "mediante" o "por" si es más breve.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_OPT_CON_EL_FIN_DE" name="con el fin de soft optional" default="off">
+      <pattern>
+        <token>con</token>
+        <token>el</token>
+        <token>fin</token>
+        <token>de</token>
+      </pattern>
+      <message>Prefiera "para" + infinitivo.</message>
+      <short>style</short>
+    </rule>
+    <rule id="ES_SOFT_OPT_EN_VIRTUD_DE" name="en virtud de soft optional" default="off">
+      <pattern>
+        <token>en</token>
+        <token>virtud</token>
+        <token>de</token>
+      </pattern>
+      <message>Prefiera "por" o "según".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

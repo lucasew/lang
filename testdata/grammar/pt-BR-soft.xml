@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="pt-BR">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="PT_SOFT_AUTOCARRO_BR" name="autocarro soft BR">
+      <pattern>
+        <token>autocarro</token>
+      </pattern>
+      <message>No português do Brasil, "ônibus" é frequentemente preferido.</message>
+      <short>autocarro</short>
+    </rule>
+    <rule id="PT_SOFT_TELEMOVEL_BR" name="telemóvel soft BR">
+      <pattern>
+        <token>telemóvel</token>
+      </pattern>
+      <message>No português do Brasil, "celular" é frequentemente preferido.</message>
+      <short>telemóvel</short>
+    </rule>
+    <rule id="PT_SOFT_ECRA_BR" name="ecrã soft BR">
+      <pattern>
+        <token>ecrã</token>
+      </pattern>
+      <message>No português do Brasil, "tela" é frequentemente preferido.</message>
+      <short>ecrã</short>
+    </rule>
+    <rule id="PT_SOFT_FACTO_BR" name="facto soft BR">
+      <pattern>
+        <token>facto</token>
+      </pattern>
+      <message>No português do Brasil, "fato" é frequentemente preferido (sentido de "fact").</message>
+      <short>facto</short>
+    </rule>
+    <rule id="PT_SOFT_CONTACTO_BR" name="contacto soft BR">
+      <pattern>
+        <token>contacto</token>
+      </pattern>
+      <message>No português do Brasil, "contato" é frequentemente preferido.</message>
+      <short>contacto</short>
+    </rule>
+    <rule id="PT_SOFT_OBJECTO_BR" name="objecto soft BR">
+      <pattern>
+        <token>objecto</token>
+      </pattern>
+      <message>No português do Brasil, "objeto" é frequentemente preferido.</message>
+      <short>objecto</short>
+    </rule>
+    <rule id="PT_SOFT_OPTIMO_BR" name="óptimo soft BR">
+      <pattern>
+        <token>óptimo</token>
+      </pattern>
+      <message>No português do Brasil, "ótimo" é frequentemente preferido.</message>
+      <short>óptimo</short>
+    </rule>
+    <rule id="PT_SOFT_ACCAO_BR" name="acção soft BR">
+      <pattern>
+        <token>acção</token>
+      </pattern>
+      <message>No português do Brasil, "ação" é frequentemente preferido.</message>
+      <short>acção</short>
+    </rule>
+    <rule id="PT_SOFT_PEQUENO_ALMOCO_BR" name="pequeno-almoço soft BR">
+      <pattern>
+        <token>pequeno-almoço</token>
+      </pattern>
+      <message>No português do Brasil, "café da manhã" é frequentemente preferido.</message>
+      <short>pequeno-almoço</short>
+    </rule>
+    <rule id="PT_SOFT_COMBOIO_BR" name="comboio soft BR">
+      <pattern>
+        <token>comboio</token>
+      </pattern>
+      <message>No português do Brasil, "trem" é frequentemente preferido.</message>
+      <short>comboio</short>
+    </rule>
+    <rule id="PT_SOFT_EQUIPA_BR" name="equipa soft BR">
+      <pattern>
+        <token>equipa</token>
+      </pattern>
+      <message>No português do Brasil, "equipe" é frequentemente preferido.</message>
+      <short>equipa</short>
+    </rule>
+    <rule id="PT_SOFT_FIXE_BR" name="fixe soft BR">
+      <pattern>
+        <token>fixe</token>
+      </pattern>
+      <message>No português do Brasil, "legal" ou "bacana" são mais comuns que "fixe".</message>
+      <short>fixe</short>
+    </rule>
+  </category>
+</rules>

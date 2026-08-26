@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="eo">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="EO_SOFT_KAJ_KAJ" name="kaj kaj">
+      <pattern>
+        <token>kaj</token>
+        <token>kaj</token>
+      </pattern>
+      <message>Ebla ripeto de "kaj".</message>
+      <short>kaj kaj</short>
+    </rule>
+    <rule id="EO_SOFT_LA_LA" name="la la">
+      <pattern>
+        <token>la</token>
+        <token>la</token>
+      </pattern>
+      <message>Ebla ripeto de "la".</message>
+      <short>la la</short>
+    </rule>
+    <rule id="EO_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Ebla ripeto de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="EO_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Ebla ripeto de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="EO_SOFT_NE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Ebla ripeto de "ne".</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="EO_SOFT_POR_POR" name="por por">
+      <pattern>
+        <token>por</token>
+        <token>por</token>
+      </pattern>
+      <message>Ebla ripeto de "por".</message>
+      <short>por por</short>
+    </rule>
+    <rule id="EO_SOFT_AL_AL" name="al al">
+      <pattern>
+        <token>al</token>
+        <token>al</token>
+      </pattern>
+      <message>Ebla ripeto de "al".</message>
+      <short>al al</short>
+    </rule>
+    <rule id="EO_SOFT_KE_KE" name="ke ke">
+      <pattern>
+        <token>ke</token>
+        <token>ke</token>
+      </pattern>
+      <message>Ebla ripeto de "ke".</message>
+      <short>ke ke</short>
+    </rule>
+    <rule id="EO_SOFT_KIU_KIU" name="kiu kiu">
+      <pattern>
+        <token>kiu</token>
+        <token>kiu</token>
+      </pattern>
+      <message>Ebla ripeto de "kiu".</message>
+      <short>kiu kiu</short>
+    </rule>
+    <rule id="EO_SOFT_JAM_JAM" name="jam jam">
+      <pattern>
+        <token>jam</token>
+        <token>jam</token>
+      </pattern>
+      <message>Ebla ripeto de "jam".</message>
+      <short>jam jam</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="EO_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Ofte sufiĉas unu demandosigno: "?"</message>
+      <short>!!</short>
+    </rule>
+    <rule id="EO_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ofte sufiĉas unu krisigno: "!"</message>
+      <short>!!</short>
+    </rule>
+  </category>
+</rules>

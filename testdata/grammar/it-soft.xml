@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="it">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="IT_SOFT_A_IL" name="a il">
+      <pattern>
+        <token>a</token>
+        <token>il</token>
+      </pattern>
+      <message>Forse "al"?</message>
+      <short>a/al</short>
+    </rule>
+    <rule id="IT_SOFT_DI_IL" name="di il">
+      <pattern>
+        <token>di</token>
+        <token>il</token>
+      </pattern>
+      <message>Forse "del"?</message>
+      <short>di/del</short>
+    </rule>
+    <rule id="IT_SOFT_IN_IL" name="in il">
+      <pattern>
+        <token>in</token>
+        <token>il</token>
+      </pattern>
+      <message>Forse "nel"?</message>
+      <short>in/nel</short>
+    </rule>
+    <rule id="IT_SOFT_E_E" name="e e">
+      <pattern>
+        <token>e</token>
+        <token>e</token>
+      </pattern>
+      <message>Possibile ripetizione di "e".</message>
+      <short>e e</short>
+    </rule>
+    <rule id="IT_SOFT_A_LO" name="a lo">
+      <pattern>
+        <token>a</token>
+        <token>lo</token>
+      </pattern>
+      <message>Forse "allo"?</message>
+      <short>a/allo</short>
+    </rule>
+    <rule id="IT_SOFT_DI_LO" name="di lo">
+      <pattern>
+        <token>di</token>
+        <token>lo</token>
+      </pattern>
+      <message>Forse "dello"?</message>
+      <short>di/dello</short>
+    </rule>
+    <rule id="IT_SOFT_PERCHE" name="perche">
+      <pattern>
+        <token>perche</token>
+      </pattern>
+      <message>Forse "perché"?</message>
+      <short>perché</short>
+    </rule>
+    <rule id="IT_SOFT_QUALCHE_UNO" name="qualche uno">
+      <pattern>
+        <token>qualche</token>
+        <token>uno</token>
+      </pattern>
+      <message>Forse "qualcuno"?</message>
+      <short>qualcuno</short>
+    </rule>
+    <rule id="IT_SOFT_CE_NE" name="c e">
+      <pattern>
+        <token>c</token>
+        <token>e</token>
+      </pattern>
+      <message>Forse "c'è"?</message>
+      <short>c'è</short>
+    </rule>
+    <rule id="IT_SOFT_POI_POI" name="poi poi">
+      <pattern>
+        <token>poi</token>
+        <token>poi</token>
+      </pattern>
+      <message>Possibile ripetizione di "poi".</message>
+      <short>poi poi</short>
+    </rule>
+    <rule id="IT_SOFT_MA_MA" name="ma ma">
+      <pattern>
+        <token>ma</token>
+        <token>ma</token>
+      </pattern>
+      <message>Possibile ripetizione di "ma".</message>
+      <short>ma ma</short>
+    </rule>
+    <rule id="IT_SOFT_SE_SE" name="se se">
+      <pattern>
+        <token>se</token>
+        <token>se</token>
+      </pattern>
+      <message>Possibile ripetizione di "se".</message>
+      <short>se se</short>
+    </rule>
+    <rule id="IT_SOFT_A_LA" name="a la">
+      <pattern>
+        <token>a</token>
+        <token>la</token>
+      </pattern>
+      <message>Forse "alla"?</message>
+      <short>a/alla</short>
+    </rule>
+    <rule id="IT_SOFT_DI_LA" name="di la">
+      <pattern>
+        <token>di</token>
+        <token>la</token>
+      </pattern>
+      <message>Forse "della"?</message>
+      <short>di/della</short>
+    </rule>
+    <rule id="IT_SOFT_IN_LA" name="in la">
+      <pattern>
+        <token>in</token>
+        <token>la</token>
+      </pattern>
+      <message>Forse "nella"?</message>
+      <short>in/nella</short>
+    </rule>
+    <rule id="IT_SOFT_POICHE" name="poiche">
+      <pattern>
+        <token>poiche</token>
+      </pattern>
+      <message>Forse "poiché"?</message>
+      <short>poiché</short>
+    </rule>
+    <rule id="IT_SOFT_QUALCHE_COSA" name="qualche cosa">
+      <pattern>
+        <token>qualche</token>
+        <token>cosa</token>
+      </pattern>
+      <message>Forse "qualcosa"?</message>
+      <short>qualcosa</short>
+    </rule>
+    <rule id="IT_SOFT_NON_NON" name="non non">
+      <pattern>
+        <token>non</token>
+        <token>non</token>
+      </pattern>
+      <message>Possibile ripetizione di "non".</message>
+      <short>non non</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Tipografia">
+    <rule id="IT_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Spesso basta un solo punto interrogativo: "?"</message>
+      <short>punteggiatura</short>
+    </rule>
+    <rule id="IT_SOFT_DOUBLE_BANG" name="doppio esclamativo">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Spesso basta un solo punto esclamativo: "!"</message>
+      <short>punteggiatura</short>
+    </rule>
+  </category>
+</rules>

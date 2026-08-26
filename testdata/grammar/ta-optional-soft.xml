@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft TA optional rules: default off until -e or SOFT_OPTIONAL. Space-tokenized. -->
+<rules lang="ta">
+  <category id="STYLE" name="Style">
+    <rule id="TA_SOFT_OPT_PATRI" name="பற்றி soft optional" default="off">
+      <pattern>
+        <token>பற்றி</token>
+      </pattern>
+      <message>தேவையானால் சுருக்கமான சொற்களைக் கருதுங்கள்.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TA_SOFT_OPT_PORUTTU" name="பொருட்டு soft optional" default="off">
+      <pattern>
+        <token>பொருட்டு</token>
+      </pattern>
+      <message>«ஆக» அல்லது «இதற்காக» போன்றவற்றைக் கருதுங்கள்.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TA_SOFT_OPT_THODARBU" name="தொடர்பாக soft optional" default="off">
+      <pattern>
+        <token>தொடர்பாக</token>
+      </pattern>
+      <message>«பற்றி» போன்ற சுருக்கமான சொற்களைக் கருதுங்கள்.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>
